@@ -2866,11 +2866,11 @@ namespace Datapack.Net.Data._1_20_4
             public readonly OmniDirection? Facing = facing;
             public static Piston Block => new();
         }
-        public class PistonHead(PistonType? type = null, OmniDirection? facing = null, bool? short = null) : Block(new("minecraft:piston_head"))
+        public class PistonHead(PistonType? type = null, OmniDirection? facing = null, bool? _short = null) : Block(new("minecraft:piston_head"))
         {
             public readonly PistonType? Type = type;
             public readonly OmniDirection? Facing = facing;
-            public readonly bool? Short = short;
+            public readonly bool? Short = _short;
             public static PistonHead Block => new();
         }
         public class PitcherCrop(To4Low? age = null, DoorHalf? half = null) : Block(new("minecraft:pitcher_crop"))

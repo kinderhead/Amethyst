@@ -117,9 +117,9 @@ with open("blocks.txt", "w") as f:
         nice_name = i.split(":")[1].split("_")
         nice_name = "".join([e.capitalize() for e in nice_name])
 
-        defs.append(f"\tpublic class {nice_name}({", ".join([f"{blocks[i][e]}? {e.lower()} = null" for e in list(blocks[i].keys())])}) : Block(new(\"{i}\"))\n\t{{\n")
+        defs.append(f"\tpublic class {nice_name}({", ".join([f"{blocks[i][e]}? {e.lower()} = null" for e in list(blocks[i].keys())])}) : Block(new(\"{i}\"))\n\t{{\n".replace("short", "_short"))
         for e in list(blocks[i].keys()):
-            defs.append(f"\t\tpublic readonly {blocks[i][e]}? {e} = {e.lower()};\n")
+            defs.append(f"\t\tpublic readonly {blocks[i][e]}? {e} = {e.lower()};\n".replace("short", "_short"))
         defs.append(f"\t\tpublic static {nice_name} Block => new();\n\t}}\n")
 
     defs.append("}\n")
