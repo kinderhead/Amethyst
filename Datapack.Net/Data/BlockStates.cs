@@ -24,6 +24,15 @@ namespace Datapack.Net.Data
         Down
     }
 
+    public enum SemiOmniDirection
+    {
+        North,
+        South,
+        East,
+        West,
+        Down
+    }
+
     public enum To15
     {
         _0 = 0,
@@ -142,6 +151,27 @@ namespace Datapack.Net.Data
         _2,
     }
 
+    public enum To5
+    {
+        _0 = 0,
+        _1,
+        _2,
+        _3,
+        _4,
+        _5
+    }
+
+    public enum To6
+    {
+        _0 = 0,
+        _1,
+        _2,
+        _3,
+        _4,
+        _5,
+        _6
+    }
+
     public enum To7Low
     {
         _0 = 0,
@@ -165,9 +195,22 @@ namespace Datapack.Net.Data
         _7
     }
 
-    public enum To8
+    public enum To8High
     {
         _1 = 1,
+        _2,
+        _3,
+        _4,
+        _5,
+        _6,
+        _7,
+        _8
+    }
+
+    public enum To8Low
+    {
+        _0 = 0,
+        _1,
         _2,
         _3,
         _4,
@@ -320,5 +363,89 @@ namespace Datapack.Net.Data
         Frustrum,
         Middle,
         Base
+    }
+
+    public enum PistonType
+    {
+        Normal,
+        Sticky
+    }
+
+    public enum NoteblockType
+    {
+        Harp,
+        Basedrum,
+        Snare,
+        Hat,
+        Bass,
+        Flute,
+        Bell,
+        Guitar,
+        Chime,
+        Xylophone,
+        Iron_Xylophone,
+        Cow_Bell,
+        Didgeridoo,
+        Bit,
+        Banjo,
+        Pling,
+        Zombie,
+        Skeleton,
+        Creeper,
+        Dragon,
+        Wither_Skeleton,
+        Piglin,
+        Custom_Head
+    }
+
+    public enum HorizontalAxis
+    {
+        X,
+        Z
+    }
+
+    public enum ManyOrientation
+    {
+        Down_East,
+        Down_North,
+        Down_South,
+        Down_West,
+        Up_East,
+        Up_North,
+        Up_South,
+        Up_West,
+        West_Up,
+        East_Up,
+        North_Up,
+        South_Up
+    }
+
+    public enum ComparatorType
+    {
+        Compare,
+        Subtract
+    }
+
+    public enum DripleafTilt
+    {
+        None,
+        Unstable,
+        Partial,
+        Full
+    }
+
+    public enum BellType
+    {
+        Floor,
+        Ceiling,
+        Single_Wall,
+        Double_Wall
+    }
+
+    public enum BambooLeaves
+    {
+        None,
+        Small,
+        Large
     }
 }

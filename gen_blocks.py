@@ -9,13 +9,11 @@ with open(os.path.join(path, "blocks.json"), "r") as f:
 names: list[str] = list(data.keys())
 
 with open("blocks.txt", "w") as f:
-    defs = []
+    defs = ["public static class Blocks\n{\n"]
+    blocks: dict[str, dict[str, str]] = {}
     for i in names:
         if "minecraft:" not in i:
             continue
-
-        nice_name = i.split(":")[1].split("_")
-        nice_name = "".join([e.capitalize() for e in nice_name])
 
         if "properties" in data[i]:
             block: dict[str, str] = {}
@@ -67,11 +65,17 @@ with open("blocks.txt", "w") as f:
                 elif str(data[i]["properties"][e]) == "['1', '2', '3', '4', '5', '6', '7']":
                     block[e.capitalize()] = "To7High"
                 elif str(data[i]["properties"][e]) == "['1', '2', '3', '4', '5', '6', '7', '8']":
-                    block[e.capitalize()] = "To8"
+                    block[e.capitalize()] = "To8High"
+                elif str(data[i]["properties"][e]) == "['0', '1', '2', '3', '4', '5', '6', '7', '8']":
+                    block[e.capitalize()] = "To8Low"
                 elif str(data[i]["properties"][e]) == "['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23', '24']":
                     block[e.capitalize()] = "To24"
                 elif str(data[i]["properties"][e]) == "['0', '1', '2', '3', '4']":
                     block[e.capitalize()] = "To4Low"
+                elif str(data[i]["properties"][e]) == "['0', '1', '2', '3', '4', '5']":
+                    block[e.capitalize()] = "To5"
+                elif str(data[i]["properties"][e]) == "['0', '1', '2', '3', '4', '5', '6']":
+                    block[e.capitalize()] = "To6"
                 elif str(data[i]["properties"][e]) == "['save', 'load', 'corner', 'data']":
                     block[e.capitalize()] = "StructureBlockType"
                 elif str(data[i]["properties"][e]) == "['inactive', 'active', 'cooldown']":
@@ -86,7 +90,37 @@ with open("blocks.txt", "w") as f:
                     block[e.capitalize()] = "VerticalDirection"
                 elif str(data[i]["properties"][e]) == "['tip_merge', 'tip', 'frustum', 'middle', 'base']":
                     block[e.capitalize()] = "DripstoneThickness"
+                elif str(data[i]["properties"][e]) == "['normal', 'sticky']":
+                    block[e.capitalize()] = "PistonType"
+                elif str(data[i]["properties"][e]) == "['harp', 'basedrum', 'snare', 'hat', 'bass', 'flute', 'bell', 'guitar', 'chime', 'xylophone', 'iron_xylophone', 'cow_bell', 'didgeridoo', 'bit', 'banjo', 'pling', 'zombie', 'skeleton', 'creeper', 'dragon', 'wither_skeleton', 'piglin', 'custom_head']":
+                    block[e.capitalize()] = "NoteblockType"
+                elif str(data[i]["properties"][e]) == "['x', 'z']":
+                    block[e.capitalize()] = "HorizontalAxis"
+                elif str(data[i]["properties"][e]) == "['down_east', 'down_north', 'down_south', 'down_west', 'up_east', 'up_north', 'up_south', 'up_west', 'west_up', 'east_up', 'north_up', 'south_up']":
+                    block[e.capitalize()] = "ManyOrientation"
+                elif str(data[i]["properties"][e]) == "['down', 'north', 'south', 'west', 'east']":
+                    block[e.capitalize()] = "SemiOmniDirection"
+                elif str(data[i]["properties"][e]) == "['compare', 'subtract']":
+                    block[e.capitalize()] = "ComparatorType"
+                elif str(data[i]["properties"][e]) == "['none', 'unstable', 'partial', 'full']":
+                    block[e.capitalize()] = "DripleafTilt"
+                elif str(data[i]["properties"][e]) == "['floor', 'ceiling', 'single_wall', 'double_wall']":
+                    block[e.capitalize()] = "BellType"
+                elif str(data[i]["properties"][e]) == "['none', 'small', 'large']":
+                    block[e.capitalize()] = "BambooLeaves"
                 else:
                     print("bruh", str(data[i]["properties"][e]))
+
+            blocks[i] = block
+
+    for i in list(blocks.keys()):
+        nice_name = i.split(":")[1].split("_")
+        nice_name = "".join([e.capitalize() for e in nice_name])
+
+        defs.append(f"\tpublic class {nice_name}({", ".join([f"{blocks[i][e]}? {e.lower()} = null" for e in list(blocks[i].keys())])}) : Block(new(\"{i}\"))\n\t{{\n")
+        for e in list(blocks[i].keys()):
+            defs.append(f"\t\tpublic readonly {blocks[i][e]}? {e} = {e.lower()};\n")
+        defs.append(f"\t\tpublic static {nice_name} Block => new();\n\t}}\n")
+
     defs.append("}\n")
     f.writelines(defs)

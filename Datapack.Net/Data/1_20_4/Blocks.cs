@@ -8,1064 +8,4457 @@ namespace Datapack.Net.Data._1_20_4
 {
     public static class Blocks
     {
-        public static readonly Block Air = new(new("minecraft:air"));
-        public static readonly Block Stone = new(new("minecraft:stone"));
-        public static readonly Block Granite = new(new("minecraft:granite"));
-        public static readonly Block PolishedGranite = new(new("minecraft:polished_granite"));
-        public static readonly Block Diorite = new(new("minecraft:diorite"));
-        public static readonly Block PolishedDiorite = new(new("minecraft:polished_diorite"));
-        public static readonly Block Andesite = new(new("minecraft:andesite"));
-        public static readonly Block PolishedAndesite = new(new("minecraft:polished_andesite"));
-        public static readonly Block GrassBlock = new(new("minecraft:grass_block"));
-        public static readonly Block Dirt = new(new("minecraft:dirt"));
-        public static readonly Block CoarseDirt = new(new("minecraft:coarse_dirt"));
-        public static readonly Block Podzol = new(new("minecraft:podzol"));
-        public static readonly Block Cobblestone = new(new("minecraft:cobblestone"));
-        public static readonly Block OakPlanks = new(new("minecraft:oak_planks"));
-        public static readonly Block SprucePlanks = new(new("minecraft:spruce_planks"));
-        public static readonly Block BirchPlanks = new(new("minecraft:birch_planks"));
-        public static readonly Block JunglePlanks = new(new("minecraft:jungle_planks"));
-        public static readonly Block AcaciaPlanks = new(new("minecraft:acacia_planks"));
-        public static readonly Block CherryPlanks = new(new("minecraft:cherry_planks"));
-        public static readonly Block DarkOakPlanks = new(new("minecraft:dark_oak_planks"));
-        public static readonly Block MangrovePlanks = new(new("minecraft:mangrove_planks"));
-        public static readonly Block BambooPlanks = new(new("minecraft:bamboo_planks"));
-        public static readonly Block BambooMosaic = new(new("minecraft:bamboo_mosaic"));
-        public static readonly Block OakSapling = new(new("minecraft:oak_sapling"));
-        public static readonly Block SpruceSapling = new(new("minecraft:spruce_sapling"));
-        public static readonly Block BirchSapling = new(new("minecraft:birch_sapling"));
-        public static readonly Block JungleSapling = new(new("minecraft:jungle_sapling"));
-        public static readonly Block AcaciaSapling = new(new("minecraft:acacia_sapling"));
-        public static readonly Block CherrySapling = new(new("minecraft:cherry_sapling"));
-        public static readonly Block DarkOakSapling = new(new("minecraft:dark_oak_sapling"));
-        public static readonly Block MangrovePropagule = new(new("minecraft:mangrove_propagule"));
-        public static readonly Block Bedrock = new(new("minecraft:bedrock"));
-        public static readonly Block Water = new(new("minecraft:water"));
-        public static readonly Block Lava = new(new("minecraft:lava"));
-        public static readonly Block Sand = new(new("minecraft:sand"));
-        public static readonly Block SuspiciousSand = new(new("minecraft:suspicious_sand"));
-        public static readonly Block RedSand = new(new("minecraft:red_sand"));
-        public static readonly Block Gravel = new(new("minecraft:gravel"));
-        public static readonly Block SuspiciousGravel = new(new("minecraft:suspicious_gravel"));
-        public static readonly Block GoldOre = new(new("minecraft:gold_ore"));
-        public static readonly Block DeepslateGoldOre = new(new("minecraft:deepslate_gold_ore"));
-        public static readonly Block IronOre = new(new("minecraft:iron_ore"));
-        public static readonly Block DeepslateIronOre = new(new("minecraft:deepslate_iron_ore"));
-        public static readonly Block CoalOre = new(new("minecraft:coal_ore"));
-        public static readonly Block DeepslateCoalOre = new(new("minecraft:deepslate_coal_ore"));
-        public static readonly Block NetherGoldOre = new(new("minecraft:nether_gold_ore"));
-        public static readonly Block OakLog = new(new("minecraft:oak_log"));
-        public static readonly Block SpruceLog = new(new("minecraft:spruce_log"));
-        public static readonly Block BirchLog = new(new("minecraft:birch_log"));
-        public static readonly Block JungleLog = new(new("minecraft:jungle_log"));
-        public static readonly Block AcaciaLog = new(new("minecraft:acacia_log"));
-        public static readonly Block CherryLog = new(new("minecraft:cherry_log"));
-        public static readonly Block DarkOakLog = new(new("minecraft:dark_oak_log"));
-        public static readonly Block MangroveLog = new(new("minecraft:mangrove_log"));
-        public static readonly Block MangroveRoots = new(new("minecraft:mangrove_roots"));
-        public static readonly Block MuddyMangroveRoots = new(new("minecraft:muddy_mangrove_roots"));
-        public static readonly Block BambooBlock = new(new("minecraft:bamboo_block"));
-        public static readonly Block StrippedSpruceLog = new(new("minecraft:stripped_spruce_log"));
-        public static readonly Block StrippedBirchLog = new(new("minecraft:stripped_birch_log"));
-        public static readonly Block StrippedJungleLog = new(new("minecraft:stripped_jungle_log"));
-        public static readonly Block StrippedAcaciaLog = new(new("minecraft:stripped_acacia_log"));
-        public static readonly Block StrippedCherryLog = new(new("minecraft:stripped_cherry_log"));
-        public static readonly Block StrippedDarkOakLog = new(new("minecraft:stripped_dark_oak_log"));
-        public static readonly Block StrippedOakLog = new(new("minecraft:stripped_oak_log"));
-        public static readonly Block StrippedMangroveLog = new(new("minecraft:stripped_mangrove_log"));
-        public static readonly Block StrippedBambooBlock = new(new("minecraft:stripped_bamboo_block"));
-        public static readonly Block OakWood = new(new("minecraft:oak_wood"));
-        public static readonly Block SpruceWood = new(new("minecraft:spruce_wood"));
-        public static readonly Block BirchWood = new(new("minecraft:birch_wood"));
-        public static readonly Block JungleWood = new(new("minecraft:jungle_wood"));
-        public static readonly Block AcaciaWood = new(new("minecraft:acacia_wood"));
-        public static readonly Block CherryWood = new(new("minecraft:cherry_wood"));
-        public static readonly Block DarkOakWood = new(new("minecraft:dark_oak_wood"));
-        public static readonly Block MangroveWood = new(new("minecraft:mangrove_wood"));
-        public static readonly Block StrippedOakWood = new(new("minecraft:stripped_oak_wood"));
-        public static readonly Block StrippedSpruceWood = new(new("minecraft:stripped_spruce_wood"));
-        public static readonly Block StrippedBirchWood = new(new("minecraft:stripped_birch_wood"));
-        public static readonly Block StrippedJungleWood = new(new("minecraft:stripped_jungle_wood"));
-        public static readonly Block StrippedAcaciaWood = new(new("minecraft:stripped_acacia_wood"));
-        public static readonly Block StrippedCherryWood = new(new("minecraft:stripped_cherry_wood"));
-        public static readonly Block StrippedDarkOakWood = new(new("minecraft:stripped_dark_oak_wood"));
-        public static readonly Block StrippedMangroveWood = new(new("minecraft:stripped_mangrove_wood"));
-        public static readonly Block OakLeaves = new(new("minecraft:oak_leaves"));
-        public static readonly Block SpruceLeaves = new(new("minecraft:spruce_leaves"));
-        public static readonly Block BirchLeaves = new(new("minecraft:birch_leaves"));
-        public static readonly Block JungleLeaves = new(new("minecraft:jungle_leaves"));
-        public static readonly Block AcaciaLeaves = new(new("minecraft:acacia_leaves"));
-        public static readonly Block CherryLeaves = new(new("minecraft:cherry_leaves"));
-        public static readonly Block DarkOakLeaves = new(new("minecraft:dark_oak_leaves"));
-        public static readonly Block MangroveLeaves = new(new("minecraft:mangrove_leaves"));
-        public static readonly Block AzaleaLeaves = new(new("minecraft:azalea_leaves"));
-        public static readonly Block FloweringAzaleaLeaves = new(new("minecraft:flowering_azalea_leaves"));
-        public static readonly Block Sponge = new(new("minecraft:sponge"));
-        public static readonly Block WetSponge = new(new("minecraft:wet_sponge"));
-        public static readonly Block Glass = new(new("minecraft:glass"));
-        public static readonly Block LapisOre = new(new("minecraft:lapis_ore"));
-        public static readonly Block DeepslateLapisOre = new(new("minecraft:deepslate_lapis_ore"));
-        public static readonly Block LapisBlock = new(new("minecraft:lapis_block"));
-        public static readonly Block Dispenser = new(new("minecraft:dispenser"));
-        public static readonly Block Sandstone = new(new("minecraft:sandstone"));
-        public static readonly Block ChiseledSandstone = new(new("minecraft:chiseled_sandstone"));
-        public static readonly Block CutSandstone = new(new("minecraft:cut_sandstone"));
-        public static readonly Block NoteBlock = new(new("minecraft:note_block"));
-        public static readonly Block WhiteBed = new(new("minecraft:white_bed"));
-        public static readonly Block OrangeBed = new(new("minecraft:orange_bed"));
-        public static readonly Block MagentaBed = new(new("minecraft:magenta_bed"));
-        public static readonly Block LightBlueBed = new(new("minecraft:light_blue_bed"));
-        public static readonly Block YellowBed = new(new("minecraft:yellow_bed"));
-        public static readonly Block LimeBed = new(new("minecraft:lime_bed"));
-        public static readonly Block PinkBed = new(new("minecraft:pink_bed"));
-        public static readonly Block GrayBed = new(new("minecraft:gray_bed"));
-        public static readonly Block LightGrayBed = new(new("minecraft:light_gray_bed"));
-        public static readonly Block CyanBed = new(new("minecraft:cyan_bed"));
-        public static readonly Block PurpleBed = new(new("minecraft:purple_bed"));
-        public static readonly Block BlueBed = new(new("minecraft:blue_bed"));
-        public static readonly Block BrownBed = new(new("minecraft:brown_bed"));
-        public static readonly Block GreenBed = new(new("minecraft:green_bed"));
-        public static readonly Block RedBed = new(new("minecraft:red_bed"));
-        public static readonly Block BlackBed = new(new("minecraft:black_bed"));
-        public static readonly Block PoweredRail = new(new("minecraft:powered_rail"));
-        public static readonly Block DetectorRail = new(new("minecraft:detector_rail"));
-        public static readonly Block StickyPiston = new(new("minecraft:sticky_piston"));
-        public static readonly Block Cobweb = new(new("minecraft:cobweb"));
-        public static readonly Block ShortGrass = new(new("minecraft:short_grass"));
-        public static readonly Block Fern = new(new("minecraft:fern"));
-        public static readonly Block DeadBush = new(new("minecraft:dead_bush"));
-        public static readonly Block Seagrass = new(new("minecraft:seagrass"));
-        public static readonly Block TallSeagrass = new(new("minecraft:tall_seagrass"));
-        public static readonly Block Piston = new(new("minecraft:piston"));
-        public static readonly Block PistonHead = new(new("minecraft:piston_head"));
-        public static readonly Block WhiteWool = new(new("minecraft:white_wool"));
-        public static readonly Block OrangeWool = new(new("minecraft:orange_wool"));
-        public static readonly Block MagentaWool = new(new("minecraft:magenta_wool"));
-        public static readonly Block LightBlueWool = new(new("minecraft:light_blue_wool"));
-        public static readonly Block YellowWool = new(new("minecraft:yellow_wool"));
-        public static readonly Block LimeWool = new(new("minecraft:lime_wool"));
-        public static readonly Block PinkWool = new(new("minecraft:pink_wool"));
-        public static readonly Block GrayWool = new(new("minecraft:gray_wool"));
-        public static readonly Block LightGrayWool = new(new("minecraft:light_gray_wool"));
-        public static readonly Block CyanWool = new(new("minecraft:cyan_wool"));
-        public static readonly Block PurpleWool = new(new("minecraft:purple_wool"));
-        public static readonly Block BlueWool = new(new("minecraft:blue_wool"));
-        public static readonly Block BrownWool = new(new("minecraft:brown_wool"));
-        public static readonly Block GreenWool = new(new("minecraft:green_wool"));
-        public static readonly Block RedWool = new(new("minecraft:red_wool"));
-        public static readonly Block BlackWool = new(new("minecraft:black_wool"));
-        public static readonly Block MovingPiston = new(new("minecraft:moving_piston"));
-        public static readonly Block Dandelion = new(new("minecraft:dandelion"));
-        public static readonly Block Torchflower = new(new("minecraft:torchflower"));
-        public static readonly Block Poppy = new(new("minecraft:poppy"));
-        public static readonly Block BlueOrchid = new(new("minecraft:blue_orchid"));
-        public static readonly Block Allium = new(new("minecraft:allium"));
-        public static readonly Block AzureBluet = new(new("minecraft:azure_bluet"));
-        public static readonly Block RedTulip = new(new("minecraft:red_tulip"));
-        public static readonly Block OrangeTulip = new(new("minecraft:orange_tulip"));
-        public static readonly Block WhiteTulip = new(new("minecraft:white_tulip"));
-        public static readonly Block PinkTulip = new(new("minecraft:pink_tulip"));
-        public static readonly Block OxeyeDaisy = new(new("minecraft:oxeye_daisy"));
-        public static readonly Block Cornflower = new(new("minecraft:cornflower"));
-        public static readonly Block WitherRose = new(new("minecraft:wither_rose"));
-        public static readonly Block LilyOfTheValley = new(new("minecraft:lily_of_the_valley"));
-        public static readonly Block BrownMushroom = new(new("minecraft:brown_mushroom"));
-        public static readonly Block RedMushroom = new(new("minecraft:red_mushroom"));
-        public static readonly Block GoldBlock = new(new("minecraft:gold_block"));
-        public static readonly Block IronBlock = new(new("minecraft:iron_block"));
-        public static readonly Block Bricks = new(new("minecraft:bricks"));
-        public static readonly Block Tnt = new(new("minecraft:tnt"));
-        public static readonly Block Bookshelf = new(new("minecraft:bookshelf"));
-        public static readonly Block ChiseledBookshelf = new(new("minecraft:chiseled_bookshelf"));
-        public static readonly Block MossyCobblestone = new(new("minecraft:mossy_cobblestone"));
-        public static readonly Block Obsidian = new(new("minecraft:obsidian"));
-        public static readonly Block Torch = new(new("minecraft:torch"));
-        public static readonly Block WallTorch = new(new("minecraft:wall_torch"));
-        public static readonly Block Fire = new(new("minecraft:fire"));
-        public static readonly Block SoulFire = new(new("minecraft:soul_fire"));
-        public static readonly Block Spawner = new(new("minecraft:spawner"));
-        public static readonly Block OakStairs = new(new("minecraft:oak_stairs"));
-        public static readonly Block Chest = new(new("minecraft:chest"));
-        public static readonly Block RedstoneWire = new(new("minecraft:redstone_wire"));
-        public static readonly Block DiamondOre = new(new("minecraft:diamond_ore"));
-        public static readonly Block DeepslateDiamondOre = new(new("minecraft:deepslate_diamond_ore"));
-        public static readonly Block DiamondBlock = new(new("minecraft:diamond_block"));
-        public static readonly Block CraftingTable = new(new("minecraft:crafting_table"));
-        public static readonly Block Wheat = new(new("minecraft:wheat"));
-        public static readonly Block Farmland = new(new("minecraft:farmland"));
-        public static readonly Block Furnace = new(new("minecraft:furnace"));
-        public static readonly Block OakSign = new(new("minecraft:oak_sign"));
-        public static readonly Block SpruceSign = new(new("minecraft:spruce_sign"));
-        public static readonly Block BirchSign = new(new("minecraft:birch_sign"));
-        public static readonly Block AcaciaSign = new(new("minecraft:acacia_sign"));
-        public static readonly Block CherrySign = new(new("minecraft:cherry_sign"));
-        public static readonly Block JungleSign = new(new("minecraft:jungle_sign"));
-        public static readonly Block DarkOakSign = new(new("minecraft:dark_oak_sign"));
-        public static readonly Block MangroveSign = new(new("minecraft:mangrove_sign"));
-        public static readonly Block BambooSign = new(new("minecraft:bamboo_sign"));
-        public static readonly Block OakDoor = new(new("minecraft:oak_door"));
-        public static readonly Block Ladder = new(new("minecraft:ladder"));
-        public static readonly Block Rail = new(new("minecraft:rail"));
-        public static readonly Block CobblestoneStairs = new(new("minecraft:cobblestone_stairs"));
-        public static readonly Block OakWallSign = new(new("minecraft:oak_wall_sign"));
-        public static readonly Block SpruceWallSign = new(new("minecraft:spruce_wall_sign"));
-        public static readonly Block BirchWallSign = new(new("minecraft:birch_wall_sign"));
-        public static readonly Block AcaciaWallSign = new(new("minecraft:acacia_wall_sign"));
-        public static readonly Block CherryWallSign = new(new("minecraft:cherry_wall_sign"));
-        public static readonly Block JungleWallSign = new(new("minecraft:jungle_wall_sign"));
-        public static readonly Block DarkOakWallSign = new(new("minecraft:dark_oak_wall_sign"));
-        public static readonly Block MangroveWallSign = new(new("minecraft:mangrove_wall_sign"));
-        public static readonly Block BambooWallSign = new(new("minecraft:bamboo_wall_sign"));
-        public static readonly Block OakHangingSign = new(new("minecraft:oak_hanging_sign"));
-        public static readonly Block SpruceHangingSign = new(new("minecraft:spruce_hanging_sign"));
-        public static readonly Block BirchHangingSign = new(new("minecraft:birch_hanging_sign"));
-        public static readonly Block AcaciaHangingSign = new(new("minecraft:acacia_hanging_sign"));
-        public static readonly Block CherryHangingSign = new(new("minecraft:cherry_hanging_sign"));
-        public static readonly Block JungleHangingSign = new(new("minecraft:jungle_hanging_sign"));
-        public static readonly Block DarkOakHangingSign = new(new("minecraft:dark_oak_hanging_sign"));
-        public static readonly Block CrimsonHangingSign = new(new("minecraft:crimson_hanging_sign"));
-        public static readonly Block WarpedHangingSign = new(new("minecraft:warped_hanging_sign"));
-        public static readonly Block MangroveHangingSign = new(new("minecraft:mangrove_hanging_sign"));
-        public static readonly Block BambooHangingSign = new(new("minecraft:bamboo_hanging_sign"));
-        public static readonly Block OakWallHangingSign = new(new("minecraft:oak_wall_hanging_sign"));
-        public static readonly Block SpruceWallHangingSign = new(new("minecraft:spruce_wall_hanging_sign"));
-        public static readonly Block BirchWallHangingSign = new(new("minecraft:birch_wall_hanging_sign"));
-        public static readonly Block AcaciaWallHangingSign = new(new("minecraft:acacia_wall_hanging_sign"));
-        public static readonly Block CherryWallHangingSign = new(new("minecraft:cherry_wall_hanging_sign"));
-        public static readonly Block JungleWallHangingSign = new(new("minecraft:jungle_wall_hanging_sign"));
-        public static readonly Block DarkOakWallHangingSign = new(new("minecraft:dark_oak_wall_hanging_sign"));
-        public static readonly Block MangroveWallHangingSign = new(new("minecraft:mangrove_wall_hanging_sign"));
-        public static readonly Block CrimsonWallHangingSign = new(new("minecraft:crimson_wall_hanging_sign"));
-        public static readonly Block WarpedWallHangingSign = new(new("minecraft:warped_wall_hanging_sign"));
-        public static readonly Block BambooWallHangingSign = new(new("minecraft:bamboo_wall_hanging_sign"));
-        public static readonly Block Lever = new(new("minecraft:lever"));
-        public static readonly Block StonePressurePlate = new(new("minecraft:stone_pressure_plate"));
-        public static readonly Block IronDoor = new(new("minecraft:iron_door"));
-        public static readonly Block OakPressurePlate = new(new("minecraft:oak_pressure_plate"));
-        public static readonly Block SprucePressurePlate = new(new("minecraft:spruce_pressure_plate"));
-        public static readonly Block BirchPressurePlate = new(new("minecraft:birch_pressure_plate"));
-        public static readonly Block JunglePressurePlate = new(new("minecraft:jungle_pressure_plate"));
-        public static readonly Block AcaciaPressurePlate = new(new("minecraft:acacia_pressure_plate"));
-        public static readonly Block CherryPressurePlate = new(new("minecraft:cherry_pressure_plate"));
-        public static readonly Block DarkOakPressurePlate = new(new("minecraft:dark_oak_pressure_plate"));
-        public static readonly Block MangrovePressurePlate = new(new("minecraft:mangrove_pressure_plate"));
-        public static readonly Block BambooPressurePlate = new(new("minecraft:bamboo_pressure_plate"));
-        public static readonly Block RedstoneOre = new(new("minecraft:redstone_ore"));
-        public static readonly Block DeepslateRedstoneOre = new(new("minecraft:deepslate_redstone_ore"));
-        public static readonly Block RedstoneTorch = new(new("minecraft:redstone_torch"));
-        public static readonly Block RedstoneWallTorch = new(new("minecraft:redstone_wall_torch"));
-        public static readonly Block StoneButton = new(new("minecraft:stone_button"));
-        public static readonly Block Snow = new(new("minecraft:snow"));
-        public static readonly Block Ice = new(new("minecraft:ice"));
-        public static readonly Block SnowBlock = new(new("minecraft:snow_block"));
-        public static readonly Block Cactus = new(new("minecraft:cactus"));
-        public static readonly Block Clay = new(new("minecraft:clay"));
-        public static readonly Block SugarCane = new(new("minecraft:sugar_cane"));
-        public static readonly Block Jukebox = new(new("minecraft:jukebox"));
-        public static readonly Block OakFence = new(new("minecraft:oak_fence"));
-        public static readonly Block Netherrack = new(new("minecraft:netherrack"));
-        public static readonly Block SoulSand = new(new("minecraft:soul_sand"));
-        public static readonly Block SoulSoil = new(new("minecraft:soul_soil"));
-        public static readonly Block Basalt = new(new("minecraft:basalt"));
-        public static readonly Block PolishedBasalt = new(new("minecraft:polished_basalt"));
-        public static readonly Block SoulTorch = new(new("minecraft:soul_torch"));
-        public static readonly Block SoulWallTorch = new(new("minecraft:soul_wall_torch"));
-        public static readonly Block Glowstone = new(new("minecraft:glowstone"));
-        public static readonly Block NetherPortal = new(new("minecraft:nether_portal"));
-        public static readonly Block CarvedPumpkin = new(new("minecraft:carved_pumpkin"));
-        public static readonly Block JackOLantern = new(new("minecraft:jack_o_lantern"));
-        public static readonly Block Cake = new(new("minecraft:cake"));
-        public static readonly Block Repeater = new(new("minecraft:repeater"));
-        public static readonly Block WhiteStainedGlass = new(new("minecraft:white_stained_glass"));
-        public static readonly Block OrangeStainedGlass = new(new("minecraft:orange_stained_glass"));
-        public static readonly Block MagentaStainedGlass = new(new("minecraft:magenta_stained_glass"));
-        public static readonly Block LightBlueStainedGlass = new(new("minecraft:light_blue_stained_glass"));
-        public static readonly Block YellowStainedGlass = new(new("minecraft:yellow_stained_glass"));
-        public static readonly Block LimeStainedGlass = new(new("minecraft:lime_stained_glass"));
-        public static readonly Block PinkStainedGlass = new(new("minecraft:pink_stained_glass"));
-        public static readonly Block GrayStainedGlass = new(new("minecraft:gray_stained_glass"));
-        public static readonly Block LightGrayStainedGlass = new(new("minecraft:light_gray_stained_glass"));
-        public static readonly Block CyanStainedGlass = new(new("minecraft:cyan_stained_glass"));
-        public static readonly Block PurpleStainedGlass = new(new("minecraft:purple_stained_glass"));
-        public static readonly Block BlueStainedGlass = new(new("minecraft:blue_stained_glass"));
-        public static readonly Block BrownStainedGlass = new(new("minecraft:brown_stained_glass"));
-        public static readonly Block GreenStainedGlass = new(new("minecraft:green_stained_glass"));
-        public static readonly Block RedStainedGlass = new(new("minecraft:red_stained_glass"));
-        public static readonly Block BlackStainedGlass = new(new("minecraft:black_stained_glass"));
-        public static readonly Block OakTrapdoor = new(new("minecraft:oak_trapdoor"));
-        public static readonly Block SpruceTrapdoor = new(new("minecraft:spruce_trapdoor"));
-        public static readonly Block BirchTrapdoor = new(new("minecraft:birch_trapdoor"));
-        public static readonly Block JungleTrapdoor = new(new("minecraft:jungle_trapdoor"));
-        public static readonly Block AcaciaTrapdoor = new(new("minecraft:acacia_trapdoor"));
-        public static readonly Block CherryTrapdoor = new(new("minecraft:cherry_trapdoor"));
-        public static readonly Block DarkOakTrapdoor = new(new("minecraft:dark_oak_trapdoor"));
-        public static readonly Block MangroveTrapdoor = new(new("minecraft:mangrove_trapdoor"));
-        public static readonly Block BambooTrapdoor = new(new("minecraft:bamboo_trapdoor"));
-        public static readonly Block StoneBricks = new(new("minecraft:stone_bricks"));
-        public static readonly Block MossyStoneBricks = new(new("minecraft:mossy_stone_bricks"));
-        public static readonly Block CrackedStoneBricks = new(new("minecraft:cracked_stone_bricks"));
-        public static readonly Block ChiseledStoneBricks = new(new("minecraft:chiseled_stone_bricks"));
-        public static readonly Block PackedMud = new(new("minecraft:packed_mud"));
-        public static readonly Block MudBricks = new(new("minecraft:mud_bricks"));
-        public static readonly Block InfestedStone = new(new("minecraft:infested_stone"));
-        public static readonly Block InfestedCobblestone = new(new("minecraft:infested_cobblestone"));
-        public static readonly Block InfestedStoneBricks = new(new("minecraft:infested_stone_bricks"));
-        public static readonly Block InfestedMossyStoneBricks = new(new("minecraft:infested_mossy_stone_bricks"));
-        public static readonly Block InfestedCrackedStoneBricks = new(new("minecraft:infested_cracked_stone_bricks"));
-        public static readonly Block InfestedChiseledStoneBricks = new(new("minecraft:infested_chiseled_stone_bricks"));
-        public static readonly Block BrownMushroomBlock = new(new("minecraft:brown_mushroom_block"));
-        public static readonly Block RedMushroomBlock = new(new("minecraft:red_mushroom_block"));
-        public static readonly Block MushroomStem = new(new("minecraft:mushroom_stem"));
-        public static readonly Block IronBars = new(new("minecraft:iron_bars"));
-        public static readonly Block Chain = new(new("minecraft:chain"));
-        public static readonly Block GlassPane = new(new("minecraft:glass_pane"));
-        public static readonly Block Pumpkin = new(new("minecraft:pumpkin"));
-        public static readonly Block Melon = new(new("minecraft:melon"));
-        public static readonly Block AttachedPumpkinStem = new(new("minecraft:attached_pumpkin_stem"));
-        public static readonly Block AttachedMelonStem = new(new("minecraft:attached_melon_stem"));
-        public static readonly Block PumpkinStem = new(new("minecraft:pumpkin_stem"));
-        public static readonly Block MelonStem = new(new("minecraft:melon_stem"));
-        public static readonly Block Vine = new(new("minecraft:vine"));
-        public static readonly Block GlowLichen = new(new("minecraft:glow_lichen"));
-        public static readonly Block OakFenceGate = new(new("minecraft:oak_fence_gate"));
-        public static readonly Block BrickStairs = new(new("minecraft:brick_stairs"));
-        public static readonly Block StoneBrickStairs = new(new("minecraft:stone_brick_stairs"));
-        public static readonly Block MudBrickStairs = new(new("minecraft:mud_brick_stairs"));
-        public static readonly Block Mycelium = new(new("minecraft:mycelium"));
-        public static readonly Block LilyPad = new(new("minecraft:lily_pad"));
-        public static readonly Block NetherBricks = new(new("minecraft:nether_bricks"));
-        public static readonly Block NetherBrickFence = new(new("minecraft:nether_brick_fence"));
-        public static readonly Block NetherBrickStairs = new(new("minecraft:nether_brick_stairs"));
-        public static readonly Block NetherWart = new(new("minecraft:nether_wart"));
-        public static readonly Block EnchantingTable = new(new("minecraft:enchanting_table"));
-        public static readonly Block BrewingStand = new(new("minecraft:brewing_stand"));
-        public static readonly Block Cauldron = new(new("minecraft:cauldron"));
-        public static readonly Block WaterCauldron = new(new("minecraft:water_cauldron"));
-        public static readonly Block LavaCauldron = new(new("minecraft:lava_cauldron"));
-        public static readonly Block PowderSnowCauldron = new(new("minecraft:powder_snow_cauldron"));
-        public static readonly Block EndPortal = new(new("minecraft:end_portal"));
-        public static readonly Block EndPortalFrame = new(new("minecraft:end_portal_frame"));
-        public static readonly Block EndStone = new(new("minecraft:end_stone"));
-        public static readonly Block DragonEgg = new(new("minecraft:dragon_egg"));
-        public static readonly Block RedstoneLamp = new(new("minecraft:redstone_lamp"));
-        public static readonly Block Cocoa = new(new("minecraft:cocoa"));
-        public static readonly Block SandstoneStairs = new(new("minecraft:sandstone_stairs"));
-        public static readonly Block EmeraldOre = new(new("minecraft:emerald_ore"));
-        public static readonly Block DeepslateEmeraldOre = new(new("minecraft:deepslate_emerald_ore"));
-        public static readonly Block EnderChest = new(new("minecraft:ender_chest"));
-        public static readonly Block TripwireHook = new(new("minecraft:tripwire_hook"));
-        public static readonly Block Tripwire = new(new("minecraft:tripwire"));
-        public static readonly Block EmeraldBlock = new(new("minecraft:emerald_block"));
-        public static readonly Block SpruceStairs = new(new("minecraft:spruce_stairs"));
-        public static readonly Block BirchStairs = new(new("minecraft:birch_stairs"));
-        public static readonly Block JungleStairs = new(new("minecraft:jungle_stairs"));
-        public static readonly Block CommandBlock = new(new("minecraft:command_block"));
-        public static readonly Block Beacon = new(new("minecraft:beacon"));
-        public static readonly Block CobblestoneWall = new(new("minecraft:cobblestone_wall"));
-        public static readonly Block MossyCobblestoneWall = new(new("minecraft:mossy_cobblestone_wall"));
-        public static readonly Block FlowerPot = new(new("minecraft:flower_pot"));
-        public static readonly Block PottedTorchflower = new(new("minecraft:potted_torchflower"));
-        public static readonly Block PottedOakSapling = new(new("minecraft:potted_oak_sapling"));
-        public static readonly Block PottedSpruceSapling = new(new("minecraft:potted_spruce_sapling"));
-        public static readonly Block PottedBirchSapling = new(new("minecraft:potted_birch_sapling"));
-        public static readonly Block PottedJungleSapling = new(new("minecraft:potted_jungle_sapling"));
-        public static readonly Block PottedAcaciaSapling = new(new("minecraft:potted_acacia_sapling"));
-        public static readonly Block PottedCherrySapling = new(new("minecraft:potted_cherry_sapling"));
-        public static readonly Block PottedDarkOakSapling = new(new("minecraft:potted_dark_oak_sapling"));
-        public static readonly Block PottedMangrovePropagule = new(new("minecraft:potted_mangrove_propagule"));
-        public static readonly Block PottedFern = new(new("minecraft:potted_fern"));
-        public static readonly Block PottedDandelion = new(new("minecraft:potted_dandelion"));
-        public static readonly Block PottedPoppy = new(new("minecraft:potted_poppy"));
-        public static readonly Block PottedBlueOrchid = new(new("minecraft:potted_blue_orchid"));
-        public static readonly Block PottedAllium = new(new("minecraft:potted_allium"));
-        public static readonly Block PottedAzureBluet = new(new("minecraft:potted_azure_bluet"));
-        public static readonly Block PottedRedTulip = new(new("minecraft:potted_red_tulip"));
-        public static readonly Block PottedOrangeTulip = new(new("minecraft:potted_orange_tulip"));
-        public static readonly Block PottedWhiteTulip = new(new("minecraft:potted_white_tulip"));
-        public static readonly Block PottedPinkTulip = new(new("minecraft:potted_pink_tulip"));
-        public static readonly Block PottedOxeyeDaisy = new(new("minecraft:potted_oxeye_daisy"));
-        public static readonly Block PottedCornflower = new(new("minecraft:potted_cornflower"));
-        public static readonly Block PottedLilyOfTheValley = new(new("minecraft:potted_lily_of_the_valley"));
-        public static readonly Block PottedWitherRose = new(new("minecraft:potted_wither_rose"));
-        public static readonly Block PottedRedMushroom = new(new("minecraft:potted_red_mushroom"));
-        public static readonly Block PottedBrownMushroom = new(new("minecraft:potted_brown_mushroom"));
-        public static readonly Block PottedDeadBush = new(new("minecraft:potted_dead_bush"));
-        public static readonly Block PottedCactus = new(new("minecraft:potted_cactus"));
-        public static readonly Block Carrots = new(new("minecraft:carrots"));
-        public static readonly Block Potatoes = new(new("minecraft:potatoes"));
-        public static readonly Block OakButton = new(new("minecraft:oak_button"));
-        public static readonly Block SpruceButton = new(new("minecraft:spruce_button"));
-        public static readonly Block BirchButton = new(new("minecraft:birch_button"));
-        public static readonly Block JungleButton = new(new("minecraft:jungle_button"));
-        public static readonly Block AcaciaButton = new(new("minecraft:acacia_button"));
-        public static readonly Block CherryButton = new(new("minecraft:cherry_button"));
-        public static readonly Block DarkOakButton = new(new("minecraft:dark_oak_button"));
-        public static readonly Block MangroveButton = new(new("minecraft:mangrove_button"));
-        public static readonly Block BambooButton = new(new("minecraft:bamboo_button"));
-        public static readonly Block SkeletonSkull = new(new("minecraft:skeleton_skull"));
-        public static readonly Block SkeletonWallSkull = new(new("minecraft:skeleton_wall_skull"));
-        public static readonly Block WitherSkeletonSkull = new(new("minecraft:wither_skeleton_skull"));
-        public static readonly Block WitherSkeletonWallSkull = new(new("minecraft:wither_skeleton_wall_skull"));
-        public static readonly Block ZombieHead = new(new("minecraft:zombie_head"));
-        public static readonly Block ZombieWallHead = new(new("minecraft:zombie_wall_head"));
-        public static readonly Block PlayerHead = new(new("minecraft:player_head"));
-        public static readonly Block PlayerWallHead = new(new("minecraft:player_wall_head"));
-        public static readonly Block CreeperHead = new(new("minecraft:creeper_head"));
-        public static readonly Block CreeperWallHead = new(new("minecraft:creeper_wall_head"));
-        public static readonly Block DragonHead = new(new("minecraft:dragon_head"));
-        public static readonly Block DragonWallHead = new(new("minecraft:dragon_wall_head"));
-        public static readonly Block PiglinHead = new(new("minecraft:piglin_head"));
-        public static readonly Block PiglinWallHead = new(new("minecraft:piglin_wall_head"));
-        public static readonly Block Anvil = new(new("minecraft:anvil"));
-        public static readonly Block ChippedAnvil = new(new("minecraft:chipped_anvil"));
-        public static readonly Block DamagedAnvil = new(new("minecraft:damaged_anvil"));
-        public static readonly Block TrappedChest = new(new("minecraft:trapped_chest"));
-        public static readonly Block LightWeightedPressurePlate = new(new("minecraft:light_weighted_pressure_plate"));
-        public static readonly Block HeavyWeightedPressurePlate = new(new("minecraft:heavy_weighted_pressure_plate"));
-        public static readonly Block Comparator = new(new("minecraft:comparator"));
-        public static readonly Block DaylightDetector = new(new("minecraft:daylight_detector"));
-        public static readonly Block RedstoneBlock = new(new("minecraft:redstone_block"));
-        public static readonly Block NetherQuartzOre = new(new("minecraft:nether_quartz_ore"));
-        public static readonly Block Hopper = new(new("minecraft:hopper"));
-        public static readonly Block QuartzBlock = new(new("minecraft:quartz_block"));
-        public static readonly Block ChiseledQuartzBlock = new(new("minecraft:chiseled_quartz_block"));
-        public static readonly Block QuartzPillar = new(new("minecraft:quartz_pillar"));
-        public static readonly Block QuartzStairs = new(new("minecraft:quartz_stairs"));
-        public static readonly Block ActivatorRail = new(new("minecraft:activator_rail"));
-        public static readonly Block Dropper = new(new("minecraft:dropper"));
-        public static readonly Block WhiteTerracotta = new(new("minecraft:white_terracotta"));
-        public static readonly Block OrangeTerracotta = new(new("minecraft:orange_terracotta"));
-        public static readonly Block MagentaTerracotta = new(new("minecraft:magenta_terracotta"));
-        public static readonly Block LightBlueTerracotta = new(new("minecraft:light_blue_terracotta"));
-        public static readonly Block YellowTerracotta = new(new("minecraft:yellow_terracotta"));
-        public static readonly Block LimeTerracotta = new(new("minecraft:lime_terracotta"));
-        public static readonly Block PinkTerracotta = new(new("minecraft:pink_terracotta"));
-        public static readonly Block GrayTerracotta = new(new("minecraft:gray_terracotta"));
-        public static readonly Block LightGrayTerracotta = new(new("minecraft:light_gray_terracotta"));
-        public static readonly Block CyanTerracotta = new(new("minecraft:cyan_terracotta"));
-        public static readonly Block PurpleTerracotta = new(new("minecraft:purple_terracotta"));
-        public static readonly Block BlueTerracotta = new(new("minecraft:blue_terracotta"));
-        public static readonly Block BrownTerracotta = new(new("minecraft:brown_terracotta"));
-        public static readonly Block GreenTerracotta = new(new("minecraft:green_terracotta"));
-        public static readonly Block RedTerracotta = new(new("minecraft:red_terracotta"));
-        public static readonly Block BlackTerracotta = new(new("minecraft:black_terracotta"));
-        public static readonly Block WhiteStainedGlassPane = new(new("minecraft:white_stained_glass_pane"));
-        public static readonly Block OrangeStainedGlassPane = new(new("minecraft:orange_stained_glass_pane"));
-        public static readonly Block MagentaStainedGlassPane = new(new("minecraft:magenta_stained_glass_pane"));
-        public static readonly Block LightBlueStainedGlassPane = new(new("minecraft:light_blue_stained_glass_pane"));
-        public static readonly Block YellowStainedGlassPane = new(new("minecraft:yellow_stained_glass_pane"));
-        public static readonly Block LimeStainedGlassPane = new(new("minecraft:lime_stained_glass_pane"));
-        public static readonly Block PinkStainedGlassPane = new(new("minecraft:pink_stained_glass_pane"));
-        public static readonly Block GrayStainedGlassPane = new(new("minecraft:gray_stained_glass_pane"));
-        public static readonly Block LightGrayStainedGlassPane = new(new("minecraft:light_gray_stained_glass_pane"));
-        public static readonly Block CyanStainedGlassPane = new(new("minecraft:cyan_stained_glass_pane"));
-        public static readonly Block PurpleStainedGlassPane = new(new("minecraft:purple_stained_glass_pane"));
-        public static readonly Block BlueStainedGlassPane = new(new("minecraft:blue_stained_glass_pane"));
-        public static readonly Block BrownStainedGlassPane = new(new("minecraft:brown_stained_glass_pane"));
-        public static readonly Block GreenStainedGlassPane = new(new("minecraft:green_stained_glass_pane"));
-        public static readonly Block RedStainedGlassPane = new(new("minecraft:red_stained_glass_pane"));
-        public static readonly Block BlackStainedGlassPane = new(new("minecraft:black_stained_glass_pane"));
-        public static readonly Block AcaciaStairs = new(new("minecraft:acacia_stairs"));
-        public static readonly Block CherryStairs = new(new("minecraft:cherry_stairs"));
-        public static readonly Block DarkOakStairs = new(new("minecraft:dark_oak_stairs"));
-        public static readonly Block MangroveStairs = new(new("minecraft:mangrove_stairs"));
-        public static readonly Block BambooStairs = new(new("minecraft:bamboo_stairs"));
-        public static readonly Block BambooMosaicStairs = new(new("minecraft:bamboo_mosaic_stairs"));
-        public static readonly Block SlimeBlock = new(new("minecraft:slime_block"));
-        public static readonly Block Barrier = new(new("minecraft:barrier"));
-        public static readonly Block Light = new(new("minecraft:light"));
-        public static readonly Block IronTrapdoor = new(new("minecraft:iron_trapdoor"));
-        public static readonly Block Prismarine = new(new("minecraft:prismarine"));
-        public static readonly Block PrismarineBricks = new(new("minecraft:prismarine_bricks"));
-        public static readonly Block DarkPrismarine = new(new("minecraft:dark_prismarine"));
-        public static readonly Block PrismarineStairs = new(new("minecraft:prismarine_stairs"));
-        public static readonly Block PrismarineBrickStairs = new(new("minecraft:prismarine_brick_stairs"));
-        public static readonly Block DarkPrismarineStairs = new(new("minecraft:dark_prismarine_stairs"));
-        public static readonly Block PrismarineSlab = new(new("minecraft:prismarine_slab"));
-        public static readonly Block PrismarineBrickSlab = new(new("minecraft:prismarine_brick_slab"));
-        public static readonly Block DarkPrismarineSlab = new(new("minecraft:dark_prismarine_slab"));
-        public static readonly Block SeaLantern = new(new("minecraft:sea_lantern"));
-        public static readonly Block HayBlock = new(new("minecraft:hay_block"));
-        public static readonly Block WhiteCarpet = new(new("minecraft:white_carpet"));
-        public static readonly Block OrangeCarpet = new(new("minecraft:orange_carpet"));
-        public static readonly Block MagentaCarpet = new(new("minecraft:magenta_carpet"));
-        public static readonly Block LightBlueCarpet = new(new("minecraft:light_blue_carpet"));
-        public static readonly Block YellowCarpet = new(new("minecraft:yellow_carpet"));
-        public static readonly Block LimeCarpet = new(new("minecraft:lime_carpet"));
-        public static readonly Block PinkCarpet = new(new("minecraft:pink_carpet"));
-        public static readonly Block GrayCarpet = new(new("minecraft:gray_carpet"));
-        public static readonly Block LightGrayCarpet = new(new("minecraft:light_gray_carpet"));
-        public static readonly Block CyanCarpet = new(new("minecraft:cyan_carpet"));
-        public static readonly Block PurpleCarpet = new(new("minecraft:purple_carpet"));
-        public static readonly Block BlueCarpet = new(new("minecraft:blue_carpet"));
-        public static readonly Block BrownCarpet = new(new("minecraft:brown_carpet"));
-        public static readonly Block GreenCarpet = new(new("minecraft:green_carpet"));
-        public static readonly Block RedCarpet = new(new("minecraft:red_carpet"));
-        public static readonly Block BlackCarpet = new(new("minecraft:black_carpet"));
-        public static readonly Block Terracotta = new(new("minecraft:terracotta"));
-        public static readonly Block CoalBlock = new(new("minecraft:coal_block"));
-        public static readonly Block PackedIce = new(new("minecraft:packed_ice"));
-        public static readonly Block Sunflower = new(new("minecraft:sunflower"));
-        public static readonly Block Lilac = new(new("minecraft:lilac"));
-        public static readonly Block RoseBush = new(new("minecraft:rose_bush"));
-        public static readonly Block Peony = new(new("minecraft:peony"));
-        public static readonly Block TallGrass = new(new("minecraft:tall_grass"));
-        public static readonly Block LargeFern = new(new("minecraft:large_fern"));
-        public static readonly Block WhiteBanner = new(new("minecraft:white_banner"));
-        public static readonly Block OrangeBanner = new(new("minecraft:orange_banner"));
-        public static readonly Block MagentaBanner = new(new("minecraft:magenta_banner"));
-        public static readonly Block LightBlueBanner = new(new("minecraft:light_blue_banner"));
-        public static readonly Block YellowBanner = new(new("minecraft:yellow_banner"));
-        public static readonly Block LimeBanner = new(new("minecraft:lime_banner"));
-        public static readonly Block PinkBanner = new(new("minecraft:pink_banner"));
-        public static readonly Block GrayBanner = new(new("minecraft:gray_banner"));
-        public static readonly Block LightGrayBanner = new(new("minecraft:light_gray_banner"));
-        public static readonly Block CyanBanner = new(new("minecraft:cyan_banner"));
-        public static readonly Block PurpleBanner = new(new("minecraft:purple_banner"));
-        public static readonly Block BlueBanner = new(new("minecraft:blue_banner"));
-        public static readonly Block BrownBanner = new(new("minecraft:brown_banner"));
-        public static readonly Block GreenBanner = new(new("minecraft:green_banner"));
-        public static readonly Block RedBanner = new(new("minecraft:red_banner"));
-        public static readonly Block BlackBanner = new(new("minecraft:black_banner"));
-        public static readonly Block WhiteWallBanner = new(new("minecraft:white_wall_banner"));
-        public static readonly Block OrangeWallBanner = new(new("minecraft:orange_wall_banner"));
-        public static readonly Block MagentaWallBanner = new(new("minecraft:magenta_wall_banner"));
-        public static readonly Block LightBlueWallBanner = new(new("minecraft:light_blue_wall_banner"));
-        public static readonly Block YellowWallBanner = new(new("minecraft:yellow_wall_banner"));
-        public static readonly Block LimeWallBanner = new(new("minecraft:lime_wall_banner"));
-        public static readonly Block PinkWallBanner = new(new("minecraft:pink_wall_banner"));
-        public static readonly Block GrayWallBanner = new(new("minecraft:gray_wall_banner"));
-        public static readonly Block LightGrayWallBanner = new(new("minecraft:light_gray_wall_banner"));
-        public static readonly Block CyanWallBanner = new(new("minecraft:cyan_wall_banner"));
-        public static readonly Block PurpleWallBanner = new(new("minecraft:purple_wall_banner"));
-        public static readonly Block BlueWallBanner = new(new("minecraft:blue_wall_banner"));
-        public static readonly Block BrownWallBanner = new(new("minecraft:brown_wall_banner"));
-        public static readonly Block GreenWallBanner = new(new("minecraft:green_wall_banner"));
-        public static readonly Block RedWallBanner = new(new("minecraft:red_wall_banner"));
-        public static readonly Block BlackWallBanner = new(new("minecraft:black_wall_banner"));
-        public static readonly Block RedSandstone = new(new("minecraft:red_sandstone"));
-        public static readonly Block ChiseledRedSandstone = new(new("minecraft:chiseled_red_sandstone"));
-        public static readonly Block CutRedSandstone = new(new("minecraft:cut_red_sandstone"));
-        public static readonly Block RedSandstoneStairs = new(new("minecraft:red_sandstone_stairs"));
-        public static readonly Block OakSlab = new(new("minecraft:oak_slab"));
-        public static readonly Block SpruceSlab = new(new("minecraft:spruce_slab"));
-        public static readonly Block BirchSlab = new(new("minecraft:birch_slab"));
-        public static readonly Block JungleSlab = new(new("minecraft:jungle_slab"));
-        public static readonly Block AcaciaSlab = new(new("minecraft:acacia_slab"));
-        public static readonly Block CherrySlab = new(new("minecraft:cherry_slab"));
-        public static readonly Block DarkOakSlab = new(new("minecraft:dark_oak_slab"));
-        public static readonly Block MangroveSlab = new(new("minecraft:mangrove_slab"));
-        public static readonly Block BambooSlab = new(new("minecraft:bamboo_slab"));
-        public static readonly Block BambooMosaicSlab = new(new("minecraft:bamboo_mosaic_slab"));
-        public static readonly Block StoneSlab = new(new("minecraft:stone_slab"));
-        public static readonly Block SmoothStoneSlab = new(new("minecraft:smooth_stone_slab"));
-        public static readonly Block SandstoneSlab = new(new("minecraft:sandstone_slab"));
-        public static readonly Block CutSandstoneSlab = new(new("minecraft:cut_sandstone_slab"));
-        public static readonly Block PetrifiedOakSlab = new(new("minecraft:petrified_oak_slab"));
-        public static readonly Block CobblestoneSlab = new(new("minecraft:cobblestone_slab"));
-        public static readonly Block BrickSlab = new(new("minecraft:brick_slab"));
-        public static readonly Block StoneBrickSlab = new(new("minecraft:stone_brick_slab"));
-        public static readonly Block MudBrickSlab = new(new("minecraft:mud_brick_slab"));
-        public static readonly Block NetherBrickSlab = new(new("minecraft:nether_brick_slab"));
-        public static readonly Block QuartzSlab = new(new("minecraft:quartz_slab"));
-        public static readonly Block RedSandstoneSlab = new(new("minecraft:red_sandstone_slab"));
-        public static readonly Block CutRedSandstoneSlab = new(new("minecraft:cut_red_sandstone_slab"));
-        public static readonly Block PurpurSlab = new(new("minecraft:purpur_slab"));
-        public static readonly Block SmoothStone = new(new("minecraft:smooth_stone"));
-        public static readonly Block SmoothSandstone = new(new("minecraft:smooth_sandstone"));
-        public static readonly Block SmoothQuartz = new(new("minecraft:smooth_quartz"));
-        public static readonly Block SmoothRedSandstone = new(new("minecraft:smooth_red_sandstone"));
-        public static readonly Block SpruceFenceGate = new(new("minecraft:spruce_fence_gate"));
-        public static readonly Block BirchFenceGate = new(new("minecraft:birch_fence_gate"));
-        public static readonly Block JungleFenceGate = new(new("minecraft:jungle_fence_gate"));
-        public static readonly Block AcaciaFenceGate = new(new("minecraft:acacia_fence_gate"));
-        public static readonly Block CherryFenceGate = new(new("minecraft:cherry_fence_gate"));
-        public static readonly Block DarkOakFenceGate = new(new("minecraft:dark_oak_fence_gate"));
-        public static readonly Block MangroveFenceGate = new(new("minecraft:mangrove_fence_gate"));
-        public static readonly Block BambooFenceGate = new(new("minecraft:bamboo_fence_gate"));
-        public static readonly Block SpruceFence = new(new("minecraft:spruce_fence"));
-        public static readonly Block BirchFence = new(new("minecraft:birch_fence"));
-        public static readonly Block JungleFence = new(new("minecraft:jungle_fence"));
-        public static readonly Block AcaciaFence = new(new("minecraft:acacia_fence"));
-        public static readonly Block CherryFence = new(new("minecraft:cherry_fence"));
-        public static readonly Block DarkOakFence = new(new("minecraft:dark_oak_fence"));
-        public static readonly Block MangroveFence = new(new("minecraft:mangrove_fence"));
-        public static readonly Block BambooFence = new(new("minecraft:bamboo_fence"));
-        public static readonly Block SpruceDoor = new(new("minecraft:spruce_door"));
-        public static readonly Block BirchDoor = new(new("minecraft:birch_door"));
-        public static readonly Block JungleDoor = new(new("minecraft:jungle_door"));
-        public static readonly Block AcaciaDoor = new(new("minecraft:acacia_door"));
-        public static readonly Block CherryDoor = new(new("minecraft:cherry_door"));
-        public static readonly Block DarkOakDoor = new(new("minecraft:dark_oak_door"));
-        public static readonly Block MangroveDoor = new(new("minecraft:mangrove_door"));
-        public static readonly Block BambooDoor = new(new("minecraft:bamboo_door"));
-        public static readonly Block EndRod = new(new("minecraft:end_rod"));
-        public static readonly Block ChorusPlant = new(new("minecraft:chorus_plant"));
-        public static readonly Block ChorusFlower = new(new("minecraft:chorus_flower"));
-        public static readonly Block PurpurBlock = new(new("minecraft:purpur_block"));
-        public static readonly Block PurpurPillar = new(new("minecraft:purpur_pillar"));
-        public static readonly Block PurpurStairs = new(new("minecraft:purpur_stairs"));
-        public static readonly Block EndStoneBricks = new(new("minecraft:end_stone_bricks"));
-        public static readonly Block TorchflowerCrop = new(new("minecraft:torchflower_crop"));
-        public static readonly Block PitcherCrop = new(new("minecraft:pitcher_crop"));
-        public static readonly Block PitcherPlant = new(new("minecraft:pitcher_plant"));
-        public static readonly Block Beetroots = new(new("minecraft:beetroots"));
-        public static readonly Block DirtPath = new(new("minecraft:dirt_path"));
-        public static readonly Block EndGateway = new(new("minecraft:end_gateway"));
-        public static readonly Block RepeatingCommandBlock = new(new("minecraft:repeating_command_block"));
-        public static readonly Block ChainCommandBlock = new(new("minecraft:chain_command_block"));
-        public static readonly Block FrostedIce = new(new("minecraft:frosted_ice"));
-        public static readonly Block MagmaBlock = new(new("minecraft:magma_block"));
-        public static readonly Block NetherWartBlock = new(new("minecraft:nether_wart_block"));
-        public static readonly Block RedNetherBricks = new(new("minecraft:red_nether_bricks"));
-        public static readonly Block BoneBlock = new(new("minecraft:bone_block"));
-        public static readonly Block StructureVoid = new(new("minecraft:structure_void"));
-        public static readonly Block Observer = new(new("minecraft:observer"));
-        public static readonly Block ShulkerBox = new(new("minecraft:shulker_box"));
-        public static readonly Block WhiteShulkerBox = new(new("minecraft:white_shulker_box"));
-        public static readonly Block OrangeShulkerBox = new(new("minecraft:orange_shulker_box"));
-        public static readonly Block MagentaShulkerBox = new(new("minecraft:magenta_shulker_box"));
-        public static readonly Block LightBlueShulkerBox = new(new("minecraft:light_blue_shulker_box"));
-        public static readonly Block YellowShulkerBox = new(new("minecraft:yellow_shulker_box"));
-        public static readonly Block LimeShulkerBox = new(new("minecraft:lime_shulker_box"));
-        public static readonly Block PinkShulkerBox = new(new("minecraft:pink_shulker_box"));
-        public static readonly Block GrayShulkerBox = new(new("minecraft:gray_shulker_box"));
-        public static readonly Block LightGrayShulkerBox = new(new("minecraft:light_gray_shulker_box"));
-        public static readonly Block CyanShulkerBox = new(new("minecraft:cyan_shulker_box"));
-        public static readonly Block PurpleShulkerBox = new(new("minecraft:purple_shulker_box"));
-        public static readonly Block BlueShulkerBox = new(new("minecraft:blue_shulker_box"));
-        public static readonly Block BrownShulkerBox = new(new("minecraft:brown_shulker_box"));
-        public static readonly Block GreenShulkerBox = new(new("minecraft:green_shulker_box"));
-        public static readonly Block RedShulkerBox = new(new("minecraft:red_shulker_box"));
-        public static readonly Block BlackShulkerBox = new(new("minecraft:black_shulker_box"));
-        public static readonly Block WhiteGlazedTerracotta = new(new("minecraft:white_glazed_terracotta"));
-        public static readonly Block OrangeGlazedTerracotta = new(new("minecraft:orange_glazed_terracotta"));
-        public static readonly Block MagentaGlazedTerracotta = new(new("minecraft:magenta_glazed_terracotta"));
-        public static readonly Block LightBlueGlazedTerracotta = new(new("minecraft:light_blue_glazed_terracotta"));
-        public static readonly Block YellowGlazedTerracotta = new(new("minecraft:yellow_glazed_terracotta"));
-        public static readonly Block LimeGlazedTerracotta = new(new("minecraft:lime_glazed_terracotta"));
-        public static readonly Block PinkGlazedTerracotta = new(new("minecraft:pink_glazed_terracotta"));
-        public static readonly Block GrayGlazedTerracotta = new(new("minecraft:gray_glazed_terracotta"));
-        public static readonly Block LightGrayGlazedTerracotta = new(new("minecraft:light_gray_glazed_terracotta"));
-        public static readonly Block CyanGlazedTerracotta = new(new("minecraft:cyan_glazed_terracotta"));
-        public static readonly Block PurpleGlazedTerracotta = new(new("minecraft:purple_glazed_terracotta"));
-        public static readonly Block BlueGlazedTerracotta = new(new("minecraft:blue_glazed_terracotta"));
-        public static readonly Block BrownGlazedTerracotta = new(new("minecraft:brown_glazed_terracotta"));
-        public static readonly Block GreenGlazedTerracotta = new(new("minecraft:green_glazed_terracotta"));
-        public static readonly Block RedGlazedTerracotta = new(new("minecraft:red_glazed_terracotta"));
-        public static readonly Block BlackGlazedTerracotta = new(new("minecraft:black_glazed_terracotta"));
-        public static readonly Block WhiteConcrete = new(new("minecraft:white_concrete"));
-        public static readonly Block OrangeConcrete = new(new("minecraft:orange_concrete"));
-        public static readonly Block MagentaConcrete = new(new("minecraft:magenta_concrete"));
-        public static readonly Block LightBlueConcrete = new(new("minecraft:light_blue_concrete"));
-        public static readonly Block YellowConcrete = new(new("minecraft:yellow_concrete"));
-        public static readonly Block LimeConcrete = new(new("minecraft:lime_concrete"));
-        public static readonly Block PinkConcrete = new(new("minecraft:pink_concrete"));
-        public static readonly Block GrayConcrete = new(new("minecraft:gray_concrete"));
-        public static readonly Block LightGrayConcrete = new(new("minecraft:light_gray_concrete"));
-        public static readonly Block CyanConcrete = new(new("minecraft:cyan_concrete"));
-        public static readonly Block PurpleConcrete = new(new("minecraft:purple_concrete"));
-        public static readonly Block BlueConcrete = new(new("minecraft:blue_concrete"));
-        public static readonly Block BrownConcrete = new(new("minecraft:brown_concrete"));
-        public static readonly Block GreenConcrete = new(new("minecraft:green_concrete"));
-        public static readonly Block RedConcrete = new(new("minecraft:red_concrete"));
-        public static readonly Block BlackConcrete = new(new("minecraft:black_concrete"));
-        public static readonly Block WhiteConcretePowder = new(new("minecraft:white_concrete_powder"));
-        public static readonly Block OrangeConcretePowder = new(new("minecraft:orange_concrete_powder"));
-        public static readonly Block MagentaConcretePowder = new(new("minecraft:magenta_concrete_powder"));
-        public static readonly Block LightBlueConcretePowder = new(new("minecraft:light_blue_concrete_powder"));
-        public static readonly Block YellowConcretePowder = new(new("minecraft:yellow_concrete_powder"));
-        public static readonly Block LimeConcretePowder = new(new("minecraft:lime_concrete_powder"));
-        public static readonly Block PinkConcretePowder = new(new("minecraft:pink_concrete_powder"));
-        public static readonly Block GrayConcretePowder = new(new("minecraft:gray_concrete_powder"));
-        public static readonly Block LightGrayConcretePowder = new(new("minecraft:light_gray_concrete_powder"));
-        public static readonly Block CyanConcretePowder = new(new("minecraft:cyan_concrete_powder"));
-        public static readonly Block PurpleConcretePowder = new(new("minecraft:purple_concrete_powder"));
-        public static readonly Block BlueConcretePowder = new(new("minecraft:blue_concrete_powder"));
-        public static readonly Block BrownConcretePowder = new(new("minecraft:brown_concrete_powder"));
-        public static readonly Block GreenConcretePowder = new(new("minecraft:green_concrete_powder"));
-        public static readonly Block RedConcretePowder = new(new("minecraft:red_concrete_powder"));
-        public static readonly Block BlackConcretePowder = new(new("minecraft:black_concrete_powder"));
-        public static readonly Block Kelp = new(new("minecraft:kelp"));
-        public static readonly Block KelpPlant = new(new("minecraft:kelp_plant"));
-        public static readonly Block DriedKelpBlock = new(new("minecraft:dried_kelp_block"));
-        public static readonly Block TurtleEgg = new(new("minecraft:turtle_egg"));
-        public static readonly Block SnifferEgg = new(new("minecraft:sniffer_egg"));
-        public static readonly Block DeadTubeCoralBlock = new(new("minecraft:dead_tube_coral_block"));
-        public static readonly Block DeadBrainCoralBlock = new(new("minecraft:dead_brain_coral_block"));
-        public static readonly Block DeadBubbleCoralBlock = new(new("minecraft:dead_bubble_coral_block"));
-        public static readonly Block DeadFireCoralBlock = new(new("minecraft:dead_fire_coral_block"));
-        public static readonly Block DeadHornCoralBlock = new(new("minecraft:dead_horn_coral_block"));
-        public static readonly Block TubeCoralBlock = new(new("minecraft:tube_coral_block"));
-        public static readonly Block BrainCoralBlock = new(new("minecraft:brain_coral_block"));
-        public static readonly Block BubbleCoralBlock = new(new("minecraft:bubble_coral_block"));
-        public static readonly Block FireCoralBlock = new(new("minecraft:fire_coral_block"));
-        public static readonly Block HornCoralBlock = new(new("minecraft:horn_coral_block"));
-        public static readonly Block DeadTubeCoral = new(new("minecraft:dead_tube_coral"));
-        public static readonly Block DeadBrainCoral = new(new("minecraft:dead_brain_coral"));
-        public static readonly Block DeadBubbleCoral = new(new("minecraft:dead_bubble_coral"));
-        public static readonly Block DeadFireCoral = new(new("minecraft:dead_fire_coral"));
-        public static readonly Block DeadHornCoral = new(new("minecraft:dead_horn_coral"));
-        public static readonly Block TubeCoral = new(new("minecraft:tube_coral"));
-        public static readonly Block BrainCoral = new(new("minecraft:brain_coral"));
-        public static readonly Block BubbleCoral = new(new("minecraft:bubble_coral"));
-        public static readonly Block FireCoral = new(new("minecraft:fire_coral"));
-        public static readonly Block HornCoral = new(new("minecraft:horn_coral"));
-        public static readonly Block DeadTubeCoralFan = new(new("minecraft:dead_tube_coral_fan"));
-        public static readonly Block DeadBrainCoralFan = new(new("minecraft:dead_brain_coral_fan"));
-        public static readonly Block DeadBubbleCoralFan = new(new("minecraft:dead_bubble_coral_fan"));
-        public static readonly Block DeadFireCoralFan = new(new("minecraft:dead_fire_coral_fan"));
-        public static readonly Block DeadHornCoralFan = new(new("minecraft:dead_horn_coral_fan"));
-        public static readonly Block TubeCoralFan = new(new("minecraft:tube_coral_fan"));
-        public static readonly Block BrainCoralFan = new(new("minecraft:brain_coral_fan"));
-        public static readonly Block BubbleCoralFan = new(new("minecraft:bubble_coral_fan"));
-        public static readonly Block FireCoralFan = new(new("minecraft:fire_coral_fan"));
-        public static readonly Block HornCoralFan = new(new("minecraft:horn_coral_fan"));
-        public static readonly Block DeadTubeCoralWallFan = new(new("minecraft:dead_tube_coral_wall_fan"));
-        public static readonly Block DeadBrainCoralWallFan = new(new("minecraft:dead_brain_coral_wall_fan"));
-        public static readonly Block DeadBubbleCoralWallFan = new(new("minecraft:dead_bubble_coral_wall_fan"));
-        public static readonly Block DeadFireCoralWallFan = new(new("minecraft:dead_fire_coral_wall_fan"));
-        public static readonly Block DeadHornCoralWallFan = new(new("minecraft:dead_horn_coral_wall_fan"));
-        public static readonly Block TubeCoralWallFan = new(new("minecraft:tube_coral_wall_fan"));
-        public static readonly Block BrainCoralWallFan = new(new("minecraft:brain_coral_wall_fan"));
-        public static readonly Block BubbleCoralWallFan = new(new("minecraft:bubble_coral_wall_fan"));
-        public static readonly Block FireCoralWallFan = new(new("minecraft:fire_coral_wall_fan"));
-        public static readonly Block HornCoralWallFan = new(new("minecraft:horn_coral_wall_fan"));
-        public static readonly Block SeaPickle = new(new("minecraft:sea_pickle"));
-        public static readonly Block BlueIce = new(new("minecraft:blue_ice"));
-        public static readonly Block Conduit = new(new("minecraft:conduit"));
-        public static readonly Block BambooSapling = new(new("minecraft:bamboo_sapling"));
-        public static readonly Block Bamboo = new(new("minecraft:bamboo"));
-        public static readonly Block PottedBamboo = new(new("minecraft:potted_bamboo"));
-        public static readonly Block VoidAir = new(new("minecraft:void_air"));
-        public static readonly Block CaveAir = new(new("minecraft:cave_air"));
-        public static readonly Block BubbleColumn = new(new("minecraft:bubble_column"));
-        public static readonly Block PolishedGraniteStairs = new(new("minecraft:polished_granite_stairs"));
-        public static readonly Block SmoothRedSandstoneStairs = new(new("minecraft:smooth_red_sandstone_stairs"));
-        public static readonly Block MossyStoneBrickStairs = new(new("minecraft:mossy_stone_brick_stairs"));
-        public static readonly Block PolishedDioriteStairs = new(new("minecraft:polished_diorite_stairs"));
-        public static readonly Block MossyCobblestoneStairs = new(new("minecraft:mossy_cobblestone_stairs"));
-        public static readonly Block EndStoneBrickStairs = new(new("minecraft:end_stone_brick_stairs"));
-        public static readonly Block StoneStairs = new(new("minecraft:stone_stairs"));
-        public static readonly Block SmoothSandstoneStairs = new(new("minecraft:smooth_sandstone_stairs"));
-        public static readonly Block SmoothQuartzStairs = new(new("minecraft:smooth_quartz_stairs"));
-        public static readonly Block GraniteStairs = new(new("minecraft:granite_stairs"));
-        public static readonly Block AndesiteStairs = new(new("minecraft:andesite_stairs"));
-        public static readonly Block RedNetherBrickStairs = new(new("minecraft:red_nether_brick_stairs"));
-        public static readonly Block PolishedAndesiteStairs = new(new("minecraft:polished_andesite_stairs"));
-        public static readonly Block DioriteStairs = new(new("minecraft:diorite_stairs"));
-        public static readonly Block PolishedGraniteSlab = new(new("minecraft:polished_granite_slab"));
-        public static readonly Block SmoothRedSandstoneSlab = new(new("minecraft:smooth_red_sandstone_slab"));
-        public static readonly Block MossyStoneBrickSlab = new(new("minecraft:mossy_stone_brick_slab"));
-        public static readonly Block PolishedDioriteSlab = new(new("minecraft:polished_diorite_slab"));
-        public static readonly Block MossyCobblestoneSlab = new(new("minecraft:mossy_cobblestone_slab"));
-        public static readonly Block EndStoneBrickSlab = new(new("minecraft:end_stone_brick_slab"));
-        public static readonly Block SmoothSandstoneSlab = new(new("minecraft:smooth_sandstone_slab"));
-        public static readonly Block SmoothQuartzSlab = new(new("minecraft:smooth_quartz_slab"));
-        public static readonly Block GraniteSlab = new(new("minecraft:granite_slab"));
-        public static readonly Block AndesiteSlab = new(new("minecraft:andesite_slab"));
-        public static readonly Block RedNetherBrickSlab = new(new("minecraft:red_nether_brick_slab"));
-        public static readonly Block PolishedAndesiteSlab = new(new("minecraft:polished_andesite_slab"));
-        public static readonly Block DioriteSlab = new(new("minecraft:diorite_slab"));
-        public static readonly Block BrickWall = new(new("minecraft:brick_wall"));
-        public static readonly Block PrismarineWall = new(new("minecraft:prismarine_wall"));
-        public static readonly Block RedSandstoneWall = new(new("minecraft:red_sandstone_wall"));
-        public static readonly Block MossyStoneBrickWall = new(new("minecraft:mossy_stone_brick_wall"));
-        public static readonly Block GraniteWall = new(new("minecraft:granite_wall"));
-        public static readonly Block StoneBrickWall = new(new("minecraft:stone_brick_wall"));
-        public static readonly Block MudBrickWall = new(new("minecraft:mud_brick_wall"));
-        public static readonly Block NetherBrickWall = new(new("minecraft:nether_brick_wall"));
-        public static readonly Block AndesiteWall = new(new("minecraft:andesite_wall"));
-        public static readonly Block RedNetherBrickWall = new(new("minecraft:red_nether_brick_wall"));
-        public static readonly Block SandstoneWall = new(new("minecraft:sandstone_wall"));
-        public static readonly Block EndStoneBrickWall = new(new("minecraft:end_stone_brick_wall"));
-        public static readonly Block DioriteWall = new(new("minecraft:diorite_wall"));
-        public static readonly Block Scaffolding = new(new("minecraft:scaffolding"));
-        public static readonly Block Loom = new(new("minecraft:loom"));
-        public static readonly Block Barrel = new(new("minecraft:barrel"));
-        public static readonly Block Smoker = new(new("minecraft:smoker"));
-        public static readonly Block BlastFurnace = new(new("minecraft:blast_furnace"));
-        public static readonly Block CartographyTable = new(new("minecraft:cartography_table"));
-        public static readonly Block FletchingTable = new(new("minecraft:fletching_table"));
-        public static readonly Block Grindstone = new(new("minecraft:grindstone"));
-        public static readonly Block Lectern = new(new("minecraft:lectern"));
-        public static readonly Block SmithingTable = new(new("minecraft:smithing_table"));
-        public static readonly Block Stonecutter = new(new("minecraft:stonecutter"));
-        public static readonly Block Bell = new(new("minecraft:bell"));
-        public static readonly Block Lantern = new(new("minecraft:lantern"));
-        public static readonly Block SoulLantern = new(new("minecraft:soul_lantern"));
-        public static readonly Block Campfire = new(new("minecraft:campfire"));
-        public static readonly Block SoulCampfire = new(new("minecraft:soul_campfire"));
-        public static readonly Block SweetBerryBush = new(new("minecraft:sweet_berry_bush"));
-        public static readonly Block WarpedStem = new(new("minecraft:warped_stem"));
-        public static readonly Block StrippedWarpedStem = new(new("minecraft:stripped_warped_stem"));
-        public static readonly Block WarpedHyphae = new(new("minecraft:warped_hyphae"));
-        public static readonly Block StrippedWarpedHyphae = new(new("minecraft:stripped_warped_hyphae"));
-        public static readonly Block WarpedNylium = new(new("minecraft:warped_nylium"));
-        public static readonly Block WarpedFungus = new(new("minecraft:warped_fungus"));
-        public static readonly Block WarpedWartBlock = new(new("minecraft:warped_wart_block"));
-        public static readonly Block WarpedRoots = new(new("minecraft:warped_roots"));
-        public static readonly Block NetherSprouts = new(new("minecraft:nether_sprouts"));
-        public static readonly Block CrimsonStem = new(new("minecraft:crimson_stem"));
-        public static readonly Block StrippedCrimsonStem = new(new("minecraft:stripped_crimson_stem"));
-        public static readonly Block CrimsonHyphae = new(new("minecraft:crimson_hyphae"));
-        public static readonly Block StrippedCrimsonHyphae = new(new("minecraft:stripped_crimson_hyphae"));
-        public static readonly Block CrimsonNylium = new(new("minecraft:crimson_nylium"));
-        public static readonly Block CrimsonFungus = new(new("minecraft:crimson_fungus"));
-        public static readonly Block Shroomlight = new(new("minecraft:shroomlight"));
-        public static readonly Block WeepingVines = new(new("minecraft:weeping_vines"));
-        public static readonly Block WeepingVinesPlant = new(new("minecraft:weeping_vines_plant"));
-        public static readonly Block TwistingVines = new(new("minecraft:twisting_vines"));
-        public static readonly Block TwistingVinesPlant = new(new("minecraft:twisting_vines_plant"));
-        public static readonly Block CrimsonRoots = new(new("minecraft:crimson_roots"));
-        public static readonly Block CrimsonPlanks = new(new("minecraft:crimson_planks"));
-        public static readonly Block WarpedPlanks = new(new("minecraft:warped_planks"));
-        public static readonly Block CrimsonSlab = new(new("minecraft:crimson_slab"));
-        public static readonly Block WarpedSlab = new(new("minecraft:warped_slab"));
-        public static readonly Block CrimsonPressurePlate = new(new("minecraft:crimson_pressure_plate"));
-        public static readonly Block WarpedPressurePlate = new(new("minecraft:warped_pressure_plate"));
-        public static readonly Block CrimsonFence = new(new("minecraft:crimson_fence"));
-        public static readonly Block WarpedFence = new(new("minecraft:warped_fence"));
-        public static readonly Block CrimsonTrapdoor = new(new("minecraft:crimson_trapdoor"));
-        public static readonly Block WarpedTrapdoor = new(new("minecraft:warped_trapdoor"));
-        public static readonly Block CrimsonFenceGate = new(new("minecraft:crimson_fence_gate"));
-        public static readonly Block WarpedFenceGate = new(new("minecraft:warped_fence_gate"));
-        public static readonly Block CrimsonStairs = new(new("minecraft:crimson_stairs"));
-        public static readonly Block WarpedStairs = new(new("minecraft:warped_stairs"));
-        public static readonly Block CrimsonButton = new(new("minecraft:crimson_button"));
-        public static readonly Block WarpedButton = new(new("minecraft:warped_button"));
-        public static readonly Block CrimsonDoor = new(new("minecraft:crimson_door"));
-        public static readonly Block WarpedDoor = new(new("minecraft:warped_door"));
-        public static readonly Block CrimsonSign = new(new("minecraft:crimson_sign"));
-        public static readonly Block WarpedSign = new(new("minecraft:warped_sign"));
-        public static readonly Block CrimsonWallSign = new(new("minecraft:crimson_wall_sign"));
-        public static readonly Block WarpedWallSign = new(new("minecraft:warped_wall_sign"));
-        public static readonly Block StructureBlock = new(new("minecraft:structure_block"));
-        public static readonly Block Jigsaw = new(new("minecraft:jigsaw"));
-        public static readonly Block Composter = new(new("minecraft:composter"));
-        public static readonly Block Target = new(new("minecraft:target"));
-        public static readonly Block BeeNest = new(new("minecraft:bee_nest"));
-        public static readonly Block Beehive = new(new("minecraft:beehive"));
-        public static readonly Block HoneyBlock = new(new("minecraft:honey_block"));
-        public static readonly Block HoneycombBlock = new(new("minecraft:honeycomb_block"));
-        public static readonly Block NetheriteBlock = new(new("minecraft:netherite_block"));
-        public static readonly Block AncientDebris = new(new("minecraft:ancient_debris"));
-        public static readonly Block CryingObsidian = new(new("minecraft:crying_obsidian"));
-        public static readonly Block RespawnAnchor = new(new("minecraft:respawn_anchor"));
-        public static readonly Block PottedCrimsonFungus = new(new("minecraft:potted_crimson_fungus"));
-        public static readonly Block PottedWarpedFungus = new(new("minecraft:potted_warped_fungus"));
-        public static readonly Block PottedCrimsonRoots = new(new("minecraft:potted_crimson_roots"));
-        public static readonly Block PottedWarpedRoots = new(new("minecraft:potted_warped_roots"));
-        public static readonly Block Lodestone = new(new("minecraft:lodestone"));
-        public static readonly Block Blackstone = new(new("minecraft:blackstone"));
-        public static readonly Block BlackstoneStairs = new(new("minecraft:blackstone_stairs"));
-        public static readonly Block BlackstoneWall = new(new("minecraft:blackstone_wall"));
-        public static readonly Block BlackstoneSlab = new(new("minecraft:blackstone_slab"));
-        public static readonly Block PolishedBlackstone = new(new("minecraft:polished_blackstone"));
-        public static readonly Block PolishedBlackstoneBricks = new(new("minecraft:polished_blackstone_bricks"));
-        public static readonly Block CrackedPolishedBlackstoneBricks = new(new("minecraft:cracked_polished_blackstone_bricks"));
-        public static readonly Block ChiseledPolishedBlackstone = new(new("minecraft:chiseled_polished_blackstone"));
-        public static readonly Block PolishedBlackstoneBrickSlab = new(new("minecraft:polished_blackstone_brick_slab"));
-        public static readonly Block PolishedBlackstoneBrickStairs = new(new("minecraft:polished_blackstone_brick_stairs"));
-        public static readonly Block PolishedBlackstoneBrickWall = new(new("minecraft:polished_blackstone_brick_wall"));
-        public static readonly Block GildedBlackstone = new(new("minecraft:gilded_blackstone"));
-        public static readonly Block PolishedBlackstoneStairs = new(new("minecraft:polished_blackstone_stairs"));
-        public static readonly Block PolishedBlackstoneSlab = new(new("minecraft:polished_blackstone_slab"));
-        public static readonly Block PolishedBlackstonePressurePlate = new(new("minecraft:polished_blackstone_pressure_plate"));
-        public static readonly Block PolishedBlackstoneButton = new(new("minecraft:polished_blackstone_button"));
-        public static readonly Block PolishedBlackstoneWall = new(new("minecraft:polished_blackstone_wall"));
-        public static readonly Block ChiseledNetherBricks = new(new("minecraft:chiseled_nether_bricks"));
-        public static readonly Block CrackedNetherBricks = new(new("minecraft:cracked_nether_bricks"));
-        public static readonly Block QuartzBricks = new(new("minecraft:quartz_bricks"));
-        public static readonly Block Candle = new(new("minecraft:candle"));
-        public static readonly Block WhiteCandle = new(new("minecraft:white_candle"));
-        public static readonly Block OrangeCandle = new(new("minecraft:orange_candle"));
-        public static readonly Block MagentaCandle = new(new("minecraft:magenta_candle"));
-        public static readonly Block LightBlueCandle = new(new("minecraft:light_blue_candle"));
-        public static readonly Block YellowCandle = new(new("minecraft:yellow_candle"));
-        public static readonly Block LimeCandle = new(new("minecraft:lime_candle"));
-        public static readonly Block PinkCandle = new(new("minecraft:pink_candle"));
-        public static readonly Block GrayCandle = new(new("minecraft:gray_candle"));
-        public static readonly Block LightGrayCandle = new(new("minecraft:light_gray_candle"));
-        public static readonly Block CyanCandle = new(new("minecraft:cyan_candle"));
-        public static readonly Block PurpleCandle = new(new("minecraft:purple_candle"));
-        public static readonly Block BlueCandle = new(new("minecraft:blue_candle"));
-        public static readonly Block BrownCandle = new(new("minecraft:brown_candle"));
-        public static readonly Block GreenCandle = new(new("minecraft:green_candle"));
-        public static readonly Block RedCandle = new(new("minecraft:red_candle"));
-        public static readonly Block BlackCandle = new(new("minecraft:black_candle"));
-        public static readonly Block CandleCake = new(new("minecraft:candle_cake"));
-        public static readonly Block WhiteCandleCake = new(new("minecraft:white_candle_cake"));
-        public static readonly Block OrangeCandleCake = new(new("minecraft:orange_candle_cake"));
-        public static readonly Block MagentaCandleCake = new(new("minecraft:magenta_candle_cake"));
-        public static readonly Block LightBlueCandleCake = new(new("minecraft:light_blue_candle_cake"));
-        public static readonly Block YellowCandleCake = new(new("minecraft:yellow_candle_cake"));
-        public static readonly Block LimeCandleCake = new(new("minecraft:lime_candle_cake"));
-        public static readonly Block PinkCandleCake = new(new("minecraft:pink_candle_cake"));
-        public static readonly Block GrayCandleCake = new(new("minecraft:gray_candle_cake"));
-        public static readonly Block LightGrayCandleCake = new(new("minecraft:light_gray_candle_cake"));
-        public static readonly Block CyanCandleCake = new(new("minecraft:cyan_candle_cake"));
-        public static readonly Block PurpleCandleCake = new(new("minecraft:purple_candle_cake"));
-        public static readonly Block BlueCandleCake = new(new("minecraft:blue_candle_cake"));
-        public static readonly Block BrownCandleCake = new(new("minecraft:brown_candle_cake"));
-        public static readonly Block GreenCandleCake = new(new("minecraft:green_candle_cake"));
-        public static readonly Block RedCandleCake = new(new("minecraft:red_candle_cake"));
-        public static readonly Block BlackCandleCake = new(new("minecraft:black_candle_cake"));
-        public static readonly Block AmethystBlock = new(new("minecraft:amethyst_block"));
-        public static readonly Block BuddingAmethyst = new(new("minecraft:budding_amethyst"));
-        public static readonly Block AmethystCluster = new(new("minecraft:amethyst_cluster"));
-        public static readonly Block LargeAmethystBud = new(new("minecraft:large_amethyst_bud"));
-        public static readonly Block MediumAmethystBud = new(new("minecraft:medium_amethyst_bud"));
-        public static readonly Block SmallAmethystBud = new(new("minecraft:small_amethyst_bud"));
-        public static readonly Block Tuff = new(new("minecraft:tuff"));
-        public static readonly Block TuffSlab = new(new("minecraft:tuff_slab"));
-        public static readonly Block TuffStairs = new(new("minecraft:tuff_stairs"));
-        public static readonly Block TuffWall = new(new("minecraft:tuff_wall"));
-        public static readonly Block PolishedTuff = new(new("minecraft:polished_tuff"));
-        public static readonly Block PolishedTuffSlab = new(new("minecraft:polished_tuff_slab"));
-        public static readonly Block PolishedTuffStairs = new(new("minecraft:polished_tuff_stairs"));
-        public static readonly Block PolishedTuffWall = new(new("minecraft:polished_tuff_wall"));
-        public static readonly Block ChiseledTuff = new(new("minecraft:chiseled_tuff"));
-        public static readonly Block TuffBricks = new(new("minecraft:tuff_bricks"));
-        public static readonly Block TuffBrickSlab = new(new("minecraft:tuff_brick_slab"));
-        public static readonly Block TuffBrickStairs = new(new("minecraft:tuff_brick_stairs"));
-        public static readonly Block TuffBrickWall = new(new("minecraft:tuff_brick_wall"));
-        public static readonly Block ChiseledTuffBricks = new(new("minecraft:chiseled_tuff_bricks"));
-        public static readonly Block Calcite = new(new("minecraft:calcite"));
-        public static readonly Block TintedGlass = new(new("minecraft:tinted_glass"));
-        public static readonly Block PowderSnow = new(new("minecraft:powder_snow"));
-        public static readonly Block SculkSensor = new(new("minecraft:sculk_sensor"));
-        public static readonly Block CalibratedSculkSensor = new(new("minecraft:calibrated_sculk_sensor"));
-        public static readonly Block Sculk = new(new("minecraft:sculk"));
-        public static readonly Block SculkVein = new(new("minecraft:sculk_vein"));
-        public static readonly Block SculkCatalyst = new(new("minecraft:sculk_catalyst"));
-        public static readonly Block SculkShrieker = new(new("minecraft:sculk_shrieker"));
-        public static readonly Block CopperBlock = new(new("minecraft:copper_block"));
-        public static readonly Block ExposedCopper = new(new("minecraft:exposed_copper"));
-        public static readonly Block WeatheredCopper = new(new("minecraft:weathered_copper"));
-        public static readonly Block OxidizedCopper = new(new("minecraft:oxidized_copper"));
-        public static readonly Block CopperOre = new(new("minecraft:copper_ore"));
-        public static readonly Block DeepslateCopperOre = new(new("minecraft:deepslate_copper_ore"));
-        public static readonly Block OxidizedCutCopper = new(new("minecraft:oxidized_cut_copper"));
-        public static readonly Block WeatheredCutCopper = new(new("minecraft:weathered_cut_copper"));
-        public static readonly Block ExposedCutCopper = new(new("minecraft:exposed_cut_copper"));
-        public static readonly Block CutCopper = new(new("minecraft:cut_copper"));
-        public static readonly Block OxidizedChiseledCopper = new(new("minecraft:oxidized_chiseled_copper"));
-        public static readonly Block WeatheredChiseledCopper = new(new("minecraft:weathered_chiseled_copper"));
-        public static readonly Block ExposedChiseledCopper = new(new("minecraft:exposed_chiseled_copper"));
-        public static readonly Block ChiseledCopper = new(new("minecraft:chiseled_copper"));
-        public static readonly Block WaxedOxidizedChiseledCopper = new(new("minecraft:waxed_oxidized_chiseled_copper"));
-        public static readonly Block WaxedWeatheredChiseledCopper = new(new("minecraft:waxed_weathered_chiseled_copper"));
-        public static readonly Block WaxedExposedChiseledCopper = new(new("minecraft:waxed_exposed_chiseled_copper"));
-        public static readonly Block WaxedChiseledCopper = new(new("minecraft:waxed_chiseled_copper"));
-        public static readonly Block OxidizedCutCopperStairs = new(new("minecraft:oxidized_cut_copper_stairs"));
-        public static readonly Block WeatheredCutCopperStairs = new(new("minecraft:weathered_cut_copper_stairs"));
-        public static readonly Block ExposedCutCopperStairs = new(new("minecraft:exposed_cut_copper_stairs"));
-        public static readonly Block CutCopperStairs = new(new("minecraft:cut_copper_stairs"));
-        public static readonly Block OxidizedCutCopperSlab = new(new("minecraft:oxidized_cut_copper_slab"));
-        public static readonly Block WeatheredCutCopperSlab = new(new("minecraft:weathered_cut_copper_slab"));
-        public static readonly Block ExposedCutCopperSlab = new(new("minecraft:exposed_cut_copper_slab"));
-        public static readonly Block CutCopperSlab = new(new("minecraft:cut_copper_slab"));
-        public static readonly Block WaxedCopperBlock = new(new("minecraft:waxed_copper_block"));
-        public static readonly Block WaxedWeatheredCopper = new(new("minecraft:waxed_weathered_copper"));
-        public static readonly Block WaxedExposedCopper = new(new("minecraft:waxed_exposed_copper"));
-        public static readonly Block WaxedOxidizedCopper = new(new("minecraft:waxed_oxidized_copper"));
-        public static readonly Block WaxedOxidizedCutCopper = new(new("minecraft:waxed_oxidized_cut_copper"));
-        public static readonly Block WaxedWeatheredCutCopper = new(new("minecraft:waxed_weathered_cut_copper"));
-        public static readonly Block WaxedExposedCutCopper = new(new("minecraft:waxed_exposed_cut_copper"));
-        public static readonly Block WaxedCutCopper = new(new("minecraft:waxed_cut_copper"));
-        public static readonly Block WaxedOxidizedCutCopperStairs = new(new("minecraft:waxed_oxidized_cut_copper_stairs"));
-        public static readonly Block WaxedWeatheredCutCopperStairs = new(new("minecraft:waxed_weathered_cut_copper_stairs"));
-        public static readonly Block WaxedExposedCutCopperStairs = new(new("minecraft:waxed_exposed_cut_copper_stairs"));
-        public static readonly Block WaxedCutCopperStairs = new(new("minecraft:waxed_cut_copper_stairs"));
-        public static readonly Block WaxedOxidizedCutCopperSlab = new(new("minecraft:waxed_oxidized_cut_copper_slab"));
-        public static readonly Block WaxedWeatheredCutCopperSlab = new(new("minecraft:waxed_weathered_cut_copper_slab"));
-        public static readonly Block WaxedExposedCutCopperSlab = new(new("minecraft:waxed_exposed_cut_copper_slab"));
-        public static readonly Block WaxedCutCopperSlab = new(new("minecraft:waxed_cut_copper_slab"));
-        public static readonly Block CopperDoor = new(new("minecraft:copper_door"));
-        public static readonly Block ExposedCopperDoor = new(new("minecraft:exposed_copper_door"));
-        public static readonly Block OxidizedCopperDoor = new(new("minecraft:oxidized_copper_door"));
-        public static readonly Block WeatheredCopperDoor = new(new("minecraft:weathered_copper_door"));
-        public static readonly Block WaxedCopperDoor = new(new("minecraft:waxed_copper_door"));
-        public static readonly Block WaxedExposedCopperDoor = new(new("minecraft:waxed_exposed_copper_door"));
-        public static readonly Block WaxedOxidizedCopperDoor = new(new("minecraft:waxed_oxidized_copper_door"));
-        public static readonly Block WaxedWeatheredCopperDoor = new(new("minecraft:waxed_weathered_copper_door"));
-        public static readonly Block CopperTrapdoor = new(new("minecraft:copper_trapdoor"));
-        public static readonly Block ExposedCopperTrapdoor = new(new("minecraft:exposed_copper_trapdoor"));
-        public static readonly Block OxidizedCopperTrapdoor = new(new("minecraft:oxidized_copper_trapdoor"));
-        public static readonly Block WeatheredCopperTrapdoor = new(new("minecraft:weathered_copper_trapdoor"));
-        public static readonly Block WaxedCopperTrapdoor = new(new("minecraft:waxed_copper_trapdoor"));
-        public static readonly Block WaxedExposedCopperTrapdoor = new(new("minecraft:waxed_exposed_copper_trapdoor"));
-        public static readonly Block WaxedOxidizedCopperTrapdoor = new(new("minecraft:waxed_oxidized_copper_trapdoor"));
-        public static readonly Block WaxedWeatheredCopperTrapdoor = new(new("minecraft:waxed_weathered_copper_trapdoor"));
-        public static readonly Block CopperGrate = new(new("minecraft:copper_grate"));
-        public static readonly Block ExposedCopperGrate = new(new("minecraft:exposed_copper_grate"));
-        public static readonly Block WeatheredCopperGrate = new(new("minecraft:weathered_copper_grate"));
-        public static readonly Block OxidizedCopperGrate = new(new("minecraft:oxidized_copper_grate"));
-        public static readonly Block WaxedCopperGrate = new(new("minecraft:waxed_copper_grate"));
-        public static readonly Block WaxedExposedCopperGrate = new(new("minecraft:waxed_exposed_copper_grate"));
-        public static readonly Block WaxedWeatheredCopperGrate = new(new("minecraft:waxed_weathered_copper_grate"));
-        public static readonly Block WaxedOxidizedCopperGrate = new(new("minecraft:waxed_oxidized_copper_grate"));
-        public static readonly Block CopperBulb = new(new("minecraft:copper_bulb"));
-        public static readonly Block ExposedCopperBulb = new(new("minecraft:exposed_copper_bulb"));
-        public static readonly Block WeatheredCopperBulb = new(new("minecraft:weathered_copper_bulb"));
-        public static readonly Block OxidizedCopperBulb = new(new("minecraft:oxidized_copper_bulb"));
-        public static readonly Block WaxedCopperBulb = new(new("minecraft:waxed_copper_bulb"));
-        public static readonly Block WaxedExposedCopperBulb = new(new("minecraft:waxed_exposed_copper_bulb"));
-        public static readonly Block WaxedWeatheredCopperBulb = new(new("minecraft:waxed_weathered_copper_bulb"));
-        public static readonly Block WaxedOxidizedCopperBulb = new(new("minecraft:waxed_oxidized_copper_bulb"));
-        public static readonly Block LightningRod = new(new("minecraft:lightning_rod"));
-        public static readonly Block PointedDripstone = new(new("minecraft:pointed_dripstone"));
-        public static readonly Block DripstoneBlock = new(new("minecraft:dripstone_block"));
-        public static readonly Block CaveVines = new(new("minecraft:cave_vines"));
-        public static readonly Block CaveVinesPlant = new(new("minecraft:cave_vines_plant"));
-        public static readonly Block SporeBlossom = new(new("minecraft:spore_blossom"));
-        public static readonly Block Azalea = new(new("minecraft:azalea"));
-        public static readonly Block FloweringAzalea = new(new("minecraft:flowering_azalea"));
-        public static readonly Block MossCarpet = new(new("minecraft:moss_carpet"));
-        public static readonly Block PinkPetals = new(new("minecraft:pink_petals"));
-        public static readonly Block MossBlock = new(new("minecraft:moss_block"));
-        public static readonly Block BigDripleaf = new(new("minecraft:big_dripleaf"));
-        public static readonly Block BigDripleafStem = new(new("minecraft:big_dripleaf_stem"));
-        public static readonly Block SmallDripleaf = new(new("minecraft:small_dripleaf"));
-        public static readonly Block HangingRoots = new(new("minecraft:hanging_roots"));
-        public static readonly Block RootedDirt = new(new("minecraft:rooted_dirt"));
-        public static readonly Block Mud = new(new("minecraft:mud"));
-        public static readonly Block Deepslate = new(new("minecraft:deepslate"));
-        public static readonly Block CobbledDeepslate = new(new("minecraft:cobbled_deepslate"));
-        public static readonly Block CobbledDeepslateStairs = new(new("minecraft:cobbled_deepslate_stairs"));
-        public static readonly Block CobbledDeepslateSlab = new(new("minecraft:cobbled_deepslate_slab"));
-        public static readonly Block CobbledDeepslateWall = new(new("minecraft:cobbled_deepslate_wall"));
-        public static readonly Block PolishedDeepslate = new(new("minecraft:polished_deepslate"));
-        public static readonly Block PolishedDeepslateStairs = new(new("minecraft:polished_deepslate_stairs"));
-        public static readonly Block PolishedDeepslateSlab = new(new("minecraft:polished_deepslate_slab"));
-        public static readonly Block PolishedDeepslateWall = new(new("minecraft:polished_deepslate_wall"));
-        public static readonly Block DeepslateTiles = new(new("minecraft:deepslate_tiles"));
-        public static readonly Block DeepslateTileStairs = new(new("minecraft:deepslate_tile_stairs"));
-        public static readonly Block DeepslateTileSlab = new(new("minecraft:deepslate_tile_slab"));
-        public static readonly Block DeepslateTileWall = new(new("minecraft:deepslate_tile_wall"));
-        public static readonly Block DeepslateBricks = new(new("minecraft:deepslate_bricks"));
-        public static readonly Block DeepslateBrickStairs = new(new("minecraft:deepslate_brick_stairs"));
-        public static readonly Block DeepslateBrickSlab = new(new("minecraft:deepslate_brick_slab"));
-        public static readonly Block DeepslateBrickWall = new(new("minecraft:deepslate_brick_wall"));
-        public static readonly Block ChiseledDeepslate = new(new("minecraft:chiseled_deepslate"));
-        public static readonly Block CrackedDeepslateBricks = new(new("minecraft:cracked_deepslate_bricks"));
-        public static readonly Block CrackedDeepslateTiles = new(new("minecraft:cracked_deepslate_tiles"));
-        public static readonly Block InfestedDeepslate = new(new("minecraft:infested_deepslate"));
-        public static readonly Block SmoothBasalt = new(new("minecraft:smooth_basalt"));
-        public static readonly Block RawIronBlock = new(new("minecraft:raw_iron_block"));
-        public static readonly Block RawCopperBlock = new(new("minecraft:raw_copper_block"));
-        public static readonly Block RawGoldBlock = new(new("minecraft:raw_gold_block"));
-        public static readonly Block PottedAzaleaBush = new(new("minecraft:potted_azalea_bush"));
-        public static readonly Block PottedFloweringAzaleaBush = new(new("minecraft:potted_flowering_azalea_bush"));
-        public static readonly Block OchreFroglight = new(new("minecraft:ochre_froglight"));
-        public static readonly Block VerdantFroglight = new(new("minecraft:verdant_froglight"));
-        public static readonly Block PearlescentFroglight = new(new("minecraft:pearlescent_froglight"));
-        public static readonly Block Frogspawn = new(new("minecraft:frogspawn"));
-        public static readonly Block ReinforcedDeepslate = new(new("minecraft:reinforced_deepslate"));
-        public static readonly Block DecoratedPot = new(new("minecraft:decorated_pot"));
-        public static readonly Block Crafter = new(new("minecraft:crafter"));
-        public static readonly Block TrialSpawner = new(new("minecraft:trial_spawner"));
-
+        public class AcaciaButton(ButtonOrientation? face = null, Direction? facing = null, bool? powered = null) : Block(new("minecraft:acacia_button"))
+        {
+            public readonly ButtonOrientation? Face = face;
+            public readonly Direction? Facing = facing;
+            public readonly bool? Powered = powered;
+            public static AcaciaButton Block => new();
+        }
+        public class AcaciaDoor(Direction? facing = null, DoorHalf? half = null, DoorHinge? hinge = null, bool? open = null, bool? powered = null) : Block(new("minecraft:acacia_door"))
+        {
+            public readonly Direction? Facing = facing;
+            public readonly DoorHalf? Half = half;
+            public readonly DoorHinge? Hinge = hinge;
+            public readonly bool? Open = open;
+            public readonly bool? Powered = powered;
+            public static AcaciaDoor Block => new();
+        }
+        public class AcaciaFence(bool? east = null, bool? north = null, bool? south = null, bool? waterlogged = null, bool? west = null) : Block(new("minecraft:acacia_fence"))
+        {
+            public readonly bool? East = east;
+            public readonly bool? North = north;
+            public readonly bool? South = south;
+            public readonly bool? Waterlogged = waterlogged;
+            public readonly bool? West = west;
+            public static AcaciaFence Block => new();
+        }
+        public class AcaciaFenceGate(Direction? facing = null, bool? in_wall = null, bool? open = null, bool? powered = null) : Block(new("minecraft:acacia_fence_gate"))
+        {
+            public readonly Direction? Facing = facing;
+            public readonly bool? In_wall = in_wall;
+            public readonly bool? Open = open;
+            public readonly bool? Powered = powered;
+            public static AcaciaFenceGate Block => new();
+        }
+        public class AcaciaHangingSign(bool? attached = null, To15? rotation = null, bool? waterlogged = null) : Block(new("minecraft:acacia_hanging_sign"))
+        {
+            public readonly bool? Attached = attached;
+            public readonly To15? Rotation = rotation;
+            public readonly bool? Waterlogged = waterlogged;
+            public static AcaciaHangingSign Block => new();
+        }
+        public class AcaciaLeaves(To7High? distance = null, bool? persistent = null, bool? waterlogged = null) : Block(new("minecraft:acacia_leaves"))
+        {
+            public readonly To7High? Distance = distance;
+            public readonly bool? Persistent = persistent;
+            public readonly bool? Waterlogged = waterlogged;
+            public static AcaciaLeaves Block => new();
+        }
+        public class AcaciaLog(Axis? axis = null) : Block(new("minecraft:acacia_log"))
+        {
+            public readonly Axis? Axis = axis;
+            public static AcaciaLog Block => new();
+        }
+        public class AcaciaPressurePlate(bool? powered = null) : Block(new("minecraft:acacia_pressure_plate"))
+        {
+            public readonly bool? Powered = powered;
+            public static AcaciaPressurePlate Block => new();
+        }
+        public class AcaciaSapling(Binary? stage = null) : Block(new("minecraft:acacia_sapling"))
+        {
+            public readonly Binary? Stage = stage;
+            public static AcaciaSapling Block => new();
+        }
+        public class AcaciaSign(To15? rotation = null, bool? waterlogged = null) : Block(new("minecraft:acacia_sign"))
+        {
+            public readonly To15? Rotation = rotation;
+            public readonly bool? Waterlogged = waterlogged;
+            public static AcaciaSign Block => new();
+        }
+        public class AcaciaSlab(SlabType? type = null, bool? waterlogged = null) : Block(new("minecraft:acacia_slab"))
+        {
+            public readonly SlabType? Type = type;
+            public readonly bool? Waterlogged = waterlogged;
+            public static AcaciaSlab Block => new();
+        }
+        public class AcaciaStairs(Direction? facing = null, StairType? half = null, StairShape? shape = null, bool? waterlogged = null) : Block(new("minecraft:acacia_stairs"))
+        {
+            public readonly Direction? Facing = facing;
+            public readonly StairType? Half = half;
+            public readonly StairShape? Shape = shape;
+            public readonly bool? Waterlogged = waterlogged;
+            public static AcaciaStairs Block => new();
+        }
+        public class AcaciaTrapdoor(Direction? facing = null, StairType? half = null, bool? open = null, bool? powered = null, bool? waterlogged = null) : Block(new("minecraft:acacia_trapdoor"))
+        {
+            public readonly Direction? Facing = facing;
+            public readonly StairType? Half = half;
+            public readonly bool? Open = open;
+            public readonly bool? Powered = powered;
+            public readonly bool? Waterlogged = waterlogged;
+            public static AcaciaTrapdoor Block => new();
+        }
+        public class AcaciaWallHangingSign(Direction? facing = null, bool? waterlogged = null) : Block(new("minecraft:acacia_wall_hanging_sign"))
+        {
+            public readonly Direction? Facing = facing;
+            public readonly bool? Waterlogged = waterlogged;
+            public static AcaciaWallHangingSign Block => new();
+        }
+        public class AcaciaWallSign(Direction? facing = null, bool? waterlogged = null) : Block(new("minecraft:acacia_wall_sign"))
+        {
+            public readonly Direction? Facing = facing;
+            public readonly bool? Waterlogged = waterlogged;
+            public static AcaciaWallSign Block => new();
+        }
+        public class AcaciaWood(Axis? axis = null) : Block(new("minecraft:acacia_wood"))
+        {
+            public readonly Axis? Axis = axis;
+            public static AcaciaWood Block => new();
+        }
+        public class ActivatorRail(bool? powered = null, StaticRailDirection? shape = null, bool? waterlogged = null) : Block(new("minecraft:activator_rail"))
+        {
+            public readonly bool? Powered = powered;
+            public readonly StaticRailDirection? Shape = shape;
+            public readonly bool? Waterlogged = waterlogged;
+            public static ActivatorRail Block => new();
+        }
+        public class AmethystCluster(OmniDirection? facing = null, bool? waterlogged = null) : Block(new("minecraft:amethyst_cluster"))
+        {
+            public readonly OmniDirection? Facing = facing;
+            public readonly bool? Waterlogged = waterlogged;
+            public static AmethystCluster Block => new();
+        }
+        public class AndesiteSlab(SlabType? type = null, bool? waterlogged = null) : Block(new("minecraft:andesite_slab"))
+        {
+            public readonly SlabType? Type = type;
+            public readonly bool? Waterlogged = waterlogged;
+            public static AndesiteSlab Block => new();
+        }
+        public class AndesiteStairs(Direction? facing = null, StairType? half = null, StairShape? shape = null, bool? waterlogged = null) : Block(new("minecraft:andesite_stairs"))
+        {
+            public readonly Direction? Facing = facing;
+            public readonly StairType? Half = half;
+            public readonly StairShape? Shape = shape;
+            public readonly bool? Waterlogged = waterlogged;
+            public static AndesiteStairs Block => new();
+        }
+        public class AndesiteWall(WallType? east = null, WallType? north = null, WallType? south = null, bool? up = null, bool? waterlogged = null, WallType? west = null) : Block(new("minecraft:andesite_wall"))
+        {
+            public readonly WallType? East = east;
+            public readonly WallType? North = north;
+            public readonly WallType? South = south;
+            public readonly bool? Up = up;
+            public readonly bool? Waterlogged = waterlogged;
+            public readonly WallType? West = west;
+            public static AndesiteWall Block => new();
+        }
+        public class Anvil(Direction? facing = null) : Block(new("minecraft:anvil"))
+        {
+            public readonly Direction? Facing = facing;
+            public static Anvil Block => new();
+        }
+        public class AttachedMelonStem(Direction? facing = null) : Block(new("minecraft:attached_melon_stem"))
+        {
+            public readonly Direction? Facing = facing;
+            public static AttachedMelonStem Block => new();
+        }
+        public class AttachedPumpkinStem(Direction? facing = null) : Block(new("minecraft:attached_pumpkin_stem"))
+        {
+            public readonly Direction? Facing = facing;
+            public static AttachedPumpkinStem Block => new();
+        }
+        public class AzaleaLeaves(To7High? distance = null, bool? persistent = null, bool? waterlogged = null) : Block(new("minecraft:azalea_leaves"))
+        {
+            public readonly To7High? Distance = distance;
+            public readonly bool? Persistent = persistent;
+            public readonly bool? Waterlogged = waterlogged;
+            public static AzaleaLeaves Block => new();
+        }
+        public class Bamboo(Binary? age = null, BambooLeaves? leaves = null, Binary? stage = null) : Block(new("minecraft:bamboo"))
+        {
+            public readonly Binary? Age = age;
+            public readonly BambooLeaves? Leaves = leaves;
+            public readonly Binary? Stage = stage;
+            public static Bamboo Block => new();
+        }
+        public class BambooBlock(Axis? axis = null) : Block(new("minecraft:bamboo_block"))
+        {
+            public readonly Axis? Axis = axis;
+            public static BambooBlock Block => new();
+        }
+        public class BambooButton(ButtonOrientation? face = null, Direction? facing = null, bool? powered = null) : Block(new("minecraft:bamboo_button"))
+        {
+            public readonly ButtonOrientation? Face = face;
+            public readonly Direction? Facing = facing;
+            public readonly bool? Powered = powered;
+            public static BambooButton Block => new();
+        }
+        public class BambooDoor(Direction? facing = null, DoorHalf? half = null, DoorHinge? hinge = null, bool? open = null, bool? powered = null) : Block(new("minecraft:bamboo_door"))
+        {
+            public readonly Direction? Facing = facing;
+            public readonly DoorHalf? Half = half;
+            public readonly DoorHinge? Hinge = hinge;
+            public readonly bool? Open = open;
+            public readonly bool? Powered = powered;
+            public static BambooDoor Block => new();
+        }
+        public class BambooFence(bool? east = null, bool? north = null, bool? south = null, bool? waterlogged = null, bool? west = null) : Block(new("minecraft:bamboo_fence"))
+        {
+            public readonly bool? East = east;
+            public readonly bool? North = north;
+            public readonly bool? South = south;
+            public readonly bool? Waterlogged = waterlogged;
+            public readonly bool? West = west;
+            public static BambooFence Block => new();
+        }
+        public class BambooFenceGate(Direction? facing = null, bool? in_wall = null, bool? open = null, bool? powered = null) : Block(new("minecraft:bamboo_fence_gate"))
+        {
+            public readonly Direction? Facing = facing;
+            public readonly bool? In_wall = in_wall;
+            public readonly bool? Open = open;
+            public readonly bool? Powered = powered;
+            public static BambooFenceGate Block => new();
+        }
+        public class BambooHangingSign(bool? attached = null, To15? rotation = null, bool? waterlogged = null) : Block(new("minecraft:bamboo_hanging_sign"))
+        {
+            public readonly bool? Attached = attached;
+            public readonly To15? Rotation = rotation;
+            public readonly bool? Waterlogged = waterlogged;
+            public static BambooHangingSign Block => new();
+        }
+        public class BambooMosaicSlab(SlabType? type = null, bool? waterlogged = null) : Block(new("minecraft:bamboo_mosaic_slab"))
+        {
+            public readonly SlabType? Type = type;
+            public readonly bool? Waterlogged = waterlogged;
+            public static BambooMosaicSlab Block => new();
+        }
+        public class BambooMosaicStairs(Direction? facing = null, StairType? half = null, StairShape? shape = null, bool? waterlogged = null) : Block(new("minecraft:bamboo_mosaic_stairs"))
+        {
+            public readonly Direction? Facing = facing;
+            public readonly StairType? Half = half;
+            public readonly StairShape? Shape = shape;
+            public readonly bool? Waterlogged = waterlogged;
+            public static BambooMosaicStairs Block => new();
+        }
+        public class BambooPressurePlate(bool? powered = null) : Block(new("minecraft:bamboo_pressure_plate"))
+        {
+            public readonly bool? Powered = powered;
+            public static BambooPressurePlate Block => new();
+        }
+        public class BambooSign(To15? rotation = null, bool? waterlogged = null) : Block(new("minecraft:bamboo_sign"))
+        {
+            public readonly To15? Rotation = rotation;
+            public readonly bool? Waterlogged = waterlogged;
+            public static BambooSign Block => new();
+        }
+        public class BambooSlab(SlabType? type = null, bool? waterlogged = null) : Block(new("minecraft:bamboo_slab"))
+        {
+            public readonly SlabType? Type = type;
+            public readonly bool? Waterlogged = waterlogged;
+            public static BambooSlab Block => new();
+        }
+        public class BambooStairs(Direction? facing = null, StairType? half = null, StairShape? shape = null, bool? waterlogged = null) : Block(new("minecraft:bamboo_stairs"))
+        {
+            public readonly Direction? Facing = facing;
+            public readonly StairType? Half = half;
+            public readonly StairShape? Shape = shape;
+            public readonly bool? Waterlogged = waterlogged;
+            public static BambooStairs Block => new();
+        }
+        public class BambooTrapdoor(Direction? facing = null, StairType? half = null, bool? open = null, bool? powered = null, bool? waterlogged = null) : Block(new("minecraft:bamboo_trapdoor"))
+        {
+            public readonly Direction? Facing = facing;
+            public readonly StairType? Half = half;
+            public readonly bool? Open = open;
+            public readonly bool? Powered = powered;
+            public readonly bool? Waterlogged = waterlogged;
+            public static BambooTrapdoor Block => new();
+        }
+        public class BambooWallHangingSign(Direction? facing = null, bool? waterlogged = null) : Block(new("minecraft:bamboo_wall_hanging_sign"))
+        {
+            public readonly Direction? Facing = facing;
+            public readonly bool? Waterlogged = waterlogged;
+            public static BambooWallHangingSign Block => new();
+        }
+        public class BambooWallSign(Direction? facing = null, bool? waterlogged = null) : Block(new("minecraft:bamboo_wall_sign"))
+        {
+            public readonly Direction? Facing = facing;
+            public readonly bool? Waterlogged = waterlogged;
+            public static BambooWallSign Block => new();
+        }
+        public class Barrel(OmniDirection? facing = null, bool? open = null) : Block(new("minecraft:barrel"))
+        {
+            public readonly OmniDirection? Facing = facing;
+            public readonly bool? Open = open;
+            public static Barrel Block => new();
+        }
+        public class Barrier(bool? waterlogged = null) : Block(new("minecraft:barrier"))
+        {
+            public readonly bool? Waterlogged = waterlogged;
+            public static Barrier Block => new();
+        }
+        public class Basalt(Axis? axis = null) : Block(new("minecraft:basalt"))
+        {
+            public readonly Axis? Axis = axis;
+            public static Basalt Block => new();
+        }
+        public class BeeNest(Direction? facing = null, To5? honey_level = null) : Block(new("minecraft:bee_nest"))
+        {
+            public readonly Direction? Facing = facing;
+            public readonly To5? Honey_level = honey_level;
+            public static BeeNest Block => new();
+        }
+        public class Beehive(Direction? facing = null, To5? honey_level = null) : Block(new("minecraft:beehive"))
+        {
+            public readonly Direction? Facing = facing;
+            public readonly To5? Honey_level = honey_level;
+            public static Beehive Block => new();
+        }
+        public class Beetroots(To3Low? age = null) : Block(new("minecraft:beetroots"))
+        {
+            public readonly To3Low? Age = age;
+            public static Beetroots Block => new();
+        }
+        public class Bell(BellType? attachment = null, Direction? facing = null, bool? powered = null) : Block(new("minecraft:bell"))
+        {
+            public readonly BellType? Attachment = attachment;
+            public readonly Direction? Facing = facing;
+            public readonly bool? Powered = powered;
+            public static Bell Block => new();
+        }
+        public class BigDripleaf(Direction? facing = null, DripleafTilt? tilt = null, bool? waterlogged = null) : Block(new("minecraft:big_dripleaf"))
+        {
+            public readonly Direction? Facing = facing;
+            public readonly DripleafTilt? Tilt = tilt;
+            public readonly bool? Waterlogged = waterlogged;
+            public static BigDripleaf Block => new();
+        }
+        public class BigDripleafStem(Direction? facing = null, bool? waterlogged = null) : Block(new("minecraft:big_dripleaf_stem"))
+        {
+            public readonly Direction? Facing = facing;
+            public readonly bool? Waterlogged = waterlogged;
+            public static BigDripleafStem Block => new();
+        }
+        public class BirchButton(ButtonOrientation? face = null, Direction? facing = null, bool? powered = null) : Block(new("minecraft:birch_button"))
+        {
+            public readonly ButtonOrientation? Face = face;
+            public readonly Direction? Facing = facing;
+            public readonly bool? Powered = powered;
+            public static BirchButton Block => new();
+        }
+        public class BirchDoor(Direction? facing = null, DoorHalf? half = null, DoorHinge? hinge = null, bool? open = null, bool? powered = null) : Block(new("minecraft:birch_door"))
+        {
+            public readonly Direction? Facing = facing;
+            public readonly DoorHalf? Half = half;
+            public readonly DoorHinge? Hinge = hinge;
+            public readonly bool? Open = open;
+            public readonly bool? Powered = powered;
+            public static BirchDoor Block => new();
+        }
+        public class BirchFence(bool? east = null, bool? north = null, bool? south = null, bool? waterlogged = null, bool? west = null) : Block(new("minecraft:birch_fence"))
+        {
+            public readonly bool? East = east;
+            public readonly bool? North = north;
+            public readonly bool? South = south;
+            public readonly bool? Waterlogged = waterlogged;
+            public readonly bool? West = west;
+            public static BirchFence Block => new();
+        }
+        public class BirchFenceGate(Direction? facing = null, bool? in_wall = null, bool? open = null, bool? powered = null) : Block(new("minecraft:birch_fence_gate"))
+        {
+            public readonly Direction? Facing = facing;
+            public readonly bool? In_wall = in_wall;
+            public readonly bool? Open = open;
+            public readonly bool? Powered = powered;
+            public static BirchFenceGate Block => new();
+        }
+        public class BirchHangingSign(bool? attached = null, To15? rotation = null, bool? waterlogged = null) : Block(new("minecraft:birch_hanging_sign"))
+        {
+            public readonly bool? Attached = attached;
+            public readonly To15? Rotation = rotation;
+            public readonly bool? Waterlogged = waterlogged;
+            public static BirchHangingSign Block => new();
+        }
+        public class BirchLeaves(To7High? distance = null, bool? persistent = null, bool? waterlogged = null) : Block(new("minecraft:birch_leaves"))
+        {
+            public readonly To7High? Distance = distance;
+            public readonly bool? Persistent = persistent;
+            public readonly bool? Waterlogged = waterlogged;
+            public static BirchLeaves Block => new();
+        }
+        public class BirchLog(Axis? axis = null) : Block(new("minecraft:birch_log"))
+        {
+            public readonly Axis? Axis = axis;
+            public static BirchLog Block => new();
+        }
+        public class BirchPressurePlate(bool? powered = null) : Block(new("minecraft:birch_pressure_plate"))
+        {
+            public readonly bool? Powered = powered;
+            public static BirchPressurePlate Block => new();
+        }
+        public class BirchSapling(Binary? stage = null) : Block(new("minecraft:birch_sapling"))
+        {
+            public readonly Binary? Stage = stage;
+            public static BirchSapling Block => new();
+        }
+        public class BirchSign(To15? rotation = null, bool? waterlogged = null) : Block(new("minecraft:birch_sign"))
+        {
+            public readonly To15? Rotation = rotation;
+            public readonly bool? Waterlogged = waterlogged;
+            public static BirchSign Block => new();
+        }
+        public class BirchSlab(SlabType? type = null, bool? waterlogged = null) : Block(new("minecraft:birch_slab"))
+        {
+            public readonly SlabType? Type = type;
+            public readonly bool? Waterlogged = waterlogged;
+            public static BirchSlab Block => new();
+        }
+        public class BirchStairs(Direction? facing = null, StairType? half = null, StairShape? shape = null, bool? waterlogged = null) : Block(new("minecraft:birch_stairs"))
+        {
+            public readonly Direction? Facing = facing;
+            public readonly StairType? Half = half;
+            public readonly StairShape? Shape = shape;
+            public readonly bool? Waterlogged = waterlogged;
+            public static BirchStairs Block => new();
+        }
+        public class BirchTrapdoor(Direction? facing = null, StairType? half = null, bool? open = null, bool? powered = null, bool? waterlogged = null) : Block(new("minecraft:birch_trapdoor"))
+        {
+            public readonly Direction? Facing = facing;
+            public readonly StairType? Half = half;
+            public readonly bool? Open = open;
+            public readonly bool? Powered = powered;
+            public readonly bool? Waterlogged = waterlogged;
+            public static BirchTrapdoor Block => new();
+        }
+        public class BirchWallHangingSign(Direction? facing = null, bool? waterlogged = null) : Block(new("minecraft:birch_wall_hanging_sign"))
+        {
+            public readonly Direction? Facing = facing;
+            public readonly bool? Waterlogged = waterlogged;
+            public static BirchWallHangingSign Block => new();
+        }
+        public class BirchWallSign(Direction? facing = null, bool? waterlogged = null) : Block(new("minecraft:birch_wall_sign"))
+        {
+            public readonly Direction? Facing = facing;
+            public readonly bool? Waterlogged = waterlogged;
+            public static BirchWallSign Block => new();
+        }
+        public class BirchWood(Axis? axis = null) : Block(new("minecraft:birch_wood"))
+        {
+            public readonly Axis? Axis = axis;
+            public static BirchWood Block => new();
+        }
+        public class BlackBanner(To15? rotation = null) : Block(new("minecraft:black_banner"))
+        {
+            public readonly To15? Rotation = rotation;
+            public static BlackBanner Block => new();
+        }
+        public class BlackBed(Direction? facing = null, bool? occupied = null, BedPart? part = null) : Block(new("minecraft:black_bed"))
+        {
+            public readonly Direction? Facing = facing;
+            public readonly bool? Occupied = occupied;
+            public readonly BedPart? Part = part;
+            public static BlackBed Block => new();
+        }
+        public class BlackCandle(To4High? candles = null, bool? lit = null, bool? waterlogged = null) : Block(new("minecraft:black_candle"))
+        {
+            public readonly To4High? Candles = candles;
+            public readonly bool? Lit = lit;
+            public readonly bool? Waterlogged = waterlogged;
+            public static BlackCandle Block => new();
+        }
+        public class BlackCandleCake(bool? lit = null) : Block(new("minecraft:black_candle_cake"))
+        {
+            public readonly bool? Lit = lit;
+            public static BlackCandleCake Block => new();
+        }
+        public class BlackGlazedTerracotta(Direction? facing = null) : Block(new("minecraft:black_glazed_terracotta"))
+        {
+            public readonly Direction? Facing = facing;
+            public static BlackGlazedTerracotta Block => new();
+        }
+        public class BlackShulkerBox(OmniDirection? facing = null) : Block(new("minecraft:black_shulker_box"))
+        {
+            public readonly OmniDirection? Facing = facing;
+            public static BlackShulkerBox Block => new();
+        }
+        public class BlackStainedGlassPane(bool? east = null, bool? north = null, bool? south = null, bool? waterlogged = null, bool? west = null) : Block(new("minecraft:black_stained_glass_pane"))
+        {
+            public readonly bool? East = east;
+            public readonly bool? North = north;
+            public readonly bool? South = south;
+            public readonly bool? Waterlogged = waterlogged;
+            public readonly bool? West = west;
+            public static BlackStainedGlassPane Block => new();
+        }
+        public class BlackWallBanner(Direction? facing = null) : Block(new("minecraft:black_wall_banner"))
+        {
+            public readonly Direction? Facing = facing;
+            public static BlackWallBanner Block => new();
+        }
+        public class BlackstoneSlab(SlabType? type = null, bool? waterlogged = null) : Block(new("minecraft:blackstone_slab"))
+        {
+            public readonly SlabType? Type = type;
+            public readonly bool? Waterlogged = waterlogged;
+            public static BlackstoneSlab Block => new();
+        }
+        public class BlackstoneStairs(Direction? facing = null, StairType? half = null, StairShape? shape = null, bool? waterlogged = null) : Block(new("minecraft:blackstone_stairs"))
+        {
+            public readonly Direction? Facing = facing;
+            public readonly StairType? Half = half;
+            public readonly StairShape? Shape = shape;
+            public readonly bool? Waterlogged = waterlogged;
+            public static BlackstoneStairs Block => new();
+        }
+        public class BlackstoneWall(WallType? east = null, WallType? north = null, WallType? south = null, bool? up = null, bool? waterlogged = null, WallType? west = null) : Block(new("minecraft:blackstone_wall"))
+        {
+            public readonly WallType? East = east;
+            public readonly WallType? North = north;
+            public readonly WallType? South = south;
+            public readonly bool? Up = up;
+            public readonly bool? Waterlogged = waterlogged;
+            public readonly WallType? West = west;
+            public static BlackstoneWall Block => new();
+        }
+        public class BlastFurnace(Direction? facing = null, bool? lit = null) : Block(new("minecraft:blast_furnace"))
+        {
+            public readonly Direction? Facing = facing;
+            public readonly bool? Lit = lit;
+            public static BlastFurnace Block => new();
+        }
+        public class BlueBanner(To15? rotation = null) : Block(new("minecraft:blue_banner"))
+        {
+            public readonly To15? Rotation = rotation;
+            public static BlueBanner Block => new();
+        }
+        public class BlueBed(Direction? facing = null, bool? occupied = null, BedPart? part = null) : Block(new("minecraft:blue_bed"))
+        {
+            public readonly Direction? Facing = facing;
+            public readonly bool? Occupied = occupied;
+            public readonly BedPart? Part = part;
+            public static BlueBed Block => new();
+        }
+        public class BlueCandle(To4High? candles = null, bool? lit = null, bool? waterlogged = null) : Block(new("minecraft:blue_candle"))
+        {
+            public readonly To4High? Candles = candles;
+            public readonly bool? Lit = lit;
+            public readonly bool? Waterlogged = waterlogged;
+            public static BlueCandle Block => new();
+        }
+        public class BlueCandleCake(bool? lit = null) : Block(new("minecraft:blue_candle_cake"))
+        {
+            public readonly bool? Lit = lit;
+            public static BlueCandleCake Block => new();
+        }
+        public class BlueGlazedTerracotta(Direction? facing = null) : Block(new("minecraft:blue_glazed_terracotta"))
+        {
+            public readonly Direction? Facing = facing;
+            public static BlueGlazedTerracotta Block => new();
+        }
+        public class BlueShulkerBox(OmniDirection? facing = null) : Block(new("minecraft:blue_shulker_box"))
+        {
+            public readonly OmniDirection? Facing = facing;
+            public static BlueShulkerBox Block => new();
+        }
+        public class BlueStainedGlassPane(bool? east = null, bool? north = null, bool? south = null, bool? waterlogged = null, bool? west = null) : Block(new("minecraft:blue_stained_glass_pane"))
+        {
+            public readonly bool? East = east;
+            public readonly bool? North = north;
+            public readonly bool? South = south;
+            public readonly bool? Waterlogged = waterlogged;
+            public readonly bool? West = west;
+            public static BlueStainedGlassPane Block => new();
+        }
+        public class BlueWallBanner(Direction? facing = null) : Block(new("minecraft:blue_wall_banner"))
+        {
+            public readonly Direction? Facing = facing;
+            public static BlueWallBanner Block => new();
+        }
+        public class BoneBlock(Axis? axis = null) : Block(new("minecraft:bone_block"))
+        {
+            public readonly Axis? Axis = axis;
+            public static BoneBlock Block => new();
+        }
+        public class BrainCoral(bool? waterlogged = null) : Block(new("minecraft:brain_coral"))
+        {
+            public readonly bool? Waterlogged = waterlogged;
+            public static BrainCoral Block => new();
+        }
+        public class BrainCoralFan(bool? waterlogged = null) : Block(new("minecraft:brain_coral_fan"))
+        {
+            public readonly bool? Waterlogged = waterlogged;
+            public static BrainCoralFan Block => new();
+        }
+        public class BrainCoralWallFan(Direction? facing = null, bool? waterlogged = null) : Block(new("minecraft:brain_coral_wall_fan"))
+        {
+            public readonly Direction? Facing = facing;
+            public readonly bool? Waterlogged = waterlogged;
+            public static BrainCoralWallFan Block => new();
+        }
+        public class BrewingStand(bool? has_bottle_0 = null, bool? has_bottle_1 = null, bool? has_bottle_2 = null) : Block(new("minecraft:brewing_stand"))
+        {
+            public readonly bool? Has_bottle_0 = has_bottle_0;
+            public readonly bool? Has_bottle_1 = has_bottle_1;
+            public readonly bool? Has_bottle_2 = has_bottle_2;
+            public static BrewingStand Block => new();
+        }
+        public class BrickSlab(SlabType? type = null, bool? waterlogged = null) : Block(new("minecraft:brick_slab"))
+        {
+            public readonly SlabType? Type = type;
+            public readonly bool? Waterlogged = waterlogged;
+            public static BrickSlab Block => new();
+        }
+        public class BrickStairs(Direction? facing = null, StairType? half = null, StairShape? shape = null, bool? waterlogged = null) : Block(new("minecraft:brick_stairs"))
+        {
+            public readonly Direction? Facing = facing;
+            public readonly StairType? Half = half;
+            public readonly StairShape? Shape = shape;
+            public readonly bool? Waterlogged = waterlogged;
+            public static BrickStairs Block => new();
+        }
+        public class BrickWall(WallType? east = null, WallType? north = null, WallType? south = null, bool? up = null, bool? waterlogged = null, WallType? west = null) : Block(new("minecraft:brick_wall"))
+        {
+            public readonly WallType? East = east;
+            public readonly WallType? North = north;
+            public readonly WallType? South = south;
+            public readonly bool? Up = up;
+            public readonly bool? Waterlogged = waterlogged;
+            public readonly WallType? West = west;
+            public static BrickWall Block => new();
+        }
+        public class BrownBanner(To15? rotation = null) : Block(new("minecraft:brown_banner"))
+        {
+            public readonly To15? Rotation = rotation;
+            public static BrownBanner Block => new();
+        }
+        public class BrownBed(Direction? facing = null, bool? occupied = null, BedPart? part = null) : Block(new("minecraft:brown_bed"))
+        {
+            public readonly Direction? Facing = facing;
+            public readonly bool? Occupied = occupied;
+            public readonly BedPart? Part = part;
+            public static BrownBed Block => new();
+        }
+        public class BrownCandle(To4High? candles = null, bool? lit = null, bool? waterlogged = null) : Block(new("minecraft:brown_candle"))
+        {
+            public readonly To4High? Candles = candles;
+            public readonly bool? Lit = lit;
+            public readonly bool? Waterlogged = waterlogged;
+            public static BrownCandle Block => new();
+        }
+        public class BrownCandleCake(bool? lit = null) : Block(new("minecraft:brown_candle_cake"))
+        {
+            public readonly bool? Lit = lit;
+            public static BrownCandleCake Block => new();
+        }
+        public class BrownGlazedTerracotta(Direction? facing = null) : Block(new("minecraft:brown_glazed_terracotta"))
+        {
+            public readonly Direction? Facing = facing;
+            public static BrownGlazedTerracotta Block => new();
+        }
+        public class BrownMushroomBlock(bool? down = null, bool? east = null, bool? north = null, bool? south = null, bool? up = null, bool? west = null) : Block(new("minecraft:brown_mushroom_block"))
+        {
+            public readonly bool? Down = down;
+            public readonly bool? East = east;
+            public readonly bool? North = north;
+            public readonly bool? South = south;
+            public readonly bool? Up = up;
+            public readonly bool? West = west;
+            public static BrownMushroomBlock Block => new();
+        }
+        public class BrownShulkerBox(OmniDirection? facing = null) : Block(new("minecraft:brown_shulker_box"))
+        {
+            public readonly OmniDirection? Facing = facing;
+            public static BrownShulkerBox Block => new();
+        }
+        public class BrownStainedGlassPane(bool? east = null, bool? north = null, bool? south = null, bool? waterlogged = null, bool? west = null) : Block(new("minecraft:brown_stained_glass_pane"))
+        {
+            public readonly bool? East = east;
+            public readonly bool? North = north;
+            public readonly bool? South = south;
+            public readonly bool? Waterlogged = waterlogged;
+            public readonly bool? West = west;
+            public static BrownStainedGlassPane Block => new();
+        }
+        public class BrownWallBanner(Direction? facing = null) : Block(new("minecraft:brown_wall_banner"))
+        {
+            public readonly Direction? Facing = facing;
+            public static BrownWallBanner Block => new();
+        }
+        public class BubbleColumn(bool? drag = null) : Block(new("minecraft:bubble_column"))
+        {
+            public readonly bool? Drag = drag;
+            public static BubbleColumn Block => new();
+        }
+        public class BubbleCoral(bool? waterlogged = null) : Block(new("minecraft:bubble_coral"))
+        {
+            public readonly bool? Waterlogged = waterlogged;
+            public static BubbleCoral Block => new();
+        }
+        public class BubbleCoralFan(bool? waterlogged = null) : Block(new("minecraft:bubble_coral_fan"))
+        {
+            public readonly bool? Waterlogged = waterlogged;
+            public static BubbleCoralFan Block => new();
+        }
+        public class BubbleCoralWallFan(Direction? facing = null, bool? waterlogged = null) : Block(new("minecraft:bubble_coral_wall_fan"))
+        {
+            public readonly Direction? Facing = facing;
+            public readonly bool? Waterlogged = waterlogged;
+            public static BubbleCoralWallFan Block => new();
+        }
+        public class Cactus(To15? age = null) : Block(new("minecraft:cactus"))
+        {
+            public readonly To15? Age = age;
+            public static Cactus Block => new();
+        }
+        public class Cake(To6? bites = null) : Block(new("minecraft:cake"))
+        {
+            public readonly To6? Bites = bites;
+            public static Cake Block => new();
+        }
+        public class CalibratedSculkSensor(Direction? facing = null, To15? power = null, SculkSensorPhase? sculk_sensor_phase = null, bool? waterlogged = null) : Block(new("minecraft:calibrated_sculk_sensor"))
+        {
+            public readonly Direction? Facing = facing;
+            public readonly To15? Power = power;
+            public readonly SculkSensorPhase? Sculk_sensor_phase = sculk_sensor_phase;
+            public readonly bool? Waterlogged = waterlogged;
+            public static CalibratedSculkSensor Block => new();
+        }
+        public class Campfire(Direction? facing = null, bool? lit = null, bool? signal_fire = null, bool? waterlogged = null) : Block(new("minecraft:campfire"))
+        {
+            public readonly Direction? Facing = facing;
+            public readonly bool? Lit = lit;
+            public readonly bool? Signal_fire = signal_fire;
+            public readonly bool? Waterlogged = waterlogged;
+            public static Campfire Block => new();
+        }
+        public class Candle(To4High? candles = null, bool? lit = null, bool? waterlogged = null) : Block(new("minecraft:candle"))
+        {
+            public readonly To4High? Candles = candles;
+            public readonly bool? Lit = lit;
+            public readonly bool? Waterlogged = waterlogged;
+            public static Candle Block => new();
+        }
+        public class CandleCake(bool? lit = null) : Block(new("minecraft:candle_cake"))
+        {
+            public readonly bool? Lit = lit;
+            public static CandleCake Block => new();
+        }
+        public class Carrots(To7Low? age = null) : Block(new("minecraft:carrots"))
+        {
+            public readonly To7Low? Age = age;
+            public static Carrots Block => new();
+        }
+        public class CarvedPumpkin(Direction? facing = null) : Block(new("minecraft:carved_pumpkin"))
+        {
+            public readonly Direction? Facing = facing;
+            public static CarvedPumpkin Block => new();
+        }
+        public class CaveVines(To25? age = null, bool? berries = null) : Block(new("minecraft:cave_vines"))
+        {
+            public readonly To25? Age = age;
+            public readonly bool? Berries = berries;
+            public static CaveVines Block => new();
+        }
+        public class CaveVinesPlant(bool? berries = null) : Block(new("minecraft:cave_vines_plant"))
+        {
+            public readonly bool? Berries = berries;
+            public static CaveVinesPlant Block => new();
+        }
+        public class Chain(Axis? axis = null, bool? waterlogged = null) : Block(new("minecraft:chain"))
+        {
+            public readonly Axis? Axis = axis;
+            public readonly bool? Waterlogged = waterlogged;
+            public static Chain Block => new();
+        }
+        public class ChainCommandBlock(bool? conditional = null, OmniDirection? facing = null) : Block(new("minecraft:chain_command_block"))
+        {
+            public readonly bool? Conditional = conditional;
+            public readonly OmniDirection? Facing = facing;
+            public static ChainCommandBlock Block => new();
+        }
+        public class CherryButton(ButtonOrientation? face = null, Direction? facing = null, bool? powered = null) : Block(new("minecraft:cherry_button"))
+        {
+            public readonly ButtonOrientation? Face = face;
+            public readonly Direction? Facing = facing;
+            public readonly bool? Powered = powered;
+            public static CherryButton Block => new();
+        }
+        public class CherryDoor(Direction? facing = null, DoorHalf? half = null, DoorHinge? hinge = null, bool? open = null, bool? powered = null) : Block(new("minecraft:cherry_door"))
+        {
+            public readonly Direction? Facing = facing;
+            public readonly DoorHalf? Half = half;
+            public readonly DoorHinge? Hinge = hinge;
+            public readonly bool? Open = open;
+            public readonly bool? Powered = powered;
+            public static CherryDoor Block => new();
+        }
+        public class CherryFence(bool? east = null, bool? north = null, bool? south = null, bool? waterlogged = null, bool? west = null) : Block(new("minecraft:cherry_fence"))
+        {
+            public readonly bool? East = east;
+            public readonly bool? North = north;
+            public readonly bool? South = south;
+            public readonly bool? Waterlogged = waterlogged;
+            public readonly bool? West = west;
+            public static CherryFence Block => new();
+        }
+        public class CherryFenceGate(Direction? facing = null, bool? in_wall = null, bool? open = null, bool? powered = null) : Block(new("minecraft:cherry_fence_gate"))
+        {
+            public readonly Direction? Facing = facing;
+            public readonly bool? In_wall = in_wall;
+            public readonly bool? Open = open;
+            public readonly bool? Powered = powered;
+            public static CherryFenceGate Block => new();
+        }
+        public class CherryHangingSign(bool? attached = null, To15? rotation = null, bool? waterlogged = null) : Block(new("minecraft:cherry_hanging_sign"))
+        {
+            public readonly bool? Attached = attached;
+            public readonly To15? Rotation = rotation;
+            public readonly bool? Waterlogged = waterlogged;
+            public static CherryHangingSign Block => new();
+        }
+        public class CherryLeaves(To7High? distance = null, bool? persistent = null, bool? waterlogged = null) : Block(new("minecraft:cherry_leaves"))
+        {
+            public readonly To7High? Distance = distance;
+            public readonly bool? Persistent = persistent;
+            public readonly bool? Waterlogged = waterlogged;
+            public static CherryLeaves Block => new();
+        }
+        public class CherryLog(Axis? axis = null) : Block(new("minecraft:cherry_log"))
+        {
+            public readonly Axis? Axis = axis;
+            public static CherryLog Block => new();
+        }
+        public class CherryPressurePlate(bool? powered = null) : Block(new("minecraft:cherry_pressure_plate"))
+        {
+            public readonly bool? Powered = powered;
+            public static CherryPressurePlate Block => new();
+        }
+        public class CherrySapling(Binary? stage = null) : Block(new("minecraft:cherry_sapling"))
+        {
+            public readonly Binary? Stage = stage;
+            public static CherrySapling Block => new();
+        }
+        public class CherrySign(To15? rotation = null, bool? waterlogged = null) : Block(new("minecraft:cherry_sign"))
+        {
+            public readonly To15? Rotation = rotation;
+            public readonly bool? Waterlogged = waterlogged;
+            public static CherrySign Block => new();
+        }
+        public class CherrySlab(SlabType? type = null, bool? waterlogged = null) : Block(new("minecraft:cherry_slab"))
+        {
+            public readonly SlabType? Type = type;
+            public readonly bool? Waterlogged = waterlogged;
+            public static CherrySlab Block => new();
+        }
+        public class CherryStairs(Direction? facing = null, StairType? half = null, StairShape? shape = null, bool? waterlogged = null) : Block(new("minecraft:cherry_stairs"))
+        {
+            public readonly Direction? Facing = facing;
+            public readonly StairType? Half = half;
+            public readonly StairShape? Shape = shape;
+            public readonly bool? Waterlogged = waterlogged;
+            public static CherryStairs Block => new();
+        }
+        public class CherryTrapdoor(Direction? facing = null, StairType? half = null, bool? open = null, bool? powered = null, bool? waterlogged = null) : Block(new("minecraft:cherry_trapdoor"))
+        {
+            public readonly Direction? Facing = facing;
+            public readonly StairType? Half = half;
+            public readonly bool? Open = open;
+            public readonly bool? Powered = powered;
+            public readonly bool? Waterlogged = waterlogged;
+            public static CherryTrapdoor Block => new();
+        }
+        public class CherryWallHangingSign(Direction? facing = null, bool? waterlogged = null) : Block(new("minecraft:cherry_wall_hanging_sign"))
+        {
+            public readonly Direction? Facing = facing;
+            public readonly bool? Waterlogged = waterlogged;
+            public static CherryWallHangingSign Block => new();
+        }
+        public class CherryWallSign(Direction? facing = null, bool? waterlogged = null) : Block(new("minecraft:cherry_wall_sign"))
+        {
+            public readonly Direction? Facing = facing;
+            public readonly bool? Waterlogged = waterlogged;
+            public static CherryWallSign Block => new();
+        }
+        public class CherryWood(Axis? axis = null) : Block(new("minecraft:cherry_wood"))
+        {
+            public readonly Axis? Axis = axis;
+            public static CherryWood Block => new();
+        }
+        public class Chest(ChestType? type = null, Direction? facing = null, bool? waterlogged = null) : Block(new("minecraft:chest"))
+        {
+            public readonly ChestType? Type = type;
+            public readonly Direction? Facing = facing;
+            public readonly bool? Waterlogged = waterlogged;
+            public static Chest Block => new();
+        }
+        public class ChippedAnvil(Direction? facing = null) : Block(new("minecraft:chipped_anvil"))
+        {
+            public readonly Direction? Facing = facing;
+            public static ChippedAnvil Block => new();
+        }
+        public class ChiseledBookshelf(Direction? facing = null, bool? slot_0_occupied = null, bool? slot_1_occupied = null, bool? slot_2_occupied = null, bool? slot_3_occupied = null, bool? slot_4_occupied = null, bool? slot_5_occupied = null) : Block(new("minecraft:chiseled_bookshelf"))
+        {
+            public readonly Direction? Facing = facing;
+            public readonly bool? Slot_0_occupied = slot_0_occupied;
+            public readonly bool? Slot_1_occupied = slot_1_occupied;
+            public readonly bool? Slot_2_occupied = slot_2_occupied;
+            public readonly bool? Slot_3_occupied = slot_3_occupied;
+            public readonly bool? Slot_4_occupied = slot_4_occupied;
+            public readonly bool? Slot_5_occupied = slot_5_occupied;
+            public static ChiseledBookshelf Block => new();
+        }
+        public class ChorusFlower(To5? age = null) : Block(new("minecraft:chorus_flower"))
+        {
+            public readonly To5? Age = age;
+            public static ChorusFlower Block => new();
+        }
+        public class ChorusPlant(bool? down = null, bool? east = null, bool? north = null, bool? south = null, bool? up = null, bool? west = null) : Block(new("minecraft:chorus_plant"))
+        {
+            public readonly bool? Down = down;
+            public readonly bool? East = east;
+            public readonly bool? North = north;
+            public readonly bool? South = south;
+            public readonly bool? Up = up;
+            public readonly bool? West = west;
+            public static ChorusPlant Block => new();
+        }
+        public class CobbledDeepslateSlab(SlabType? type = null, bool? waterlogged = null) : Block(new("minecraft:cobbled_deepslate_slab"))
+        {
+            public readonly SlabType? Type = type;
+            public readonly bool? Waterlogged = waterlogged;
+            public static CobbledDeepslateSlab Block => new();
+        }
+        public class CobbledDeepslateStairs(Direction? facing = null, StairType? half = null, StairShape? shape = null, bool? waterlogged = null) : Block(new("minecraft:cobbled_deepslate_stairs"))
+        {
+            public readonly Direction? Facing = facing;
+            public readonly StairType? Half = half;
+            public readonly StairShape? Shape = shape;
+            public readonly bool? Waterlogged = waterlogged;
+            public static CobbledDeepslateStairs Block => new();
+        }
+        public class CobbledDeepslateWall(WallType? east = null, WallType? north = null, WallType? south = null, bool? up = null, bool? waterlogged = null, WallType? west = null) : Block(new("minecraft:cobbled_deepslate_wall"))
+        {
+            public readonly WallType? East = east;
+            public readonly WallType? North = north;
+            public readonly WallType? South = south;
+            public readonly bool? Up = up;
+            public readonly bool? Waterlogged = waterlogged;
+            public readonly WallType? West = west;
+            public static CobbledDeepslateWall Block => new();
+        }
+        public class CobblestoneSlab(SlabType? type = null, bool? waterlogged = null) : Block(new("minecraft:cobblestone_slab"))
+        {
+            public readonly SlabType? Type = type;
+            public readonly bool? Waterlogged = waterlogged;
+            public static CobblestoneSlab Block => new();
+        }
+        public class CobblestoneStairs(Direction? facing = null, StairType? half = null, StairShape? shape = null, bool? waterlogged = null) : Block(new("minecraft:cobblestone_stairs"))
+        {
+            public readonly Direction? Facing = facing;
+            public readonly StairType? Half = half;
+            public readonly StairShape? Shape = shape;
+            public readonly bool? Waterlogged = waterlogged;
+            public static CobblestoneStairs Block => new();
+        }
+        public class CobblestoneWall(WallType? east = null, WallType? north = null, WallType? south = null, bool? up = null, bool? waterlogged = null, WallType? west = null) : Block(new("minecraft:cobblestone_wall"))
+        {
+            public readonly WallType? East = east;
+            public readonly WallType? North = north;
+            public readonly WallType? South = south;
+            public readonly bool? Up = up;
+            public readonly bool? Waterlogged = waterlogged;
+            public readonly WallType? West = west;
+            public static CobblestoneWall Block => new();
+        }
+        public class Cocoa(To2? age = null, Direction? facing = null) : Block(new("minecraft:cocoa"))
+        {
+            public readonly To2? Age = age;
+            public readonly Direction? Facing = facing;
+            public static Cocoa Block => new();
+        }
+        public class CommandBlock(bool? conditional = null, OmniDirection? facing = null) : Block(new("minecraft:command_block"))
+        {
+            public readonly bool? Conditional = conditional;
+            public readonly OmniDirection? Facing = facing;
+            public static CommandBlock Block => new();
+        }
+        public class Comparator(Direction? facing = null, ComparatorType? mode = null, bool? powered = null) : Block(new("minecraft:comparator"))
+        {
+            public readonly Direction? Facing = facing;
+            public readonly ComparatorType? Mode = mode;
+            public readonly bool? Powered = powered;
+            public static Comparator Block => new();
+        }
+        public class Composter(To8Low? level = null) : Block(new("minecraft:composter"))
+        {
+            public readonly To8Low? Level = level;
+            public static Composter Block => new();
+        }
+        public class Conduit(bool? waterlogged = null) : Block(new("minecraft:conduit"))
+        {
+            public readonly bool? Waterlogged = waterlogged;
+            public static Conduit Block => new();
+        }
+        public class CopperBulb(bool? lit = null, bool? powered = null) : Block(new("minecraft:copper_bulb"))
+        {
+            public readonly bool? Lit = lit;
+            public readonly bool? Powered = powered;
+            public static CopperBulb Block => new();
+        }
+        public class CopperDoor(Direction? facing = null, DoorHalf? half = null, DoorHinge? hinge = null, bool? open = null, bool? powered = null) : Block(new("minecraft:copper_door"))
+        {
+            public readonly Direction? Facing = facing;
+            public readonly DoorHalf? Half = half;
+            public readonly DoorHinge? Hinge = hinge;
+            public readonly bool? Open = open;
+            public readonly bool? Powered = powered;
+            public static CopperDoor Block => new();
+        }
+        public class CopperGrate(bool? waterlogged = null) : Block(new("minecraft:copper_grate"))
+        {
+            public readonly bool? Waterlogged = waterlogged;
+            public static CopperGrate Block => new();
+        }
+        public class CopperTrapdoor(Direction? facing = null, StairType? half = null, bool? open = null, bool? powered = null, bool? waterlogged = null) : Block(new("minecraft:copper_trapdoor"))
+        {
+            public readonly Direction? Facing = facing;
+            public readonly StairType? Half = half;
+            public readonly bool? Open = open;
+            public readonly bool? Powered = powered;
+            public readonly bool? Waterlogged = waterlogged;
+            public static CopperTrapdoor Block => new();
+        }
+        public class Crafter(bool? crafting = null, ManyOrientation? orientation = null, bool? triggered = null) : Block(new("minecraft:crafter"))
+        {
+            public readonly bool? Crafting = crafting;
+            public readonly ManyOrientation? Orientation = orientation;
+            public readonly bool? Triggered = triggered;
+            public static Crafter Block => new();
+        }
+        public class CreeperHead(bool? powered = null, To15? rotation = null) : Block(new("minecraft:creeper_head"))
+        {
+            public readonly bool? Powered = powered;
+            public readonly To15? Rotation = rotation;
+            public static CreeperHead Block => new();
+        }
+        public class CreeperWallHead(Direction? facing = null, bool? powered = null) : Block(new("minecraft:creeper_wall_head"))
+        {
+            public readonly Direction? Facing = facing;
+            public readonly bool? Powered = powered;
+            public static CreeperWallHead Block => new();
+        }
+        public class CrimsonButton(ButtonOrientation? face = null, Direction? facing = null, bool? powered = null) : Block(new("minecraft:crimson_button"))
+        {
+            public readonly ButtonOrientation? Face = face;
+            public readonly Direction? Facing = facing;
+            public readonly bool? Powered = powered;
+            public static CrimsonButton Block => new();
+        }
+        public class CrimsonDoor(Direction? facing = null, DoorHalf? half = null, DoorHinge? hinge = null, bool? open = null, bool? powered = null) : Block(new("minecraft:crimson_door"))
+        {
+            public readonly Direction? Facing = facing;
+            public readonly DoorHalf? Half = half;
+            public readonly DoorHinge? Hinge = hinge;
+            public readonly bool? Open = open;
+            public readonly bool? Powered = powered;
+            public static CrimsonDoor Block => new();
+        }
+        public class CrimsonFence(bool? east = null, bool? north = null, bool? south = null, bool? waterlogged = null, bool? west = null) : Block(new("minecraft:crimson_fence"))
+        {
+            public readonly bool? East = east;
+            public readonly bool? North = north;
+            public readonly bool? South = south;
+            public readonly bool? Waterlogged = waterlogged;
+            public readonly bool? West = west;
+            public static CrimsonFence Block => new();
+        }
+        public class CrimsonFenceGate(Direction? facing = null, bool? in_wall = null, bool? open = null, bool? powered = null) : Block(new("minecraft:crimson_fence_gate"))
+        {
+            public readonly Direction? Facing = facing;
+            public readonly bool? In_wall = in_wall;
+            public readonly bool? Open = open;
+            public readonly bool? Powered = powered;
+            public static CrimsonFenceGate Block => new();
+        }
+        public class CrimsonHangingSign(bool? attached = null, To15? rotation = null, bool? waterlogged = null) : Block(new("minecraft:crimson_hanging_sign"))
+        {
+            public readonly bool? Attached = attached;
+            public readonly To15? Rotation = rotation;
+            public readonly bool? Waterlogged = waterlogged;
+            public static CrimsonHangingSign Block => new();
+        }
+        public class CrimsonHyphae(Axis? axis = null) : Block(new("minecraft:crimson_hyphae"))
+        {
+            public readonly Axis? Axis = axis;
+            public static CrimsonHyphae Block => new();
+        }
+        public class CrimsonPressurePlate(bool? powered = null) : Block(new("minecraft:crimson_pressure_plate"))
+        {
+            public readonly bool? Powered = powered;
+            public static CrimsonPressurePlate Block => new();
+        }
+        public class CrimsonSign(To15? rotation = null, bool? waterlogged = null) : Block(new("minecraft:crimson_sign"))
+        {
+            public readonly To15? Rotation = rotation;
+            public readonly bool? Waterlogged = waterlogged;
+            public static CrimsonSign Block => new();
+        }
+        public class CrimsonSlab(SlabType? type = null, bool? waterlogged = null) : Block(new("minecraft:crimson_slab"))
+        {
+            public readonly SlabType? Type = type;
+            public readonly bool? Waterlogged = waterlogged;
+            public static CrimsonSlab Block => new();
+        }
+        public class CrimsonStairs(Direction? facing = null, StairType? half = null, StairShape? shape = null, bool? waterlogged = null) : Block(new("minecraft:crimson_stairs"))
+        {
+            public readonly Direction? Facing = facing;
+            public readonly StairType? Half = half;
+            public readonly StairShape? Shape = shape;
+            public readonly bool? Waterlogged = waterlogged;
+            public static CrimsonStairs Block => new();
+        }
+        public class CrimsonStem(Axis? axis = null) : Block(new("minecraft:crimson_stem"))
+        {
+            public readonly Axis? Axis = axis;
+            public static CrimsonStem Block => new();
+        }
+        public class CrimsonTrapdoor(Direction? facing = null, StairType? half = null, bool? open = null, bool? powered = null, bool? waterlogged = null) : Block(new("minecraft:crimson_trapdoor"))
+        {
+            public readonly Direction? Facing = facing;
+            public readonly StairType? Half = half;
+            public readonly bool? Open = open;
+            public readonly bool? Powered = powered;
+            public readonly bool? Waterlogged = waterlogged;
+            public static CrimsonTrapdoor Block => new();
+        }
+        public class CrimsonWallHangingSign(Direction? facing = null, bool? waterlogged = null) : Block(new("minecraft:crimson_wall_hanging_sign"))
+        {
+            public readonly Direction? Facing = facing;
+            public readonly bool? Waterlogged = waterlogged;
+            public static CrimsonWallHangingSign Block => new();
+        }
+        public class CrimsonWallSign(Direction? facing = null, bool? waterlogged = null) : Block(new("minecraft:crimson_wall_sign"))
+        {
+            public readonly Direction? Facing = facing;
+            public readonly bool? Waterlogged = waterlogged;
+            public static CrimsonWallSign Block => new();
+        }
+        public class CutCopperSlab(SlabType? type = null, bool? waterlogged = null) : Block(new("minecraft:cut_copper_slab"))
+        {
+            public readonly SlabType? Type = type;
+            public readonly bool? Waterlogged = waterlogged;
+            public static CutCopperSlab Block => new();
+        }
+        public class CutCopperStairs(Direction? facing = null, StairType? half = null, StairShape? shape = null, bool? waterlogged = null) : Block(new("minecraft:cut_copper_stairs"))
+        {
+            public readonly Direction? Facing = facing;
+            public readonly StairType? Half = half;
+            public readonly StairShape? Shape = shape;
+            public readonly bool? Waterlogged = waterlogged;
+            public static CutCopperStairs Block => new();
+        }
+        public class CutRedSandstoneSlab(SlabType? type = null, bool? waterlogged = null) : Block(new("minecraft:cut_red_sandstone_slab"))
+        {
+            public readonly SlabType? Type = type;
+            public readonly bool? Waterlogged = waterlogged;
+            public static CutRedSandstoneSlab Block => new();
+        }
+        public class CutSandstoneSlab(SlabType? type = null, bool? waterlogged = null) : Block(new("minecraft:cut_sandstone_slab"))
+        {
+            public readonly SlabType? Type = type;
+            public readonly bool? Waterlogged = waterlogged;
+            public static CutSandstoneSlab Block => new();
+        }
+        public class CyanBanner(To15? rotation = null) : Block(new("minecraft:cyan_banner"))
+        {
+            public readonly To15? Rotation = rotation;
+            public static CyanBanner Block => new();
+        }
+        public class CyanBed(Direction? facing = null, bool? occupied = null, BedPart? part = null) : Block(new("minecraft:cyan_bed"))
+        {
+            public readonly Direction? Facing = facing;
+            public readonly bool? Occupied = occupied;
+            public readonly BedPart? Part = part;
+            public static CyanBed Block => new();
+        }
+        public class CyanCandle(To4High? candles = null, bool? lit = null, bool? waterlogged = null) : Block(new("minecraft:cyan_candle"))
+        {
+            public readonly To4High? Candles = candles;
+            public readonly bool? Lit = lit;
+            public readonly bool? Waterlogged = waterlogged;
+            public static CyanCandle Block => new();
+        }
+        public class CyanCandleCake(bool? lit = null) : Block(new("minecraft:cyan_candle_cake"))
+        {
+            public readonly bool? Lit = lit;
+            public static CyanCandleCake Block => new();
+        }
+        public class CyanGlazedTerracotta(Direction? facing = null) : Block(new("minecraft:cyan_glazed_terracotta"))
+        {
+            public readonly Direction? Facing = facing;
+            public static CyanGlazedTerracotta Block => new();
+        }
+        public class CyanShulkerBox(OmniDirection? facing = null) : Block(new("minecraft:cyan_shulker_box"))
+        {
+            public readonly OmniDirection? Facing = facing;
+            public static CyanShulkerBox Block => new();
+        }
+        public class CyanStainedGlassPane(bool? east = null, bool? north = null, bool? south = null, bool? waterlogged = null, bool? west = null) : Block(new("minecraft:cyan_stained_glass_pane"))
+        {
+            public readonly bool? East = east;
+            public readonly bool? North = north;
+            public readonly bool? South = south;
+            public readonly bool? Waterlogged = waterlogged;
+            public readonly bool? West = west;
+            public static CyanStainedGlassPane Block => new();
+        }
+        public class CyanWallBanner(Direction? facing = null) : Block(new("minecraft:cyan_wall_banner"))
+        {
+            public readonly Direction? Facing = facing;
+            public static CyanWallBanner Block => new();
+        }
+        public class DamagedAnvil(Direction? facing = null) : Block(new("minecraft:damaged_anvil"))
+        {
+            public readonly Direction? Facing = facing;
+            public static DamagedAnvil Block => new();
+        }
+        public class DarkOakButton(ButtonOrientation? face = null, Direction? facing = null, bool? powered = null) : Block(new("minecraft:dark_oak_button"))
+        {
+            public readonly ButtonOrientation? Face = face;
+            public readonly Direction? Facing = facing;
+            public readonly bool? Powered = powered;
+            public static DarkOakButton Block => new();
+        }
+        public class DarkOakDoor(Direction? facing = null, DoorHalf? half = null, DoorHinge? hinge = null, bool? open = null, bool? powered = null) : Block(new("minecraft:dark_oak_door"))
+        {
+            public readonly Direction? Facing = facing;
+            public readonly DoorHalf? Half = half;
+            public readonly DoorHinge? Hinge = hinge;
+            public readonly bool? Open = open;
+            public readonly bool? Powered = powered;
+            public static DarkOakDoor Block => new();
+        }
+        public class DarkOakFence(bool? east = null, bool? north = null, bool? south = null, bool? waterlogged = null, bool? west = null) : Block(new("minecraft:dark_oak_fence"))
+        {
+            public readonly bool? East = east;
+            public readonly bool? North = north;
+            public readonly bool? South = south;
+            public readonly bool? Waterlogged = waterlogged;
+            public readonly bool? West = west;
+            public static DarkOakFence Block => new();
+        }
+        public class DarkOakFenceGate(Direction? facing = null, bool? in_wall = null, bool? open = null, bool? powered = null) : Block(new("minecraft:dark_oak_fence_gate"))
+        {
+            public readonly Direction? Facing = facing;
+            public readonly bool? In_wall = in_wall;
+            public readonly bool? Open = open;
+            public readonly bool? Powered = powered;
+            public static DarkOakFenceGate Block => new();
+        }
+        public class DarkOakHangingSign(bool? attached = null, To15? rotation = null, bool? waterlogged = null) : Block(new("minecraft:dark_oak_hanging_sign"))
+        {
+            public readonly bool? Attached = attached;
+            public readonly To15? Rotation = rotation;
+            public readonly bool? Waterlogged = waterlogged;
+            public static DarkOakHangingSign Block => new();
+        }
+        public class DarkOakLeaves(To7High? distance = null, bool? persistent = null, bool? waterlogged = null) : Block(new("minecraft:dark_oak_leaves"))
+        {
+            public readonly To7High? Distance = distance;
+            public readonly bool? Persistent = persistent;
+            public readonly bool? Waterlogged = waterlogged;
+            public static DarkOakLeaves Block => new();
+        }
+        public class DarkOakLog(Axis? axis = null) : Block(new("minecraft:dark_oak_log"))
+        {
+            public readonly Axis? Axis = axis;
+            public static DarkOakLog Block => new();
+        }
+        public class DarkOakPressurePlate(bool? powered = null) : Block(new("minecraft:dark_oak_pressure_plate"))
+        {
+            public readonly bool? Powered = powered;
+            public static DarkOakPressurePlate Block => new();
+        }
+        public class DarkOakSapling(Binary? stage = null) : Block(new("minecraft:dark_oak_sapling"))
+        {
+            public readonly Binary? Stage = stage;
+            public static DarkOakSapling Block => new();
+        }
+        public class DarkOakSign(To15? rotation = null, bool? waterlogged = null) : Block(new("minecraft:dark_oak_sign"))
+        {
+            public readonly To15? Rotation = rotation;
+            public readonly bool? Waterlogged = waterlogged;
+            public static DarkOakSign Block => new();
+        }
+        public class DarkOakSlab(SlabType? type = null, bool? waterlogged = null) : Block(new("minecraft:dark_oak_slab"))
+        {
+            public readonly SlabType? Type = type;
+            public readonly bool? Waterlogged = waterlogged;
+            public static DarkOakSlab Block => new();
+        }
+        public class DarkOakStairs(Direction? facing = null, StairType? half = null, StairShape? shape = null, bool? waterlogged = null) : Block(new("minecraft:dark_oak_stairs"))
+        {
+            public readonly Direction? Facing = facing;
+            public readonly StairType? Half = half;
+            public readonly StairShape? Shape = shape;
+            public readonly bool? Waterlogged = waterlogged;
+            public static DarkOakStairs Block => new();
+        }
+        public class DarkOakTrapdoor(Direction? facing = null, StairType? half = null, bool? open = null, bool? powered = null, bool? waterlogged = null) : Block(new("minecraft:dark_oak_trapdoor"))
+        {
+            public readonly Direction? Facing = facing;
+            public readonly StairType? Half = half;
+            public readonly bool? Open = open;
+            public readonly bool? Powered = powered;
+            public readonly bool? Waterlogged = waterlogged;
+            public static DarkOakTrapdoor Block => new();
+        }
+        public class DarkOakWallHangingSign(Direction? facing = null, bool? waterlogged = null) : Block(new("minecraft:dark_oak_wall_hanging_sign"))
+        {
+            public readonly Direction? Facing = facing;
+            public readonly bool? Waterlogged = waterlogged;
+            public static DarkOakWallHangingSign Block => new();
+        }
+        public class DarkOakWallSign(Direction? facing = null, bool? waterlogged = null) : Block(new("minecraft:dark_oak_wall_sign"))
+        {
+            public readonly Direction? Facing = facing;
+            public readonly bool? Waterlogged = waterlogged;
+            public static DarkOakWallSign Block => new();
+        }
+        public class DarkOakWood(Axis? axis = null) : Block(new("minecraft:dark_oak_wood"))
+        {
+            public readonly Axis? Axis = axis;
+            public static DarkOakWood Block => new();
+        }
+        public class DarkPrismarineSlab(SlabType? type = null, bool? waterlogged = null) : Block(new("minecraft:dark_prismarine_slab"))
+        {
+            public readonly SlabType? Type = type;
+            public readonly bool? Waterlogged = waterlogged;
+            public static DarkPrismarineSlab Block => new();
+        }
+        public class DarkPrismarineStairs(Direction? facing = null, StairType? half = null, StairShape? shape = null, bool? waterlogged = null) : Block(new("minecraft:dark_prismarine_stairs"))
+        {
+            public readonly Direction? Facing = facing;
+            public readonly StairType? Half = half;
+            public readonly StairShape? Shape = shape;
+            public readonly bool? Waterlogged = waterlogged;
+            public static DarkPrismarineStairs Block => new();
+        }
+        public class DaylightDetector(bool? inverted = null, To15? power = null) : Block(new("minecraft:daylight_detector"))
+        {
+            public readonly bool? Inverted = inverted;
+            public readonly To15? Power = power;
+            public static DaylightDetector Block => new();
+        }
+        public class DeadBrainCoral(bool? waterlogged = null) : Block(new("minecraft:dead_brain_coral"))
+        {
+            public readonly bool? Waterlogged = waterlogged;
+            public static DeadBrainCoral Block => new();
+        }
+        public class DeadBrainCoralFan(bool? waterlogged = null) : Block(new("minecraft:dead_brain_coral_fan"))
+        {
+            public readonly bool? Waterlogged = waterlogged;
+            public static DeadBrainCoralFan Block => new();
+        }
+        public class DeadBrainCoralWallFan(Direction? facing = null, bool? waterlogged = null) : Block(new("minecraft:dead_brain_coral_wall_fan"))
+        {
+            public readonly Direction? Facing = facing;
+            public readonly bool? Waterlogged = waterlogged;
+            public static DeadBrainCoralWallFan Block => new();
+        }
+        public class DeadBubbleCoral(bool? waterlogged = null) : Block(new("minecraft:dead_bubble_coral"))
+        {
+            public readonly bool? Waterlogged = waterlogged;
+            public static DeadBubbleCoral Block => new();
+        }
+        public class DeadBubbleCoralFan(bool? waterlogged = null) : Block(new("minecraft:dead_bubble_coral_fan"))
+        {
+            public readonly bool? Waterlogged = waterlogged;
+            public static DeadBubbleCoralFan Block => new();
+        }
+        public class DeadBubbleCoralWallFan(Direction? facing = null, bool? waterlogged = null) : Block(new("minecraft:dead_bubble_coral_wall_fan"))
+        {
+            public readonly Direction? Facing = facing;
+            public readonly bool? Waterlogged = waterlogged;
+            public static DeadBubbleCoralWallFan Block => new();
+        }
+        public class DeadFireCoral(bool? waterlogged = null) : Block(new("minecraft:dead_fire_coral"))
+        {
+            public readonly bool? Waterlogged = waterlogged;
+            public static DeadFireCoral Block => new();
+        }
+        public class DeadFireCoralFan(bool? waterlogged = null) : Block(new("minecraft:dead_fire_coral_fan"))
+        {
+            public readonly bool? Waterlogged = waterlogged;
+            public static DeadFireCoralFan Block => new();
+        }
+        public class DeadFireCoralWallFan(Direction? facing = null, bool? waterlogged = null) : Block(new("minecraft:dead_fire_coral_wall_fan"))
+        {
+            public readonly Direction? Facing = facing;
+            public readonly bool? Waterlogged = waterlogged;
+            public static DeadFireCoralWallFan Block => new();
+        }
+        public class DeadHornCoral(bool? waterlogged = null) : Block(new("minecraft:dead_horn_coral"))
+        {
+            public readonly bool? Waterlogged = waterlogged;
+            public static DeadHornCoral Block => new();
+        }
+        public class DeadHornCoralFan(bool? waterlogged = null) : Block(new("minecraft:dead_horn_coral_fan"))
+        {
+            public readonly bool? Waterlogged = waterlogged;
+            public static DeadHornCoralFan Block => new();
+        }
+        public class DeadHornCoralWallFan(Direction? facing = null, bool? waterlogged = null) : Block(new("minecraft:dead_horn_coral_wall_fan"))
+        {
+            public readonly Direction? Facing = facing;
+            public readonly bool? Waterlogged = waterlogged;
+            public static DeadHornCoralWallFan Block => new();
+        }
+        public class DeadTubeCoral(bool? waterlogged = null) : Block(new("minecraft:dead_tube_coral"))
+        {
+            public readonly bool? Waterlogged = waterlogged;
+            public static DeadTubeCoral Block => new();
+        }
+        public class DeadTubeCoralFan(bool? waterlogged = null) : Block(new("minecraft:dead_tube_coral_fan"))
+        {
+            public readonly bool? Waterlogged = waterlogged;
+            public static DeadTubeCoralFan Block => new();
+        }
+        public class DeadTubeCoralWallFan(Direction? facing = null, bool? waterlogged = null) : Block(new("minecraft:dead_tube_coral_wall_fan"))
+        {
+            public readonly Direction? Facing = facing;
+            public readonly bool? Waterlogged = waterlogged;
+            public static DeadTubeCoralWallFan Block => new();
+        }
+        public class DecoratedPot(bool? cracked = null, Direction? facing = null, bool? waterlogged = null) : Block(new("minecraft:decorated_pot"))
+        {
+            public readonly bool? Cracked = cracked;
+            public readonly Direction? Facing = facing;
+            public readonly bool? Waterlogged = waterlogged;
+            public static DecoratedPot Block => new();
+        }
+        public class Deepslate(Axis? axis = null) : Block(new("minecraft:deepslate"))
+        {
+            public readonly Axis? Axis = axis;
+            public static Deepslate Block => new();
+        }
+        public class DeepslateBrickSlab(SlabType? type = null, bool? waterlogged = null) : Block(new("minecraft:deepslate_brick_slab"))
+        {
+            public readonly SlabType? Type = type;
+            public readonly bool? Waterlogged = waterlogged;
+            public static DeepslateBrickSlab Block => new();
+        }
+        public class DeepslateBrickStairs(Direction? facing = null, StairType? half = null, StairShape? shape = null, bool? waterlogged = null) : Block(new("minecraft:deepslate_brick_stairs"))
+        {
+            public readonly Direction? Facing = facing;
+            public readonly StairType? Half = half;
+            public readonly StairShape? Shape = shape;
+            public readonly bool? Waterlogged = waterlogged;
+            public static DeepslateBrickStairs Block => new();
+        }
+        public class DeepslateBrickWall(WallType? east = null, WallType? north = null, WallType? south = null, bool? up = null, bool? waterlogged = null, WallType? west = null) : Block(new("minecraft:deepslate_brick_wall"))
+        {
+            public readonly WallType? East = east;
+            public readonly WallType? North = north;
+            public readonly WallType? South = south;
+            public readonly bool? Up = up;
+            public readonly bool? Waterlogged = waterlogged;
+            public readonly WallType? West = west;
+            public static DeepslateBrickWall Block => new();
+        }
+        public class DeepslateRedstoneOre(bool? lit = null) : Block(new("minecraft:deepslate_redstone_ore"))
+        {
+            public readonly bool? Lit = lit;
+            public static DeepslateRedstoneOre Block => new();
+        }
+        public class DeepslateTileSlab(SlabType? type = null, bool? waterlogged = null) : Block(new("minecraft:deepslate_tile_slab"))
+        {
+            public readonly SlabType? Type = type;
+            public readonly bool? Waterlogged = waterlogged;
+            public static DeepslateTileSlab Block => new();
+        }
+        public class DeepslateTileStairs(Direction? facing = null, StairType? half = null, StairShape? shape = null, bool? waterlogged = null) : Block(new("minecraft:deepslate_tile_stairs"))
+        {
+            public readonly Direction? Facing = facing;
+            public readonly StairType? Half = half;
+            public readonly StairShape? Shape = shape;
+            public readonly bool? Waterlogged = waterlogged;
+            public static DeepslateTileStairs Block => new();
+        }
+        public class DeepslateTileWall(WallType? east = null, WallType? north = null, WallType? south = null, bool? up = null, bool? waterlogged = null, WallType? west = null) : Block(new("minecraft:deepslate_tile_wall"))
+        {
+            public readonly WallType? East = east;
+            public readonly WallType? North = north;
+            public readonly WallType? South = south;
+            public readonly bool? Up = up;
+            public readonly bool? Waterlogged = waterlogged;
+            public readonly WallType? West = west;
+            public static DeepslateTileWall Block => new();
+        }
+        public class DetectorRail(bool? powered = null, StaticRailDirection? shape = null, bool? waterlogged = null) : Block(new("minecraft:detector_rail"))
+        {
+            public readonly bool? Powered = powered;
+            public readonly StaticRailDirection? Shape = shape;
+            public readonly bool? Waterlogged = waterlogged;
+            public static DetectorRail Block => new();
+        }
+        public class DioriteSlab(SlabType? type = null, bool? waterlogged = null) : Block(new("minecraft:diorite_slab"))
+        {
+            public readonly SlabType? Type = type;
+            public readonly bool? Waterlogged = waterlogged;
+            public static DioriteSlab Block => new();
+        }
+        public class DioriteStairs(Direction? facing = null, StairType? half = null, StairShape? shape = null, bool? waterlogged = null) : Block(new("minecraft:diorite_stairs"))
+        {
+            public readonly Direction? Facing = facing;
+            public readonly StairType? Half = half;
+            public readonly StairShape? Shape = shape;
+            public readonly bool? Waterlogged = waterlogged;
+            public static DioriteStairs Block => new();
+        }
+        public class DioriteWall(WallType? east = null, WallType? north = null, WallType? south = null, bool? up = null, bool? waterlogged = null, WallType? west = null) : Block(new("minecraft:diorite_wall"))
+        {
+            public readonly WallType? East = east;
+            public readonly WallType? North = north;
+            public readonly WallType? South = south;
+            public readonly bool? Up = up;
+            public readonly bool? Waterlogged = waterlogged;
+            public readonly WallType? West = west;
+            public static DioriteWall Block => new();
+        }
+        public class Dispenser(OmniDirection? facing = null, bool? triggered = null) : Block(new("minecraft:dispenser"))
+        {
+            public readonly OmniDirection? Facing = facing;
+            public readonly bool? Triggered = triggered;
+            public static Dispenser Block => new();
+        }
+        public class DragonHead(bool? powered = null, To15? rotation = null) : Block(new("minecraft:dragon_head"))
+        {
+            public readonly bool? Powered = powered;
+            public readonly To15? Rotation = rotation;
+            public static DragonHead Block => new();
+        }
+        public class DragonWallHead(Direction? facing = null, bool? powered = null) : Block(new("minecraft:dragon_wall_head"))
+        {
+            public readonly Direction? Facing = facing;
+            public readonly bool? Powered = powered;
+            public static DragonWallHead Block => new();
+        }
+        public class Dropper(OmniDirection? facing = null, bool? triggered = null) : Block(new("minecraft:dropper"))
+        {
+            public readonly OmniDirection? Facing = facing;
+            public readonly bool? Triggered = triggered;
+            public static Dropper Block => new();
+        }
+        public class EndPortalFrame(bool? eye = null, Direction? facing = null) : Block(new("minecraft:end_portal_frame"))
+        {
+            public readonly bool? Eye = eye;
+            public readonly Direction? Facing = facing;
+            public static EndPortalFrame Block => new();
+        }
+        public class EndRod(OmniDirection? facing = null) : Block(new("minecraft:end_rod"))
+        {
+            public readonly OmniDirection? Facing = facing;
+            public static EndRod Block => new();
+        }
+        public class EndStoneBrickSlab(SlabType? type = null, bool? waterlogged = null) : Block(new("minecraft:end_stone_brick_slab"))
+        {
+            public readonly SlabType? Type = type;
+            public readonly bool? Waterlogged = waterlogged;
+            public static EndStoneBrickSlab Block => new();
+        }
+        public class EndStoneBrickStairs(Direction? facing = null, StairType? half = null, StairShape? shape = null, bool? waterlogged = null) : Block(new("minecraft:end_stone_brick_stairs"))
+        {
+            public readonly Direction? Facing = facing;
+            public readonly StairType? Half = half;
+            public readonly StairShape? Shape = shape;
+            public readonly bool? Waterlogged = waterlogged;
+            public static EndStoneBrickStairs Block => new();
+        }
+        public class EndStoneBrickWall(WallType? east = null, WallType? north = null, WallType? south = null, bool? up = null, bool? waterlogged = null, WallType? west = null) : Block(new("minecraft:end_stone_brick_wall"))
+        {
+            public readonly WallType? East = east;
+            public readonly WallType? North = north;
+            public readonly WallType? South = south;
+            public readonly bool? Up = up;
+            public readonly bool? Waterlogged = waterlogged;
+            public readonly WallType? West = west;
+            public static EndStoneBrickWall Block => new();
+        }
+        public class EnderChest(Direction? facing = null, bool? waterlogged = null) : Block(new("minecraft:ender_chest"))
+        {
+            public readonly Direction? Facing = facing;
+            public readonly bool? Waterlogged = waterlogged;
+            public static EnderChest Block => new();
+        }
+        public class ExposedCopperBulb(bool? lit = null, bool? powered = null) : Block(new("minecraft:exposed_copper_bulb"))
+        {
+            public readonly bool? Lit = lit;
+            public readonly bool? Powered = powered;
+            public static ExposedCopperBulb Block => new();
+        }
+        public class ExposedCopperDoor(Direction? facing = null, DoorHalf? half = null, DoorHinge? hinge = null, bool? open = null, bool? powered = null) : Block(new("minecraft:exposed_copper_door"))
+        {
+            public readonly Direction? Facing = facing;
+            public readonly DoorHalf? Half = half;
+            public readonly DoorHinge? Hinge = hinge;
+            public readonly bool? Open = open;
+            public readonly bool? Powered = powered;
+            public static ExposedCopperDoor Block => new();
+        }
+        public class ExposedCopperGrate(bool? waterlogged = null) : Block(new("minecraft:exposed_copper_grate"))
+        {
+            public readonly bool? Waterlogged = waterlogged;
+            public static ExposedCopperGrate Block => new();
+        }
+        public class ExposedCopperTrapdoor(Direction? facing = null, StairType? half = null, bool? open = null, bool? powered = null, bool? waterlogged = null) : Block(new("minecraft:exposed_copper_trapdoor"))
+        {
+            public readonly Direction? Facing = facing;
+            public readonly StairType? Half = half;
+            public readonly bool? Open = open;
+            public readonly bool? Powered = powered;
+            public readonly bool? Waterlogged = waterlogged;
+            public static ExposedCopperTrapdoor Block => new();
+        }
+        public class ExposedCutCopperSlab(SlabType? type = null, bool? waterlogged = null) : Block(new("minecraft:exposed_cut_copper_slab"))
+        {
+            public readonly SlabType? Type = type;
+            public readonly bool? Waterlogged = waterlogged;
+            public static ExposedCutCopperSlab Block => new();
+        }
+        public class ExposedCutCopperStairs(Direction? facing = null, StairType? half = null, StairShape? shape = null, bool? waterlogged = null) : Block(new("minecraft:exposed_cut_copper_stairs"))
+        {
+            public readonly Direction? Facing = facing;
+            public readonly StairType? Half = half;
+            public readonly StairShape? Shape = shape;
+            public readonly bool? Waterlogged = waterlogged;
+            public static ExposedCutCopperStairs Block => new();
+        }
+        public class Farmland(To7Low? moisture = null) : Block(new("minecraft:farmland"))
+        {
+            public readonly To7Low? Moisture = moisture;
+            public static Farmland Block => new();
+        }
+        public class Fire(To15? age = null, bool? east = null, bool? north = null, bool? south = null, bool? up = null, bool? west = null) : Block(new("minecraft:fire"))
+        {
+            public readonly To15? Age = age;
+            public readonly bool? East = east;
+            public readonly bool? North = north;
+            public readonly bool? South = south;
+            public readonly bool? Up = up;
+            public readonly bool? West = west;
+            public static Fire Block => new();
+        }
+        public class FireCoral(bool? waterlogged = null) : Block(new("minecraft:fire_coral"))
+        {
+            public readonly bool? Waterlogged = waterlogged;
+            public static FireCoral Block => new();
+        }
+        public class FireCoralFan(bool? waterlogged = null) : Block(new("minecraft:fire_coral_fan"))
+        {
+            public readonly bool? Waterlogged = waterlogged;
+            public static FireCoralFan Block => new();
+        }
+        public class FireCoralWallFan(Direction? facing = null, bool? waterlogged = null) : Block(new("minecraft:fire_coral_wall_fan"))
+        {
+            public readonly Direction? Facing = facing;
+            public readonly bool? Waterlogged = waterlogged;
+            public static FireCoralWallFan Block => new();
+        }
+        public class FloweringAzaleaLeaves(To7High? distance = null, bool? persistent = null, bool? waterlogged = null) : Block(new("minecraft:flowering_azalea_leaves"))
+        {
+            public readonly To7High? Distance = distance;
+            public readonly bool? Persistent = persistent;
+            public readonly bool? Waterlogged = waterlogged;
+            public static FloweringAzaleaLeaves Block => new();
+        }
+        public class FrostedIce(To3Low? age = null) : Block(new("minecraft:frosted_ice"))
+        {
+            public readonly To3Low? Age = age;
+            public static FrostedIce Block => new();
+        }
+        public class Furnace(Direction? facing = null, bool? lit = null) : Block(new("minecraft:furnace"))
+        {
+            public readonly Direction? Facing = facing;
+            public readonly bool? Lit = lit;
+            public static Furnace Block => new();
+        }
+        public class GlassPane(bool? east = null, bool? north = null, bool? south = null, bool? waterlogged = null, bool? west = null) : Block(new("minecraft:glass_pane"))
+        {
+            public readonly bool? East = east;
+            public readonly bool? North = north;
+            public readonly bool? South = south;
+            public readonly bool? Waterlogged = waterlogged;
+            public readonly bool? West = west;
+            public static GlassPane Block => new();
+        }
+        public class GlowLichen(bool? down = null, bool? east = null, bool? north = null, bool? south = null, bool? up = null, bool? waterlogged = null, bool? west = null) : Block(new("minecraft:glow_lichen"))
+        {
+            public readonly bool? Down = down;
+            public readonly bool? East = east;
+            public readonly bool? North = north;
+            public readonly bool? South = south;
+            public readonly bool? Up = up;
+            public readonly bool? Waterlogged = waterlogged;
+            public readonly bool? West = west;
+            public static GlowLichen Block => new();
+        }
+        public class GraniteSlab(SlabType? type = null, bool? waterlogged = null) : Block(new("minecraft:granite_slab"))
+        {
+            public readonly SlabType? Type = type;
+            public readonly bool? Waterlogged = waterlogged;
+            public static GraniteSlab Block => new();
+        }
+        public class GraniteStairs(Direction? facing = null, StairType? half = null, StairShape? shape = null, bool? waterlogged = null) : Block(new("minecraft:granite_stairs"))
+        {
+            public readonly Direction? Facing = facing;
+            public readonly StairType? Half = half;
+            public readonly StairShape? Shape = shape;
+            public readonly bool? Waterlogged = waterlogged;
+            public static GraniteStairs Block => new();
+        }
+        public class GraniteWall(WallType? east = null, WallType? north = null, WallType? south = null, bool? up = null, bool? waterlogged = null, WallType? west = null) : Block(new("minecraft:granite_wall"))
+        {
+            public readonly WallType? East = east;
+            public readonly WallType? North = north;
+            public readonly WallType? South = south;
+            public readonly bool? Up = up;
+            public readonly bool? Waterlogged = waterlogged;
+            public readonly WallType? West = west;
+            public static GraniteWall Block => new();
+        }
+        public class GrassBlock(bool? snowy = null) : Block(new("minecraft:grass_block"))
+        {
+            public readonly bool? Snowy = snowy;
+            public static GrassBlock Block => new();
+        }
+        public class GrayBanner(To15? rotation = null) : Block(new("minecraft:gray_banner"))
+        {
+            public readonly To15? Rotation = rotation;
+            public static GrayBanner Block => new();
+        }
+        public class GrayBed(Direction? facing = null, bool? occupied = null, BedPart? part = null) : Block(new("minecraft:gray_bed"))
+        {
+            public readonly Direction? Facing = facing;
+            public readonly bool? Occupied = occupied;
+            public readonly BedPart? Part = part;
+            public static GrayBed Block => new();
+        }
+        public class GrayCandle(To4High? candles = null, bool? lit = null, bool? waterlogged = null) : Block(new("minecraft:gray_candle"))
+        {
+            public readonly To4High? Candles = candles;
+            public readonly bool? Lit = lit;
+            public readonly bool? Waterlogged = waterlogged;
+            public static GrayCandle Block => new();
+        }
+        public class GrayCandleCake(bool? lit = null) : Block(new("minecraft:gray_candle_cake"))
+        {
+            public readonly bool? Lit = lit;
+            public static GrayCandleCake Block => new();
+        }
+        public class GrayGlazedTerracotta(Direction? facing = null) : Block(new("minecraft:gray_glazed_terracotta"))
+        {
+            public readonly Direction? Facing = facing;
+            public static GrayGlazedTerracotta Block => new();
+        }
+        public class GrayShulkerBox(OmniDirection? facing = null) : Block(new("minecraft:gray_shulker_box"))
+        {
+            public readonly OmniDirection? Facing = facing;
+            public static GrayShulkerBox Block => new();
+        }
+        public class GrayStainedGlassPane(bool? east = null, bool? north = null, bool? south = null, bool? waterlogged = null, bool? west = null) : Block(new("minecraft:gray_stained_glass_pane"))
+        {
+            public readonly bool? East = east;
+            public readonly bool? North = north;
+            public readonly bool? South = south;
+            public readonly bool? Waterlogged = waterlogged;
+            public readonly bool? West = west;
+            public static GrayStainedGlassPane Block => new();
+        }
+        public class GrayWallBanner(Direction? facing = null) : Block(new("minecraft:gray_wall_banner"))
+        {
+            public readonly Direction? Facing = facing;
+            public static GrayWallBanner Block => new();
+        }
+        public class GreenBanner(To15? rotation = null) : Block(new("minecraft:green_banner"))
+        {
+            public readonly To15? Rotation = rotation;
+            public static GreenBanner Block => new();
+        }
+        public class GreenBed(Direction? facing = null, bool? occupied = null, BedPart? part = null) : Block(new("minecraft:green_bed"))
+        {
+            public readonly Direction? Facing = facing;
+            public readonly bool? Occupied = occupied;
+            public readonly BedPart? Part = part;
+            public static GreenBed Block => new();
+        }
+        public class GreenCandle(To4High? candles = null, bool? lit = null, bool? waterlogged = null) : Block(new("minecraft:green_candle"))
+        {
+            public readonly To4High? Candles = candles;
+            public readonly bool? Lit = lit;
+            public readonly bool? Waterlogged = waterlogged;
+            public static GreenCandle Block => new();
+        }
+        public class GreenCandleCake(bool? lit = null) : Block(new("minecraft:green_candle_cake"))
+        {
+            public readonly bool? Lit = lit;
+            public static GreenCandleCake Block => new();
+        }
+        public class GreenGlazedTerracotta(Direction? facing = null) : Block(new("minecraft:green_glazed_terracotta"))
+        {
+            public readonly Direction? Facing = facing;
+            public static GreenGlazedTerracotta Block => new();
+        }
+        public class GreenShulkerBox(OmniDirection? facing = null) : Block(new("minecraft:green_shulker_box"))
+        {
+            public readonly OmniDirection? Facing = facing;
+            public static GreenShulkerBox Block => new();
+        }
+        public class GreenStainedGlassPane(bool? east = null, bool? north = null, bool? south = null, bool? waterlogged = null, bool? west = null) : Block(new("minecraft:green_stained_glass_pane"))
+        {
+            public readonly bool? East = east;
+            public readonly bool? North = north;
+            public readonly bool? South = south;
+            public readonly bool? Waterlogged = waterlogged;
+            public readonly bool? West = west;
+            public static GreenStainedGlassPane Block => new();
+        }
+        public class GreenWallBanner(Direction? facing = null) : Block(new("minecraft:green_wall_banner"))
+        {
+            public readonly Direction? Facing = facing;
+            public static GreenWallBanner Block => new();
+        }
+        public class Grindstone(ButtonOrientation? face = null, Direction? facing = null) : Block(new("minecraft:grindstone"))
+        {
+            public readonly ButtonOrientation? Face = face;
+            public readonly Direction? Facing = facing;
+            public static Grindstone Block => new();
+        }
+        public class HangingRoots(bool? waterlogged = null) : Block(new("minecraft:hanging_roots"))
+        {
+            public readonly bool? Waterlogged = waterlogged;
+            public static HangingRoots Block => new();
+        }
+        public class HayBlock(Axis? axis = null) : Block(new("minecraft:hay_block"))
+        {
+            public readonly Axis? Axis = axis;
+            public static HayBlock Block => new();
+        }
+        public class HeavyWeightedPressurePlate(To15? power = null) : Block(new("minecraft:heavy_weighted_pressure_plate"))
+        {
+            public readonly To15? Power = power;
+            public static HeavyWeightedPressurePlate Block => new();
+        }
+        public class Hopper(bool? enabled = null, SemiOmniDirection? facing = null) : Block(new("minecraft:hopper"))
+        {
+            public readonly bool? Enabled = enabled;
+            public readonly SemiOmniDirection? Facing = facing;
+            public static Hopper Block => new();
+        }
+        public class HornCoral(bool? waterlogged = null) : Block(new("minecraft:horn_coral"))
+        {
+            public readonly bool? Waterlogged = waterlogged;
+            public static HornCoral Block => new();
+        }
+        public class HornCoralFan(bool? waterlogged = null) : Block(new("minecraft:horn_coral_fan"))
+        {
+            public readonly bool? Waterlogged = waterlogged;
+            public static HornCoralFan Block => new();
+        }
+        public class HornCoralWallFan(Direction? facing = null, bool? waterlogged = null) : Block(new("minecraft:horn_coral_wall_fan"))
+        {
+            public readonly Direction? Facing = facing;
+            public readonly bool? Waterlogged = waterlogged;
+            public static HornCoralWallFan Block => new();
+        }
+        public class InfestedDeepslate(Axis? axis = null) : Block(new("minecraft:infested_deepslate"))
+        {
+            public readonly Axis? Axis = axis;
+            public static InfestedDeepslate Block => new();
+        }
+        public class IronBars(bool? east = null, bool? north = null, bool? south = null, bool? waterlogged = null, bool? west = null) : Block(new("minecraft:iron_bars"))
+        {
+            public readonly bool? East = east;
+            public readonly bool? North = north;
+            public readonly bool? South = south;
+            public readonly bool? Waterlogged = waterlogged;
+            public readonly bool? West = west;
+            public static IronBars Block => new();
+        }
+        public class IronDoor(Direction? facing = null, DoorHalf? half = null, DoorHinge? hinge = null, bool? open = null, bool? powered = null) : Block(new("minecraft:iron_door"))
+        {
+            public readonly Direction? Facing = facing;
+            public readonly DoorHalf? Half = half;
+            public readonly DoorHinge? Hinge = hinge;
+            public readonly bool? Open = open;
+            public readonly bool? Powered = powered;
+            public static IronDoor Block => new();
+        }
+        public class IronTrapdoor(Direction? facing = null, StairType? half = null, bool? open = null, bool? powered = null, bool? waterlogged = null) : Block(new("minecraft:iron_trapdoor"))
+        {
+            public readonly Direction? Facing = facing;
+            public readonly StairType? Half = half;
+            public readonly bool? Open = open;
+            public readonly bool? Powered = powered;
+            public readonly bool? Waterlogged = waterlogged;
+            public static IronTrapdoor Block => new();
+        }
+        public class JackOLantern(Direction? facing = null) : Block(new("minecraft:jack_o_lantern"))
+        {
+            public readonly Direction? Facing = facing;
+            public static JackOLantern Block => new();
+        }
+        public class Jigsaw(ManyOrientation? orientation = null) : Block(new("minecraft:jigsaw"))
+        {
+            public readonly ManyOrientation? Orientation = orientation;
+            public static Jigsaw Block => new();
+        }
+        public class Jukebox(bool? has_record = null) : Block(new("minecraft:jukebox"))
+        {
+            public readonly bool? Has_record = has_record;
+            public static Jukebox Block => new();
+        }
+        public class JungleButton(ButtonOrientation? face = null, Direction? facing = null, bool? powered = null) : Block(new("minecraft:jungle_button"))
+        {
+            public readonly ButtonOrientation? Face = face;
+            public readonly Direction? Facing = facing;
+            public readonly bool? Powered = powered;
+            public static JungleButton Block => new();
+        }
+        public class JungleDoor(Direction? facing = null, DoorHalf? half = null, DoorHinge? hinge = null, bool? open = null, bool? powered = null) : Block(new("minecraft:jungle_door"))
+        {
+            public readonly Direction? Facing = facing;
+            public readonly DoorHalf? Half = half;
+            public readonly DoorHinge? Hinge = hinge;
+            public readonly bool? Open = open;
+            public readonly bool? Powered = powered;
+            public static JungleDoor Block => new();
+        }
+        public class JungleFence(bool? east = null, bool? north = null, bool? south = null, bool? waterlogged = null, bool? west = null) : Block(new("minecraft:jungle_fence"))
+        {
+            public readonly bool? East = east;
+            public readonly bool? North = north;
+            public readonly bool? South = south;
+            public readonly bool? Waterlogged = waterlogged;
+            public readonly bool? West = west;
+            public static JungleFence Block => new();
+        }
+        public class JungleFenceGate(Direction? facing = null, bool? in_wall = null, bool? open = null, bool? powered = null) : Block(new("minecraft:jungle_fence_gate"))
+        {
+            public readonly Direction? Facing = facing;
+            public readonly bool? In_wall = in_wall;
+            public readonly bool? Open = open;
+            public readonly bool? Powered = powered;
+            public static JungleFenceGate Block => new();
+        }
+        public class JungleHangingSign(bool? attached = null, To15? rotation = null, bool? waterlogged = null) : Block(new("minecraft:jungle_hanging_sign"))
+        {
+            public readonly bool? Attached = attached;
+            public readonly To15? Rotation = rotation;
+            public readonly bool? Waterlogged = waterlogged;
+            public static JungleHangingSign Block => new();
+        }
+        public class JungleLeaves(To7High? distance = null, bool? persistent = null, bool? waterlogged = null) : Block(new("minecraft:jungle_leaves"))
+        {
+            public readonly To7High? Distance = distance;
+            public readonly bool? Persistent = persistent;
+            public readonly bool? Waterlogged = waterlogged;
+            public static JungleLeaves Block => new();
+        }
+        public class JungleLog(Axis? axis = null) : Block(new("minecraft:jungle_log"))
+        {
+            public readonly Axis? Axis = axis;
+            public static JungleLog Block => new();
+        }
+        public class JunglePressurePlate(bool? powered = null) : Block(new("minecraft:jungle_pressure_plate"))
+        {
+            public readonly bool? Powered = powered;
+            public static JunglePressurePlate Block => new();
+        }
+        public class JungleSapling(Binary? stage = null) : Block(new("minecraft:jungle_sapling"))
+        {
+            public readonly Binary? Stage = stage;
+            public static JungleSapling Block => new();
+        }
+        public class JungleSign(To15? rotation = null, bool? waterlogged = null) : Block(new("minecraft:jungle_sign"))
+        {
+            public readonly To15? Rotation = rotation;
+            public readonly bool? Waterlogged = waterlogged;
+            public static JungleSign Block => new();
+        }
+        public class JungleSlab(SlabType? type = null, bool? waterlogged = null) : Block(new("minecraft:jungle_slab"))
+        {
+            public readonly SlabType? Type = type;
+            public readonly bool? Waterlogged = waterlogged;
+            public static JungleSlab Block => new();
+        }
+        public class JungleStairs(Direction? facing = null, StairType? half = null, StairShape? shape = null, bool? waterlogged = null) : Block(new("minecraft:jungle_stairs"))
+        {
+            public readonly Direction? Facing = facing;
+            public readonly StairType? Half = half;
+            public readonly StairShape? Shape = shape;
+            public readonly bool? Waterlogged = waterlogged;
+            public static JungleStairs Block => new();
+        }
+        public class JungleTrapdoor(Direction? facing = null, StairType? half = null, bool? open = null, bool? powered = null, bool? waterlogged = null) : Block(new("minecraft:jungle_trapdoor"))
+        {
+            public readonly Direction? Facing = facing;
+            public readonly StairType? Half = half;
+            public readonly bool? Open = open;
+            public readonly bool? Powered = powered;
+            public readonly bool? Waterlogged = waterlogged;
+            public static JungleTrapdoor Block => new();
+        }
+        public class JungleWallHangingSign(Direction? facing = null, bool? waterlogged = null) : Block(new("minecraft:jungle_wall_hanging_sign"))
+        {
+            public readonly Direction? Facing = facing;
+            public readonly bool? Waterlogged = waterlogged;
+            public static JungleWallHangingSign Block => new();
+        }
+        public class JungleWallSign(Direction? facing = null, bool? waterlogged = null) : Block(new("minecraft:jungle_wall_sign"))
+        {
+            public readonly Direction? Facing = facing;
+            public readonly bool? Waterlogged = waterlogged;
+            public static JungleWallSign Block => new();
+        }
+        public class JungleWood(Axis? axis = null) : Block(new("minecraft:jungle_wood"))
+        {
+            public readonly Axis? Axis = axis;
+            public static JungleWood Block => new();
+        }
+        public class Kelp(To25? age = null) : Block(new("minecraft:kelp"))
+        {
+            public readonly To25? Age = age;
+            public static Kelp Block => new();
+        }
+        public class Ladder(Direction? facing = null, bool? waterlogged = null) : Block(new("minecraft:ladder"))
+        {
+            public readonly Direction? Facing = facing;
+            public readonly bool? Waterlogged = waterlogged;
+            public static Ladder Block => new();
+        }
+        public class Lantern(bool? hanging = null, bool? waterlogged = null) : Block(new("minecraft:lantern"))
+        {
+            public readonly bool? Hanging = hanging;
+            public readonly bool? Waterlogged = waterlogged;
+            public static Lantern Block => new();
+        }
+        public class LargeAmethystBud(OmniDirection? facing = null, bool? waterlogged = null) : Block(new("minecraft:large_amethyst_bud"))
+        {
+            public readonly OmniDirection? Facing = facing;
+            public readonly bool? Waterlogged = waterlogged;
+            public static LargeAmethystBud Block => new();
+        }
+        public class LargeFern(DoorHalf? half = null) : Block(new("minecraft:large_fern"))
+        {
+            public readonly DoorHalf? Half = half;
+            public static LargeFern Block => new();
+        }
+        public class Lava(To15? level = null) : Block(new("minecraft:lava"))
+        {
+            public readonly To15? Level = level;
+            public static Lava Block => new();
+        }
+        public class Lectern(Direction? facing = null, bool? has_book = null, bool? powered = null) : Block(new("minecraft:lectern"))
+        {
+            public readonly Direction? Facing = facing;
+            public readonly bool? Has_book = has_book;
+            public readonly bool? Powered = powered;
+            public static Lectern Block => new();
+        }
+        public class Lever(ButtonOrientation? face = null, Direction? facing = null, bool? powered = null) : Block(new("minecraft:lever"))
+        {
+            public readonly ButtonOrientation? Face = face;
+            public readonly Direction? Facing = facing;
+            public readonly bool? Powered = powered;
+            public static Lever Block => new();
+        }
+        public class Light(To15? level = null, bool? waterlogged = null) : Block(new("minecraft:light"))
+        {
+            public readonly To15? Level = level;
+            public readonly bool? Waterlogged = waterlogged;
+            public static Light Block => new();
+        }
+        public class LightBlueBanner(To15? rotation = null) : Block(new("minecraft:light_blue_banner"))
+        {
+            public readonly To15? Rotation = rotation;
+            public static LightBlueBanner Block => new();
+        }
+        public class LightBlueBed(Direction? facing = null, bool? occupied = null, BedPart? part = null) : Block(new("minecraft:light_blue_bed"))
+        {
+            public readonly Direction? Facing = facing;
+            public readonly bool? Occupied = occupied;
+            public readonly BedPart? Part = part;
+            public static LightBlueBed Block => new();
+        }
+        public class LightBlueCandle(To4High? candles = null, bool? lit = null, bool? waterlogged = null) : Block(new("minecraft:light_blue_candle"))
+        {
+            public readonly To4High? Candles = candles;
+            public readonly bool? Lit = lit;
+            public readonly bool? Waterlogged = waterlogged;
+            public static LightBlueCandle Block => new();
+        }
+        public class LightBlueCandleCake(bool? lit = null) : Block(new("minecraft:light_blue_candle_cake"))
+        {
+            public readonly bool? Lit = lit;
+            public static LightBlueCandleCake Block => new();
+        }
+        public class LightBlueGlazedTerracotta(Direction? facing = null) : Block(new("minecraft:light_blue_glazed_terracotta"))
+        {
+            public readonly Direction? Facing = facing;
+            public static LightBlueGlazedTerracotta Block => new();
+        }
+        public class LightBlueShulkerBox(OmniDirection? facing = null) : Block(new("minecraft:light_blue_shulker_box"))
+        {
+            public readonly OmniDirection? Facing = facing;
+            public static LightBlueShulkerBox Block => new();
+        }
+        public class LightBlueStainedGlassPane(bool? east = null, bool? north = null, bool? south = null, bool? waterlogged = null, bool? west = null) : Block(new("minecraft:light_blue_stained_glass_pane"))
+        {
+            public readonly bool? East = east;
+            public readonly bool? North = north;
+            public readonly bool? South = south;
+            public readonly bool? Waterlogged = waterlogged;
+            public readonly bool? West = west;
+            public static LightBlueStainedGlassPane Block => new();
+        }
+        public class LightBlueWallBanner(Direction? facing = null) : Block(new("minecraft:light_blue_wall_banner"))
+        {
+            public readonly Direction? Facing = facing;
+            public static LightBlueWallBanner Block => new();
+        }
+        public class LightGrayBanner(To15? rotation = null) : Block(new("minecraft:light_gray_banner"))
+        {
+            public readonly To15? Rotation = rotation;
+            public static LightGrayBanner Block => new();
+        }
+        public class LightGrayBed(Direction? facing = null, bool? occupied = null, BedPart? part = null) : Block(new("minecraft:light_gray_bed"))
+        {
+            public readonly Direction? Facing = facing;
+            public readonly bool? Occupied = occupied;
+            public readonly BedPart? Part = part;
+            public static LightGrayBed Block => new();
+        }
+        public class LightGrayCandle(To4High? candles = null, bool? lit = null, bool? waterlogged = null) : Block(new("minecraft:light_gray_candle"))
+        {
+            public readonly To4High? Candles = candles;
+            public readonly bool? Lit = lit;
+            public readonly bool? Waterlogged = waterlogged;
+            public static LightGrayCandle Block => new();
+        }
+        public class LightGrayCandleCake(bool? lit = null) : Block(new("minecraft:light_gray_candle_cake"))
+        {
+            public readonly bool? Lit = lit;
+            public static LightGrayCandleCake Block => new();
+        }
+        public class LightGrayGlazedTerracotta(Direction? facing = null) : Block(new("minecraft:light_gray_glazed_terracotta"))
+        {
+            public readonly Direction? Facing = facing;
+            public static LightGrayGlazedTerracotta Block => new();
+        }
+        public class LightGrayShulkerBox(OmniDirection? facing = null) : Block(new("minecraft:light_gray_shulker_box"))
+        {
+            public readonly OmniDirection? Facing = facing;
+            public static LightGrayShulkerBox Block => new();
+        }
+        public class LightGrayStainedGlassPane(bool? east = null, bool? north = null, bool? south = null, bool? waterlogged = null, bool? west = null) : Block(new("minecraft:light_gray_stained_glass_pane"))
+        {
+            public readonly bool? East = east;
+            public readonly bool? North = north;
+            public readonly bool? South = south;
+            public readonly bool? Waterlogged = waterlogged;
+            public readonly bool? West = west;
+            public static LightGrayStainedGlassPane Block => new();
+        }
+        public class LightGrayWallBanner(Direction? facing = null) : Block(new("minecraft:light_gray_wall_banner"))
+        {
+            public readonly Direction? Facing = facing;
+            public static LightGrayWallBanner Block => new();
+        }
+        public class LightWeightedPressurePlate(To15? power = null) : Block(new("minecraft:light_weighted_pressure_plate"))
+        {
+            public readonly To15? Power = power;
+            public static LightWeightedPressurePlate Block => new();
+        }
+        public class LightningRod(OmniDirection? facing = null, bool? powered = null, bool? waterlogged = null) : Block(new("minecraft:lightning_rod"))
+        {
+            public readonly OmniDirection? Facing = facing;
+            public readonly bool? Powered = powered;
+            public readonly bool? Waterlogged = waterlogged;
+            public static LightningRod Block => new();
+        }
+        public class Lilac(DoorHalf? half = null) : Block(new("minecraft:lilac"))
+        {
+            public readonly DoorHalf? Half = half;
+            public static Lilac Block => new();
+        }
+        public class LimeBanner(To15? rotation = null) : Block(new("minecraft:lime_banner"))
+        {
+            public readonly To15? Rotation = rotation;
+            public static LimeBanner Block => new();
+        }
+        public class LimeBed(Direction? facing = null, bool? occupied = null, BedPart? part = null) : Block(new("minecraft:lime_bed"))
+        {
+            public readonly Direction? Facing = facing;
+            public readonly bool? Occupied = occupied;
+            public readonly BedPart? Part = part;
+            public static LimeBed Block => new();
+        }
+        public class LimeCandle(To4High? candles = null, bool? lit = null, bool? waterlogged = null) : Block(new("minecraft:lime_candle"))
+        {
+            public readonly To4High? Candles = candles;
+            public readonly bool? Lit = lit;
+            public readonly bool? Waterlogged = waterlogged;
+            public static LimeCandle Block => new();
+        }
+        public class LimeCandleCake(bool? lit = null) : Block(new("minecraft:lime_candle_cake"))
+        {
+            public readonly bool? Lit = lit;
+            public static LimeCandleCake Block => new();
+        }
+        public class LimeGlazedTerracotta(Direction? facing = null) : Block(new("minecraft:lime_glazed_terracotta"))
+        {
+            public readonly Direction? Facing = facing;
+            public static LimeGlazedTerracotta Block => new();
+        }
+        public class LimeShulkerBox(OmniDirection? facing = null) : Block(new("minecraft:lime_shulker_box"))
+        {
+            public readonly OmniDirection? Facing = facing;
+            public static LimeShulkerBox Block => new();
+        }
+        public class LimeStainedGlassPane(bool? east = null, bool? north = null, bool? south = null, bool? waterlogged = null, bool? west = null) : Block(new("minecraft:lime_stained_glass_pane"))
+        {
+            public readonly bool? East = east;
+            public readonly bool? North = north;
+            public readonly bool? South = south;
+            public readonly bool? Waterlogged = waterlogged;
+            public readonly bool? West = west;
+            public static LimeStainedGlassPane Block => new();
+        }
+        public class LimeWallBanner(Direction? facing = null) : Block(new("minecraft:lime_wall_banner"))
+        {
+            public readonly Direction? Facing = facing;
+            public static LimeWallBanner Block => new();
+        }
+        public class Loom(Direction? facing = null) : Block(new("minecraft:loom"))
+        {
+            public readonly Direction? Facing = facing;
+            public static Loom Block => new();
+        }
+        public class MagentaBanner(To15? rotation = null) : Block(new("minecraft:magenta_banner"))
+        {
+            public readonly To15? Rotation = rotation;
+            public static MagentaBanner Block => new();
+        }
+        public class MagentaBed(Direction? facing = null, bool? occupied = null, BedPart? part = null) : Block(new("minecraft:magenta_bed"))
+        {
+            public readonly Direction? Facing = facing;
+            public readonly bool? Occupied = occupied;
+            public readonly BedPart? Part = part;
+            public static MagentaBed Block => new();
+        }
+        public class MagentaCandle(To4High? candles = null, bool? lit = null, bool? waterlogged = null) : Block(new("minecraft:magenta_candle"))
+        {
+            public readonly To4High? Candles = candles;
+            public readonly bool? Lit = lit;
+            public readonly bool? Waterlogged = waterlogged;
+            public static MagentaCandle Block => new();
+        }
+        public class MagentaCandleCake(bool? lit = null) : Block(new("minecraft:magenta_candle_cake"))
+        {
+            public readonly bool? Lit = lit;
+            public static MagentaCandleCake Block => new();
+        }
+        public class MagentaGlazedTerracotta(Direction? facing = null) : Block(new("minecraft:magenta_glazed_terracotta"))
+        {
+            public readonly Direction? Facing = facing;
+            public static MagentaGlazedTerracotta Block => new();
+        }
+        public class MagentaShulkerBox(OmniDirection? facing = null) : Block(new("minecraft:magenta_shulker_box"))
+        {
+            public readonly OmniDirection? Facing = facing;
+            public static MagentaShulkerBox Block => new();
+        }
+        public class MagentaStainedGlassPane(bool? east = null, bool? north = null, bool? south = null, bool? waterlogged = null, bool? west = null) : Block(new("minecraft:magenta_stained_glass_pane"))
+        {
+            public readonly bool? East = east;
+            public readonly bool? North = north;
+            public readonly bool? South = south;
+            public readonly bool? Waterlogged = waterlogged;
+            public readonly bool? West = west;
+            public static MagentaStainedGlassPane Block => new();
+        }
+        public class MagentaWallBanner(Direction? facing = null) : Block(new("minecraft:magenta_wall_banner"))
+        {
+            public readonly Direction? Facing = facing;
+            public static MagentaWallBanner Block => new();
+        }
+        public class MangroveButton(ButtonOrientation? face = null, Direction? facing = null, bool? powered = null) : Block(new("minecraft:mangrove_button"))
+        {
+            public readonly ButtonOrientation? Face = face;
+            public readonly Direction? Facing = facing;
+            public readonly bool? Powered = powered;
+            public static MangroveButton Block => new();
+        }
+        public class MangroveDoor(Direction? facing = null, DoorHalf? half = null, DoorHinge? hinge = null, bool? open = null, bool? powered = null) : Block(new("minecraft:mangrove_door"))
+        {
+            public readonly Direction? Facing = facing;
+            public readonly DoorHalf? Half = half;
+            public readonly DoorHinge? Hinge = hinge;
+            public readonly bool? Open = open;
+            public readonly bool? Powered = powered;
+            public static MangroveDoor Block => new();
+        }
+        public class MangroveFence(bool? east = null, bool? north = null, bool? south = null, bool? waterlogged = null, bool? west = null) : Block(new("minecraft:mangrove_fence"))
+        {
+            public readonly bool? East = east;
+            public readonly bool? North = north;
+            public readonly bool? South = south;
+            public readonly bool? Waterlogged = waterlogged;
+            public readonly bool? West = west;
+            public static MangroveFence Block => new();
+        }
+        public class MangroveFenceGate(Direction? facing = null, bool? in_wall = null, bool? open = null, bool? powered = null) : Block(new("minecraft:mangrove_fence_gate"))
+        {
+            public readonly Direction? Facing = facing;
+            public readonly bool? In_wall = in_wall;
+            public readonly bool? Open = open;
+            public readonly bool? Powered = powered;
+            public static MangroveFenceGate Block => new();
+        }
+        public class MangroveHangingSign(bool? attached = null, To15? rotation = null, bool? waterlogged = null) : Block(new("minecraft:mangrove_hanging_sign"))
+        {
+            public readonly bool? Attached = attached;
+            public readonly To15? Rotation = rotation;
+            public readonly bool? Waterlogged = waterlogged;
+            public static MangroveHangingSign Block => new();
+        }
+        public class MangroveLeaves(To7High? distance = null, bool? persistent = null, bool? waterlogged = null) : Block(new("minecraft:mangrove_leaves"))
+        {
+            public readonly To7High? Distance = distance;
+            public readonly bool? Persistent = persistent;
+            public readonly bool? Waterlogged = waterlogged;
+            public static MangroveLeaves Block => new();
+        }
+        public class MangroveLog(Axis? axis = null) : Block(new("minecraft:mangrove_log"))
+        {
+            public readonly Axis? Axis = axis;
+            public static MangroveLog Block => new();
+        }
+        public class MangrovePressurePlate(bool? powered = null) : Block(new("minecraft:mangrove_pressure_plate"))
+        {
+            public readonly bool? Powered = powered;
+            public static MangrovePressurePlate Block => new();
+        }
+        public class MangrovePropagule(To4Low? age = null, bool? hanging = null, Binary? stage = null, bool? waterlogged = null) : Block(new("minecraft:mangrove_propagule"))
+        {
+            public readonly To4Low? Age = age;
+            public readonly bool? Hanging = hanging;
+            public readonly Binary? Stage = stage;
+            public readonly bool? Waterlogged = waterlogged;
+            public static MangrovePropagule Block => new();
+        }
+        public class MangroveRoots(bool? waterlogged = null) : Block(new("minecraft:mangrove_roots"))
+        {
+            public readonly bool? Waterlogged = waterlogged;
+            public static MangroveRoots Block => new();
+        }
+        public class MangroveSign(To15? rotation = null, bool? waterlogged = null) : Block(new("minecraft:mangrove_sign"))
+        {
+            public readonly To15? Rotation = rotation;
+            public readonly bool? Waterlogged = waterlogged;
+            public static MangroveSign Block => new();
+        }
+        public class MangroveSlab(SlabType? type = null, bool? waterlogged = null) : Block(new("minecraft:mangrove_slab"))
+        {
+            public readonly SlabType? Type = type;
+            public readonly bool? Waterlogged = waterlogged;
+            public static MangroveSlab Block => new();
+        }
+        public class MangroveStairs(Direction? facing = null, StairType? half = null, StairShape? shape = null, bool? waterlogged = null) : Block(new("minecraft:mangrove_stairs"))
+        {
+            public readonly Direction? Facing = facing;
+            public readonly StairType? Half = half;
+            public readonly StairShape? Shape = shape;
+            public readonly bool? Waterlogged = waterlogged;
+            public static MangroveStairs Block => new();
+        }
+        public class MangroveTrapdoor(Direction? facing = null, StairType? half = null, bool? open = null, bool? powered = null, bool? waterlogged = null) : Block(new("minecraft:mangrove_trapdoor"))
+        {
+            public readonly Direction? Facing = facing;
+            public readonly StairType? Half = half;
+            public readonly bool? Open = open;
+            public readonly bool? Powered = powered;
+            public readonly bool? Waterlogged = waterlogged;
+            public static MangroveTrapdoor Block => new();
+        }
+        public class MangroveWallHangingSign(Direction? facing = null, bool? waterlogged = null) : Block(new("minecraft:mangrove_wall_hanging_sign"))
+        {
+            public readonly Direction? Facing = facing;
+            public readonly bool? Waterlogged = waterlogged;
+            public static MangroveWallHangingSign Block => new();
+        }
+        public class MangroveWallSign(Direction? facing = null, bool? waterlogged = null) : Block(new("minecraft:mangrove_wall_sign"))
+        {
+            public readonly Direction? Facing = facing;
+            public readonly bool? Waterlogged = waterlogged;
+            public static MangroveWallSign Block => new();
+        }
+        public class MangroveWood(Axis? axis = null) : Block(new("minecraft:mangrove_wood"))
+        {
+            public readonly Axis? Axis = axis;
+            public static MangroveWood Block => new();
+        }
+        public class MediumAmethystBud(OmniDirection? facing = null, bool? waterlogged = null) : Block(new("minecraft:medium_amethyst_bud"))
+        {
+            public readonly OmniDirection? Facing = facing;
+            public readonly bool? Waterlogged = waterlogged;
+            public static MediumAmethystBud Block => new();
+        }
+        public class MelonStem(To7Low? age = null) : Block(new("minecraft:melon_stem"))
+        {
+            public readonly To7Low? Age = age;
+            public static MelonStem Block => new();
+        }
+        public class MossyCobblestoneSlab(SlabType? type = null, bool? waterlogged = null) : Block(new("minecraft:mossy_cobblestone_slab"))
+        {
+            public readonly SlabType? Type = type;
+            public readonly bool? Waterlogged = waterlogged;
+            public static MossyCobblestoneSlab Block => new();
+        }
+        public class MossyCobblestoneStairs(Direction? facing = null, StairType? half = null, StairShape? shape = null, bool? waterlogged = null) : Block(new("minecraft:mossy_cobblestone_stairs"))
+        {
+            public readonly Direction? Facing = facing;
+            public readonly StairType? Half = half;
+            public readonly StairShape? Shape = shape;
+            public readonly bool? Waterlogged = waterlogged;
+            public static MossyCobblestoneStairs Block => new();
+        }
+        public class MossyCobblestoneWall(WallType? east = null, WallType? north = null, WallType? south = null, bool? up = null, bool? waterlogged = null, WallType? west = null) : Block(new("minecraft:mossy_cobblestone_wall"))
+        {
+            public readonly WallType? East = east;
+            public readonly WallType? North = north;
+            public readonly WallType? South = south;
+            public readonly bool? Up = up;
+            public readonly bool? Waterlogged = waterlogged;
+            public readonly WallType? West = west;
+            public static MossyCobblestoneWall Block => new();
+        }
+        public class MossyStoneBrickSlab(SlabType? type = null, bool? waterlogged = null) : Block(new("minecraft:mossy_stone_brick_slab"))
+        {
+            public readonly SlabType? Type = type;
+            public readonly bool? Waterlogged = waterlogged;
+            public static MossyStoneBrickSlab Block => new();
+        }
+        public class MossyStoneBrickStairs(Direction? facing = null, StairType? half = null, StairShape? shape = null, bool? waterlogged = null) : Block(new("minecraft:mossy_stone_brick_stairs"))
+        {
+            public readonly Direction? Facing = facing;
+            public readonly StairType? Half = half;
+            public readonly StairShape? Shape = shape;
+            public readonly bool? Waterlogged = waterlogged;
+            public static MossyStoneBrickStairs Block => new();
+        }
+        public class MossyStoneBrickWall(WallType? east = null, WallType? north = null, WallType? south = null, bool? up = null, bool? waterlogged = null, WallType? west = null) : Block(new("minecraft:mossy_stone_brick_wall"))
+        {
+            public readonly WallType? East = east;
+            public readonly WallType? North = north;
+            public readonly WallType? South = south;
+            public readonly bool? Up = up;
+            public readonly bool? Waterlogged = waterlogged;
+            public readonly WallType? West = west;
+            public static MossyStoneBrickWall Block => new();
+        }
+        public class MovingPiston(PistonType? type = null, OmniDirection? facing = null) : Block(new("minecraft:moving_piston"))
+        {
+            public readonly PistonType? Type = type;
+            public readonly OmniDirection? Facing = facing;
+            public static MovingPiston Block => new();
+        }
+        public class MudBrickSlab(SlabType? type = null, bool? waterlogged = null) : Block(new("minecraft:mud_brick_slab"))
+        {
+            public readonly SlabType? Type = type;
+            public readonly bool? Waterlogged = waterlogged;
+            public static MudBrickSlab Block => new();
+        }
+        public class MudBrickStairs(Direction? facing = null, StairType? half = null, StairShape? shape = null, bool? waterlogged = null) : Block(new("minecraft:mud_brick_stairs"))
+        {
+            public readonly Direction? Facing = facing;
+            public readonly StairType? Half = half;
+            public readonly StairShape? Shape = shape;
+            public readonly bool? Waterlogged = waterlogged;
+            public static MudBrickStairs Block => new();
+        }
+        public class MudBrickWall(WallType? east = null, WallType? north = null, WallType? south = null, bool? up = null, bool? waterlogged = null, WallType? west = null) : Block(new("minecraft:mud_brick_wall"))
+        {
+            public readonly WallType? East = east;
+            public readonly WallType? North = north;
+            public readonly WallType? South = south;
+            public readonly bool? Up = up;
+            public readonly bool? Waterlogged = waterlogged;
+            public readonly WallType? West = west;
+            public static MudBrickWall Block => new();
+        }
+        public class MuddyMangroveRoots(Axis? axis = null) : Block(new("minecraft:muddy_mangrove_roots"))
+        {
+            public readonly Axis? Axis = axis;
+            public static MuddyMangroveRoots Block => new();
+        }
+        public class MushroomStem(bool? down = null, bool? east = null, bool? north = null, bool? south = null, bool? up = null, bool? west = null) : Block(new("minecraft:mushroom_stem"))
+        {
+            public readonly bool? Down = down;
+            public readonly bool? East = east;
+            public readonly bool? North = north;
+            public readonly bool? South = south;
+            public readonly bool? Up = up;
+            public readonly bool? West = west;
+            public static MushroomStem Block => new();
+        }
+        public class Mycelium(bool? snowy = null) : Block(new("minecraft:mycelium"))
+        {
+            public readonly bool? Snowy = snowy;
+            public static Mycelium Block => new();
+        }
+        public class NetherBrickFence(bool? east = null, bool? north = null, bool? south = null, bool? waterlogged = null, bool? west = null) : Block(new("minecraft:nether_brick_fence"))
+        {
+            public readonly bool? East = east;
+            public readonly bool? North = north;
+            public readonly bool? South = south;
+            public readonly bool? Waterlogged = waterlogged;
+            public readonly bool? West = west;
+            public static NetherBrickFence Block => new();
+        }
+        public class NetherBrickSlab(SlabType? type = null, bool? waterlogged = null) : Block(new("minecraft:nether_brick_slab"))
+        {
+            public readonly SlabType? Type = type;
+            public readonly bool? Waterlogged = waterlogged;
+            public static NetherBrickSlab Block => new();
+        }
+        public class NetherBrickStairs(Direction? facing = null, StairType? half = null, StairShape? shape = null, bool? waterlogged = null) : Block(new("minecraft:nether_brick_stairs"))
+        {
+            public readonly Direction? Facing = facing;
+            public readonly StairType? Half = half;
+            public readonly StairShape? Shape = shape;
+            public readonly bool? Waterlogged = waterlogged;
+            public static NetherBrickStairs Block => new();
+        }
+        public class NetherBrickWall(WallType? east = null, WallType? north = null, WallType? south = null, bool? up = null, bool? waterlogged = null, WallType? west = null) : Block(new("minecraft:nether_brick_wall"))
+        {
+            public readonly WallType? East = east;
+            public readonly WallType? North = north;
+            public readonly WallType? South = south;
+            public readonly bool? Up = up;
+            public readonly bool? Waterlogged = waterlogged;
+            public readonly WallType? West = west;
+            public static NetherBrickWall Block => new();
+        }
+        public class NetherPortal(HorizontalAxis? axis = null) : Block(new("minecraft:nether_portal"))
+        {
+            public readonly HorizontalAxis? Axis = axis;
+            public static NetherPortal Block => new();
+        }
+        public class NetherWart(To3Low? age = null) : Block(new("minecraft:nether_wart"))
+        {
+            public readonly To3Low? Age = age;
+            public static NetherWart Block => new();
+        }
+        public class NoteBlock(NoteblockType? instrument = null, To24? note = null, bool? powered = null) : Block(new("minecraft:note_block"))
+        {
+            public readonly NoteblockType? Instrument = instrument;
+            public readonly To24? Note = note;
+            public readonly bool? Powered = powered;
+            public static NoteBlock Block => new();
+        }
+        public class OakButton(ButtonOrientation? face = null, Direction? facing = null, bool? powered = null) : Block(new("minecraft:oak_button"))
+        {
+            public readonly ButtonOrientation? Face = face;
+            public readonly Direction? Facing = facing;
+            public readonly bool? Powered = powered;
+            public static OakButton Block => new();
+        }
+        public class OakDoor(Direction? facing = null, DoorHalf? half = null, DoorHinge? hinge = null, bool? open = null, bool? powered = null) : Block(new("minecraft:oak_door"))
+        {
+            public readonly Direction? Facing = facing;
+            public readonly DoorHalf? Half = half;
+            public readonly DoorHinge? Hinge = hinge;
+            public readonly bool? Open = open;
+            public readonly bool? Powered = powered;
+            public static OakDoor Block => new();
+        }
+        public class OakFence(bool? east = null, bool? north = null, bool? south = null, bool? waterlogged = null, bool? west = null) : Block(new("minecraft:oak_fence"))
+        {
+            public readonly bool? East = east;
+            public readonly bool? North = north;
+            public readonly bool? South = south;
+            public readonly bool? Waterlogged = waterlogged;
+            public readonly bool? West = west;
+            public static OakFence Block => new();
+        }
+        public class OakFenceGate(Direction? facing = null, bool? in_wall = null, bool? open = null, bool? powered = null) : Block(new("minecraft:oak_fence_gate"))
+        {
+            public readonly Direction? Facing = facing;
+            public readonly bool? In_wall = in_wall;
+            public readonly bool? Open = open;
+            public readonly bool? Powered = powered;
+            public static OakFenceGate Block => new();
+        }
+        public class OakHangingSign(bool? attached = null, To15? rotation = null, bool? waterlogged = null) : Block(new("minecraft:oak_hanging_sign"))
+        {
+            public readonly bool? Attached = attached;
+            public readonly To15? Rotation = rotation;
+            public readonly bool? Waterlogged = waterlogged;
+            public static OakHangingSign Block => new();
+        }
+        public class OakLeaves(To7High? distance = null, bool? persistent = null, bool? waterlogged = null) : Block(new("minecraft:oak_leaves"))
+        {
+            public readonly To7High? Distance = distance;
+            public readonly bool? Persistent = persistent;
+            public readonly bool? Waterlogged = waterlogged;
+            public static OakLeaves Block => new();
+        }
+        public class OakLog(Axis? axis = null) : Block(new("minecraft:oak_log"))
+        {
+            public readonly Axis? Axis = axis;
+            public static OakLog Block => new();
+        }
+        public class OakPressurePlate(bool? powered = null) : Block(new("minecraft:oak_pressure_plate"))
+        {
+            public readonly bool? Powered = powered;
+            public static OakPressurePlate Block => new();
+        }
+        public class OakSapling(Binary? stage = null) : Block(new("minecraft:oak_sapling"))
+        {
+            public readonly Binary? Stage = stage;
+            public static OakSapling Block => new();
+        }
+        public class OakSign(To15? rotation = null, bool? waterlogged = null) : Block(new("minecraft:oak_sign"))
+        {
+            public readonly To15? Rotation = rotation;
+            public readonly bool? Waterlogged = waterlogged;
+            public static OakSign Block => new();
+        }
+        public class OakSlab(SlabType? type = null, bool? waterlogged = null) : Block(new("minecraft:oak_slab"))
+        {
+            public readonly SlabType? Type = type;
+            public readonly bool? Waterlogged = waterlogged;
+            public static OakSlab Block => new();
+        }
+        public class OakStairs(Direction? facing = null, StairType? half = null, StairShape? shape = null, bool? waterlogged = null) : Block(new("minecraft:oak_stairs"))
+        {
+            public readonly Direction? Facing = facing;
+            public readonly StairType? Half = half;
+            public readonly StairShape? Shape = shape;
+            public readonly bool? Waterlogged = waterlogged;
+            public static OakStairs Block => new();
+        }
+        public class OakTrapdoor(Direction? facing = null, StairType? half = null, bool? open = null, bool? powered = null, bool? waterlogged = null) : Block(new("minecraft:oak_trapdoor"))
+        {
+            public readonly Direction? Facing = facing;
+            public readonly StairType? Half = half;
+            public readonly bool? Open = open;
+            public readonly bool? Powered = powered;
+            public readonly bool? Waterlogged = waterlogged;
+            public static OakTrapdoor Block => new();
+        }
+        public class OakWallHangingSign(Direction? facing = null, bool? waterlogged = null) : Block(new("minecraft:oak_wall_hanging_sign"))
+        {
+            public readonly Direction? Facing = facing;
+            public readonly bool? Waterlogged = waterlogged;
+            public static OakWallHangingSign Block => new();
+        }
+        public class OakWallSign(Direction? facing = null, bool? waterlogged = null) : Block(new("minecraft:oak_wall_sign"))
+        {
+            public readonly Direction? Facing = facing;
+            public readonly bool? Waterlogged = waterlogged;
+            public static OakWallSign Block => new();
+        }
+        public class OakWood(Axis? axis = null) : Block(new("minecraft:oak_wood"))
+        {
+            public readonly Axis? Axis = axis;
+            public static OakWood Block => new();
+        }
+        public class Observer(OmniDirection? facing = null, bool? powered = null) : Block(new("minecraft:observer"))
+        {
+            public readonly OmniDirection? Facing = facing;
+            public readonly bool? Powered = powered;
+            public static Observer Block => new();
+        }
+        public class OchreFroglight(Axis? axis = null) : Block(new("minecraft:ochre_froglight"))
+        {
+            public readonly Axis? Axis = axis;
+            public static OchreFroglight Block => new();
+        }
+        public class OrangeBanner(To15? rotation = null) : Block(new("minecraft:orange_banner"))
+        {
+            public readonly To15? Rotation = rotation;
+            public static OrangeBanner Block => new();
+        }
+        public class OrangeBed(Direction? facing = null, bool? occupied = null, BedPart? part = null) : Block(new("minecraft:orange_bed"))
+        {
+            public readonly Direction? Facing = facing;
+            public readonly bool? Occupied = occupied;
+            public readonly BedPart? Part = part;
+            public static OrangeBed Block => new();
+        }
+        public class OrangeCandle(To4High? candles = null, bool? lit = null, bool? waterlogged = null) : Block(new("minecraft:orange_candle"))
+        {
+            public readonly To4High? Candles = candles;
+            public readonly bool? Lit = lit;
+            public readonly bool? Waterlogged = waterlogged;
+            public static OrangeCandle Block => new();
+        }
+        public class OrangeCandleCake(bool? lit = null) : Block(new("minecraft:orange_candle_cake"))
+        {
+            public readonly bool? Lit = lit;
+            public static OrangeCandleCake Block => new();
+        }
+        public class OrangeGlazedTerracotta(Direction? facing = null) : Block(new("minecraft:orange_glazed_terracotta"))
+        {
+            public readonly Direction? Facing = facing;
+            public static OrangeGlazedTerracotta Block => new();
+        }
+        public class OrangeShulkerBox(OmniDirection? facing = null) : Block(new("minecraft:orange_shulker_box"))
+        {
+            public readonly OmniDirection? Facing = facing;
+            public static OrangeShulkerBox Block => new();
+        }
+        public class OrangeStainedGlassPane(bool? east = null, bool? north = null, bool? south = null, bool? waterlogged = null, bool? west = null) : Block(new("minecraft:orange_stained_glass_pane"))
+        {
+            public readonly bool? East = east;
+            public readonly bool? North = north;
+            public readonly bool? South = south;
+            public readonly bool? Waterlogged = waterlogged;
+            public readonly bool? West = west;
+            public static OrangeStainedGlassPane Block => new();
+        }
+        public class OrangeWallBanner(Direction? facing = null) : Block(new("minecraft:orange_wall_banner"))
+        {
+            public readonly Direction? Facing = facing;
+            public static OrangeWallBanner Block => new();
+        }
+        public class OxidizedCopperBulb(bool? lit = null, bool? powered = null) : Block(new("minecraft:oxidized_copper_bulb"))
+        {
+            public readonly bool? Lit = lit;
+            public readonly bool? Powered = powered;
+            public static OxidizedCopperBulb Block => new();
+        }
+        public class OxidizedCopperDoor(Direction? facing = null, DoorHalf? half = null, DoorHinge? hinge = null, bool? open = null, bool? powered = null) : Block(new("minecraft:oxidized_copper_door"))
+        {
+            public readonly Direction? Facing = facing;
+            public readonly DoorHalf? Half = half;
+            public readonly DoorHinge? Hinge = hinge;
+            public readonly bool? Open = open;
+            public readonly bool? Powered = powered;
+            public static OxidizedCopperDoor Block => new();
+        }
+        public class OxidizedCopperGrate(bool? waterlogged = null) : Block(new("minecraft:oxidized_copper_grate"))
+        {
+            public readonly bool? Waterlogged = waterlogged;
+            public static OxidizedCopperGrate Block => new();
+        }
+        public class OxidizedCopperTrapdoor(Direction? facing = null, StairType? half = null, bool? open = null, bool? powered = null, bool? waterlogged = null) : Block(new("minecraft:oxidized_copper_trapdoor"))
+        {
+            public readonly Direction? Facing = facing;
+            public readonly StairType? Half = half;
+            public readonly bool? Open = open;
+            public readonly bool? Powered = powered;
+            public readonly bool? Waterlogged = waterlogged;
+            public static OxidizedCopperTrapdoor Block => new();
+        }
+        public class OxidizedCutCopperSlab(SlabType? type = null, bool? waterlogged = null) : Block(new("minecraft:oxidized_cut_copper_slab"))
+        {
+            public readonly SlabType? Type = type;
+            public readonly bool? Waterlogged = waterlogged;
+            public static OxidizedCutCopperSlab Block => new();
+        }
+        public class OxidizedCutCopperStairs(Direction? facing = null, StairType? half = null, StairShape? shape = null, bool? waterlogged = null) : Block(new("minecraft:oxidized_cut_copper_stairs"))
+        {
+            public readonly Direction? Facing = facing;
+            public readonly StairType? Half = half;
+            public readonly StairShape? Shape = shape;
+            public readonly bool? Waterlogged = waterlogged;
+            public static OxidizedCutCopperStairs Block => new();
+        }
+        public class PearlescentFroglight(Axis? axis = null) : Block(new("minecraft:pearlescent_froglight"))
+        {
+            public readonly Axis? Axis = axis;
+            public static PearlescentFroglight Block => new();
+        }
+        public class Peony(DoorHalf? half = null) : Block(new("minecraft:peony"))
+        {
+            public readonly DoorHalf? Half = half;
+            public static Peony Block => new();
+        }
+        public class PetrifiedOakSlab(SlabType? type = null, bool? waterlogged = null) : Block(new("minecraft:petrified_oak_slab"))
+        {
+            public readonly SlabType? Type = type;
+            public readonly bool? Waterlogged = waterlogged;
+            public static PetrifiedOakSlab Block => new();
+        }
+        public class PiglinHead(bool? powered = null, To15? rotation = null) : Block(new("minecraft:piglin_head"))
+        {
+            public readonly bool? Powered = powered;
+            public readonly To15? Rotation = rotation;
+            public static PiglinHead Block => new();
+        }
+        public class PiglinWallHead(Direction? facing = null, bool? powered = null) : Block(new("minecraft:piglin_wall_head"))
+        {
+            public readonly Direction? Facing = facing;
+            public readonly bool? Powered = powered;
+            public static PiglinWallHead Block => new();
+        }
+        public class PinkBanner(To15? rotation = null) : Block(new("minecraft:pink_banner"))
+        {
+            public readonly To15? Rotation = rotation;
+            public static PinkBanner Block => new();
+        }
+        public class PinkBed(Direction? facing = null, bool? occupied = null, BedPart? part = null) : Block(new("minecraft:pink_bed"))
+        {
+            public readonly Direction? Facing = facing;
+            public readonly bool? Occupied = occupied;
+            public readonly BedPart? Part = part;
+            public static PinkBed Block => new();
+        }
+        public class PinkCandle(To4High? candles = null, bool? lit = null, bool? waterlogged = null) : Block(new("minecraft:pink_candle"))
+        {
+            public readonly To4High? Candles = candles;
+            public readonly bool? Lit = lit;
+            public readonly bool? Waterlogged = waterlogged;
+            public static PinkCandle Block => new();
+        }
+        public class PinkCandleCake(bool? lit = null) : Block(new("minecraft:pink_candle_cake"))
+        {
+            public readonly bool? Lit = lit;
+            public static PinkCandleCake Block => new();
+        }
+        public class PinkGlazedTerracotta(Direction? facing = null) : Block(new("minecraft:pink_glazed_terracotta"))
+        {
+            public readonly Direction? Facing = facing;
+            public static PinkGlazedTerracotta Block => new();
+        }
+        public class PinkPetals(Direction? facing = null, To4High? flower_amount = null) : Block(new("minecraft:pink_petals"))
+        {
+            public readonly Direction? Facing = facing;
+            public readonly To4High? Flower_amount = flower_amount;
+            public static PinkPetals Block => new();
+        }
+        public class PinkShulkerBox(OmniDirection? facing = null) : Block(new("minecraft:pink_shulker_box"))
+        {
+            public readonly OmniDirection? Facing = facing;
+            public static PinkShulkerBox Block => new();
+        }
+        public class PinkStainedGlassPane(bool? east = null, bool? north = null, bool? south = null, bool? waterlogged = null, bool? west = null) : Block(new("minecraft:pink_stained_glass_pane"))
+        {
+            public readonly bool? East = east;
+            public readonly bool? North = north;
+            public readonly bool? South = south;
+            public readonly bool? Waterlogged = waterlogged;
+            public readonly bool? West = west;
+            public static PinkStainedGlassPane Block => new();
+        }
+        public class PinkWallBanner(Direction? facing = null) : Block(new("minecraft:pink_wall_banner"))
+        {
+            public readonly Direction? Facing = facing;
+            public static PinkWallBanner Block => new();
+        }
+        public class Piston(bool? extended = null, OmniDirection? facing = null) : Block(new("minecraft:piston"))
+        {
+            public readonly bool? Extended = extended;
+            public readonly OmniDirection? Facing = facing;
+            public static Piston Block => new();
+        }
+        public class PistonHead(PistonType? type = null, OmniDirection? facing = null, bool? short = null) : Block(new("minecraft:piston_head"))
+        {
+            public readonly PistonType? Type = type;
+            public readonly OmniDirection? Facing = facing;
+            public readonly bool? Short = short;
+            public static PistonHead Block => new();
+        }
+        public class PitcherCrop(To4Low? age = null, DoorHalf? half = null) : Block(new("minecraft:pitcher_crop"))
+        {
+            public readonly To4Low? Age = age;
+            public readonly DoorHalf? Half = half;
+            public static PitcherCrop Block => new();
+        }
+        public class PitcherPlant(DoorHalf? half = null) : Block(new("minecraft:pitcher_plant"))
+        {
+            public readonly DoorHalf? Half = half;
+            public static PitcherPlant Block => new();
+        }
+        public class PlayerHead(bool? powered = null, To15? rotation = null) : Block(new("minecraft:player_head"))
+        {
+            public readonly bool? Powered = powered;
+            public readonly To15? Rotation = rotation;
+            public static PlayerHead Block => new();
+        }
+        public class PlayerWallHead(Direction? facing = null, bool? powered = null) : Block(new("minecraft:player_wall_head"))
+        {
+            public readonly Direction? Facing = facing;
+            public readonly bool? Powered = powered;
+            public static PlayerWallHead Block => new();
+        }
+        public class Podzol(bool? snowy = null) : Block(new("minecraft:podzol"))
+        {
+            public readonly bool? Snowy = snowy;
+            public static Podzol Block => new();
+        }
+        public class PointedDripstone(DripstoneThickness? thickness = null, VerticalDirection? vertical_direction = null, bool? waterlogged = null) : Block(new("minecraft:pointed_dripstone"))
+        {
+            public readonly DripstoneThickness? Thickness = thickness;
+            public readonly VerticalDirection? Vertical_direction = vertical_direction;
+            public readonly bool? Waterlogged = waterlogged;
+            public static PointedDripstone Block => new();
+        }
+        public class PolishedAndesiteSlab(SlabType? type = null, bool? waterlogged = null) : Block(new("minecraft:polished_andesite_slab"))
+        {
+            public readonly SlabType? Type = type;
+            public readonly bool? Waterlogged = waterlogged;
+            public static PolishedAndesiteSlab Block => new();
+        }
+        public class PolishedAndesiteStairs(Direction? facing = null, StairType? half = null, StairShape? shape = null, bool? waterlogged = null) : Block(new("minecraft:polished_andesite_stairs"))
+        {
+            public readonly Direction? Facing = facing;
+            public readonly StairType? Half = half;
+            public readonly StairShape? Shape = shape;
+            public readonly bool? Waterlogged = waterlogged;
+            public static PolishedAndesiteStairs Block => new();
+        }
+        public class PolishedBasalt(Axis? axis = null) : Block(new("minecraft:polished_basalt"))
+        {
+            public readonly Axis? Axis = axis;
+            public static PolishedBasalt Block => new();
+        }
+        public class PolishedBlackstoneBrickSlab(SlabType? type = null, bool? waterlogged = null) : Block(new("minecraft:polished_blackstone_brick_slab"))
+        {
+            public readonly SlabType? Type = type;
+            public readonly bool? Waterlogged = waterlogged;
+            public static PolishedBlackstoneBrickSlab Block => new();
+        }
+        public class PolishedBlackstoneBrickStairs(Direction? facing = null, StairType? half = null, StairShape? shape = null, bool? waterlogged = null) : Block(new("minecraft:polished_blackstone_brick_stairs"))
+        {
+            public readonly Direction? Facing = facing;
+            public readonly StairType? Half = half;
+            public readonly StairShape? Shape = shape;
+            public readonly bool? Waterlogged = waterlogged;
+            public static PolishedBlackstoneBrickStairs Block => new();
+        }
+        public class PolishedBlackstoneBrickWall(WallType? east = null, WallType? north = null, WallType? south = null, bool? up = null, bool? waterlogged = null, WallType? west = null) : Block(new("minecraft:polished_blackstone_brick_wall"))
+        {
+            public readonly WallType? East = east;
+            public readonly WallType? North = north;
+            public readonly WallType? South = south;
+            public readonly bool? Up = up;
+            public readonly bool? Waterlogged = waterlogged;
+            public readonly WallType? West = west;
+            public static PolishedBlackstoneBrickWall Block => new();
+        }
+        public class PolishedBlackstoneButton(ButtonOrientation? face = null, Direction? facing = null, bool? powered = null) : Block(new("minecraft:polished_blackstone_button"))
+        {
+            public readonly ButtonOrientation? Face = face;
+            public readonly Direction? Facing = facing;
+            public readonly bool? Powered = powered;
+            public static PolishedBlackstoneButton Block => new();
+        }
+        public class PolishedBlackstonePressurePlate(bool? powered = null) : Block(new("minecraft:polished_blackstone_pressure_plate"))
+        {
+            public readonly bool? Powered = powered;
+            public static PolishedBlackstonePressurePlate Block => new();
+        }
+        public class PolishedBlackstoneSlab(SlabType? type = null, bool? waterlogged = null) : Block(new("minecraft:polished_blackstone_slab"))
+        {
+            public readonly SlabType? Type = type;
+            public readonly bool? Waterlogged = waterlogged;
+            public static PolishedBlackstoneSlab Block => new();
+        }
+        public class PolishedBlackstoneStairs(Direction? facing = null, StairType? half = null, StairShape? shape = null, bool? waterlogged = null) : Block(new("minecraft:polished_blackstone_stairs"))
+        {
+            public readonly Direction? Facing = facing;
+            public readonly StairType? Half = half;
+            public readonly StairShape? Shape = shape;
+            public readonly bool? Waterlogged = waterlogged;
+            public static PolishedBlackstoneStairs Block => new();
+        }
+        public class PolishedBlackstoneWall(WallType? east = null, WallType? north = null, WallType? south = null, bool? up = null, bool? waterlogged = null, WallType? west = null) : Block(new("minecraft:polished_blackstone_wall"))
+        {
+            public readonly WallType? East = east;
+            public readonly WallType? North = north;
+            public readonly WallType? South = south;
+            public readonly bool? Up = up;
+            public readonly bool? Waterlogged = waterlogged;
+            public readonly WallType? West = west;
+            public static PolishedBlackstoneWall Block => new();
+        }
+        public class PolishedDeepslateSlab(SlabType? type = null, bool? waterlogged = null) : Block(new("minecraft:polished_deepslate_slab"))
+        {
+            public readonly SlabType? Type = type;
+            public readonly bool? Waterlogged = waterlogged;
+            public static PolishedDeepslateSlab Block => new();
+        }
+        public class PolishedDeepslateStairs(Direction? facing = null, StairType? half = null, StairShape? shape = null, bool? waterlogged = null) : Block(new("minecraft:polished_deepslate_stairs"))
+        {
+            public readonly Direction? Facing = facing;
+            public readonly StairType? Half = half;
+            public readonly StairShape? Shape = shape;
+            public readonly bool? Waterlogged = waterlogged;
+            public static PolishedDeepslateStairs Block => new();
+        }
+        public class PolishedDeepslateWall(WallType? east = null, WallType? north = null, WallType? south = null, bool? up = null, bool? waterlogged = null, WallType? west = null) : Block(new("minecraft:polished_deepslate_wall"))
+        {
+            public readonly WallType? East = east;
+            public readonly WallType? North = north;
+            public readonly WallType? South = south;
+            public readonly bool? Up = up;
+            public readonly bool? Waterlogged = waterlogged;
+            public readonly WallType? West = west;
+            public static PolishedDeepslateWall Block => new();
+        }
+        public class PolishedDioriteSlab(SlabType? type = null, bool? waterlogged = null) : Block(new("minecraft:polished_diorite_slab"))
+        {
+            public readonly SlabType? Type = type;
+            public readonly bool? Waterlogged = waterlogged;
+            public static PolishedDioriteSlab Block => new();
+        }
+        public class PolishedDioriteStairs(Direction? facing = null, StairType? half = null, StairShape? shape = null, bool? waterlogged = null) : Block(new("minecraft:polished_diorite_stairs"))
+        {
+            public readonly Direction? Facing = facing;
+            public readonly StairType? Half = half;
+            public readonly StairShape? Shape = shape;
+            public readonly bool? Waterlogged = waterlogged;
+            public static PolishedDioriteStairs Block => new();
+        }
+        public class PolishedGraniteSlab(SlabType? type = null, bool? waterlogged = null) : Block(new("minecraft:polished_granite_slab"))
+        {
+            public readonly SlabType? Type = type;
+            public readonly bool? Waterlogged = waterlogged;
+            public static PolishedGraniteSlab Block => new();
+        }
+        public class PolishedGraniteStairs(Direction? facing = null, StairType? half = null, StairShape? shape = null, bool? waterlogged = null) : Block(new("minecraft:polished_granite_stairs"))
+        {
+            public readonly Direction? Facing = facing;
+            public readonly StairType? Half = half;
+            public readonly StairShape? Shape = shape;
+            public readonly bool? Waterlogged = waterlogged;
+            public static PolishedGraniteStairs Block => new();
+        }
+        public class PolishedTuffSlab(SlabType? type = null, bool? waterlogged = null) : Block(new("minecraft:polished_tuff_slab"))
+        {
+            public readonly SlabType? Type = type;
+            public readonly bool? Waterlogged = waterlogged;
+            public static PolishedTuffSlab Block => new();
+        }
+        public class PolishedTuffStairs(Direction? facing = null, StairType? half = null, StairShape? shape = null, bool? waterlogged = null) : Block(new("minecraft:polished_tuff_stairs"))
+        {
+            public readonly Direction? Facing = facing;
+            public readonly StairType? Half = half;
+            public readonly StairShape? Shape = shape;
+            public readonly bool? Waterlogged = waterlogged;
+            public static PolishedTuffStairs Block => new();
+        }
+        public class PolishedTuffWall(WallType? east = null, WallType? north = null, WallType? south = null, bool? up = null, bool? waterlogged = null, WallType? west = null) : Block(new("minecraft:polished_tuff_wall"))
+        {
+            public readonly WallType? East = east;
+            public readonly WallType? North = north;
+            public readonly WallType? South = south;
+            public readonly bool? Up = up;
+            public readonly bool? Waterlogged = waterlogged;
+            public readonly WallType? West = west;
+            public static PolishedTuffWall Block => new();
+        }
+        public class Potatoes(To7Low? age = null) : Block(new("minecraft:potatoes"))
+        {
+            public readonly To7Low? Age = age;
+            public static Potatoes Block => new();
+        }
+        public class PowderSnowCauldron(To3High? level = null) : Block(new("minecraft:powder_snow_cauldron"))
+        {
+            public readonly To3High? Level = level;
+            public static PowderSnowCauldron Block => new();
+        }
+        public class PoweredRail(bool? powered = null, StaticRailDirection? shape = null, bool? waterlogged = null) : Block(new("minecraft:powered_rail"))
+        {
+            public readonly bool? Powered = powered;
+            public readonly StaticRailDirection? Shape = shape;
+            public readonly bool? Waterlogged = waterlogged;
+            public static PoweredRail Block => new();
+        }
+        public class PrismarineBrickSlab(SlabType? type = null, bool? waterlogged = null) : Block(new("minecraft:prismarine_brick_slab"))
+        {
+            public readonly SlabType? Type = type;
+            public readonly bool? Waterlogged = waterlogged;
+            public static PrismarineBrickSlab Block => new();
+        }
+        public class PrismarineBrickStairs(Direction? facing = null, StairType? half = null, StairShape? shape = null, bool? waterlogged = null) : Block(new("minecraft:prismarine_brick_stairs"))
+        {
+            public readonly Direction? Facing = facing;
+            public readonly StairType? Half = half;
+            public readonly StairShape? Shape = shape;
+            public readonly bool? Waterlogged = waterlogged;
+            public static PrismarineBrickStairs Block => new();
+        }
+        public class PrismarineSlab(SlabType? type = null, bool? waterlogged = null) : Block(new("minecraft:prismarine_slab"))
+        {
+            public readonly SlabType? Type = type;
+            public readonly bool? Waterlogged = waterlogged;
+            public static PrismarineSlab Block => new();
+        }
+        public class PrismarineStairs(Direction? facing = null, StairType? half = null, StairShape? shape = null, bool? waterlogged = null) : Block(new("minecraft:prismarine_stairs"))
+        {
+            public readonly Direction? Facing = facing;
+            public readonly StairType? Half = half;
+            public readonly StairShape? Shape = shape;
+            public readonly bool? Waterlogged = waterlogged;
+            public static PrismarineStairs Block => new();
+        }
+        public class PrismarineWall(WallType? east = null, WallType? north = null, WallType? south = null, bool? up = null, bool? waterlogged = null, WallType? west = null) : Block(new("minecraft:prismarine_wall"))
+        {
+            public readonly WallType? East = east;
+            public readonly WallType? North = north;
+            public readonly WallType? South = south;
+            public readonly bool? Up = up;
+            public readonly bool? Waterlogged = waterlogged;
+            public readonly WallType? West = west;
+            public static PrismarineWall Block => new();
+        }
+        public class PumpkinStem(To7Low? age = null) : Block(new("minecraft:pumpkin_stem"))
+        {
+            public readonly To7Low? Age = age;
+            public static PumpkinStem Block => new();
+        }
+        public class PurpleBanner(To15? rotation = null) : Block(new("minecraft:purple_banner"))
+        {
+            public readonly To15? Rotation = rotation;
+            public static PurpleBanner Block => new();
+        }
+        public class PurpleBed(Direction? facing = null, bool? occupied = null, BedPart? part = null) : Block(new("minecraft:purple_bed"))
+        {
+            public readonly Direction? Facing = facing;
+            public readonly bool? Occupied = occupied;
+            public readonly BedPart? Part = part;
+            public static PurpleBed Block => new();
+        }
+        public class PurpleCandle(To4High? candles = null, bool? lit = null, bool? waterlogged = null) : Block(new("minecraft:purple_candle"))
+        {
+            public readonly To4High? Candles = candles;
+            public readonly bool? Lit = lit;
+            public readonly bool? Waterlogged = waterlogged;
+            public static PurpleCandle Block => new();
+        }
+        public class PurpleCandleCake(bool? lit = null) : Block(new("minecraft:purple_candle_cake"))
+        {
+            public readonly bool? Lit = lit;
+            public static PurpleCandleCake Block => new();
+        }
+        public class PurpleGlazedTerracotta(Direction? facing = null) : Block(new("minecraft:purple_glazed_terracotta"))
+        {
+            public readonly Direction? Facing = facing;
+            public static PurpleGlazedTerracotta Block => new();
+        }
+        public class PurpleShulkerBox(OmniDirection? facing = null) : Block(new("minecraft:purple_shulker_box"))
+        {
+            public readonly OmniDirection? Facing = facing;
+            public static PurpleShulkerBox Block => new();
+        }
+        public class PurpleStainedGlassPane(bool? east = null, bool? north = null, bool? south = null, bool? waterlogged = null, bool? west = null) : Block(new("minecraft:purple_stained_glass_pane"))
+        {
+            public readonly bool? East = east;
+            public readonly bool? North = north;
+            public readonly bool? South = south;
+            public readonly bool? Waterlogged = waterlogged;
+            public readonly bool? West = west;
+            public static PurpleStainedGlassPane Block => new();
+        }
+        public class PurpleWallBanner(Direction? facing = null) : Block(new("minecraft:purple_wall_banner"))
+        {
+            public readonly Direction? Facing = facing;
+            public static PurpleWallBanner Block => new();
+        }
+        public class PurpurPillar(Axis? axis = null) : Block(new("minecraft:purpur_pillar"))
+        {
+            public readonly Axis? Axis = axis;
+            public static PurpurPillar Block => new();
+        }
+        public class PurpurSlab(SlabType? type = null, bool? waterlogged = null) : Block(new("minecraft:purpur_slab"))
+        {
+            public readonly SlabType? Type = type;
+            public readonly bool? Waterlogged = waterlogged;
+            public static PurpurSlab Block => new();
+        }
+        public class PurpurStairs(Direction? facing = null, StairType? half = null, StairShape? shape = null, bool? waterlogged = null) : Block(new("minecraft:purpur_stairs"))
+        {
+            public readonly Direction? Facing = facing;
+            public readonly StairType? Half = half;
+            public readonly StairShape? Shape = shape;
+            public readonly bool? Waterlogged = waterlogged;
+            public static PurpurStairs Block => new();
+        }
+        public class QuartzPillar(Axis? axis = null) : Block(new("minecraft:quartz_pillar"))
+        {
+            public readonly Axis? Axis = axis;
+            public static QuartzPillar Block => new();
+        }
+        public class QuartzSlab(SlabType? type = null, bool? waterlogged = null) : Block(new("minecraft:quartz_slab"))
+        {
+            public readonly SlabType? Type = type;
+            public readonly bool? Waterlogged = waterlogged;
+            public static QuartzSlab Block => new();
+        }
+        public class QuartzStairs(Direction? facing = null, StairType? half = null, StairShape? shape = null, bool? waterlogged = null) : Block(new("minecraft:quartz_stairs"))
+        {
+            public readonly Direction? Facing = facing;
+            public readonly StairType? Half = half;
+            public readonly StairShape? Shape = shape;
+            public readonly bool? Waterlogged = waterlogged;
+            public static QuartzStairs Block => new();
+        }
+        public class Rail(RailDirection? shape = null, bool? waterlogged = null) : Block(new("minecraft:rail"))
+        {
+            public readonly RailDirection? Shape = shape;
+            public readonly bool? Waterlogged = waterlogged;
+            public static Rail Block => new();
+        }
+        public class RedBanner(To15? rotation = null) : Block(new("minecraft:red_banner"))
+        {
+            public readonly To15? Rotation = rotation;
+            public static RedBanner Block => new();
+        }
+        public class RedBed(Direction? facing = null, bool? occupied = null, BedPart? part = null) : Block(new("minecraft:red_bed"))
+        {
+            public readonly Direction? Facing = facing;
+            public readonly bool? Occupied = occupied;
+            public readonly BedPart? Part = part;
+            public static RedBed Block => new();
+        }
+        public class RedCandle(To4High? candles = null, bool? lit = null, bool? waterlogged = null) : Block(new("minecraft:red_candle"))
+        {
+            public readonly To4High? Candles = candles;
+            public readonly bool? Lit = lit;
+            public readonly bool? Waterlogged = waterlogged;
+            public static RedCandle Block => new();
+        }
+        public class RedCandleCake(bool? lit = null) : Block(new("minecraft:red_candle_cake"))
+        {
+            public readonly bool? Lit = lit;
+            public static RedCandleCake Block => new();
+        }
+        public class RedGlazedTerracotta(Direction? facing = null) : Block(new("minecraft:red_glazed_terracotta"))
+        {
+            public readonly Direction? Facing = facing;
+            public static RedGlazedTerracotta Block => new();
+        }
+        public class RedMushroomBlock(bool? down = null, bool? east = null, bool? north = null, bool? south = null, bool? up = null, bool? west = null) : Block(new("minecraft:red_mushroom_block"))
+        {
+            public readonly bool? Down = down;
+            public readonly bool? East = east;
+            public readonly bool? North = north;
+            public readonly bool? South = south;
+            public readonly bool? Up = up;
+            public readonly bool? West = west;
+            public static RedMushroomBlock Block => new();
+        }
+        public class RedNetherBrickSlab(SlabType? type = null, bool? waterlogged = null) : Block(new("minecraft:red_nether_brick_slab"))
+        {
+            public readonly SlabType? Type = type;
+            public readonly bool? Waterlogged = waterlogged;
+            public static RedNetherBrickSlab Block => new();
+        }
+        public class RedNetherBrickStairs(Direction? facing = null, StairType? half = null, StairShape? shape = null, bool? waterlogged = null) : Block(new("minecraft:red_nether_brick_stairs"))
+        {
+            public readonly Direction? Facing = facing;
+            public readonly StairType? Half = half;
+            public readonly StairShape? Shape = shape;
+            public readonly bool? Waterlogged = waterlogged;
+            public static RedNetherBrickStairs Block => new();
+        }
+        public class RedNetherBrickWall(WallType? east = null, WallType? north = null, WallType? south = null, bool? up = null, bool? waterlogged = null, WallType? west = null) : Block(new("minecraft:red_nether_brick_wall"))
+        {
+            public readonly WallType? East = east;
+            public readonly WallType? North = north;
+            public readonly WallType? South = south;
+            public readonly bool? Up = up;
+            public readonly bool? Waterlogged = waterlogged;
+            public readonly WallType? West = west;
+            public static RedNetherBrickWall Block => new();
+        }
+        public class RedSandstoneSlab(SlabType? type = null, bool? waterlogged = null) : Block(new("minecraft:red_sandstone_slab"))
+        {
+            public readonly SlabType? Type = type;
+            public readonly bool? Waterlogged = waterlogged;
+            public static RedSandstoneSlab Block => new();
+        }
+        public class RedSandstoneStairs(Direction? facing = null, StairType? half = null, StairShape? shape = null, bool? waterlogged = null) : Block(new("minecraft:red_sandstone_stairs"))
+        {
+            public readonly Direction? Facing = facing;
+            public readonly StairType? Half = half;
+            public readonly StairShape? Shape = shape;
+            public readonly bool? Waterlogged = waterlogged;
+            public static RedSandstoneStairs Block => new();
+        }
+        public class RedSandstoneWall(WallType? east = null, WallType? north = null, WallType? south = null, bool? up = null, bool? waterlogged = null, WallType? west = null) : Block(new("minecraft:red_sandstone_wall"))
+        {
+            public readonly WallType? East = east;
+            public readonly WallType? North = north;
+            public readonly WallType? South = south;
+            public readonly bool? Up = up;
+            public readonly bool? Waterlogged = waterlogged;
+            public readonly WallType? West = west;
+            public static RedSandstoneWall Block => new();
+        }
+        public class RedShulkerBox(OmniDirection? facing = null) : Block(new("minecraft:red_shulker_box"))
+        {
+            public readonly OmniDirection? Facing = facing;
+            public static RedShulkerBox Block => new();
+        }
+        public class RedStainedGlassPane(bool? east = null, bool? north = null, bool? south = null, bool? waterlogged = null, bool? west = null) : Block(new("minecraft:red_stained_glass_pane"))
+        {
+            public readonly bool? East = east;
+            public readonly bool? North = north;
+            public readonly bool? South = south;
+            public readonly bool? Waterlogged = waterlogged;
+            public readonly bool? West = west;
+            public static RedStainedGlassPane Block => new();
+        }
+        public class RedWallBanner(Direction? facing = null) : Block(new("minecraft:red_wall_banner"))
+        {
+            public readonly Direction? Facing = facing;
+            public static RedWallBanner Block => new();
+        }
+        public class RedstoneLamp(bool? lit = null) : Block(new("minecraft:redstone_lamp"))
+        {
+            public readonly bool? Lit = lit;
+            public static RedstoneLamp Block => new();
+        }
+        public class RedstoneOre(bool? lit = null) : Block(new("minecraft:redstone_ore"))
+        {
+            public readonly bool? Lit = lit;
+            public static RedstoneOre Block => new();
+        }
+        public class RedstoneTorch(bool? lit = null) : Block(new("minecraft:redstone_torch"))
+        {
+            public readonly bool? Lit = lit;
+            public static RedstoneTorch Block => new();
+        }
+        public class RedstoneWallTorch(Direction? facing = null, bool? lit = null) : Block(new("minecraft:redstone_wall_torch"))
+        {
+            public readonly Direction? Facing = facing;
+            public readonly bool? Lit = lit;
+            public static RedstoneWallTorch Block => new();
+        }
+        public class RedstoneWire(RedstoneDirection? east = null, RedstoneDirection? north = null, To15? power = null, RedstoneDirection? south = null, RedstoneDirection? west = null) : Block(new("minecraft:redstone_wire"))
+        {
+            public readonly RedstoneDirection? East = east;
+            public readonly RedstoneDirection? North = north;
+            public readonly To15? Power = power;
+            public readonly RedstoneDirection? South = south;
+            public readonly RedstoneDirection? West = west;
+            public static RedstoneWire Block => new();
+        }
+        public class Repeater(To4High? delay = null, Direction? facing = null, bool? locked = null, bool? powered = null) : Block(new("minecraft:repeater"))
+        {
+            public readonly To4High? Delay = delay;
+            public readonly Direction? Facing = facing;
+            public readonly bool? Locked = locked;
+            public readonly bool? Powered = powered;
+            public static Repeater Block => new();
+        }
+        public class RepeatingCommandBlock(bool? conditional = null, OmniDirection? facing = null) : Block(new("minecraft:repeating_command_block"))
+        {
+            public readonly bool? Conditional = conditional;
+            public readonly OmniDirection? Facing = facing;
+            public static RepeatingCommandBlock Block => new();
+        }
+        public class RespawnAnchor(To4Low? charges = null) : Block(new("minecraft:respawn_anchor"))
+        {
+            public readonly To4Low? Charges = charges;
+            public static RespawnAnchor Block => new();
+        }
+        public class RoseBush(DoorHalf? half = null) : Block(new("minecraft:rose_bush"))
+        {
+            public readonly DoorHalf? Half = half;
+            public static RoseBush Block => new();
+        }
+        public class SandstoneSlab(SlabType? type = null, bool? waterlogged = null) : Block(new("minecraft:sandstone_slab"))
+        {
+            public readonly SlabType? Type = type;
+            public readonly bool? Waterlogged = waterlogged;
+            public static SandstoneSlab Block => new();
+        }
+        public class SandstoneStairs(Direction? facing = null, StairType? half = null, StairShape? shape = null, bool? waterlogged = null) : Block(new("minecraft:sandstone_stairs"))
+        {
+            public readonly Direction? Facing = facing;
+            public readonly StairType? Half = half;
+            public readonly StairShape? Shape = shape;
+            public readonly bool? Waterlogged = waterlogged;
+            public static SandstoneStairs Block => new();
+        }
+        public class SandstoneWall(WallType? east = null, WallType? north = null, WallType? south = null, bool? up = null, bool? waterlogged = null, WallType? west = null) : Block(new("minecraft:sandstone_wall"))
+        {
+            public readonly WallType? East = east;
+            public readonly WallType? North = north;
+            public readonly WallType? South = south;
+            public readonly bool? Up = up;
+            public readonly bool? Waterlogged = waterlogged;
+            public readonly WallType? West = west;
+            public static SandstoneWall Block => new();
+        }
+        public class Scaffolding(bool? bottom = null, To7Low? distance = null, bool? waterlogged = null) : Block(new("minecraft:scaffolding"))
+        {
+            public readonly bool? Bottom = bottom;
+            public readonly To7Low? Distance = distance;
+            public readonly bool? Waterlogged = waterlogged;
+            public static Scaffolding Block => new();
+        }
+        public class SculkCatalyst(bool? bloom = null) : Block(new("minecraft:sculk_catalyst"))
+        {
+            public readonly bool? Bloom = bloom;
+            public static SculkCatalyst Block => new();
+        }
+        public class SculkSensor(To15? power = null, SculkSensorPhase? sculk_sensor_phase = null, bool? waterlogged = null) : Block(new("minecraft:sculk_sensor"))
+        {
+            public readonly To15? Power = power;
+            public readonly SculkSensorPhase? Sculk_sensor_phase = sculk_sensor_phase;
+            public readonly bool? Waterlogged = waterlogged;
+            public static SculkSensor Block => new();
+        }
+        public class SculkShrieker(bool? can_summon = null, bool? shrieking = null, bool? waterlogged = null) : Block(new("minecraft:sculk_shrieker"))
+        {
+            public readonly bool? Can_summon = can_summon;
+            public readonly bool? Shrieking = shrieking;
+            public readonly bool? Waterlogged = waterlogged;
+            public static SculkShrieker Block => new();
+        }
+        public class SculkVein(bool? down = null, bool? east = null, bool? north = null, bool? south = null, bool? up = null, bool? waterlogged = null, bool? west = null) : Block(new("minecraft:sculk_vein"))
+        {
+            public readonly bool? Down = down;
+            public readonly bool? East = east;
+            public readonly bool? North = north;
+            public readonly bool? South = south;
+            public readonly bool? Up = up;
+            public readonly bool? Waterlogged = waterlogged;
+            public readonly bool? West = west;
+            public static SculkVein Block => new();
+        }
+        public class SeaPickle(To4High? pickles = null, bool? waterlogged = null) : Block(new("minecraft:sea_pickle"))
+        {
+            public readonly To4High? Pickles = pickles;
+            public readonly bool? Waterlogged = waterlogged;
+            public static SeaPickle Block => new();
+        }
+        public class ShulkerBox(OmniDirection? facing = null) : Block(new("minecraft:shulker_box"))
+        {
+            public readonly OmniDirection? Facing = facing;
+            public static ShulkerBox Block => new();
+        }
+        public class SkeletonSkull(bool? powered = null, To15? rotation = null) : Block(new("minecraft:skeleton_skull"))
+        {
+            public readonly bool? Powered = powered;
+            public readonly To15? Rotation = rotation;
+            public static SkeletonSkull Block => new();
+        }
+        public class SkeletonWallSkull(Direction? facing = null, bool? powered = null) : Block(new("minecraft:skeleton_wall_skull"))
+        {
+            public readonly Direction? Facing = facing;
+            public readonly bool? Powered = powered;
+            public static SkeletonWallSkull Block => new();
+        }
+        public class SmallAmethystBud(OmniDirection? facing = null, bool? waterlogged = null) : Block(new("minecraft:small_amethyst_bud"))
+        {
+            public readonly OmniDirection? Facing = facing;
+            public readonly bool? Waterlogged = waterlogged;
+            public static SmallAmethystBud Block => new();
+        }
+        public class SmallDripleaf(Direction? facing = null, DoorHalf? half = null, bool? waterlogged = null) : Block(new("minecraft:small_dripleaf"))
+        {
+            public readonly Direction? Facing = facing;
+            public readonly DoorHalf? Half = half;
+            public readonly bool? Waterlogged = waterlogged;
+            public static SmallDripleaf Block => new();
+        }
+        public class Smoker(Direction? facing = null, bool? lit = null) : Block(new("minecraft:smoker"))
+        {
+            public readonly Direction? Facing = facing;
+            public readonly bool? Lit = lit;
+            public static Smoker Block => new();
+        }
+        public class SmoothQuartzSlab(SlabType? type = null, bool? waterlogged = null) : Block(new("minecraft:smooth_quartz_slab"))
+        {
+            public readonly SlabType? Type = type;
+            public readonly bool? Waterlogged = waterlogged;
+            public static SmoothQuartzSlab Block => new();
+        }
+        public class SmoothQuartzStairs(Direction? facing = null, StairType? half = null, StairShape? shape = null, bool? waterlogged = null) : Block(new("minecraft:smooth_quartz_stairs"))
+        {
+            public readonly Direction? Facing = facing;
+            public readonly StairType? Half = half;
+            public readonly StairShape? Shape = shape;
+            public readonly bool? Waterlogged = waterlogged;
+            public static SmoothQuartzStairs Block => new();
+        }
+        public class SmoothRedSandstoneSlab(SlabType? type = null, bool? waterlogged = null) : Block(new("minecraft:smooth_red_sandstone_slab"))
+        {
+            public readonly SlabType? Type = type;
+            public readonly bool? Waterlogged = waterlogged;
+            public static SmoothRedSandstoneSlab Block => new();
+        }
+        public class SmoothRedSandstoneStairs(Direction? facing = null, StairType? half = null, StairShape? shape = null, bool? waterlogged = null) : Block(new("minecraft:smooth_red_sandstone_stairs"))
+        {
+            public readonly Direction? Facing = facing;
+            public readonly StairType? Half = half;
+            public readonly StairShape? Shape = shape;
+            public readonly bool? Waterlogged = waterlogged;
+            public static SmoothRedSandstoneStairs Block => new();
+        }
+        public class SmoothSandstoneSlab(SlabType? type = null, bool? waterlogged = null) : Block(new("minecraft:smooth_sandstone_slab"))
+        {
+            public readonly SlabType? Type = type;
+            public readonly bool? Waterlogged = waterlogged;
+            public static SmoothSandstoneSlab Block => new();
+        }
+        public class SmoothSandstoneStairs(Direction? facing = null, StairType? half = null, StairShape? shape = null, bool? waterlogged = null) : Block(new("minecraft:smooth_sandstone_stairs"))
+        {
+            public readonly Direction? Facing = facing;
+            public readonly StairType? Half = half;
+            public readonly StairShape? Shape = shape;
+            public readonly bool? Waterlogged = waterlogged;
+            public static SmoothSandstoneStairs Block => new();
+        }
+        public class SmoothStoneSlab(SlabType? type = null, bool? waterlogged = null) : Block(new("minecraft:smooth_stone_slab"))
+        {
+            public readonly SlabType? Type = type;
+            public readonly bool? Waterlogged = waterlogged;
+            public static SmoothStoneSlab Block => new();
+        }
+        public class SnifferEgg(To2? hatch = null) : Block(new("minecraft:sniffer_egg"))
+        {
+            public readonly To2? Hatch = hatch;
+            public static SnifferEgg Block => new();
+        }
+        public class Snow(To8High? layers = null) : Block(new("minecraft:snow"))
+        {
+            public readonly To8High? Layers = layers;
+            public static Snow Block => new();
+        }
+        public class SoulCampfire(Direction? facing = null, bool? lit = null, bool? signal_fire = null, bool? waterlogged = null) : Block(new("minecraft:soul_campfire"))
+        {
+            public readonly Direction? Facing = facing;
+            public readonly bool? Lit = lit;
+            public readonly bool? Signal_fire = signal_fire;
+            public readonly bool? Waterlogged = waterlogged;
+            public static SoulCampfire Block => new();
+        }
+        public class SoulLantern(bool? hanging = null, bool? waterlogged = null) : Block(new("minecraft:soul_lantern"))
+        {
+            public readonly bool? Hanging = hanging;
+            public readonly bool? Waterlogged = waterlogged;
+            public static SoulLantern Block => new();
+        }
+        public class SoulWallTorch(Direction? facing = null) : Block(new("minecraft:soul_wall_torch"))
+        {
+            public readonly Direction? Facing = facing;
+            public static SoulWallTorch Block => new();
+        }
+        public class SpruceButton(ButtonOrientation? face = null, Direction? facing = null, bool? powered = null) : Block(new("minecraft:spruce_button"))
+        {
+            public readonly ButtonOrientation? Face = face;
+            public readonly Direction? Facing = facing;
+            public readonly bool? Powered = powered;
+            public static SpruceButton Block => new();
+        }
+        public class SpruceDoor(Direction? facing = null, DoorHalf? half = null, DoorHinge? hinge = null, bool? open = null, bool? powered = null) : Block(new("minecraft:spruce_door"))
+        {
+            public readonly Direction? Facing = facing;
+            public readonly DoorHalf? Half = half;
+            public readonly DoorHinge? Hinge = hinge;
+            public readonly bool? Open = open;
+            public readonly bool? Powered = powered;
+            public static SpruceDoor Block => new();
+        }
+        public class SpruceFence(bool? east = null, bool? north = null, bool? south = null, bool? waterlogged = null, bool? west = null) : Block(new("minecraft:spruce_fence"))
+        {
+            public readonly bool? East = east;
+            public readonly bool? North = north;
+            public readonly bool? South = south;
+            public readonly bool? Waterlogged = waterlogged;
+            public readonly bool? West = west;
+            public static SpruceFence Block => new();
+        }
+        public class SpruceFenceGate(Direction? facing = null, bool? in_wall = null, bool? open = null, bool? powered = null) : Block(new("minecraft:spruce_fence_gate"))
+        {
+            public readonly Direction? Facing = facing;
+            public readonly bool? In_wall = in_wall;
+            public readonly bool? Open = open;
+            public readonly bool? Powered = powered;
+            public static SpruceFenceGate Block => new();
+        }
+        public class SpruceHangingSign(bool? attached = null, To15? rotation = null, bool? waterlogged = null) : Block(new("minecraft:spruce_hanging_sign"))
+        {
+            public readonly bool? Attached = attached;
+            public readonly To15? Rotation = rotation;
+            public readonly bool? Waterlogged = waterlogged;
+            public static SpruceHangingSign Block => new();
+        }
+        public class SpruceLeaves(To7High? distance = null, bool? persistent = null, bool? waterlogged = null) : Block(new("minecraft:spruce_leaves"))
+        {
+            public readonly To7High? Distance = distance;
+            public readonly bool? Persistent = persistent;
+            public readonly bool? Waterlogged = waterlogged;
+            public static SpruceLeaves Block => new();
+        }
+        public class SpruceLog(Axis? axis = null) : Block(new("minecraft:spruce_log"))
+        {
+            public readonly Axis? Axis = axis;
+            public static SpruceLog Block => new();
+        }
+        public class SprucePressurePlate(bool? powered = null) : Block(new("minecraft:spruce_pressure_plate"))
+        {
+            public readonly bool? Powered = powered;
+            public static SprucePressurePlate Block => new();
+        }
+        public class SpruceSapling(Binary? stage = null) : Block(new("minecraft:spruce_sapling"))
+        {
+            public readonly Binary? Stage = stage;
+            public static SpruceSapling Block => new();
+        }
+        public class SpruceSign(To15? rotation = null, bool? waterlogged = null) : Block(new("minecraft:spruce_sign"))
+        {
+            public readonly To15? Rotation = rotation;
+            public readonly bool? Waterlogged = waterlogged;
+            public static SpruceSign Block => new();
+        }
+        public class SpruceSlab(SlabType? type = null, bool? waterlogged = null) : Block(new("minecraft:spruce_slab"))
+        {
+            public readonly SlabType? Type = type;
+            public readonly bool? Waterlogged = waterlogged;
+            public static SpruceSlab Block => new();
+        }
+        public class SpruceStairs(Direction? facing = null, StairType? half = null, StairShape? shape = null, bool? waterlogged = null) : Block(new("minecraft:spruce_stairs"))
+        {
+            public readonly Direction? Facing = facing;
+            public readonly StairType? Half = half;
+            public readonly StairShape? Shape = shape;
+            public readonly bool? Waterlogged = waterlogged;
+            public static SpruceStairs Block => new();
+        }
+        public class SpruceTrapdoor(Direction? facing = null, StairType? half = null, bool? open = null, bool? powered = null, bool? waterlogged = null) : Block(new("minecraft:spruce_trapdoor"))
+        {
+            public readonly Direction? Facing = facing;
+            public readonly StairType? Half = half;
+            public readonly bool? Open = open;
+            public readonly bool? Powered = powered;
+            public readonly bool? Waterlogged = waterlogged;
+            public static SpruceTrapdoor Block => new();
+        }
+        public class SpruceWallHangingSign(Direction? facing = null, bool? waterlogged = null) : Block(new("minecraft:spruce_wall_hanging_sign"))
+        {
+            public readonly Direction? Facing = facing;
+            public readonly bool? Waterlogged = waterlogged;
+            public static SpruceWallHangingSign Block => new();
+        }
+        public class SpruceWallSign(Direction? facing = null, bool? waterlogged = null) : Block(new("minecraft:spruce_wall_sign"))
+        {
+            public readonly Direction? Facing = facing;
+            public readonly bool? Waterlogged = waterlogged;
+            public static SpruceWallSign Block => new();
+        }
+        public class SpruceWood(Axis? axis = null) : Block(new("minecraft:spruce_wood"))
+        {
+            public readonly Axis? Axis = axis;
+            public static SpruceWood Block => new();
+        }
+        public class StickyPiston(bool? extended = null, OmniDirection? facing = null) : Block(new("minecraft:sticky_piston"))
+        {
+            public readonly bool? Extended = extended;
+            public readonly OmniDirection? Facing = facing;
+            public static StickyPiston Block => new();
+        }
+        public class StoneBrickSlab(SlabType? type = null, bool? waterlogged = null) : Block(new("minecraft:stone_brick_slab"))
+        {
+            public readonly SlabType? Type = type;
+            public readonly bool? Waterlogged = waterlogged;
+            public static StoneBrickSlab Block => new();
+        }
+        public class StoneBrickStairs(Direction? facing = null, StairType? half = null, StairShape? shape = null, bool? waterlogged = null) : Block(new("minecraft:stone_brick_stairs"))
+        {
+            public readonly Direction? Facing = facing;
+            public readonly StairType? Half = half;
+            public readonly StairShape? Shape = shape;
+            public readonly bool? Waterlogged = waterlogged;
+            public static StoneBrickStairs Block => new();
+        }
+        public class StoneBrickWall(WallType? east = null, WallType? north = null, WallType? south = null, bool? up = null, bool? waterlogged = null, WallType? west = null) : Block(new("minecraft:stone_brick_wall"))
+        {
+            public readonly WallType? East = east;
+            public readonly WallType? North = north;
+            public readonly WallType? South = south;
+            public readonly bool? Up = up;
+            public readonly bool? Waterlogged = waterlogged;
+            public readonly WallType? West = west;
+            public static StoneBrickWall Block => new();
+        }
+        public class StoneButton(ButtonOrientation? face = null, Direction? facing = null, bool? powered = null) : Block(new("minecraft:stone_button"))
+        {
+            public readonly ButtonOrientation? Face = face;
+            public readonly Direction? Facing = facing;
+            public readonly bool? Powered = powered;
+            public static StoneButton Block => new();
+        }
+        public class StonePressurePlate(bool? powered = null) : Block(new("minecraft:stone_pressure_plate"))
+        {
+            public readonly bool? Powered = powered;
+            public static StonePressurePlate Block => new();
+        }
+        public class StoneSlab(SlabType? type = null, bool? waterlogged = null) : Block(new("minecraft:stone_slab"))
+        {
+            public readonly SlabType? Type = type;
+            public readonly bool? Waterlogged = waterlogged;
+            public static StoneSlab Block => new();
+        }
+        public class StoneStairs(Direction? facing = null, StairType? half = null, StairShape? shape = null, bool? waterlogged = null) : Block(new("minecraft:stone_stairs"))
+        {
+            public readonly Direction? Facing = facing;
+            public readonly StairType? Half = half;
+            public readonly StairShape? Shape = shape;
+            public readonly bool? Waterlogged = waterlogged;
+            public static StoneStairs Block => new();
+        }
+        public class Stonecutter(Direction? facing = null) : Block(new("minecraft:stonecutter"))
+        {
+            public readonly Direction? Facing = facing;
+            public static Stonecutter Block => new();
+        }
+        public class StrippedAcaciaLog(Axis? axis = null) : Block(new("minecraft:stripped_acacia_log"))
+        {
+            public readonly Axis? Axis = axis;
+            public static StrippedAcaciaLog Block => new();
+        }
+        public class StrippedAcaciaWood(Axis? axis = null) : Block(new("minecraft:stripped_acacia_wood"))
+        {
+            public readonly Axis? Axis = axis;
+            public static StrippedAcaciaWood Block => new();
+        }
+        public class StrippedBambooBlock(Axis? axis = null) : Block(new("minecraft:stripped_bamboo_block"))
+        {
+            public readonly Axis? Axis = axis;
+            public static StrippedBambooBlock Block => new();
+        }
+        public class StrippedBirchLog(Axis? axis = null) : Block(new("minecraft:stripped_birch_log"))
+        {
+            public readonly Axis? Axis = axis;
+            public static StrippedBirchLog Block => new();
+        }
+        public class StrippedBirchWood(Axis? axis = null) : Block(new("minecraft:stripped_birch_wood"))
+        {
+            public readonly Axis? Axis = axis;
+            public static StrippedBirchWood Block => new();
+        }
+        public class StrippedCherryLog(Axis? axis = null) : Block(new("minecraft:stripped_cherry_log"))
+        {
+            public readonly Axis? Axis = axis;
+            public static StrippedCherryLog Block => new();
+        }
+        public class StrippedCherryWood(Axis? axis = null) : Block(new("minecraft:stripped_cherry_wood"))
+        {
+            public readonly Axis? Axis = axis;
+            public static StrippedCherryWood Block => new();
+        }
+        public class StrippedCrimsonHyphae(Axis? axis = null) : Block(new("minecraft:stripped_crimson_hyphae"))
+        {
+            public readonly Axis? Axis = axis;
+            public static StrippedCrimsonHyphae Block => new();
+        }
+        public class StrippedCrimsonStem(Axis? axis = null) : Block(new("minecraft:stripped_crimson_stem"))
+        {
+            public readonly Axis? Axis = axis;
+            public static StrippedCrimsonStem Block => new();
+        }
+        public class StrippedDarkOakLog(Axis? axis = null) : Block(new("minecraft:stripped_dark_oak_log"))
+        {
+            public readonly Axis? Axis = axis;
+            public static StrippedDarkOakLog Block => new();
+        }
+        public class StrippedDarkOakWood(Axis? axis = null) : Block(new("minecraft:stripped_dark_oak_wood"))
+        {
+            public readonly Axis? Axis = axis;
+            public static StrippedDarkOakWood Block => new();
+        }
+        public class StrippedJungleLog(Axis? axis = null) : Block(new("minecraft:stripped_jungle_log"))
+        {
+            public readonly Axis? Axis = axis;
+            public static StrippedJungleLog Block => new();
+        }
+        public class StrippedJungleWood(Axis? axis = null) : Block(new("minecraft:stripped_jungle_wood"))
+        {
+            public readonly Axis? Axis = axis;
+            public static StrippedJungleWood Block => new();
+        }
+        public class StrippedMangroveLog(Axis? axis = null) : Block(new("minecraft:stripped_mangrove_log"))
+        {
+            public readonly Axis? Axis = axis;
+            public static StrippedMangroveLog Block => new();
+        }
+        public class StrippedMangroveWood(Axis? axis = null) : Block(new("minecraft:stripped_mangrove_wood"))
+        {
+            public readonly Axis? Axis = axis;
+            public static StrippedMangroveWood Block => new();
+        }
+        public class StrippedOakLog(Axis? axis = null) : Block(new("minecraft:stripped_oak_log"))
+        {
+            public readonly Axis? Axis = axis;
+            public static StrippedOakLog Block => new();
+        }
+        public class StrippedOakWood(Axis? axis = null) : Block(new("minecraft:stripped_oak_wood"))
+        {
+            public readonly Axis? Axis = axis;
+            public static StrippedOakWood Block => new();
+        }
+        public class StrippedSpruceLog(Axis? axis = null) : Block(new("minecraft:stripped_spruce_log"))
+        {
+            public readonly Axis? Axis = axis;
+            public static StrippedSpruceLog Block => new();
+        }
+        public class StrippedSpruceWood(Axis? axis = null) : Block(new("minecraft:stripped_spruce_wood"))
+        {
+            public readonly Axis? Axis = axis;
+            public static StrippedSpruceWood Block => new();
+        }
+        public class StrippedWarpedHyphae(Axis? axis = null) : Block(new("minecraft:stripped_warped_hyphae"))
+        {
+            public readonly Axis? Axis = axis;
+            public static StrippedWarpedHyphae Block => new();
+        }
+        public class StrippedWarpedStem(Axis? axis = null) : Block(new("minecraft:stripped_warped_stem"))
+        {
+            public readonly Axis? Axis = axis;
+            public static StrippedWarpedStem Block => new();
+        }
+        public class StructureBlock(StructureBlockType? mode = null) : Block(new("minecraft:structure_block"))
+        {
+            public readonly StructureBlockType? Mode = mode;
+            public static StructureBlock Block => new();
+        }
+        public class SugarCane(To15? age = null) : Block(new("minecraft:sugar_cane"))
+        {
+            public readonly To15? Age = age;
+            public static SugarCane Block => new();
+        }
+        public class Sunflower(DoorHalf? half = null) : Block(new("minecraft:sunflower"))
+        {
+            public readonly DoorHalf? Half = half;
+            public static Sunflower Block => new();
+        }
+        public class SuspiciousGravel(To3Low? dusted = null) : Block(new("minecraft:suspicious_gravel"))
+        {
+            public readonly To3Low? Dusted = dusted;
+            public static SuspiciousGravel Block => new();
+        }
+        public class SuspiciousSand(To3Low? dusted = null) : Block(new("minecraft:suspicious_sand"))
+        {
+            public readonly To3Low? Dusted = dusted;
+            public static SuspiciousSand Block => new();
+        }
+        public class SweetBerryBush(To3Low? age = null) : Block(new("minecraft:sweet_berry_bush"))
+        {
+            public readonly To3Low? Age = age;
+            public static SweetBerryBush Block => new();
+        }
+        public class TallGrass(DoorHalf? half = null) : Block(new("minecraft:tall_grass"))
+        {
+            public readonly DoorHalf? Half = half;
+            public static TallGrass Block => new();
+        }
+        public class TallSeagrass(DoorHalf? half = null) : Block(new("minecraft:tall_seagrass"))
+        {
+            public readonly DoorHalf? Half = half;
+            public static TallSeagrass Block => new();
+        }
+        public class Target(To15? power = null) : Block(new("minecraft:target"))
+        {
+            public readonly To15? Power = power;
+            public static Target Block => new();
+        }
+        public class Tnt(bool? unstable = null) : Block(new("minecraft:tnt"))
+        {
+            public readonly bool? Unstable = unstable;
+            public static Tnt Block => new();
+        }
+        public class TorchflowerCrop(Binary? age = null) : Block(new("minecraft:torchflower_crop"))
+        {
+            public readonly Binary? Age = age;
+            public static TorchflowerCrop Block => new();
+        }
+        public class TrappedChest(ChestType? type = null, Direction? facing = null, bool? waterlogged = null) : Block(new("minecraft:trapped_chest"))
+        {
+            public readonly ChestType? Type = type;
+            public readonly Direction? Facing = facing;
+            public readonly bool? Waterlogged = waterlogged;
+            public static TrappedChest Block => new();
+        }
+        public class TrialSpawner(TrialSpawnerState? trial_spawner_state = null) : Block(new("minecraft:trial_spawner"))
+        {
+            public readonly TrialSpawnerState? Trial_spawner_state = trial_spawner_state;
+            public static TrialSpawner Block => new();
+        }
+        public class Tripwire(bool? attached = null, bool? disarmed = null, bool? east = null, bool? north = null, bool? powered = null, bool? south = null, bool? west = null) : Block(new("minecraft:tripwire"))
+        {
+            public readonly bool? Attached = attached;
+            public readonly bool? Disarmed = disarmed;
+            public readonly bool? East = east;
+            public readonly bool? North = north;
+            public readonly bool? Powered = powered;
+            public readonly bool? South = south;
+            public readonly bool? West = west;
+            public static Tripwire Block => new();
+        }
+        public class TripwireHook(bool? attached = null, Direction? facing = null, bool? powered = null) : Block(new("minecraft:tripwire_hook"))
+        {
+            public readonly bool? Attached = attached;
+            public readonly Direction? Facing = facing;
+            public readonly bool? Powered = powered;
+            public static TripwireHook Block => new();
+        }
+        public class TubeCoral(bool? waterlogged = null) : Block(new("minecraft:tube_coral"))
+        {
+            public readonly bool? Waterlogged = waterlogged;
+            public static TubeCoral Block => new();
+        }
+        public class TubeCoralFan(bool? waterlogged = null) : Block(new("minecraft:tube_coral_fan"))
+        {
+            public readonly bool? Waterlogged = waterlogged;
+            public static TubeCoralFan Block => new();
+        }
+        public class TubeCoralWallFan(Direction? facing = null, bool? waterlogged = null) : Block(new("minecraft:tube_coral_wall_fan"))
+        {
+            public readonly Direction? Facing = facing;
+            public readonly bool? Waterlogged = waterlogged;
+            public static TubeCoralWallFan Block => new();
+        }
+        public class TuffBrickSlab(SlabType? type = null, bool? waterlogged = null) : Block(new("minecraft:tuff_brick_slab"))
+        {
+            public readonly SlabType? Type = type;
+            public readonly bool? Waterlogged = waterlogged;
+            public static TuffBrickSlab Block => new();
+        }
+        public class TuffBrickStairs(Direction? facing = null, StairType? half = null, StairShape? shape = null, bool? waterlogged = null) : Block(new("minecraft:tuff_brick_stairs"))
+        {
+            public readonly Direction? Facing = facing;
+            public readonly StairType? Half = half;
+            public readonly StairShape? Shape = shape;
+            public readonly bool? Waterlogged = waterlogged;
+            public static TuffBrickStairs Block => new();
+        }
+        public class TuffBrickWall(WallType? east = null, WallType? north = null, WallType? south = null, bool? up = null, bool? waterlogged = null, WallType? west = null) : Block(new("minecraft:tuff_brick_wall"))
+        {
+            public readonly WallType? East = east;
+            public readonly WallType? North = north;
+            public readonly WallType? South = south;
+            public readonly bool? Up = up;
+            public readonly bool? Waterlogged = waterlogged;
+            public readonly WallType? West = west;
+            public static TuffBrickWall Block => new();
+        }
+        public class TuffSlab(SlabType? type = null, bool? waterlogged = null) : Block(new("minecraft:tuff_slab"))
+        {
+            public readonly SlabType? Type = type;
+            public readonly bool? Waterlogged = waterlogged;
+            public static TuffSlab Block => new();
+        }
+        public class TuffStairs(Direction? facing = null, StairType? half = null, StairShape? shape = null, bool? waterlogged = null) : Block(new("minecraft:tuff_stairs"))
+        {
+            public readonly Direction? Facing = facing;
+            public readonly StairType? Half = half;
+            public readonly StairShape? Shape = shape;
+            public readonly bool? Waterlogged = waterlogged;
+            public static TuffStairs Block => new();
+        }
+        public class TuffWall(WallType? east = null, WallType? north = null, WallType? south = null, bool? up = null, bool? waterlogged = null, WallType? west = null) : Block(new("minecraft:tuff_wall"))
+        {
+            public readonly WallType? East = east;
+            public readonly WallType? North = north;
+            public readonly WallType? South = south;
+            public readonly bool? Up = up;
+            public readonly bool? Waterlogged = waterlogged;
+            public readonly WallType? West = west;
+            public static TuffWall Block => new();
+        }
+        public class TurtleEgg(To4High? eggs = null, To2? hatch = null) : Block(new("minecraft:turtle_egg"))
+        {
+            public readonly To4High? Eggs = eggs;
+            public readonly To2? Hatch = hatch;
+            public static TurtleEgg Block => new();
+        }
+        public class TwistingVines(To25? age = null) : Block(new("minecraft:twisting_vines"))
+        {
+            public readonly To25? Age = age;
+            public static TwistingVines Block => new();
+        }
+        public class VerdantFroglight(Axis? axis = null) : Block(new("minecraft:verdant_froglight"))
+        {
+            public readonly Axis? Axis = axis;
+            public static VerdantFroglight Block => new();
+        }
+        public class Vine(bool? east = null, bool? north = null, bool? south = null, bool? up = null, bool? west = null) : Block(new("minecraft:vine"))
+        {
+            public readonly bool? East = east;
+            public readonly bool? North = north;
+            public readonly bool? South = south;
+            public readonly bool? Up = up;
+            public readonly bool? West = west;
+            public static Vine Block => new();
+        }
+        public class WallTorch(Direction? facing = null) : Block(new("minecraft:wall_torch"))
+        {
+            public readonly Direction? Facing = facing;
+            public static WallTorch Block => new();
+        }
+        public class WarpedButton(ButtonOrientation? face = null, Direction? facing = null, bool? powered = null) : Block(new("minecraft:warped_button"))
+        {
+            public readonly ButtonOrientation? Face = face;
+            public readonly Direction? Facing = facing;
+            public readonly bool? Powered = powered;
+            public static WarpedButton Block => new();
+        }
+        public class WarpedDoor(Direction? facing = null, DoorHalf? half = null, DoorHinge? hinge = null, bool? open = null, bool? powered = null) : Block(new("minecraft:warped_door"))
+        {
+            public readonly Direction? Facing = facing;
+            public readonly DoorHalf? Half = half;
+            public readonly DoorHinge? Hinge = hinge;
+            public readonly bool? Open = open;
+            public readonly bool? Powered = powered;
+            public static WarpedDoor Block => new();
+        }
+        public class WarpedFence(bool? east = null, bool? north = null, bool? south = null, bool? waterlogged = null, bool? west = null) : Block(new("minecraft:warped_fence"))
+        {
+            public readonly bool? East = east;
+            public readonly bool? North = north;
+            public readonly bool? South = south;
+            public readonly bool? Waterlogged = waterlogged;
+            public readonly bool? West = west;
+            public static WarpedFence Block => new();
+        }
+        public class WarpedFenceGate(Direction? facing = null, bool? in_wall = null, bool? open = null, bool? powered = null) : Block(new("minecraft:warped_fence_gate"))
+        {
+            public readonly Direction? Facing = facing;
+            public readonly bool? In_wall = in_wall;
+            public readonly bool? Open = open;
+            public readonly bool? Powered = powered;
+            public static WarpedFenceGate Block => new();
+        }
+        public class WarpedHangingSign(bool? attached = null, To15? rotation = null, bool? waterlogged = null) : Block(new("minecraft:warped_hanging_sign"))
+        {
+            public readonly bool? Attached = attached;
+            public readonly To15? Rotation = rotation;
+            public readonly bool? Waterlogged = waterlogged;
+            public static WarpedHangingSign Block => new();
+        }
+        public class WarpedHyphae(Axis? axis = null) : Block(new("minecraft:warped_hyphae"))
+        {
+            public readonly Axis? Axis = axis;
+            public static WarpedHyphae Block => new();
+        }
+        public class WarpedPressurePlate(bool? powered = null) : Block(new("minecraft:warped_pressure_plate"))
+        {
+            public readonly bool? Powered = powered;
+            public static WarpedPressurePlate Block => new();
+        }
+        public class WarpedSign(To15? rotation = null, bool? waterlogged = null) : Block(new("minecraft:warped_sign"))
+        {
+            public readonly To15? Rotation = rotation;
+            public readonly bool? Waterlogged = waterlogged;
+            public static WarpedSign Block => new();
+        }
+        public class WarpedSlab(SlabType? type = null, bool? waterlogged = null) : Block(new("minecraft:warped_slab"))
+        {
+            public readonly SlabType? Type = type;
+            public readonly bool? Waterlogged = waterlogged;
+            public static WarpedSlab Block => new();
+        }
+        public class WarpedStairs(Direction? facing = null, StairType? half = null, StairShape? shape = null, bool? waterlogged = null) : Block(new("minecraft:warped_stairs"))
+        {
+            public readonly Direction? Facing = facing;
+            public readonly StairType? Half = half;
+            public readonly StairShape? Shape = shape;
+            public readonly bool? Waterlogged = waterlogged;
+            public static WarpedStairs Block => new();
+        }
+        public class WarpedStem(Axis? axis = null) : Block(new("minecraft:warped_stem"))
+        {
+            public readonly Axis? Axis = axis;
+            public static WarpedStem Block => new();
+        }
+        public class WarpedTrapdoor(Direction? facing = null, StairType? half = null, bool? open = null, bool? powered = null, bool? waterlogged = null) : Block(new("minecraft:warped_trapdoor"))
+        {
+            public readonly Direction? Facing = facing;
+            public readonly StairType? Half = half;
+            public readonly bool? Open = open;
+            public readonly bool? Powered = powered;
+            public readonly bool? Waterlogged = waterlogged;
+            public static WarpedTrapdoor Block => new();
+        }
+        public class WarpedWallHangingSign(Direction? facing = null, bool? waterlogged = null) : Block(new("minecraft:warped_wall_hanging_sign"))
+        {
+            public readonly Direction? Facing = facing;
+            public readonly bool? Waterlogged = waterlogged;
+            public static WarpedWallHangingSign Block => new();
+        }
+        public class WarpedWallSign(Direction? facing = null, bool? waterlogged = null) : Block(new("minecraft:warped_wall_sign"))
+        {
+            public readonly Direction? Facing = facing;
+            public readonly bool? Waterlogged = waterlogged;
+            public static WarpedWallSign Block => new();
+        }
+        public class Water(To15? level = null) : Block(new("minecraft:water"))
+        {
+            public readonly To15? Level = level;
+            public static Water Block => new();
+        }
+        public class WaterCauldron(To3High? level = null) : Block(new("minecraft:water_cauldron"))
+        {
+            public readonly To3High? Level = level;
+            public static WaterCauldron Block => new();
+        }
+        public class WaxedCopperBulb(bool? lit = null, bool? powered = null) : Block(new("minecraft:waxed_copper_bulb"))
+        {
+            public readonly bool? Lit = lit;
+            public readonly bool? Powered = powered;
+            public static WaxedCopperBulb Block => new();
+        }
+        public class WaxedCopperDoor(Direction? facing = null, DoorHalf? half = null, DoorHinge? hinge = null, bool? open = null, bool? powered = null) : Block(new("minecraft:waxed_copper_door"))
+        {
+            public readonly Direction? Facing = facing;
+            public readonly DoorHalf? Half = half;
+            public readonly DoorHinge? Hinge = hinge;
+            public readonly bool? Open = open;
+            public readonly bool? Powered = powered;
+            public static WaxedCopperDoor Block => new();
+        }
+        public class WaxedCopperGrate(bool? waterlogged = null) : Block(new("minecraft:waxed_copper_grate"))
+        {
+            public readonly bool? Waterlogged = waterlogged;
+            public static WaxedCopperGrate Block => new();
+        }
+        public class WaxedCopperTrapdoor(Direction? facing = null, StairType? half = null, bool? open = null, bool? powered = null, bool? waterlogged = null) : Block(new("minecraft:waxed_copper_trapdoor"))
+        {
+            public readonly Direction? Facing = facing;
+            public readonly StairType? Half = half;
+            public readonly bool? Open = open;
+            public readonly bool? Powered = powered;
+            public readonly bool? Waterlogged = waterlogged;
+            public static WaxedCopperTrapdoor Block => new();
+        }
+        public class WaxedCutCopperSlab(SlabType? type = null, bool? waterlogged = null) : Block(new("minecraft:waxed_cut_copper_slab"))
+        {
+            public readonly SlabType? Type = type;
+            public readonly bool? Waterlogged = waterlogged;
+            public static WaxedCutCopperSlab Block => new();
+        }
+        public class WaxedCutCopperStairs(Direction? facing = null, StairType? half = null, StairShape? shape = null, bool? waterlogged = null) : Block(new("minecraft:waxed_cut_copper_stairs"))
+        {
+            public readonly Direction? Facing = facing;
+            public readonly StairType? Half = half;
+            public readonly StairShape? Shape = shape;
+            public readonly bool? Waterlogged = waterlogged;
+            public static WaxedCutCopperStairs Block => new();
+        }
+        public class WaxedExposedCopperBulb(bool? lit = null, bool? powered = null) : Block(new("minecraft:waxed_exposed_copper_bulb"))
+        {
+            public readonly bool? Lit = lit;
+            public readonly bool? Powered = powered;
+            public static WaxedExposedCopperBulb Block => new();
+        }
+        public class WaxedExposedCopperDoor(Direction? facing = null, DoorHalf? half = null, DoorHinge? hinge = null, bool? open = null, bool? powered = null) : Block(new("minecraft:waxed_exposed_copper_door"))
+        {
+            public readonly Direction? Facing = facing;
+            public readonly DoorHalf? Half = half;
+            public readonly DoorHinge? Hinge = hinge;
+            public readonly bool? Open = open;
+            public readonly bool? Powered = powered;
+            public static WaxedExposedCopperDoor Block => new();
+        }
+        public class WaxedExposedCopperGrate(bool? waterlogged = null) : Block(new("minecraft:waxed_exposed_copper_grate"))
+        {
+            public readonly bool? Waterlogged = waterlogged;
+            public static WaxedExposedCopperGrate Block => new();
+        }
+        public class WaxedExposedCopperTrapdoor(Direction? facing = null, StairType? half = null, bool? open = null, bool? powered = null, bool? waterlogged = null) : Block(new("minecraft:waxed_exposed_copper_trapdoor"))
+        {
+            public readonly Direction? Facing = facing;
+            public readonly StairType? Half = half;
+            public readonly bool? Open = open;
+            public readonly bool? Powered = powered;
+            public readonly bool? Waterlogged = waterlogged;
+            public static WaxedExposedCopperTrapdoor Block => new();
+        }
+        public class WaxedExposedCutCopperSlab(SlabType? type = null, bool? waterlogged = null) : Block(new("minecraft:waxed_exposed_cut_copper_slab"))
+        {
+            public readonly SlabType? Type = type;
+            public readonly bool? Waterlogged = waterlogged;
+            public static WaxedExposedCutCopperSlab Block => new();
+        }
+        public class WaxedExposedCutCopperStairs(Direction? facing = null, StairType? half = null, StairShape? shape = null, bool? waterlogged = null) : Block(new("minecraft:waxed_exposed_cut_copper_stairs"))
+        {
+            public readonly Direction? Facing = facing;
+            public readonly StairType? Half = half;
+            public readonly StairShape? Shape = shape;
+            public readonly bool? Waterlogged = waterlogged;
+            public static WaxedExposedCutCopperStairs Block => new();
+        }
+        public class WaxedOxidizedCopperBulb(bool? lit = null, bool? powered = null) : Block(new("minecraft:waxed_oxidized_copper_bulb"))
+        {
+            public readonly bool? Lit = lit;
+            public readonly bool? Powered = powered;
+            public static WaxedOxidizedCopperBulb Block => new();
+        }
+        public class WaxedOxidizedCopperDoor(Direction? facing = null, DoorHalf? half = null, DoorHinge? hinge = null, bool? open = null, bool? powered = null) : Block(new("minecraft:waxed_oxidized_copper_door"))
+        {
+            public readonly Direction? Facing = facing;
+            public readonly DoorHalf? Half = half;
+            public readonly DoorHinge? Hinge = hinge;
+            public readonly bool? Open = open;
+            public readonly bool? Powered = powered;
+            public static WaxedOxidizedCopperDoor Block => new();
+        }
+        public class WaxedOxidizedCopperGrate(bool? waterlogged = null) : Block(new("minecraft:waxed_oxidized_copper_grate"))
+        {
+            public readonly bool? Waterlogged = waterlogged;
+            public static WaxedOxidizedCopperGrate Block => new();
+        }
+        public class WaxedOxidizedCopperTrapdoor(Direction? facing = null, StairType? half = null, bool? open = null, bool? powered = null, bool? waterlogged = null) : Block(new("minecraft:waxed_oxidized_copper_trapdoor"))
+        {
+            public readonly Direction? Facing = facing;
+            public readonly StairType? Half = half;
+            public readonly bool? Open = open;
+            public readonly bool? Powered = powered;
+            public readonly bool? Waterlogged = waterlogged;
+            public static WaxedOxidizedCopperTrapdoor Block => new();
+        }
+        public class WaxedOxidizedCutCopperSlab(SlabType? type = null, bool? waterlogged = null) : Block(new("minecraft:waxed_oxidized_cut_copper_slab"))
+        {
+            public readonly SlabType? Type = type;
+            public readonly bool? Waterlogged = waterlogged;
+            public static WaxedOxidizedCutCopperSlab Block => new();
+        }
+        public class WaxedOxidizedCutCopperStairs(Direction? facing = null, StairType? half = null, StairShape? shape = null, bool? waterlogged = null) : Block(new("minecraft:waxed_oxidized_cut_copper_stairs"))
+        {
+            public readonly Direction? Facing = facing;
+            public readonly StairType? Half = half;
+            public readonly StairShape? Shape = shape;
+            public readonly bool? Waterlogged = waterlogged;
+            public static WaxedOxidizedCutCopperStairs Block => new();
+        }
+        public class WaxedWeatheredCopperBulb(bool? lit = null, bool? powered = null) : Block(new("minecraft:waxed_weathered_copper_bulb"))
+        {
+            public readonly bool? Lit = lit;
+            public readonly bool? Powered = powered;
+            public static WaxedWeatheredCopperBulb Block => new();
+        }
+        public class WaxedWeatheredCopperDoor(Direction? facing = null, DoorHalf? half = null, DoorHinge? hinge = null, bool? open = null, bool? powered = null) : Block(new("minecraft:waxed_weathered_copper_door"))
+        {
+            public readonly Direction? Facing = facing;
+            public readonly DoorHalf? Half = half;
+            public readonly DoorHinge? Hinge = hinge;
+            public readonly bool? Open = open;
+            public readonly bool? Powered = powered;
+            public static WaxedWeatheredCopperDoor Block => new();
+        }
+        public class WaxedWeatheredCopperGrate(bool? waterlogged = null) : Block(new("minecraft:waxed_weathered_copper_grate"))
+        {
+            public readonly bool? Waterlogged = waterlogged;
+            public static WaxedWeatheredCopperGrate Block => new();
+        }
+        public class WaxedWeatheredCopperTrapdoor(Direction? facing = null, StairType? half = null, bool? open = null, bool? powered = null, bool? waterlogged = null) : Block(new("minecraft:waxed_weathered_copper_trapdoor"))
+        {
+            public readonly Direction? Facing = facing;
+            public readonly StairType? Half = half;
+            public readonly bool? Open = open;
+            public readonly bool? Powered = powered;
+            public readonly bool? Waterlogged = waterlogged;
+            public static WaxedWeatheredCopperTrapdoor Block => new();
+        }
+        public class WaxedWeatheredCutCopperSlab(SlabType? type = null, bool? waterlogged = null) : Block(new("minecraft:waxed_weathered_cut_copper_slab"))
+        {
+            public readonly SlabType? Type = type;
+            public readonly bool? Waterlogged = waterlogged;
+            public static WaxedWeatheredCutCopperSlab Block => new();
+        }
+        public class WaxedWeatheredCutCopperStairs(Direction? facing = null, StairType? half = null, StairShape? shape = null, bool? waterlogged = null) : Block(new("minecraft:waxed_weathered_cut_copper_stairs"))
+        {
+            public readonly Direction? Facing = facing;
+            public readonly StairType? Half = half;
+            public readonly StairShape? Shape = shape;
+            public readonly bool? Waterlogged = waterlogged;
+            public static WaxedWeatheredCutCopperStairs Block => new();
+        }
+        public class WeatheredCopperBulb(bool? lit = null, bool? powered = null) : Block(new("minecraft:weathered_copper_bulb"))
+        {
+            public readonly bool? Lit = lit;
+            public readonly bool? Powered = powered;
+            public static WeatheredCopperBulb Block => new();
+        }
+        public class WeatheredCopperDoor(Direction? facing = null, DoorHalf? half = null, DoorHinge? hinge = null, bool? open = null, bool? powered = null) : Block(new("minecraft:weathered_copper_door"))
+        {
+            public readonly Direction? Facing = facing;
+            public readonly DoorHalf? Half = half;
+            public readonly DoorHinge? Hinge = hinge;
+            public readonly bool? Open = open;
+            public readonly bool? Powered = powered;
+            public static WeatheredCopperDoor Block => new();
+        }
+        public class WeatheredCopperGrate(bool? waterlogged = null) : Block(new("minecraft:weathered_copper_grate"))
+        {
+            public readonly bool? Waterlogged = waterlogged;
+            public static WeatheredCopperGrate Block => new();
+        }
+        public class WeatheredCopperTrapdoor(Direction? facing = null, StairType? half = null, bool? open = null, bool? powered = null, bool? waterlogged = null) : Block(new("minecraft:weathered_copper_trapdoor"))
+        {
+            public readonly Direction? Facing = facing;
+            public readonly StairType? Half = half;
+            public readonly bool? Open = open;
+            public readonly bool? Powered = powered;
+            public readonly bool? Waterlogged = waterlogged;
+            public static WeatheredCopperTrapdoor Block => new();
+        }
+        public class WeatheredCutCopperSlab(SlabType? type = null, bool? waterlogged = null) : Block(new("minecraft:weathered_cut_copper_slab"))
+        {
+            public readonly SlabType? Type = type;
+            public readonly bool? Waterlogged = waterlogged;
+            public static WeatheredCutCopperSlab Block => new();
+        }
+        public class WeatheredCutCopperStairs(Direction? facing = null, StairType? half = null, StairShape? shape = null, bool? waterlogged = null) : Block(new("minecraft:weathered_cut_copper_stairs"))
+        {
+            public readonly Direction? Facing = facing;
+            public readonly StairType? Half = half;
+            public readonly StairShape? Shape = shape;
+            public readonly bool? Waterlogged = waterlogged;
+            public static WeatheredCutCopperStairs Block => new();
+        }
+        public class WeepingVines(To25? age = null) : Block(new("minecraft:weeping_vines"))
+        {
+            public readonly To25? Age = age;
+            public static WeepingVines Block => new();
+        }
+        public class Wheat(To7Low? age = null) : Block(new("minecraft:wheat"))
+        {
+            public readonly To7Low? Age = age;
+            public static Wheat Block => new();
+        }
+        public class WhiteBanner(To15? rotation = null) : Block(new("minecraft:white_banner"))
+        {
+            public readonly To15? Rotation = rotation;
+            public static WhiteBanner Block => new();
+        }
+        public class WhiteBed(Direction? facing = null, bool? occupied = null, BedPart? part = null) : Block(new("minecraft:white_bed"))
+        {
+            public readonly Direction? Facing = facing;
+            public readonly bool? Occupied = occupied;
+            public readonly BedPart? Part = part;
+            public static WhiteBed Block => new();
+        }
+        public class WhiteCandle(To4High? candles = null, bool? lit = null, bool? waterlogged = null) : Block(new("minecraft:white_candle"))
+        {
+            public readonly To4High? Candles = candles;
+            public readonly bool? Lit = lit;
+            public readonly bool? Waterlogged = waterlogged;
+            public static WhiteCandle Block => new();
+        }
+        public class WhiteCandleCake(bool? lit = null) : Block(new("minecraft:white_candle_cake"))
+        {
+            public readonly bool? Lit = lit;
+            public static WhiteCandleCake Block => new();
+        }
+        public class WhiteGlazedTerracotta(Direction? facing = null) : Block(new("minecraft:white_glazed_terracotta"))
+        {
+            public readonly Direction? Facing = facing;
+            public static WhiteGlazedTerracotta Block => new();
+        }
+        public class WhiteShulkerBox(OmniDirection? facing = null) : Block(new("minecraft:white_shulker_box"))
+        {
+            public readonly OmniDirection? Facing = facing;
+            public static WhiteShulkerBox Block => new();
+        }
+        public class WhiteStainedGlassPane(bool? east = null, bool? north = null, bool? south = null, bool? waterlogged = null, bool? west = null) : Block(new("minecraft:white_stained_glass_pane"))
+        {
+            public readonly bool? East = east;
+            public readonly bool? North = north;
+            public readonly bool? South = south;
+            public readonly bool? Waterlogged = waterlogged;
+            public readonly bool? West = west;
+            public static WhiteStainedGlassPane Block => new();
+        }
+        public class WhiteWallBanner(Direction? facing = null) : Block(new("minecraft:white_wall_banner"))
+        {
+            public readonly Direction? Facing = facing;
+            public static WhiteWallBanner Block => new();
+        }
+        public class WitherSkeletonSkull(bool? powered = null, To15? rotation = null) : Block(new("minecraft:wither_skeleton_skull"))
+        {
+            public readonly bool? Powered = powered;
+            public readonly To15? Rotation = rotation;
+            public static WitherSkeletonSkull Block => new();
+        }
+        public class WitherSkeletonWallSkull(Direction? facing = null, bool? powered = null) : Block(new("minecraft:wither_skeleton_wall_skull"))
+        {
+            public readonly Direction? Facing = facing;
+            public readonly bool? Powered = powered;
+            public static WitherSkeletonWallSkull Block => new();
+        }
+        public class YellowBanner(To15? rotation = null) : Block(new("minecraft:yellow_banner"))
+        {
+            public readonly To15? Rotation = rotation;
+            public static YellowBanner Block => new();
+        }
+        public class YellowBed(Direction? facing = null, bool? occupied = null, BedPart? part = null) : Block(new("minecraft:yellow_bed"))
+        {
+            public readonly Direction? Facing = facing;
+            public readonly bool? Occupied = occupied;
+            public readonly BedPart? Part = part;
+            public static YellowBed Block => new();
+        }
+        public class YellowCandle(To4High? candles = null, bool? lit = null, bool? waterlogged = null) : Block(new("minecraft:yellow_candle"))
+        {
+            public readonly To4High? Candles = candles;
+            public readonly bool? Lit = lit;
+            public readonly bool? Waterlogged = waterlogged;
+            public static YellowCandle Block => new();
+        }
+        public class YellowCandleCake(bool? lit = null) : Block(new("minecraft:yellow_candle_cake"))
+        {
+            public readonly bool? Lit = lit;
+            public static YellowCandleCake Block => new();
+        }
+        public class YellowGlazedTerracotta(Direction? facing = null) : Block(new("minecraft:yellow_glazed_terracotta"))
+        {
+            public readonly Direction? Facing = facing;
+            public static YellowGlazedTerracotta Block => new();
+        }
+        public class YellowShulkerBox(OmniDirection? facing = null) : Block(new("minecraft:yellow_shulker_box"))
+        {
+            public readonly OmniDirection? Facing = facing;
+            public static YellowShulkerBox Block => new();
+        }
+        public class YellowStainedGlassPane(bool? east = null, bool? north = null, bool? south = null, bool? waterlogged = null, bool? west = null) : Block(new("minecraft:yellow_stained_glass_pane"))
+        {
+            public readonly bool? East = east;
+            public readonly bool? North = north;
+            public readonly bool? South = south;
+            public readonly bool? Waterlogged = waterlogged;
+            public readonly bool? West = west;
+            public static YellowStainedGlassPane Block => new();
+        }
+        public class YellowWallBanner(Direction? facing = null) : Block(new("minecraft:yellow_wall_banner"))
+        {
+            public readonly Direction? Facing = facing;
+            public static YellowWallBanner Block => new();
+        }
+        public class ZombieHead(bool? powered = null, To15? rotation = null) : Block(new("minecraft:zombie_head"))
+        {
+            public readonly bool? Powered = powered;
+            public readonly To15? Rotation = rotation;
+            public static ZombieHead Block => new();
+        }
+        public class ZombieWallHead(Direction? facing = null, bool? powered = null) : Block(new("minecraft:zombie_wall_head"))
+        {
+            public readonly Direction? Facing = facing;
+            public readonly bool? Powered = powered;
+            public static ZombieWallHead Block => new();
+        }
     }
+
 }
