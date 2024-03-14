@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Datapack.Net.Function.Commands
 {
-    public class Execute(bool macro) : Command(macro)
+    public class Execute(bool macro = false) : Command(macro)
     {
         public readonly List<Subcommand> Subcommands = [];
 
@@ -67,6 +67,8 @@ namespace Datapack.Net.Function.Commands
             }
 
             public Execute Biome(Position pos, Biome biome) => Add(new Subcommand.Biome(pos, biome));
+            public Execute Block(Position pos, Block block) => Add(new Subcommand.Block(pos, block));
+            public Execute Blocks(Position start, Position end, Position destination, bool masked = false) => Add(new Subcommand.Blocks(start, end, destination, masked));
 
             public enum Type
             {
@@ -85,10 +87,10 @@ namespace Datapack.Net.Function.Commands
                     return $"{Enum.GetName(Type)?.ToLower()} {Get()}";
                 }
 
-                public class Biome(Position position, Data.Biome biome) : Subcommand
+                public class Biome(Position position, Net.Data.Biome biome) : Subcommand
                 {
                     public readonly Position Position = position;
-                    public readonly Data.Biome BiomeTag = biome;
+                    public readonly Net.Data.Biome BiomeTag = biome;
 
                     public override string Get()
                     {
@@ -96,14 +98,39 @@ namespace Datapack.Net.Function.Commands
                     }
                 }
 
-                public class Block(Position position, Data.Block block) : Subcommand
+                public class Block(Position position, Net.Data.Block block) : Subcommand
                 {
                     public readonly Position Position = position;
-                    public readonly Data.Block BlockTag = block;
+                    public readonly Net.Data.Block BlockTag = block;
 
                     public override string Get()
                     {
-                        return $"biome {Position} {BlockTag}";
+                        return $"block {Position} {BlockTag}";
+                    }
+                }
+
+                public class Blocks(Position start, Position end, Position destination, bool masked) : Subcommand
+                {
+                    public readonly Position Start = start;
+                    public readonly Position End = end;
+                    public readonly Position Destination = destination;
+                    public readonly bool Masked = masked;
+
+                    public override string Get()
+                    {
+                        return $"blocks {Start} {End} {Destination} {(Masked ? "masked" : "all")}";
+                    }
+                }
+
+                public class Data : Subcommand
+                {
+                    public readonly Position? Position;
+                    public readonly IEntityTarget? Target;
+                    public readonly Storage? Source;
+
+                    public override string Get()
+                    {
+                        return $"data ";
                     }
                 }
             }

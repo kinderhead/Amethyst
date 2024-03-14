@@ -1,4 +1,5 @@
-﻿using Datapack.Net.Function.Commands;
+﻿using Datapack.Net.Data._1_20_4;
+using Datapack.Net.Function.Commands;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -63,6 +64,15 @@ namespace Datapack.Net.Tests
 
             var cmd = new FunctionCommand(func, storage);
             Assert.That(cmd.Build(), Is.EqualTo("function test:func with storage test:test"));
+        }
+
+        [Test]
+        public void Execute()
+        {
+            var func = new MCFunction(new("test", "func"));
+            var cmd = new Execute().As(new TargetSelector(TargetType.e, type: Entities.Axolotl)).Facing(new(0, 0, 0)).Run(new FunctionCommand(func));
+
+            Assert.That(cmd.Build(), Is.EqualTo("execute as @e[type=minecraft:axolotl] facing 0 0 0 run function test:func"));
         }
     }
 }
