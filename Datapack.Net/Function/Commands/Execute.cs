@@ -7,9 +7,18 @@ using System.Threading.Tasks;
 
 namespace Datapack.Net.Function.Commands
 {
-    public class Execute(bool macro = false) : Command(macro)
+    public class Execute : Command
     {
         public readonly List<Subcommand> Subcommands = [];
+
+        public readonly Conditional If;
+        public readonly Conditional Unless;
+
+        public Execute(bool macro = false) : base(macro)
+        {
+            If = new(this, Conditional.Type.If);
+            Unless = new(this, Conditional.Type.Unless);
+        }
 
         protected override string PreBuild()
         {
@@ -69,6 +78,13 @@ namespace Datapack.Net.Function.Commands
             public Execute Biome(Position pos, Biome biome) => Add(new Subcommand.Biome(pos, biome));
             public Execute Block(Position pos, Block block) => Add(new Subcommand.Block(pos, block));
             public Execute Blocks(Position start, Position end, Position destination, bool masked = false) => Add(new Subcommand.Blocks(start, end, destination, masked));
+            public Execute Data(Position pos, string path) => Add(new Subcommand.Data(pos, path));
+            public Execute Data(IEntityTarget target, string path) => Add(new Subcommand.Data(target, path));
+            public Execute Data(Storage source, string path) => Add(new Subcommand.Data(source, path));
+            public Execute Dimension(Dimension dimension) => Add(new Subcommand.Dimension(dimension));
+            public Execute Entity(IEntityTarget entities) => Add(new Subcommand.Entity(entities));
+            public Execute Function(MCFunction function) => Add(new Subcommand.Function(function));
+
 
             public enum Type
             {
@@ -127,10 +143,70 @@ namespace Datapack.Net.Function.Commands
                     public readonly Position? Position;
                     public readonly IEntityTarget? Target;
                     public readonly Storage? Source;
+                    public readonly string Path;
+
+                    public Data(Position pos, string path)
+                    {
+                        Position = pos;
+                        Path = path;
+                    }
+
+                    public Data(IEntityTarget target, string path)
+                    {
+                        Target = target;
+                        Path = path;
+                    }
+
+                    public Data(Storage source, string path)
+                    {
+                        Source = source;
+                        Path = path;
+                    }
 
                     public override string Get()
                     {
-                        return $"data ";
+                        if (Position != null)
+                        {
+                            return $"data block {Position} {Path}";
+                        }
+                        else if (Target != null)
+                        {
+                            return $"data entity {Target.Get()} {Path}";
+                        }
+                        else
+                        {
+                            return $"data entity {Source} {Path}";
+                        }
+                    }
+                }
+
+                public class Dimension(Net.Data.Dimension dimension) : Subcommand
+                {
+                    public readonly Net.Data.Dimension DimensionTag = dimension;
+
+                    public override string Get()
+                    {
+                        return $"dimension {DimensionTag}";
+                    }
+                }
+
+                public class Entity(IEntityTarget entities) : Subcommand
+                {
+                    public readonly IEntityTarget Entities = entities;
+
+                    public override string Get()
+                    {
+                        return $"entity {Entities}";
+                    }
+                }
+
+                public class Function(MCFunction function) : Subcommand
+                {
+                    public readonly MCFunction MCFunction = function;
+
+                    public override string Get()
+                    {
+                        return $"function {MCFunction.ID}";
                     }
                 }
             }
