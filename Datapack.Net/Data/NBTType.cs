@@ -22,4 +22,14 @@ namespace Datapack.Net.Data
             return Build();
         }
     }
+
+    public enum NBTNumberType
+    {
+        Byte,
+        Short,
+        Int,
+        Long,
+        Float,
+        Double
+    }
 }

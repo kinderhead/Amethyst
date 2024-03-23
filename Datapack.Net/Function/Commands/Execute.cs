@@ -24,7 +24,6 @@ namespace Datapack.Net.Function.Commands
         {
             StringBuilder sb = new("execute ");
 
-            bool run = false;
             foreach (var i in Subcommands)
             {
                 sb.Append(i.ToString());
@@ -32,12 +31,9 @@ namespace Datapack.Net.Function.Commands
 
                 if (i is Subcommand.Run)
                 {
-                    run = true;
                     break;
                 }
             }
-
-            if (!run) throw new ArgumentException("Execute command does not contain a run subcommand.");
 
             return sb.ToString().TrimEnd();
         }
@@ -84,6 +80,14 @@ namespace Datapack.Net.Function.Commands
             public Execute Dimension(Dimension dimension) => Add(new Subcommand.Dimension(dimension));
             public Execute Entity(IEntityTarget entities) => Add(new Subcommand.Entity(entities));
             public Execute Function(MCFunction function) => Add(new Subcommand.Function(function));
+            public Execute Loaded(Position pos) => Add(new Subcommand.Loaded(pos));
+            public Execute Score(IEntityTarget target, Score targetObjective, Comparison op, IEntityTarget source, Score sourceObjective) => Add(new Subcommand.Score(target, targetObjective, op, source, sourceObjective));
+            public Execute Score(IEntityTarget target, Score targetObjective, MCRange<int> range) => Add(new Subcommand.Score(target, targetObjective, range));
+            public Execute Store(Position pos, string path, NBTNumberType type, double scale, bool result = true) => Add(new Subcommand.Store { TargetPos = pos, Path = path, DataType = type, Scale = scale, Result = result });
+            public Execute Store(Bossbar id, BossbarValueType type, bool result = true) => Add(new Subcommand.Store { BossbarID = id, BossbarType = type, Result = result });
+            public Execute Store(IEntityTarget target, string path, NBTNumberType type, double scale, bool result = true) => Add(new Subcommand.Store { Target = target, Path = path, DataType = type, Scale = scale, Result = result });
+            public Execute Store(IEntityTarget target, Score objective, bool result = true) => Add(new Subcommand.Store { Target = target, Objective = objective, Result = result });
+            public Execute Store(Storage target, string path, NBTNumberType type, double scale, bool result = true) => Add(new Subcommand.Store { StorageTarget = target, Path = path, DataType = type, Scale = scale, Result = result });
 
 
             public enum Type
@@ -207,6 +211,100 @@ namespace Datapack.Net.Function.Commands
                     public override string Get()
                     {
                         return $"function {MCFunction.ID}";
+                    }
+                }
+
+                public class Loaded(Position pos) : Subcommand
+                {
+                    public readonly Position Position = pos;
+
+                    public override string Get()
+                    {
+                        return $"loaded {Position}";
+                    }
+                }
+
+                public class Score : Subcommand
+                {
+                    public readonly IEntityTarget Target;
+                    public readonly Net.Function.Score TargetObjective;
+                    public readonly Comparison? Operator;
+                    public readonly IEntityTarget? Source;
+                    public readonly Net.Function.Score? SourceObjective;
+                    public readonly MCRange<int>? Range;
+
+                    public Score(IEntityTarget target, Net.Function.Score targetObjective, Comparison op, IEntityTarget source, Net.Function.Score sourceObjective)
+                    {
+                        Target = target;
+                        TargetObjective = targetObjective;
+                        Operator = op;
+                        Source = source;
+                        SourceObjective = sourceObjective;
+                    }
+
+                    public Score(IEntityTarget target, Net.Function.Score targetObjective, MCRange<int> range)
+                    {
+                        Target = target;
+                        TargetObjective = targetObjective;
+                        Range = range;
+                    }
+
+                    public override string Get()
+                    {
+                        if (Operator != null)
+                        {
+                            return $"score {Target.Get()} {TargetObjective} {Operator} {Source?.Get()} {SourceObjective}";
+                        }
+                        else
+                        {
+                            return $"score {Target.Get()} {TargetObjective} {Range}";
+                        }
+                    }
+                }
+
+                public class Store : Subcommand
+                {
+                    public bool Result;
+
+                    public Position? TargetPos;
+                    public IEntityTarget? Target;
+                    public Storage? StorageTarget;
+                    public string? Path;
+                    public NBTNumberType DataType;
+                    public double? Scale;
+
+                    public Bossbar? BossbarID;
+                    public BossbarValueType BossbarType;
+
+                    public Net.Function.Score? Objective;
+
+                    public override string Get()
+                    {
+                        var prefix = $"store {(Result ? "result" : "success")} ";
+                        var postfix = "";
+
+                        if (TargetPos != null)
+                        {
+                            postfix = $"block {TargetPos} {Path} {Enum.GetName(DataType)?.ToLower()} {Scale}";
+                        }
+                        else if (BossbarID != null)
+                        {
+                            postfix = $"bossbar {BossbarID} {Enum.GetName(BossbarType)?.ToLower()}";
+                        }
+                        else if (Target != null)
+                        {
+                            postfix = $"entity {Target.Get()} {Path} {Enum.GetName(DataType)?.ToLower()} {Scale}";
+                        }
+                        else if (Objective != null)
+                        {
+                            postfix = $"score {Target?.Get()} {Objective}";
+                        }
+                        else if (StorageTarget != null)
+                        {
+                            postfix = $"storage {StorageTarget} {Path} {Enum.GetName(DataType)?.ToLower()} {Scale}";
+                        }
+
+                        return prefix + postfix;
                     }
                 }
             }
@@ -410,5 +508,14 @@ namespace Datapack.Net.Function.Commands
         Motion_Blocking,
         Motion_Blocking_No_Leaves,
         Ocean_Floor
+    }
+
+    public enum Comparison
+    {
+        Equal,
+        LessThan,
+        LessThanOrEqual,
+        GreaterThan,
+        GreaterThanOrEqual
     }
 }

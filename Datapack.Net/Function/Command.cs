@@ -17,5 +17,10 @@ namespace Datapack.Net.Function
         }
 
         protected abstract string PreBuild();
+
+        public override string ToString()
+        {
+            return Build();
+        }
     }
 }
