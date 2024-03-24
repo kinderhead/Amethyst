@@ -52,7 +52,13 @@ namespace Datapack.Net.Function.Commands
         public Execute Positioned(Heightmap heightmap) => Add(new Subcommand.Positioned(heightmap));
         public Execute Rotated(Rotation rotation) => Add(new Subcommand.Rotated(rotation));
         public Execute Rotated(IEntityTarget target) => Add(new Subcommand.Rotated(target));
-        public Execute Summon(IEntityTarget target) => Add(new Subcommand.Summon(target));
+        public Execute Summon(EntityType target) => Add(new Subcommand.Summon(target));
+        public Execute Store(Position pos, string path, NBTNumberType type, double scale, bool result = true) => Add(new Subcommand.Store { TargetPos = pos, Path = path, DataType = type, Scale = scale, Result = result });
+        public Execute Store(Bossbar id, BossbarValueType type, bool result = true) => Add(new Subcommand.Store { BossbarID = id, BossbarType = type, Result = result });
+        public Execute Store(IEntityTarget target, string path, NBTNumberType type, double scale, bool result = true) => Add(new Subcommand.Store { Target = target, Path = path, DataType = type, Scale = scale, Result = result });
+        public Execute Store(IEntityTarget target, Score objective, bool result = true) => Add(new Subcommand.Store { Target = target, Objective = objective, Result = result });
+        public Execute Store(Storage target, string path, NBTNumberType type, double scale, bool result = true) => Add(new Subcommand.Store { StorageTarget = target, Path = path, DataType = type, Scale = scale, Result = result });
+
 
         public Execute Add(Subcommand sbc)
         {
@@ -83,12 +89,6 @@ namespace Datapack.Net.Function.Commands
             public Execute Loaded(Position pos) => Add(new Subcommand.Loaded(pos));
             public Execute Score(IEntityTarget target, Score targetObjective, Comparison op, IEntityTarget source, Score sourceObjective) => Add(new Subcommand.Score(target, targetObjective, op, source, sourceObjective));
             public Execute Score(IEntityTarget target, Score targetObjective, MCRange<int> range) => Add(new Subcommand.Score(target, targetObjective, range));
-            public Execute Store(Position pos, string path, NBTNumberType type, double scale, bool result = true) => Add(new Subcommand.Store { TargetPos = pos, Path = path, DataType = type, Scale = scale, Result = result });
-            public Execute Store(Bossbar id, BossbarValueType type, bool result = true) => Add(new Subcommand.Store { BossbarID = id, BossbarType = type, Result = result });
-            public Execute Store(IEntityTarget target, string path, NBTNumberType type, double scale, bool result = true) => Add(new Subcommand.Store { Target = target, Path = path, DataType = type, Scale = scale, Result = result });
-            public Execute Store(IEntityTarget target, Score objective, bool result = true) => Add(new Subcommand.Store { Target = target, Objective = objective, Result = result });
-            public Execute Store(Storage target, string path, NBTNumberType type, double scale, bool result = true) => Add(new Subcommand.Store { StorageTarget = target, Path = path, DataType = type, Scale = scale, Result = result });
-
 
             public enum Type
             {
@@ -179,7 +179,7 @@ namespace Datapack.Net.Function.Commands
                         }
                         else
                         {
-                            return $"data entity {Source} {Path}";
+                            return $"data storage {Source} {Path}";
                         }
                     }
                 }
@@ -200,7 +200,7 @@ namespace Datapack.Net.Function.Commands
 
                     public override string Get()
                     {
-                        return $"entity {Entities}";
+                        return $"entity {Entities.Get()}";
                     }
                 }
 
@@ -253,58 +253,31 @@ namespace Datapack.Net.Function.Commands
                     {
                         if (Operator != null)
                         {
-                            return $"score {Target.Get()} {TargetObjective} {Operator} {Source?.Get()} {SourceObjective}";
+                            return $"score {Target.Get()} {TargetObjective} {GetOperator((Comparison) Operator)} {Source?.Get()} {SourceObjective}";
                         }
                         else
                         {
-                            return $"score {Target.Get()} {TargetObjective} {Range}";
+                            return $"score {Target.Get()} {TargetObjective} matches {Range}";
                         }
                     }
-                }
 
-                public class Store : Subcommand
-                {
-                    public bool Result;
-
-                    public Position? TargetPos;
-                    public IEntityTarget? Target;
-                    public Storage? StorageTarget;
-                    public string? Path;
-                    public NBTNumberType DataType;
-                    public double? Scale;
-
-                    public Bossbar? BossbarID;
-                    public BossbarValueType BossbarType;
-
-                    public Net.Function.Score? Objective;
-
-                    public override string Get()
+                    public static string GetOperator(Comparison op)
                     {
-                        var prefix = $"store {(Result ? "result" : "success")} ";
-                        var postfix = "";
-
-                        if (TargetPos != null)
+                        switch (op)
                         {
-                            postfix = $"block {TargetPos} {Path} {Enum.GetName(DataType)?.ToLower()} {Scale}";
+                            case Comparison.LessThan:
+                                return "<";
+                            case Comparison.GreaterThan:
+                                return ">";
+                            case Comparison.LessThanOrEqual:
+                                return "<=";
+                            case Comparison.GreaterThanOrEqual:
+                                return ">=";
+                            case Comparison.Equal:
+                                return "=";
+                            default:
+                                return "";
                         }
-                        else if (BossbarID != null)
-                        {
-                            postfix = $"bossbar {BossbarID} {Enum.GetName(BossbarType)?.ToLower()}";
-                        }
-                        else if (Target != null)
-                        {
-                            postfix = $"entity {Target.Get()} {Path} {Enum.GetName(DataType)?.ToLower()} {Scale}";
-                        }
-                        else if (Objective != null)
-                        {
-                            postfix = $"score {Target?.Get()} {Objective}";
-                        }
-                        else if (StorageTarget != null)
-                        {
-                            postfix = $"storage {StorageTarget} {Path} {Enum.GetName(DataType)?.ToLower()} {Scale}";
-                        }
-
-                        return prefix + postfix;
                     }
                 }
             }
@@ -478,13 +451,59 @@ namespace Datapack.Net.Function.Commands
                 }
             }
 
-            public class Summon(IEntityTarget target) : Subcommand
+            public class Summon(EntityType target) : Subcommand
             {
-                public readonly IEntityTarget Target = target;
+                public readonly EntityType Target = target;
 
                 public override string ToString()
                 {
-                    return $"summon {Target.Get()}";
+                    return $"summon {Target}";
+                }
+            }
+
+            public class Store : Subcommand
+            {
+                public bool Result;
+
+                public Position? TargetPos;
+                public IEntityTarget? Target;
+                public Storage? StorageTarget;
+                public string? Path;
+                public NBTNumberType DataType;
+                public double? Scale;
+
+                public Bossbar? BossbarID;
+                public BossbarValueType BossbarType;
+
+                public Score? Objective;
+
+                public override string ToString()
+                {
+                    var prefix = $"store {(Result ? "result" : "success")} ";
+                    var postfix = "";
+
+                    if (TargetPos != null)
+                    {
+                        postfix = $"block {TargetPos} {Path} {Enum.GetName(DataType)?.ToLower()} {Scale}";
+                    }
+                    else if (BossbarID != null)
+                    {
+                        postfix = $"bossbar {BossbarID} {Enum.GetName(BossbarType)?.ToLower()}";
+                    }
+                    else if (Objective != null)
+                    {
+                        postfix = $"score {Target?.Get()} {Objective}";
+                    }
+                    else if (Target != null)
+                    {
+                        postfix = $"entity {Target.Get()} {Path} {Enum.GetName(DataType)?.ToLower()} {Scale}";
+                    }
+                    else if (StorageTarget != null)
+                    {
+                        postfix = $"storage {StorageTarget} {Path} {Enum.GetName(DataType)?.ToLower()} {Scale}";
+                    }
+
+                    return prefix + postfix;
                 }
             }
         }

@@ -28,6 +28,8 @@ namespace Datapack.Net.Utils
         public static bool operator ==(NamespacedID left, NamespacedID right) => left.Namespace == right.Namespace && left.Path == right.Path;
         public static bool operator !=(NamespacedID left, NamespacedID right) => left.Namespace != right.Namespace || left.Path != right.Path;
 
+        public static implicit operator NamespacedID(string id) => new(id);
+
         public override bool Equals(object? obj)
         {
             if (obj is NamespacedID id)
