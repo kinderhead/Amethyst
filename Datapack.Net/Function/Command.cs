@@ -12,8 +12,8 @@ namespace Datapack.Net.Function
 
         public string Build()
         {
-            if (Macro) return "$" + PreBuild();
-            return PreBuild();
+            if (Macro) return "$" + PreBuild().Trim();
+            return PreBuild().Trim();
         }
 
         protected abstract string PreBuild();

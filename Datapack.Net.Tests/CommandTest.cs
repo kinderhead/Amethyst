@@ -191,5 +191,51 @@ namespace Datapack.Net.Tests
         }
 
         #endregion
+
+        #region Data
+
+        [Test]
+        public void DataGetBlock()
+        {
+            var cmd = new DataCommand.Get(new Position(0, 0, 0), "test", 3);
+            Assert.That(cmd.Build(), Is.EqualTo("data get block 0 0 0 test 3"));
+        }
+
+        [Test]
+        public void DataGetEntity()
+        {
+            var cmd = new DataCommand.Get(new NamedTarget("boo"), "test", 3);
+            Assert.That(cmd.Build(), Is.EqualTo("data get entity boo test 3"));
+        }
+
+        [Test]
+        public void DataGetStorage()
+        {
+            var cmd = new DataCommand.Get(new Storage("test:test"));
+            Assert.That(cmd.Build(), Is.EqualTo("data get storage test:test"));
+        }
+
+        [Test]
+        public void DataMergeBlock()
+        {
+            var cmd = new DataCommand.Merge(new Position(0, 0, 0), new NBTCompound{{ "test", "test" }});
+            Assert.That(cmd.Build(), Is.EqualTo("data merge block 0 0 0 {\"test\":\"test\"}"));
+        }
+
+        [Test]
+        public void DataMergeEntity()
+        {
+            var cmd = new DataCommand.Merge(new NamedTarget("boo"), new NBTCompound { { "test", "test" } });
+            Assert.That(cmd.Build(), Is.EqualTo("data merge entity boo {\"test\":\"test\"}"));
+        }
+
+        [Test]
+        public void DataMergeStorage()
+        {
+            var cmd = new DataCommand.Merge(new Storage("test:test"), new NBTCompound { { "test", "test" } });
+            Assert.That(cmd.Build(), Is.EqualTo("data merge storage test:test {\"test\":\"test\"}"));
+        }
+
+        #endregion
     }
 }

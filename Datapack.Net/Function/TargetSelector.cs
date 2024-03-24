@@ -102,6 +102,24 @@ namespace Datapack.Net.Function
             if (sb.Length > 0) sb.Length--;
             return sb.ToString();
         }
+
+        public bool IsOne()
+        {
+            if (TargetType == TargetType.a || TargetType == TargetType.e && Limit == 1)
+            {
+                return true;
+            }
+            else if (TargetType == TargetType.s && Limit == null)
+            {
+                return true;
+            }
+            else if (TargetType == TargetType.p || TargetType == TargetType.r && (Limit == null || Limit == 1))
+            {
+                return true;
+            }
+
+            return false;
+        }
     }
 
     public enum TargetType

@@ -14,5 +14,8 @@ namespace Datapack.Net.Data
         {
             sb.Append(Value ? "true" : "false");
         }
+
+        public static implicit operator NBTBool(bool val) => new(val);
+        public static implicit operator bool(NBTBool val) => val.Value;
     }
 }

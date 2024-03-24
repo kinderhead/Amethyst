@@ -21,6 +21,16 @@ namespace Datapack.Net.Data
         {
             return Build();
         }
+
+        public static implicit operator NBTType(string val) => new NBTString(val);
+        public static implicit operator NBTType(int val) => new NBTInt(val);
+        public static implicit operator NBTType(byte val) => new NBTByte(val);
+        public static implicit operator NBTType(short val) => new NBTShort(val);
+        public static implicit operator NBTType(long val) => new NBTLong(val);
+        public static implicit operator NBTType(float val) => new NBTFloat(val);
+        public static implicit operator NBTType(double val) => new NBTDouble(val);
+        public static implicit operator NBTType(bool val) => new NBTBool(val);
+
     }
 
     public enum NBTNumberType

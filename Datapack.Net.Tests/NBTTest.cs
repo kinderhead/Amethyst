@@ -49,11 +49,11 @@ namespace Datapack.Net.Tests
         {
             var list = new NBTList
             {
-                new NBTBool(false),
-                new NBTFloat(3.14f),
+                false,
+                3.14f,
                 new NBTList
                 {
-                    new NBTString("wah")
+                    "wah"
                 }
             };
 
@@ -65,15 +65,15 @@ namespace Datapack.Net.Tests
         {
             var compound = new NBTCompound
             {
-                { "test", new NBTBool(true) },
-                { "wah", new NBTString("Yep") },
+                { "test", true },
+                { "wah", "Yep" },
                 { "list", new NBTList
                     {
-                        new NBTBool(false),
-                        new NBTFloat(3.14f),
+                        false,
+                        3.14f,
                         new NBTList
                         {
-                            new NBTString("wah")
+                            "wah"
                         }
                     }
                 }

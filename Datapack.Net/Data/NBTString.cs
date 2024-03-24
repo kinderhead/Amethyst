@@ -20,5 +20,8 @@ namespace Datapack.Net.Data
             val = val.Replace("\\", "\\\\");
             return val.Replace("\"", "\\\"");
         }
+
+        public static implicit operator NBTString(string val) => new(val);
+        public static implicit operator string(NBTString val) => val.Value;
     }
 }

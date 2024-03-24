@@ -158,5 +158,27 @@ namespace Datapack.Net.Tests
             var sel = new TargetSelector(TargetType.e, nbt: new NBTCompound() { { "test", new NBTInt(4) } });
             Assert.That(sel.Get(), Is.EqualTo("@e[nbt={\"test\":4}]"));
         }
+
+        [Test]
+        public void TestOne()
+        {
+            List<TargetSelector> sels = [
+                new TargetSelector(TargetType.a, limit: 1),
+                new TargetSelector(TargetType.e, limit: 1),
+                new TargetSelector(TargetType.s),
+                new TargetSelector(TargetType.p),
+                new TargetSelector(TargetType.r),
+                new TargetSelector(TargetType.p, limit: 1),
+                new TargetSelector(TargetType.r, limit: 1)
+            ];
+
+            Assert.Multiple(() =>
+            {
+                foreach (var i in sels)
+                {
+                    Assert.That(i.IsOne(), Is.True);
+                }
+            });
+        }
     }
 }
