@@ -28,13 +28,14 @@ namespace Datapack.Net
             types.Add(new Tags());
             types.Add(new DimensionResource());
             types.Add(new DimensionType());
+            types.Add(new Functions());
         }
 
         public void Build()
         {
             using (fileStream = new FileStream(@"test.zip", FileMode.Create))
             {
-                using (zipFile = new ZipArchive(fileStream))
+                using (zipFile = new ZipArchive(fileStream, ZipArchiveMode.Create))
                 {
                     foreach (var type in types)
                     {
@@ -53,12 +54,14 @@ namespace Datapack.Net
 
         internal void WriteFile(string path, string content)
         {
+            Console.WriteLine($"Writing to file \"{path}\":\n{content}\n");
+
             if (zipFile != null)
             {
                 var entry = zipFile.CreateEntry(path);
 
-                using var stream = entry.Open();
-                stream.Write(Encoding.UTF8.GetBytes(content));
+                using var stream = new StreamWriter(entry.Open());
+                stream.Write(content);
             }
             else
             {

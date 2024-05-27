@@ -237,5 +237,72 @@ namespace Datapack.Net.Tests
         }
 
         #endregion
+
+        #region Scoreboard
+
+        [Test]
+        public void ScoreboardObjectivesAdd()
+        {
+            var cmd = new Scoreboard.Objectives.Add(new Score("test", "dummy", "Test"));
+            Assert.That(cmd.Build(), Is.EqualTo("scoreboard objectives add test dummy Test"));
+        }
+
+        [Test]
+        public void ScoreboardObjectivesRemove()
+        {
+            var cmd = new Scoreboard.Objectives.Remove(new Score("test", "dummy"));
+            Assert.That(cmd.Build(), Is.EqualTo("scoreboard objectives remove test"));
+        }
+
+        [Test]
+        public void ScoreboardPlayersGet()
+        {
+            var cmd = new Scoreboard.Players.Get(new NamedTarget("me"),new Score("test", "dummy"));
+            Assert.That(cmd.Build(), Is.EqualTo("scoreboard players get me test"));
+        }
+
+        [Test]
+        public void ScoreboardPlayersSet()
+        {
+            var cmd = new Scoreboard.Players.Set(new NamedTarget("me"), new Score("test", "dummy"), 5);
+            Assert.That(cmd.Build(), Is.EqualTo("scoreboard players set me test 5"));
+        }
+
+        [Test]
+        public void ScoreboardPlayersAdd()
+        {
+            var cmd = new Scoreboard.Players.Add(new NamedTarget("me"), new Score("test", "dummy"), 5);
+            Assert.That(cmd.Build(), Is.EqualTo("scoreboard players add me test 5"));
+        }
+
+        [Test]
+        public void ScoreboardPlayersRemove()
+        {
+            var cmd = new Scoreboard.Players.Remove(new NamedTarget("me"), new Score("test", "dummy"), 5);
+            Assert.That(cmd.Build(), Is.EqualTo("scoreboard players remove me test 5"));
+        }
+
+        [Test]
+        public void ScoreboardPlayersReset1()
+        {
+            var cmd = new Scoreboard.Players.Reset(new NamedTarget("me"), new Score("test", "dummy"));
+            Assert.That(cmd.Build(), Is.EqualTo("scoreboard players reset me test"));
+        }
+
+        [Test]
+        public void ScoreboardPlayersReset2()
+        {
+            var cmd = new Scoreboard.Players.Reset(new NamedTarget("me"));
+            Assert.That(cmd.Build(), Is.EqualTo("scoreboard players reset me"));
+        }
+
+        [Test]
+        public void ScoreboardPlayersOperation()
+        {
+            var cmd = new Scoreboard.Players.Operation(new NamedTarget("me"), new Score("test", "dummy"), ScoreOperation.Sub, new NamedTarget("you"), new Score("test2", "dummy"));
+            Assert.That(cmd.Build(), Is.EqualTo("scoreboard players operation me test -= you test2"));
+        }
+
+        #endregion
     }
 }

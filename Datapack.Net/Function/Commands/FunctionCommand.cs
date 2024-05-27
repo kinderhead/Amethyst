@@ -21,7 +21,7 @@ namespace Datapack.Net.Function.Commands
         {
             Function = func;
 
-            if (Function.Macro) throw new InvalidOperationException($"Function {func.ID} has macro arguments, but is not called with them");
+            if (!Function.Partial && Function.Macro) throw new InvalidOperationException($"Function {func.ID} has macro arguments, but is not called with them");
         }
 
         public FunctionCommand(MCFunction func, NBTCompound arguments, bool macro = false) : base(macro)
@@ -29,7 +29,7 @@ namespace Datapack.Net.Function.Commands
             Function = func;
             NBTArguments = arguments;
 
-            if (!Function.Macro) throw new InvalidOperationException($"Function {func.ID} does not has macro arguments, but is called with them");
+            if (!Function.Partial && !Function.Macro) throw new InvalidOperationException($"Function {func.ID} does not has macro arguments, but is called with them");
         }
 
         public FunctionCommand(MCFunction func, IEntityTarget arguments, string path = "", bool macro = false) : base(macro)
@@ -38,7 +38,7 @@ namespace Datapack.Net.Function.Commands
             Path = path;
             EntityArguments = arguments;
 
-            if (!Function.Macro) throw new InvalidOperationException($"Function {func.ID} does not has macro arguments, but is called with them");
+            if (!Function.Partial && !Function.Macro) throw new InvalidOperationException($"Function {func.ID} does not has macro arguments, but is called with them");
         }
 
         public FunctionCommand(MCFunction func, Storage arguments, string path = "", bool macro = false) : base(macro)
@@ -47,7 +47,7 @@ namespace Datapack.Net.Function.Commands
             Path = path;
             StorageArguments = arguments;
 
-            if (!Function.Macro) throw new InvalidOperationException($"Function {func.ID} does not has macro arguments, but is called with them");
+            if (!Function.Partial && !Function.Macro) throw new InvalidOperationException($"Function {func.ID} does not has macro arguments, but is called with them");
         }
 
         public FunctionCommand(MCFunction func, Position arguments, string path = "", bool macro = false) : base(macro)
@@ -56,7 +56,7 @@ namespace Datapack.Net.Function.Commands
             Path = path;
             BlockArguments = arguments;
 
-            if (!Function.Macro) throw new InvalidOperationException($"Function {func.ID} does not has macro arguments, but is called with them");
+            if (!Function.Partial && !Function.Macro) throw new InvalidOperationException($"Function {func.ID} does not has macro arguments, but is called with them");
         }
 
         protected override string PreBuild()

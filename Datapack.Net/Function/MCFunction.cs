@@ -8,9 +8,10 @@ using System.Threading.Tasks;
 
 namespace Datapack.Net.Function
 {
-    public class MCFunction(NamespacedID id) : Resource(id)
+    public class MCFunction(NamespacedID id, bool partial = false) : Resource(id)
     {
         public bool Macro { get; protected set; }
+        public readonly bool Partial = partial;
 
         protected List<Command> commands = [];
 
