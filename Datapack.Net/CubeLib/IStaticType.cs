@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Datapack.Net.CubeLib
 {
-    public interface ICubeLangType
+    public interface IStaticType
     {
         public void Init();
     }

@@ -25,7 +25,7 @@ namespace Datapack.Net.CubeLib
         private readonly HashSet<Score> Scores = [];
         private readonly HashSet<Score> Registers = [];
         private readonly HashSet<Score> Globals = [];
-        private readonly List<ICubeLangType> CubeLangTypes = [];
+        private readonly List<IStaticType> StaticTypes = [];
         private readonly List<Command> MiscInitCmds = [];
 
         private MCFunction? currentTarget;
@@ -60,7 +60,7 @@ namespace Datapack.Net.CubeLib
             tags.AddTag(tickTag);
 
             RegisterStack = new(InternalStorage, "register_stack");
-            AddObject(RegisterStack);
+            AddStaticObject(RegisterStack);
 
             while (FunctionsToProcess.TryDequeue(out var i))
             {
@@ -76,7 +76,7 @@ namespace Datapack.Net.CubeLib
             }
 
             // Prepend Main
-            foreach (var i in CubeLangTypes)
+            foreach (var i in StaticTypes)
             {
                 i.Init();
             }
@@ -104,17 +104,50 @@ namespace Datapack.Net.CubeLib
             Datapack.Build();
         }
 
-        public void Call(Action func)
+        public void Jump(Action func)
         {
             if (!MCFunctions.ContainsKey(func))
             {
                 AddFunction(func);
             }
 
-            Call(MCFunctions[func]);
+            Jump(MCFunctions[func]);
         }
 
-        public void Call(MCFunction func) => AddCommand(new FunctionCommand(func));
+        public void Jump(MCFunction func) => AddCommand(new FunctionCommand(func));
+
+        public void Jump(Action func, Storage storage, string path = "")
+        {
+            if (!MCFunctions.ContainsKey(func))
+            {
+                AddFunction(func);
+            }
+
+            Jump(MCFunctions[func], storage, path);
+        }
+
+        public void Jump(MCFunction func, Storage storage, string path = "") => AddCommand(new FunctionCommand(func, storage, path));
+
+        public ScoreRef Call(Action func)
+        {
+            var ret = Local();
+            Call(func, ret);
+            return ret;
+        }
+
+        public void Call(Action func, ScoreRef ret)
+        {
+            if (!DeclareMCAttribute.Get(func).Returns) throw new InvalidOperationException("Function does not return a value");
+
+            if (!MCFunctions.ContainsKey(func))
+            {
+                AddFunction(func);
+            }
+
+            Call(MCFunctions[func], ret);
+        }
+
+        public void Call(MCFunction func, ScoreRef ret) => AddCommand(new Execute().Store(ret).Run(new FunctionCommand(func)));
 
         public void Print(params object[] args)
         {
@@ -133,6 +166,10 @@ namespace Datapack.Net.CubeLib
 
             AddCommand(new TellrawCommand(new TargetSelector(TargetType.a), text));
         }
+
+        public void Return(int val) => AddCommand(new ReturnCommand(val));
+        public void Return() => AddCommand(new ReturnCommand());
+        public void Return(Command cmd) => AddCommand(new ReturnCommand(cmd));
 
         public MCFunction AddFunction(Action func)
         {
@@ -171,7 +208,7 @@ namespace Datapack.Net.CubeLib
             CurrentTarget.Add(cmd);
         }
 
-        public void AddObject(ICubeLangType type) => CubeLangTypes.Add(type);
+        public void AddStaticObject(IStaticType type) => StaticTypes.Add(type);
 
         public void PrependMain(Command cmd)
         {
@@ -254,9 +291,9 @@ namespace Datapack.Net.CubeLib
             {
                 If(!comp, new ReturnCommand(0));
                 res();
-                Call(CurrentTarget);
+                Jump(CurrentTarget);
             });
-            Call(func);
+            Jump(func);
         }
 
         public void For(int start, ScoreRef end, Action<ScoreRef> res)

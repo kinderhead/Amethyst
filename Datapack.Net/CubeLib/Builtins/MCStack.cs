@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Datapack.Net.CubeLib.Builtins
 {
-    public class MCStack(Storage storage, string path) : ICubeLangType
+    public class MCStack(Storage storage, string path) : IStaticType
     {
         public readonly Storage Storage = storage;
         public readonly string Path = path;

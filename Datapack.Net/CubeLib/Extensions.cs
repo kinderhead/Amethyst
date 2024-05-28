@@ -1,4 +1,5 @@
 ﻿using Datapack.Net.Function;
+using Datapack.Net.Function.Commands;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,5 +14,7 @@ namespace Datapack.Net.CubeLib
         {
             return text.Score(val.Target, val.Score);
         }
+
+        public static Execute Store(this Execute cmd, ScoreRef score, bool result = true) => cmd.Store(score.Target, score.Score, result);
     }
 }
