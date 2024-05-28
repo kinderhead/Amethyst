@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static Datapack.Net.Data._1_20_4.Blocks;
 
 namespace Datapack.Net.CubeLib
 {
@@ -23,15 +24,19 @@ namespace Datapack.Net.CubeLib
 
         private readonly HashSet<Score> Scores = [];
         private readonly HashSet<Score> Registers = [];
+        private readonly HashSet<Score> Globals = [];
         private readonly List<ICubeLangType> CubeLangTypes = [];
+        private readonly List<Command> MiscInitCmds = [];
 
         public MCFunction? CurrentTarget { get; private set; }
-        protected readonly List<ScoreRef> RegistersInUse = [];
+        private List<ScoreRef> RegistersInUse = [];
 
         public readonly NamedTarget ScoreEntity = new($"_{ns}_cubelib_score");
         public readonly Storage InternalStorage = new(new(ns, "_internal"));
 
         public MCStack RegisterStack;
+
+        private int AnonymousFuncCounter = 0;
 
         public void Build()
         {
@@ -74,6 +79,11 @@ namespace Datapack.Net.CubeLib
                 i.Init();
             }
 
+            foreach (var i in MiscInitCmds)
+            {
+                PrependMain(i);
+            }
+
             foreach (var i in Registers)
             {
                 PrependMain(new Scoreboard.Players.Set(ScoreEntity, i, 0));
@@ -102,22 +112,53 @@ namespace Datapack.Net.CubeLib
             AddCommand(new FunctionCommand(MCFunctions[func]));
         }
 
-        public void Print(string msg)
+        public void Print(params object[] args)
         {
-            AddCommand(new TellrawCommand(new TargetSelector(TargetType.a), new FormattedText().Text(msg)));
-        }
+            var text = new FormattedText();
 
-        public void Print(ScoreRef val)
-        {
-            AddCommand(new TellrawCommand(new TargetSelector(TargetType.a), new FormattedText().Score(val)));
+            foreach (var i in args)
+            {
+                if (i is string str) text.Text(str);
+                else if (i is ScoreRef score) text.Score(score);
+                else throw new ArgumentException($"Invalid print object {i}");
+
+                text.Text(" ");
+            }
+
+            text.RemoveLast();
+
+            AddCommand(new TellrawCommand(new TargetSelector(TargetType.a), text));
         }
 
         public MCFunction AddFunction(Action func)
         {
-            var id = new NamespacedID(Namespace, DeclareMCAttribute.Get(func).Name);
+            return AddFunction(func, new(Namespace, DeclareMCAttribute.Get(func).Name));
+        }
+
+        public MCFunction AddFunction(Action func, NamespacedID id, bool scoped = false)
+        {
             var mcfunc = new MCFunction(id, true);
             MCFunctions[func] = mcfunc;
-            FunctionsToProcess.Enqueue(new(func, mcfunc));
+            if (scoped)
+            {
+                List<ScoreRef> scope = [.. RegistersInUse];
+                var oldFunc = CurrentTarget;
+                CurrentTarget = mcfunc;
+
+                func();
+
+                for (int i = RegistersInUse.Count - 1; i >= scope.Count; i--)
+                {
+                    RegisterStack.Dequeue(RegistersInUse[i]);
+                }
+
+                RegistersInUse = scope;
+                CurrentTarget = oldFunc;
+            }
+            else
+            {
+                FunctionsToProcess.Enqueue(new(func, mcfunc));
+            }
             return mcfunc;
         }
 
@@ -144,9 +185,16 @@ namespace Datapack.Net.CubeLib
             return new(score, ScoreEntity);
         }
 
+        public ScoreRef Temp(int num, int val, string type = "tmp")
+        {
+            var tmp = Temp(num, type);
+            tmp.Set(val);
+            return tmp;
+        }
+
         public ScoreRef Local()
         {
-            var score = new Score($"_cl_reg_{RegistersInUse.Count}", "dummy");
+            var score = new Score($"_cl_{Namespace}_reg_{RegistersInUse.Count}", "dummy");
             Registers.Add(score);
             Scores.Add(score);
 
@@ -163,6 +211,43 @@ namespace Datapack.Net.CubeLib
             var register = Local();
             register.Set(val);
             return register;
+        }
+
+        public ScoreRef Local(ScoreRef val)
+        {
+            var register = Local();
+            register.Set(val);
+            return register;
+        }
+
+        public ScoreRef Global()
+        {
+            var score = new Score($"_cl_{Namespace}_var_{Globals.Count}", "dummy");
+            Globals.Add(score);
+            Scores.Add(score);
+
+            return new ScoreRef(score, ScoreEntity);
+        }
+
+        public ScoreRef Global(int val)
+        {
+            var global = Global();
+            MiscInitCmds.Add(new Scoreboard.Players.Set(global.Target, global.Score, val));
+            return global;
+        }
+
+        public MCFunction Lambda(Action func)
+        {
+            var mcfunc = AddFunction(func, new(Namespace, $"zz_anon/{AnonymousFuncCounter}"), true);
+            AnonymousFuncCounter++;
+
+            return mcfunc;
+        }
+
+        public void If(ScoreRefComparison comp, Action res)
+        {
+            var cmd = comp.Process(new Execute());
+            AddCommand(cmd.Run(new FunctionCommand(Lambda(res))));
         }
 
         protected virtual void Init() { }

@@ -29,5 +29,12 @@ namespace Datapack.Net.CubeLib.Builtins
             Project.ActiveProject.AddCommand(new Execute().Store(to.Target, to.Score).Run(new DataCommand.Get(Storage, $"{Path}[0]")));
             Project.ActiveProject.AddCommand(new DataCommand.Remove(Storage, $"{Path}[0]"));
         }
+
+        public ScoreRef Dequeue()
+        {
+            var score = Project.ActiveProject.Local();
+            Dequeue(score);
+            return score;
+        }
     }
 }

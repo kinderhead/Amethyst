@@ -23,6 +23,8 @@ namespace Datapack.Net.Function
             return this;
         }
 
+        public void RemoveLast() => Obj.RemoveAt(Obj.Count - 1);
+
         public override string ToString()
         {
             return Obj.ToString(Newtonsoft.Json.Formatting.None);
