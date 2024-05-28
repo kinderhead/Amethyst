@@ -238,17 +238,12 @@ namespace Datapack.Net.CubeLib
 
         public MCFunction Lambda(Action func)
         {
-            var mcfunc = AddFunction(func, new(Namespace, $"zz_anon/{AnonymousFuncCounter}"), true);
-            AnonymousFuncCounter++;
-
+            var mcfunc = AddFunction(func, new(Namespace, $"zz_anon/{AnonymousFuncCounter++}"), true);
+            
             return mcfunc;
         }
 
-        public void If(ScoreRefComparison comp, Action res)
-        {
-            var cmd = comp.Process(new Execute());
-            AddCommand(cmd.Run(new FunctionCommand(Lambda(res))));
-        }
+        public IfHandler If(ScoreRefComparison comp, Action res) => new(this, comp, res);
 
         protected virtual void Init() { }
 
