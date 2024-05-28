@@ -20,6 +20,11 @@ namespace TNTCannon
         protected override void Main()
         {
             Print("boo");
+            var x = Local(5);
+            For(0, x, (i) =>
+            {
+                Print(i);
+            });
         }
 
         protected override void Tick()

@@ -17,6 +17,27 @@ namespace Datapack.Net.Tests
             Assert.That(cmd.Build(), Is.EqualTo("say test"));
         }
 
+        [Test]
+        public void Return1()
+        {
+            var cmd = new ReturnCommand();
+            Assert.That(cmd.Build(), Is.EqualTo("return fail"));
+        }
+
+        [Test]
+        public void Return2()
+        {
+            var cmd = new ReturnCommand(5);
+            Assert.That(cmd.Build(), Is.EqualTo("return 5"));
+        }
+
+        [Test]
+        public void Return3()
+        {
+            var cmd = new ReturnCommand(new SayCommand("boo"));
+            Assert.That(cmd.Build(), Is.EqualTo("return run say boo"));
+        }
+
         #region Function
 
         [Test]

@@ -8,7 +8,7 @@ namespace Datapack.Net.Function
 {
     public abstract class Command(bool macro)
     {
-        public readonly bool Macro = macro;
+        public bool Macro = macro;
 
         public string Build()
         {

@@ -28,10 +28,12 @@ namespace Datapack.Net.CubeLib
         private readonly List<ICubeLangType> CubeLangTypes = [];
         private readonly List<Command> MiscInitCmds = [];
 
-        public MCFunction? CurrentTarget { get; private set; }
+        private MCFunction? currentTarget;
+        public MCFunction CurrentTarget { get => currentTarget ?? throw new InvalidOperationException("Project not building yet"); private set => currentTarget = value; }
+
         private List<ScoreRef> RegistersInUse = [];
 
-        public readonly NamedTarget ScoreEntity = new($"_{ns}_cubelib_score");
+        public readonly NamedTarget ScoreEntity = new($"#_{ns}_cubelib_score");
         public readonly Storage InternalStorage = new(new(ns, "_internal"));
 
         public MCStack RegisterStack;
@@ -109,8 +111,10 @@ namespace Datapack.Net.CubeLib
                 AddFunction(func);
             }
 
-            AddCommand(new FunctionCommand(MCFunctions[func]));
+            Call(MCFunctions[func]);
         }
+
+        public void Call(MCFunction func) => AddCommand(new FunctionCommand(func));
 
         public void Print(params object[] args)
         {
@@ -164,7 +168,6 @@ namespace Datapack.Net.CubeLib
 
         public void AddCommand(Command cmd)
         {
-            if (CurrentTarget == null) throw new InvalidOperationException("Project not building yet");
             CurrentTarget.Add(cmd);
         }
 
@@ -172,7 +175,6 @@ namespace Datapack.Net.CubeLib
 
         public void PrependMain(Command cmd)
         {
-            if (!MCFunctions.ContainsKey(Main)) throw new InvalidOperationException("Project not building yet");
             MCFunctions[Main].Prepend(cmd);
         }
 
@@ -244,6 +246,28 @@ namespace Datapack.Net.CubeLib
         }
 
         public IfHandler If(ScoreRefComparison comp, Action res) => new(this, comp, res);
+        public void If(ScoreRefComparison comp, Command res) => AddCommand(comp.Process(new Execute()).Run(res));
+
+        public void While(ScoreRefComparison comp, Action res)
+        {
+            var func = Lambda(() =>
+            {
+                If(!comp, new ReturnCommand(0));
+                res();
+                Call(CurrentTarget);
+            });
+            Call(func);
+        }
+
+        public void For(int start, ScoreRef end, Action<ScoreRef> res)
+        {
+            var i = Local(start);
+            While(i < end, () =>
+            {
+                res(i);
+                i.Add(1);
+            });
+        }
 
         protected virtual void Init() { }
 
