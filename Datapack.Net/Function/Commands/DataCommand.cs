@@ -216,6 +216,7 @@ namespace Datapack.Net.Function.Commands
             public Modify Value(string value)
             {
                 Val = value;
+                Modifier = "value";
                 return this;
             }
 

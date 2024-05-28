@@ -8,23 +8,18 @@ using System.Threading.Tasks;
 
 namespace TNTCannon
 {
-    public class TNTProject() : Project("tnt")
+    public class TNTProject() : Project("tnt", new("Wow"))
     {
-        private Score Test;
-
         protected override void Init()
         {
-            Test = new("test", "dummy");
-            AddScore(Test);
+
         }
 
         protected override void Main()
         {
-            Print("hello");
-
-            var x = new ScoreRef(Test, ScoreEntity);
-            x.Set(5);
-            x.Mul(5);
+            var x = Local(69);
+            x.Mul(420);
+            Print(x);
         }
     }
 }

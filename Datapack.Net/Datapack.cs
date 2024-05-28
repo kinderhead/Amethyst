@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Datapack.Net.Pack;
+using Newtonsoft.Json.Linq;
 
 namespace Datapack.Net
 {
@@ -15,7 +16,10 @@ namespace Datapack.Net
         private FileStream? fileStream;
         private ZipArchive? zipFile;
 
-        public Datapack()
+        public string Description;
+        public int PackFormat;
+
+        public Datapack(string description, int packFormat = 26)
         {
             types.Add(new Advancements());
             types.Add(new ItemModifiers());
@@ -29,6 +33,9 @@ namespace Datapack.Net
             types.Add(new DimensionResource());
             types.Add(new DimensionType());
             types.Add(new Functions());
+
+            Description = description;
+            PackFormat = packFormat;
         }
 
         public void Build()
@@ -41,6 +48,13 @@ namespace Datapack.Net
                     {
                         type.Build(this);
                     }
+
+                    WriteFile("pack.mcmeta", new JObject(
+                        new JProperty("pack", new JObject(
+                            new JProperty("description", Description),
+                            new JProperty("pack_format", PackFormat)
+                        ))
+                    ).ToString());
                 }
             }
         }

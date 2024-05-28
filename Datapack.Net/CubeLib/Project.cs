@@ -1,4 +1,5 @@
-﻿using Datapack.Net.Function;
+﻿using Datapack.Net.CubeLib.Builtins;
+using Datapack.Net.Function;
 using Datapack.Net.Function.Commands;
 using Datapack.Net.Pack;
 using Datapack.Net.Utils;
@@ -10,24 +11,27 @@ using System.Threading.Tasks;
 
 namespace Datapack.Net.CubeLib
 {
-    public abstract class Project(string ns)
+    public abstract class Project(string ns, Datapack pack)
     {
         public static Project ActiveProject { get; private set; }
 
-        public readonly Datapack Datapack = new();
+        public readonly Datapack Datapack = pack;
         public readonly string Namespace = ns;
 
         private readonly Dictionary<Action, MCFunction> MCFunctions = [];
         private readonly Queue<KeyValuePair<Action, MCFunction>> FunctionsToProcess = [];
 
         private readonly HashSet<Score> Scores = [];
-        private readonly HashSet<ScoreRef> Registers = [];
+        private readonly HashSet<Score> Registers = [];
+        private readonly List<ICubeLangType> CubeLangTypes = [];
 
         public MCFunction? CurrentTarget { get; private set; }
         protected readonly List<ScoreRef> RegistersInUse = [];
 
         public readonly NamedTarget ScoreEntity = new($"_{ns}_cubelib_score");
         public readonly Storage InternalStorage = new(new(ns, "_internal"));
+
+        public MCStack RegisterStack;
 
         public void Build()
         {
@@ -38,16 +42,46 @@ namespace Datapack.Net.CubeLib
             AddFunction(Main);
             AddFunction(Tick);
 
+            var tags = Datapack.GetResource<Tags>();
+            var mainTag = new Tag(new("minecraft", "load"), "functions");
+            var tickTag = new Tag(new("minecraft", "tick"), "functions");
+
+            mainTag.Values.Add(new(Namespace, "main"));
+            tickTag.Values.Add(new(Namespace, "tick"));
+
+            tags.AddTag(mainTag);
+            tags.AddTag(tickTag);
+
+            RegisterStack = new(InternalStorage, "register_stack");
+            AddObject(RegisterStack);
+
             while (FunctionsToProcess.TryDequeue(out var i))
             {
+                RegistersInUse.Clear();
                 CurrentTarget = i.Value;
                 i.Key();
+
+                RegistersInUse.Reverse();
+                foreach (var r in RegistersInUse)
+                {
+                    RegisterStack.Dequeue(r);
+                }
             }
 
             // Prepend Main
+            foreach (var i in CubeLangTypes)
+            {
+                i.Init();
+            }
+
+            foreach (var i in Registers)
+            {
+                PrependMain(new Scoreboard.Players.Set(ScoreEntity, i, 0));
+            }
+
             foreach (var i in Scores.Reverse())
             {
-                MCFunctions[Main].Prepend(new Scoreboard.Objectives.Add(i));
+                PrependMain(new Scoreboard.Objectives.Add(i));
             }
 
             foreach (var i in MCFunctions.Values)
@@ -70,7 +104,12 @@ namespace Datapack.Net.CubeLib
 
         public void Print(string msg)
         {
-            AddCommand(new SayCommand(msg));
+            AddCommand(new TellrawCommand(new TargetSelector(TargetType.a), new FormattedText().Text(msg)));
+        }
+
+        public void Print(ScoreRef val)
+        {
+            AddCommand(new TellrawCommand(new TargetSelector(TargetType.a), new FormattedText().Score(val)));
         }
 
         public MCFunction AddFunction(Action func)
@@ -88,6 +127,14 @@ namespace Datapack.Net.CubeLib
             CurrentTarget.Add(cmd);
         }
 
+        public void AddObject(ICubeLangType type) => CubeLangTypes.Add(type);
+
+        public void PrependMain(Command cmd)
+        {
+            if (!MCFunctions.ContainsKey(Main)) throw new InvalidOperationException("Project not building yet");
+            MCFunctions[Main].Prepend(cmd);
+        }
+
         public void AddScore(Score score) => Scores.Add(score);
 
         public ScoreRef Temp(int num, string type = "tmp")
@@ -95,6 +142,27 @@ namespace Datapack.Net.CubeLib
             var score = new Score($"_cl_{type}_{num}", "dummy");
             if (!Scores.Contains(score)) AddScore(score);
             return new(score, ScoreEntity);
+        }
+
+        public ScoreRef Local()
+        {
+            var score = new Score($"_cl_reg_{RegistersInUse.Count}", "dummy");
+            Registers.Add(score);
+            Scores.Add(score);
+
+            var register = new ScoreRef(score, ScoreEntity);
+            RegistersInUse.Add(register);
+
+            RegisterStack.Enqueue(register);
+
+            return register;
+        }
+
+        public ScoreRef Local(int val)
+        {
+            var register = Local();
+            register.Set(val);
+            return register;
         }
 
         protected virtual void Init() { }
