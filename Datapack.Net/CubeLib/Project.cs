@@ -44,6 +44,12 @@ namespace Datapack.Net.CubeLib
                 i.Key();
             }
 
+            // Prepend Main
+            foreach (var i in Scores.Reverse())
+            {
+                MCFunctions[Main].Prepend(new Scoreboard.Objectives.Add(i));
+            }
+
             foreach (var i in MCFunctions.Values)
             {
                 Datapack.GetResource<Functions>().Add(i);
@@ -94,13 +100,7 @@ namespace Datapack.Net.CubeLib
         protected virtual void Init() { }
 
         [DeclareMC("main")]
-        protected virtual void Main()
-        {
-            foreach (var i in Scores)
-            {
-                AddCommand(new Scoreboard.Objectives.Add(i));
-            }
-        }
+        protected virtual void Main() { }
 
         [DeclareMC("tick")]
         protected virtual void Tick() { }

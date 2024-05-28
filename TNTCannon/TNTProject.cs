@@ -14,18 +14,17 @@ namespace TNTCannon
 
         protected override void Init()
         {
-            base.Init();
             Test = new("test", "dummy");
             AddScore(Test);
         }
 
         protected override void Main()
         {
-            base.Main();
             Print("hello");
 
             var x = new ScoreRef(Test, ScoreEntity);
             x.Set(5);
+            x.Mul(5);
         }
     }
 }

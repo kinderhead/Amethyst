@@ -21,6 +21,12 @@ namespace Datapack.Net.Function
             if (command.Macro) Macro = true;
         }
 
+        public void Prepend(Command command)
+        {
+            commands.Insert(0, command);
+            if (command.Macro) Macro = true;
+        }
+
         public override string Build(Datapack pack)
         {
             StringBuilder sb = new();

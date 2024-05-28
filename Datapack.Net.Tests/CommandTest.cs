@@ -236,6 +236,20 @@ namespace Datapack.Net.Tests
             Assert.That(cmd.Build(), Is.EqualTo("data merge storage test:test {\"test\":\"test\"}"));
         }
 
+        [Test]
+        public void DataModifySet()
+        {
+            var cmd = new DataCommand.Modify(new Position(1, 1, 1), "boo").Set().String(new TargetSelector(TargetType.p), "test", 0, 1);
+            Assert.That(cmd.Build(), Is.EqualTo("data modify block 1 1 1 boo set string entity @p test 0 1"));
+        }
+
+        [Test]
+        public void DataRemove()
+        {
+            var cmd = new DataCommand.Remove(new Storage(new("h", "i")), "key");
+            Assert.That(cmd.Build(), Is.EqualTo("data remove storage h:i key"));
+        }
+
         #endregion
 
         #region Scoreboard
