@@ -15,22 +15,20 @@ namespace Datapack.Net.Pack
             
         }
 
-        public void AddTag(Tag tag)
+        public Tag AddTag(Tag tag)
         {
-            resources.Add(tag);
+            Resources.Add(tag);
+            return tag;
         }
 
-        public Tag GetTag(NamespacedID id)
+        public Tag GetTag(NamespacedID id, string type)
         {
-            var tag = (Tag?)resources.Find(i => i.ID == id);
-
-            if (tag != null) return tag;
-            throw new FileNotFoundException($"Tag {id} was not found");
+            return (Tag?)Resources.Find(i => i.ID == id) ?? AddTag(new(id, type));
         }
 
-        public override void Build(Datapack pack)
+        public override void Build(DP pack)
         {
-            foreach (Tag i in resources.Cast<Tag>())
+            foreach (Tag i in Resources.Cast<Tag>())
             {
                 pack.WriteFile(ComputePath(i.ID, i.TagType + "/"), i.Build(pack));
             }

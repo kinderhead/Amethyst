@@ -8,7 +8,7 @@ using static Datapack.Net.Function.Commands.Execute;
 
 namespace Datapack.Net.CubeLib
 {
-    public struct ScoreRefComparison()
+    public class ScoreRefComparison : Conditional
     {
         public ScoreRef? LeftScore;
         public ScoreRef? RightScore;
@@ -16,14 +16,9 @@ namespace Datapack.Net.CubeLib
         public int Right;
         public Comparison Op;
 
-        /// <summary>
-        /// Execute operation, false for unless.
-        /// </summary>
-        public bool If = true;
-
-        public readonly Execute Process(Execute cmd, int tmp = 0)
+        public override Execute Process(Execute cmd, int tmp = 0)
         {
-            Conditional branch = If ? cmd.If : cmd.Unless;
+            Execute.Conditional branch = If ? cmd.If : cmd.Unless;
 
             ScoreRef a = LeftScore ?? Project.ActiveProject.Temp(tmp, Left, "cmp");
             ScoreRef b = RightScore ?? Project.ActiveProject.Temp(tmp, Right, "cmp");
@@ -32,7 +27,5 @@ namespace Datapack.Net.CubeLib
 
             return cmd;
         }
-
-        public static ScoreRefComparison operator !(ScoreRefComparison op) => op with { If = !op.If };
     }
 }

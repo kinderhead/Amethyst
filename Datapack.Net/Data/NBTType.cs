@@ -30,7 +30,6 @@ namespace Datapack.Net.Data
         public static implicit operator NBTType(float val) => new NBTFloat(val);
         public static implicit operator NBTType(double val) => new NBTDouble(val);
         public static implicit operator NBTType(bool val) => new NBTBool(val);
-
     }
 
     public enum NBTNumberType

@@ -11,23 +11,23 @@ namespace Datapack.Net.CubeLib
     public class IfHandler
     {
         public readonly Project Project;
-        public readonly List<ScoreRefComparison> Comparisons = [];
+        public readonly List<Conditional> Comparisons = [];
 
-        public IfHandler(Project project, ScoreRefComparison comp, Action func)
+        public IfHandler(Project project, Conditional comp, Action func)
         {
             Project = project;
             Comparisons.Add(comp);
 
             var cmd = comp.Process(new Execute());
-            Project.AddCommand(cmd.Run(new FunctionCommand(Project.Lambda(func))));
+            Project.AddCommand(cmd.Run(Project.Lambda(func)));
         }
 
-        public IfHandler ElseIf(ScoreRefComparison comp, Action func)
+        public IfHandler ElseIf(Conditional comp, Action func)
         {
             Else(() =>
             {
                 var cmd = comp.Process(new Execute());
-                Project.AddCommand(cmd.Run(new FunctionCommand(Project.Lambda(func))));
+                Project.AddCommand(cmd.Run(Project.Lambda(func)));
             });
             Comparisons.Add(comp);
             return this;
@@ -37,7 +37,7 @@ namespace Datapack.Net.CubeLib
         {
             var cmd = new Execute();
             cmd = (!Comparisons.Last()).Process(cmd);
-            Project.AddCommand(cmd.Run(new FunctionCommand(Project.Lambda(func))));
+            Project.AddCommand(cmd.Run(Project.Lambda(func)));
         }
     }
 }

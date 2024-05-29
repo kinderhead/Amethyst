@@ -8,11 +8,24 @@ using System.Threading.Tasks;
 namespace Datapack.Net.CubeLib
 {
     [AttributeUsage(AttributeTargets.Method, AllowMultiple = false)]
-    public class DeclareMCAttribute(string name, bool returns = false, bool macro = false) : Attribute
+    public class DeclareMCAttribute : Attribute
     {
-        public readonly string Name = name;
-        public readonly bool Returns = returns;
-        public readonly bool Macro = macro;
+        public readonly string Path;
+        public readonly bool Returns;
+        public readonly string[] Macros = [];
+
+        public DeclareMCAttribute(string name, bool returns, string[] macros)
+        {
+            Path = name;
+            Returns = returns;
+            Macros = macros;
+        }
+
+        public DeclareMCAttribute(string name, bool returns = false)
+        {
+            Path = name;
+            Returns = returns;
+        }
 
         public static DeclareMCAttribute Get(Action func)
         {

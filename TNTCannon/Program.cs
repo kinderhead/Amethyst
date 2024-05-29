@@ -1,10 +1,16 @@
-﻿namespace TNTCannon
+﻿using Datapack.Net;
+using Datapack.Net.CubeLib;
+
+namespace TNTCannon
 {
     internal class Program
     {
         static void Main(string[] args)
         {
-            new TNTProject().Build();
+            var pack = new DP("Wow");
+            Project.Create<TNTProject>(pack).Build();
+            pack.Optimize();
+            pack.Build();
         }
     }
 }

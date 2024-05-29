@@ -1,4 +1,5 @@
-﻿using Datapack.Net.CubeLib;
+﻿using Datapack.Net;
+using Datapack.Net.CubeLib;
 using Datapack.Net.Function;
 using Datapack.Net.Function.Commands;
 using System;
@@ -9,8 +10,10 @@ using System.Threading.Tasks;
 
 namespace TNTCannon
 {
-    public class TNTProject() : Project("tnt", new("Wow"))
+    public class TNTProject(DP pack) : Project(pack)
     {
+        public override string Namespace => "tnt";
+
         protected override void Init()
         {
             
@@ -18,19 +21,15 @@ namespace TNTCannon
 
         protected override void Main()
         {
-            Local();
-            Jump(Test, InternalStorage);
+            Call(Std.Test);
+            var x = Local();
+            CallRet(Std.AllocAddress, x, [new("storage", Heap.Storage.ToString()), new("path", Heap.Path)]);
+            Print(x);
         }
 
         protected override void Tick()
         {
             
-        }
-
-        [DeclareMC("test", macro: true)]
-        public void Test()
-        {
-            AddCommand(new SayCommand("$(register_stack)", true));
         }
     }
 }

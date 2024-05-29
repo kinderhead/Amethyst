@@ -21,6 +21,8 @@ namespace Datapack.Net.CubeLib
         public void Div(int val) => Op(val, ScoreOperation.Div);
         public void Mod(int val) => Op(val, ScoreOperation.Mod);
 
+        public Scoreboard.Players.Get Get() => new(Target, Score);
+
         public void Op(int val, ScoreOperation op)
         {
             var tmp = Project.ActiveProject.Temp(0, "math");

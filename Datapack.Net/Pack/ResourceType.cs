@@ -12,11 +12,11 @@ namespace Datapack.Net.Pack
         public readonly string Path = path;
         public readonly string FileExtension = fileExtension;
 
-        protected List<Resource> resources = [];
+        internal List<Resource> Resources = [];
 
-        public virtual void Build(Datapack pack)
+        public virtual void Build(DP pack)
         {
-            foreach (var i in resources)
+            foreach (var i in Resources)
             {
                 pack.WriteFile(ComputePath(i.ID), i.Build(pack));
             }
@@ -32,7 +32,7 @@ namespace Datapack.Net.Pack
     {
         public void Add(Resource resource)
         {
-            resources.Add(resource);
+            Resources.Add(resource);
         }
     }
 

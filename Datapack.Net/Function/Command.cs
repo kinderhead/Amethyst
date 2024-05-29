@@ -2,18 +2,23 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace Datapack.Net.Function
 {
-    public abstract class Command(bool macro)
+    public abstract partial class Command(bool macro)
     {
+        public static readonly Regex MacroRegex = MacroRegexGet();
+
         public bool Macro = macro;
 
         public string Build()
         {
-            if (Macro) return "$" + PreBuild().Trim();
-            return PreBuild().Trim();
+            var txt = PreBuild().Trim();
+
+            if (Macro && MacroRegex.IsMatch(txt)) txt = "$" + txt;
+            return txt;
         }
 
         protected abstract string PreBuild();
@@ -22,5 +27,8 @@ namespace Datapack.Net.Function
         {
             return Build();
         }
+
+        [GeneratedRegex(@"\$\((.*?)\)")]
+        private static partial Regex MacroRegexGet();
     }
 }

@@ -11,9 +11,13 @@ namespace Datapack.Net.Function
     {
         public readonly NamespacedID ID = id;
 
-        public override string ToString()
-        {
-            return ID.ToString();
-        }
+        public override string ToString() => ID.ToString();
+    }
+
+    public class StorageMacro(string raw) : Storage(new())
+    {
+        public readonly string Value = raw;
+
+        public override string ToString() => Value;
     }
 }

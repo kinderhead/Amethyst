@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Datapack.Net.Function.Commands
 {
-    public class Execute : Command
+    public class Execute : Command, ICloneable
     {
         public readonly List<Subcommand> Subcommands = [];
 
@@ -59,12 +59,34 @@ namespace Datapack.Net.Function.Commands
         public Execute Store(IEntityTarget target, Score objective, bool result = true) => Add(new Subcommand.Store { Target = target, Objective = objective, Result = result });
         public Execute Store(Storage target, string path, NBTNumberType type, double scale, bool result = true) => Add(new Subcommand.Store { StorageTarget = target, Path = path, DataType = type, Scale = scale, Result = result });
 
-
         public Execute Add(Subcommand sbc)
         {
             Subcommands.Add(sbc);
             return this;
         }
+
+        public T Get<T>() where T : Subcommand
+        {
+            foreach (var i in Subcommands) if (i is T) return (T)i;
+            throw new Exception("Execute command does not have the requested subcommand");
+        }
+
+        public void RemoveAll<T>() where T : Subcommand
+        {
+            Subcommands.RemoveAll((i) => i is T);
+        }
+
+        public object Clone()
+        {
+            var other = new Execute(Macro);
+            foreach (var i in Subcommands)
+            {
+                other.Subcommands.Add((Subcommand)i.Clone());
+            }
+            return other;
+        }
+
+        public Execute Copy() => (Execute)Clone();
 
         public class Conditional(Execute execute, Conditional.Type type)
         {
@@ -283,8 +305,13 @@ namespace Datapack.Net.Function.Commands
             }
         }
 
-        public class Subcommand
+        public class Subcommand : ICloneable
         {
+            public object Clone()
+            {
+                return MemberwiseClone();
+            }
+
             public class Run(Command cmd) : Subcommand
             {
                 public readonly Command Command = cmd;

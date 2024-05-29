@@ -1,4 +1,5 @@
-﻿using Datapack.Net.Pack;
+﻿using Datapack.Net.Function.Commands;
+using Datapack.Net.Pack;
 using Datapack.Net.Utils;
 using System;
 using System.Collections.Generic;
@@ -13,28 +14,45 @@ namespace Datapack.Net.Function
         public bool Macro { get; protected set; }
         public readonly bool Partial = partial;
 
-        protected List<Command> commands = [];
+        internal List<Command> Commands = [];
+
+        public int Length => Commands.Count;
 
         public void Add(Command command)
         {
-            commands.Add(command);
+            Commands.Add(command);
             if (command.Macro) Macro = true;
         }
 
         public void Prepend(Command command)
         {
-            commands.Insert(0, command);
+            Commands.Insert(0, command);
             if (command.Macro) Macro = true;
         }
 
-        public override string Build(Datapack pack)
+        public override string Build(DP pack)
         {
             StringBuilder sb = new();
-            foreach (var i in commands)
+            foreach (var i in Commands)
             {
                 sb.AppendLine(i.Build());
+                if (i is ReturnCommand) break;
             }
             return sb.ToString();
+        }
+
+        public static bool operator==(MCFunction a, MCFunction b) => a.ID == b.ID;
+        public static bool operator!=(MCFunction a, MCFunction b) => a.ID != b.ID;
+
+        public override bool Equals(object? obj)
+        {
+            if (obj is MCFunction f) return this == f;
+            return base.Equals(obj);
+        }
+
+        public override int GetHashCode()
+        {
+            return ID.GetHashCode();
         }
     }
 }

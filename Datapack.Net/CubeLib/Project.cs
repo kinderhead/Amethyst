@@ -1,25 +1,32 @@
 ﻿using Datapack.Net.CubeLib.Builtins;
+using Datapack.Net.Data;
 using Datapack.Net.Function;
 using Datapack.Net.Function.Commands;
 using Datapack.Net.Pack;
 using Datapack.Net.Utils;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
-using static Datapack.Net.Data._1_20_4.Blocks;
+using static Datapack.Net.Function.Commands.Execute.Subcommand;
 
 namespace Datapack.Net.CubeLib
 {
-    public abstract class Project(string ns, Datapack pack)
+    public abstract class Project
     {
         public static Project ActiveProject { get; private set; }
+        public static readonly List<Project> Projects = [];
+        public static readonly Storage GlobalStorage = new(new("cubelib", "global"));
+        public static readonly NamedTarget GlobalScoreEntity = new("#_cubelib_score");
 
-        public readonly Datapack Datapack = pack;
-        public readonly string Namespace = ns;
+        public readonly DP Datapack;
+        public abstract string Namespace { get; }
 
         private readonly Dictionary<Action, MCFunction> MCFunctions = [];
+        private readonly List<MCFunction> MiscMCFunctions = [];
         private readonly Queue<KeyValuePair<Action, MCFunction>> FunctionsToProcess = [];
 
         private readonly HashSet<Score> Scores = [];
@@ -30,49 +37,102 @@ namespace Datapack.Net.CubeLib
 
         private MCFunction? currentTarget;
         public MCFunction CurrentTarget { get => currentTarget ?? throw new InvalidOperationException("Project not building yet"); private set => currentTarget = value; }
+        public MCFunction CurrentTargetCleanup { get; private set; }
+        public DeclareMCAttribute CurrentFunctionAttrs { get; private set; }
 
         private List<ScoreRef> RegistersInUse = [];
 
-        public readonly NamedTarget ScoreEntity = new($"#_{ns}_cubelib_score");
-        public readonly Storage InternalStorage = new(new(ns, "_internal"));
+        public readonly NamedTarget ScoreEntity;
+        public readonly Storage InternalStorage;
 
         public MCStack RegisterStack;
+        public MCHeap Heap;
 
         private int AnonymousFuncCounter = 0;
 
+        public readonly List<Project> Dependencies = [];
+
+        private bool Built = false;
+
+        public CubeLibStd Std;
+
+        protected Project(DP pack)
+        {
+            Datapack = pack;
+            ScoreEntity = new($"#_{Namespace}_cubelib_score");
+            InternalStorage = new(new(Namespace, "_internal"));
+        }
+
+        public static T Create<T>(DP pack) where T : Project
+        {
+            T project = (T?)Activator.CreateInstance(typeof(T), [pack]) ?? throw new ArgumentException("Invalid project constructor");
+            var index = Projects.FindIndex((i) => i.GetType() == project.GetType());
+            if (index == -1)
+            {
+                Projects.Add(project);
+                return project;
+            }
+            return (T)Projects[index];
+        }
+
+        public T AddDependency<T>() where T : Project
+        {
+            var project = Create<T>(Datapack);
+            project.Build();
+            ActiveProject = this;
+            Dependencies.Add(project);
+            return project;
+        }
+
         public void Build()
         {
+            if (Built) return;
+            Built = true;
             ActiveProject = this;
 
+            Std = AddDependency<CubeLibStd>();
             Init();
 
             AddFunction(Main);
             AddFunction(Tick);
 
+            foreach (var i in GetType().GetMethods())
+            {
+                if (i.GetCustomAttribute<DeclareMCAttribute>() is not null) AddFunction((Action)Delegate.CreateDelegate(typeof(Action), this, i));
+            }
+
             var tags = Datapack.GetResource<Tags>();
-            var mainTag = new Tag(new("minecraft", "load"), "functions");
-            var tickTag = new Tag(new("minecraft", "tick"), "functions");
+            var mainTag = tags.GetTag(new("minecraft", "load"), "functions");
+            var tickTag = tags.GetTag(new("minecraft", "tick"), "functions");
 
-            mainTag.Values.Add(new(Namespace, "main"));
-            tickTag.Values.Add(new(Namespace, "tick"));
+            mainTag.Values.Add(new(Namespace, "_main"));
+            tickTag.Values.Add(new(Namespace, "_tick"));
 
-            tags.AddTag(mainTag);
-            tags.AddTag(tickTag);
-
-            RegisterStack = new(InternalStorage, "register_stack");
+            RegisterStack = new(GlobalStorage, "register_stack");
             AddStaticObject(RegisterStack);
+            Heap = new(InternalStorage, "heap");
+            AddStaticObject(Heap);
 
             while (FunctionsToProcess.TryDequeue(out var i))
             {
                 RegistersInUse.Clear();
                 CurrentTarget = i.Value;
+                CurrentTargetCleanup = new MCFunction(new(i.Value.ID.Namespace, $"zz_cleanup/{i.Value.ID.Path}"), true);
+                CurrentFunctionAttrs = DeclareMCAttribute.Get(i.Key);
+                MiscMCFunctions.Add(CurrentTargetCleanup);
                 i.Key();
 
                 RegistersInUse.Reverse();
-                foreach (var r in RegistersInUse)
+
+                WithCleanup(() =>
                 {
-                    RegisterStack.Dequeue(r);
-                }
+                    foreach (var r in RegistersInUse)
+                    {
+                        RegisterStack.Dequeue(r);
+                    }
+                });
+
+                Call(CurrentTargetCleanup);
             }
 
             // Prepend Main
@@ -101,53 +161,100 @@ namespace Datapack.Net.CubeLib
                 Datapack.GetResource<Functions>().Add(i);
             }
 
-            Datapack.Build();
-        }
-
-        public void Jump(Action func)
-        {
-            if (!MCFunctions.ContainsKey(func))
+            foreach (var i in MiscMCFunctions)
             {
-                AddFunction(func);
+                Datapack.GetResource<Functions>().Add(i);
             }
-
-            Jump(MCFunctions[func]);
         }
 
-        public void Jump(MCFunction func) => AddCommand(new FunctionCommand(func));
-
-        public void Jump(Action func, Storage storage, string path = "")
+        public MCFunction GuaranteeFunc(Action func, bool macro)
         {
-            if (!MCFunctions.ContainsKey(func))
+            var attr = DeclareMCAttribute.Get(func);
+            MCFunction retFunc;
+            if (func.Target != this && func.Target is Project lib)
             {
-                AddFunction(func);
+                if (lib.Built) return lib.MCFunctions[func];
+                retFunc = new(new(lib.Namespace, attr.Path), true);
             }
+            else if (FindFunction(func) is MCFunction mcfunc)
+            {
+                retFunc = mcfunc;
+            }
+            else retFunc = AddFunction(func);
 
-            Jump(MCFunctions[func], storage, path);
+            if (macro && attr.Macros.Length == 0) throw new ArgumentException("Attempted to call a non macro function with arguments");
+            if (!macro && attr.Macros.Length != 0) throw new ArgumentException("Attempted to call a macro function without arguments");
+
+            return retFunc;
         }
 
-        public void Jump(MCFunction func, Storage storage, string path = "") => AddCommand(new FunctionCommand(func, storage, path));
+        public void Call(Action func)
+        {
+            Call(GuaranteeFunc(func, false));
+        }
 
-        public ScoreRef Call(Action func)
+        public void Call(MCFunction func) => AddCommand(new FunctionCommand(func));
+
+        public void Call(Action func, Storage storage, string path = "", bool macro = false) => Call(GuaranteeFunc(func, true), storage, path, macro);
+        public void Call(MCFunction func, Storage storage, string path = "", bool macro = false) => AddCommand(new FunctionCommand(func, storage, path, macro));
+
+        public void Call(Action func, KeyValuePair<string, object>[] args, bool macro = false) => Call(GuaranteeFunc(func, true), args, macro);
+        public void Call(MCFunction func, KeyValuePair<string, object>[] args, bool macro = false)
+        {
+            AddCommand(BaseCall(func, args, macro));
+        }
+
+        public ScoreRef CallRet(Action func)
         {
             var ret = Local();
-            Call(func, ret);
+            CallRet(func, ret);
             return ret;
         }
 
-        public void Call(Action func, ScoreRef ret)
+        public void CallRet(Action func, ScoreRef ret)
         {
             if (!DeclareMCAttribute.Get(func).Returns) throw new InvalidOperationException("Function does not return a value");
 
-            if (!MCFunctions.ContainsKey(func))
-            {
-                AddFunction(func);
-            }
-
-            Call(MCFunctions[func], ret);
+            CallRet(GuaranteeFunc(func, false), ret);
         }
 
-        public void Call(MCFunction func, ScoreRef ret) => AddCommand(new Execute().Store(ret).Run(new FunctionCommand(func)));
+        public void CallRet(MCFunction func, ScoreRef ret, bool macro = false) => AddCommand(new Execute(macro).Store(ret).Run(new FunctionCommand(func)));
+
+        public void CallRet(Action func, ScoreRef ret, Storage storage, string path = "", bool macro = false) => CallRet(GuaranteeFunc(func, true), ret, storage, path, macro);
+        public void CallRet(MCFunction func, ScoreRef ret, Storage storage, string path = "", bool macro = false) => AddCommand(new Execute(macro).Store(ret).Run(new FunctionCommand(func, storage, path)));
+
+        public void CallRet(Action func, ScoreRef ret, KeyValuePair<string, object>[] args, bool macro = false) => CallRet(GuaranteeFunc(func, true), ret, args, macro);
+        public void CallRet(MCFunction func, ScoreRef ret, KeyValuePair<string, object>[] args, bool macro = false)
+        {
+            AddCommand(new Execute(macro).Store(ret).Run(BaseCall(func, args, macro)));
+        }
+
+        private FunctionCommand BaseCall(MCFunction func, KeyValuePair<string, object>[] args, bool macro = false)
+        {
+            var parameters = new NBTCompound();
+            var runtimeScores = new Dictionary<string, ScoreRef>();
+
+            foreach (var i in args)
+            {
+                if (i.Value is string str) parameters[i.Key] = str;
+                else if (i.Value is int val) parameters[i.Key] = val;
+                else if (i.Value is ScoreRef score) runtimeScores[i.Key] = score;
+                else throw new ArgumentException($"Type {i.GetType().FullName} is not supported yet");
+            }
+
+            if (runtimeScores.Count == 0)
+            {
+                return new FunctionCommand(func, parameters, macro);
+            }
+
+            AddCommand(new DataCommand.Modify(InternalStorage, "tmp", macro).Set().Value(parameters.ToString()));
+            foreach (var i in runtimeScores)
+            {
+                AddCommand(new Execute(macro).Store(InternalStorage, $"tmp.{i.Key}", NBTNumberType.Int, 1).Run(i.Value.Get()));
+            }
+
+            return new FunctionCommand(func, InternalStorage, "tmp");
+        }
 
         public void Print(params object[] args)
         {
@@ -168,33 +275,69 @@ namespace Datapack.Net.CubeLib
         }
 
         public void Return(int val) => AddCommand(new ReturnCommand(val));
-        public void Return() => AddCommand(new ReturnCommand());
+        public void Return() => Return(1);
+
+        /// <summary>
+        /// Returns from the function with the result of the command. Local variables are invalidated. <br/>
+        /// Use <see cref="Return(ScoreRef)"/> to return a local variable.
+        /// </summary>
+        /// <param name="cmd"></param>
         public void Return(Command cmd) => AddCommand(new ReturnCommand(cmd));
+        public void Return(ScoreRef score)
+        {
+            var temp = Temp(0, "ret");
+            temp.Set(score);
+            Return(temp.Get());
+        }
+
+        public void ReturnFail() => AddCommand(new ReturnCommand());
+
+        public void Break() => Return();
+
+        public MCFunction? FindFunction(Action func)
+        {
+            var actions = MCFunctions.ToList();
+            var index = actions.FindIndex((i) => i.Key.Method.MethodHandle.Equals(func.Method.MethodHandle));
+            if (index != -1) return actions[index].Value;
+            return null;
+        }
 
         public MCFunction AddFunction(Action func)
         {
-            return AddFunction(func, new(Namespace, DeclareMCAttribute.Get(func).Name));
+            return AddFunction(func, new(Namespace, DeclareMCAttribute.Get(func).Path));
         }
 
         public MCFunction AddFunction(Action func, NamespacedID id, bool scoped = false)
         {
             var mcfunc = new MCFunction(id, true);
             MCFunctions[func] = mcfunc;
+
             if (scoped)
             {
+                var cleanup = new MCFunction(new(id.Namespace, $"zz_cleanup/{id.Path}"), true);
+                MiscMCFunctions.Add(cleanup);
+
                 List<ScoreRef> scope = [.. RegistersInUse];
                 var oldFunc = CurrentTarget;
+                var oldCleanup = CurrentTargetCleanup;
                 CurrentTarget = mcfunc;
+                CurrentTargetCleanup = cleanup;
 
                 func();
 
-                for (int i = RegistersInUse.Count - 1; i >= scope.Count; i--)
+                WithCleanup(() =>
                 {
-                    RegisterStack.Dequeue(RegistersInUse[i]);
-                }
+                    for (int i = RegistersInUse.Count - 1; i >= scope.Count; i--)
+                    {
+                        RegisterStack.Dequeue(RegistersInUse[i]);
+                    }
+                });
+
+                Call(CurrentTargetCleanup);
 
                 RegistersInUse = scope;
                 CurrentTarget = oldFunc;
+                CurrentTargetCleanup = oldCleanup;
             }
             else
             {
@@ -205,26 +348,45 @@ namespace Datapack.Net.CubeLib
 
         public void AddCommand(Command cmd)
         {
+            if (cmd is ReturnCommand) Call(CurrentTargetCleanup);
+            else if (cmd is Execute ex && ex.Get<Run>().Command is ReturnCommand)
+            {
+                var other = ex.Copy();
+                other.RemoveAll<Run>();
+                other.Run(new FunctionCommand(CurrentTargetCleanup));
+                AddCommand(other);
+            }
+
             CurrentTarget.Add(cmd);
+        }
+
+        public void WithCleanup(Action func)
+        {
+            var oldTarget = CurrentTarget;
+            CurrentTarget = CurrentTargetCleanup;
+
+            func();
+
+            CurrentTarget = oldTarget;
         }
 
         public void AddStaticObject(IStaticType type) => StaticTypes.Add(type);
 
         public void PrependMain(Command cmd)
         {
-            MCFunctions[Main].Prepend(cmd);
+            (FindFunction(Main) ?? throw new Exception("Main doesn't exist")).Prepend(cmd);
         }
 
         public void AddScore(Score score) => Scores.Add(score);
 
-        public ScoreRef Temp(int num, string type = "tmp")
+        public ScoreRef Temp(int num, string type = "def")
         {
-            var score = new Score($"_cl_{type}_{num}", "dummy");
+            var score = new Score($"_cl_tmp_{type}_{num}", "dummy");
             if (!Scores.Contains(score)) AddScore(score);
             return new(score, ScoreEntity);
         }
 
-        public ScoreRef Temp(int num, int val, string type = "tmp")
+        public ScoreRef Temp(int num, int val, string type = "def")
         {
             var tmp = Temp(num, type);
             tmp.Set(val);
@@ -233,11 +395,11 @@ namespace Datapack.Net.CubeLib
 
         public ScoreRef Local()
         {
-            var score = new Score($"_cl_{Namespace}_reg_{RegistersInUse.Count}", "dummy");
+            var score = new Score($"_cl_reg_{RegistersInUse.Count}", "dummy");
             Registers.Add(score);
             Scores.Add(score);
 
-            var register = new ScoreRef(score, ScoreEntity);
+            var register = new ScoreRef(score, GlobalScoreEntity);
             RegistersInUse.Add(register);
 
             RegisterStack.Enqueue(register);
@@ -265,7 +427,7 @@ namespace Datapack.Net.CubeLib
             Globals.Add(score);
             Scores.Add(score);
 
-            return new ScoreRef(score, ScoreEntity);
+            return new ScoreRef(score, GlobalScoreEntity);
         }
 
         public ScoreRef Global(int val)
@@ -275,25 +437,51 @@ namespace Datapack.Net.CubeLib
             return global;
         }
 
-        public MCFunction Lambda(Action func)
+        public FunctionCommand Lambda(Action func)
         {
             var mcfunc = AddFunction(func, new(Namespace, $"zz_anon/{AnonymousFuncCounter++}"), true);
-            
-            return mcfunc;
+
+            if (CurrentFunctionAttrs.Macros.Length == 0) return new(mcfunc);
+
+            var nbt = new NBTCompound();
+
+            foreach (var i in CurrentFunctionAttrs.Macros)
+            {
+                nbt[i] = $"$({i})";
+            }
+
+            return new(mcfunc, nbt, true);
         }
 
-        public IfHandler If(ScoreRefComparison comp, Action res) => new(this, comp, res);
-        public void If(ScoreRefComparison comp, Command res) => AddCommand(comp.Process(new Execute()).Run(res));
+        public StoragePointer Alloc() => Alloc(0);
 
-        public void While(ScoreRefComparison comp, Action res)
+        public StoragePointer Alloc(int val)
         {
-            var func = Lambda(() =>
+            var pointer = Heap.Alloc();
+
+            return pointer;
+        }
+
+        public IfHandler If(Conditional comp, Action res) => new(this, comp, res);
+        public void If(Conditional comp, Command res) => AddCommand(comp.Process(new Execute()).Run(res));
+
+        public void While(Conditional comp, Action res)
+        {
+            WhileTrue(() =>
             {
                 If(!comp, new ReturnCommand(0));
                 res();
-                Jump(CurrentTarget);
             });
-            Jump(func);
+        }
+
+        public void WhileTrue(Action res)
+        {
+            var func = Lambda(() =>
+            {
+                res();
+                Call(CurrentTarget);
+            });
+            AddCommand(func);
         }
 
         public void For(int start, ScoreRef end, Action<ScoreRef> res)
@@ -306,12 +494,21 @@ namespace Datapack.Net.CubeLib
             });
         }
 
+        public void Random(MCRange<int> range, ScoreRef score) => AddCommand(new Execute().Store(score).Run(new RandomCommand(range)));
+
+        public ScoreRef Random(MCRange<int> range)
+        {
+            var score = Local();
+            Random(range, score);
+            return score;
+        }
+
         protected virtual void Init() { }
 
-        [DeclareMC("main")]
+        [DeclareMC("_main")]
         protected virtual void Main() { }
 
-        [DeclareMC("tick")]
+        [DeclareMC("_tick")]
         protected virtual void Tick() { }
     }
 }

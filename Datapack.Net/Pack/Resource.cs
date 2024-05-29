@@ -13,14 +13,14 @@ namespace Datapack.Net.Pack
         [JsonIgnore]
         public readonly NamespacedID ID = id;
 
-        public abstract string Build(Datapack pack);
+        public abstract string Build(DP pack);
     }
 
     public class TextResource(NamespacedID id, string content) : Resource(id)
     {
         public readonly string Content = content;
 
-        public override string Build(Datapack pack)
+        public override string Build(DP pack)
         {
             return Content;
         }
@@ -28,7 +28,7 @@ namespace Datapack.Net.Pack
 
     public class JsonResource(NamespacedID id) : Resource(id)
     {
-        public override string Build(Datapack pack)
+        public override string Build(DP pack)
         {
             return JsonUtils.Serialize(this);
         }
