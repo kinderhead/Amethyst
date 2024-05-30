@@ -223,13 +223,21 @@ namespace Datapack.Net.CubeLib
         public void CallRet(Action func, ScoreRef ret, Storage storage, string path = "", bool macro = false) => CallRet(GuaranteeFunc(func, true), ret, storage, path, macro);
         public void CallRet(MCFunction func, ScoreRef ret, Storage storage, string path = "", bool macro = false) => AddCommand(new Execute(macro).Store(ret).Run(new FunctionCommand(func, storage, path)));
 
-        public void CallRet(Action func, ScoreRef ret, KeyValuePair<string, object>[] args, bool macro = false) => CallRet(GuaranteeFunc(func, true), ret, args, macro);
-        public void CallRet(MCFunction func, ScoreRef ret, KeyValuePair<string, object>[] args, bool macro = false)
+        public void CallRet(Action func, ScoreRef ret, KeyValuePair<string, object>[] args, bool macro = false, int tmp = 0) => CallRet(GuaranteeFunc(func, true), ret, args, macro, tmp);
+
+        public ScoreRef CallRet(Action func, KeyValuePair<string, object>[] args, bool macro = false, int tmp = 0)
         {
-            AddCommand(new Execute(macro).Store(ret).Run(BaseCall(func, args, macro)));
+            var ret = Local();
+            CallRet(func, ret, args, macro, tmp);
+            return ret;
         }
 
-        private FunctionCommand BaseCall(MCFunction func, KeyValuePair<string, object>[] args, bool macro = false)
+        public void CallRet(MCFunction func, ScoreRef ret, KeyValuePair<string, object>[] args, bool macro = false, int tmp = 0)
+        {
+            AddCommand(new Execute(macro).Store(ret).Run(BaseCall(func, args, macro, tmp)));
+        }
+
+        public FunctionCommand BaseCall(MCFunction func, KeyValuePair<string, object>[] args, bool macro = false, int tmp = 0)
         {
             var parameters = new NBTCompound();
             var runtimeScores = new Dictionary<string, ScoreRef>();
@@ -239,7 +247,9 @@ namespace Datapack.Net.CubeLib
                 if (i.Value is string str) parameters[i.Key] = str;
                 else if (i.Value is int val) parameters[i.Key] = val;
                 else if (i.Value is ScoreRef score) runtimeScores[i.Key] = score;
-                else throw new ArgumentException($"Type {i.GetType().FullName} is not supported yet");
+                else if (i.Value is NamespacedID id) parameters[i.Key] = id.ToString();
+                else if (i.Value is Storage storage) parameters[i.Key] = storage.ToString();
+                else throw new ArgumentException($"Type {i.Value.GetType().Name} is not supported yet");
             }
 
             if (runtimeScores.Count == 0)
@@ -247,13 +257,18 @@ namespace Datapack.Net.CubeLib
                 return new FunctionCommand(func, parameters, macro);
             }
 
-            AddCommand(new DataCommand.Modify(InternalStorage, "tmp", macro).Set().Value(parameters.ToString()));
+            AddCommand(new DataCommand.Modify(InternalStorage, $"tmp{tmp}", macro).Set().Value(parameters.ToString()));
             foreach (var i in runtimeScores)
             {
-                AddCommand(new Execute(macro).Store(InternalStorage, $"tmp.{i.Key}", NBTNumberType.Int, 1).Run(i.Value.Get()));
+                AddCommand(new Execute(macro).Store(InternalStorage, $"tmp{tmp}.{i.Key}", NBTNumberType.Int, 1).Run(i.Value.Get()));
             }
 
-            return new FunctionCommand(func, InternalStorage, "tmp");
+            return new FunctionCommand(func, InternalStorage, $"tmp{tmp}");
+        }
+
+        public void Print(HeapPointer ptr)
+        {
+            Call(Std.PointerPrint, ptr.StandardMacros());
         }
 
         public void Print(params object[] args)
@@ -453,13 +468,22 @@ namespace Datapack.Net.CubeLib
             return new(mcfunc, nbt, true);
         }
 
-        public StoragePointer Alloc() => Alloc(0);
+        public HeapPointer Alloc(ScoreRef loc) => Alloc(loc, 0);
 
-        public StoragePointer Alloc(int val)
+        public HeapPointer Alloc(ScoreRef loc, int val)
         {
-            var pointer = Heap.Alloc();
-
+            var pointer = Heap.Alloc(loc);
+            pointer.Set(val);
             return pointer;
+        }
+
+        public HeapPointer Attach(ScoreRef loc) => new(Heap, loc);
+
+        public HeapPointer AllocIfNull(ScoreRef loc, int val = 0)
+        {
+            var ptr = Attach(loc);
+            If(!ptr.Exists(), () => Alloc(ptr, val));
+            return ptr;
         }
 
         public IfHandler If(Conditional comp, Action res) => new(this, comp, res);

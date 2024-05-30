@@ -14,6 +14,8 @@ namespace TNTCannon
     {
         public override string Namespace => "tnt";
 
+        private HeapPointer Object;
+
         protected override void Init()
         {
             
@@ -21,15 +23,32 @@ namespace TNTCannon
 
         protected override void Main()
         {
-            Call(Std.Test);
-            var x = Local();
-            CallRet(Std.AllocAddress, x, [new("storage", Heap.Storage.ToString()), new("path", Heap.Path)]);
-            Print(x);
+            Object = AllocIfNull(Global(), 17);
         }
 
         protected override void Tick()
         {
-            
+            var x = Local(5);
+            x.Mul(Object.Dereference());
+            Print(x);
+        }
+
+        [DeclareMC("set")]
+        public void Set()
+        {
+            Object.Set(7);
+        }
+
+        [DeclareMC("free")]
+        public void Free()
+        {
+            Object.Free();
+        }
+
+        [DeclareMC("reset")]
+        public void Reset()
+        {
+            Heap.Clear();
         }
     }
 }

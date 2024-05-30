@@ -72,6 +72,8 @@ namespace Datapack.Net
         public void Optimize()
         {
             EmptyFunctions();
+            EmptyFunctions(); // 2nd pass
+            EmptyFunctions(); // 3rd pass
         }
 
         private void EmptyFunctions()
@@ -122,16 +124,20 @@ namespace Datapack.Net
             }
         }
 
+        private readonly List<string> FilesWriten = [];
         internal void WriteFile(string path, string content)
         {
             Console.WriteLine($"Writing to file \"{path}\":\n{content}\n");
 
             if (zipFile != null)
             {
+                if (FilesWriten.Contains(path)) throw new Exception($"Datapack has duplicate file: {path}");
+
                 var entry = zipFile.CreateEntry(path);
 
                 using var stream = new StreamWriter(entry.Open());
                 stream.Write(content);
+                FilesWriten.Add(path);
             }
             else
             {

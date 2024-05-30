@@ -23,6 +23,12 @@ namespace Datapack.Net.Function
             return this;
         }
 
+        public FormattedText Storage(Storage target, string path)
+        {
+            Obj.Add(new JObject(new JProperty("nbt", path), new JProperty("storage", target.ToString())));
+            return this;
+        }
+
         public void RemoveLast() => Obj.RemoveAt(Obj.Count - 1);
 
         public override string ToString()
