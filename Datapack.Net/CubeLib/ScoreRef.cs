@@ -78,6 +78,8 @@ namespace Datapack.Net.CubeLib
 
         public ScoreRef GetAsArg() => this;
 
+        public static IRuntimeArgument Create(ScoreRef arg) => new ScoreRef(arg.Score, arg.Target);
+
         //public static implicit operator ScoreRef(int val)
         //{
         //    return new()

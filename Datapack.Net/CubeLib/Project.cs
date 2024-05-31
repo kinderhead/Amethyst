@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
@@ -15,7 +16,7 @@ using static Datapack.Net.Function.Commands.Execute.Subcommand;
 
 namespace Datapack.Net.CubeLib
 {
-    public abstract class Project
+    public abstract partial class Project
     {
         public static Project ActiveProject { get; private set; }
         public static readonly List<Project> Projects = [];
@@ -25,9 +26,9 @@ namespace Datapack.Net.CubeLib
         public readonly DP Datapack;
         public abstract string Namespace { get; }
 
-        private readonly Dictionary<Action, MCFunction> MCFunctions = [];
+        private readonly Dictionary<Delegate, MCFunction> MCFunctions = [];
         private readonly List<MCFunction> MiscMCFunctions = [];
-        private readonly Queue<KeyValuePair<Action, MCFunction>> FunctionsToProcess = [];
+        private readonly Queue<KeyValuePair<Delegate, MCFunction>> FunctionsToProcess = [];
 
         private readonly HashSet<Score> Scores = [];
         private readonly HashSet<Score> Registers = [];
@@ -46,6 +47,7 @@ namespace Datapack.Net.CubeLib
         public readonly Storage InternalStorage;
 
         public MCStack RegisterStack;
+        public MCStack ArgumentStack;
         public MCHeap Heap;
 
         private int AnonymousFuncCounter = 0;
@@ -98,7 +100,12 @@ namespace Datapack.Net.CubeLib
 
             foreach (var i in GetType().GetMethods())
             {
-                if (i.GetCustomAttribute<DeclareMCAttribute>() is not null) AddFunction((Action)Delegate.CreateDelegate(typeof(Action), this, i));
+                List<Type> args = [];
+                foreach (var e in i.GetParameters())
+                {
+                    args.Add(e.ParameterType);
+                }
+                if (i.GetCustomAttribute<DeclareMCAttribute>() is not null) AddFunction(Delegate.CreateDelegate(Expression.GetActionType([.. args]), this, i));
             }
 
             var tags = Datapack.GetResource<Tags>();
@@ -110,6 +117,8 @@ namespace Datapack.Net.CubeLib
 
             RegisterStack = new(GlobalStorage, "register_stack");
             AddStaticObject(RegisterStack);
+            ArgumentStack = new(GlobalStorage, "argument_stack");
+            AddStaticObject(ArgumentStack);
             Heap = new(InternalStorage, "heap");
             AddStaticObject(Heap);
 
@@ -120,7 +129,23 @@ namespace Datapack.Net.CubeLib
                 CurrentTargetCleanup = new MCFunction(new(i.Value.ID.Namespace, $"zz_cleanup/{i.Value.ID.Path}"), true);
                 CurrentFunctionAttrs = DeclareMCAttribute.Get(i.Key);
                 MiscMCFunctions.Add(CurrentTargetCleanup);
-                i.Key();
+
+                var args = DeclareMCAttribute.Args(i.Key);
+                if (args.Length == 0) i.Key.DynamicInvoke();
+                else
+                {
+                    List<IRuntimeArgument> funcArgs = [];
+
+                    foreach(var e in args)
+                    {
+                        var arg = ArgumentStack.Dequeue();
+                        funcArgs.Add((IRuntimeArgument?)e.GetMethod("Create")?.Invoke(null, [arg]) ?? throw new ArgumentException($"Invalid arguments for function {i.Key.Method.Name}"));
+                    }
+
+                    funcArgs.Reverse();
+
+                    i.Key.DynamicInvoke([.. funcArgs]);
+                }
 
                 RegistersInUse.Reverse();
 
@@ -167,7 +192,7 @@ namespace Datapack.Net.CubeLib
             }
         }
 
-        public MCFunction GuaranteeFunc(Action func, bool macro)
+        public MCFunction GuaranteeFunc(Delegate func, bool macro)
         {
             var attr = DeclareMCAttribute.Get(func);
             MCFunction retFunc;
@@ -188,21 +213,17 @@ namespace Datapack.Net.CubeLib
             return retFunc;
         }
 
-        public void Call(Action func)
-        {
-            Call(GuaranteeFunc(func, false));
-        }
-
+        public void Call(Action func) => Call(GuaranteeFunc(func, false));
         public void Call(MCFunction func) => AddCommand(new FunctionCommand(func));
 
         public void Call(Action func, Storage storage, string path = "", bool macro = false) => Call(GuaranteeFunc(func, true), storage, path, macro);
         public void Call(MCFunction func, Storage storage, string path = "", bool macro = false) => AddCommand(new FunctionCommand(func, storage, path, macro));
 
         public void Call(Action func, KeyValuePair<string, object>[] args, bool macro = false) => Call(GuaranteeFunc(func, true), args, macro);
-        public void Call(MCFunction func, KeyValuePair<string, object>[] args, bool macro = false)
-        {
-            AddCommand(BaseCall(func, args, macro));
-        }
+        public void Call(MCFunction func, KeyValuePair<string, object>[] args, bool macro = false) => AddCommand(BaseCall(func, args, macro));
+
+        public void CallArg(Delegate func, params IRuntimeArgument[] args) => CallArg(GuaranteeFunc(func, false), args);
+        public void CallArg(MCFunction func, params IRuntimeArgument[] args) => AddCommand(BaseCall(func, args));
 
         public ScoreRef CallRet(Action func)
         {
@@ -266,9 +287,23 @@ namespace Datapack.Net.CubeLib
             return new FunctionCommand(func, InternalStorage, $"tmp{tmp}");
         }
 
+        public FunctionCommand BaseCall(MCFunction func, IRuntimeArgument[] args, bool macro = false)
+        {
+            PushArgs(args);
+            return new FunctionCommand(func, macro);
+        }
+
+        public void PushArgs(IRuntimeArgument[] args)
+        {
+            foreach (var i in args.Reverse())
+            {
+                ArgumentStack.Enqueue(i.GetAsArg());
+            }
+        }
+
         public void Print(HeapPointer ptr)
         {
-            Call(Std.PointerPrint, ptr.StandardMacros());
+            Call(Std._PointerPrint, ptr.StandardMacros());
         }
 
         public void Print(params object[] args)
@@ -309,7 +344,7 @@ namespace Datapack.Net.CubeLib
 
         public void Break() => Return();
 
-        public MCFunction? FindFunction(Action func)
+        public MCFunction? FindFunction(Delegate func)
         {
             var actions = MCFunctions.ToList();
             var index = actions.FindIndex((i) => i.Key.Method.MethodHandle.Equals(func.Method.MethodHandle));
@@ -317,12 +352,12 @@ namespace Datapack.Net.CubeLib
             return null;
         }
 
-        public MCFunction AddFunction(Action func)
+        public MCFunction AddFunction(Delegate func)
         {
             return AddFunction(func, new(Namespace, DeclareMCAttribute.Get(func).Path));
         }
 
-        public MCFunction AddFunction(Action func, NamespacedID id, bool scoped = false)
+        public MCFunction AddFunction(Delegate func, NamespacedID id, bool scoped = false)
         {
             var mcfunc = new MCFunction(id, true);
             MCFunctions[func] = mcfunc;
@@ -338,7 +373,7 @@ namespace Datapack.Net.CubeLib
                 CurrentTarget = mcfunc;
                 CurrentTargetCleanup = cleanup;
 
-                func();
+                func.DynamicInvoke();
 
                 WithCleanup(() =>
                 {

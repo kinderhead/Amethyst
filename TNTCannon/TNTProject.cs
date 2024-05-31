@@ -10,11 +10,9 @@ using System.Threading.Tasks;
 
 namespace TNTCannon
 {
-    public class TNTProject(DP pack) : Project(pack)
+    public partial class TNTProject(DP pack) : Project(pack)
     {
         public override string Namespace => "tnt";
-
-        private HeapPointer Object;
 
         protected override void Init()
         {
@@ -23,30 +21,25 @@ namespace TNTCannon
 
         protected override void Main()
         {
-            Object = AllocIfNull(Global(), 17);
+            Funny(Local(9));
         }
 
         protected override void Tick()
         {
-            var x = Local(5);
-            x.Mul(Object.Dereference());
+            
+        }
+
+        [DeclareMC("func")]
+        private void _Funny(ScoreRef x)
+        {
             Print(x);
         }
 
-        [DeclareMC("set")]
-        public void Set()
-        {
-            Object.Set(7);
-        }
-
-        [DeclareMC("free")]
-        public void Free()
-        {
-            Object.Free();
-        }
-
+        /// <summary>
+        /// Test
+        /// </summary>
         [DeclareMC("reset")]
-        public void Reset()
+        private void _Reset()
         {
             Heap.Clear();
         }

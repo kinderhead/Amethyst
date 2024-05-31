@@ -8,6 +8,8 @@ namespace Datapack.Net.CubeLib
 {
     public interface IRuntimeArgument
     {
-        ScoreRef GetAsArg();
+        public ScoreRef GetAsArg();
+
+        public static virtual IRuntimeArgument Create(ScoreRef arg) => throw new NotImplementedException();
     }
 }

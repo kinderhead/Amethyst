@@ -15,10 +15,10 @@ namespace Datapack.Net.CubeLib
 
         public void Set(int val)
         {
-            Project.ActiveProject.Call(Project.ActiveProject.Std.PointerSet, StandardMacros([new("value", val)]));
+            Project.ActiveProject.Call(Project.ActiveProject.Std._PointerSet, StandardMacros([new("value", val)]));
         }
 
-        public void Dereference(ScoreRef val) => Project.ActiveProject.CallRet(Project.ActiveProject.Std.PointerDereference, val, StandardMacros());
+        public void Dereference(ScoreRef val) => Project.ActiveProject.CallRet(Project.ActiveProject.Std._PointerDereference, val, StandardMacros());
         public ScoreRef Dereference()
         {
             var ret = Project.ActiveProject.Local();
@@ -28,7 +28,7 @@ namespace Datapack.Net.CubeLib
 
         public void Free()
         {
-            Project.ActiveProject.Call(Project.ActiveProject.Std.PointerFree, StandardMacros());
+            Project.ActiveProject.Call(Project.ActiveProject.Std._PointerFree, StandardMacros());
         }
 
         public PointerExists Exists() => new() { Pointer = this };
@@ -44,6 +44,8 @@ namespace Datapack.Net.CubeLib
         }
 
         public ScoreRef GetAsArg() => Pointer;
+
+        public static IRuntimeArgument Create(ScoreRef arg) => new HeapPointer(Project.ActiveProject.Heap, (ScoreRef)ScoreRef.Create(arg));
 
         public static implicit operator ScoreRef(HeapPointer pointer) => pointer.Pointer;
     }

@@ -27,9 +27,22 @@ namespace Datapack.Net.CubeLib
             Returns = returns;
         }
 
-        public static DeclareMCAttribute Get(Action func)
+        public static DeclareMCAttribute Get(Delegate func)
         {
             return func.Method.GetCustomAttribute<DeclareMCAttribute>() ?? throw new InvalidOperationException("Function does not have the DeclareMC attribute");
+        }
+
+        public static Type[] Args(Delegate func)
+        {
+            var types = new List<Type>();
+
+            foreach (var i in func.Method.GetParameters())
+            {
+                if (i.ParameterType.GetInterface(nameof(IRuntimeArgument)) != null) types.Add(i.ParameterType);
+                else throw new InvalidOperationException($"Function {func.Method.Name} is not a valid Minecraft function");
+            }
+
+            return [.. types];
         }
     }
 }

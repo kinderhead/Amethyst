@@ -38,7 +38,7 @@ namespace Datapack.Net.CubeLib
             Execute.Conditional branch = If ? cmd.If : cmd.Unless;
 
             var tempVar = Project.ActiveProject.Temp(tmp, "cmp");
-            Project.ActiveProject.CallRet(Project.ActiveProject.Std.StorageExistsConcat, tempVar, [new("storage", Pointer.Heap.Storage), new("path1", Pointer.Heap.Path), new("path2", Pointer.Pointer)], false, tmp);
+            Project.ActiveProject.CallRet(Project.ActiveProject.Std._StorageExistsConcat, tempVar, [new("storage", Pointer.Heap.Storage), new("path1", Pointer.Heap.Path), new("path2", Pointer.Pointer)], false, tmp);
 
             branch.Score(tempVar.Target, tempVar.Score, 1);
 
