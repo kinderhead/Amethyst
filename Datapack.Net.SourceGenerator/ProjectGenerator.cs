@@ -11,7 +11,7 @@ namespace Datapack.Net.SourceGenerator
     [Generator]
     public class ProjectGenerator : ISourceGenerator
     {
-        public static readonly DiagnosticDescriptor InvalidFunctionFormat = new DiagnosticDescriptor("MC0001", "Invalid Function", "Function {0} is not a valid Datapack function, and it must be private and its name must start with an underscore", "Datapack", DiagnosticSeverity.Error, true);
+        public static readonly DiagnosticDescriptor InvalidFunctionFormat = new("MC0001", "Invalid Function", "Function {0} is not a valid Datapack function, and it must be private and its name must start with an underscore", "Datapack", DiagnosticSeverity.Error, true);
 
         private readonly SyntaxReceiver Projects = new DerivedClassesReceiver("Project");
 
