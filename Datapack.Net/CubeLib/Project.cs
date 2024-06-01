@@ -136,13 +136,12 @@ namespace Datapack.Net.CubeLib
                 {
                     List<IRuntimeArgument> funcArgs = [];
 
-                    foreach(var e in args)
+                    foreach (var e in args)
                     {
                         var arg = ArgumentStack.Dequeue();
+                        Console.WriteLine(e.Name);
                         funcArgs.Add((IRuntimeArgument?)e.GetMethod("Create")?.Invoke(null, [arg]) ?? throw new ArgumentException($"Invalid arguments for function {i.Key.Method.Name}"));
                     }
-
-                    funcArgs.Reverse();
 
                     i.Key.DynamicInvoke([.. funcArgs]);
                 }

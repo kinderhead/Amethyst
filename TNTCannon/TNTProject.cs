@@ -21,7 +21,12 @@ namespace TNTCannon
 
         protected override void Main()
         {
-            Funny(Local(9));
+            Heap.Clear();
+
+            var pointer = Alloc(Local());
+            pointer.Set(17);
+
+            CallArg(_Funny, Local(7), pointer);
         }
 
         protected override void Tick()
@@ -30,9 +35,11 @@ namespace TNTCannon
         }
 
         [DeclareMC("func")]
-        private void _Funny(ScoreRef x)
+        private void _Funny(ScoreRef x, HeapPointer y)
         {
-            Print(x);
+            Print(x, y.Pointer);
+            Print(y);
+            Print("boo");
         }
 
         /// <summary>

@@ -365,3 +365,4 @@ FodyWeavers.xsd
 blocks.txt
 entities.json
 blocks.json
+*.zip
