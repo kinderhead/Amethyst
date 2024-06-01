@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 
 namespace TNTCannon
 {
+    [Project]
     public partial class TNTProject(DP pack) : Project(pack)
     {
         public override string Namespace => "tnt";
@@ -23,19 +24,19 @@ namespace TNTCannon
         {
             Heap.Clear();
 
-            var pointer = Alloc(Local());
+            var pointer = Alloc<int>(Local());
             pointer.Set(17);
 
-            CallArg(_Funny, Local(7), pointer);
+            Funny(Local(7), pointer);
         }
 
         protected override void Tick()
         {
-            
+
         }
 
         [DeclareMC("func")]
-        private void _Funny(ScoreRef x, HeapPointer y)
+        private void _Funny(ScoreRef x, HeapPointer<int> y)
         {
             Print(x, y.Pointer);
             Print(y);

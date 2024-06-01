@@ -2,11 +2,10 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-	<EnforceExtendedAnalyzerRules>true</EnforceExtendedAnalyzerRules>
-	  <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
 	  <IncludeBuildOutput>false</IncludeBuildOutput>
-	  <LangVersion>12</LangVersion>
+	  <LangVersion>latest</LangVersion>
 	  <IsRoslynComponent>true</IsRoslynComponent>
+	  <EnforceExtendedAnalyzerRules>true</EnforceExtendedAnalyzerRules>
   </PropertyGroup>
 
   <ItemGroup>
@@ -15,6 +14,11 @@
   </ItemGroup>
   <ItemGroup>
 	<PackageReference Include="SourceGeneratorsKit" Version="0.0.1" GeneratePathProperty="true" PrivateAssets="all" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="$(OutputPath)\$(AssemblyName).dll" Pack="true" 
+        PackagePath="analyzers/dotnet/cs" Visible="false" />
   </ItemGroup>
 	
 	<PropertyGroup>

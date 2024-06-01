@@ -9,67 +9,85 @@ using System.Text;
 namespace Datapack.Net.SourceGenerator
 {
     [Generator]
-    public class ProjectGenerator : ISourceGenerator
+    public class ProjectGenerator : IIncrementalGenerator
     {
         public static readonly DiagnosticDescriptor InvalidFunctionFormat = new("MC0001", "Invalid Function", "Function {0} is not a valid Datapack function, and it must be private and its name must start with an underscore", "Datapack", DiagnosticSeverity.Error, true);
 
-        private readonly SyntaxReceiver Projects = new DerivedClassesReceiver("Project");
-
-        public void Execute(GeneratorExecutionContext context)
+        public void Initialize(IncrementalGeneratorInitializationContext context)
         {
-            if (!(context.SyntaxContextReceiver is SyntaxReceiver)) return;
+            var projects = context.SyntaxProvider.ForAttributeWithMetadataName<Project?>("Datapack.Net.CubeLib.ProjectAttribute",
+                static (s, _) => true,
+                static (ctx, _) =>
+                {
+                    var cls = (ClassDeclarationSyntax)ctx.TargetNode;
+                    
+                    foreach (var i in cls.AttributeLists)
+                    {
+                        foreach (var e in i.Attributes)
+                        {
+                            if (ctx.SemanticModel.GetSymbolInfo(e).Symbol is not IMethodSymbol attribute) continue;
+                            if (attribute.ContainingType.ToDisplayString() == "Datapack.Net.CubeLib.ProjectAttribute")
+                            {
+                                if (ctx.SemanticModel.GetDeclaredSymbol(cls) is not INamedTypeSymbol clsSymbol) return null;
 
-            foreach (var i in Projects.Classes)
-            {
-                ProcessClass(context, i);
-            }
+                                List<MCFunctions> funcs = new();
+                                foreach (var sym in clsSymbol.GetMembers())
+                                {
+                                    if (sym is IMethodSymbol method && sym.HasAttribute("Datapack.Net.CubeLib.DeclareMCAttribute"))
+                                    {
+                                        List<(string, string)> args = new(method.Parameters.Length);
+                                        foreach (var arg in method.Parameters)
+                                        {
+                                            args.Add((arg.Type.ToDisplayString(), arg.Name));
+                                        }
+                                        funcs.Add(new(method.Name, args));
+                                    }
+                                }
+                                return new Project(clsSymbol.Name, clsSymbol.ContainingNamespace.ToDisplayString(), funcs);
+                            }
+                        }
+                    }
+                    return null;
+                }
+            ).Where(static m => m is not null);
+
+            context.RegisterSourceOutput(projects, static (spc, source) => Execute(source, spc));
         }
 
-        public void ProcessClass(GeneratorExecutionContext context, INamedTypeSymbol symbol)
+        private static void Execute(Project? _project, SourceProductionContext context)
         {
-            if (symbol.Name == "Project") return;
+            if (_project is not { } project) return;
 
             var funcs = new StringBuilder();
 
-            foreach (var i in symbol.GetMembers())
+            foreach (var i in project.Functions)
             {
-                if (i.Kind == SymbolKind.Method && i.GetAttributes().Where((x) => x.AttributeClass.Name == "DeclareMCAttribute").Count() != 0)
+                //funcs.Append($"\t\t///<inheritdoc cref=\"{method.GetDocumentationCommentId()}\"/>\n");
+                funcs.Append($"\t\tpublic void {i.Name.Substring(1)}(");
+
+                foreach (var arg in i.Arguments)
                 {
-                    if (!i.Name.StartsWith("_"))
-                    {
-                        context.ReportDiagnostic(Diagnostic.Create(InvalidFunctionFormat, i.Locations.FirstOrDefault(), i.ToDisplayString()));
-                        continue;
-                    }
-
-                    var method = (IMethodSymbol)i;
-
-                    funcs.Append($"\t\t///<inheritdoc cref=\"{method.GetDocumentationCommentId()}\"/>\n");
-                    funcs.Append($"\t\tpublic void {method.Name.ToString().Substring(1)}(");
-
-                    foreach (var arg in method.Parameters)
-                    {
-                        funcs.Append($"{arg.Type.Name} {arg.Name}, ");
-                    }
-
-                    if (method.Parameters.Length > 0) funcs.Length -= 2;
-                    funcs.Append(") => ");
-
-                    if (method.Parameters.Length > 0)
-                    {
-                        funcs.Append($"CallArg({method.Name}, ");
-                        foreach (var arg in method.Parameters)
-                        {
-                            funcs.Append($"{arg.Name}, ");
-                        }
-                        funcs.Length -= 2;
-                    }
-                    else
-                    {
-                        funcs.Append($"Call({method.Name}");
-                    }
-
-                    funcs.Append(");\n");
+                    funcs.Append($"{arg.Item1} {arg.Item2}, ");
                 }
+
+                if (i.Arguments.Length > 0) funcs.Length -= 2;
+                funcs.Append(") => ");
+
+                if (i.Arguments.Length > 0)
+                {
+                    funcs.Append($"CallArg({i.Name}, ");
+                    foreach (var arg in i.Arguments)
+                    {
+                        funcs.Append($"{arg.Item2}, ");
+                    }
+                    funcs.Length -= 2;
+                }
+                else
+                {
+                    funcs.Append($"Call({i.Name}");
+                }
+
+                funcs.Append(");\n");
             }
 
             if (funcs.Length > 0) funcs.Length--;
@@ -77,19 +95,14 @@ namespace Datapack.Net.SourceGenerator
             string source = $@"using Datapack.Net.CubeLib;
 
 // <auto-generated/>
-namespace {symbol.ContainingNamespace.ToDisplayString()}
+namespace {project.Namespace}
 {{
-    public partial class {symbol.Name}
+    public partial class {project.Name}
     {{
 {funcs}
     }}
 }}";
-            context.AddSource($"{symbol.Name}.g.cs", source);
-        }
-
-        public void Initialize(GeneratorInitializationContext context)
-        {
-            context.RegisterForSyntaxNotifications(() => Projects);
+            context.AddSource($"{project.Name}.g.cs", source);
         }
     }
 }

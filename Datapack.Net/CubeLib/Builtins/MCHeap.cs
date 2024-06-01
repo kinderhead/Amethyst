@@ -19,11 +19,11 @@ namespace Datapack.Net.CubeLib.Builtins
             Project.ActiveProject.PrependMain(new Execute().Unless.Data(Storage, Path).Run(new DataCommand.Modify(Storage, Path).Set().Value("{}")));
         }
 
-        public HeapPointer Alloc(ScoreRef loc)
+        public HeapPointer<T> Alloc<T>(ScoreRef loc)
         {
             var p = Project.ActiveProject;
             p.CallRet(p.Std._AllocAddress, loc, [new("storage", Storage.ID), new("path", Path)]);
-            var pointer = new HeapPointer(this, loc);
+            var pointer = new HeapPointer<T>(this, loc);
             return pointer;
         }
 

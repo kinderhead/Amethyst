@@ -300,7 +300,7 @@ namespace Datapack.Net.CubeLib
             }
         }
 
-        public void Print(HeapPointer ptr)
+        public void Print<T>(HeapPointer<T> ptr)
         {
             Call(Std._PointerPrint, ptr.StandardMacros());
         }
@@ -502,21 +502,21 @@ namespace Datapack.Net.CubeLib
             return new(mcfunc, nbt, true);
         }
 
-        public HeapPointer Alloc(ScoreRef loc) => Alloc(loc, 0);
+        public HeapPointer<T> Alloc<T>(ScoreRef loc) => Alloc<T>(loc, 0);
 
-        public HeapPointer Alloc(ScoreRef loc, int val)
+        public HeapPointer<T> Alloc<T>(ScoreRef loc, int val)
         {
-            var pointer = Heap.Alloc(loc);
+            var pointer = Heap.Alloc<T>(loc);
             pointer.Set(val);
             return pointer;
         }
 
-        public HeapPointer Attach(ScoreRef loc) => new(Heap, loc);
+        public HeapPointer<T> Attach<T>(ScoreRef loc) => new(Heap, loc);
 
-        public HeapPointer AllocIfNull(ScoreRef loc, int val = 0)
+        public HeapPointer<T> AllocIfNull<T>(ScoreRef loc, int val = 0)
         {
-            var ptr = Attach(loc);
-            If(!ptr.Exists(), () => Alloc(ptr, val));
+            var ptr = Attach<T>(loc);
+            If(!ptr.Exists(), () => Alloc<T>(ptr, val));
             return ptr;
         }
 
