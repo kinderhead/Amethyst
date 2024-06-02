@@ -25,15 +25,21 @@ namespace TNTCannon
             Heap.Clear();
 
             var obj = AllocObj<Funny>();
-            obj.Value = 17;
+            obj.Prop = 17;
             obj.Str = "How?";
 
-            Print(obj.Str);
+            var other = AllocObj<Funny>();
+            other.Prop = 5;
+            other.Str = "Thingy";
 
-            var tmp = Alloc<string>();
-            obj.Str.Move(tmp);
+            other.Move(obj.Other);
+
+            var tmp = Alloc<Funny>();
+            obj.Other.Copy(tmp);
             Testy(tmp);
             tmp.Free();
+
+            obj.Say();
         }
 
         protected override void Tick()
@@ -42,7 +48,7 @@ namespace TNTCannon
         }
 
         [DeclareMC("testy")]
-        private void _Testy(HeapPointer<string> str)
+        private void _Testy(HeapPointer<Funny> str)
         {
             Print(str);
         }

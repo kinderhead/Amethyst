@@ -7,9 +7,9 @@ namespace Datapack.Net.SourceGenerator
     {
         public readonly string Name;
         public readonly string Namespace;
-        public readonly MCFunctions[] Functions;
+        public readonly MCFunction[] Functions;
 
-        public Project(string name, string ns, List<MCFunctions> functions)
+        public Project(string name, string ns, List<MCFunction> functions)
         {
             Name = name;
             Functions = [.. functions];
@@ -17,12 +17,12 @@ namespace Datapack.Net.SourceGenerator
         }
     }
 
-    public readonly record struct MCFunctions
+    public readonly record struct MCFunction
     {
         public readonly string Name;
         public readonly (string, string)[] Arguments;
 
-        public MCFunctions(string name, List<(string, string)> args)
+        public MCFunction(string name, List<(string, string)> args)
         {
             Name = name;
             Arguments = [.. args];

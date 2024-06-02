@@ -2,10 +2,10 @@ using System;
 
 namespace Datapack.Net.CubeLib
 {
-    public class RuntimeProperty<T>
+    public class RuntimeProperty<T> : IRuntimeProperty<T>
     {
-        public readonly HeapPointer<T>? Pointer;
-        public readonly T Value;
+        public HeapPointer<T> Pointer { get; protected set; }
+        public T Value { get; }
 
         internal RuntimeProperty(HeapPointer<T> pointer)
         {
@@ -17,7 +17,7 @@ namespace Datapack.Net.CubeLib
             Value = val;
         }
 
-        public void Move(HeapPointer<T> dest) => (Pointer ?? throw new Exception("RuntimeProperty is not fully qualified")).Move(dest);
+        public void Copy(HeapPointer<T> dest) => (Pointer ?? throw new Exception("RuntimeProperty is not fully qualified")).Copy(dest);
 
         public static implicit operator RuntimeProperty<T>(T val) => new(val);
         public static implicit operator HeapPointer<T>(RuntimeProperty<T> prop) => prop.Pointer ?? throw new Exception("RuntimeProperty is not fully qualified");

@@ -10,9 +10,9 @@ using System.Threading.Tasks;
 
 namespace Datapack.Net.CubeLib
 {
-    public abstract class BaseHeapPointer 
+    public abstract class BaseHeapPointer
     {
-
+        public abstract KeyValuePair<string, object>[] StandardMacros(KeyValuePair<string, object>[]? extras = null, string postfix = "");
     }
 
     public class HeapPointer<T>(MCHeap heap, ScoreRef pointer, string extraPath = "") : BaseHeapPointer, IRuntimeArgument
@@ -29,9 +29,23 @@ namespace Datapack.Net.CubeLib
             Project.ActiveProject.Call(Project.ActiveProject.Std._PointerSet, StandardMacros([new("value", obj)]));
         }
 
-        public void Move<R>(HeapPointer<R> dest)
+        public void Copy(HeapPointer<T> dest) => CopyUnsafe(dest);
+
+        public void CopyUnsafe(BaseHeapPointer dest)
         {
             Project.ActiveProject.Call(Project.ActiveProject.Std._PointerMove, [.. StandardMacros(null, "2"), .. dest.StandardMacros(null, "1")]);
+        }
+
+        public void Move(HeapPointer<T> dest)
+        {
+            Copy(dest);
+            Free();
+        }
+
+        public void MoveUnsafe(BaseHeapPointer dest)
+        {
+            CopyUnsafe(dest);
+            Free();
         }
 
         public HeapPointer<R> Get<R>(string path) => new(Heap, Pointer, ExtraPath + "." + path);
@@ -51,7 +65,7 @@ namespace Datapack.Net.CubeLib
 
         public PointerExists<T> Exists() => new() { Pointer = this };
 
-        public KeyValuePair<string, object>[] StandardMacros(KeyValuePair<string, object>[]? extras = null, string postfix = "")
+        public override KeyValuePair<string, object>[] StandardMacros(KeyValuePair<string, object>[]? extras = null, string postfix = "")
         {
             extras ??= [];
 

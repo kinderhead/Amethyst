@@ -1,21 +1,18 @@
-﻿using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
-using SourceGeneratorsKit;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
+using SourceGeneratorsKit;
 
 namespace Datapack.Net.SourceGenerator
 {
     [Generator]
-    public class ProjectGenerator : IIncrementalGenerator
+    public class RuntimeObjectGenerator : IIncrementalGenerator
     {
-        public static readonly DiagnosticDescriptor InvalidFunctionFormat = new("MC0001", "Invalid Function", "Function {0} is not a valid Datapack function, and it must be private and its name must start with an underscore", "Datapack", DiagnosticSeverity.Error, true);
-
         public void Initialize(IncrementalGeneratorInitializationContext context)
         {
-            var projects = context.SyntaxProvider.ForAttributeWithMetadataName<Project?>("Datapack.Net.CubeLib.ProjectAttribute",
+            var projects = context.SyntaxProvider.ForAttributeWithMetadataName<RuntimeObject?>("Datapack.Net.CubeLib.RuntimeObjectAttribute",
                 static (s, _) => true,
                 static (ctx, _) =>
                 {
@@ -26,14 +23,14 @@ namespace Datapack.Net.SourceGenerator
                         foreach (var e in i.Attributes)
                         {
                             if (ctx.SemanticModel.GetSymbolInfo(e).Symbol is not IMethodSymbol attribute) continue;
-                            if (attribute.ContainingType.ToDisplayString() == "Datapack.Net.CubeLib.ProjectAttribute")
+                            if (attribute.ContainingType.ToDisplayString() == "Datapack.Net.CubeLib.RuntimeObjectAttribute")
                             {
                                 if (ctx.SemanticModel.GetDeclaredSymbol(cls) is not INamedTypeSymbol clsSymbol) return null;
 
-                                List<MCFunction> funcs = new();
+                                List<MCFunction> funcs = [];
                                 foreach (var sym in clsSymbol.GetMembers())
                                 {
-                                    if (sym is IMethodSymbol method && sym.HasAttribute("Datapack.Net.CubeLib.DeclareMCAttribute"))
+                                    if (sym is IMethodSymbol method && sym.HasAttribute("Datapack.Net.CubeLib.DeclareMCAttribute") && sym.IsStatic)
                                     {
                                         List<(string, string)> args = new(method.Parameters.Length);
                                         foreach (var arg in method.Parameters)
@@ -43,7 +40,7 @@ namespace Datapack.Net.SourceGenerator
                                         funcs.Add(new(method.Name, args));
                                     }
                                 }
-                                return new Project(clsSymbol.Name, clsSymbol.ContainingNamespace.ToDisplayString(), funcs);
+                                return new RuntimeObject(clsSymbol.Name, clsSymbol.ContainingNamespace.ToDisplayString(), funcs);
                             }
                         }
                     }
@@ -54,15 +51,15 @@ namespace Datapack.Net.SourceGenerator
             context.RegisterSourceOutput(projects, static (spc, source) => Execute(source, spc));
         }
 
-        private static void Execute(Project? _project, SourceProductionContext context)
+        private static void Execute(RuntimeObject? _project, SourceProductionContext context)
         {
             if (_project is not { } project) return;
 
             var funcs = new StringBuilder();
 
-            foreach (var i in project.Functions)
+            foreach (var i in project.Methods)
             {
-                funcs.AppendLine(Utils.GenerateWrapper(i));
+                funcs.AppendLine(Utils.GenerateWrapper(i, "State.", true));
             }
 
             if (funcs.Length > 0) funcs.Length--;
@@ -73,6 +70,7 @@ namespace {project.Namespace}
     public partial class {project.Name}
     {{
 {funcs}
+        public static implicit operator Datapack.Net.CubeLib.HeapPointer<{project.Name}>({project.Name} obj) => obj.Pointer;
     }}
 }}";
             context.AddSource($"{project.Name}.g.cs", source);
