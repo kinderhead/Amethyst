@@ -30,17 +30,12 @@ namespace Datapack.Net.SourceGenerator
                             {
                                 if (ctx.SemanticModel.GetDeclaredSymbol(cls) is not INamedTypeSymbol clsSymbol) return null;
 
-                                List<MCFunction> funcs = new();
+                                List<MCFunction> funcs = [];
                                 foreach (var sym in clsSymbol.GetMembers())
                                 {
                                     if (sym is IMethodSymbol method && sym.HasAttribute("Datapack.Net.CubeLib.DeclareMCAttribute"))
                                     {
-                                        List<(string, string)> args = new(method.Parameters.Length);
-                                        foreach (var arg in method.Parameters)
-                                        {
-                                            args.Add((arg.Type.ToDisplayString(), arg.Name));
-                                        }
-                                        funcs.Add(new(method.Name, args));
+                                        funcs.Add(Utils.GetMCFunction(method));
                                     }
                                 }
                                 return new Project(clsSymbol.Name, clsSymbol.ContainingNamespace.ToDisplayString(), funcs);

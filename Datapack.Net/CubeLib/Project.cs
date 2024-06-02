@@ -221,7 +221,9 @@ namespace Datapack.Net.CubeLib
         public void Call(MCFunction func, KeyValuePair<string, object>[] args, bool macro = false) => AddCommand(BaseCall(func, args, macro));
 
         public void CallArg(Delegate func, params IRuntimeArgument[] args) => CallArg(GuaranteeFunc(func, false), args);
+        public void CallArg(Delegate func, IRuntimeArgument[] args, KeyValuePair<string, object>[] macros) => CallArg(GuaranteeFunc(func, false), args, macros);
         public void CallArg(MCFunction func, params IRuntimeArgument[] args) => AddCommand(BaseCall(func, args));
+        public void CallArg(MCFunction func, IRuntimeArgument[] args, KeyValuePair<string, object>[] macros) => AddCommand(BaseCall(func, args, macros));
 
         public ScoreRef CallRet(Action func)
         {
@@ -255,6 +257,11 @@ namespace Datapack.Net.CubeLib
         {
             AddCommand(new Execute(macro).Store(ret).Run(BaseCall(func, args, macro, tmp)));
         }
+
+        public void CallArgRet(Delegate func, ScoreRef ret, params IRuntimeArgument[] args) => CallArgRet(GuaranteeFunc(func, false), ret, args);
+        public void CallArgRet(Delegate func, ScoreRef ret, IRuntimeArgument[] args, KeyValuePair<string, object>[] macros) => CallArgRet(GuaranteeFunc(func, false), ret, args, macros);
+        public void CallArgRet(MCFunction func, ScoreRef ret, params IRuntimeArgument[] args) => AddCommand(new Execute().Store(ret).Run(BaseCall(func, args)));
+        public void CallArgRet(MCFunction func, ScoreRef ret, IRuntimeArgument[] args, KeyValuePair<string, object>[] macros) => AddCommand(new Execute().Store(ret).Run(BaseCall(func, args, macros)));
 
         public FunctionCommand BaseCall(MCFunction func, KeyValuePair<string, object>[] args, bool macro = false, int tmp = 0)
         {
@@ -291,6 +298,12 @@ namespace Datapack.Net.CubeLib
             return new FunctionCommand(func, macro);
         }
 
+        public FunctionCommand BaseCall(MCFunction func, IRuntimeArgument[] args, KeyValuePair<string, object>[] macros, bool macro = false, int tmp = 0)
+        {
+            PushArgs(args);
+            return BaseCall(func, macros, macro, tmp);
+        }
+
         public void PushArgs(IRuntimeArgument[] args)
         {
             foreach (var i in args.Reverse())
@@ -299,7 +312,7 @@ namespace Datapack.Net.CubeLib
             }
         }
 
-        public void Print<T>(HeapPointer<T> ptr) => Call(Std._PointerPrint, ptr.StandardMacros());
+        public void Print<T>(HeapPointer<T> ptr) => Std.PointerPrint(ptr.StandardMacros());
         public void Print<T>(RuntimeProperty<T> prop) => Print((HeapPointer<T>)prop);
 
         public void Print(params object[] args)

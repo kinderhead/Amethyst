@@ -55,7 +55,7 @@ namespace Datapack.Net.CubeLib
             return (IBaseRuntimeObject?)Activator.CreateInstance(typeof(TSelf), [pointer]) ?? throw new ArgumentException("Failed to create runtime object");
         }
 
-        public static IRuntimeArgument Create(ScoreRef arg) => Create((BaseHeapPointer)(HeapPointer<TSelf>)HeapPointer<TSelf>.Create(arg));
+        public static IRuntimeArgument Create(ScoreRef arg) => Create((BaseHeapPointer)HeapPointer<TSelf>.Create(arg));
         public static implicit operator RuntimeObject<TProject, TSelf>(HeapPointer<TSelf> pointer) => (RuntimeObject<TProject, TSelf>)Create((BaseHeapPointer)pointer);
     }
 }

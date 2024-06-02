@@ -8,7 +8,7 @@ namespace TNTCannon
     {
         public RuntimeProperty<int> Prop { get => Get<int>("value"); set => Set("value", value); }
         public RuntimeProperty<string> Str { get => Get<string>("str"); set => Set("str", value); }
-        public Funny Other { get => GetObj<Funny>("other"); set => Set("other", value); }
+        public RuntimeProperty<Funny> Other { get => GetObj<Funny>("other"); set => Set("other", value); }
 
         [DeclareMC("say")]
         private static void _Say(Funny self)

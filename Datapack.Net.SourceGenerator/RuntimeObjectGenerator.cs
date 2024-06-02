@@ -32,12 +32,7 @@ namespace Datapack.Net.SourceGenerator
                                 {
                                     if (sym is IMethodSymbol method && sym.HasAttribute("Datapack.Net.CubeLib.DeclareMCAttribute") && sym.IsStatic)
                                     {
-                                        List<(string, string)> args = new(method.Parameters.Length);
-                                        foreach (var arg in method.Parameters)
-                                        {
-                                            args.Add((arg.Type.ToDisplayString(), arg.Name));
-                                        }
-                                        funcs.Add(new(method.Name, args));
+                                        funcs.Add(Utils.GetMCFunction(method));
                                     }
                                 }
                                 return new RuntimeObject(clsSymbol.Name, clsSymbol.ContainingNamespace.ToDisplayString(), funcs);

@@ -16,16 +16,4 @@ namespace Datapack.Net.SourceGenerator
             Namespace = ns;
         }
     }
-
-    public readonly record struct MCFunction
-    {
-        public readonly string Name;
-        public readonly (string, string)[] Arguments;
-
-        public MCFunction(string name, List<(string, string)> args)
-        {
-            Name = name;
-            Arguments = [.. args];
-        }
-    }
 }

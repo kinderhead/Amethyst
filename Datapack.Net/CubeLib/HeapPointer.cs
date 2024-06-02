@@ -26,14 +26,14 @@ namespace Datapack.Net.CubeLib
         {
             var obj = val is NBTString ? val.ToString() : val;
 
-            Project.ActiveProject.Call(Project.ActiveProject.Std._PointerSet, StandardMacros([new("value", obj)]));
+            Project.ActiveProject.Std.PointerSet(StandardMacros([new("value", obj)]));
         }
 
         public void Copy(HeapPointer<T> dest) => CopyUnsafe(dest);
 
         public void CopyUnsafe(BaseHeapPointer dest)
         {
-            Project.ActiveProject.Call(Project.ActiveProject.Std._PointerMove, [.. StandardMacros(null, "2"), .. dest.StandardMacros(null, "1")]);
+            Project.ActiveProject.Std.PointerMove([.. StandardMacros(null, "2"), .. dest.StandardMacros(null, "1")]);
         }
 
         public void Move(HeapPointer<T> dest)
@@ -60,7 +60,7 @@ namespace Datapack.Net.CubeLib
 
         public void Free()
         {
-            Project.ActiveProject.Call(Project.ActiveProject.Std._PointerFree, StandardMacros());
+            Project.ActiveProject.Std.PointerFree(StandardMacros());
         }
 
         public PointerExists<T> Exists() => new() { Pointer = this };

@@ -22,7 +22,7 @@ namespace Datapack.Net.CubeLib.Builtins
         public HeapPointer<T> Alloc<T>(ScoreRef loc)
         {
             var p = Project.ActiveProject;
-            p.CallRet(p.Std._AllocAddress, loc, [new("storage", Storage.ID), new("path", Path)]);
+            p.Std.AllocAddress(loc, [new("storage", Storage.ID), new("path", Path)]);
             var pointer = new HeapPointer<T>(this, loc);
             return pointer;
         }

@@ -32,9 +32,9 @@ namespace TNTCannon
             other.Prop = 5;
             other.Str = "Thingy";
 
-            other.Move(obj.Other);
+            obj.Other = other;
 
-            var tmp = Alloc<Funny>();
+            var tmp = AllocObj<Funny>();
             obj.Other.Copy(tmp);
             Testy(tmp);
             tmp.Free();
