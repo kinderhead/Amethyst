@@ -516,19 +516,20 @@ namespace Datapack.Net.CubeLib
             return new(mcfunc, nbt, true);
         }
 
-        public T Alloc<T>() where T : IBaseRuntimeObject => Alloc<T>(Local());
-        public T Alloc<T>(ScoreRef loc) where T : IBaseRuntimeObject => (T)T.Create(Heap.Alloc<T>(loc));
+        public T AllocObj<T>() where T : IBaseRuntimeObject => AllocObj<T>(Local());
+        public T AllocObj<T>(ScoreRef loc) where T : IBaseRuntimeObject => (T)T.Create(Heap.Alloc<T>(loc));
 
-        public T Attach<T>(ScoreRef loc) where T : IBaseRuntimeObject => (T)T.Create(new HeapPointer<T>(Heap, loc));
+        public T AttachObj<T>(ScoreRef loc) where T : IBaseRuntimeObject => (T)T.Create(new HeapPointer<T>(Heap, loc));
 
-        public T AllocIfNull<T>(ScoreRef loc) where T : IBaseRuntimeObject
+        public T AllocObjIfNull<T>(ScoreRef loc) where T : IBaseRuntimeObject
         {
-            var obj = Attach<T>(loc);
-            obj.IfNull(() => Alloc(loc));
+            var obj = AttachObj<T>(loc);
+            obj.IfNull(() => Alloc<T>(loc));
             return obj;
         }
 
-        public HeapPointer<int> Alloc(ScoreRef loc) => Alloc(loc, 0);
+        public HeapPointer<T> Alloc<T>() => Alloc<T>(Local());
+        public HeapPointer<T> Alloc<T>(ScoreRef loc) => Heap.Alloc<T>(loc);
 
         public HeapPointer<int> Alloc(ScoreRef loc, int val)
         {
@@ -537,11 +538,11 @@ namespace Datapack.Net.CubeLib
             return pointer;
         }
 
-        public HeapPointer<int> Attach(ScoreRef loc) => new(Heap, loc);
+        public HeapPointer<T> Attach<T>(ScoreRef loc) => new(Heap, loc);
 
-        public HeapPointer<int> AllocIfNull(ScoreRef loc, int val = 0)
+        public HeapPointer<T> AllocIfNull<T>(ScoreRef loc, int val = 0)
         {
-            var ptr = Attach(loc);
+            var ptr = Attach<T>(loc);
             If(!ptr.Exists(), () => Alloc(loc, val));
             return ptr;
         }

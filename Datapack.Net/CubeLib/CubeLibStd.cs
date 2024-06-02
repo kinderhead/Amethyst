@@ -108,19 +108,19 @@ namespace Datapack.Net.CubeLib
 
         /// <summary>
         /// Arguments: <br/>
-        /// <b>storage1</b>: Source storage identifier <br/>
-        /// <b>path1</b>: Source path in storage to heap <br/>
-        /// <b>pointer1</b>: Source pointer <br/>
-        /// <b>ext1</b>: Source extension path including "." <br/>
-        /// <b>storage2</b>: Destination storage identifier <br/>
-        /// <b>path2</b>: Destination path in storage to heap <br/>
-        /// <b>pointer2</b>: Destination pointer <br/>
-        /// <b>ext2</b>: Destination extension path including "." <br/>
+        /// <b>storage1</b>: Destination storage identifier <br/>
+        /// <b>path1</b>: Destination path in storage to heap <br/>
+        /// <b>pointer1</b>: Destination pointer <br/>
+        /// <b>ext1</b>: Destination extension path including "." <br/>
+        /// <b>storage2</b>: Source storage identifier <br/>
+        /// <b>path2</b>: Source path in storage to heap <br/>
+        /// <b>pointer2</b>: Source pointer <br/>
+        /// <b>ext2</b>: Source extension path including "." <br/>
         /// </summary>
         [DeclareMC("pointer_move", true, ["storage1", "path1", "pointer1", "ext1", "storage2", "path2", "pointer2", "ext2"])]
         public void _PointerMove()
         {
-            AddCommand(new DataCommand.Modify(new StorageMacro("$(storage1)"), "$(path1).$(pointer1)$(ext1)").Set().From(new StorageMacro("$(storage2)"), "$(path2).$(pointer2)$(ext2)"));
+            AddCommand(new DataCommand.Modify(new StorageMacro("$(storage1)"), "$(path1).$(pointer1)$(ext1)", true).Set().From(new StorageMacro("$(storage2)"), "$(path2).$(pointer2)$(ext2)"));
         }
     }
 }

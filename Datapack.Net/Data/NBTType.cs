@@ -33,6 +33,8 @@ namespace Datapack.Net.Data
 
         public static NBTType? ToNBT(object obj)
         {
+            if (obj is NBTType nbt) return nbt;
+
             return obj switch
             {
                 string str => new NBTString(str),
@@ -49,6 +51,8 @@ namespace Datapack.Net.Data
 
         public static bool IsNBTType<T>()
         {
+            if (typeof(T).IsAssignableTo(typeof(NBTType))) return true;
+
             return RawNBTTypes.Contains(typeof(T));
         }
 

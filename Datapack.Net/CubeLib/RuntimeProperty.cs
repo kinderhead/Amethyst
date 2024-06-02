@@ -17,6 +17,8 @@ namespace Datapack.Net.CubeLib
             Value = val;
         }
 
+        public void Move(HeapPointer<T> dest) => (Pointer ?? throw new Exception("RuntimeProperty is not fully qualified")).Move(dest);
+
         public static implicit operator RuntimeProperty<T>(T val) => new(val);
         public static implicit operator HeapPointer<T>(RuntimeProperty<T> prop) => prop.Pointer ?? throw new Exception("RuntimeProperty is not fully qualified");
         public static implicit operator RuntimeProperty<T>(HeapPointer<T> pointer) => new(pointer);

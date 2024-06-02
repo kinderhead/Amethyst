@@ -24,14 +24,27 @@ namespace TNTCannon
         {
             Heap.Clear();
 
-            var obj = Alloc<Funny>(Local());
+            var obj = AllocObj<Funny>();
             obj.Value = 17;
-            Print(obj.Value);
+            obj.Str = "How?";
+
+            Print(obj.Str);
+
+            var tmp = Alloc<string>();
+            obj.Str.Move(tmp);
+            Testy(tmp);
+            tmp.Free();
         }
 
         protected override void Tick()
         {
 
+        }
+
+        [DeclareMC("testy")]
+        private void _Testy(HeapPointer<string> str)
+        {
+            Print(str);
         }
 
         /// <summary>

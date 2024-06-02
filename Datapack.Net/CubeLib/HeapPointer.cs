@@ -12,7 +12,7 @@ namespace Datapack.Net.CubeLib
 {
     public abstract class BaseHeapPointer 
     {
-        
+
     }
 
     public class HeapPointer<T>(MCHeap heap, ScoreRef pointer, string extraPath = "") : BaseHeapPointer, IRuntimeArgument
@@ -22,19 +22,16 @@ namespace Datapack.Net.CubeLib
 
         public readonly string ExtraPath = extraPath;
 
-        public void Set(int val)
-        {
-            Project.ActiveProject.Call(Project.ActiveProject.Std._PointerSet, StandardMacros([new("value", val)]));
-        }
-
         public void Set(NBTType val)
         {
-            Project.ActiveProject.Call(Project.ActiveProject.Std._PointerSet, StandardMacros([new("value", val)]));
+            var obj = val is NBTString ? val.ToString() : val;
+
+            Project.ActiveProject.Call(Project.ActiveProject.Std._PointerSet, StandardMacros([new("value", obj)]));
         }
 
         public void Move<R>(HeapPointer<R> dest)
         {
-            Project.ActiveProject.Call(Project.ActiveProject.Std._PointerMove, [.. StandardMacros(null, "1"), .. dest.StandardMacros(null, "2")]);
+            Project.ActiveProject.Call(Project.ActiveProject.Std._PointerMove, [.. StandardMacros(null, "2"), .. dest.StandardMacros(null, "1")]);
         }
 
         public HeapPointer<R> Get<R>(string path) => new(Heap, Pointer, ExtraPath + "." + path);
@@ -65,11 +62,15 @@ namespace Datapack.Net.CubeLib
                 .. extras];
         }
 
-        public ScoreRef GetAsArg() => Pointer;
+        public ScoreRef GetAsArg() => (ScoreRef)this;
 
         public static IRuntimeArgument Create(ScoreRef arg) => new HeapPointer<T>(Project.ActiveProject.Heap, (ScoreRef)ScoreRef.Create(arg));
 
-        public static implicit operator ScoreRef(HeapPointer<T> pointer) => pointer.Pointer;
+        public static implicit operator ScoreRef(HeapPointer<T> pointer)
+        {
+            if (pointer.ExtraPath != "") throw new Exception("Pointers with subpaths cannot be converted to a score");
+            return pointer.Pointer;
+        }
 
         public static void CheckValidType()
         {
