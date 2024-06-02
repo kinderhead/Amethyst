@@ -264,8 +264,8 @@ namespace Datapack.Net.CubeLib
 
             foreach (var i in args)
             {
-                if (i.Value is string str) parameters[i.Key] = str;
-                else if (i.Value is int val) parameters[i.Key] = val;
+                if (NBTType.ToNBT(i.Value) != null) parameters[i.Key] = NBTType.ToNBT(i.Value) ?? throw new Exception("How did we get here?");
+                else if (i.Value.GetType().IsAssignableTo(typeof(NBTType))) parameters[i.Key] = (NBTType)i.Value;
                 else if (i.Value is ScoreRef score) runtimeScores[i.Key] = score;
                 else if (i.Value is NamespacedID id) parameters[i.Key] = id.ToString();
                 else if (i.Value is Storage storage) parameters[i.Key] = storage.ToString();
@@ -300,10 +300,8 @@ namespace Datapack.Net.CubeLib
             }
         }
 
-        public void Print<T>(HeapPointer<T> ptr)
-        {
-            Call(Std._PointerPrint, ptr.StandardMacros());
-        }
+        public void Print<T>(HeapPointer<T> ptr) => Call(Std._PointerPrint, ptr.StandardMacros());
+        public void Print<T>(RuntimeProperty<T> prop) => Print((HeapPointer<T>)prop);
 
         public void Print(params object[] args)
         {
@@ -502,21 +500,33 @@ namespace Datapack.Net.CubeLib
             return new(mcfunc, nbt, true);
         }
 
-        public HeapPointer<T> Alloc<T>(ScoreRef loc) => Alloc<T>(loc, 0);
+        public T Alloc<T>() where T : IBaseRuntimeObject => Alloc<T>(Local());
+        public T Alloc<T>(ScoreRef loc) where T : IBaseRuntimeObject => (T)T.Create(Heap.Alloc<T>(loc));
 
-        public HeapPointer<T> Alloc<T>(ScoreRef loc, int val)
+        public T Attach<T>(ScoreRef loc) where T : IBaseRuntimeObject => (T)T.Create(new HeapPointer<T>(Heap, loc));
+
+        public T AllocIfNull<T>(ScoreRef loc) where T : IBaseRuntimeObject
         {
-            var pointer = Heap.Alloc<T>(loc);
+            var obj = Attach<T>(loc);
+            obj.IfNull(() => Alloc(loc));
+            return obj;
+        }
+
+        public HeapPointer<int> Alloc(ScoreRef loc) => Alloc(loc, 0);
+
+        public HeapPointer<int> Alloc(ScoreRef loc, int val)
+        {
+            var pointer = Heap.Alloc<int>(loc);
             pointer.Set(val);
             return pointer;
         }
 
-        public HeapPointer<T> Attach<T>(ScoreRef loc) => new(Heap, loc);
+        public HeapPointer<int> Attach(ScoreRef loc) => new(Heap, loc);
 
-        public HeapPointer<T> AllocIfNull<T>(ScoreRef loc, int val = 0)
+        public HeapPointer<int> AllocIfNull(ScoreRef loc, int val = 0)
         {
-            var ptr = Attach<T>(loc);
-            If(!ptr.Exists(), () => Alloc<T>(ptr, val));
+            var ptr = Attach(loc);
+            If(!ptr.Exists(), () => Alloc(loc, val));
             return ptr;
         }
 

@@ -30,6 +30,29 @@ namespace Datapack.Net.Data
         public static implicit operator NBTType(float val) => new NBTFloat(val);
         public static implicit operator NBTType(double val) => new NBTDouble(val);
         public static implicit operator NBTType(bool val) => new NBTBool(val);
+
+        public static NBTType? ToNBT(object obj)
+        {
+            return obj switch
+            {
+                string str => new NBTString(str),
+                int i => new NBTInt(i),
+                byte b => new NBTByte(b),
+                short s => new NBTShort(s),
+                long l => new NBTLong(l),
+                float f => new NBTFloat(f),
+                double d => new NBTDouble(d),
+                bool tf => new NBTBool(tf),
+                _ => null
+            };
+        }
+
+        public static bool IsNBTType<T>()
+        {
+            return RawNBTTypes.Contains(typeof(T));
+        }
+
+        public static readonly Type[] RawNBTTypes = [typeof(string), typeof(int), typeof(byte), typeof(short), typeof(long), typeof(float), typeof(double), typeof(bool)];
     }
 
     public enum NBTNumberType

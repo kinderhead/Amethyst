@@ -24,23 +24,14 @@ namespace TNTCannon
         {
             Heap.Clear();
 
-            var pointer = Alloc<int>(Local());
-            pointer.Set(17);
-
-            Funny(Local(7), pointer);
+            var obj = Alloc<Funny>(Local());
+            obj.Value = 17;
+            Print(obj.Value);
         }
 
         protected override void Tick()
         {
 
-        }
-
-        [DeclareMC("func")]
-        private void _Funny(ScoreRef x, HeapPointer<int> y)
-        {
-            Print(x, y.Pointer);
-            Print(y);
-            Print("boo");
         }
 
         /// <summary>
