@@ -3,11 +3,13 @@ using Datapack.Net.Data;
 
 namespace Datapack.Net.CubeLib
 {
-    public interface IBaseRuntimeObject
+    public interface IBaseRuntimeObject : IRuntimeArgument
     {
         public void IfNull(Action func);
 
         public static abstract IBaseRuntimeObject Create(BaseHeapPointer pointer);
+
+        public static IRuntimeArgument Create(ScoreRef arg, Type self) => (IRuntimeArgument?)Activator.CreateInstance(self, [typeof(HeapPointer<>).MakeGenericType(self).GetMethod("Create")?.Invoke(null, [arg])]) ?? throw new ArgumentException("Error dynamically creating a RuntimeObject");
     }
 
     public abstract class RuntimeObject<TProject, TSelf>(HeapPointer<TSelf> loc) : IBaseRuntimeObject where TProject : Project
@@ -25,6 +27,13 @@ namespace Datapack.Net.CubeLib
             else throw new ArgumentException("RuntimeProperty was not created properly");
         }
 
+        public void IfNull(Action func)
+        {
+            State.If(Pointer.Exists(), func);
+        }
+
+        public ScoreRef GetAsArg() => Pointer.GetAsArg();
+
         public static TProject State => (TProject)Project.ActiveProject;
 
         public static IBaseRuntimeObject Create(BaseHeapPointer pointer)
@@ -32,9 +41,6 @@ namespace Datapack.Net.CubeLib
             return (IBaseRuntimeObject?)Activator.CreateInstance(typeof(TSelf), [pointer]) ?? throw new ArgumentException("Failed to create runtime object");
         }
 
-        public void IfNull(Action func)
-        {
-            State.If(Pointer.Exists(), func);
-        }
+        public static IRuntimeArgument Create(ScoreRef arg) => Create((BaseHeapPointer)(HeapPointer<TSelf>)HeapPointer<TSelf>.Create(arg));
     }
 }

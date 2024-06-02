@@ -29,7 +29,12 @@ namespace Datapack.Net.CubeLib
 
         public static DeclareMCAttribute Get(Delegate func)
         {
-            return func.Method.GetCustomAttribute<DeclareMCAttribute>() ?? throw new InvalidOperationException("Function does not have the DeclareMC attribute");
+            return Get(func.Method);
+        }
+
+        public static DeclareMCAttribute Get(MethodInfo func)
+        {
+            return func.GetCustomAttribute<DeclareMCAttribute>() ?? throw new InvalidOperationException("Function does not have the DeclareMC attribute");
         }
 
         public static Type[] Args(Delegate func)

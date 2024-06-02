@@ -1,4 +1,5 @@
 ﻿using Datapack.Net.CubeLib.Builtins;
+using Datapack.Net.CubeLib.Utils;
 using Datapack.Net.Data;
 using Datapack.Net.Function;
 using Datapack.Net.Function.Commands;
@@ -100,12 +101,8 @@ namespace Datapack.Net.CubeLib
 
             foreach (var i in GetType().GetMethods())
             {
-                List<Type> args = [];
-                foreach (var e in i.GetParameters())
-                {
-                    args.Add(e.ParameterType);
-                }
-                if (i.GetCustomAttribute<DeclareMCAttribute>() is not null) AddFunction(Delegate.CreateDelegate(Expression.GetActionType([.. args]), this, i));
+
+                if (i.GetCustomAttribute<DeclareMCAttribute>() is not null) AddFunction(DelegateUtils.Create(i, this));
             }
 
             var tags = Datapack.GetResource<Tags>();
@@ -140,7 +137,9 @@ namespace Datapack.Net.CubeLib
                     {
                         var arg = ArgumentStack.Dequeue();
                         Console.WriteLine(e.Name);
-                        funcArgs.Add((IRuntimeArgument?)e.GetMethod("Create")?.Invoke(null, [arg]) ?? throw new ArgumentException($"Invalid arguments for function {i.Key.Method.Name}"));
+
+                        if (e.IsAssignableTo(typeof(IBaseRuntimeObject))) funcArgs.Add(IBaseRuntimeObject.Create(arg, e));
+                        else funcArgs.Add((IRuntimeArgument?)e.GetMethod("Create")?.Invoke(null, [arg]) ?? throw new ArgumentException($"Invalid arguments for function {i.Key.Method.Name}"));
                     }
 
                     i.Key.DynamicInvoke([.. funcArgs]);
@@ -418,6 +417,23 @@ namespace Datapack.Net.CubeLib
         }
 
         public void AddStaticObject(IStaticType type) => StaticTypes.Add(type);
+
+        public void RegisterObject<T>() where T : IBaseRuntimeObject
+        {
+            var attr = RuntimeObjectAttribute.Get<T>();
+
+            foreach (var i in typeof(T).GetMethods(BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Public))
+            {
+                if (i.IsStatic && i.GetCustomAttribute<DeclareMCAttribute>() is not null)
+                {
+                    var funcAttr = DeclareMCAttribute.Get(i);
+                    var func = DelegateUtils.Create(i, null);
+                    var mcFunc = new MCFunction(new(Namespace, $"{attr.Name}/{funcAttr.Path}"), true);
+                    MCFunctions[func] = mcFunc;
+                    FunctionsToProcess.Enqueue(new(func, mcFunc));
+                }
+            }
+        }
 
         public void PrependMain(Command cmd)
         {

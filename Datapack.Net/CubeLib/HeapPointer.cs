@@ -10,7 +10,10 @@ using System.Threading.Tasks;
 
 namespace Datapack.Net.CubeLib
 {
-    public abstract class BaseHeapPointer { }
+    public abstract class BaseHeapPointer 
+    {
+        
+    }
 
     public class HeapPointer<T>(MCHeap heap, ScoreRef pointer, string extraPath = "") : BaseHeapPointer, IRuntimeArgument
     {

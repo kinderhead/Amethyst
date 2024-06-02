@@ -17,7 +17,7 @@ namespace TNTCannon
 
         protected override void Init()
         {
-            
+            RegisterObject<Funny>();
         }
 
         protected override void Main()
