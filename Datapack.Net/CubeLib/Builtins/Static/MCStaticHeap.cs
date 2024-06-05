@@ -7,9 +7,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Datapack.Net.CubeLib.Builtins
+namespace Datapack.Net.CubeLib.Builtins.Static
 {
-    public class MCHeap(Storage storage, string path) : IStaticType
+    public class MCStaticHeap(Storage storage, string path) : IStaticType
     {
         public readonly Storage Storage = storage;
         public readonly string Path = path;

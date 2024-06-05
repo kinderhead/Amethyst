@@ -6,9 +6,17 @@ namespace TNTCannon
     [RuntimeObject("funny")]
     public partial class Funny(HeapPointer<Funny> prop) : RuntimeObject<TNTProject, Funny>(prop)
     {
-        public RuntimeProperty<int> Prop { get => Get<int>("value"); set => Set("value", value); }
-        public RuntimeProperty<string> Str { get => Get<string>("str"); set => Set("str", value); }
-        public Funny Other { get => GetObj<Funny>("other"); set => Set("other", value); }
+        internal sealed class Props
+        {
+            [RuntimeProperty("prop")]
+            public int Prop { get; set; }
+
+            [RuntimeProperty("str")]
+            public string Str { get; set; }
+
+            [RuntimeProperty("other")]
+            public Funny Other { get; set; }
+        }
 
         [DeclareMC("say")]
         private static void _Say(Funny self)

@@ -1,4 +1,4 @@
-﻿using Datapack.Net.CubeLib.Builtins;
+﻿using Datapack.Net.CubeLib.Builtins.Static;
 using Datapack.Net.Data;
 using Datapack.Net.Function;
 using Datapack.Net.Function.Commands;
@@ -15,9 +15,9 @@ namespace Datapack.Net.CubeLib
         public abstract KeyValuePair<string, object>[] StandardMacros(KeyValuePair<string, object>[]? extras = null, string postfix = "");
     }
 
-    public class HeapPointer<T>(MCHeap heap, ScoreRef pointer, string extraPath = "") : BaseHeapPointer, IRuntimeArgument
+    public class HeapPointer<T>(MCStaticHeap heap, ScoreRef pointer, string extraPath = "") : BaseHeapPointer, IRuntimeArgument
     {
-        public readonly MCHeap Heap = heap;
+        public readonly MCStaticHeap Heap = heap;
         public readonly ScoreRef Pointer = pointer;
 
         public readonly string ExtraPath = extraPath;

@@ -1,4 +1,4 @@
-﻿using Datapack.Net.CubeLib.Builtins;
+﻿using Datapack.Net.CubeLib.Builtins.Static;
 using Datapack.Net.CubeLib.Utils;
 using Datapack.Net.Data;
 using Datapack.Net.Function;
@@ -49,9 +49,9 @@ namespace Datapack.Net.CubeLib
         public readonly NamedTarget ScoreEntity;
         public readonly Storage InternalStorage;
 
-        public MCStack RegisterStack;
-        public MCStack ArgumentStack;
-        public MCHeap Heap;
+        public MCStaticStack RegisterStack;
+        public MCStaticStack ArgumentStack;
+        public MCStaticHeap Heap;
 
         private int AnonymousFuncCounter = 0;
 

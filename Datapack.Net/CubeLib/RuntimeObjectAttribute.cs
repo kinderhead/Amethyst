@@ -13,4 +13,10 @@ namespace Datapack.Net.CubeLib
             return typeof(T).GetCustomAttribute<RuntimeObjectAttribute>() ?? throw new InvalidOperationException("Function does not have the DeclareMC attribute");
         }
     }
+
+    [AttributeUsage(AttributeTargets.Property)]
+    public class RuntimePropertyAttribute(string name) : Attribute
+    {
+        public readonly string Name = name;
+    }
 }

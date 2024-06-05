@@ -1,4 +1,5 @@
-﻿using Datapack.Net.Function;
+﻿using Datapack.Net.CubeLib.Builtins;
+using Datapack.Net.Function;
 using Datapack.Net.Function.Commands;
 using System;
 using System.Collections.Generic;
@@ -12,6 +13,11 @@ namespace Datapack.Net.CubeLib
     public partial class CubeLibStd(DP pack) : Project(pack)
     {
         public override string Namespace => "cubelib";
+
+        protected override void Init()
+        {
+            RegisterObject<MCArray>();
+        }
 
         [DeclareMC("test")]
         private void _Test()
