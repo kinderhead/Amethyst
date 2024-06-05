@@ -57,7 +57,7 @@ namespace TNTCannon
         }
 
         [DeclareMC("testy")]
-        private void _Testy(HeapPointer<Funny> obj)
+        private void _Testy(Funny obj)
         {
             Print(obj);
         }

@@ -315,7 +315,7 @@ namespace Datapack.Net.CubeLib
         }
 
         public void Print<T>(HeapPointer<T> ptr) => Std.PointerPrint(ptr.StandardMacros());
-        public void Print<T>(RuntimeProperty<T> prop) => Print((HeapPointer<T>)prop);
+        public void Print<T>(IRuntimeProperty<T> prop) => Print(prop.Pointer);
 
         public void Print(params object[] args)
         {
