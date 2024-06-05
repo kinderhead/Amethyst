@@ -20,8 +20,8 @@ namespace Datapack.Net.CubeLib.Builtins
 
         public void Enqueue(ScoreRef value)
         {
-            Project.ActiveProject.AddCommand(new Execute().Store(Project.ActiveProject.InternalStorage, "tmp", Data.NBTNumberType.Int, 1).Run(new Scoreboard.Players.Get(value.Target, value.Score)));
-            Project.ActiveProject.AddCommand(new DataCommand.Modify(Storage, Path).Insert(0).From(Project.ActiveProject.InternalStorage, "tmp"));
+            Project.ActiveProject.AddCommand(new Execute().Store(Project.ActiveProject.InternalStorage, "tmpstack", Data.NBTNumberType.Int, 1).Run(new Scoreboard.Players.Get(value.Target, value.Score)));
+            Project.ActiveProject.AddCommand(new DataCommand.Modify(Storage, Path).Insert(0).From(Project.ActiveProject.InternalStorage, "tmpstack"));
         }
 
         public void Dequeue(ScoreRef to)

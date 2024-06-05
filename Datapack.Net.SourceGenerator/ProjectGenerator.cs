@@ -3,6 +3,7 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 using SourceGeneratorsKit;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 
@@ -19,6 +20,11 @@ namespace Datapack.Net.SourceGenerator
                 static (s, _) => true,
                 static (ctx, _) =>
                 {
+                    //if (!Debugger.IsAttached)
+                    //{
+                    //    Debugger.Launch();
+                    //}
+
                     var cls = (ClassDeclarationSyntax)ctx.TargetNode;
 
                     foreach (var i in cls.AttributeLists)
@@ -33,7 +39,7 @@ namespace Datapack.Net.SourceGenerator
                                 List<MCFunction> funcs = [];
                                 foreach (var sym in clsSymbol.GetMembers())
                                 {
-                                    if (sym is IMethodSymbol method && sym.HasAttribute("Datapack.Net.CubeLib.DeclareMCAttribute"))
+                                    if (sym is IMethodSymbol method && sym.GetAttributes().Where(i => i.AttributeClass.ToDisplayString().Contains("Datapack.Net.CubeLib.DeclareMC")).Count() != 0)
                                     {
                                         funcs.Add(Utils.GetMCFunction(method));
                                     }

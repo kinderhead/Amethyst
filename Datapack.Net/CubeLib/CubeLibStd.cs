@@ -14,7 +14,7 @@ namespace Datapack.Net.CubeLib
         public override string Namespace => "cubelib";
 
         [DeclareMC("test")]
-        public void _Test()
+        private void _Test()
         {
             Print("Test");
         }
@@ -24,7 +24,7 @@ namespace Datapack.Net.CubeLib
         /// <b>storage</b>: Storage identifier <br/>
         /// <b>path</b>: Path in storage to heap
         /// </summary>
-        [DeclareMC("alloc_address", true, ["storage", "path"])]
+        [DeclareMCReturn<ScoreRef>("alloc_address", ["storage", "path"])]
         private void _AllocAddress()
         {
             var x = Local();
@@ -32,8 +32,9 @@ namespace Datapack.Net.CubeLib
             {
                 Random(new(0, int.MaxValue - 1), x);
 
-                var res = CallRet(_StorageExistsConcat, [new("storage", "$(storage)"), new("path1", "$(path)"), new("path2", x)], true);
-                If(res == 1, new ReturnCommand(1));
+                var res = Local();
+                PointerExists([new("storage", "$(storage)"), new("path", "$(path)"), new("pointer", x)], res, true);
+                If(res == 0, new ReturnCommand(1));
             });
             Return(x);
         }
@@ -41,13 +42,14 @@ namespace Datapack.Net.CubeLib
         /// <summary>
         /// Arguments: <br/>
         /// <b>storage</b>: Storage identifier <br/>
-        /// <b>path1</b>: Path in storage to check <br/>
-        /// <b>path2</b>: Concatenates with path1
+        /// <b>path</b>: Path in storage to heap <br/>
+        /// <b>pointer</b>: The pointer <br/>
+        /// <b>ext</b>: Extension path including "." <br/>
         /// </summary>
-        [DeclareMC("storage_exists_concat", true, ["storage", "path1", "path2"])]
-        private void _StorageExistsConcat()
+        [DeclareMCReturn<ScoreRef>("pointer_exists", ["storage", "path", "pointer", "ext"])]
+        private void _PointerExists()
         {
-            AddCommand(new Execute(true).If.Data(new StorageMacro("$(storage)"), "$(path1).$(path2)").Run(new ReturnCommand(1)));
+            AddCommand(new Execute(true).If.Data(new StorageMacro("$(storage)"), "$(path).$(pointer)$(ext)").Run(new ReturnCommand(1)));
             ReturnFail();
         }
 
@@ -59,7 +61,7 @@ namespace Datapack.Net.CubeLib
         /// <b>ext</b>: Extension path including "." <br/>
         /// <b>value</b>: Value
         /// </summary>
-        [DeclareMC("pointer_set", true, ["storage", "path", "pointer", "ext", "value"])]
+        [DeclareMC("pointer_set", ["storage", "path", "pointer", "ext", "value"])]
         private void _PointerSet()
         {
             AddCommand(new DataCommand.Modify(new StorageMacro("$(storage)"), "$(path).$(pointer)$(ext)", true).Set().Value("$(value)"));
@@ -72,7 +74,7 @@ namespace Datapack.Net.CubeLib
         /// <b>pointer</b>: The pointer <br/>
         /// <b>ext</b>: Extension path including "." <br/>
         /// </summary>
-        [DeclareMC("pointer_dereference", true, ["storage", "path", "pointer", "ext"])]
+        [DeclareMCReturn<ScoreRef>("pointer_dereference", ["storage", "path", "pointer", "ext"])]
         private void _PointerDereference()
         {
             var x = Local();
@@ -87,7 +89,7 @@ namespace Datapack.Net.CubeLib
         /// <b>pointer</b>: The pointer <br/>
         /// <b>ext</b>: Extension path including "." <br/>
         /// </summary>
-        [DeclareMC("pointer_free", true, ["storage", "path", "pointer", "ext"])]
+        [DeclareMC("pointer_free", ["storage", "path", "pointer", "ext"])]
         private void _PointerFree()
         {
             AddCommand(new DataCommand.Remove(new StorageMacro("$(storage)"), "$(path).$(pointer)$(ext)", true));
@@ -100,7 +102,7 @@ namespace Datapack.Net.CubeLib
         /// <b>pointer</b>: The pointer <br/>
         /// <b>ext</b>: Extension path including "." <br/>
         /// </summary>
-        [DeclareMC("pointer_print", true, ["storage", "path", "pointer", "ext"])]
+        [DeclareMC("pointer_print", ["storage", "path", "pointer", "ext"])]
         private void _PointerPrint()
         {
             AddCommand(new TellrawCommand(new TargetSelector(TargetType.a), new FormattedText().Storage(new StorageMacro("$(storage)"), "$(path).$(pointer)$(ext)"), true));
@@ -117,7 +119,7 @@ namespace Datapack.Net.CubeLib
         /// <b>pointer2</b>: Source pointer <br/>
         /// <b>ext2</b>: Source extension path including "." <br/>
         /// </summary>
-        [DeclareMC("pointer_move", true, ["storage1", "path1", "pointer1", "ext1", "storage2", "path2", "pointer2", "ext2"])]
+        [DeclareMC("pointer_move", ["storage1", "path1", "pointer1", "ext1", "storage2", "path2", "pointer2", "ext2"])]
         private void _PointerMove()
         {
             AddCommand(new DataCommand.Modify(new StorageMacro("$(storage1)"), "$(path1).$(pointer1)$(ext1)", true).Set().From(new StorageMacro("$(storage2)"), "$(path2).$(pointer2)$(ext2)"));

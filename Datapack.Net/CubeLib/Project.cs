@@ -13,6 +13,7 @@ using System.Linq.Expressions;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using static Datapack.Net.Data._1_20_4.Blocks;
 using static Datapack.Net.Function.Commands.Execute.Subcommand;
 
 namespace Datapack.Net.CubeLib
@@ -36,6 +37,7 @@ namespace Datapack.Net.CubeLib
         private readonly HashSet<Score> Globals = [];
         private readonly List<IStaticType> StaticTypes = [];
         private readonly List<Command> MiscInitCmds = [];
+        private readonly Dictionary<int, ScoreRef> Constants = [];
 
         private MCFunction? currentTarget;
         public MCFunction CurrentTarget { get => currentTarget ?? throw new InvalidOperationException("Project not building yet"); private set => currentTarget = value; }
@@ -55,7 +57,7 @@ namespace Datapack.Net.CubeLib
 
         public readonly List<Project> Dependencies = [];
 
-        private bool Built = false;
+        private bool BuiltOrBuilding = false;
 
         public CubeLibStd Std;
 
@@ -89,19 +91,15 @@ namespace Datapack.Net.CubeLib
 
         public void Build()
         {
-            if (Built) return;
-            Built = true;
+            if (BuiltOrBuilding) return;
+            BuiltOrBuilding = true;
             ActiveProject = this;
 
             Std = AddDependency<CubeLibStd>();
             Init();
 
-            AddFunction(Main);
-            AddFunction(Tick);
-
-            foreach (var i in GetType().GetMethods())
+            foreach (var i in GetType().GetMethods(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance))
             {
-
                 if (i.GetCustomAttribute<DeclareMCAttribute>() is not null) AddFunction(DelegateUtils.Create(i, this));
             }
 
@@ -136,7 +134,6 @@ namespace Datapack.Net.CubeLib
                     foreach (var e in args)
                     {
                         var arg = ArgumentStack.Dequeue();
-                        Console.WriteLine(e.Name);
 
                         if (e.IsAssignableTo(typeof(IBaseRuntimeObject))) funcArgs.Add(IBaseRuntimeObject.Create(arg, e));
                         else funcArgs.Add((IRuntimeArgument?)e.GetMethod("Create")?.Invoke(null, [arg]) ?? throw new ArgumentException($"Invalid arguments for function {i.Key.Method.Name}"));
@@ -162,6 +159,11 @@ namespace Datapack.Net.CubeLib
             foreach (var i in StaticTypes)
             {
                 i.Init();
+            }
+
+            foreach (var i in Constants)
+            {
+                PrependMain(new Scoreboard.Players.Set(i.Value.Target, i.Value.Score, i.Key));
             }
 
             foreach (var i in MiscInitCmds)
@@ -196,7 +198,7 @@ namespace Datapack.Net.CubeLib
             MCFunction retFunc;
             if (func.Target != this && func.Target is Project lib)
             {
-                if (lib.Built) return lib.MCFunctions[func];
+                if (lib.BuiltOrBuilding) return lib.GuaranteeFunc(func, macro);
                 retFunc = new(new(lib.Namespace, attr.Path), true);
             }
             else if (FindFunction(func) is MCFunction mcfunc)
@@ -211,8 +213,8 @@ namespace Datapack.Net.CubeLib
             return retFunc;
         }
 
-        public void Call(Action func) => Call(GuaranteeFunc(func, false));
-        public void Call(MCFunction func) => AddCommand(new FunctionCommand(func));
+        public void Call(Action func, bool macro = false) => Call(GuaranteeFunc(func, false), macro);
+        public void Call(MCFunction func, bool macro = false) => AddCommand(new FunctionCommand(func, macro));
 
         public void Call(Action func, Storage storage, string path = "", bool macro = false) => Call(GuaranteeFunc(func, true), storage, path, macro);
         public void Call(MCFunction func, Storage storage, string path = "", bool macro = false) => AddCommand(new FunctionCommand(func, storage, path, macro));
@@ -220,10 +222,10 @@ namespace Datapack.Net.CubeLib
         public void Call(Action func, KeyValuePair<string, object>[] args, bool macro = false) => Call(GuaranteeFunc(func, true), args, macro);
         public void Call(MCFunction func, KeyValuePair<string, object>[] args, bool macro = false) => AddCommand(BaseCall(func, args, macro));
 
-        public void CallArg(Delegate func, params IRuntimeArgument[] args) => CallArg(GuaranteeFunc(func, false), args);
-        public void CallArg(Delegate func, IRuntimeArgument[] args, KeyValuePair<string, object>[] macros) => CallArg(GuaranteeFunc(func, false), args, macros);
-        public void CallArg(MCFunction func, params IRuntimeArgument[] args) => AddCommand(BaseCall(func, args));
-        public void CallArg(MCFunction func, IRuntimeArgument[] args, KeyValuePair<string, object>[] macros) => AddCommand(BaseCall(func, args, macros));
+        public void CallArg(Delegate func, IRuntimeArgument[] args, bool macro = false) => CallArg(GuaranteeFunc(func, false), args, macro);
+        public void CallArg(Delegate func, IRuntimeArgument[] args, KeyValuePair<string, object>[] macros, bool macro = false) => CallArg(GuaranteeFunc(func, false), args, macros, macro);
+        public void CallArg(MCFunction func, IRuntimeArgument[] args, bool macro = false) => AddCommand(BaseCall(func, args, macro));
+        public void CallArg(MCFunction func, IRuntimeArgument[] args, KeyValuePair<string, object>[] macros, bool macro = false) => AddCommand(BaseCall(func, args, macros, macro));
 
         public ScoreRef CallRet(Action func)
         {
@@ -258,10 +260,10 @@ namespace Datapack.Net.CubeLib
             AddCommand(new Execute(macro).Store(ret).Run(BaseCall(func, args, macro, tmp)));
         }
 
-        public void CallArgRet(Delegate func, ScoreRef ret, params IRuntimeArgument[] args) => CallArgRet(GuaranteeFunc(func, false), ret, args);
-        public void CallArgRet(Delegate func, ScoreRef ret, IRuntimeArgument[] args, KeyValuePair<string, object>[] macros) => CallArgRet(GuaranteeFunc(func, false), ret, args, macros);
-        public void CallArgRet(MCFunction func, ScoreRef ret, params IRuntimeArgument[] args) => AddCommand(new Execute().Store(ret).Run(BaseCall(func, args)));
-        public void CallArgRet(MCFunction func, ScoreRef ret, IRuntimeArgument[] args, KeyValuePair<string, object>[] macros) => AddCommand(new Execute().Store(ret).Run(BaseCall(func, args, macros)));
+        public void CallArgRet(Delegate func, ScoreRef ret, IRuntimeArgument[] args, bool macro = false) => CallArgRet(GuaranteeFunc(func, false), ret, args, macro);
+        public void CallArgRet(Delegate func, ScoreRef ret, IRuntimeArgument[] args, KeyValuePair<string, object>[] macros, bool macro = false, int tmp = 0) => CallArgRet(GuaranteeFunc(func, false), ret, args, macros, macro, tmp);
+        public void CallArgRet(MCFunction func, ScoreRef ret, IRuntimeArgument[] args, bool macro = false) => AddCommand(new Execute(macro).Store(ret).Run(BaseCall(func, args, macro)));
+        public void CallArgRet(MCFunction func, ScoreRef ret, IRuntimeArgument[] args, KeyValuePair<string, object>[] macros, bool macro = false, int tmp = 0) => AddCommand(new Execute().Store(ret).Run(BaseCall(func, args, macros, macro, tmp)));
 
         public FunctionCommand BaseCall(MCFunction func, KeyValuePair<string, object>[] args, bool macro = false, int tmp = 0)
         {
@@ -283,13 +285,13 @@ namespace Datapack.Net.CubeLib
                 return new FunctionCommand(func, parameters, macro);
             }
 
-            AddCommand(new DataCommand.Modify(InternalStorage, $"tmp{tmp}", macro).Set().Value(parameters.ToString()));
+            AddCommand(new DataCommand.Modify(InternalStorage, $"func_tmp{tmp}", macro).Set().Value(parameters.ToString()));
             foreach (var i in runtimeScores)
             {
-                AddCommand(new Execute(macro).Store(InternalStorage, $"tmp{tmp}.{i.Key}", NBTNumberType.Int, 1).Run(i.Value.Get()));
+                AddCommand(new Execute(macro).Store(InternalStorage, $"func_tmp{tmp}.{i.Key}", NBTNumberType.Int, 1).Run(i.Value.Get()));
             }
 
-            return new FunctionCommand(func, InternalStorage, $"tmp{tmp}");
+            return new FunctionCommand(func, InternalStorage, $"func_tmp{tmp}");
         }
 
         public FunctionCommand BaseCall(MCFunction func, IRuntimeArgument[] args, bool macro = false)
@@ -412,6 +414,27 @@ namespace Datapack.Net.CubeLib
             {
                 var other = ex.Copy();
                 other.RemoveAll<Run>();
+
+                if (other.Contains<Execute.Conditional.Subcommand>())
+                {
+                    var tmpExe = new Execute(cmd.Macro);
+                    var tmp = Temp(0, "exe_ret");
+
+                    foreach (var i in ex.GetAll<Execute.Conditional.Subcommand>())
+                    {
+                        tmpExe.Add((Execute.Subcommand)i.Clone());
+                    }
+
+                    tmpExe.Store(tmp);
+                    tmpExe.Run(Constant(1).Get());
+                    AddCommand(tmpExe);
+
+                    other.RemoveAll<Execute.Conditional.Subcommand>();
+                    other.If.Score(tmp, 1);
+                    ex.RemoveAll<Execute.Conditional.Subcommand>();
+                    ex.If.Score(tmp, 1);
+                }
+
                 other.Run(new FunctionCommand(CurrentTargetCleanup));
                 AddCommand(other);
             }
@@ -513,10 +536,23 @@ namespace Datapack.Net.CubeLib
             return global;
         }
 
-        public FunctionCommand Lambda(Action func)
+        public ScoreRef Constant(int val)
         {
-            var mcfunc = AddFunction(func, new(Namespace, $"zz_anon/{AnonymousFuncCounter++}"), true);
+            if (Constants.TryGetValue(val, out var obj)) return obj;
 
+            var score = new Score("_cl_const", "dummy");
+            var c = new ScoreRef(score, new NamedTarget($"#_cl_{val}"));
+
+            Scores.Add(score);
+            Constants[val] = c;
+
+            return c;
+        }
+
+        public FunctionCommand Lambda(Action func) => LambdaWith(AddFunction(func, new(Namespace, $"zz_anon/{AnonymousFuncCounter++}"), true));
+
+        public FunctionCommand LambdaWith(MCFunction mcfunc)
+        {
             if (CurrentFunctionAttrs.Macros.Length == 0) return new(mcfunc);
 
             var nbt = new NBTCompound();
@@ -567,7 +603,7 @@ namespace Datapack.Net.CubeLib
         {
             WhileTrue(() =>
             {
-                If(!comp, new ReturnCommand(0));
+                If(!comp, new ReturnCommand(1));
                 res();
             });
         }
@@ -577,7 +613,7 @@ namespace Datapack.Net.CubeLib
             var func = Lambda(() =>
             {
                 res();
-                Call(CurrentTarget);
+                AddCommand(LambdaWith(CurrentTarget));
             });
             AddCommand(func);
         }

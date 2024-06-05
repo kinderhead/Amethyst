@@ -22,18 +22,27 @@ namespace TNTCannon
 
         protected override void Main()
         {
+            Print("Running");
+
             Heap.Clear();
 
+            //var p = Alloc<int>();
+            //p.Set(5);
+            //Print(p);
+
+            Print("Allocating first object");
             var obj = AllocObj<Funny>();
             obj.Prop = 17;
             obj.Str = "How?";
 
+            Print("Allocating second object");
             var other = AllocObj<Funny>();
             other.Prop = 5;
             other.Str = "Thingy";
 
             obj.Other = other;
 
+            Print("Allocating temp object");
             var tmp = AllocObj<Funny>();
             obj.Other.Copy(tmp);
             Testy(tmp);
@@ -48,9 +57,9 @@ namespace TNTCannon
         }
 
         [DeclareMC("testy")]
-        private void _Testy(HeapPointer<Funny> str)
+        private void _Testy(HeapPointer<Funny> obj)
         {
-            Print(str);
+            Print(obj);
         }
 
         /// <summary>

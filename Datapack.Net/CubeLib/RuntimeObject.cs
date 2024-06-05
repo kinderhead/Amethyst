@@ -14,7 +14,8 @@ namespace Datapack.Net.CubeLib
 
     public abstract class RuntimeObject<TProject, TSelf> : IBaseRuntimeObject, IRuntimeProperty<TSelf> where TProject : Project where TSelf : RuntimeObject<TProject, TSelf>
     {
-        public HeapPointer<TSelf> Pointer { get; protected set; }
+        public HeapPointer<TSelf> Pointer { get; }
+
         public TSelf Value { get => (TSelf)this; }
 
         public RuntimeObject(HeapPointer<TSelf> loc)

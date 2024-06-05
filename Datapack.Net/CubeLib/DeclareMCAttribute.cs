@@ -14,17 +14,17 @@ namespace Datapack.Net.CubeLib
         public readonly bool Returns;
         public readonly string[] Macros = [];
 
-        public DeclareMCAttribute(string name, bool returns, string[] macros)
+        public DeclareMCAttribute(string name, string[] macros)
         {
             Path = name;
-            Returns = returns;
+            Returns = false;
             Macros = macros;
         }
 
-        public DeclareMCAttribute(string name, bool returns = false)
+        public DeclareMCAttribute(string name)
         {
             Path = name;
-            Returns = returns;
+            Returns = false;
         }
 
         public static DeclareMCAttribute Get(Delegate func)
@@ -48,6 +48,17 @@ namespace Datapack.Net.CubeLib
             }
 
             return [.. types];
+        }
+    }
+
+    public class DeclareMCReturnAttribute<T> : DeclareMCAttribute where T : IRuntimeArgument
+    {
+        public DeclareMCReturnAttribute(string name) : base(name)
+        {
+        }
+
+        public DeclareMCReturnAttribute(string name, string[] macros) : base(name, macros)
+        {
         }
     }
 }

@@ -24,16 +24,22 @@ namespace Datapack.Net.Function.Commands
         {
             StringBuilder sb = new("execute ");
 
+            Subcommand.Run? run = null;
             foreach (var i in Subcommands)
             {
+                if (i is Subcommand.Run r)
+                {
+                    if (run is not null) throw new ArgumentException($"Execute command (incomplete) {sb} has multiple runs");
+                    run = r;
+                    continue;
+                }
+
                 sb.Append(i.ToString());
                 sb.Append(' ');
-
-                if (i is Subcommand.Run)
-                {
-                    break;
-                }
             }
+
+            if (run is null) throw new ArgumentException($"Execute command {sb} does not have a run");
+            else sb.Append(run.ToString());
 
             return sb.ToString().TrimEnd();
         }
@@ -71,9 +77,24 @@ namespace Datapack.Net.Function.Commands
             throw new Exception("Execute command does not have the requested subcommand");
         }
 
+        public IEnumerable<T> GetAll<T>() where T : Subcommand
+        {
+            return Subcommands.Where(i => i is T).Cast<T>();
+        }
+
         public void RemoveAll<T>() where T : Subcommand
         {
             Subcommands.RemoveAll((i) => i is T);
+        }
+
+        public bool Contains<T>() where T : Subcommand
+        {
+            foreach (var i in Subcommands)
+            {
+                if (i is T) return true;
+            }
+
+            return false;
         }
 
         public object Clone()

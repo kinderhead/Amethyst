@@ -50,7 +50,7 @@ namespace Datapack.Net.CubeLib
 
         public HeapPointer<R> Get<R>(string path) => new(Heap, Pointer, ExtraPath + "." + path);
 
-        public void Dereference(ScoreRef val) => Project.ActiveProject.CallRet(Project.ActiveProject.Std._PointerDereference, val, StandardMacros());
+        public void Dereference(ScoreRef val) => Project.ActiveProject.Std.PointerDereference(StandardMacros(), val);
         public ScoreRef Dereference()
         {
             var ret = Project.ActiveProject.Local();

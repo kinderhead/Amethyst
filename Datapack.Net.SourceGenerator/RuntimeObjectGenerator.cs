@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -30,7 +31,7 @@ namespace Datapack.Net.SourceGenerator
                                 List<MCFunction> funcs = [];
                                 foreach (var sym in clsSymbol.GetMembers())
                                 {
-                                    if (sym is IMethodSymbol method && sym.HasAttribute("Datapack.Net.CubeLib.DeclareMCAttribute") && sym.IsStatic)
+                                    if (sym is IMethodSymbol method && sym.GetAttributes().Where(i => i.AttributeClass.ToDisplayString().Contains("Datapack.Net.CubeLib.DeclareMC")).Count() != 0 && sym.IsStatic)
                                     {
                                         funcs.Add(Utils.GetMCFunction(method));
                                     }
@@ -54,7 +55,7 @@ namespace Datapack.Net.SourceGenerator
 
             foreach (var i in project.Methods)
             {
-                funcs.AppendLine(Utils.GenerateWrapper(i, "State.", true));
+                funcs.AppendLine(Utils.GenerateWrapper(i, true));
             }
 
             if (funcs.Length > 0) funcs.Length--;
