@@ -44,7 +44,15 @@ namespace Datapack.Net.Function.Commands
             return sb.ToString().TrimEnd();
         }
 
-        public Execute Run(Command cmd) => Add(new Subcommand.Run(cmd));
+        public Execute Run(Command cmd)
+        {
+            if (cmd.Macro)
+            {
+                Macro = true;
+                cmd.Macro = false;
+            }
+            return Add(new Subcommand.Run(cmd));
+        }
         public Execute Align(Swizzle axes) => Add(new Subcommand.Align(axes));
         public Execute Anchored(bool eyes) => Add(new Subcommand.Anchored(eyes));
         public Execute As(IEntityTarget target) => Add(new Subcommand.As(target));
@@ -306,21 +314,15 @@ namespace Datapack.Net.Function.Commands
 
                     public static string GetOperator(Comparison op)
                     {
-                        switch (op)
+                        return op switch
                         {
-                            case Comparison.LessThan:
-                                return "<";
-                            case Comparison.GreaterThan:
-                                return ">";
-                            case Comparison.LessThanOrEqual:
-                                return "<=";
-                            case Comparison.GreaterThanOrEqual:
-                                return ">=";
-                            case Comparison.Equal:
-                                return "=";
-                            default:
-                                return "";
-                        }
+                            Comparison.LessThan => "<",
+                            Comparison.GreaterThan => ">",
+                            Comparison.LessThanOrEqual => "<=",
+                            Comparison.GreaterThanOrEqual => ">=",
+                            Comparison.Equal => "=",
+                            _ => "",
+                        };
                     }
                 }
             }

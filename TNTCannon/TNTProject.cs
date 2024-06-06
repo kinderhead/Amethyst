@@ -1,5 +1,7 @@
 ﻿using Datapack.Net;
 using Datapack.Net.CubeLib;
+using Datapack.Net.CubeLib.Builtins;
+using Datapack.Net.Data;
 using Datapack.Net.Function;
 using Datapack.Net.Function.Commands;
 using System;
@@ -26,29 +28,9 @@ namespace TNTCannon
 
             Heap.Clear();
 
-            //var p = Alloc<int>();
-            //p.Set(5);
-            //Print(p);
-
-            Print("Allocating first object");
-            var obj = AllocObj<Funny>();
-            obj.Prop = 17;
-            obj.Str = "How?";
-
-            Print("Allocating second object");
-            var other = AllocObj<Funny>();
-            other.Prop = 5;
-            other.Str = "Thingy";
-
-            obj.Other = other;
-
-            Print("Allocating temp object");
-            var tmp = AllocObj<Funny>();
-            obj.Other.Copy(tmp);
-            Testy(tmp);
-            tmp.Free();
-
-            obj.Say();
+            var list = AllocObj<MCList>();
+            list.Add(new NBTCompound());
+            Print(list);
         }
 
         protected override void Tick()

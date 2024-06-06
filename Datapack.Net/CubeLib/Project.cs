@@ -25,6 +25,8 @@ namespace Datapack.Net.CubeLib
         public static readonly Storage GlobalStorage = new(new("cubelib", "global"));
         public static readonly NamedTarget GlobalScoreEntity = new("#_cubelib_score");
 
+        internal static Dictionary<Delegate, MCFunction> RuntimeMethods = [];
+
         public readonly DP Datapack;
         public abstract string Namespace { get; }
 
@@ -61,6 +63,9 @@ namespace Datapack.Net.CubeLib
 
         public CubeLibStd Std;
 
+        public bool ErrorChecking = false;
+        public ScoreRef ErrorScore;
+
         protected Project(DP pack)
         {
             Datapack = pack;
@@ -83,6 +88,7 @@ namespace Datapack.Net.CubeLib
         public T AddDependency<T>() where T : Project
         {
             var project = Create<T>(Datapack);
+            project.ErrorChecking = ErrorChecking;
             project.Build();
             ActiveProject = this;
             Dependencies.Add(project);
@@ -114,8 +120,15 @@ namespace Datapack.Net.CubeLib
             AddStaticObject(RegisterStack);
             ArgumentStack = new(GlobalStorage, "argument_stack");
             AddStaticObject(ArgumentStack);
-            Heap = new(InternalStorage, "heap");
+            Heap = new(GlobalStorage, "heap");
             AddStaticObject(Heap);
+
+            if (ErrorChecking)
+            {
+                var score = new Score("_cl_err", "dummy");
+                Scores.Add(score);
+                ErrorScore = new(score, GlobalScoreEntity);
+            }
 
             while (FunctionsToProcess.TryDequeue(out var i))
             {
@@ -201,10 +214,7 @@ namespace Datapack.Net.CubeLib
                 if (lib.BuiltOrBuilding) return lib.GuaranteeFunc(func, macro);
                 retFunc = new(new(lib.Namespace, attr.Path), true);
             }
-            else if (FindFunction(func) is MCFunction mcfunc)
-            {
-                retFunc = mcfunc;
-            }
+            else if (FindFunction(func) is MCFunction mcfunc) retFunc = mcfunc;
             else retFunc = AddFunction(func);
 
             if (macro && attr.Macros.Length == 0) throw new ArgumentException("Attempted to call a non macro function with arguments");
@@ -223,7 +233,7 @@ namespace Datapack.Net.CubeLib
         public void Call(MCFunction func, KeyValuePair<string, object>[] args, bool macro = false) => AddCommand(BaseCall(func, args, macro));
 
         public void CallArg(Delegate func, IRuntimeArgument[] args, bool macro = false) => CallArg(GuaranteeFunc(func, false), args, macro);
-        public void CallArg(Delegate func, IRuntimeArgument[] args, KeyValuePair<string, object>[] macros, bool macro = false) => CallArg(GuaranteeFunc(func, false), args, macros, macro);
+        public void CallArg(Delegate func, IRuntimeArgument[] args, KeyValuePair<string, object>[] macros, bool macro = false) => CallArg(GuaranteeFunc(func, true), args, macros, macro);
         public void CallArg(MCFunction func, IRuntimeArgument[] args, bool macro = false) => AddCommand(BaseCall(func, args, macro));
         public void CallArg(MCFunction func, IRuntimeArgument[] args, KeyValuePair<string, object>[] macros, bool macro = false) => AddCommand(BaseCall(func, args, macros, macro));
 
@@ -325,7 +335,7 @@ namespace Datapack.Net.CubeLib
             {
                 if (i is string str) text.Text(str);
                 else if (i is ScoreRef score) text.Score(score);
-                else throw new ArgumentException($"Invalid print object {i}");
+                else throw new ArgumentException($"Invalid print object {i}. Try using Print<T> for objects on the heap");
 
                 text.Text(" ");
             }
@@ -357,9 +367,14 @@ namespace Datapack.Net.CubeLib
 
         public MCFunction? FindFunction(Delegate func)
         {
-            var actions = MCFunctions.ToList();
-            var index = actions.FindIndex((i) => i.Key.Method.MethodHandle.Equals(func.Method.MethodHandle));
-            if (index != -1) return actions[index].Value;
+            var funcs = MCFunctions.ToList();
+            var index = funcs.FindIndex((i) => i.Key.Method.MethodHandle.Equals(func.Method.MethodHandle));
+            if (index != -1) return funcs[index].Value;
+
+            var methods = RuntimeMethods.ToList();
+            index = methods.FindIndex((i) => i.Key.Method.MethodHandle.Equals(func.Method.MethodHandle));
+            if (index != -1) return methods[index].Value;
+
             return null;
         }
 
@@ -438,7 +453,13 @@ namespace Datapack.Net.CubeLib
                 other.Run(new FunctionCommand(CurrentTargetCleanup));
                 AddCommand(other);
             }
-
+            else if (ErrorChecking && cmd is not Execute)
+            {
+                if (cmd is FunctionCommand) CurrentTarget.Add(new Scoreboard.Players.Set(ErrorScore.Target, ErrorScore.Score, 1));
+                CurrentTarget.Add(new Execute(cmd.Macro).Store(ErrorScore, false).Run(cmd));
+                CurrentTarget.Add(new Execute(true).If.Score(ErrorScore, 0).Run(new TellrawCommand(new TargetSelector(TargetType.a), new FormattedText().Text($"Command \"{cmd}\" failed"))));
+                return;
+            }
             CurrentTarget.Add(cmd);
         }
 
@@ -462,13 +483,20 @@ namespace Datapack.Net.CubeLib
             {
                 if (i.IsStatic && i.GetCustomAttribute<DeclareMCAttribute>() is not null)
                 {
-                    var funcAttr = DeclareMCAttribute.Get(i);
-                    var func = DelegateUtils.Create(i, null);
-                    var mcFunc = new MCFunction(new(Namespace, $"{attr.Name}/{funcAttr.Path}"), true);
-                    MCFunctions[func] = mcFunc;
-                    FunctionsToProcess.Enqueue(new(func, mcFunc));
+                    ProcessRuntimeObjectMethod(i, attr);
                 }
             }
+        }
+
+        public MCFunction ProcessRuntimeObjectMethod(MethodInfo method, RuntimeObjectAttribute attr)
+        {
+            var funcAttr = DeclareMCAttribute.Get(method);
+            var func = DelegateUtils.Create(method, null);
+            var mcFunc = new MCFunction(new(Namespace, $"{attr.Name}/{funcAttr.Path}"), true);
+            MCFunctions[func] = mcFunc;
+            RuntimeMethods[func] = mcFunc;
+            FunctionsToProcess.Enqueue(new(func, mcFunc));
+            return mcFunc;
         }
 
         public void PrependMain(Command cmd)
@@ -566,7 +594,12 @@ namespace Datapack.Net.CubeLib
         }
 
         public T AllocObj<T>() where T : IBaseRuntimeObject => AllocObj<T>(Local());
-        public T AllocObj<T>(ScoreRef loc) where T : IBaseRuntimeObject => (T)T.Create(Heap.Alloc<T>(loc));
+        public T AllocObj<T>(ScoreRef loc) where T : IBaseRuntimeObject
+        {
+            var obj = (T)T.Create(Heap.Alloc<T>(loc));
+            if (obj.HasMethod("init")) CallArg(obj.GetMethod("init"), [obj]);
+            return obj;
+        }
 
         public T AttachObj<T>(ScoreRef loc) where T : IBaseRuntimeObject => (T)T.Create(new HeapPointer<T>(Heap, loc));
 
@@ -580,9 +613,9 @@ namespace Datapack.Net.CubeLib
         public HeapPointer<T> Alloc<T>() => Alloc<T>(Local());
         public HeapPointer<T> Alloc<T>(ScoreRef loc) => Heap.Alloc<T>(loc);
 
-        public HeapPointer<int> Alloc(ScoreRef loc, int val)
+        public HeapPointer<T> Alloc<T>(ScoreRef loc, T val) where T : NBTType
         {
-            var pointer = Heap.Alloc<int>(loc);
+            var pointer = Heap.Alloc<T>(loc);
             pointer.Set(val);
             return pointer;
         }
@@ -592,7 +625,7 @@ namespace Datapack.Net.CubeLib
         public HeapPointer<T> AllocIfNull<T>(ScoreRef loc, int val = 0)
         {
             var ptr = Attach<T>(loc);
-            If(!ptr.Exists(), () => Alloc(loc, val));
+            If(!ptr.Exists(), () => Alloc(loc, (NBTInt)val));
             return ptr;
         }
 

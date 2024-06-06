@@ -16,7 +16,7 @@ namespace Datapack.Net.CubeLib
 
         protected override void Init()
         {
-            RegisterObject<MCArray>();
+            RegisterObject<MCList>();
         }
 
         [DeclareMC("test")]
@@ -71,6 +71,20 @@ namespace Datapack.Net.CubeLib
         private void _PointerSet()
         {
             AddCommand(new DataCommand.Modify(new StorageMacro("$(storage)"), "$(path).$(pointer)$(ext)", true).Set().Value("$(value)"));
+        }
+
+        /// <summary>
+        /// Arguments: <br/>
+        /// <b>storage</b>: Storage identifier <br/>
+        /// <b>path</b>: Path in storage to heap <br/>
+        /// <b>pointer</b>: The pointer <br/>
+        /// <b>ext</b>: Extension path including "." <br/>
+        /// <b>value</b>: Value
+        /// </summary>
+        [DeclareMC("pointer_append", ["storage", "path", "pointer", "ext", "value"])]
+        private void _PointerAppend()
+        {
+            AddCommand(new DataCommand.Modify(new StorageMacro("$(storage)"), "$(path).$(pointer)$(ext)", true).Append().Value("$(value)"));
         }
 
         /// <summary>

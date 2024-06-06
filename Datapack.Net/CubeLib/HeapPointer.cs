@@ -24,9 +24,9 @@ namespace Datapack.Net.CubeLib
 
         public void Set(NBTType val)
         {
-            var obj = val is NBTString ? val.ToString() : val;
+            //var obj = val is NBTString ? val.ToString() : val;
 
-            Project.ActiveProject.Std.PointerSet(StandardMacros([new("value", obj)]));
+            Project.ActiveProject.Std.PointerSet(StandardMacros([new("value", val.ToString())]));
         }
 
         public void Copy(HeapPointer<T> dest) => CopyUnsafe(dest);
@@ -62,6 +62,8 @@ namespace Datapack.Net.CubeLib
         {
             Project.ActiveProject.Std.PointerFree(StandardMacros());
         }
+
+        public HeapPointer<T> Duplicate() => new(Heap, Pointer, ExtraPath);
 
         public PointerExists<T> Exists() => new() { Pointer = this };
 

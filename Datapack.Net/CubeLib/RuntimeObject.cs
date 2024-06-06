@@ -1,11 +1,16 @@
 using System;
+using System.Reflection;
+using Datapack.Net.CubeLib.Utils;
 using Datapack.Net.Data;
+using Datapack.Net.Function;
 
 namespace Datapack.Net.CubeLib
 {
     public interface IBaseRuntimeObject : IRuntimeArgument
     {
         public void IfNull(Action func);
+        public bool HasMethod(string name);
+        public Delegate GetMethod(string name);
 
         public static abstract IBaseRuntimeObject Create(BaseHeapPointer pointer);
 
@@ -49,7 +54,35 @@ namespace Datapack.Net.CubeLib
 
         public ScoreRef GetAsArg() => Pointer.GetAsArg();
 
-        public static TProject State => (TProject)Project.ActiveProject;
+        public bool HasMethod(string name)
+        {
+            foreach (var i in GetType().GetMethods(BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Public))
+            {
+                if (i.GetCustomAttribute<DeclareMCAttribute>()?.Path == name) return true;
+            }
+
+            return false;
+        }
+
+        public Delegate GetMethod(string name)
+        {
+            foreach (var i in GetType().GetMethods(BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Public))
+            {
+                if (i.GetCustomAttribute<DeclareMCAttribute>()?.Path == name) return DelegateUtils.Create(i, null);
+            }
+
+            throw new Exception($"Cannot get method {name} from object");
+        }
+
+        private static TProject? _state = null;
+        public static TProject State
+        {
+            get
+            {
+                _state ??= Project.Create<TProject>(Project.ActiveProject.Datapack);
+                return _state;
+            }
+        }
 
         public static IBaseRuntimeObject Create(BaseHeapPointer pointer)
         {
@@ -57,6 +90,7 @@ namespace Datapack.Net.CubeLib
         }
 
         public static IRuntimeArgument Create(ScoreRef arg) => Create((BaseHeapPointer)HeapPointer<TSelf>.Create(arg));
+
         public static implicit operator RuntimeObject<TProject, TSelf>(HeapPointer<TSelf> pointer) => (RuntimeObject<TProject, TSelf>)Create((BaseHeapPointer)pointer);
     }
 }

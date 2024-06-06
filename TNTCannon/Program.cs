@@ -8,7 +8,11 @@ namespace TNTCannon
         static void Main(string[] args)
         {
             var pack = new DP("Wow");
-            Project.Create<TNTProject>(pack).Build();
+
+            var proj = Project.Create<TNTProject>(pack);
+            //proj.ErrorChecking = true;
+            proj.Build();
+
             pack.Optimize();
             pack.Build();
         }
