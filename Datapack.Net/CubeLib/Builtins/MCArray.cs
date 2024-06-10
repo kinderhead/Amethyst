@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace Datapack.Net.CubeLib.Builtins
 {
     [RuntimeObject("list")]
-    public partial class MCList(HeapPointer<MCList> loc) : RuntimeObject<CubeLibStd, MCList>(loc)
+    public partial class MCList(IPointer<MCList> loc) : RuntimeObject<CubeLibStd, MCList>(loc)
     {
         internal sealed class Props
         {

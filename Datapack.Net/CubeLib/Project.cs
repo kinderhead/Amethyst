@@ -1,4 +1,5 @@
-﻿using Datapack.Net.CubeLib.Builtins.Static;
+﻿using Datapack.Net.CubeLib.Builtins;
+using Datapack.Net.CubeLib.Builtins.Static;
 using Datapack.Net.CubeLib.Utils;
 using Datapack.Net.Data;
 using Datapack.Net.Function;
@@ -53,6 +54,7 @@ namespace Datapack.Net.CubeLib
 
         public MCStaticStack RegisterStack;
         public MCStaticStack ArgumentStack;
+        public MCStaticStack StorageArgumentStack;
         public MCStaticHeap Heap;
 
         private int AnonymousFuncCounter = 0;
@@ -120,6 +122,8 @@ namespace Datapack.Net.CubeLib
             AddStaticObject(RegisterStack);
             ArgumentStack = new(GlobalStorage, "argument_stack");
             AddStaticObject(ArgumentStack);
+            StorageArgumentStack = new(GlobalStorage, "storage_stack");
+            AddStaticObject(StorageArgumentStack);
             Heap = new(GlobalStorage, "heap");
             AddStaticObject(Heap);
 
@@ -138,6 +142,8 @@ namespace Datapack.Net.CubeLib
                 CurrentFunctionAttrs = DeclareMCAttribute.Get(i.Key);
                 MiscMCFunctions.Add(CurrentTargetCleanup);
 
+                List<IPointer> pointers = [];
+
                 var args = DeclareMCAttribute.Args(i.Key);
                 if (args.Length == 0) i.Key.DynamicInvoke();
                 else
@@ -146,10 +152,15 @@ namespace Datapack.Net.CubeLib
 
                     foreach (var e in args)
                     {
-                        var arg = ArgumentStack.Dequeue();
-
-                        if (e.IsAssignableTo(typeof(IBaseRuntimeObject))) funcArgs.Add(IBaseRuntimeObject.Create(arg, e));
-                        else funcArgs.Add((IRuntimeArgument?)e.GetMethod("Create")?.Invoke(null, [arg]) ?? throw new ArgumentException($"Invalid arguments for function {i.Key.Method.Name}"));
+                        if (e.IsAssignableTo(typeof(IBaseRuntimeObject)))
+                        {
+                            StorageArgumentStack.DequeueToStorage();
+                            var ptr = Alloc<NBTCompound>();
+                            Std.PointerSetFrom([.. ptr.StandardMacros(), new("src_storage", InternalStorage), new("src_path", "tmpstack")]);
+                            funcArgs.Add(IBaseRuntimeObject.CreateWithRTP(ptr.Pointer, e));
+                            pointers.Add(ptr);
+                        }
+                        else funcArgs.Add((IRuntimeArgument?)e.GetMethod("Create")?.Invoke(null, [ArgumentStack.Dequeue()]) ?? throw new ArgumentException($"Invalid arguments for function {i.Key.Method.Name}"));
                     }
 
                     i.Key.DynamicInvoke([.. funcArgs]);
@@ -159,6 +170,11 @@ namespace Datapack.Net.CubeLib
 
                 WithCleanup(() =>
                 {
+                    foreach (var p in pointers)
+                    {
+                        p.Free();
+                    }
+
                     foreach (var r in RegistersInUse)
                     {
                         RegisterStack.Dequeue(r);
@@ -229,13 +245,13 @@ namespace Datapack.Net.CubeLib
         public void Call(Action func, Storage storage, string path = "", bool macro = false) => Call(GuaranteeFunc(func, true), storage, path, macro);
         public void Call(MCFunction func, Storage storage, string path = "", bool macro = false) => AddCommand(new FunctionCommand(func, storage, path, macro));
 
-        public void Call(Action func, KeyValuePair<string, object>[] args, bool macro = false) => Call(GuaranteeFunc(func, true), args, macro);
-        public void Call(MCFunction func, KeyValuePair<string, object>[] args, bool macro = false) => AddCommand(BaseCall(func, args, macro));
+        public void Call(Action func, KeyValuePair<string, object>[] args, bool macro = false, int tmp = 0) => Call(GuaranteeFunc(func, true), args, macro, tmp);
+        public void Call(MCFunction func, KeyValuePair<string, object>[] args, bool macro = false, int tmp = 0) => AddCommand(BaseCall(func, args, macro, tmp));
 
         public void CallArg(Delegate func, IRuntimeArgument[] args, bool macro = false) => CallArg(GuaranteeFunc(func, false), args, macro);
-        public void CallArg(Delegate func, IRuntimeArgument[] args, KeyValuePair<string, object>[] macros, bool macro = false) => CallArg(GuaranteeFunc(func, true), args, macros, macro);
+        public void CallArg(Delegate func, IRuntimeArgument[] args, KeyValuePair<string, object>[] macros, bool macro = false, int tmp = 0) => CallArg(GuaranteeFunc(func, true), args, macros, macro, tmp);
         public void CallArg(MCFunction func, IRuntimeArgument[] args, bool macro = false) => AddCommand(BaseCall(func, args, macro));
-        public void CallArg(MCFunction func, IRuntimeArgument[] args, KeyValuePair<string, object>[] macros, bool macro = false) => AddCommand(BaseCall(func, args, macros, macro));
+        public void CallArg(MCFunction func, IRuntimeArgument[] args, KeyValuePair<string, object>[] macros, bool macro = false, int tmp = 0) => AddCommand(BaseCall(func, args, macros, macro, tmp));
 
         public ScoreRef CallRet(Action func)
         {
@@ -279,26 +295,34 @@ namespace Datapack.Net.CubeLib
         {
             var parameters = new NBTCompound();
             var runtimeScores = new Dictionary<string, ScoreRef>();
+            var pointers = new Dictionary<string, IPointer>();
 
             foreach (var i in args)
             {
                 if (NBTType.ToNBT(i.Value) != null) parameters[i.Key] = NBTType.ToNBT(i.Value) ?? throw new Exception("How did we get here?");
                 else if (i.Value.GetType().IsAssignableTo(typeof(NBTType))) parameters[i.Key] = (NBTType)i.Value;
                 else if (i.Value is ScoreRef score) runtimeScores[i.Key] = score;
+                else if (i.Value is IToPointer ptr) pointers[i.Key] = ptr.ToPointer();
                 else if (i.Value is NamespacedID id) parameters[i.Key] = id.ToString();
                 else if (i.Value is Storage storage) parameters[i.Key] = storage.ToString();
                 else throw new ArgumentException($"Type {i.Value.GetType().Name} is not supported yet");
             }
 
-            if (runtimeScores.Count == 0)
+            if (runtimeScores.Count == 0 && pointers.Count == 0)
             {
                 return new FunctionCommand(func, parameters, macro);
             }
 
             AddCommand(new DataCommand.Modify(InternalStorage, $"func_tmp{tmp}", macro).Set().Value(parameters.ToString()));
+
             foreach (var i in runtimeScores)
             {
                 AddCommand(new Execute(macro).Store(InternalStorage, $"func_tmp{tmp}.{i.Key}", NBTNumberType.Int, 1).Run(i.Value.Get()));
+            }
+
+            foreach (var i in pointers)
+            {
+                Std.PointerDereference(i.Value.StandardMacros([new("dest_storage", InternalStorage), new("dest", $"func_tmp{tmp}.{i.Key}")]), macro, tmp + 1);
             }
 
             return new FunctionCommand(func, InternalStorage, $"func_tmp{tmp}");
@@ -320,11 +344,15 @@ namespace Datapack.Net.CubeLib
         {
             foreach (var i in args.Reverse())
             {
-                ArgumentStack.Enqueue(i.GetAsArg());
+                if (i is IBaseRuntimeObject obj)
+                {
+                    StorageArgumentStack.Enqueue(obj.GetPointer());
+                }
+                else ArgumentStack.Enqueue(i.GetAsArg());
             }
         }
 
-        public void Print<T>(HeapPointer<T> ptr) => Std.PointerPrint(ptr.StandardMacros());
+        public void Print<T>(IPointer<T> ptr) => Std.PointerPrint(ptr.StandardMacros());
         public void Print<T>(IRuntimeProperty<T> prop) => Print(prop.Pointer);
 
         public void Print(params object[] args)
@@ -668,6 +696,22 @@ namespace Datapack.Net.CubeLib
             var score = Local();
             Random(range, score);
             return score;
+        }
+
+        public void Strcat(IPointer<string> dest, params object[] values) => Strcat(dest, values);
+
+        public void Strcat(IPointer<string> dest, bool macro = false, params object[] values)
+        {
+            if (values.Length > 10) throw new ArgumentException("Strcat only accepts up to 10 objects at this moment");
+
+            List<KeyValuePair<string, object>> args = [];
+
+            for (int i = 0; i < values.Length; i++)
+            {
+                args.Add(new(i.ToString(), values[i]));
+            }
+
+            Std.StringConcat([.. args, .. dest.StandardMacros()], macro);
         }
 
         protected virtual void Init() { }

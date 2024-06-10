@@ -1,10 +1,11 @@
+using Datapack.Net.CubeLib.Utils;
 using System;
 
 namespace Datapack.Net.CubeLib
 {
-    public interface IRuntimeProperty<T>
+    public interface IRuntimeProperty<T> : IToPointer
     {
-        public HeapPointer<T> Pointer { get; }
+        public IPointer<T> Pointer { get; }
         public T Value { get; }
     }
 }

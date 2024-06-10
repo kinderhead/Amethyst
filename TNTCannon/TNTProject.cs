@@ -28,9 +28,15 @@ namespace TNTCannon
 
             Heap.Clear();
 
-            var list = AllocObj<MCList>();
-            list.Add(new NBTCompound());
-            Print(list);
+            var first = AllocObj<Funny>();
+            var second = AllocObj<Funny>();
+
+            second.Prop = 17;
+
+            first.Prop = 5;
+            first.Other = second;
+
+            Testy(first.Other);
         }
 
         protected override void Tick()

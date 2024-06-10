@@ -31,6 +31,7 @@ namespace Datapack.Net.SourceGenerator
             if (func.ReturnType != "void") args.Add($"{func.ReturnType} ret");
 
             args.Add("bool macro = false");
+            args.Add("int tmp = 0");
 
             foreach (var i in args)
             {
@@ -68,7 +69,10 @@ namespace Datapack.Net.SourceGenerator
                 if (func.Macro) builder.Append(", macros");
             }
 
-            builder.Append(", macro);");
+            builder.Append(", macro");
+
+            if (func.Macro) builder.Append(", tmp");
+            builder.Append(");");
 
             return builder.ToString();
         }

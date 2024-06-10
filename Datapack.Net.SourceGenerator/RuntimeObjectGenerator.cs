@@ -57,7 +57,18 @@ namespace Datapack.Net.SourceGenerator
                                     }
                                 }
 
-                                return new RuntimeObject(clsSymbol.Name, clsSymbol.ContainingNamespace.ToDisplayString(), funcs, props);
+                                var name = new StringBuilder(clsSymbol.Name);
+                                if (clsSymbol.TypeParameters.Length > 0) {
+                                    name.Append("<");
+                                    foreach (var t in clsSymbol.TypeParameters)
+                                    {
+                                        name.Append($"{t.Name}, ");
+                                    }
+                                    name.Length -= 2;
+                                    name.Append(">");
+                                }
+
+                                return new RuntimeObject(name.ToString(), clsSymbol.ContainingNamespace.ToDisplayString(), funcs, props);
                             }
                         }
                     }
@@ -77,10 +88,10 @@ namespace Datapack.Net.SourceGenerator
             foreach (var i in obj.Properties)
             {
                 var type = i.IsObj ? i.Type : $"global::Datapack.Net.CubeLib.RuntimeProperty<{i.Type}>";
-                var postfix = i.IsObj ? "Obj" : "";
+                var postfix = i.IsObj ? "Obj" : "Prop";
 
                 things.AppendLine($"        /// <inheritdoc cref=\"{obj.Namespace}.{obj.Name}.Props.{i.Name}\"/>");
-                things.AppendLine($"        public {type} {i.Name} {{ get => Get{postfix}<{i.Type}>(\"{i.InternalName}\"); set => Set(\"{i.InternalName}\", value); }}");
+                things.AppendLine($"        public {type} {i.Name} {{ get => new(this.Get{postfix}<{i.Type}>(\"{i.InternalName}\"){(i.IsObj ? ".Pointer" : "")}); set => this.SetProp(\"{i.InternalName}\", value); }}");
             }
 
             foreach (var i in obj.Methods)
@@ -96,10 +107,9 @@ namespace {obj.Namespace}
     public partial class {obj.Name}
     {{
 {things}
-        public static implicit operator Datapack.Net.CubeLib.HeapPointer<{obj.Name}>({obj.Name} obj) => obj.Pointer;
     }}
 }}";
-            context.AddSource($"{obj.Name}.g.cs", source);
+            context.AddSource($"{obj.Name.Split('<')[0]}.g.cs", source);
         }
     }
 }

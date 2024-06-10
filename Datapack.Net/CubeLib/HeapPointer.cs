@@ -1,4 +1,6 @@
-﻿using Datapack.Net.CubeLib.Builtins.Static;
+﻿using Datapack.Net.CubeLib.Builtins;
+using Datapack.Net.CubeLib.Builtins.Static;
+using Datapack.Net.CubeLib.Utils;
 using Datapack.Net.Data;
 using Datapack.Net.Function;
 using Datapack.Net.Function.Commands;
@@ -10,12 +12,12 @@ using System.Threading.Tasks;
 
 namespace Datapack.Net.CubeLib
 {
-    public abstract class BaseHeapPointer
+    public abstract class BaseHeapPointer : IStandardPointerMacros
     {
         public abstract KeyValuePair<string, object>[] StandardMacros(KeyValuePair<string, object>[]? extras = null, string postfix = "");
     }
 
-    public class HeapPointer<T>(MCStaticHeap heap, ScoreRef pointer, string extraPath = "") : BaseHeapPointer, IRuntimeArgument
+    public class HeapPointer<T>(MCStaticHeap heap, ScoreRef pointer, string extraPath = "") : BaseHeapPointer, IPointer<T>
     {
         public readonly MCStaticHeap Heap = heap;
         public readonly ScoreRef Pointer = pointer;
@@ -24,33 +26,31 @@ namespace Datapack.Net.CubeLib
 
         public void Set(NBTType val)
         {
-            //var obj = val is NBTString ? val.ToString() : val;
-
             Project.ActiveProject.Std.PointerSet(StandardMacros([new("value", val.ToString())]));
         }
 
-        public void Copy(HeapPointer<T> dest) => CopyUnsafe(dest);
+        public void Copy(IPointer<T> dest) => CopyUnsafe(dest);
 
-        public void CopyUnsafe(BaseHeapPointer dest)
+        public void CopyUnsafe(IStandardPointerMacros dest)
         {
             Project.ActiveProject.Std.PointerMove([.. StandardMacros(null, "2"), .. dest.StandardMacros(null, "1")]);
         }
 
-        public void Move(HeapPointer<T> dest)
+        public void Move(IPointer<T> dest)
         {
             Copy(dest);
             Free();
         }
 
-        public void MoveUnsafe(BaseHeapPointer dest)
+        public void MoveUnsafe(IStandardPointerMacros dest)
         {
             CopyUnsafe(dest);
             Free();
         }
 
-        public HeapPointer<R> Get<R>(string path) => new(Heap, Pointer, ExtraPath + "." + path);
+        public IPointer<R> Get<R>(string path) => new HeapPointer<R>(Heap, Pointer, ExtraPath + "." + path);
 
-        public void Dereference(ScoreRef val) => Project.ActiveProject.Std.PointerDereference(StandardMacros(), val);
+        public void Dereference(ScoreRef val) => Project.ActiveProject.Std.PointerDereferenceToScore(StandardMacros(), val);
         public ScoreRef Dereference()
         {
             var ret = Project.ActiveProject.Local();
@@ -66,6 +66,13 @@ namespace Datapack.Net.CubeLib
         public HeapPointer<T> Duplicate() => new(Heap, Pointer, ExtraPath);
 
         public PointerExists<T> Exists() => new() { Pointer = this };
+
+        public RuntimePointer<T> ToRTP()
+        {
+            var ptr = Project.ActiveProject.AllocObj<RuntimePointer<T>>();
+            Project.ActiveProject.Strcat(ptr.Obj.Pointer, Pointer, ExtraPath);
+            return ptr;
+        }
 
         public override KeyValuePair<string, object>[] StandardMacros(KeyValuePair<string, object>[]? extras = null, string postfix = "")
         {
@@ -96,5 +103,9 @@ namespace Datapack.Net.CubeLib
 
             throw new ArgumentException($"Type {typeof(T).Name} is not a valid HeapPointerProperty type");
         }
+
+        public IPointer ToPointer() => this;
+
+        public IPointer<R> Cast<R>() => new HeapPointer<R>(Heap, Pointer, ExtraPath);
     }
 }

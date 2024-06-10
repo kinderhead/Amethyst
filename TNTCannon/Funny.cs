@@ -4,7 +4,7 @@ using Datapack.Net.CubeLib;
 namespace TNTCannon
 {
     [RuntimeObject("funny")]
-    public partial class Funny(HeapPointer<Funny> prop) : RuntimeObject<TNTProject, Funny>(prop)
+    public partial class Funny(IPointer<Funny> prop) : RuntimeObject<TNTProject, Funny>(prop)
     {
         internal sealed class Props
         {

@@ -1,5 +1,6 @@
 using System;
 using System.Reflection;
+using Datapack.Net.CubeLib.Builtins;
 using Datapack.Net.CubeLib.Utils;
 using Datapack.Net.Data;
 using Datapack.Net.Function;
@@ -12,44 +13,53 @@ namespace Datapack.Net.CubeLib
         public bool HasMethod(string name);
         public Delegate GetMethod(string name);
 
-        public static abstract IBaseRuntimeObject Create(BaseHeapPointer pointer);
+        public IPointer GetPointer();
+
+        public static abstract IBaseRuntimeObject Create<T>(IPointer<T> pointer);
 
         public static IRuntimeArgument Create(ScoreRef arg, Type self) => (IRuntimeArgument?)Activator.CreateInstance(self, [typeof(HeapPointer<>).MakeGenericType(self).GetMethod("Create")?.Invoke(null, [arg])]) ?? throw new ArgumentException("Error dynamically creating a RuntimeObject");
+        public static IRuntimeArgument CreateWithRTP(ScoreRef loc, Type self) => (IRuntimeArgument?)Activator.CreateInstance(self, [Create(loc, typeof(RuntimePointer<>).MakeGenericType(self))]) ?? throw new ArgumentException("Error dynamically creating a RuntimeObject");
     }
 
     public abstract class RuntimeObject<TProject, TSelf> : IBaseRuntimeObject, IRuntimeProperty<TSelf> where TProject : Project where TSelf : RuntimeObject<TProject, TSelf>
     {
-        public HeapPointer<TSelf> Pointer { get; }
+        public IPointer<TSelf> Pointer { get; }
+        public IPointer GetPointer() => Pointer;
 
         public TSelf Value { get => (TSelf)this; }
 
-        public RuntimeObject(HeapPointer<TSelf> loc)
+        public RuntimeObject(IPointer<TSelf> loc)
         {
             Pointer = loc;
         }
 
         public RuntimeObject() {}
 
-        protected HeapPointer<T> Get<T>(string path) => Pointer.Get<T>(path);
-        protected T GetObj<T>(string path) where T : IBaseRuntimeObject => (T)T.Create(Pointer.Get<T>(path));
+        protected IPointer<T> GetProp<T>(string path) => Pointer.Get<T>(path);
+        protected T GetObj<T>(string path) where T : IBaseRuntimeObject => (T)T.Create((RuntimePointer<T>)RuntimePointer<T>.Create(Pointer.Get<RuntimePointer<T>>(path)));
 
-        protected void Set(string path, NBTType val) => Pointer.Get<NBTType>(path).Set(val);
-        protected void Set<T>(string path, HeapPointer<T> pointer) => pointer.Copy(Get<T>(path));
-        protected void Set<T>(string path, IRuntimeProperty<T> prop)
+        protected void SetProp(string path, NBTType val) => Pointer.Get<NBTType>(path).Set(val);
+        protected void SetProp<T>(string path, IPointer<T> pointer)
         {
-            if (prop.Pointer is not null) Set(path, prop.Pointer);
-            else if (NBTType.IsNBTType<T>()) Set(path, NBTType.ToNBT(prop.Value ?? throw new ArgumentException("RuntimeProperty was not created properly")) ?? throw new Exception("How did we get here?"));
+            var place = GetProp<T>(path).Get<string>("obj");
+            Project.ActiveProject.Std.StorePointer([.. place.StandardMacros([], "1"), .. pointer.StandardMacros([], "2")]);
+        }
+        protected void SetProp<T>(string path, IRuntimeProperty<T> prop)
+        {
+            if (prop.Pointer is not null) SetProp(path, prop.Pointer);
+            else if (NBTType.IsNBTType<T>()) SetProp(path, NBTType.ToNBT(prop.Value ?? throw new ArgumentException("RuntimeProperty was not created properly")) ?? throw new Exception("How did we get here?"));
             else throw new ArgumentException("RuntimeProperty was not created properly");
         }
 
-        public void Free() => Pointer.Free();
-        public void Copy(HeapPointer<TSelf> dest) => Pointer.Copy(dest);
-        public void Move(HeapPointer<TSelf> dest) => Pointer.Move(dest);
-        public void Move(TSelf dest) => Pointer.Move(dest.Pointer);
+        public void FreeObj() => Pointer.Free();
+        public void CopyObj(IPointer<TSelf> dest) => Pointer.Copy(dest);
+        public void MoveObj(IPointer<TSelf> dest) => Pointer.Move(dest);
+        public void MoveObj(TSelf dest) => Pointer.Move(dest.Pointer);
 
         public void IfNull(Action func)
         {
-            State.If(Pointer.Exists(), func);
+            if (Pointer is HeapPointer<TSelf> hp) State.If(hp.Exists(), func);
+            else throw new NotImplementedException();
         }
 
         public ScoreRef GetAsArg() => Pointer.GetAsArg();
@@ -84,13 +94,15 @@ namespace Datapack.Net.CubeLib
             }
         }
 
-        public static IBaseRuntimeObject Create(BaseHeapPointer pointer)
+        public static IBaseRuntimeObject Create<T>(IPointer<T> pointer)
         {
             return (IBaseRuntimeObject?)Activator.CreateInstance(typeof(TSelf), [pointer]) ?? throw new ArgumentException("Failed to create runtime object");
         }
 
-        public static IRuntimeArgument Create(ScoreRef arg) => Create((BaseHeapPointer)HeapPointer<TSelf>.Create(arg));
+        public static IRuntimeArgument Create(ScoreRef arg) => Create((IPointer<TSelf>)HeapPointer<TSelf>.Create(arg));
 
-        public static implicit operator RuntimeObject<TProject, TSelf>(HeapPointer<TSelf> pointer) => (RuntimeObject<TProject, TSelf>)Create((BaseHeapPointer)pointer);
+        public static implicit operator RuntimeObject<TProject, TSelf>(HeapPointer<TSelf> pointer) => (RuntimeObject<TProject, TSelf>)Create<TSelf>(pointer);
+
+        public virtual IPointer ToPointer() => Pointer;
     }
 }
