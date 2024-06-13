@@ -40,7 +40,7 @@ namespace Datapack.Net.CubeLib.Builtins.Static
         /// </summary>
         public void DequeueToStorage()
         {
-            Project.ActiveProject.AddCommand(new DataCommand.Modify(Project.ActiveProject.InternalStorage, "tmpstack").Set().From(Storage, $"{Path}[0]"));
+            Project.ActiveProject.AddCommand(new DataCommand.Modify(Project.ActiveProject.InternalStorage, "tmpstack_st").Set().From(Storage, $"{Path}[0]"));
             Project.ActiveProject.AddCommand(new DataCommand.Remove(Storage, $"{Path}[0]"));
         }
 

@@ -15,6 +15,7 @@ namespace Datapack.Net.CubeLib
     public abstract class BaseHeapPointer : IStandardPointerMacros
     {
         public abstract KeyValuePair<string, object>[] StandardMacros(KeyValuePair<string, object>[]? extras = null, string postfix = "");
+        public abstract RuntimePointer<T> ToRTP<T>();
     }
 
     public class HeapPointer<T>(MCStaticHeap heap, ScoreRef pointer, string extraPath = "") : BaseHeapPointer, IPointer<T>
@@ -67,12 +68,14 @@ namespace Datapack.Net.CubeLib
 
         public PointerExists<T> Exists() => new() { Pointer = this };
 
-        public RuntimePointer<T> ToRTP()
+        public override RuntimePointer<R> ToRTP<R>()
         {
-            var ptr = Project.ActiveProject.AllocObj<RuntimePointer<T>>();
+            var ptr = Project.ActiveProject.AllocObj<RuntimePointer<R>>();
             Project.ActiveProject.Strcat(ptr.Obj.Pointer, Pointer, ExtraPath);
             return ptr;
         }
+
+        public RuntimePointer<T> ToRTP() => ToRTP<T>();
 
         public override KeyValuePair<string, object>[] StandardMacros(KeyValuePair<string, object>[]? extras = null, string postfix = "")
         {

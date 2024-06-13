@@ -17,12 +17,12 @@ namespace Datapack.Net.CubeLib
         public IPointer<R> Get<R>(string path);
         public void MoveUnsafe(IStandardPointerMacros dest);
         public void Set(NBTType val);
+        public IPointer<R> Cast<R>();
     }
 
     public interface IPointer<T> : IPointer
     {
         public void Copy(IPointer<T> dest);
         public void Move(IPointer<T> dest);
-        public IPointer<R> Cast<R>();
     }
 }

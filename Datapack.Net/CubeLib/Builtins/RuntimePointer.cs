@@ -13,6 +13,19 @@ namespace Datapack.Net.CubeLib.Builtins
     {
         public readonly string ExtraPath = extraPath;
 
+        private bool selfPointer = false;
+        public RuntimePointer<T> SelfPointer
+        {
+            get
+            {
+                var ptr = new RuntimePointer<T>(Pointer, ExtraPath)
+                {
+                    selfPointer = true
+                };
+                return ptr;
+            }
+        }
+
         public RuntimePointer(IPointer<RuntimePointer<T>> loc) : this(loc, "")
         {
 
@@ -61,14 +74,15 @@ namespace Datapack.Net.CubeLib.Builtins
                 .. extras];
         }
 
+        public override IPointer ToPointer() => selfPointer ? Pointer : this;
+
         public IPointer<R> Get<R>(string path) => new RuntimePointer<R>(Pointer.Cast<RuntimePointer<R>>(), ExtraPath + "." + path);
 
         public void Resolve(IPointer<RuntimePointer<T>> dest)
         {
             Pointer.Copy(dest);
+            throw new NotImplementedException();
         }
-
-        public override IPointer ToPointer() => this;
 
         public void Free() => Pointer.Free();
 

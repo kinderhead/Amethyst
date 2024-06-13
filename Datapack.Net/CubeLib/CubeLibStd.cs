@@ -156,6 +156,7 @@ namespace Datapack.Net.CubeLib
         [DeclareMC("pointer_print", ["storage", "path", "pointer", "ext"])]
         private void _PointerPrint()
         {
+            //AddCommand(new TellrawCommand(new TargetSelector(TargetType.a), new FormattedText().Text("$(value)"), true));
             AddCommand(new TellrawCommand(new TargetSelector(TargetType.a), new FormattedText().Storage(new StorageMacro("$(storage)"), "$(path).$(pointer)$(ext)"), true));
         }
 
@@ -188,6 +189,8 @@ namespace Datapack.Net.CubeLib
         [DeclareMC("pointer_dereference", ["dest_storage", "dest", "storage", "path", "pointer", "ext"])]
         private void _PointerDereference()
         {
+            //AddCommand(new SayCommand("Deref $(dest_storage) $(dest) $(path).$(pointer)$(ext)", true));
+            //AddCommand(new TellrawCommand(new TargetSelector(TargetType.a), new FormattedText().Storage(new StorageMacro("$(storage)"), "$(path).$(pointer)$(ext)"), true));
             AddCommand(new DataCommand.Modify(new StorageMacro("$(dest_storage)"), "$(dest)", true).Set().From(new StorageMacro("$(storage)"), "$(path).$(pointer)$(ext)"));
         }
 

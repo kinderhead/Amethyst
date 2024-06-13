@@ -156,7 +156,7 @@ namespace Datapack.Net.CubeLib
                         {
                             StorageArgumentStack.DequeueToStorage();
                             var ptr = Alloc<NBTCompound>();
-                            Std.PointerSetFrom([.. ptr.StandardMacros(), new("src_storage", InternalStorage), new("src_path", "tmpstack")]);
+                            Std.PointerSetFrom([.. ptr.StandardMacros(), new("src_storage", InternalStorage), new("src_path", "tmpstack_st")]);
                             funcArgs.Add(IBaseRuntimeObject.CreateWithRTP(ptr.Pointer, e));
                             pointers.Add(ptr);
                         }
@@ -346,7 +346,19 @@ namespace Datapack.Net.CubeLib
             {
                 if (i is IBaseRuntimeObject obj)
                 {
-                    StorageArgumentStack.Enqueue(obj.GetPointer());
+                    var rawPtr = obj.GetPointer();
+                    RuntimePointer<NBTCompound> ptr;
+                    bool needsFree = false;
+
+                    if (rawPtr is BaseHeapPointer hp)
+                    {
+                        ptr = hp.ToRTP<NBTCompound>();
+                        needsFree = true;
+                    }
+                    else ptr = (RuntimePointer<NBTCompound>)rawPtr.Cast<NBTCompound>();
+
+                    StorageArgumentStack.Enqueue(ptr.SelfPointer);
+                    if (needsFree) ptr.Free();
                 }
                 else ArgumentStack.Enqueue(i.GetAsArg());
             }
@@ -481,10 +493,18 @@ namespace Datapack.Net.CubeLib
                 other.Run(new FunctionCommand(CurrentTargetCleanup));
                 AddCommand(other);
             }
-            else if (ErrorChecking && cmd is not Execute)
+            else if (ErrorChecking)
             {
-                if (cmd is FunctionCommand) CurrentTarget.Add(new Scoreboard.Players.Set(ErrorScore.Target, ErrorScore.Score, 1));
-                CurrentTarget.Add(new Execute(cmd.Macro).Store(ErrorScore, false).Run(cmd));
+                if (cmd is Execute exe)
+                {
+                    if (exe.Get<Run>().Command is FunctionCommand) CurrentTarget.Add(new Scoreboard.Players.Set(ErrorScore.Target, ErrorScore.Score, 1));
+                    exe.Store(ErrorScore, false);
+                }
+                else
+                {
+                    if (cmd is FunctionCommand) CurrentTarget.Add(new Scoreboard.Players.Set(ErrorScore.Target, ErrorScore.Score, 1));
+                    CurrentTarget.Add(new Execute(cmd.Macro).Store(ErrorScore, false).Run(cmd));
+                }
                 CurrentTarget.Add(new Execute(true).If.Score(ErrorScore, 0).Run(new TellrawCommand(new TargetSelector(TargetType.a), new FormattedText().Text($"Command \"{cmd}\" failed"))));
                 return;
             }

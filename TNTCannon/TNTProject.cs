@@ -37,6 +37,7 @@ namespace TNTCannon
             first.Other = second;
 
             Testy(first.Other);
+            Print(first.Other);
         }
 
         protected override void Tick()
@@ -47,7 +48,9 @@ namespace TNTCannon
         [DeclareMC("testy")]
         private void _Testy(Funny obj)
         {
+            Print("Thinky");
             Print(obj);
+            obj.Str = "8";
         }
 
         /// <summary>
