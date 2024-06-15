@@ -14,7 +14,7 @@ namespace Datapack.Net.CubeLib
         public void Dereference(ScoreRef val);
         public ScoreRef Dereference();
         public void Free();
-        public IPointer<R> Get<R>(string path);
+        public IPointer<R> Get<R>(string path, bool dot = true);
         public void MoveUnsafe(IStandardPointerMacros dest);
         public void Set(NBTType val);
         public IPointer<R> Cast<R>();
@@ -22,6 +22,7 @@ namespace Datapack.Net.CubeLib
 
     public interface IPointer<T> : IPointer
     {
+        public T Self { get; }
         public void Copy(IPointer<T> dest);
         public void Move(IPointer<T> dest);
     }

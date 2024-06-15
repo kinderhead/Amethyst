@@ -28,38 +28,19 @@ namespace TNTCannon
 
             Heap.Clear();
 
-            var first = AllocObj<Funny>();
-            var second = AllocObj<Funny>();
+            var list = AllocObj<MCList<NBTString>>();
+            list.Add("Bruh");
+            list.Add("Bruh2");
+            list.Add("Boo");
 
-            second.Prop = 17;
+            Print(list[0]);
 
-            first.Prop = 5;
-            first.Other = second;
-
-            Testy(first.Other);
-            Print(first.Other);
+            list.ForEach((i, idex) => Print(i));
         }
 
         protected override void Tick()
         {
 
-        }
-
-        [DeclareMC("testy")]
-        private void _Testy(Funny obj)
-        {
-            Print("Thinky");
-            Print(obj);
-            obj.Str = "8";
-        }
-
-        /// <summary>
-        /// Test
-        /// </summary>
-        [DeclareMC("reset")]
-        private void _Reset()
-        {
-            Heap.Clear();
         }
     }
 }

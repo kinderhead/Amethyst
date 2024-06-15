@@ -25,6 +25,8 @@ namespace Datapack.Net.CubeLib
 
         public readonly string ExtraPath = extraPath;
 
+        public T Self => (T?)typeof(T).GetMethod("Create")?.Invoke(null, [this]) ?? throw new ArgumentException("Not a pointer to a RuntimeObject");
+
         public void Set(NBTType val)
         {
             Project.ActiveProject.Std.PointerSet(StandardMacros([new("value", val.ToString())]));
@@ -49,7 +51,7 @@ namespace Datapack.Net.CubeLib
             Free();
         }
 
-        public IPointer<R> Get<R>(string path) => new HeapPointer<R>(Heap, Pointer, ExtraPath + "." + path);
+        public IPointer<R> Get<R>(string path, bool dot = true) => new HeapPointer<R>(Heap, Pointer, ExtraPath + (dot ? "." : "") + path);
 
         public void Dereference(ScoreRef val) => Project.ActiveProject.Std.PointerDereferenceToScore(StandardMacros(), val);
         public ScoreRef Dereference()
@@ -70,7 +72,7 @@ namespace Datapack.Net.CubeLib
 
         public override RuntimePointer<R> ToRTP<R>()
         {
-            var ptr = Project.ActiveProject.AllocObj<RuntimePointer<R>>();
+            var ptr = Project.ActiveProject.AllocObj<RuntimePointer<R>>(false);
             Project.ActiveProject.Strcat(ptr.Obj.Pointer, Pointer, ExtraPath);
             return ptr;
         }

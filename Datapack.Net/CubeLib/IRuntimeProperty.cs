@@ -6,6 +6,6 @@ namespace Datapack.Net.CubeLib
     public interface IRuntimeProperty<T> : IToPointer
     {
         public IPointer<T> Pointer { get; }
-        public T Value { get; }
+        public T PropValue { get; }
     }
 }

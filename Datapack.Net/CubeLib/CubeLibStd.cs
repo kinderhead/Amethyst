@@ -17,7 +17,7 @@ namespace Datapack.Net.CubeLib
 
         protected override void Init()
         {
-            RegisterObject<MCList>();
+            RegisterObject<MCList<NBTType>>();
             RegisterObject<RuntimePointer<NBTType>>();
         }
 
@@ -41,7 +41,7 @@ namespace Datapack.Net.CubeLib
                 Random(new(0, int.MaxValue - 1), x);
 
                 var res = Local();
-                PointerExists([new("storage", "$(storage)"), new("path", "$(path)"), new("pointer", x)], res, true);
+                PointerExists([new("storage", "$(storage)"), new("path", "$(path)"), new("pointer", x), new("ext", "")], res, true);
                 If(res == 0, new ReturnCommand(1));
             });
             Return(x);
@@ -196,17 +196,36 @@ namespace Datapack.Net.CubeLib
 
         /// <summary>
         /// Arguments: <br/>
-        /// <b>storage</b>: Storage identifier <br/>
-        /// <b>path</b>: Path in storage to heap <br/>
-        /// <b>pointer</b>: The pointer <br/>
-        /// <b>ext</b>: Extension path including "." <br/>
-        /// <b>0-9</b>: Up to 10 string components labeled 0 through 9 to be concatenated in order <br/>
+        /// <b>storage1</b>: Destination storage identifier <br/>
+        /// <b>path1</b>: Destination path in storage to heap <br/>
+        /// <b>pointer1</b>: Destination pointer <br/>
+        /// <b>ext1</b>: Destination extension path including "." <br/>
+        /// <b>storage2</b>: List storage identifier <br/>
+        /// <b>path2</b>: List path in storage to heap <br/>
+        /// <b>pointer2</b>: List pointer <br/>
+        /// <b>ext2</b>: List extension path including "." <br/>
+        /// <b>index</b>: Index <br/>
         /// </summary>
-        [DeclareMC("string_concat", ["storage", "path", "pointer", "ext", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9"])]
-        private void _StringConcat()
+        [DeclareMC("pointer_index_list", ["storage1", "path1", "pointer1", "ext1", "index", "storage2", "path2", "pointer2", "ext2"])]
+        private void _PointerIndexList()
         {
-            AddCommand(new DataCommand.Modify(new StorageMacro("$(storage)"), "$(path).$(pointer)$(ext)", true).Set().Value("$(0)$(1)$(2)$(3)$(4)$(5)$(6)$(7)$(8)$(9)"));
+            AddCommand(new DataCommand.Modify(new StorageMacro("$(storage1)"), "$(path1).$(pointer1)$(ext1)", true).Set().Value("\"$(pointer2)$(ext2)[$(index)]\""));
         }
+
+        // /// <summary>
+        // /// Arguments: <br/>
+        // /// <b>storage</b>: Storage identifier <br/>
+        // /// <b>path</b>: Path in storage to heap <br/>
+        // /// <b>pointer</b>: The pointer <br/>
+        // /// <b>ext</b>: Extension path including "." <br/>
+        // /// <b>0-9</b>: Up to 10 string components labeled 0 through 9 to be concatenated in order <br/>
+        // /// </summary>
+        // [DeclareMC("string_concat", ["storage", "path", "pointer", "ext", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9"])]
+        // private void _StringConcat()
+        // {
+        //     Print("Yo");
+        //     AddCommand(new DataCommand.Modify(new StorageMacro("$(storage)"), "$(path).$(pointer)$(ext)", true).Set().Value("$(0)$(1)$(2)$(3)$(4)$(5)$(6)$(7)$(8)$(9)"));
+        // }
 
         /// <summary>
         /// Arguments: <br/>

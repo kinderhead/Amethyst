@@ -30,7 +30,9 @@ namespace Datapack.Net.Function
             if (command.Macro) Macro = true;
         }
 
-        public override string Build(DP pack)
+        public override string Build(DP pack) => Build();
+
+        public string Build()
         {
             StringBuilder sb = new();
             foreach (var i in Commands)
@@ -40,6 +42,8 @@ namespace Datapack.Net.Function
             }
             return sb.ToString();
         }
+
+        public bool SameContents(MCFunction other) => Build() == other.Build();
 
         public static bool operator==(MCFunction a, MCFunction b) => a.ID == b.ID;
         public static bool operator!=(MCFunction a, MCFunction b) => a.ID != b.ID;

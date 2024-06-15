@@ -26,17 +26,17 @@ namespace Datapack.Net.CubeLib
         public IPointer<TSelf> Pointer { get; }
         public IPointer GetPointer() => Pointer;
 
-        public TSelf Value { get => (TSelf)this; }
+        public TSelf PropValue { get => (TSelf)this; }
 
         public RuntimeObject(IPointer<TSelf> loc)
         {
             Pointer = loc;
         }
 
-        public RuntimeObject() {}
+        public RuntimeObject() { }
 
-        protected IPointer<T> GetProp<T>(string path) => Pointer.Get<T>(path);
-        protected T GetObj<T>(string path) where T : IBaseRuntimeObject => (T)T.Create((RuntimePointer<T>)RuntimePointer<T>.Create(Pointer.Get<RuntimePointer<T>>(path)));
+        protected IPointer<T> GetProp<T>(string path, bool dot = true) => Pointer.Get<T>(path, dot);
+        protected T GetObj<T>(string path, bool dot = true) where T : IBaseRuntimeObject => (T)T.Create((RuntimePointer<T>)RuntimePointer<T>.Create(Pointer.Get<RuntimePointer<T>>(path, dot)));
 
         protected void SetProp(string path, NBTType val) => Pointer.Get<NBTType>(path).Set(val);
         protected void SetProp<T>(string path, IPointer<T> pointer)
@@ -47,7 +47,7 @@ namespace Datapack.Net.CubeLib
         protected void SetProp<T>(string path, IRuntimeProperty<T> prop)
         {
             if (prop.Pointer is not null) SetProp(path, prop.Pointer);
-            else if (NBTType.IsNBTType<T>()) SetProp(path, NBTType.ToNBT(prop.Value ?? throw new ArgumentException("RuntimeProperty was not created properly")) ?? throw new Exception("How did we get here?"));
+            else if (NBTType.IsNBTType<T>()) SetProp(path, NBTType.ToNBT(prop.PropValue ?? throw new ArgumentException("RuntimeProperty was not created properly")) ?? throw new Exception("How did we get here?"));
             else throw new ArgumentException("RuntimeProperty was not created properly");
         }
 

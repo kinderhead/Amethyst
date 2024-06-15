@@ -26,6 +26,8 @@ namespace Datapack.Net.CubeLib.Builtins
             }
         }
 
+        public T Self => (T?)typeof(T).GetMethod("Create")?.Invoke(null, [this]) ?? throw new ArgumentException("Not a pointer to a RuntimeObject");
+
         public RuntimePointer(IPointer<RuntimePointer<T>> loc) : this(loc, "")
         {
 
@@ -76,7 +78,7 @@ namespace Datapack.Net.CubeLib.Builtins
 
         public override IPointer ToPointer() => selfPointer ? Pointer : this;
 
-        public IPointer<R> Get<R>(string path) => new RuntimePointer<R>(Pointer.Cast<RuntimePointer<R>>(), ExtraPath + "." + path);
+        public IPointer<R> Get<R>(string path, bool dot) => new RuntimePointer<R>(Pointer.Cast<RuntimePointer<R>>(), ExtraPath + (dot ? "." : "") + path);
 
         public void Resolve(IPointer<RuntimePointer<T>> dest)
         {

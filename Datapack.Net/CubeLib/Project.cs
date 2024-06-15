@@ -68,6 +68,8 @@ namespace Datapack.Net.CubeLib
         public bool ErrorChecking = false;
         public ScoreRef ErrorScore;
 
+        public readonly List<MCFunction> DynamicFunctions = [];
+
         protected Project(DP pack)
         {
             Datapack = pack;
@@ -215,41 +217,51 @@ namespace Datapack.Net.CubeLib
                 Datapack.GetResource<Functions>().Add(i);
             }
 
+            foreach (var i in DynamicFunctions)
+            {
+                Datapack.GetResource<Functions>().Add(i);
+            }
+
             foreach (var i in MiscMCFunctions)
             {
                 Datapack.GetResource<Functions>().Add(i);
             }
         }
 
-        public MCFunction GuaranteeFunc(Delegate func, bool macro)
+        public MCFunction GuaranteeFunc(Delegate func, KeyValuePair<string, object>[] macros)
         {
             var attr = DeclareMCAttribute.Get(func);
             MCFunction retFunc;
             if (func.Target != this && func.Target is Project lib)
             {
-                if (lib.BuiltOrBuilding) return lib.GuaranteeFunc(func, macro);
+                if (lib.BuiltOrBuilding) return lib.GuaranteeFunc(func, macros);
                 retFunc = new(new(lib.Namespace, attr.Path), true);
             }
             else if (FindFunction(func) is MCFunction mcfunc) retFunc = mcfunc;
             else retFunc = AddFunction(func);
 
-            if (macro && attr.Macros.Length == 0) throw new ArgumentException("Attempted to call a non macro function with arguments");
-            if (!macro && attr.Macros.Length != 0) throw new ArgumentException("Attempted to call a macro function without arguments");
+            if (macros.Length != 0 && attr.Macros.Length == 0) throw new ArgumentException("Attempted to call a non macro function with arguments");
+            else if (macros.Length == 0 && attr.Macros.Length != 0) throw new ArgumentException("Attempted to call a macro function without arguments");
+            else if (macros.Length != attr.Macros.Length) throw new ArgumentException("Mismatch in number of macro arguments passed to and accepted by function");
+            else if (macros.Length != 0)
+            {
+                foreach (var i in macros)
+                {
+                    if (!attr.Macros.Contains(i.Key)) throw new ArgumentException($"Function does not accept macro argument \"{i.Key}\"");
+                }
+            }
 
             return retFunc;
         }
 
-        public void Call(Action func, bool macro = false) => Call(GuaranteeFunc(func, false), macro);
+        public void Call(Action func, bool macro = false) => Call(GuaranteeFunc(func, []), macro);
         public void Call(MCFunction func, bool macro = false) => AddCommand(new FunctionCommand(func, macro));
 
-        public void Call(Action func, Storage storage, string path = "", bool macro = false) => Call(GuaranteeFunc(func, true), storage, path, macro);
-        public void Call(MCFunction func, Storage storage, string path = "", bool macro = false) => AddCommand(new FunctionCommand(func, storage, path, macro));
-
-        public void Call(Action func, KeyValuePair<string, object>[] args, bool macro = false, int tmp = 0) => Call(GuaranteeFunc(func, true), args, macro, tmp);
+        public void Call(Action func, KeyValuePair<string, object>[] args, bool macro = false, int tmp = 0) => Call(GuaranteeFunc(func, args), args, macro, tmp);
         public void Call(MCFunction func, KeyValuePair<string, object>[] args, bool macro = false, int tmp = 0) => AddCommand(BaseCall(func, args, macro, tmp));
 
-        public void CallArg(Delegate func, IRuntimeArgument[] args, bool macro = false) => CallArg(GuaranteeFunc(func, false), args, macro);
-        public void CallArg(Delegate func, IRuntimeArgument[] args, KeyValuePair<string, object>[] macros, bool macro = false, int tmp = 0) => CallArg(GuaranteeFunc(func, true), args, macros, macro, tmp);
+        public void CallArg(Delegate func, IRuntimeArgument[] args, bool macro = false) => CallArg(GuaranteeFunc(func, []), args, macro);
+        public void CallArg(Delegate func, IRuntimeArgument[] args, KeyValuePair<string, object>[] macros, bool macro = false, int tmp = 0) => CallArg(GuaranteeFunc(func, macros), args, macros, macro, tmp);
         public void CallArg(MCFunction func, IRuntimeArgument[] args, bool macro = false) => AddCommand(BaseCall(func, args, macro));
         public void CallArg(MCFunction func, IRuntimeArgument[] args, KeyValuePair<string, object>[] macros, bool macro = false, int tmp = 0) => AddCommand(BaseCall(func, args, macros, macro, tmp));
 
@@ -264,15 +276,12 @@ namespace Datapack.Net.CubeLib
         {
             if (!DeclareMCAttribute.Get(func).Returns) throw new InvalidOperationException("Function does not return a value");
 
-            CallRet(GuaranteeFunc(func, false), ret);
+            CallRet(GuaranteeFunc(func, []), ret);
         }
 
         public void CallRet(MCFunction func, ScoreRef ret, bool macro = false) => AddCommand(new Execute(macro).Store(ret).Run(new FunctionCommand(func)));
 
-        public void CallRet(Action func, ScoreRef ret, Storage storage, string path = "", bool macro = false) => CallRet(GuaranteeFunc(func, true), ret, storage, path, macro);
-        public void CallRet(MCFunction func, ScoreRef ret, Storage storage, string path = "", bool macro = false) => AddCommand(new Execute(macro).Store(ret).Run(new FunctionCommand(func, storage, path)));
-
-        public void CallRet(Action func, ScoreRef ret, KeyValuePair<string, object>[] args, bool macro = false, int tmp = 0) => CallRet(GuaranteeFunc(func, true), ret, args, macro, tmp);
+        public void CallRet(Action func, ScoreRef ret, KeyValuePair<string, object>[] args, bool macro = false, int tmp = 0) => CallRet(GuaranteeFunc(func, args), ret, args, macro, tmp);
 
         public ScoreRef CallRet(Action func, KeyValuePair<string, object>[] args, bool macro = false, int tmp = 0)
         {
@@ -286,8 +295,8 @@ namespace Datapack.Net.CubeLib
             AddCommand(new Execute(macro).Store(ret).Run(BaseCall(func, args, macro, tmp)));
         }
 
-        public void CallArgRet(Delegate func, ScoreRef ret, IRuntimeArgument[] args, bool macro = false) => CallArgRet(GuaranteeFunc(func, false), ret, args, macro);
-        public void CallArgRet(Delegate func, ScoreRef ret, IRuntimeArgument[] args, KeyValuePair<string, object>[] macros, bool macro = false, int tmp = 0) => CallArgRet(GuaranteeFunc(func, false), ret, args, macros, macro, tmp);
+        public void CallArgRet(Delegate func, ScoreRef ret, IRuntimeArgument[] args, bool macro = false) => CallArgRet(GuaranteeFunc(func, []), ret, args, macro);
+        public void CallArgRet(Delegate func, ScoreRef ret, IRuntimeArgument[] args, KeyValuePair<string, object>[] macros, bool macro = false, int tmp = 0) => CallArgRet(GuaranteeFunc(func, macros), ret, args, macros, macro, tmp);
         public void CallArgRet(MCFunction func, ScoreRef ret, IRuntimeArgument[] args, bool macro = false) => AddCommand(new Execute(macro).Store(ret).Run(BaseCall(func, args, macro)));
         public void CallArgRet(MCFunction func, ScoreRef ret, IRuntimeArgument[] args, KeyValuePair<string, object>[] macros, bool macro = false, int tmp = 0) => AddCommand(new Execute().Store(ret).Run(BaseCall(func, args, macros, macro, tmp)));
 
@@ -412,7 +421,7 @@ namespace Datapack.Net.CubeLib
             if (index != -1) return funcs[index].Value;
 
             var methods = RuntimeMethods.ToList();
-            index = methods.FindIndex((i) => i.Key.Method.MethodHandle.Equals(func.Method.MethodHandle));
+            index = methods.FindIndex((i) => i.Key.Method.Name == func.Method.Name && (i.Key.Method.DeclaringType?.SameType(func.Method.DeclaringType) ?? false));
             if (index != -1) return methods[index].Value;
 
             return null;
@@ -568,13 +577,18 @@ namespace Datapack.Net.CubeLib
             return tmp;
         }
 
-        public ScoreRef Local()
+        public ScoreRef GetRegister(int index)
         {
-            var score = new Score($"_cl_reg_{RegistersInUse.Count}", "dummy");
+            var score = new Score($"_cl_reg_{index}", "dummy");
             Registers.Add(score);
             Scores.Add(score);
 
-            var register = new ScoreRef(score, GlobalScoreEntity);
+            return new ScoreRef(score, GlobalScoreEntity);
+        }
+
+        public ScoreRef Local()
+        {
+            var register = GetRegister(RegistersInUse.Count);
             RegistersInUse.Add(register);
 
             RegisterStack.Enqueue(register);
@@ -641,22 +655,26 @@ namespace Datapack.Net.CubeLib
             return new(mcfunc, nbt, true);
         }
 
-        public T AllocObj<T>() where T : IBaseRuntimeObject => AllocObj<T>(Local());
-        public T AllocObj<T>(ScoreRef loc) where T : IBaseRuntimeObject
+        public T AllocObj<T>(bool rtp = true) where T : IBaseRuntimeObject => AllocObj<T>(Local(), rtp);
+        public T AllocObj<T>(ScoreRef loc, bool rtp = true) where T : IBaseRuntimeObject
         {
-            var obj = (T)T.Create(Heap.Alloc<T>(loc));
+            var ptr = (IPointer<T>)(rtp ? Heap.Alloc<T>(loc).ToRTP() : Heap.Alloc<T>(loc));
+            var obj = (T)T.Create(ptr);
             if (obj.HasMethod("init")) CallArg(obj.GetMethod("init"), [obj]);
+
+            if (rtp) WithCleanup(() => ((RuntimePointer<T>)ptr).FreeObj());
+
             return obj;
         }
 
-        public T AttachObj<T>(ScoreRef loc) where T : IBaseRuntimeObject => (T)T.Create(new HeapPointer<T>(Heap, loc));
+        // public T AttachObj<T>(ScoreRef loc) where T : IBaseRuntimeObject => (T)T.Create(new HeapPointer<T>(Heap, loc));
 
-        public T AllocObjIfNull<T>(ScoreRef loc) where T : IBaseRuntimeObject
-        {
-            var obj = AttachObj<T>(loc);
-            obj.IfNull(() => Alloc<T>(loc));
-            return obj;
-        }
+        // public T AllocObjIfNull<T>(ScoreRef loc) where T : IBaseRuntimeObject
+        // {
+        //     var obj = AttachObj<T>(loc);
+        //     obj.IfNull(() => Alloc<T>(loc));
+        //     return obj;
+        // }
 
         public HeapPointer<T> Alloc<T>() => Alloc<T>(Local());
         public HeapPointer<T> Alloc<T>(ScoreRef loc) => Heap.Alloc<T>(loc);
@@ -670,10 +688,10 @@ namespace Datapack.Net.CubeLib
 
         public HeapPointer<T> Attach<T>(ScoreRef loc) => new(Heap, loc);
 
-        public HeapPointer<T> AllocIfNull<T>(ScoreRef loc, int val = 0)
+        public HeapPointer<T> AllocIfNull<T>(ScoreRef loc, int defaultValue = 0)
         {
             var ptr = Attach<T>(loc);
-            If(!ptr.Exists(), () => Alloc(loc, (NBTInt)val));
+            If(!ptr.Exists(), () => Alloc(loc, (NBTInt)defaultValue));
             return ptr;
         }
 
@@ -718,12 +736,28 @@ namespace Datapack.Net.CubeLib
             return score;
         }
 
-        public void Strcat(IPointer<string> dest, params object[] values) => Strcat(dest, values);
+        public void CallDynamicFunction(Action<MCFunction> func) => Call(ProcessDynamicFunction(func));
+
+        public MCFunction ProcessDynamicFunction(Action<MCFunction> func)
+        {
+            var mcfunc = new MCFunction(new(Namespace, $"zz_anon/{AnonymousFuncCounter++}"), true);
+            func(mcfunc);
+            foreach (var i in DynamicFunctions)
+            {
+                if (i.SameContents(mcfunc))
+                {
+                    AnonymousFuncCounter--;
+                    return i;
+                }
+            }
+            DynamicFunctions.Add(mcfunc);
+            return mcfunc;
+        }
+
+        public void Strcat(IPointer<string> dest, params object[] values) => Strcat(dest, false, values);
 
         public void Strcat(IPointer<string> dest, bool macro = false, params object[] values)
         {
-            if (values.Length > 10) throw new ArgumentException("Strcat only accepts up to 10 objects at this moment");
-
             List<KeyValuePair<string, object>> args = [];
 
             for (int i = 0; i < values.Length; i++)
@@ -731,7 +765,23 @@ namespace Datapack.Net.CubeLib
                 args.Add(new(i.ToString(), values[i]));
             }
 
-            Std.StringConcat([.. args, .. dest.StandardMacros()], macro);
+            Call(ProcessDynamicFunction((func) =>
+            {
+                var builder = new StringBuilder();
+
+                for (int i = 0; i < values.Length; i++)
+                {
+                    builder.Append($"$({i})");
+                }
+
+                func.Add(new DataCommand.Modify(new StorageMacro("$(storage)"), "$(path).$(pointer)$(ext)", true).Set().Value(builder.ToString()));
+            }), [..dest.StandardMacros(), ..args], macro);
+        }
+
+        public void DebugLastFunctionCall()
+        {
+            AddCommand(new DataCommand.Modify(InternalStorage, "test").Set().From(InternalStorage, "func_tmp0"));
+            Print($"Debugging for function available with storage {InternalStorage} test");
         }
 
         protected virtual void Init() { }

@@ -24,4 +24,14 @@ namespace Datapack.Net.Data
         public static implicit operator NBTString(string val) => new(val);
         public static implicit operator string(NBTString val) => val.Value;
     }
+
+    public class NBTRawString(string val) : NBTType
+    {
+        public readonly string Value = val;
+
+        public override void Build(StringBuilder sb)
+        {
+            sb.Append(Value);
+        }
+    }
 }

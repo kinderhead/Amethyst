@@ -5,7 +5,7 @@ namespace Datapack.Net.CubeLib
     public class RuntimeProperty<T> : IRuntimeProperty<T>
     {
         public IPointer<T> Pointer { get; protected set; }
-        public T Value { get; }
+        public T PropValue { get; }
 
         public RuntimeProperty(IPointer<T> pointer)
         {
@@ -14,7 +14,7 @@ namespace Datapack.Net.CubeLib
 
         public RuntimeProperty(T val)
         {
-            Value = val;
+            PropValue = val;
         }
 
         public void Copy(IPointer<T> dest) => (Pointer ?? throw new Exception("RuntimeProperty is not fully qualified")).Copy(dest);

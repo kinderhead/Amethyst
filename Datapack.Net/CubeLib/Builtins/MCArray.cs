@@ -1,4 +1,5 @@
-﻿using Datapack.Net.Data;
+﻿using Datapack.Net.CubeLib.Utils;
+using Datapack.Net.Data;
 using Datapack.Net.Function.Commands;
 using System;
 using System.Collections.Generic;
@@ -9,25 +10,66 @@ using System.Threading.Tasks;
 namespace Datapack.Net.CubeLib.Builtins
 {
     [RuntimeObject("list")]
-    public partial class MCList(IPointer<MCList> loc) : RuntimeObject<CubeLibStd, MCList>(loc)
+    public partial class MCList<T>(IPointer<MCList<T>> loc) : RuntimeObject<CubeLibStd, MCList<T>>(loc)
     {
-        internal sealed class Props
+        public void Add(T value)
         {
-            [RuntimeProperty("value")]
-            public NBTList List { get; set; }
-
-            [RuntimeProperty("count")]
-            public int Count { get; set; }
+            if (NBTType.IsNBTType<T>()) _Add([new("value", value?.ToString())]);
+            else _Add([new("value", value)]);
         }
 
-        public void Add(IRuntimeArgument value) => Add([new("value", value)]);
-        public void Add(NBTType value) => Add([new("value", value.ToString())]);
+        public void ForEach(Action<IPointer<T>, ScoreRef> loop)
+        {
+            var proj = Project.ActiveProject;
+
+            var count = Count();
+            proj.For(0, count, (idex) =>
+            {
+                var i = this[idex];
+                loop(i, idex);
+            });
+        }
+
+        public void Count(ScoreRef loc) => Pointer.Dereference(loc);
+        public ScoreRef Count()
+        {
+            var reg = Project.ActiveProject.Local();
+            Count(reg);
+            return reg;
+        }
+
+        public RuntimePointer<T> Index(object index)
+        {
+            var proj = Project.ActiveProject;
+
+            var ptr = proj.AllocObj<RuntimePointer<T>>(false);
+            proj.Std.PointerIndexList([.. ptr.Obj.Pointer.StandardMacros([], "1"), .. Pointer.StandardMacros([], "2"), new("index", index)]);
+            proj.WithCleanup(ptr.FreeObj);
+            return ptr;
+        }
+
+        public IPointer<T> this[int index]
+        {
+            get => GetProp<T>($"[{index}]", false);
+            set => value.Copy(GetProp<T>($"[{index}]", false));
+        }
+
+        public IPointer<T> this[ScoreRef index]
+        {
+            get => Index(index);
+            set => value.Copy(Index(index));
+        }
+
+        public IPointer<T> this[IPointer<NBTInt> index]
+        {
+            get => Index(index);
+            set => value.Copy(Index(index));
+        }
 
         [DeclareMC("init")]
-        private static void _Init(MCList self)
+        private static void _Init(MCList<T> self)
         {
-            self.List = new NBTList();
-            self.Count = 0;
+            self.Pointer.Set(new NBTList());
         }
 
         /// <summary>
@@ -36,9 +78,9 @@ namespace Datapack.Net.CubeLib.Builtins
         /// </summary>
         /// <param name="self">Self</param>
         [DeclareMC("add", ["value"])]
-        private static void _Add(MCList self)
+        private static void __Add(MCList<T> self)
         {
-            State.Std.PointerAppend(self.List.Pointer.StandardMacros([new("value", "$(value)")]), true);
+            State.Std.PointerAppend(self.Pointer.StandardMacros([new("value", new NBTRawString("$(value)"))]), true);
         }
     }
 }
