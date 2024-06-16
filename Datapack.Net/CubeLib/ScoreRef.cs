@@ -34,9 +34,7 @@ namespace Datapack.Net.CubeLib
 
         public void Op(int val, ScoreOperation op)
         {
-            var tmp = Project.ActiveProject.Temp(0, "math_const");
-            tmp.Set(val);
-            Project.ActiveProject.AddCommand(new Scoreboard.Players.Operation(Target, Score, op, tmp.Target, tmp.Score));
+            Op(Project.ActiveProject.Constant(val), op);
         }
 
         public void Op(ScoreRef val, ScoreOperation op)
