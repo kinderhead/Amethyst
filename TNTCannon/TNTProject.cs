@@ -17,9 +17,12 @@ namespace TNTCannon
     {
         public override string Namespace => "tnt";
 
+        private ScoreRef List;
+
         protected override void Init()
         {
             RegisterObject<Funny>();
+            List = Global();
         }
 
         protected override void Main()
@@ -28,9 +31,9 @@ namespace TNTCannon
 
             Heap.Clear();
 
-            var x = Local(10);
-            var y = Local(5);
-            Print(x * 76 * (y + 2));
+            var list = AllocObj<MCList<NBTInt>>();
+
+            Print(list);
         }
 
         protected override void Tick()

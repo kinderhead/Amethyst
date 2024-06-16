@@ -14,8 +14,14 @@ namespace Datapack.Net.CubeLib.Builtins
     {
         public void Add(T value)
         {
-            if (NBTType.IsNBTType<T>()) _Add([new("value", value?.ToString())]);
-            else _Add([new("value", value)]);
+            if (NBTType.IsNBTType<T>()) InternalAdd(value?.ToString() ?? throw new Exception("How did we get here?"));
+            else InternalAdd(value ?? throw new ArgumentException("Cannot be null"));
+        }
+
+        public void Add(ScoreRef value)
+        {
+            if (typeof(T) != typeof(NBTInt)) throw new ArgumentException("Cannot convert a ScoreRef to a non integer");
+            InternalAdd(value ?? throw new ArgumentException("Cannot be null"));
         }
 
         public void Remove(int index) => this[index].Free();
@@ -76,15 +82,9 @@ namespace Datapack.Net.CubeLib.Builtins
             self.Pointer.Set(new NBTList());
         }
 
-        /// <summary>
-        /// Arguments: <br/>
-        /// <b>value</b>: The value to add <br/>
-        /// </summary>
-        /// <param name="self">Self</param>
-        [DeclareMC("add", ["value"])]
-        private static void __Add(MCList<T> self)
+        private void InternalAdd(object value)
         {
-            State.Std.PointerAppend(self.Pointer.StandardMacros([new("value", new NBTRawString("$(value)"))]), true);
+            Project.ActiveProject.Std.PointerAppend(Pointer.StandardMacros([new("value", value)]), true);
         }
     }
 }
