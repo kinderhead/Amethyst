@@ -28,14 +28,9 @@ namespace TNTCannon
 
             Heap.Clear();
 
-            var list = AllocObj<MCList<NBTString>>();
-            list.Add("Bruh");
-            list.Add("Bruh2");
-            list.Add("Boo");
-
-            list.Remove(1);
-
-            list.ForEach((i, idex) => Print(i));
+            var x = Local(10);
+            var y = Local(5);
+            Print(x * 76 * (y + 2));
         }
 
         protected override void Tick()

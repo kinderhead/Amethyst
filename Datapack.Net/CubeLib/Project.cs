@@ -401,6 +401,12 @@ namespace Datapack.Net.CubeLib
             {
                 if (i is string str) text.Text(str);
                 else if (i is ScoreRef score) text.Score(score);
+                else if (i is ScoreRefOperation op)
+                {
+                    var x = Local();
+                    op.Process(x);
+                    text.Score(x);
+                }
                 else throw new ArgumentException($"Invalid print object {i}. Try using Print<T> for objects on the heap");
 
                 text.Text(" ");
