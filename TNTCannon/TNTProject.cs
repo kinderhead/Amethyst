@@ -33,7 +33,7 @@ namespace TNTCannon
             list.Add("Bruh2");
             list.Add("Boo");
 
-            Print(list[0]);
+            list.Remove(1);
 
             list.ForEach((i, idex) => Print(i));
         }

@@ -9,8 +9,9 @@ namespace TNTCannon
         {
             var pack = new DP("Wow");
 
+            Project.Settings.VerifyMacros = true;
+
             var proj = Project.Create<TNTProject>(pack);
-            //proj.ErrorChecking = true;
             proj.Build();
 
             pack.Optimize();

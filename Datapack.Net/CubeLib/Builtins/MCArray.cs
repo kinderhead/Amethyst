@@ -18,6 +18,10 @@ namespace Datapack.Net.CubeLib.Builtins
             else _Add([new("value", value)]);
         }
 
+        public void Remove(int index) => this[index].Free();
+        public void Remove(ScoreRef index) => this[index].Free();
+        public void Remove(IPointer<NBTInt> index) => this[index].Free();
+
         public void ForEach(Action<IPointer<T>, ScoreRef> loop)
         {
             var proj = Project.ActiveProject;

@@ -25,6 +25,7 @@ namespace Datapack.Net.CubeLib
         public static readonly List<Project> Projects = [];
         public static readonly Storage GlobalStorage = new(new("cubelib", "global"));
         public static readonly NamedTarget GlobalScoreEntity = new("#_cubelib_score");
+        public static Settings Settings;
 
         internal static Dictionary<Delegate, MCFunction> RuntimeMethods = [];
 
@@ -32,6 +33,7 @@ namespace Datapack.Net.CubeLib
         public abstract string Namespace { get; }
 
         private readonly Dictionary<Delegate, MCFunction> MCFunctions = [];
+        private static readonly Dictionary<NamespacedID, MCFunction> MacroCheckFunctions = [];
         private readonly List<MCFunction> MiscMCFunctions = [];
         private readonly Queue<KeyValuePair<Delegate, MCFunction>> FunctionsToProcess = [];
 
@@ -65,7 +67,6 @@ namespace Datapack.Net.CubeLib
 
         public CubeLibStd Std;
 
-        public bool ErrorChecking = false;
         public ScoreRef ErrorScore;
 
         public readonly List<MCFunction> DynamicFunctions = [];
@@ -92,7 +93,6 @@ namespace Datapack.Net.CubeLib
         public T AddDependency<T>() where T : Project
         {
             var project = Create<T>(Datapack);
-            project.ErrorChecking = ErrorChecking;
             project.Build();
             ActiveProject = this;
             Dependencies.Add(project);
@@ -129,7 +129,7 @@ namespace Datapack.Net.CubeLib
             Heap = new(GlobalStorage, "heap");
             AddStaticObject(Heap);
 
-            if (ErrorChecking)
+            if (Settings.ErrorChecking)
             {
                 var score = new Score("_cl_err", "dummy");
                 Scores.Add(score);
@@ -145,6 +145,17 @@ namespace Datapack.Net.CubeLib
                 MiscMCFunctions.Add(CurrentTargetCleanup);
 
                 List<IPointer> pointers = [];
+
+                if (Settings.VerifyMacros && CurrentFunctionAttrs.Macros.Length > 0)
+                {
+                    var macroCheck = MacroCheckFunctions[CurrentTarget.ID];
+                    MiscMCFunctions.Add(macroCheck);
+                    foreach (var macro in CurrentFunctionAttrs.Macros)
+                    {
+                        macroCheck.Add(new Execute(true).Unless.Data(new StorageMacro("$(storage)"), $"$(path).{macro}").Run(new TellrawCommand(new TargetSelector(TargetType.a), new FormattedText().Text($"Macro argument {macro} was not provided to function {CurrentTarget.ID}"))));
+                    }
+                    MacroCheckFunctions[CurrentTarget.ID] = macroCheck;
+                }
 
                 var args = DeclareMCAttribute.Args(i.Key);
                 if (args.Length == 0) i.Key.DynamicInvoke();
@@ -300,7 +311,7 @@ namespace Datapack.Net.CubeLib
         public void CallArgRet(MCFunction func, ScoreRef ret, IRuntimeArgument[] args, bool macro = false) => AddCommand(new Execute(macro).Store(ret).Run(BaseCall(func, args, macro)));
         public void CallArgRet(MCFunction func, ScoreRef ret, IRuntimeArgument[] args, KeyValuePair<string, object>[] macros, bool macro = false, int tmp = 0) => AddCommand(new Execute().Store(ret).Run(BaseCall(func, args, macros, macro, tmp)));
 
-        public FunctionCommand BaseCall(MCFunction func, KeyValuePair<string, object>[] args, bool macro = false, int tmp = 0)
+        private FunctionCommand BaseCall(MCFunction func, KeyValuePair<string, object>[] args, bool macro = false, int tmp = 0)
         {
             var parameters = new NBTCompound();
             var runtimeScores = new Dictionary<string, ScoreRef>();
@@ -334,16 +345,22 @@ namespace Datapack.Net.CubeLib
                 Std.PointerDereference(i.Value.StandardMacros([new("dest_storage", InternalStorage), new("dest", $"func_tmp{tmp}.{i.Key}")]), macro, tmp + 1);
             }
 
+            if (Settings.VerifyMacros && !func.ID.Path.StartsWith("zz_")) AddCommand(new FunctionCommand(MacroCheckFunctions[func.ID], new NBTCompound
+            {
+                ["storage"] = InternalStorage.ToString(),
+                ["path"] = $"func_tmp{tmp}"
+            }));
+
             return new FunctionCommand(func, InternalStorage, $"func_tmp{tmp}");
         }
 
-        public FunctionCommand BaseCall(MCFunction func, IRuntimeArgument[] args, bool macro = false)
+        private FunctionCommand BaseCall(MCFunction func, IRuntimeArgument[] args, bool macro = false)
         {
             PushArgs(args);
             return new FunctionCommand(func, macro);
         }
 
-        public FunctionCommand BaseCall(MCFunction func, IRuntimeArgument[] args, KeyValuePair<string, object>[] macros, bool macro = false, int tmp = 0)
+        private FunctionCommand BaseCall(MCFunction func, IRuntimeArgument[] args, KeyValuePair<string, object>[] macros, bool macro = false, int tmp = 0)
         {
             PushArgs(args);
             return BaseCall(func, macros, macro, tmp);
@@ -437,6 +454,8 @@ namespace Datapack.Net.CubeLib
             var mcfunc = new MCFunction(id, true);
             MCFunctions[func] = mcfunc;
 
+            if (Settings.VerifyMacros) MacroCheckFunctions[id] = new MCFunction(new(id.Namespace, $"zz_macro_check/{id.Path}"), true);
+
             if (scoped)
             {
                 var cleanup = new MCFunction(new(id.Namespace, $"zz_cleanup/{id.Path}"), true);
@@ -482,7 +501,7 @@ namespace Datapack.Net.CubeLib
                 if (other.Contains<Execute.Conditional.Subcommand>())
                 {
                     var tmpExe = new Execute(cmd.Macro);
-                    var tmp = Temp(0, "exe_ret");
+                    var tmp = Temp(0, 0, "exe_ret");
 
                     foreach (var i in ex.GetAll<Execute.Conditional.Subcommand>())
                     {
@@ -502,7 +521,7 @@ namespace Datapack.Net.CubeLib
                 other.Run(new FunctionCommand(CurrentTargetCleanup));
                 AddCommand(other);
             }
-            else if (ErrorChecking)
+            else if (Settings.ErrorChecking)
             {
                 if (cmd is Execute exe)
                 {
@@ -552,6 +571,9 @@ namespace Datapack.Net.CubeLib
             var mcFunc = new MCFunction(new(Namespace, $"{attr.Name}/{funcAttr.Path}"), true);
             MCFunctions[func] = mcFunc;
             RuntimeMethods[func] = mcFunc;
+
+            if (Settings.VerifyMacros) MacroCheckFunctions[mcFunc.ID] = new MCFunction(new(mcFunc.ID.Namespace, $"zz_macro_check/{mcFunc.ID.Path}"), true);
+
             FunctionsToProcess.Enqueue(new(func, mcFunc));
             return mcFunc;
         }

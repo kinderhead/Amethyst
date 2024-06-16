@@ -68,7 +68,7 @@ namespace Datapack.Net.CubeLib.Builtins
         public KeyValuePair<string, object>[] StandardMacros(KeyValuePair<string, object>[]? extras = null, string postfix = "")
         {
             extras ??= [];
-            
+
             return [new($"storage{postfix}", Project.ActiveProject.Heap.Storage),
                 new($"path{postfix}", Project.ActiveProject.Heap.Path),
                 new($"pointer{postfix}", Obj),
@@ -86,7 +86,10 @@ namespace Datapack.Net.CubeLib.Builtins
             throw new NotImplementedException();
         }
 
-        public void Free() => Pointer.Free();
+        public void Free()
+        {
+            Project.ActiveProject.Std.PointerFree(StandardMacros());
+        }
 
         public IPointer<R> Cast<R>() => new RuntimePointer<R>(Pointer.Cast<RuntimePointer<R>>());
 
