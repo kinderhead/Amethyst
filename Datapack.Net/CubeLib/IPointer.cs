@@ -18,6 +18,8 @@ namespace Datapack.Net.CubeLib
         public void MoveUnsafe(IStandardPointerMacros dest);
         public void Set(NBTType val);
         public IPointer<R> Cast<R>();
+        public BaseHeapPointer GetHeapPointer();
+        public PointerExists Exists();
     }
 
     public interface IPointer<T> : IPointer

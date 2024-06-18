@@ -28,6 +28,8 @@ namespace Datapack.Net.CubeLib.Builtins
         public void Remove(ScoreRef index) => this[index].Free();
         public void Remove(IPointer<NBTInt> index) => this[index].Free();
 
+        public void Clear() => Pointer.Set(new NBTList());
+
         public void ForEach(Action<IPointer<T>, ScoreRef> loop)
         {
             var proj = Project.ActiveProject;

@@ -89,9 +89,14 @@ namespace Datapack.Net.CubeLib.Builtins
         public void Free()
         {
             Project.ActiveProject.Std.PointerFree(StandardMacros());
+            FreeObj();
         }
 
         public IPointer<R> Cast<R>() => new RuntimePointer<R>(Pointer.Cast<RuntimePointer<R>>());
+
+        public PointerExists Exists() => new() { Pointer = this };
+
+        public BaseHeapPointer GetHeapPointer() => Pointer.GetHeapPointer();
 
         internal sealed class Props
         {

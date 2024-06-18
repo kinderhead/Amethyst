@@ -27,6 +27,15 @@ namespace Datapack.Net.CubeLib.Builtins.Static
             return pointer;
         }
 
+        public RuntimePointer<T> Alloc<T>(RuntimePointer<T> loc)
+        {
+            var p = Project.ActiveProject;
+            var ret = p.Temp(0, "alloc");
+            p.Std.AllocAddress([new("storage", Storage.ID), new("path", Path)], ret);
+            p.Std.PointerSet(loc.Obj.Pointer.StandardMacros([new("value", ret)]));
+            return loc;
+        }
+
         public void Clear()
         {
             Project.ActiveProject.AddCommand(new DataCommand.Modify(Storage, Path).Set().Value("{}"));

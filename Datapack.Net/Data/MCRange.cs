@@ -54,9 +54,7 @@ namespace Datapack.Net.Data
             else return $"..{Max}";
         }
 
-        public static implicit operator MCRange<T>(T val)
-        {
-            return new(val);
-        }
+        public static implicit operator MCRange<T>(T val) => new(val);
+        public static implicit operator MCRange<T>((T, T) val) => new(val.Item1, val.Item2);
     }
 }

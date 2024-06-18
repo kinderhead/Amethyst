@@ -29,9 +29,9 @@ namespace Datapack.Net.CubeLib
         }
     }
 
-    public class PointerExists<T> : Conditional
+    public class PointerExists : Conditional
     {
-        public HeapPointer<T> Pointer;
+        public IPointer Pointer;
 
         public override Execute Process(Execute cmd, int tmp = 0)
         {

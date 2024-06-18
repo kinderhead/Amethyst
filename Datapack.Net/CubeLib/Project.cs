@@ -71,6 +71,10 @@ namespace Datapack.Net.CubeLib
 
         public readonly List<MCFunction> DynamicFunctions = [];
 
+        private bool SendToMisc = false;
+
+        private bool DuringInit = false;
+
         protected Project(DP pack)
         {
             Datapack = pack;
@@ -106,7 +110,6 @@ namespace Datapack.Net.CubeLib
             ActiveProject = this;
 
             Std = AddDependency<CubeLibStd>();
-            Init();
 
             foreach (var i in GetType().GetMethods(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance))
             {
@@ -135,6 +138,10 @@ namespace Datapack.Net.CubeLib
                 Scores.Add(score);
                 ErrorScore = new(score, GlobalScoreEntity);
             }
+
+            DuringInit = true;
+            Init();
+            DuringInit = false;
 
             while (FunctionsToProcess.TryDequeue(out var i))
             {
@@ -198,6 +205,11 @@ namespace Datapack.Net.CubeLib
             }
 
             // Prepend Main
+            foreach (var i in MiscInitCmds.Reverse<Command>())
+            {
+                PrependMain(i);
+            }
+
             foreach (var i in StaticTypes)
             {
                 i.Init();
@@ -206,11 +218,6 @@ namespace Datapack.Net.CubeLib
             foreach (var i in Constants)
             {
                 PrependMain(new Scoreboard.Players.Set(i.Value.Target, i.Value.Score, i.Key));
-            }
-
-            foreach (var i in MiscInitCmds)
-            {
-                PrependMain(i);
             }
 
             foreach (var i in Registers)
@@ -470,6 +477,8 @@ namespace Datapack.Net.CubeLib
                 List<ScoreRef> scope = [.. RegistersInUse];
                 var oldFunc = CurrentTarget;
                 var oldCleanup = CurrentTargetCleanup;
+                var oldSendToMisc = SendToMisc;
+                SendToMisc = false;
                 CurrentTarget = mcfunc;
                 CurrentTargetCleanup = cleanup;
 
@@ -488,6 +497,7 @@ namespace Datapack.Net.CubeLib
                 RegistersInUse = scope;
                 CurrentTarget = oldFunc;
                 CurrentTargetCleanup = oldCleanup;
+                SendToMisc = oldSendToMisc;
             }
             else
             {
@@ -498,6 +508,12 @@ namespace Datapack.Net.CubeLib
 
         public void AddCommand(Command cmd)
         {
+            if (SendToMisc)
+            {
+                MiscInitCmds.Add(cmd);
+                return;
+            }
+
             if (cmd is ReturnCommand) Call(CurrentTargetCleanup);
             else if (cmd is Execute ex && ex.Get<Run>().Command is ReturnCommand)
             {
@@ -553,6 +569,17 @@ namespace Datapack.Net.CubeLib
             func();
 
             CurrentTarget = oldTarget;
+        }
+
+        public void WithInit(Action func)
+        {
+            SendToMisc = true;
+            var old = currentTarget;
+            currentTarget = FindFunction(Main);
+
+            func();
+            currentTarget = old;
+            SendToMisc = false;
         }
 
         public void AddStaticObject(IStaticType type) => StaticTypes.Add(type);
@@ -638,14 +665,18 @@ namespace Datapack.Net.CubeLib
             return register;
         }
 
-        public ScoreRef Global()
+        public ScoreRef GetGlobal(int index)
         {
-            var score = new Score($"_cl_{Namespace}_var_{Globals.Count}", "dummy");
+            if (!DuringInit) throw new Exception("Tried to create a global variable outside of Init");
+
+            var score = new Score($"_cl_{Namespace}_var_{index}", "dummy");
             Globals.Add(score);
             Scores.Add(score);
 
             return new ScoreRef(score, GlobalScoreEntity);
         }
+
+        public ScoreRef Global() => GetGlobal(Globals.Count);
 
         public ScoreRef Global(int val)
         {
@@ -671,7 +702,7 @@ namespace Datapack.Net.CubeLib
 
         public FunctionCommand LambdaWith(MCFunction mcfunc)
         {
-            if (CurrentFunctionAttrs.Macros.Length == 0) return new(mcfunc);
+            if (CurrentFunctionAttrs is null || CurrentFunctionAttrs.Macros.Length == 0) return new(mcfunc);
 
             var nbt = new NBTCompound();
 
@@ -684,25 +715,36 @@ namespace Datapack.Net.CubeLib
         }
 
         public T AllocObj<T>(bool rtp = true) where T : IBaseRuntimeObject => AllocObj<T>(Local(), rtp);
-        public T AllocObj<T>(ScoreRef loc, bool rtp = true) where T : IBaseRuntimeObject
+        public T AllocObj<T>(ScoreRef loc, bool rtp = true, bool cleanup = true) where T : IBaseRuntimeObject
         {
-            var ptr = (IPointer<T>)(rtp ? Heap.Alloc<T>(loc).ToRTP() : Heap.Alloc<T>(loc));
+            var ptr = (IPointer<T>)(rtp ? Heap.Alloc(AllocObj<RuntimePointer<T>>(loc, false, false)) : Heap.Alloc<T>(loc));
             var obj = (T)T.Create(ptr);
             if (obj.HasMethod("init")) CallArg(obj.GetMethod("init"), [obj]);
 
-            if (rtp) WithCleanup(() => ((RuntimePointer<T>)ptr).FreeObj());
+            if (rtp && cleanup) WithCleanup(() => ((RuntimePointer<T>)ptr).FreeObj());
 
             return obj;
         }
 
-        // public T AttachObj<T>(ScoreRef loc) where T : IBaseRuntimeObject => (T)T.Create(new HeapPointer<T>(Heap, loc));
+        public T AttachObj<T>(ScoreRef loc, bool rtp = true) where T : IBaseRuntimeObject
+        {
+            if (!rtp) return (T)T.Create(Attach<T>(loc));
+            return (T)T.Create(AttachObj<RuntimePointer<T>>(loc, false));
+        }
 
-        // public T AllocObjIfNull<T>(ScoreRef loc) where T : IBaseRuntimeObject
-        // {
-        //     var obj = AttachObj<T>(loc);
-        //     obj.IfNull(() => Alloc<T>(loc));
-        //     return obj;
-        // }
+        public T AllocObjIfNull<T>(ScoreRef loc, bool rtp = true) where T : IBaseRuntimeObject
+        {
+            var obj = AttachObj<T>(loc, rtp);
+            If(!obj.GetPointer().GetHeapPointer().Exists(), () => AllocObj<T>(loc, rtp, false));
+            return obj;
+        }
+
+        public T GlobalAllocObjIfNull<T>(bool rtp = true) where T : IBaseRuntimeObject
+        {
+            T? ret = default;
+            WithInit(() => ret = AllocObjIfNull<T>(Global(), rtp));
+            return ret ?? throw new Exception();
+        }
 
         public HeapPointer<T> Alloc<T>() => Alloc<T>(Local());
         public HeapPointer<T> Alloc<T>(ScoreRef loc) => Heap.Alloc<T>(loc);
@@ -716,10 +758,10 @@ namespace Datapack.Net.CubeLib
 
         public HeapPointer<T> Attach<T>(ScoreRef loc) => new(Heap, loc);
 
-        public HeapPointer<T> AllocIfNull<T>(ScoreRef loc, int defaultValue = 0)
+        public HeapPointer<T> AllocIfNull<T>(ScoreRef loc, T defaultValue) where T : NBTType
         {
             var ptr = Attach<T>(loc);
-            If(!ptr.Exists(), () => Alloc(loc, (NBTInt)defaultValue));
+            If(!ptr.Exists(), () => Alloc(loc, defaultValue));
             return ptr;
         }
 

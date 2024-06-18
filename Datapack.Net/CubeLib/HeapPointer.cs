@@ -12,9 +12,22 @@ using System.Threading.Tasks;
 
 namespace Datapack.Net.CubeLib
 {
-    public abstract class BaseHeapPointer : IStandardPointerMacros
+    public abstract class BaseHeapPointer : IStandardPointerMacros, IPointer
     {
+        public abstract IPointer<R> Cast<R>();
+        public abstract void CopyUnsafe(IStandardPointerMacros dest);
+        public abstract void Dereference(ScoreRef val);
+        public abstract ScoreRef Dereference();
+        public abstract void Free();
+        public abstract IPointer<R> Get<R>(string path, bool dot = true);
+        public abstract ScoreRef GetAsArg();
+        public abstract BaseHeapPointer GetHeapPointer();
+        public abstract void MoveUnsafe(IStandardPointerMacros dest);
+        public abstract void Set(NBTType val);
         public abstract KeyValuePair<string, object>[] StandardMacros(KeyValuePair<string, object>[]? extras = null, string postfix = "");
+        public abstract IPointer ToPointer();
+        public abstract PointerExists Exists();
+
         public abstract RuntimePointer<T> ToRTP<T>();
     }
 
@@ -27,14 +40,14 @@ namespace Datapack.Net.CubeLib
 
         public T Self => (T?)typeof(T).GetMethod("Create")?.Invoke(null, [this]) ?? throw new ArgumentException("Not a pointer to a RuntimeObject");
 
-        public void Set(NBTType val)
+        public override void Set(NBTType val)
         {
             Project.ActiveProject.Std.PointerSet(StandardMacros([new("value", val.ToString())]));
         }
 
         public void Copy(IPointer<T> dest) => CopyUnsafe(dest);
 
-        public void CopyUnsafe(IStandardPointerMacros dest)
+        public override void CopyUnsafe(IStandardPointerMacros dest)
         {
             Project.ActiveProject.Std.PointerMove([.. StandardMacros(null, "2"), .. dest.StandardMacros(null, "1")]);
         }
@@ -45,30 +58,30 @@ namespace Datapack.Net.CubeLib
             Free();
         }
 
-        public void MoveUnsafe(IStandardPointerMacros dest)
+        public override void MoveUnsafe(IStandardPointerMacros dest)
         {
             CopyUnsafe(dest);
             Free();
         }
 
-        public IPointer<R> Get<R>(string path, bool dot = true) => new HeapPointer<R>(Heap, Pointer, ExtraPath + (dot ? "." : "") + path);
+        public override IPointer<R> Get<R>(string path, bool dot = true) => new HeapPointer<R>(Heap, Pointer, ExtraPath + (dot ? "." : "") + path);
 
-        public void Dereference(ScoreRef val) => Project.ActiveProject.Std.PointerDereferenceToScore(StandardMacros(), val);
-        public ScoreRef Dereference()
+        public override void Dereference(ScoreRef val) => Project.ActiveProject.Std.PointerDereferenceToScore(StandardMacros(), val);
+        public override ScoreRef Dereference()
         {
             var ret = Project.ActiveProject.Local();
             Dereference(ret);
             return ret;
         }
 
-        public void Free()
+        public override void Free()
         {
             Project.ActiveProject.Std.PointerFree(StandardMacros());
         }
 
         public HeapPointer<T> Duplicate() => new(Heap, Pointer, ExtraPath);
 
-        public PointerExists<T> Exists() => new() { Pointer = this };
+        public override PointerExists Exists() => new() { Pointer = this };
 
         public override RuntimePointer<R> ToRTP<R>()
         {
@@ -90,7 +103,7 @@ namespace Datapack.Net.CubeLib
                 .. extras];
         }
 
-        public ScoreRef GetAsArg() => (ScoreRef)this;
+        public override ScoreRef GetAsArg() => (ScoreRef)this;
 
         public static IRuntimeArgument Create(ScoreRef arg) => new HeapPointer<T>(Project.ActiveProject.Heap, (ScoreRef)ScoreRef.Create(arg));
 
@@ -109,8 +122,10 @@ namespace Datapack.Net.CubeLib
             throw new ArgumentException($"Type {typeof(T).Name} is not a valid HeapPointerProperty type");
         }
 
-        public IPointer ToPointer() => this;
+        public override IPointer ToPointer() => this;
 
-        public IPointer<R> Cast<R>() => new HeapPointer<R>(Heap, Pointer, ExtraPath);
+        public override IPointer<R> Cast<R>() => new HeapPointer<R>(Heap, Pointer, ExtraPath);
+
+        public override BaseHeapPointer GetHeapPointer() => this;
     }
 }

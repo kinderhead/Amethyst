@@ -17,28 +17,38 @@ namespace TNTCannon
     {
         public override string Namespace => "tnt";
 
-        private ScoreRef List;
+        private MCList<NBTInt> List;
+        private MCBool DoPrint;
 
         protected override void Init()
         {
             RegisterObject<Funny>();
-            List = Global();
+
+            List = GlobalAllocObjIfNull<MCList<NBTInt>>();
+            DoPrint = new(Global(1));
         }
 
         protected override void Main()
         {
             Print("Running");
-
-            Heap.Clear();
-
-            var list = AllocObj<MCList<NBTInt>>();
-
-            Print(list);
         }
 
         protected override void Tick()
         {
+            If(DoPrint, () => Print(List));
+        }
 
+        [DeclareMC("add")]
+        private void _Add()
+        {
+            List.Add(Random((0, 69)));
+        }
+
+        [DeclareMC("reset")]
+        private void _Reset()
+        {
+            Heap.Clear();
+            DoPrint.Set(false);
         }
     }
 }
