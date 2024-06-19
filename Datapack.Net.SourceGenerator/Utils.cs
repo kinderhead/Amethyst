@@ -72,7 +72,7 @@ namespace Datapack.Net.SourceGenerator
             builder.Append(", macro");
 
             if (func.Macro) builder.Append(", tmp");
-            builder.Append(");");
+            builder.Append($");\n        public Datapack.Net.Function.MCFunction {func.Name.Substring(1)}_Function() => {state}FindFunction({func.Name}) ?? throw new Exception(\"Project not built yet\");");
 
             return builder.ToString();
         }

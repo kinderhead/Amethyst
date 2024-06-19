@@ -2,6 +2,7 @@
 using Datapack.Net.CubeLib;
 using Datapack.Net.CubeLib.Builtins;
 using Datapack.Net.Data;
+using Datapack.Net.Data._1_20_4;
 using Datapack.Net.Function;
 using Datapack.Net.Function.Commands;
 using System;
@@ -27,22 +28,27 @@ namespace TNTCannon
             Print("Running");
 
             Heap.Clear();
+        }
 
-            var list = AllocObj<MCList<NBTInt>>();
+        [DeclareMC("do")]
+        private void _Do()
+        {
+            var entity = EntityRef(new NamedTarget("virchelovek"));
 
-            For(0, Local(69), i => list.Add(i));
-
-            Print(list);
-
-            list.FreeObj();
-
-            //var entity = EntityRef(new TargetSelector(TargetType.p));
-            //entity.As(() => AddCommand(new SayCommand("boo")));
+            entity.As(() =>
+            {
+                var dest = EntityRef(new TargetSelector(TargetType.e, type: Entities.Sheep, sort: SortType.Nearest, limit: 1));
+                entity.Teleport(dest);
+            });
         }
 
         protected override void Tick()
         {
-            
+            As(new TargetSelector(TargetType.a), (i) =>
+            {
+                var random = EntityRef(new TargetSelector(TargetType.e, sort: SortType.Random, limit: 1));
+                i.Teleport(random);
+            });
         }
     }
 }

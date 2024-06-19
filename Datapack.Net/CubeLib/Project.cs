@@ -253,12 +253,8 @@ namespace Datapack.Net.CubeLib
         {
             var attr = DeclareMCAttribute.Get(func);
             MCFunction retFunc;
-            if (func.Target != this && func.Target is Project lib)
-            {
-                if (lib.BuiltOrBuilding) return lib.GuaranteeFunc(func, macros);
-                retFunc = new(new(lib.Namespace, attr.Path), true);
-            }
-            else if (FindFunction(func) is MCFunction mcfunc) retFunc = mcfunc;
+
+            if (FindFunction(func) is MCFunction mcfunc) retFunc = mcfunc;
             else retFunc = AddFunction(func);
 
             if (macros.Length != 0 && attr.Macros.Length == 0) throw new ArgumentException("Attempted to call a non macro function with arguments");
@@ -456,6 +452,12 @@ namespace Datapack.Net.CubeLib
             var methods = RuntimeMethods.ToList();
             index = methods.FindIndex((i) => i.Key.Method.Name == func.Method.Name && (i.Key.Method.DeclaringType?.SameType(func.Method.DeclaringType) ?? false));
             if (index != -1) return methods[index].Value;
+
+            if (func.Target != this && func.Target is Project lib)
+            {
+                if (lib.BuiltOrBuilding) return lib.FindFunction(func);
+                return new(new(lib.Namespace, DeclareMCAttribute.Get(func).Path), true);
+            }
 
             return null;
         }
@@ -810,6 +812,15 @@ namespace Datapack.Net.CubeLib
             });
         }
 
+        public void As(IEntityTarget targets, Action<Entity> func)
+        {
+            AddCommand(new Execute().As(targets).Run(Lambda(() =>
+            {
+                var self = EntityRef(new TargetSelector(TargetType.s));
+                func(self);
+            })));
+        }
+
         public void Random(MCRange<int> range, ScoreRef score) => AddCommand(new Execute().Store(score).Run(new RandomCommand(range)));
 
         public ScoreRef Random(MCRange<int> range)
@@ -871,9 +882,8 @@ namespace Datapack.Net.CubeLib
 
         public Entity EntityRef(IEntityTarget sel, ScoreRef var)
         {
-            var id = new ScoreRef(EntityIDScore, sel);
-            If(!id.Exists(), () => Std.UniqueEntityID(id));
-            var.Set(id);
+            AddCommand(new Execute().As(sel.RequireOne()).Store(var).Run(new FunctionCommand(Std.GetEntityID_Function())));
+
             return new(var);
         }
 

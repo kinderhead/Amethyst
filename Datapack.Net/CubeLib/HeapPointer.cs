@@ -127,5 +127,11 @@ namespace Datapack.Net.CubeLib
         public override IPointer<R> Cast<R>() => new HeapPointer<R>(Heap, Pointer, ExtraPath);
 
         public override BaseHeapPointer GetHeapPointer() => this;
+
+        public IPointer<T> Local()
+        {
+            Project.ActiveProject.WithCleanup(Free);
+            return this;
+        }
     }
 }

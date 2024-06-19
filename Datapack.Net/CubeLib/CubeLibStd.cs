@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static Datapack.Net.Function.Commands.Scoreboard.Players;
 
 namespace Datapack.Net.CubeLib
 {
@@ -246,11 +247,19 @@ namespace Datapack.Net.CubeLib
             {
                 Random(new(0, int.MaxValue - 1), x);
 
-                var ret = Local();
+                var ret = Local(0);
                 AddCommand(new Execute().As(new TargetSelector(TargetType.e)).If.Score(new TargetSelector(TargetType.s), EntityIDScore, Comparison.Equal, x.Target, x.Score).Run(ret.SetCmd(1)));
                 If(ret == 0, new ReturnCommand(1));
             });
             Return(x);
+        }
+
+        [DeclareMCReturn<ScoreRef>("get_entity_id")]
+        private void _GetEntityID()
+        {
+            var self = new ScoreRef(EntityIDScore, new TargetSelector(TargetType.s));
+            If(!self.Exists(), () => Std.UniqueEntityID(self));
+            Return(self);
         }
     }
 }

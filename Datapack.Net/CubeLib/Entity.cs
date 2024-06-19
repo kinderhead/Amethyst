@@ -10,7 +10,8 @@ namespace Datapack.Net.CubeLib
 {
     public class Entity(ScoreRef id) : IRuntimeArgument
     {
-        public static readonly Stack<Entity> AsStack = [];
+        private static readonly Stack<Entity> AsStack = [];
+        private static readonly Stack<Entity> AtStack = [];
 
         public readonly ScoreRef ID = id;
 
@@ -22,12 +23,20 @@ namespace Datapack.Net.CubeLib
             var cmd = As(new Execute()).Run(proj.Lambda(() =>
             {
                 AsStack.Push(this);
+                if (at) AtStack.Push(this);
+
                 func();
+
                 AsStack.Pop();
+                if (at) AtStack.Pop();
             }));
             if (at) cmd.At(new TargetSelector(TargetType.s));
             proj.AddCommand(cmd);
         }
+
+        public void Teleport(Position pos) => Project.ActiveProject.AddCommand(As(new Execute().Run(new TeleportCommand(pos))));
+
+        public void Teleport(Entity dest) => Project.ActiveProject.AddCommand(As(dest.As(new Execute().Run(new TeleportCommand(new Position(new(0, CoordType.Relative), new(0, CoordType.Relative), new(0, CoordType.Relative))))).At(new TargetSelector(TargetType.s)), true));
 
         /// <summary>
         /// Sets the execute's target to the entity. If ran inside <see cref="As(Action, bool)"/>
@@ -35,7 +44,7 @@ namespace Datapack.Net.CubeLib
         /// Setting <c>force</c> to true will always recalculate the current entity.
         /// </summary>
         /// <param name="cmd">Execute command</param>
-        /// <param name="force">Force </param>
+        /// <param name="force">Force recalculation</param>
         /// <returns></returns>
         public Execute As(Execute cmd, bool force = false)
         {

@@ -339,5 +339,58 @@ namespace Datapack.Net.Tests
         }
 
         #endregion
+
+        #region Teleport
+
+        [Test]
+        public void Teleport1()
+        {
+            var cmd = new TeleportCommand(new NamedTarget("dest"));
+            Assert.That(cmd.Build(), Is.EqualTo("tp dest"));
+        }
+
+        [Test]
+        public void Teleport2()
+        {
+            var cmd = new TeleportCommand(new NamedTarget("target"), new NamedTarget("dest"));
+            Assert.That(cmd.Build(), Is.EqualTo("tp target dest"));
+        }
+
+        [Test]
+        public void Teleport3()
+        {
+            var cmd = new TeleportCommand(new Position(0, 0, 0));
+            Assert.That(cmd.Build(), Is.EqualTo("tp 0 0 0"));
+        }
+
+        [Test]
+        public void Teleport4()
+        {
+            var cmd = new TeleportCommand(new NamedTarget("target"), new Position(0, 0, 0));
+            Assert.That(cmd.Build(), Is.EqualTo("tp target 0 0 0"));
+        }
+
+        [Test]
+        public void Teleport5()
+        {
+            var cmd = new TeleportCommand(new NamedTarget("target"), new Position(0, 0, 0), new Rotation(4, 5));
+            Assert.That(cmd.Build(), Is.EqualTo("tp target 0 0 0 4 5"));
+        }
+
+        [Test]
+        public void Teleport6()
+        {
+            var cmd = new TeleportCommand(new NamedTarget("target"), new Position(0, 0, 0), new Position(50, 0, 0));
+            Assert.That(cmd.Build(), Is.EqualTo("tp target 0 0 0 facing 50 0 0"));
+        }
+
+        [Test]
+        public void Teleport7()
+        {
+            var cmd = new TeleportCommand(new NamedTarget("target"), new Position(0, 0, 0), new NamedTarget("facingEntity"), true);
+            Assert.That(cmd.Build(), Is.EqualTo("tp target 0 0 0 facing entity facingEntity eyes"));
+        }
+
+        #endregion
     }
 }

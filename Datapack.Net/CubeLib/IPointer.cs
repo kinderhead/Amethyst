@@ -27,5 +27,6 @@ namespace Datapack.Net.CubeLib
         public T Self { get; }
         public void Copy(IPointer<T> dest);
         public void Move(IPointer<T> dest);
+        public IPointer<T> Local();
     }
 }

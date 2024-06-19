@@ -98,6 +98,12 @@ namespace Datapack.Net.CubeLib.Builtins
 
         public BaseHeapPointer GetHeapPointer() => Pointer.GetHeapPointer();
 
+        public IPointer<T> Local()
+        {
+            Project.ActiveProject.WithCleanup(Free);
+            return this;
+        }
+
         internal sealed class Props
         {
             [RuntimeProperty("obj")]
