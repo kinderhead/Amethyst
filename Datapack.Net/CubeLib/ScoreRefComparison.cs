@@ -20,27 +20,10 @@ namespace Datapack.Net.CubeLib
         {
             Execute.Conditional branch = If ? cmd.If : cmd.Unless;
 
-            ScoreRef a = LeftScore ?? Project.ActiveProject.Temp(tmp, Left, "cmp");
-            ScoreRef b = RightScore ?? Project.ActiveProject.Temp(tmp, Right, "cmp");
+            ScoreRef a = LeftScore ?? Project.ActiveProject.Constant(Left);
+            ScoreRef b = RightScore ?? Project.ActiveProject.Constant(Right);
 
             branch.Score(a.Target, a.Score, Op, b.Target, b.Score);
-
-            return cmd;
-        }
-    }
-
-    public class PointerExists : Conditional
-    {
-        public IPointer Pointer;
-
-        public override Execute Process(Execute cmd, int tmp = 0)
-        {
-            Execute.Conditional branch = If ? cmd.If : cmd.Unless;
-
-            var tempVar = Project.ActiveProject.Temp(tmp, "cmp");
-            Project.ActiveProject.Std.PointerExists(Pointer.StandardMacros(), tempVar);
-
-            branch.Score(tempVar.Target, tempVar.Score, 1);
 
             return cmd;
         }

@@ -29,6 +29,7 @@ namespace Datapack.Net.CubeLib
         public void Mod(ScoreRef val) => Op(val, ScoreOperation.Mod);
 
         public Scoreboard.Players.Get Get() => new(Target, Score);
+        public Scoreboard.Players.Set SetCmd(int val) => new(Target, Score, val);
 
         public Execute Store(bool macro = false) => new Execute(macro).Store(this);
 
@@ -41,6 +42,8 @@ namespace Datapack.Net.CubeLib
         {
             Project.ActiveProject.AddCommand(new Scoreboard.Players.Operation(Target, Score, op, val.Target, val.Score));
         }
+
+        public ScoreRefComparison Exists() => this >= -2147483648;
 
         public static ScoreRefComparison operator ==(ScoreRef a, ScoreRef b) => new() { LeftScore = a, RightScore = b, Op = Comparison.Equal };
         public static ScoreRefComparison operator ==(int a, ScoreRef b) => new() { Left = a, RightScore = b, Op = Comparison.Equal };

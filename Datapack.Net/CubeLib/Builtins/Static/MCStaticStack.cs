@@ -36,7 +36,7 @@ namespace Datapack.Net.CubeLib.Builtins.Static
         }
 
         /// <summary>
-        /// Dequeues to InternalStorage.tmpstack
+        /// Dequeues to <c>InternalStorage.tmpstack</c>.
         /// </summary>
         public void DequeueToStorage()
         {

@@ -237,5 +237,20 @@ namespace Datapack.Net.CubeLib
         {
             AddCommand(new DataCommand.Modify(new StorageMacro("$(storage)"), "$(path)", true).Insert(0).Value("$(value)"));
         }
+
+        [DeclareMCReturn<ScoreRef>("unique_entity_id")]
+        private void _UniqueEntityID()
+        {
+            var x = Local();
+            WhileTrue(() =>
+            {
+                Random(new(0, int.MaxValue - 1), x);
+
+                var ret = Local();
+                AddCommand(new Execute().As(new TargetSelector(TargetType.e)).If.Score(new TargetSelector(TargetType.s), EntityIDScore, Comparison.Equal, x.Target, x.Score).Run(ret.SetCmd(1)));
+                If(ret == 0, new ReturnCommand(1));
+            });
+            Return(x);
+        }
     }
 }

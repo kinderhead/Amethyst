@@ -10,9 +10,9 @@ namespace Datapack.Net.CubeLib
     [AttributeUsage(AttributeTargets.Method, AllowMultiple = false)]
     public class DeclareMCAttribute : Attribute
     {
-        public readonly string Path;
-        public readonly bool Returns;
-        public readonly string[] Macros = [];
+        public string Path { get; protected set; }
+        public bool Returns { get; protected set; }
+        public string[] Macros { get; protected set; } = [];
 
         public DeclareMCAttribute(string name, string[] macros)
         {
@@ -55,10 +55,12 @@ namespace Datapack.Net.CubeLib
     {
         public DeclareMCReturnAttribute(string name) : base(name)
         {
+            Returns = true;
         }
 
         public DeclareMCReturnAttribute(string name, string[] macros) : base(name, macros)
         {
+            Returns = true;
         }
     }
 }

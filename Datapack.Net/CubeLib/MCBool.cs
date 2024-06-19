@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Datapack.Net.CubeLib
 {
-    public class MCBool(ScoreRef var)
+    public class MCBool(ScoreRef var) : IRuntimeArgument
     {
         public readonly ScoreRef Var = var;
 
@@ -15,8 +15,12 @@ namespace Datapack.Net.CubeLib
             Set(val);
         }
 
+        public ScoreRef GetAsArg() => Var;
+
         public void Set(bool val) => Var.Set(val ? 1 : 0);
 
         public static implicit operator ScoreRefComparison(MCBool a) => a.Var == 1;
+
+        public static IRuntimeArgument Create(ScoreRef arg) => new MCBool(arg);
     }
 }

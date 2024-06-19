@@ -25,6 +25,7 @@ namespace Datapack.Net.CubeLib
         public static readonly List<Project> Projects = [];
         public static readonly Storage GlobalStorage = new(new("cubelib", "global"));
         public static readonly NamedTarget GlobalScoreEntity = new("#_cubelib_score");
+        public static readonly Score EntityIDScore = new("_cl_id", "dummy");
         public static Settings Settings;
 
         internal static Dictionary<Delegate, MCFunction> RuntimeMethods = [];
@@ -131,6 +132,8 @@ namespace Datapack.Net.CubeLib
             AddStaticObject(StorageArgumentStack);
             Heap = new(GlobalStorage, "heap");
             AddStaticObject(Heap);
+
+            Scores.Add(EntityIDScore);
 
             if (Settings.ErrorChecking)
             {
@@ -290,11 +293,11 @@ namespace Datapack.Net.CubeLib
             return ret;
         }
 
-        public void CallRet(Action func, ScoreRef ret)
+        public void CallRet(Action func, ScoreRef ret, bool macro = false)
         {
             if (!DeclareMCAttribute.Get(func).Returns) throw new InvalidOperationException("Function does not return a value");
 
-            CallRet(GuaranteeFunc(func, []), ret);
+            CallRet(GuaranteeFunc(func, []), ret, macro);
         }
 
         public void CallRet(MCFunction func, ScoreRef ret, bool macro = false) => AddCommand(new Execute(macro).Store(ret).Run(new FunctionCommand(func)));
@@ -690,7 +693,7 @@ namespace Datapack.Net.CubeLib
             if (Constants.TryGetValue(val, out var obj)) return obj;
 
             var score = new Score("_cl_const", "dummy");
-            var c = new ScoreRef(score, new NamedTarget($"#_cl_{val}"));
+            var c = new ScoreRef(score, new NamedTarget($"#_cl_{val}".Replace('-', '_')));
 
             Scores.Add(score);
             Constants[val] = c;
@@ -712,6 +715,16 @@ namespace Datapack.Net.CubeLib
             }
 
             return new(mcfunc, nbt, true);
+        }
+
+        public KeyValuePair<string, object>[] PropagateMacros()
+        {
+            var args = new List<KeyValuePair<string, object>>();
+            foreach (var i in CurrentFunctionAttrs.Macros)
+            {
+                args.Add(new(i, $"$({i})"));
+            }
+            return args.ToArray();
         }
 
         public T AllocObj<T>(bool rtp = true) where T : IBaseRuntimeObject => AllocObj<T>(Local(), rtp);
@@ -852,6 +865,16 @@ namespace Datapack.Net.CubeLib
         {
             AddCommand(new DataCommand.Modify(InternalStorage, "test").Set().From(InternalStorage, "func_tmp0"));
             Print($"Debugging for function available with storage {InternalStorage} test");
+        }
+
+        public Entity EntityRef(IEntityTarget sel) => EntityRef(sel, Local());
+
+        public Entity EntityRef(IEntityTarget sel, ScoreRef var)
+        {
+            var id = new ScoreRef(EntityIDScore, sel);
+            If(!id.Exists(), () => Std.UniqueEntityID(id));
+            var.Set(id);
+            return new(var);
         }
 
         protected virtual void Init() { }
