@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 namespace Datapack.Net.CubeLib.Builtins
 {
     [RuntimeObject("list")]
-    public partial class MCList<T>(IPointer<MCList<T>> loc) : RuntimeObject<CubeLibStd, MCList<T>>(loc)
+    public partial class MCList<T>(IPointer<MCList<T>> loc) : RuntimeObject<CubeLibStd, MCList<T>>(loc) where T : Pointerable
     {
         public void Add(T value)
         {

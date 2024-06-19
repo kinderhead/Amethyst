@@ -165,7 +165,7 @@ namespace Datapack.Net.Tests
             List<TargetSelector> sels = [
                 new TargetSelector(TargetType.a, limit: 1),
                 new TargetSelector(TargetType.e, limit: 1),
-                new TargetSelector(TargetType.s),
+                TargetSelector.Self,
                 new TargetSelector(TargetType.p),
                 new TargetSelector(TargetType.r),
                 new TargetSelector(TargetType.p, limit: 1),

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Datapack.Net.CubeLib.Utils
 {
-    public interface IToPointer
+    public interface IToPointer : Pointerable
     {
         public IPointer ToPointer();
     }

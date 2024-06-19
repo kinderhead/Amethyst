@@ -7,7 +7,7 @@ using Datapack.Net.Function;
 
 namespace Datapack.Net.CubeLib
 {
-    public interface IBaseRuntimeObject : IRuntimeArgument
+    public interface IBaseRuntimeObject : IRuntimeArgument, Pointerable
     {
         public void IfNull(Action func);
         public bool HasMethod(string name);
@@ -15,7 +15,7 @@ namespace Datapack.Net.CubeLib
 
         public IPointer GetPointer();
 
-        public static abstract IBaseRuntimeObject Create<T>(IPointer<T> pointer);
+        public static abstract IBaseRuntimeObject Create<T>(IPointer<T> pointer) where T : Pointerable;
 
         public static IRuntimeArgument Create(ScoreRef arg, Type self) => (IRuntimeArgument?)Activator.CreateInstance(self, [typeof(HeapPointer<>).MakeGenericType(self).GetMethod("Create")?.Invoke(null, [arg])]) ?? throw new ArgumentException("Error dynamically creating a RuntimeObject");
         public static IRuntimeArgument CreateWithRTP(ScoreRef loc, Type self) => (IRuntimeArgument?)Activator.CreateInstance(self, [Create(loc, typeof(RuntimePointer<>).MakeGenericType(self))]) ?? throw new ArgumentException("Error dynamically creating a RuntimeObject");
@@ -35,16 +35,16 @@ namespace Datapack.Net.CubeLib
 
         public RuntimeObject() { }
 
-        protected IPointer<T> GetProp<T>(string path, bool dot = true) => Pointer.Get<T>(path, dot);
+        protected IPointer<T> GetProp<T>(string path, bool dot = true) where T : Pointerable => Pointer.Get<T>(path, dot);
         protected T GetObj<T>(string path, bool dot = true) where T : IBaseRuntimeObject => (T)T.Create((RuntimePointer<T>)RuntimePointer<T>.Create(Pointer.Get<RuntimePointer<T>>(path, dot)));
 
         protected void SetProp(string path, NBTType val) => Pointer.Get<NBTType>(path).Set(val);
-        protected void SetProp<T>(string path, IPointer<T> pointer)
+        protected void SetProp<T>(string path, IPointer<T> pointer) where T : Pointerable
         {
-            var place = GetProp<T>(path).Get<string>("obj");
+            var place = GetProp<T>(path).Get<NBTString>("obj");
             Project.ActiveProject.Std.StorePointer([.. place.StandardMacros([], "1"), .. pointer.StandardMacros([], "2")]);
         }
-        protected void SetProp<T>(string path, IRuntimeProperty<T> prop)
+        protected void SetProp<T>(string path, IRuntimeProperty<T> prop) where T : Pointerable
         {
             if (prop.Pointer is not null) SetProp(path, prop.Pointer);
             else if (NBTType.IsNBTType<T>()) SetProp(path, NBTType.ToNBT(prop.PropValue ?? throw new ArgumentException("RuntimeProperty was not created properly")) ?? throw new Exception("How did we get here?"));
@@ -94,7 +94,7 @@ namespace Datapack.Net.CubeLib
             }
         }
 
-        public static IBaseRuntimeObject Create<T>(IPointer<T> pointer)
+        public static IBaseRuntimeObject Create<T>(IPointer<T> pointer) where T : Pointerable
         {
             return (IBaseRuntimeObject?)Activator.CreateInstance(typeof(TSelf), [pointer]) ?? throw new ArgumentException("Failed to create runtime object");
         }

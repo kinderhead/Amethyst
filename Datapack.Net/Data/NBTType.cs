@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Datapack.Net.CubeLib;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Datapack.Net.Data
 {
-    public abstract class NBTType
+    public abstract class NBTType : Pointerable
     {
         public abstract void Build(StringBuilder sb);
 

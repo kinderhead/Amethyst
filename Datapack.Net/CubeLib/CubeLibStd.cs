@@ -248,7 +248,7 @@ namespace Datapack.Net.CubeLib
                 Random(new(0, int.MaxValue - 1), x);
 
                 var ret = Local(0);
-                AddCommand(new Execute().As(new TargetSelector(TargetType.e)).If.Score(new TargetSelector(TargetType.s), EntityIDScore, Comparison.Equal, x.Target, x.Score).Run(ret.SetCmd(1)));
+                AddCommand(new Execute().As(new TargetSelector(TargetType.e)).If.Score(TargetSelector.Self, EntityIDScore, Comparison.Equal, x.Target, x.Score).Run(ret.SetCmd(1)));
                 If(ret == 0, new ReturnCommand(1));
             });
             Return(x);
@@ -257,9 +257,22 @@ namespace Datapack.Net.CubeLib
         [DeclareMCReturn<ScoreRef>("get_entity_id")]
         private void _GetEntityID()
         {
-            var self = new ScoreRef(EntityIDScore, new TargetSelector(TargetType.s));
+            var self = new ScoreRef(EntityIDScore, TargetSelector.Self);
             If(!self.Exists(), () => Std.UniqueEntityID(self));
             Return(self);
+        }
+
+        /// <summary>
+        /// Arguments: <br/>
+        /// <b>storage</b>: Storage identifier <br/>
+        /// <b>path</b>: Path in storage to heap <br/>
+        /// <b>pointer</b>: The pointer <br/>
+        /// <b>ext</b>: Extension path including "." <br/>
+        /// </summary>
+        [DeclareMC("entity_nbt_to_pointer", ["storage", "path", "pointer", "ext"])]
+        private void _EntityNBTToPointer()
+        {
+            AddCommand(new DataCommand.Modify(new StorageMacro("$(storage)"), "$(path).$(pointer)$(ext)", true).Set().From(TargetSelector.Self));
         }
     }
 }

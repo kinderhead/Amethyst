@@ -396,8 +396,8 @@ namespace Datapack.Net.CubeLib
             }
         }
 
-        public void Print<T>(IPointer<T> ptr) => Std.PointerPrint(ptr.StandardMacros());
-        public void Print<T>(IRuntimeProperty<T> prop) => Print(prop.Pointer);
+        public void Print<T>(IPointer<T> ptr) where T : Pointerable => Std.PointerPrint(ptr.StandardMacros());
+        public void Print<T>(IRuntimeProperty<T> prop) where T : Pointerable => Print(prop.Pointer);
 
         public void Print(params object[] args)
         {
@@ -761,8 +761,8 @@ namespace Datapack.Net.CubeLib
             return ret ?? throw new Exception();
         }
 
-        public HeapPointer<T> Alloc<T>() => Alloc<T>(Local());
-        public HeapPointer<T> Alloc<T>(ScoreRef loc) => Heap.Alloc<T>(loc);
+        public HeapPointer<T> Alloc<T>() where T : Pointerable => Alloc<T>(Local());
+        public HeapPointer<T> Alloc<T>(ScoreRef loc) where T : Pointerable => Heap.Alloc<T>(loc);
 
         public HeapPointer<T> Alloc<T>(ScoreRef loc, T val) where T : NBTType
         {
@@ -771,7 +771,7 @@ namespace Datapack.Net.CubeLib
             return pointer;
         }
 
-        public HeapPointer<T> Attach<T>(ScoreRef loc) => new(Heap, loc);
+        public HeapPointer<T> Attach<T>(ScoreRef loc) where T : Pointerable => new(Heap, loc);
 
         public HeapPointer<T> AllocIfNull<T>(ScoreRef loc, T defaultValue) where T : NBTType
         {
@@ -816,7 +816,7 @@ namespace Datapack.Net.CubeLib
         {
             AddCommand(new Execute().As(targets).Run(Lambda(() =>
             {
-                var self = EntityRef(new TargetSelector(TargetType.s));
+                var self = EntityRef(TargetSelector.Self);
                 func(self);
             })));
         }

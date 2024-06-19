@@ -29,11 +29,7 @@ namespace TNTCannon
 
             Heap.Clear();
 
-            var player = EntityRef(new NamedTarget("kinderhead"));
-            player.As(() =>
-            {
-                Summon(Entities.Chicken, Position.Current).Kill();
-            });
+            
         }
 
         [DeclareMC("do")]
@@ -45,6 +41,18 @@ namespace TNTCannon
             {
                 var dest = EntityRef(new TargetSelector(TargetType.e, type: Entities.Sheep, sort: SortType.Nearest, limit: 1));
                 entity.Teleport(dest);
+            });
+        }
+
+        [DeclareMC("boom", ["count"])]
+        private void _Boom()
+        {
+            var max = Local();
+            max.DynSet("count");
+
+            For(1, max, i =>
+            {
+                Summon(Entities.Tnt, new Position(new(0, CoordType.Relative), new(-.2, CoordType.Relative), new(0, CoordType.Relative)));
             });
         }
 

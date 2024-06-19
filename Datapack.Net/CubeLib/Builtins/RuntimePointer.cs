@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace Datapack.Net.CubeLib.Builtins
 {
     [RuntimeObject("pointer")]
-    public partial class RuntimePointer<T>(IPointer<RuntimePointer<T>> loc, string extraPath) : RuntimeObject<CubeLibStd, RuntimePointer<T>>(loc), IPointer<T>
+    public partial class RuntimePointer<T>(IPointer<RuntimePointer<T>> loc, string extraPath) : RuntimeObject<CubeLibStd, RuntimePointer<T>>(loc), IPointer<T> where T : Pointerable
     {
         public readonly string ExtraPath = extraPath;
 
@@ -78,7 +78,7 @@ namespace Datapack.Net.CubeLib.Builtins
 
         public override IPointer ToPointer() => selfPointer ? Pointer : this;
 
-        public IPointer<R> Get<R>(string path, bool dot) => new RuntimePointer<R>(Pointer.Cast<RuntimePointer<R>>(), ExtraPath + (dot ? "." : "") + path);
+        public IPointer<R> Get<R>(string path, bool dot) where R : Pointerable => new RuntimePointer<R>(Pointer.Cast<RuntimePointer<R>>(), ExtraPath + (dot ? "." : "") + path);
 
         public void Resolve(IPointer<RuntimePointer<T>> dest)
         {
@@ -92,7 +92,7 @@ namespace Datapack.Net.CubeLib.Builtins
             FreeObj();
         }
 
-        public IPointer<R> Cast<R>() => new RuntimePointer<R>(Pointer.Cast<RuntimePointer<R>>());
+        public IPointer<R> Cast<R>() where R : Pointerable => new RuntimePointer<R>(Pointer.Cast<RuntimePointer<R>>());
 
         public PointerExists Exists() => new() { Pointer = this };
 

@@ -14,19 +14,24 @@ namespace Datapack.Net.CubeLib
         public void Dereference(ScoreRef val);
         public ScoreRef Dereference();
         public void Free();
-        public IPointer<R> Get<R>(string path, bool dot = true);
+        public IPointer<R> Get<R>(string path, bool dot = true) where R : Pointerable;
         public void MoveUnsafe(IStandardPointerMacros dest);
         public void Set(NBTType val);
-        public IPointer<R> Cast<R>();
+        public IPointer<R> Cast<R>() where R : Pointerable;
         public BaseHeapPointer GetHeapPointer();
         public PointerExists Exists();
     }
 
-    public interface IPointer<T> : IPointer
+    public interface IPointer<T> : IPointer where T : Pointerable
     {
         public T Self { get; }
         public void Copy(IPointer<T> dest);
         public void Move(IPointer<T> dest);
         public IPointer<T> Local();
+    }
+
+    public interface Pointerable
+    {
+
     }
 }

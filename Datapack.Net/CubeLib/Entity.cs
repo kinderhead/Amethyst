@@ -1,4 +1,5 @@
-﻿using Datapack.Net.Function;
+﻿using Datapack.Net.Data;
+using Datapack.Net.Function;
 using Datapack.Net.Function.Commands;
 using System;
 using System.Collections.Generic;
@@ -30,15 +31,17 @@ namespace Datapack.Net.CubeLib
                 AsStack.Pop();
                 if (at) AtStack.Pop();
             }));
-            if (at) cmd.At(new TargetSelector(TargetType.s));
+            if (at) cmd.At(TargetSelector.Self);
             proj.AddCommand(cmd);
         }
 
         public void Teleport(Position pos) => Project.ActiveProject.AddCommand(As(new Execute().Run(new TeleportCommand(pos))));
 
-        public void Teleport(Entity dest) => Project.ActiveProject.AddCommand(As(dest.As(new Execute().Run(new TeleportCommand(new Position(new(0, CoordType.Relative), new(0, CoordType.Relative), new(0, CoordType.Relative))))).At(new TargetSelector(TargetType.s)), true));
+        public void Teleport(Entity dest) => Project.ActiveProject.AddCommand(As(dest.As(new Execute().Run(new TeleportCommand(new Position(new(0, CoordType.Relative), new(0, CoordType.Relative), new(0, CoordType.Relative))))).At(TargetSelector.Self), true));
 
-        public void Kill() => Project.ActiveProject.AddCommand(As(new Execute().Run(new KillCommand(new TargetSelector(TargetType.s)))));
+        public void Kill() => Project.ActiveProject.AddCommand(As(new Execute().Run(new KillCommand(TargetSelector.Self))));
+
+        public void CopyTo(IPointer<NBTCompound> loc) => As(() => Project.ActiveProject.Std.EntityNBTToPointer(loc.StandardMacros()), false);
 
         /// <summary>
         /// Sets the execute's target to the entity. If ran inside <see cref="As(Action, bool)"/>
@@ -50,8 +53,8 @@ namespace Datapack.Net.CubeLib
         /// <returns></returns>
         public Execute As(Execute cmd, bool force = false)
         {
-            if (force || AsStack.Count == 0 || (AsStack.TryPeek(out var cur) && cur != this)) return cmd.As(new TargetSelector(TargetType.e)).If.Score(new TargetSelector(TargetType.s), Project.EntityIDScore, Comparison.Equal, ID.Target, ID.Score);
-            return cmd.As(new TargetSelector(TargetType.s));
+            if (force || AsStack.Count == 0 || (AsStack.TryPeek(out var cur) && cur != this)) return cmd.As(new TargetSelector(TargetType.e)).If.Score(TargetSelector.Self, Project.EntityIDScore, Comparison.Equal, ID.Target, ID.Score);
+            return cmd.As(TargetSelector.Self);
         }
     }
 }

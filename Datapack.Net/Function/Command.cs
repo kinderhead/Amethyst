@@ -31,4 +31,10 @@ namespace Datapack.Net.Function
         [GeneratedRegex(@"\$\((.*?)\)")]
         private static partial Regex MacroRegexGet();
     }
+
+    public class RawCommand(string cmd, bool macro = false) : Command(macro)
+    {
+        public readonly string Command = cmd;
+        protected override string PreBuild() => Command;
+    }
 }

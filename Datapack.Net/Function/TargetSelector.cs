@@ -120,6 +120,8 @@ namespace Datapack.Net.Function
 
             return false;
         }
+
+        public static TargetSelector Self => new(TargetType.s);
     }
 
     public enum TargetType

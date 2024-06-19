@@ -14,12 +14,12 @@ namespace Datapack.Net.CubeLib
 {
     public abstract class BaseHeapPointer : IStandardPointerMacros, IPointer
     {
-        public abstract IPointer<R> Cast<R>();
+        public abstract IPointer<R> Cast<R>() where R : Pointerable;
         public abstract void CopyUnsafe(IStandardPointerMacros dest);
         public abstract void Dereference(ScoreRef val);
         public abstract ScoreRef Dereference();
         public abstract void Free();
-        public abstract IPointer<R> Get<R>(string path, bool dot = true);
+        public abstract IPointer<R> Get<R>(string path, bool dot = true) where R : Pointerable;
         public abstract ScoreRef GetAsArg();
         public abstract BaseHeapPointer GetHeapPointer();
         public abstract void MoveUnsafe(IStandardPointerMacros dest);
@@ -28,10 +28,10 @@ namespace Datapack.Net.CubeLib
         public abstract IPointer ToPointer();
         public abstract PointerExists Exists();
 
-        public abstract RuntimePointer<T> ToRTP<T>();
+        public abstract RuntimePointer<T> ToRTP<T>() where T : Pointerable;
     }
 
-    public class HeapPointer<T>(MCStaticHeap heap, ScoreRef pointer, string extraPath = "") : BaseHeapPointer, IPointer<T>
+    public class HeapPointer<T>(MCStaticHeap heap, ScoreRef pointer, string extraPath = "") : BaseHeapPointer, IPointer<T> where T : Pointerable
     {
         public readonly MCStaticHeap Heap = heap;
         public readonly ScoreRef Pointer = pointer;

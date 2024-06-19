@@ -31,6 +31,8 @@ namespace Datapack.Net.CubeLib
         public Scoreboard.Players.Get Get() => new(Target, Score);
         public Scoreboard.Players.Set SetCmd(int val) => new(Target, Score, val);
 
+        public void DynSet(string macro) => Project.ActiveProject.AddCommand(new RawCommand($"scoreboard players set {Target.Get()} {Score} $({macro})", true));
+
         public Execute Store(bool macro = false) => new Execute(macro).Store(this);
 
         public void Op(int val, ScoreOperation op)

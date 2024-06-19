@@ -19,7 +19,7 @@ namespace Datapack.Net.CubeLib.Builtins.Static
             Project.ActiveProject.PrependMain(new Execute().Unless.Data(Storage, Path).Run(new DataCommand.Modify(Storage, Path).Set().Value("{}")));
         }
 
-        public HeapPointer<T> Alloc<T>(ScoreRef loc)
+        public HeapPointer<T> Alloc<T>(ScoreRef loc) where T : Pointerable
         {
             var p = Project.ActiveProject;
             p.Std.AllocAddress([new("storage", Storage.ID), new("path", Path)], loc);
@@ -27,7 +27,7 @@ namespace Datapack.Net.CubeLib.Builtins.Static
             return pointer;
         }
 
-        public RuntimePointer<T> Alloc<T>(RuntimePointer<T> loc)
+        public RuntimePointer<T> Alloc<T>(RuntimePointer<T> loc) where T : Pointerable
         {
             var p = Project.ActiveProject;
             var ret = p.Temp(0, "alloc");

@@ -170,7 +170,7 @@ namespace Datapack.Net.Tests
             var func = new MCFunction(new("test", "func"));
             var cmd = new Execute()
                 .Unless.Data(new Position(1, 2, 3), "hi")
-                .Unless.Data(new TargetSelector(TargetType.s), "three.1")
+                .Unless.Data(TargetSelector.Self, "three.1")
                 .Unless.Data(new Storage(new("test:test")), "test")
                 .Run(new FunctionCommand(func));
 
