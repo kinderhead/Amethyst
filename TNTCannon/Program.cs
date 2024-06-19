@@ -7,7 +7,7 @@ namespace TNTCannon
     {
         static void Main(string[] args)
         {
-            var pack = new DP("Wow");
+            var pack = new DP("Wow", "test.zip");
 
             Project.Settings.VerifyMacros = true;
 

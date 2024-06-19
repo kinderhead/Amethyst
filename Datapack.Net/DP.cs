@@ -19,10 +19,11 @@ namespace Datapack.Net
         private FileStream? fileStream;
         private ZipArchive? zipFile;
 
-        public string Description;
-        public int PackFormat;
+        public readonly string Description;
+        public readonly int PackFormat;
+        public readonly string FilePath;
 
-        public DP(string description, int packFormat = 26)
+        public DP(string description, string filepath, int packFormat = 26)
         {
             types.Add(new Advancements());
             types.Add(new ItemModifiers());
@@ -39,11 +40,12 @@ namespace Datapack.Net
 
             Description = description;
             PackFormat = packFormat;
+            FilePath = filepath;
         }
 
         public void Build()
         {
-            using (fileStream = new FileStream(@"test.zip", FileMode.Create))
+            using (fileStream = new FileStream(FilePath, FileMode.Create))
             {
                 using (zipFile = new ZipArchive(fileStream, ZipArchiveMode.Create))
                 {

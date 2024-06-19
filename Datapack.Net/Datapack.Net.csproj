@@ -8,6 +8,14 @@
 
   <ItemGroup>
     <None Include="..\.editorconfig" Link=".editorconfig" />
+    <None Include="..\LICENSE.txt">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+    <None Include="..\README.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
   </ItemGroup>
 
   <ItemGroup>
@@ -20,6 +28,17 @@
 
 	<PropertyGroup>
 		<EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
+		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+		<Title>Datapack.Net</Title>
+		<Authors>kinderhead</Authors>
+		<Description>A library for generating Minecraft Datapacks</Description>
+		<Copyright>MIT</Copyright>
+		<PackageProjectUrl>https://github.com/kinderhead/Datapack.Net</PackageProjectUrl>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
+		<RepositoryUrl>https://github.com/kinderhead/Datapack.Net</RepositoryUrl>
+		<PackageTags>minecraft,datapack</PackageTags>
+		<Version>0.1.0</Version>
+		<PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
 	</PropertyGroup>
 
 </Project>
