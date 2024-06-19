@@ -274,5 +274,16 @@ namespace Datapack.Net.CubeLib
         {
             AddCommand(new DataCommand.Modify(new StorageMacro("$(storage)"), "$(path).$(pointer)$(ext)", true).Set().From(TargetSelector.Self));
         }
+
+        /// <summary>
+        /// Arguments: <br/>
+        /// <b>path</b>: Path in entity NBT <br/>
+        /// <b>path</b>: Value <br/>
+        /// </summary>
+        [DeclareMC("entity_write", ["path", "value"])]
+        private void _EntityWrite()
+        {
+            AddCommand(new DataCommand.Modify(TargetSelector.Self, "$(path)", true).Set().Value("$(value)"));
+        }
     }
 }

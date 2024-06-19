@@ -821,6 +821,8 @@ namespace Datapack.Net.CubeLib
             })));
         }
 
+        public Entity Summon(EntityType type) => Summon(type, Position.Current);
+
         public Entity Summon(EntityType type, Position pos)
         {
             var id = Local();

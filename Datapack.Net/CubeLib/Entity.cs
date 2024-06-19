@@ -43,6 +43,8 @@ namespace Datapack.Net.CubeLib
 
         public void CopyTo(IPointer<NBTCompound> loc) => As(() => Project.ActiveProject.Std.EntityNBTToPointer(loc.StandardMacros()), false);
 
+        public void SetNBT(string path, NBTType value) => As(() => Project.ActiveProject.Std.EntityWrite([new("path", path), new("value", value)]));
+
         /// <summary>
         /// Sets the execute's target to the entity. If ran inside <see cref="As(Action, bool)"/>
         /// then the current entity will be remembered and <c>@s</c> will be used.

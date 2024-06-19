@@ -50,19 +50,23 @@ namespace TNTCannon
             var max = Local();
             max.DynSet("count");
 
+            var self = EntityRef(TargetSelector.Self);
+            self.Teleport(new Position(~new Coord(0), ~new Coord(.5), ~new Coord(0)));
+
             For(1, max, i =>
             {
-                Summon(Entities.Tnt, new Position(new(0, CoordType.Relative), new(-.2, CoordType.Relative), new(0, CoordType.Relative)));
+                Summon(Entities.Tnt, new Position(~new Coord(0), ~new Coord(-.5), ~new Coord(0)));
             });
         }
 
         protected override void Tick()
         {
-            //As(new TargetSelector(TargetType.a), (i) =>
-            //{
-            //    var random = EntityRef(new TargetSelector(TargetType.e, sort: SortType.Random, limit: 1));
-            //    i.Teleport(random);
-            //});
+            As(new TargetSelector(TargetType.e, type: Entities.Arrow), (i) =>
+            {
+                i.As(() => Summon(Entities.Tnt).SetNBT("fuse", 100));
+            });
+
+            AddCommand(new KillCommand(new TargetSelector(TargetType.e, type: Entities.Arrow, nbt: new NBTCompound() { ["inGround"] = true })));
         }
     }
 }

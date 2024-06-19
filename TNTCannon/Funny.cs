@@ -1,5 +1,6 @@
 using System;
 using Datapack.Net.CubeLib;
+using Datapack.Net.Data;
 
 namespace TNTCannon
 {
@@ -9,10 +10,10 @@ namespace TNTCannon
         internal sealed class Props
         {
             [RuntimeProperty("prop")]
-            public int Prop { get; set; }
+            public NBTInt Prop { get; set; }
 
             [RuntimeProperty("str")]
-            public string Str { get; set; }
+            public NBTString Str { get; set; }
 
             [RuntimeProperty("other")]
             public Funny Other { get; set; }
