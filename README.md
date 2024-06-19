@@ -35,6 +35,8 @@ Datapack.Net can be installed via NuGet [here](https://www.nuget.org/packages/Da
 
 If cloning locally, you need to build the project and restart your IDE for the source generator to come into effect.
 
+For the time being, I recommend cloning and editing the `TNTCannon` example/testing project if you just want to play around.
+
 ## Usage
 
 This is basic datapack creation and building. Scroll down for the more interesting stuff.
