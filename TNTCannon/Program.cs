@@ -1,5 +1,8 @@
 ﻿using Datapack.Net;
 using Datapack.Net.CubeLib;
+using Datapack.Net.Function;
+using Datapack.Net.Pack;
+using Datapack.Net.Utils;
 
 namespace TNTCannon
 {
