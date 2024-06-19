@@ -39,7 +39,7 @@ namespace Datapack.Net.CubeLib
         /// <returns></returns>
         public Execute As(Execute cmd, bool force = false)
         {
-            if (force || (AsStack.TryPeek(out var cur) && cur != this)) return cmd.As(new TargetSelector(TargetType.e)).If.Score(new TargetSelector(TargetType.s), Project.EntityIDScore, Comparison.Equal, ID.Target, ID.Score);
+            if (force || AsStack.Count == 0 || (AsStack.TryPeek(out var cur) && cur != this)) return cmd.As(new TargetSelector(TargetType.e)).If.Score(new TargetSelector(TargetType.s), Project.EntityIDScore, Comparison.Equal, ID.Target, ID.Score);
             return cmd.As(new TargetSelector(TargetType.s));
         }
     }

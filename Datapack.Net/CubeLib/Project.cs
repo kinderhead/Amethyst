@@ -837,9 +837,9 @@ namespace Datapack.Net.CubeLib
             return mcfunc;
         }
 
-        public void Strcat(IPointer<string> dest, params object[] values) => Strcat(dest, false, values);
+        public void Strcat(IPointer<NBTString> dest, params object[] values) => Strcat(dest, false, values);
 
-        public void Strcat(IPointer<string> dest, bool macro = false, params object[] values)
+        public void Strcat(IPointer<NBTString> dest, bool macro = false, params object[] values)
         {
             List<KeyValuePair<string, object>> args = [];
 

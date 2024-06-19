@@ -26,8 +26,18 @@ namespace TNTCannon
         {
             Print("Running");
 
-            var entity = EntityRef(new TargetSelector(TargetType.p));
-            entity.As(() => AddCommand(new SayCommand("boo")));
+            Heap.Clear();
+
+            var list = AllocObj<MCList<NBTInt>>();
+
+            For(0, Local(69), i => list.Add(i));
+
+            Print(list);
+
+            list.FreeObj();
+
+            //var entity = EntityRef(new TargetSelector(TargetType.p));
+            //entity.As(() => AddCommand(new SayCommand("boo")));
         }
 
         protected override void Tick()

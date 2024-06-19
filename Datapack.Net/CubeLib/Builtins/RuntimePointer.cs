@@ -101,7 +101,7 @@ namespace Datapack.Net.CubeLib.Builtins
         internal sealed class Props
         {
             [RuntimeProperty("obj")]
-            public string Obj { get; set; }
+            public NBTString Obj { get; set; }
         }
     }
 }
