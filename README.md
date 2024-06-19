@@ -71,7 +71,7 @@ See the tests for examples of commands and other features.
 
 ## CubeLib
 
-Have you ever strugled to multiply a score by a constant number? Have you ever wanted better control flow? With the recent addition of function macros in Minecraft, everything is possible. CubeLib is a system to achieve just that by dynamically generating commands based on function calls. It's optional and fully separate from the rest of the library under the `Datapack.Net.CubeLib` namespace.
+Have you ever struggled to multiply a score by a constant number? Have you ever wanted better control flow? With the recent addition of function macros in Minecraft, everything is possible. CubeLib is a system to achieve just that by dynamically generating commands based on function calls. It's optional and fully separate from the rest of the library under the `Datapack.Net.CubeLib` namespace.
 
 A quick example:
 
