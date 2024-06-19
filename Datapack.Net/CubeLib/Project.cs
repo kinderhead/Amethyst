@@ -821,6 +821,13 @@ namespace Datapack.Net.CubeLib
             })));
         }
 
+        public Entity Summon(EntityType type, Position pos)
+        {
+            var id = Local();
+            AddCommand(new Execute().Positioned(pos).Summon(type).Store(id).Run(new FunctionCommand(Std.GetEntityID_Function())));
+            return new(id);
+        }
+
         public void Random(MCRange<int> range, ScoreRef score) => AddCommand(new Execute().Store(score).Run(new RandomCommand(range)));
 
         public ScoreRef Random(MCRange<int> range)

@@ -28,6 +28,12 @@ namespace TNTCannon
             Print("Running");
 
             Heap.Clear();
+
+            var player = EntityRef(new NamedTarget("kinderhead"));
+            player.As(() =>
+            {
+                Summon(Entities.Chicken, Position.Current).Kill();
+            });
         }
 
         [DeclareMC("do")]
@@ -44,11 +50,11 @@ namespace TNTCannon
 
         protected override void Tick()
         {
-            As(new TargetSelector(TargetType.a), (i) =>
-            {
-                var random = EntityRef(new TargetSelector(TargetType.e, sort: SortType.Random, limit: 1));
-                i.Teleport(random);
-            });
+            //As(new TargetSelector(TargetType.a), (i) =>
+            //{
+            //    var random = EntityRef(new TargetSelector(TargetType.e, sort: SortType.Random, limit: 1));
+            //    i.Teleport(random);
+            //});
         }
     }
 }

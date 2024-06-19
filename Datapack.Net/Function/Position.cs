@@ -16,6 +16,8 @@ namespace Datapack.Net.Function
         {
             return $"{X} {Y} {Z}";
         }
+
+        public static Position Current => new(new(0, CoordType.Relative), new(0, CoordType.Relative), new(0, CoordType.Relative));
     }
 
     public readonly struct Coord(double val, CoordType type = CoordType.Global)

@@ -38,6 +38,13 @@ namespace Datapack.Net.Tests
             Assert.That(cmd.Build(), Is.EqualTo("return run say boo"));
         }
 
+        [Test]
+        public void Kill()
+        {
+            var cmd = new KillCommand(new NamedTarget("test"));
+            Assert.That(cmd.Build(), Is.EqualTo("kill test"));
+        }
+
         #region Function
 
         [Test]

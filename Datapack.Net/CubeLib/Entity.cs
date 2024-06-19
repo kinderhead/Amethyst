@@ -38,6 +38,8 @@ namespace Datapack.Net.CubeLib
 
         public void Teleport(Entity dest) => Project.ActiveProject.AddCommand(As(dest.As(new Execute().Run(new TeleportCommand(new Position(new(0, CoordType.Relative), new(0, CoordType.Relative), new(0, CoordType.Relative))))).At(new TargetSelector(TargetType.s)), true));
 
+        public void Kill() => Project.ActiveProject.AddCommand(As(new Execute().Run(new KillCommand(new TargetSelector(TargetType.s)))));
+
         /// <summary>
         /// Sets the execute's target to the entity. If ran inside <see cref="As(Action, bool)"/>
         /// then the current entity will be remembered and <c>@s</c> will be used.
