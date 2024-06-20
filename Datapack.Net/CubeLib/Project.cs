@@ -62,6 +62,8 @@ namespace Datapack.Net.CubeLib
 
         private int AnonymousFuncCounter = 0;
 
+        public int UniqueVars { get; private set; }
+
         public readonly List<Project> Dependencies = [];
 
         private bool BuiltOrBuilding = false;
@@ -317,17 +319,24 @@ namespace Datapack.Net.CubeLib
         public void CallArgRet(MCFunction func, ScoreRef ret, IRuntimeArgument[] args, bool macro = false) => AddCommand(new Execute(macro).Store(ret).Run(BaseCall(func, args, macro)));
         public void CallArgRet(MCFunction func, ScoreRef ret, IRuntimeArgument[] args, KeyValuePair<string, object>[] macros, bool macro = false, int tmp = 0) => AddCommand(new Execute().Store(ret).Run(BaseCall(func, args, macros, macro, tmp)));
 
-        private FunctionCommand BaseCall(MCFunction func, KeyValuePair<string, object>[] args, bool macro = false, int tmp = 0)
+        public FunctionCommand BaseCall(MCFunction func, KeyValuePair<string, object>[] args, bool macro = false, int tmp = 0)
         {
             var parameters = new NBTCompound();
             var runtimeScores = new Dictionary<string, ScoreRef>();
             var pointers = new Dictionary<string, IPointer>();
 
+            var newScores = 0;
             foreach (var i in args)
             {
                 if (NBTType.ToNBT(i.Value) != null) parameters[i.Key] = NBTType.ToNBT(i.Value) ?? throw new Exception("How did we get here?");
                 else if (i.Value.GetType().IsAssignableTo(typeof(NBTType))) parameters[i.Key] = (NBTType)i.Value;
                 else if (i.Value is ScoreRef score) runtimeScores[i.Key] = score;
+                else if (i.Value is ScoreRefOperation op)
+                {
+                    var var = Temp(newScores++, $"exe{tmp}");
+                    op.Process(var);
+                    runtimeScores[i.Key] = var;
+                }
                 else if (i.Value is IToPointer ptr) pointers[i.Key] = ptr.ToPointer();
                 else if (i.Value is NamespacedID id) parameters[i.Key] = id.ToString();
                 else if (i.Value is Storage storage) parameters[i.Key] = storage.ToString();
@@ -360,13 +369,13 @@ namespace Datapack.Net.CubeLib
             return new FunctionCommand(func, InternalStorage, $"func_tmp{tmp}");
         }
 
-        private FunctionCommand BaseCall(MCFunction func, IRuntimeArgument[] args, bool macro = false)
+        public FunctionCommand BaseCall(MCFunction func, IRuntimeArgument[] args, bool macro = false)
         {
             PushArgs(args);
             return new FunctionCommand(func, macro);
         }
 
-        private FunctionCommand BaseCall(MCFunction func, IRuntimeArgument[] args, KeyValuePair<string, object>[] macros, bool macro = false, int tmp = 0)
+        public FunctionCommand BaseCall(MCFunction func, IRuntimeArgument[] args, KeyValuePair<string, object>[] macros, bool macro = false, int tmp = 0)
         {
             PushArgs(args);
             return BaseCall(func, macros, macro, tmp);
@@ -678,7 +687,7 @@ namespace Datapack.Net.CubeLib
             Globals.Add(score);
             Scores.Add(score);
 
-            return new ScoreRef(score, GlobalScoreEntity);
+            return new(score, GlobalScoreEntity);
         }
 
         public ScoreRef Global() => GetGlobal(Globals.Count);
@@ -688,6 +697,13 @@ namespace Datapack.Net.CubeLib
             var global = Global();
             MiscInitCmds.Add(new Scoreboard.Players.Set(global.Target, global.Score, val));
             return global;
+        }
+
+        public ScoreRef NewUnique()
+        {
+            var score = new Score($"_cl_{Namespace}_unique_{UniqueVars++}", "dummy");
+            Scores.Add(score);
+            return new(score, GlobalScoreEntity);
         }
 
         public ScoreRef Constant(int val)
@@ -726,7 +742,7 @@ namespace Datapack.Net.CubeLib
             {
                 args.Add(new(i, $"$({i})"));
             }
-            return args.ToArray();
+            return [.. args];
         }
 
         public T AllocObj<T>(bool rtp = true) where T : IBaseRuntimeObject => AllocObj<T>(Local(), rtp);
@@ -814,11 +830,13 @@ namespace Datapack.Net.CubeLib
 
         public void As(IEntityTarget targets, Action<Entity> func)
         {
+            Entity.AsStack.Push(null);
             AddCommand(new Execute().As(targets).Run(Lambda(() =>
             {
                 var self = EntityRef(TargetSelector.Self);
                 func(self);
             })));
+            Entity.AsStack.Pop();
         }
 
         public Entity Summon(EntityType type) => Summon(type, Position.Current);

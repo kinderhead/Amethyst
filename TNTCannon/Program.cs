@@ -8,11 +8,12 @@ namespace TNTCannon
 {
     internal class Program
     {
-        static void Main(string[] args)
+        static void Main()
         {
             var pack = new DP("Wow", "test.zip");
 
             Project.Settings.VerifyMacros = true;
+            Project.Settings.EntityCheckPlayer = true;
 
             var proj = Project.Create<TNTProject>(pack);
             proj.Build();

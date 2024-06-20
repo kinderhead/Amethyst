@@ -1,6 +1,8 @@
 ﻿using Datapack.Net.Data;
+using Datapack.Net.Data._1_20_4;
 using Datapack.Net.Function;
 using Datapack.Net.Function.Commands;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,12 +13,42 @@ namespace Datapack.Net.CubeLib
 {
     public class Entity(ScoreRef id) : IRuntimeArgument
     {
-        private static readonly Stack<Entity> AsStack = [];
-        private static readonly Stack<Entity> AtStack = [];
+        internal static readonly Stack<Entity?> AsStack = [];
+        internal static readonly Stack<Entity?> AtStack = [];
+
+        private readonly Dictionary<string, ScoreRef> Uniques = [];
 
         public readonly ScoreRef ID = id;
 
         public ScoreRef GetAsArg() => ID;
+
+        public ScoreRef Health
+        {
+            get
+            {
+                var ret = Unique("health");
+                Project.ActiveProject.AddCommand(As(ret.Store()).Run(new DataCommand.Get(TargetSelector.Self, "Health")));
+                return ret.AsReadonly();
+            }
+
+            set
+            {
+                As(() =>
+                {
+                    var diff = Health - value;
+                    Project.ActiveProject.Std.Damage([new("value", diff)]);
+                }, false);
+            }
+        }
+
+        public void SetHealth(int value)
+        {
+            As(() =>
+            {
+                var diff = Health - value;
+                Project.ActiveProject.Std.Damage([new("value", diff)]);
+            }, false);
+        }
 
         public void As(Action func, bool at = true)
         {
@@ -43,7 +75,18 @@ namespace Datapack.Net.CubeLib
 
         public void CopyTo(IPointer<NBTCompound> loc) => As(() => Project.ActiveProject.Std.EntityNBTToPointer(loc.StandardMacros()), false);
 
-        public void SetNBT(string path, NBTType value) => As(() => Project.ActiveProject.Std.EntityWrite([new("path", path), new("value", value)]));
+        public void SetNBT(string path, NBTType value)
+        {
+            As(() => {
+                PlayerCheck();
+                Project.ActiveProject.Std.EntityWrite([new("path", path), new("value", value)]);
+            });
+        }
+
+        public void PlayerCheck()
+        {
+            if (Project.Settings.EntityCheckPlayer) Project.ActiveProject.If(Is(new TargetSelector(TargetType.s, type: Entities.Player)), new TellrawCommand(new TargetSelector(TargetType.a), new FormattedText().Entity(TargetSelector.Self).Text(" is a player and cannot be edited")));
+        }
 
         /// <summary>
         /// Sets the execute's target to the entity. If ran inside <see cref="As(Action, bool)"/>
@@ -56,7 +99,19 @@ namespace Datapack.Net.CubeLib
         public Execute As(Execute cmd, bool force = false)
         {
             if (force || AsStack.Count == 0 || (AsStack.TryPeek(out var cur) && cur != this)) return cmd.As(new TargetSelector(TargetType.e)).If.Score(TargetSelector.Self, Project.EntityIDScore, Comparison.Equal, ID.Target, ID.Score);
-            return cmd.As(TargetSelector.Self);
+            return cmd;
+        }
+
+        public bool IsCurrentTarget() => AsStack.TryPeek(out var cur) && cur == this;
+
+        public EntityComparison Is(TargetSelector sel) => new(this, sel);
+
+        private ScoreRef Unique(string key)
+        {
+            if (Uniques.TryGetValue(key, out var score)) return score;
+            score = Project.ActiveProject.NewUnique();
+            Uniques[key] = score;
+            return score;
         }
     }
 }

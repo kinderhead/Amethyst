@@ -29,6 +29,12 @@ namespace Datapack.Net.Function
             return this;
         }
 
+        public FormattedText Entity(IEntityTarget target, string sep = ", ")
+        {
+            Obj.Add(new JObject(new JProperty("selector", target.Get()), new JProperty("separator", sep)));
+            return this;
+        }
+
         public void RemoveLast() => Obj.RemoveAt(Obj.Count - 1);
 
         public override string ToString()

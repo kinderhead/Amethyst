@@ -47,5 +47,12 @@ namespace Datapack.Net.CubeLib
         public static ScoreRefOperation operator %(ScoreRefOperation a, ScoreRefOperation b) => new() { LeftBranch = a, RightBranch = b, Operation = ScoreOperation.Mod };
         public static ScoreRefOperation operator %(int a, ScoreRefOperation b) => new() { LeftConst = a, RightBranch = b, Operation = ScoreOperation.Mod };
         public static ScoreRefOperation operator %(ScoreRefOperation a, int b) => new() { LeftBranch = a, RightConst = b, Operation = ScoreOperation.Mod };
+
+        public static implicit operator ScoreRef(ScoreRefOperation a)
+        {
+            var tmp = Project.ActiveProject.Temp(0, "math");
+            a.Process(tmp);
+            return tmp;
+        }
     }
 }

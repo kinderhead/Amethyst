@@ -278,12 +278,22 @@ namespace Datapack.Net.CubeLib
         /// <summary>
         /// Arguments: <br/>
         /// <b>path</b>: Path in entity NBT <br/>
-        /// <b>path</b>: Value <br/>
+        /// <b>value</b>: Value <br/>
         /// </summary>
         [DeclareMC("entity_write", ["path", "value"])]
         private void _EntityWrite()
         {
             AddCommand(new DataCommand.Modify(TargetSelector.Self, "$(path)", true).Set().Value("$(value)"));
+        }
+
+        /// <summary>
+        /// Arguments: <br/>
+        /// <b>value</b>: Damage amount <br/>
+        /// </summary>
+        [DeclareMC("damage", ["value"])]
+        private void _Damage()
+        {
+            AddCommand(new RawCommand("damage @s $(value)", true));
         }
     }
 }

@@ -45,6 +45,27 @@ namespace Datapack.Net.Tests
             Assert.That(cmd.Build(), Is.EqualTo("kill test"));
         }
 
+        [Test]
+        public void Damage1()
+        {
+            var cmd = new DamageCommand(new NamedTarget("test"), 5, new("test", "dmg"));
+            Assert.That(cmd.Build(), Is.EqualTo("damage test 5 test:dmg"));
+        }
+
+        [Test]
+        public void Damage2()
+        {
+            var cmd = new DamageCommand(new NamedTarget("test"), 5, new("test", "dmg"), new Position(1, 2, 3));
+            Assert.That(cmd.Build(), Is.EqualTo("damage test 5 test:dmg at 1 2 3"));
+        }
+
+        [Test]
+        public void Damage3()
+        {
+            var cmd = new DamageCommand(new NamedTarget("test"), 5, new("test", "dmg"), new NamedTarget("By"), new NamedTarget("Cause"));
+            Assert.That(cmd.Build(), Is.EqualTo("damage test 5 test:dmg by By from Cause"));
+        }
+
         #region Function
 
         [Test]

@@ -6,5 +6,6 @@ namespace Datapack.Net.CubeLib
     {
         public bool ErrorChecking = false;
         public bool VerifyMacros = false;
+        public bool EntityCheckPlayer = false;
     }
 }

@@ -29,7 +29,9 @@ namespace TNTCannon
 
             Heap.Clear();
 
-            
+            var player = EntityRef(new TargetSelector(TargetType.p));
+
+            player.Kill();
         }
 
         [DeclareMC("do")]
@@ -61,7 +63,7 @@ namespace TNTCannon
 
         protected override void Tick()
         {
-            As(new TargetSelector(TargetType.e, type: Entities.Arrow), (i) =>
+            As(new TargetSelector(TargetType.e, type: Entities.Arrow), i =>
             {
                 i.As(() => Summon(Entities.Tnt).SetNBT("fuse", 100));
             });
