@@ -233,4 +233,4 @@ If your object is generic like `MCList<T>`, then pick a type like `NBTType`. Met
 
 NBT types are stored by value, and custom objects (basically fancy pointers) are passed and stored by reference.
 
-More information can be found in the Wiki (WIP)
+More information can be found in the [wiki](https://github.com/kinderhead/Datapack.Net/wiki) (WIP)

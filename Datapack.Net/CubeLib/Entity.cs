@@ -41,15 +41,6 @@ namespace Datapack.Net.CubeLib
             }
         }
 
-        public void SetHealth(int value)
-        {
-            As(() =>
-            {
-                var diff = Health - value;
-                Project.ActiveProject.Std.Damage([new("value", diff)]);
-            }, false);
-        }
-
         public void As(Action func, bool at = true)
         {
             var proj = Project.ActiveProject;

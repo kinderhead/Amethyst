@@ -18,9 +18,12 @@ namespace TNTCannon
     {
         public override string Namespace => "tnt";
 
+        private Entity Player;
+
         protected override void Init()
         {
             //RegisterObject<Funny>();
+            Player = GlobalEntityRef(new TargetSelector(TargetType.p));
         }
 
         protected override void Main()
@@ -29,21 +32,9 @@ namespace TNTCannon
 
             Heap.Clear();
 
-            var player = EntityRef(new TargetSelector(TargetType.p));
+            Player.Health = 10;
 
-            player.Kill();
-        }
-
-        [DeclareMC("do")]
-        private void _Do()
-        {
-            var entity = EntityRef(new NamedTarget("virchelovek"));
-
-            entity.As(() =>
-            {
-                var dest = EntityRef(new TargetSelector(TargetType.e, type: Entities.Sheep, sort: SortType.Nearest, limit: 1));
-                entity.Teleport(dest);
-            });
+            Print((Player.Health + 69) / 4);
         }
 
         [DeclareMC("boom", ["count"])]

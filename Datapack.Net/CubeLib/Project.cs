@@ -585,15 +585,25 @@ namespace Datapack.Net.CubeLib
             CurrentTarget = oldTarget;
         }
 
-        public void WithInit(Action func)
+        public T WithInit<T>(Func<T> func)
         {
             SendToMisc = true;
             var old = currentTarget;
             currentTarget = FindFunction(Main);
 
-            func();
+            var ret = func();
             currentTarget = old;
             SendToMisc = false;
+            return ret;
+        }
+
+        public void WithInit(Action func)
+        {
+            WithInit(() =>
+            {
+                func();
+                return false;
+            });
         }
 
         public void AddStaticObject(IStaticType type) => StaticTypes.Add(type);
@@ -770,12 +780,7 @@ namespace Datapack.Net.CubeLib
             return obj;
         }
 
-        public T GlobalAllocObjIfNull<T>(bool rtp = true) where T : IBaseRuntimeObject
-        {
-            T? ret = default;
-            WithInit(() => ret = AllocObjIfNull<T>(Global(), rtp));
-            return ret ?? throw new Exception();
-        }
+        public T GlobalAllocObjIfNull<T>(bool rtp = true) where T : IBaseRuntimeObject => WithInit(() => AllocObjIfNull<T>(Global(), rtp));
 
         public HeapPointer<T> Alloc<T>() where T : Pointerable => Alloc<T>(Local());
         public HeapPointer<T> Alloc<T>(ScoreRef loc) where T : Pointerable => Heap.Alloc<T>(loc);
@@ -906,6 +911,7 @@ namespace Datapack.Net.CubeLib
         }
 
         public Entity EntityRef(IEntityTarget sel) => EntityRef(sel, Local());
+        public Entity GlobalEntityRef(IEntityTarget sel) => WithInit(() => EntityRef(sel, Global()));
 
         public Entity EntityRef(IEntityTarget sel, ScoreRef var)
         {

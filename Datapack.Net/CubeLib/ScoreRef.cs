@@ -105,32 +105,24 @@ namespace Datapack.Net.CubeLib
         public static ScoreRefOperation operator +(ScoreRef a, ScoreRef b) => new() { LeftScore = a, RightScore = b, Operation = ScoreOperation.Add };
         public static ScoreRefOperation operator +(ScoreRefOperation a, ScoreRef b) => new() { LeftBranch = a, RightScore = b, Operation = ScoreOperation.Add };
         public static ScoreRefOperation operator +(ScoreRef a, ScoreRefOperation b) => new() { LeftScore = a, RightBranch = b, Operation = ScoreOperation.Add };
-        public static ScoreRefOperation operator +(int a, ScoreRef b) => new() { LeftConst = a, RightScore = b, Operation = ScoreOperation.Add };
-        public static ScoreRefOperation operator +(ScoreRef a, int b) => new() { LeftScore = a, RightConst = b, Operation = ScoreOperation.Add };
 
         public static ScoreRefOperation operator -(ScoreRef a, ScoreRef b) => new() { LeftScore = a, RightScore = b, Operation = ScoreOperation.Sub };
         public static ScoreRefOperation operator -(ScoreRefOperation a, ScoreRef b) => new() { LeftBranch = a, RightScore = b, Operation = ScoreOperation.Sub };
         public static ScoreRefOperation operator -(ScoreRef a, ScoreRefOperation b) => new() { LeftScore = a, RightBranch = b, Operation = ScoreOperation.Sub };
-        public static ScoreRefOperation operator -(int a, ScoreRef b) => new() { LeftConst = a, RightScore = b, Operation = ScoreOperation.Sub };
-        public static ScoreRefOperation operator -(ScoreRef a, int b) => new() { LeftScore = a, RightConst = b, Operation = ScoreOperation.Sub };
 
         public static ScoreRefOperation operator *(ScoreRef a, ScoreRef b) => new() { LeftScore = a, RightScore = b, Operation = ScoreOperation.Mul };
         public static ScoreRefOperation operator *(ScoreRefOperation a, ScoreRef b) => new() { LeftBranch = a, RightScore = b, Operation = ScoreOperation.Mul };
         public static ScoreRefOperation operator *(ScoreRef a, ScoreRefOperation b) => new() { LeftScore = a, RightBranch = b, Operation = ScoreOperation.Mul };
-        public static ScoreRefOperation operator *(int a, ScoreRef b) => new() { LeftConst = a, RightScore = b, Operation = ScoreOperation.Mul };
-        public static ScoreRefOperation operator *(ScoreRef a, int b) => new() { LeftScore = a, RightConst = b, Operation = ScoreOperation.Mul };
 
         public static ScoreRefOperation operator /(ScoreRef a, ScoreRef b) => new() { LeftScore = a, RightScore = b, Operation = ScoreOperation.Div };
         public static ScoreRefOperation operator /(ScoreRefOperation a, ScoreRef b) => new() { LeftBranch = a, RightScore = b, Operation = ScoreOperation.Div };
         public static ScoreRefOperation operator /(ScoreRef a, ScoreRefOperation b) => new() { LeftScore = a, RightBranch = b, Operation = ScoreOperation.Div };
-        public static ScoreRefOperation operator /(int a, ScoreRef b) => new() { LeftConst = a, RightScore = b, Operation = ScoreOperation.Div };
-        public static ScoreRefOperation operator /(ScoreRef a, int b) => new() { LeftScore = a, RightConst = b, Operation = ScoreOperation.Div };
 
         public static ScoreRefOperation operator %(ScoreRef a, ScoreRef b) => new() { LeftScore = a, RightScore = b, Operation = ScoreOperation.Mod };
         public static ScoreRefOperation operator %(ScoreRefOperation a, ScoreRef b) => new() { LeftBranch = a, RightScore = b, Operation = ScoreOperation.Mod };
         public static ScoreRefOperation operator %(ScoreRef a, ScoreRefOperation b) => new() { LeftScore = a, RightBranch = b, Operation = ScoreOperation.Mod };
-        public static ScoreRefOperation operator %(int a, ScoreRef b) => new() { LeftConst = a, RightScore = b, Operation = ScoreOperation.Mod };
-        public static ScoreRefOperation operator %(ScoreRef a, int b) => new() { LeftScore = a, RightConst = b, Operation = ScoreOperation.Mod };
+
+        public static implicit operator ScoreRef(int a) => Project.ActiveProject.Constant(a);
 
         public override bool Equals(object? obj)
         {
