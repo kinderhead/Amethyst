@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 
 namespace Datapack.Net.SourceGenerator
@@ -14,6 +15,11 @@ namespace Datapack.Net.SourceGenerator
             Name = name;
             Functions = [.. functions];
             Namespace = ns;
+        }
+
+        public override int GetHashCode()
+        {
+            return unchecked(Name.GetHashCode() + Namespace.GetHashCode() + Functions.GetHashCode());
         }
     }
 }

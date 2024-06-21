@@ -31,11 +31,14 @@ Datapack.Net still has a long way to go, so feel free to play around and catch b
 
 ## Installation
 
-Datapack.Net can be installed via NuGet [here](https://www.nuget.org/packages/Datapack.Net/). The CubeLib analyzer is a separate package (not yet published).
+Datapack.Net can be installed via NuGet [here](https://www.nuget.org/packages/Datapack.Net/). The CubeLib analyzer is a separate package located [here](https://www.nuget.org/packages/Datapack.Net.SourceGenerator).
+
+```sh
+dotnet add package Datapack.Net
+dotnet add package Datapack.Net.SourceGenerator
+```
 
 If cloning locally, you need to build the project and restart your IDE for the source generator to come into effect.
-
-For the time being, I recommend cloning and editing the `TNTCannon` example/testing project if you just want to play around.
 
 ## Usage
 
