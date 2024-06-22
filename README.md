@@ -29,7 +29,7 @@ Datapack.Net still has a long way to go, so feel free to play around and catch b
 * Datapack optimizer
   * Currently only removes empty functions and commands that reference them
 * Supports 1.20.4
-  * 1.20.5+ support is limited due to the new item components replacing NBT. Most things should still work
+  * 1.20.5+ support is limited due to the new item components replacing NBT. Most things should still work. This will change in the future
 
 ## Installation
 
@@ -39,6 +39,8 @@ Datapack.Net can be installed via NuGet [here](https://www.nuget.org/packages/Da
 dotnet add package Datapack.Net
 dotnet add package Datapack.Net.SourceGenerator
 ```
+
+Don't forget to update frequently.
 
 If cloning locally, you need to build the project and restart your IDE for the source generator to come into effect.
 
@@ -105,7 +107,7 @@ If(x > 20, () => Print("Big number"))
   * Not usually used directly by the end user
 * String concatenation
 * Dynamic heap allocation and memory management using modern datapack tools like macros and storage
-  * C-style. No handholding or garbage collection
+  * Simple garbage collector, C++ smart pointer style
   * Object oriented programming
     * No inheritance yet
   * Statically typed runtime lists (`MCList<T>`)
@@ -131,15 +133,10 @@ public partial class MyProject(DP pack) : Project(pack)
 {
     public override string Namespace => "test";
 
-    protected override void Init()
-    {
-        // Initialize global variables here
-    }
-
     protected override void Main()
     {
         // Ran on reload
-        // Do not set class properties here because this function is not guaranteed to be ran before others
+        // Initialize things here
     }
 
     protected override void Tick()
@@ -174,7 +171,7 @@ private void _Test(MyObject obj)
 }
 ```
 
-Custom functions are declared as private and with a leading underscore in their name (custom object methods are also static to prevent confusing states with each other). This is so the source generator can generate wrapper methods for easier use. If the source generators are not used, then they can be public. In the future, the source generator will contain an analyzer to catch this error.
+Custom functions are declared as private and with a leading underscore in their name (custom object methods are also static to prevent confusion). This is so the source generator can generate wrapper methods for easier use. If the source generators are not used, then they can be public. In the future, the source generator will contain an analyzer to catch this error.
 
 Which then can be called as follows anywhere:
 ```csharp
@@ -186,7 +183,6 @@ Pointers:
 var ptr = Alloc<NBTString>();
 ptr.Set("Boo");
 ptr.Copy(otherPointer);
-ptr.Free();
 ```
 
 Objects are allocated using `AllocObj<T>` instead because they have additional requirements. They will also be allocated using a `RuntimePointer<T>` for efficiency reasons, so that means two objects will be allocated (the pointer and the object).
@@ -199,10 +195,10 @@ public partial class Funny(IPointer<Funny> prop) : RuntimeObject<TNTProject, Fun
     internal sealed class Props
     {
         [RuntimeProperty("prop")]
-        public int Prop { get; set; }
+        public NBTInt Prop { get; set; }
 
         [RuntimeProperty("str")]
-        public string Str { get; set; }
+        public NBTString Str { get; set; }
 
         [RuntimeProperty("other")]
         public Funny Other { get; set; }

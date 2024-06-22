@@ -18,13 +18,7 @@ namespace TNTCannon
     {
         public override string Namespace => "tnt";
 
-        private Entity Player;
-
-        protected override void Init()
-        {
-            //RegisterObject<Funny>();
-            Player = GlobalEntityRef(new TargetSelector(TargetType.p));
-        }
+        private Funny Obj;
 
         protected override void Main()
         {
@@ -32,34 +26,17 @@ namespace TNTCannon
 
             Heap.Clear();
 
-            Player.Health = 10;
-
-            Print((Player.Health + 69) / 4);
+            Obj = AllocObj<Funny>(Global());
+            Obj.Prop = 4;
+            Obj.Other = AllocObj<Funny>();
+            Obj.Other.Str = "Booooooooo";
         }
 
-        [DeclareMC("boom", ["count"])]
-        private void _Boom()
+        [DeclareMC("test")]
+        private void _Test()
         {
-            var max = Local();
-            max.DynSet("count");
-
-            var self = EntityRef(TargetSelector.Self);
-            self.Teleport(new Position(~new Coord(0), ~new Coord(.5), ~new Coord(0)));
-
-            For(1, max, i =>
-            {
-                Summon(Entities.Tnt, new Position(~new Coord(0), ~new Coord(-.5), ~new Coord(0)));
-            });
-        }
-
-        protected override void Tick()
-        {
-            As(new TargetSelector(TargetType.e, type: Entities.Arrow), i =>
-            {
-                i.As(() => Summon(Entities.Tnt).SetNBT("fuse", 100));
-            });
-
-            AddCommand(new KillCommand(new TargetSelector(TargetType.e, type: Entities.Arrow, nbt: new NBTCompound() { ["inGround"] = true })));
+            Print(Obj);
+            Print(Obj.Other);
         }
     }
 }

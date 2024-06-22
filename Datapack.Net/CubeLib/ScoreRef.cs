@@ -9,11 +9,12 @@ using System.Threading.Tasks;
 
 namespace Datapack.Net.CubeLib
 {
-    public class ScoreRef(Score score, IEntityTarget target, bool @readonly = false) : IRuntimeArgument
+    public class ScoreRef(Score score, IEntityTarget target, bool @readonly = false, bool global = false) : IRuntimeArgument
     {
         public readonly Score Score = score;
         public readonly IEntityTarget Target = target.RequireOne();
         public readonly bool Readonly = @readonly;
+        public readonly bool Global = global;
 
         public void Set(int val)
         {
@@ -136,8 +137,8 @@ namespace Datapack.Net.CubeLib
 
         public ScoreRef GetAsArg() => this;
 
-        public ScoreRef AsReadonly() => new(Score, Target, true);
+        public ScoreRef AsReadonly() => new(Score, Target, true, Global);
 
-        public static IRuntimeArgument Create(ScoreRef arg) => new ScoreRef(arg.Score, arg.Target);
+        public static IRuntimeArgument Create(ScoreRef arg) => new ScoreRef(arg.Score, arg.Target, global: arg.Global);
     }
 }

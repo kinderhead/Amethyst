@@ -89,5 +89,19 @@ namespace Datapack.Net.SourceGenerator
 
             return new(method.Name, method.ToDisplayString(), attr.AttributeClass.IsGenericType ? attr.AttributeClass.TypeArguments.FirstOrDefault().ToDisplayString() : "void", args, attr.AttributeConstructor.Parameters.Length == 2);
         }
+
+        public static string ProcessRuntimePropertyType(string type)
+        {
+            if (type == "Datapack.Net.Data.NBTString") return "Datapack.Net.CubeLib.StringRuntimeProperty";
+            if (type == "Datapack.Net.Data.NBTInt") return "Datapack.Net.CubeLib.IntRuntimeProperty";
+            if (type == "Datapack.Net.Data.NBTLong") return "Datapack.Net.CubeLib.LongRuntimeProperty";
+            if (type == "Datapack.Net.Data.NBTShort") return "Datapack.Net.CubeLib.ShortRuntimeProperty";
+            if (type == "Datapack.Net.Data.NBTFloat") return "Datapack.Net.CubeLib.FloatRuntimeProperty";
+            if (type == "Datapack.Net.Data.NBTDouble") return "Datapack.Net.CubeLib.DoubleRuntimeProperty";
+            if (type == "Datapack.Net.Data.NBTByte") return "Datapack.Net.CubeLib.ByteRuntimeProperty";
+            if (type == "Datapack.Net.Data.NBTBool") return "Datapack.Net.CubeLib.BoolRuntimeProperty";
+
+            return $"global::Datapack.Net.CubeLib.RuntimeProperty<{type}>";
+        }
     }
 }

@@ -9,9 +9,15 @@ namespace Datapack.Net.CubeLib
 {
     public interface IBaseRuntimeObject : IRuntimeArgument, Pointerable
     {
+        public bool Freed { get; }
+
+        public RuntimeProperty<NBTInt> ReferenceCount { get; set; }
+
         public void IfNull(Action func);
         public bool HasMethod(string name);
         public Delegate GetMethod(string name);
+
+        public void FreeObj();
 
         public IPointer GetPointer();
 
@@ -28,12 +34,18 @@ namespace Datapack.Net.CubeLib
 
         public TSelf PropValue { get => (TSelf)this; }
 
+        public bool Freed { get; protected set; }
+
+        public RuntimeProperty<NBTInt> ReferenceCount { get => new(GetProp<NBTInt>("__ref")); set => SetProp("__ref", value); }
+
         public RuntimeObject(IPointer<TSelf> loc)
         {
             Pointer = loc;
         }
 
         public RuntimeObject() { }
+
+        public virtual (string, Type)[] AllProperties { get; }
 
         protected IPointer<T> GetProp<T>(string path, bool dot = true) where T : Pointerable => Pointer.Get<T>(path, dot);
         protected T GetObj<T>(string path, bool dot = true) where T : IBaseRuntimeObject => (T)T.Create((RuntimePointer<T>)RuntimePointer<T>.Create(Pointer.Get<RuntimePointer<T>>(path, dot)));
@@ -42,8 +54,10 @@ namespace Datapack.Net.CubeLib
         protected void SetProp<T>(string path, IPointer<T> pointer) where T : Pointerable
         {
             var place = GetProp<T>(path).Get<NBTString>("obj");
+            if (typeof(T).IsAssignableTo(typeof(IBaseRuntimeObject))) ((IBaseRuntimeObject)pointer.Self).ReferenceCount.Pointer.With(i => i.Add(1));
             Project.ActiveProject.Std.StorePointer([.. place.StandardMacros([], "1"), .. pointer.StandardMacros([], "2")]);
         }
+
         protected void SetProp<T>(string path, IRuntimeProperty<T> prop) where T : Pointerable
         {
             if (prop.Pointer is not null) SetProp(path, prop.Pointer);
@@ -51,7 +65,12 @@ namespace Datapack.Net.CubeLib
             else throw new ArgumentException("RuntimeProperty was not created properly");
         }
 
-        public void FreeObj() => Pointer.Free();
+        public virtual void FreeObj()
+        {
+            FreePointers();
+            Pointer.Free();
+            Freed = true;
+        }
         public void CopyObj(IPointer<TSelf> dest) => Pointer.Copy(dest);
         public void MoveObj(IPointer<TSelf> dest) => Pointer.Move(dest);
         public void MoveObj(TSelf dest) => Pointer.Move(dest.Pointer);
@@ -83,6 +102,8 @@ namespace Datapack.Net.CubeLib
 
             throw new Exception($"Cannot get method {name} from object");
         }
+
+        public virtual void FreePointers() { }
 
         private static TProject? _state = null;
         public static TProject State

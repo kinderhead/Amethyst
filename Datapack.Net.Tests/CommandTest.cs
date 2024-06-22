@@ -66,6 +66,20 @@ namespace Datapack.Net.Tests
             Assert.That(cmd.Build(), Is.EqualTo("damage test 5 test:dmg by By from Cause"));
         }
 
+        [Test]
+        public void Schedule1()
+        {
+            var cmd = new ScheduleCommand(new MCFunction(new("test:test")));
+            Assert.That(cmd.Build(), Is.EqualTo("schedule clear test:test"));
+        }
+
+        [Test]
+        public void Schedule2()
+        {
+            var cmd = new ScheduleCommand(new MCFunction(new("test:test")), 5);
+            Assert.That(cmd.Build(), Is.EqualTo("schedule function test:test 5 replace"));
+        }
+
         #region Function
 
         [Test]

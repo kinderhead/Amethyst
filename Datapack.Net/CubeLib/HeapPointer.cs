@@ -24,6 +24,7 @@ namespace Datapack.Net.CubeLib
         public abstract BaseHeapPointer GetHeapPointer();
         public abstract void MoveUnsafe(IStandardPointerMacros dest);
         public abstract void Set(NBTType val);
+        public abstract void Set(ScoreRef val);
         public abstract KeyValuePair<string, object>[] StandardMacros(KeyValuePair<string, object>[]? extras = null, string postfix = "");
         public abstract IPointer ToPointer();
         public abstract PointerExists Exists();
@@ -43,6 +44,11 @@ namespace Datapack.Net.CubeLib
         public override void Set(NBTType val)
         {
             Project.ActiveProject.Std.PointerSet(StandardMacros([new("value", val.ToString())]));
+        }
+
+        public override void Set(ScoreRef val)
+        {
+            Project.ActiveProject.Std.PointerSet(StandardMacros([new("value", val)]));
         }
 
         public void Copy(IPointer<T> dest) => CopyUnsafe(dest);

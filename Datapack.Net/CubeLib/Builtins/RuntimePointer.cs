@@ -26,7 +26,8 @@ namespace Datapack.Net.CubeLib.Builtins
             }
         }
 
-        public T Self => (T?)typeof(T).GetMethod("Create")?.Invoke(null, [this]) ?? throw new ArgumentException("Not a pointer to a RuntimeObject");
+        public T Self => (T?)Activator.CreateInstance(typeof(T), this) ?? throw new ArgumentException("Not a pointer to a RuntimeObject");
+        public bool IsRuntimeObject => typeof(T).IsAssignableTo(typeof(IBaseRuntimeObject));
 
         public RuntimePointer(IPointer<RuntimePointer<T>> loc) : this(loc, "")
         {
@@ -89,10 +90,38 @@ namespace Datapack.Net.CubeLib.Builtins
         public void Free()
         {
             Project.ActiveProject.Std.PointerFree(StandardMacros());
+            Freed = true;
             FreeObj();
         }
 
-        public IPointer<R> Cast<R>() where R : Pointerable => new RuntimePointer<R>(Pointer.Cast<RuntimePointer<R>>());
+        public override void FreeObj()
+        {
+            if (!Freed && IsRuntimeObject)
+            {
+                RemoveOneReference();
+            }
+
+            base.FreeObj();
+        }
+
+        public void RemoveOneReference()
+        {
+            if (IsRuntimeObject && Self is IBaseRuntimeObject obj)
+            {
+                obj.ReferenceCount.Pointer.With(i =>
+                {
+                    i.Sub(1);
+                    Project.ActiveProject.If(i == 0, () =>
+                    {
+                        Project.ActiveProject.Std.PointerFree(StandardMacros());
+                    }).Else(() => obj.ReferenceCount.Pointer.Set(i));
+
+                    return false;
+                });
+            }
+        }
+
+        public IPointer<R> Cast<R>() where R : Pointerable => new RuntimePointer<R>(Pointer.Cast<RuntimePointer<R>>(), ExtraPath);
 
         public PointerExists Exists() => new() { Pointer = this };
 
@@ -103,6 +132,13 @@ namespace Datapack.Net.CubeLib.Builtins
             Project.ActiveProject.WithCleanup(Free);
             return this;
         }
+
+        public void Set(ScoreRef val)
+        {
+            Project.ActiveProject.Std.PointerSet(StandardMacros([new("value", val)]));
+        }
+
+        public RuntimePointer<T> ToRTP() => this;
 
         internal sealed class Props
         {

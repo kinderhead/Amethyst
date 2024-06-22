@@ -16,16 +16,10 @@ namespace Datapack.Net.CubeLib
     {
         public override string Namespace => "cubelib";
 
-        protected override void Init()
+        protected override void Main()
         {
             RegisterObject<MCList<NBTType>>();
             RegisterObject<RuntimePointer<NBTType>>();
-        }
-
-        [DeclareMC("test")]
-        private void _Test()
-        {
-            Print("Test");
         }
 
         /// <summary>
@@ -96,10 +90,12 @@ namespace Datapack.Net.CubeLib
         /// <b>path1</b>: Destination path in storage to heap <br/>
         /// <b>pointer1</b>: Destination pointer <br/>
         /// <b>ext1</b>: Destination extension path including "." <br/>
+        /// <b>storage2</b>: Unused <br/>
+        /// <b>path2</b>: Unused <br/>
         /// <b>pointer2</b>: Source pointer <br/>
         /// <b>ext2</b>: Source extension path including "." <br/>
         /// </summary>
-        [DeclareMC("pointer_store", ["storage1", "path1", "pointer1", "ext1", "pointer2", "ext2"])]
+        [DeclareMC("pointer_store", ["storage1", "path1", "pointer1", "ext1", "storage2", "path2", "pointer2", "ext2"])]
         private void _StorePointer()
         {
             AddCommand(new DataCommand.Modify(new StorageMacro("$(storage1)"), "$(path1).$(pointer1)$(ext1)", true).Set().Value("$(pointer2)$(ext2)"));
@@ -190,8 +186,7 @@ namespace Datapack.Net.CubeLib
         [DeclareMC("pointer_dereference", ["dest_storage", "dest", "storage", "path", "pointer", "ext"])]
         private void _PointerDereference()
         {
-            //AddCommand(new SayCommand("Deref $(dest_storage) $(dest) $(path).$(pointer)$(ext)", true));
-            //AddCommand(new TellrawCommand(new TargetSelector(TargetType.a), new FormattedText().Storage(new StorageMacro("$(storage)"), "$(path).$(pointer)$(ext)"), true));
+            //AddCommand(new TellrawCommand(new TargetSelector(TargetType.a), new FormattedText().Text("$(dest) $(path).$(pointer)$(ext): ").Storage(new StorageMacro("$(storage)"), "$(path).$(pointer)$(ext)"), true));
             AddCommand(new DataCommand.Modify(new StorageMacro("$(dest_storage)"), "$(dest)", true).Set().From(new StorageMacro("$(storage)"), "$(path).$(pointer)$(ext)"));
         }
 
