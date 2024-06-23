@@ -796,8 +796,6 @@ namespace Datapack.Net.CubeLib
             return obj;
         }
 
-        public T GlobalAllocObjIfNull<T>(bool rtp = true) where T : IBaseRuntimeObject => WithInit(() => AllocObjIfNull<T>(Global(), rtp));
-
         public HeapPointer<T> Alloc<T>() where T : NBTType => Alloc<T>(Local());
         public HeapPointer<T> Alloc<T>(ScoreRef loc) where T : NBTType => Heap.Alloc<T>(loc);
 

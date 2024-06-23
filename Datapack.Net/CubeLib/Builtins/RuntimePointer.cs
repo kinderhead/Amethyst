@@ -140,6 +140,8 @@ namespace Datapack.Net.CubeLib.Builtins
 
         public RuntimePointer<T> ToRTP() => this;
 
+        public RuntimePointer<R> ToRTP<R>() where R : Pointerable => (RuntimePointer<R>)Cast<R>();
+
         internal sealed class Props
         {
             [RuntimeProperty("obj")]

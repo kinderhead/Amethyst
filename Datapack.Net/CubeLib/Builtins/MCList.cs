@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Datapack.Net.CubeLib.Builtins
 {
-    [RuntimeObject("list")]
+    [RuntimeObject("list", false)]
     public partial class MCList<T>(IPointer<MCList<T>> loc) : RuntimeObject<CubeLibStd, MCList<T>>(loc) where T : Pointerable
     {
         public void Add(T value)
@@ -84,9 +84,30 @@ namespace Datapack.Net.CubeLib.Builtins
             self.Pointer.Set(new NBTList());
         }
 
+        public override void FreePointers()
+        {
+            if (typeof(T).IsAssignableTo(typeof(IBaseRuntimeObject)))
+            {
+                ForEach((i, idex) =>
+                {
+                    if (i is RuntimePointer<T> ptr)
+                    {
+                        ptr.RemoveOneReference();
+                    }
+                });
+            }
+        }
+
         private void InternalAdd(object value)
         {
-            Project.ActiveProject.Std.PointerAppend(Pointer.StandardMacros([new("value", value)]), true);
+            if (value is IBaseRuntimeObject obj)
+            {
+                Project.ActiveProject.Std.PointerAppend(Pointer.StandardMacros([new("value", new NBTCompound())]), true);
+                var rtp = obj.GetPointer().ToRTP<T>();
+                rtp.Pointer.Copy(this[-1].Cast<RuntimePointer<T>>());
+                obj.ReferenceCount.Pointer.With(i => i.Add(1));
+            }
+            else Project.ActiveProject.Std.PointerAppend(Pointer.StandardMacros([new("value", value)]), true);
         }
     }
 }

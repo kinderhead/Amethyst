@@ -20,6 +20,8 @@ namespace Datapack.Net.CubeLib
         public void Set(NBTType val);
         public void Set(ScoreRef val);
         public IPointer<R> Cast<R>() where R : Pointerable;
+        public RuntimePointer<R> ToRTP<R>() where R: Pointerable;
+
         public BaseHeapPointer GetHeapPointer();
         public PointerExists Exists();
     }

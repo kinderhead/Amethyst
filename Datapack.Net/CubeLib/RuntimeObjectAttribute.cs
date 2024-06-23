@@ -4,9 +4,10 @@ using System.Reflection;
 namespace Datapack.Net.CubeLib
 {
     [AttributeUsage(AttributeTargets.Class)]
-    public class RuntimeObjectAttribute(string name) : Attribute
+    public class RuntimeObjectAttribute(string name, bool implementCleanup = true) : Attribute
     {
         public readonly string Name = name;
+        public readonly bool ImplementCleanup = implementCleanup;
 
         public static RuntimeObjectAttribute Get<T>()
         {

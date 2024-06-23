@@ -7,15 +7,17 @@ namespace Datapack.Net.SourceGenerator
     {
         public readonly string Name;
         public readonly string Namespace;
+        public readonly bool ImplementCleanup;
         public readonly MCFunction[] Methods;
         public readonly RuntimeObjectProperty[] Properties;
 
-        public RuntimeObject(string name, string ns, List<MCFunction> methods, List<RuntimeObjectProperty> props)
+        public RuntimeObject(string name, string ns, bool implClean, List<MCFunction> methods, List<RuntimeObjectProperty> props)
         {
             Name = name;
             Namespace = ns;
             Methods = [.. methods];
             Properties = [.. props];
+            ImplementCleanup = implClean;
         }
     }
 
