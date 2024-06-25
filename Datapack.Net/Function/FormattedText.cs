@@ -11,27 +11,31 @@ namespace Datapack.Net.Function
     {
         private readonly JArray Obj = [];
 
-        public FormattedText Text(string str)
+        public FormattedText Text(string str, Modifiers? modifiers = null)
         {
-            Obj.Add(new JObject(new JProperty("text", str)));
+            modifiers ??= new();
+            Obj.Add(modifiers.Value.Process(new JObject(new JProperty("text", str)), this));
             return this;
         }
 
-        public FormattedText Score(IEntityTarget target, Score score)
+        public FormattedText Score(IEntityTarget target, Score score, Modifiers? modifiers = null)
         {
-            Obj.Add(new JObject(new JProperty("score", new JObject(new JProperty("name", target.RequireOne().Get()), new JProperty("objective", score.Name)))));
+            modifiers ??= new();
+            Obj.Add(modifiers.Value.Process(new JObject(new JProperty("score", new JObject(new JProperty("name", target.RequireOne().Get()), new JProperty("objective", score.Name)))), this));
             return this;
         }
 
-        public FormattedText Storage(Storage target, string path)
+        public FormattedText Storage(Storage target, string path, Modifiers? modifiers = null)
         {
-            Obj.Add(new JObject(new JProperty("nbt", path), new JProperty("storage", target.ToString())));
+            modifiers ??= new();
+            Obj.Add(modifiers.Value.Process(new JObject(new JProperty("nbt", path), new JProperty("storage", target.ToString())), this));
             return this;
         }
 
-        public FormattedText Entity(IEntityTarget target, string sep = ", ")
+        public FormattedText Entity(IEntityTarget target, string sep = ", ", Modifiers? modifiers = null)
         {
-            Obj.Add(new JObject(new JProperty("selector", target.Get()), new JProperty("separator", sep)));
+            modifiers ??= new();
+            Obj.Add(modifiers.Value.Process(new JObject(new JProperty("selector", target.Get()), new JProperty("separator", sep)), this));
             return this;
         }
 
@@ -40,6 +44,19 @@ namespace Datapack.Net.Function
         public override string ToString()
         {
             return Obj.ToString(Newtonsoft.Json.Formatting.None);
+        }
+
+        public struct Modifiers()
+        {
+            public string Color = "";
+            public FormattedText? HoverText;
+
+            public readonly JObject Process(JObject obj, FormattedText self)
+            {
+                if (Color != "") obj["color"] = Color;
+                if (HoverText is not null) obj["hoverEvent"] = new JObject(new JProperty("action", "show_text"), new JProperty("value", HoverText.Obj));
+                return obj;
+            }
         }
     }
 }

@@ -15,18 +15,20 @@ namespace Datapack.Net.CubeLib
         public void Dereference(ScoreRef val);
         public ScoreRef Dereference();
         public void Free();
-        public IPointer<R> Get<R>(string path, bool dot = true) where R : Pointerable;
+        public IPointer<R> Get<R>(string path, bool dot = true) where R : IPointerable;
         public void MoveUnsafe(IStandardPointerMacros dest);
         public void Set(NBTType val);
         public void Set(ScoreRef val);
-        public IPointer<R> Cast<R>() where R : Pointerable;
-        public RuntimePointer<R> ToRTP<R>() where R: Pointerable;
+        public IPointer<R> Cast<R>() where R : IPointerable;
+        public IPointer Cast(Type type);
+        public RuntimePointer<R> ToRTP<R>() where R : IPointerable;
+        public RuntimePointer<R> ToRTP<R>(RuntimePointer<R> ptr) where R : IPointerable;
 
         public BaseHeapPointer GetHeapPointer();
         public PointerExists Exists();
     }
 
-    public interface IPointer<T> : IPointer where T : Pointerable
+    public interface IPointer<T> : IPointer where T : IPointerable
     {
         public T Self { get; }
         public void Copy(IPointer<T> dest);
@@ -35,7 +37,7 @@ namespace Datapack.Net.CubeLib
         public RuntimePointer<T> ToRTP();
     }
 
-    public interface Pointerable
+    public interface IPointerable
     {
 
     }

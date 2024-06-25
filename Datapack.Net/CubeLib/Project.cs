@@ -8,6 +8,7 @@ using Datapack.Net.Pack;
 using Datapack.Net.Utils;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
@@ -162,8 +163,15 @@ namespace Datapack.Net.CubeLib
                     MiscMCFunctions.Add(macroCheck);
                     foreach (var macro in CurrentFunctionAttrs.Macros)
                     {
-                        macroCheck.Add(new Execute(true).Unless.Data(new StorageMacro("$(storage)"), $"$(path).{macro}").Run(new TellrawCommand(new TargetSelector(TargetType.a), new FormattedText().Text($"Macro argument {macro} was not provided to function {CurrentTarget.ID}"))));
+                        macroCheck.Add(new Execute(true).Unless.Data(new StorageMacro("$(storage)"), $"$(path).{macro}").Run(new TellrawCommand(new TargetSelector(TargetType.a),
+                            new FormattedText()
+                                .Text("Error: ", new() { Color = Color.RED })
+                                .Text("Missing macro argument at ", new() { Color = Color.RED, HoverText = new FormattedText().Text($"Function: {CurrentTarget.ID}, Argument: {macro}") })
+                                .Text("$(line)", new() { Color = Color.YELLOW, HoverText = new FormattedText().Text("$(code)", new() { Color = Color.GREEN }) })
+                        )));
+                        macroCheck.Add(new Execute(true).Unless.Data(new StorageMacro("$(storage)"), $"$(path).{macro}").Run(new ReturnCommand()));
                     }
+                    macroCheck.Add(new ReturnCommand(1));
                     MacroCheckFunctions[CurrentTarget.ID] = macroCheck;
                 }
 
@@ -181,7 +189,7 @@ namespace Datapack.Net.CubeLib
                             var ptr = Alloc<NBTCompound>();
                             Std.PointerSetFrom([.. ptr.StandardMacros(), new("src_storage", InternalStorage), new("src_path", "tmpstack_st")]);
                             funcArgs.Add(IBaseRuntimeObject.CreateWithRTP(ptr.Pointer, e));
-                            pointers.Add(ptr);
+                            pointers.Add(ptr.Cast(e));
                         }
                         else funcArgs.Add((IRuntimeArgument?)e.GetMethod("Create")?.Invoke(null, [ArgumentStack.Dequeue()]) ?? throw new ArgumentException($"Invalid arguments for function {i.Key.Method.Name}"));
                     }
@@ -263,10 +271,17 @@ namespace Datapack.Net.CubeLib
             if (FindFunction(func) is MCFunction mcfunc) retFunc = mcfunc;
             else retFunc = AddFunction(func);
 
-            if (macros.Length != 0 && attr.Macros.Length == 0) throw new ArgumentException("Attempted to call a non macro function with arguments");
-            else if (macros.Length == 0 && attr.Macros.Length != 0) throw new ArgumentException("Attempted to call a macro function without arguments");
-            else if (macros.Length != attr.Macros.Length) throw new ArgumentException("Mismatch in number of macro arguments passed to and accepted by function");
-            else if (macros.Length != 0)
+            var uniqueMacros = new Dictionary<string, object>();
+
+            foreach (var i in macros)
+            {
+                uniqueMacros[i.Key] = i.Value;
+            }
+
+            if (uniqueMacros.Count != 0 && attr.Macros.Length == 0) throw new ArgumentException("Attempted to call a non macro function with arguments");
+            else if (uniqueMacros.Count == 0 && attr.Macros.Length != 0) throw new ArgumentException("Attempted to call a macro function without arguments");
+            else if (uniqueMacros.Count != attr.Macros.Length) throw new ArgumentException("Mismatch in number of macro arguments passed to and accepted by function");
+            else if (uniqueMacros.Count != 0)
             {
                 foreach (var i in macros)
                 {
@@ -364,13 +379,20 @@ namespace Datapack.Net.CubeLib
                 Std.PointerDereference(i.Value.StandardMacros([new("dest_storage", InternalStorage), new("dest", $"func_tmp{tmp}.{i.Key}")]), macro, tmp + 1);
             }
 
-            if (Settings.VerifyMacros && !func.ID.Path.StartsWith("zz_")) AddCommand(new FunctionCommand(MacroCheckFunctions[func.ID], new NBTCompound
+            if (Settings.VerifyMacros && !func.ID.Path.StartsWith("zz_"))
             {
-                ["storage"] = InternalStorage.ToString(),
-                ["path"] = $"func_tmp{tmp}"
-            }));
+                var ret = Temp(0, "call_fail");
+                AddCommand(new Execute(macro).Store(ret, false).Run(new FunctionCommand(MacroCheckFunctions[func.ID], new NBTCompound
+                {
+                    ["storage"] = InternalStorage.ToString(),
+                    ["path"] = $"func_tmp{tmp}",
+                    ["line"] = GetLineData().Item1,
+                    ["code"] = NBTString.Escape(GetLineData().Item2)
+                })));
+                if (!CurrentTarget.ID.Path.StartsWith("zz_")) If(ret == 0, new ReturnCommand());
+            }
 
-            return new FunctionCommand(func, InternalStorage, $"func_tmp{tmp}");
+            return new FunctionCommand(func, InternalStorage, $"func_tmp{tmp}", macro);
         }
 
         public FunctionCommand BaseCall(MCFunction func, IRuntimeArgument[] args, bool macro = false)
@@ -392,25 +414,18 @@ namespace Datapack.Net.CubeLib
                 if (i is IBaseRuntimeObject obj)
                 {
                     var rawPtr = obj.GetPointer();
-                    RuntimePointer<NBTCompound> ptr;
-                    bool needsFree = false;
 
-                    if (rawPtr is BaseHeapPointer hp)
-                    {
-                        ptr = hp.ToRTP<NBTCompound>();
-                        needsFree = true;
-                    }
-                    else ptr = (RuntimePointer<NBTCompound>)rawPtr.Cast<NBTCompound>();
+                    // :)
+                    dynamic ptr = rawPtr.GetType().GetMethod("ToRTP", 1, [])?.MakeGenericMethod(obj.GetType()).Invoke(rawPtr, []) ?? throw new Exception();
 
                     StorageArgumentStack.Enqueue(ptr.SelfPointer);
-                    if (needsFree) ptr.Free();
                 }
                 else ArgumentStack.Enqueue(i.GetAsArg());
             }
         }
 
-        public void Print<T>(IPointer<T> ptr) where T : Pointerable => Std.PointerPrint(ptr.StandardMacros());
-        public void Print<T>(IRuntimeProperty<T> prop) where T : Pointerable => Print(prop.Pointer);
+        public void Print<T>(IPointer<T> ptr) where T : IPointerable => Std.PointerPrint(ptr.StandardMacros());
+        public void Print<T>(IRuntimeProperty<T> prop) where T : IPointerable => Print(prop.Pointer);
 
         public void Print(params object[] args)
         {
@@ -533,12 +548,21 @@ namespace Datapack.Net.CubeLib
             return mcfunc;
         }
 
+        private string lastLine;
         public void AddCommand(Command cmd)
         {
             if (SendToMisc)
             {
                 MiscInitCmds.Add(cmd);
                 return;
+            }
+
+            var line = GetCallingLine();
+
+            if (line != lastLine)
+            {
+                lastLine = line;
+                CurrentTarget.Add(new Comment($" {line}"));
             }
 
             if (cmd is ReturnCommand) Call(CurrentTargetCleanup);
@@ -627,7 +651,7 @@ namespace Datapack.Net.CubeLib
 
             foreach (var i in typeof(T).GetMethods(BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Public))
             {
-                if (i.IsStatic && i.GetCustomAttribute<DeclareMCAttribute>() is not null)
+                if (i.IsStatic && i.GetCustomAttribute<DeclareMCAttribute>() is DeclareMCAttribute m && (Settings.ReferenceChecking || m.Path != "deinit"))
                 {
                     ProcessRuntimeObjectMethod(i, attr);
                 }
@@ -637,6 +661,7 @@ namespace Datapack.Net.CubeLib
         public MCFunction ProcessRuntimeObjectMethod(MethodInfo method, RuntimeObjectAttribute attr)
         {
             var funcAttr = DeclareMCAttribute.Get(method);
+            
             var func = DelegateUtils.Create(method, null);
             var mcFunc = new MCFunction(new(Namespace, $"{attr.Name}/{funcAttr.Path}"), true);
             MCFunctions[func] = mcFunc;
@@ -740,9 +765,9 @@ namespace Datapack.Net.CubeLib
             return c;
         }
 
-        public FunctionCommand Lambda(Action func) => LambdaWith(AddFunction(func, new(Namespace, $"zz_anon/{AnonymousFuncCounter++}"), true));
+        public FunctionCommand Lambda(Action func) => Lambda(AddFunction(func, new(Namespace, $"zz_anon/{AnonymousFuncCounter++}"), true));
 
-        public FunctionCommand LambdaWith(MCFunction mcfunc)
+        public FunctionCommand Lambda(MCFunction mcfunc)
         {
             if (CurrentFunctionAttrs is null || CurrentFunctionAttrs.Macros.Length == 0) return new(mcfunc);
 
@@ -770,10 +795,10 @@ namespace Datapack.Net.CubeLib
         public T AllocObj<T>(ScoreRef loc, bool rtp = true, bool cleanup = true) where T : IBaseRuntimeObject
         {
             var ptr = (IPointer<T>)(rtp ? Heap.Alloc(AllocObj<RuntimePointer<T>>(loc, false, false)) : Heap.Alloc<T>(loc));
-            var obj = (T)T.Create(ptr);
+            var obj = T.Create(ptr);
             if (obj.HasMethod("init")) CallArg(obj.GetMethod("init"), [obj]);
 
-            if (rtp)
+            if (rtp && Settings.ReferenceChecking)
             {
                 obj.ReferenceCount.Pointer.Set((NBTInt)1);
             }
@@ -807,7 +832,7 @@ namespace Datapack.Net.CubeLib
             return pointer;
         }
 
-        public HeapPointer<T> Attach<T>(ScoreRef loc) where T : Pointerable => new(Heap, loc);
+        public HeapPointer<T> Attach<T>(ScoreRef loc) where T : IPointerable => new(Heap, loc);
 
         public HeapPointer<T> AllocIfNull<T>(ScoreRef loc, T defaultValue) where T : NBTType
         {
@@ -833,7 +858,7 @@ namespace Datapack.Net.CubeLib
             var func = Lambda(() =>
             {
                 res();
-                AddCommand(LambdaWith(CurrentTarget));
+                AddCommand(Lambda(CurrentTarget));
             });
             AddCommand(func);
         }
@@ -916,13 +941,45 @@ namespace Datapack.Net.CubeLib
                 }
 
                 func.Add(new DataCommand.Modify(new StorageMacro("$(storage)"), "$(path).$(pointer)$(ext)", true).Set().Value(builder.ToString()));
-            }), [..dest.StandardMacros(), ..args], macro);
+            }), [.. dest.StandardMacros(), .. args], macro);
         }
 
         public void DebugLastFunctionCall(int tmp = 0)
         {
             AddCommand(new DataCommand.Modify(InternalStorage, "test").Set().From(InternalStorage, $"func_tmp{tmp}"));
             Print($"Debugging for function available with storage {InternalStorage} test");
+        }
+
+        public (string, string) GetLineData()
+        {
+            var trace = new StackTrace(1, true);
+
+            foreach (var i in trace.GetFrames())
+            {
+                if (i.GetMethod()?.DeclaringType?.Namespace?.StartsWith("Datapack.Net") == true) continue;
+                else if (i.GetMethod()?.DeclaringType?.BaseType != typeof(Project)) continue;
+                else return ($"{Path.GetFileName(i.GetFileName())}:{i.GetFileLineNumber()}", File.ReadLines(i.GetFileName() ?? throw new Exception("Couldn't read file")).Skip(i.GetFileLineNumber() - 1).Take(1).First().Trim());
+            }
+
+            return ("<builtin>", "<builtin>");
+        }
+
+        public string GetCallingLine()
+        {
+            var trace = new StackTrace(3, true);
+            StackFrame? frame = null;
+
+            foreach (var i in trace.GetFrames())
+            {
+                if (i.GetMethod()?.DeclaringType != typeof(Project) && i.GetFileName()?.EndsWith(".g.cs") == false)
+                {
+                    frame = i;
+                    break;
+                }
+            }
+
+            if (frame is null) return "<builtin>";
+            return $"{Path.GetFileName(frame.GetFileName())}:{frame.GetFileLineNumber()}";
         }
 
         public Entity EntityRef(IEntityTarget sel) => EntityRef(sel, Local());

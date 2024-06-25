@@ -18,25 +18,15 @@ namespace TNTCannon
     {
         public override string Namespace => "tnt";
 
-        private Funny Obj;
-
         protected override void Main()
         {
             Print("Running");
 
+            RegisterObject<Funny>();
+
             Heap.Clear();
 
-            Obj = AllocObj<Funny>(Global());
-            Obj.Prop = 4;
-            Obj.Other = AllocObj<Funny>();
-            Obj.Other.Str = "Booooooooo";
-        }
-
-        [DeclareMC("test")]
-        private void _Test()
-        {
-            Print(Obj);
-            Print(Obj.Other);
+            AllocObj<Funny>();
         }
     }
 }

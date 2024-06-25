@@ -8,8 +8,8 @@ using System.Threading.Tasks;
 
 namespace Datapack.Net.CubeLib.Builtins
 {
-    [RuntimeObject("pointer")]
-    public partial class RuntimePointer<T>(IPointer<RuntimePointer<T>> loc, string extraPath) : RuntimeObject<CubeLibStd, RuntimePointer<T>>(loc), IPointer<T> where T : Pointerable
+    [RuntimeObject("pointer", false)]
+    public partial class RuntimePointer<T>(IPointer<RuntimePointer<T>> loc, string extraPath) : RuntimeObject<CubeLibStd, RuntimePointer<T>>(loc), IPointer<T> where T : IPointerable
     {
         public readonly string ExtraPath = extraPath;
 
@@ -27,7 +27,7 @@ namespace Datapack.Net.CubeLib.Builtins
         }
 
         public T Self => (T?)Activator.CreateInstance(typeof(T), this) ?? throw new ArgumentException("Not a pointer to a RuntimeObject");
-        public bool IsRuntimeObject => typeof(T).IsAssignableTo(typeof(IBaseRuntimeObject));
+        public bool IsRuntimeObject => typeof(T).IsAssignableTo(typeof(IBaseRuntimeObject)) && !(typeof(T).IsGenericType && typeof(T).GetGenericTypeDefinition() == typeof(RuntimePointer<>));
 
         public RuntimePointer(IPointer<RuntimePointer<T>> loc) : this(loc, "")
         {
@@ -79,7 +79,7 @@ namespace Datapack.Net.CubeLib.Builtins
 
         public override IPointer ToPointer() => selfPointer ? Pointer : this;
 
-        public IPointer<R> Get<R>(string path, bool dot) where R : Pointerable => new RuntimePointer<R>(Pointer.Cast<RuntimePointer<R>>(), ExtraPath + (dot ? "." : "") + path);
+        public IPointer<R> Get<R>(string path, bool dot = true) where R : IPointerable => new RuntimePointer<R>(Pointer.Cast<RuntimePointer<R>>(), ExtraPath + (dot ? "." : "") + path);
 
         public void Resolve(IPointer<RuntimePointer<T>> dest)
         {
@@ -89,23 +89,16 @@ namespace Datapack.Net.CubeLib.Builtins
 
         public void Free()
         {
+            if (Project.Settings.ReferenceChecking && IsRuntimeObject && Self is IBaseRuntimeObject obj) obj.Destruct();
             Project.ActiveProject.Std.PointerFree(StandardMacros());
             Freed = true;
             FreeObj();
         }
 
-        public override void FreeObj()
-        {
-            if (!Freed && IsRuntimeObject)
-            {
-                RemoveOneReference();
-            }
-
-            base.FreeObj();
-        }
-
         public void RemoveOneReference()
         {
+            if (!Project.Settings.ReferenceChecking) throw new Exception("Reference checking disabled");
+
             if (IsRuntimeObject && Self is IBaseRuntimeObject obj)
             {
                 obj.ReferenceCount.Pointer.With(i =>
@@ -113,6 +106,7 @@ namespace Datapack.Net.CubeLib.Builtins
                     i.Sub(1);
                     Project.ActiveProject.If(i == 0, () =>
                     {
+                        obj.Destruct();
                         Project.ActiveProject.Std.PointerFree(StandardMacros());
                     }).Else(() => obj.ReferenceCount.Pointer.Set(i));
 
@@ -121,7 +115,12 @@ namespace Datapack.Net.CubeLib.Builtins
             }
         }
 
-        public IPointer<R> Cast<R>() where R : Pointerable => new RuntimePointer<R>(Pointer.Cast<RuntimePointer<R>>(), ExtraPath);
+        public IPointer<R> Cast<R>() where R : IPointerable => new RuntimePointer<R>(Pointer.Cast<RuntimePointer<R>>(), ExtraPath);
+
+        public IPointer Cast(Type type)
+        {
+            return (IPointer?)GetType().GetMethod("Cast", 1, [])?.MakeGenericMethod([type]).Invoke(this, []) ?? throw new Exception("Unable to cast");
+        }
 
         public PointerExists Exists() => new() { Pointer = this };
 
@@ -140,7 +139,18 @@ namespace Datapack.Net.CubeLib.Builtins
 
         public RuntimePointer<T> ToRTP() => this;
 
-        public RuntimePointer<R> ToRTP<R>() where R : Pointerable => (RuntimePointer<R>)Cast<R>();
+        public RuntimePointer<R> ToRTP<R>() where R : IPointerable => (RuntimePointer<R>)Cast<R>();
+
+        public RuntimePointer<R> ToRTP<R>(RuntimePointer<R> ptr) where R : IPointerable
+        {
+            ptr.Obj = Obj;
+            return ptr;
+        }
+
+        public override void Destruct()
+        {
+            RemoveOneReference();
+        }
 
         internal sealed class Props
         {

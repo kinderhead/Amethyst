@@ -14,12 +14,13 @@ namespace Datapack.Net.CubeLib
 {
     public abstract class BaseHeapPointer : IStandardPointerMacros, IPointer
     {
-        public abstract IPointer<R> Cast<R>() where R : Pointerable;
+        public abstract IPointer<R> Cast<R>() where R : IPointerable;
+        public abstract IPointer Cast(Type type);
         public abstract void CopyUnsafe(IStandardPointerMacros dest);
         public abstract void Dereference(ScoreRef val);
         public abstract ScoreRef Dereference();
         public abstract void Free();
-        public abstract IPointer<R> Get<R>(string path, bool dot = true) where R : Pointerable;
+        public abstract IPointer<R> Get<R>(string path, bool dot = true) where R : IPointerable;
         public abstract ScoreRef GetAsArg();
         public abstract BaseHeapPointer GetHeapPointer();
         public abstract void MoveUnsafe(IStandardPointerMacros dest);
@@ -28,11 +29,11 @@ namespace Datapack.Net.CubeLib
         public abstract KeyValuePair<string, object>[] StandardMacros(KeyValuePair<string, object>[]? extras = null, string postfix = "");
         public abstract IPointer ToPointer();
         public abstract PointerExists Exists();
-
-        public abstract RuntimePointer<T> ToRTP<T>() where T : Pointerable;
+        public abstract RuntimePointer<T> ToRTP<T>() where T : IPointerable;
+        public abstract RuntimePointer<R> ToRTP<R>(RuntimePointer<R> ptr) where R : IPointerable;
     }
 
-    public class HeapPointer<T>(MCStaticHeap heap, ScoreRef pointer, string extraPath = "") : BaseHeapPointer, IPointer<T> where T : Pointerable
+    public class HeapPointer<T>(MCStaticHeap heap, ScoreRef pointer, string extraPath = "") : BaseHeapPointer, IPointer<T> where T : IPointerable
     {
         public readonly MCStaticHeap Heap = heap;
         public readonly ScoreRef Pointer = pointer;
@@ -82,6 +83,7 @@ namespace Datapack.Net.CubeLib
 
         public override void Free()
         {
+            if (typeof(T).IsAssignableTo(typeof(IBaseRuntimeObject)) && Project.Settings.ReferenceChecking) ((IBaseRuntimeObject?)Activator.CreateInstance(typeof(T), this))?.Destruct();
             Project.ActiveProject.Std.PointerFree(StandardMacros());
         }
 
@@ -91,12 +93,25 @@ namespace Datapack.Net.CubeLib
 
         public override RuntimePointer<R> ToRTP<R>()
         {
-            var ptr = Project.ActiveProject.AllocObj<RuntimePointer<R>>(false);
-            Project.ActiveProject.Strcat(ptr.Obj.Pointer, Pointer, ExtraPath);
+            var ptr = Project.ActiveProject.AllocObj<RuntimePointer<R>>(Project.ActiveProject.Local(), false, false);
+            ToRTP(ptr);
+
+            // Average infinite recursion fix
+            Project.ActiveProject.WithCleanup(() =>
+            {
+                ptr.RemoveOneReference();
+                Project.ActiveProject.Std.PointerFree(ptr.Pointer.StandardMacros());
+            });
             return ptr;
         }
 
         public RuntimePointer<T> ToRTP() => ToRTP<T>();
+
+        public override RuntimePointer<R> ToRTP<R>(RuntimePointer<R> ptr)
+        {
+            Project.ActiveProject.Strcat(ptr.Obj.Pointer, Pointer, ExtraPath);
+            return ptr;
+        }
 
         public override KeyValuePair<string, object>[] StandardMacros(KeyValuePair<string, object>[]? extras = null, string postfix = "")
         {
@@ -138,6 +153,11 @@ namespace Datapack.Net.CubeLib
         {
             Project.ActiveProject.WithCleanup(Free);
             return this;
+        }
+
+        public override IPointer Cast(Type type)
+        {
+            return (IPointer?)GetType().GetMethod("Cast", 1, [])?.MakeGenericMethod([type]).Invoke(this, []) ?? throw new Exception("Unable to cast");
         }
     }
 }

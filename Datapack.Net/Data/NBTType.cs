@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Datapack.Net.Data
 {
-    public abstract class NBTType : Pointerable
+    public abstract class NBTType : IPointerable
     {
         public abstract void Build(StringBuilder sb);
 

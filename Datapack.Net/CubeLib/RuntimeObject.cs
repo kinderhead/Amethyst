@@ -7,7 +7,7 @@ using Datapack.Net.Function;
 
 namespace Datapack.Net.CubeLib
 {
-    public interface IBaseRuntimeObject : IRuntimeArgument, Pointerable
+    public interface IBaseRuntimeObject : IRuntimeArgument, IPointerable
     {
         public bool Freed { get; }
 
@@ -19,9 +19,11 @@ namespace Datapack.Net.CubeLib
 
         public void FreeObj();
 
+        public void Destruct();
+
         public IPointer GetPointer();
 
-        public static abstract IBaseRuntimeObject Create<T>(IPointer<T> pointer) where T : Pointerable;
+        public static abstract T Create<T>(IPointer<T> pointer) where T : IPointerable;
 
         public static IRuntimeArgument Create(ScoreRef arg, Type self) => (IRuntimeArgument?)Activator.CreateInstance(self, [typeof(HeapPointer<>).MakeGenericType(self).GetMethod("Create")?.Invoke(null, [arg])]) ?? throw new ArgumentException("Error dynamically creating a RuntimeObject");
         public static IRuntimeArgument CreateWithRTP(ScoreRef loc, Type self) => (IRuntimeArgument?)Activator.CreateInstance(self, [Create(loc, typeof(RuntimePointer<>).MakeGenericType(self))]) ?? throw new ArgumentException("Error dynamically creating a RuntimeObject");
@@ -36,7 +38,19 @@ namespace Datapack.Net.CubeLib
 
         public bool Freed { get; protected set; }
 
-        public RuntimeProperty<NBTInt> ReferenceCount { get => new(GetProp<NBTInt>("__ref")); set => SetProp("__ref", value); }
+        public RuntimeProperty<NBTInt> ReferenceCount
+        {
+            get
+            {
+                if (!Project.Settings.ReferenceChecking) throw new Exception("Reference checking disabled");
+                return new(GetProp<NBTInt>("__ref"));
+            }
+            set
+            {
+                if (!Project.Settings.ReferenceChecking) throw new Exception("Reference checking disabled");
+                SetProp("__ref", value);
+            }
+        }
 
         public RuntimeObject(IPointer<TSelf> loc)
         {
@@ -47,18 +61,22 @@ namespace Datapack.Net.CubeLib
 
         public virtual (string, Type)[] AllProperties { get; }
 
-        protected IPointer<T> GetProp<T>(string path, bool dot = true) where T : Pointerable => Pointer.Get<T>(path, dot);
-        protected T GetObj<T>(string path, bool dot = true) where T : IBaseRuntimeObject => (T)T.Create((RuntimePointer<T>)RuntimePointer<T>.Create(Pointer.Get<RuntimePointer<T>>(path, dot)));
+        protected IPointer<T> GetProp<T>(string path, bool dot = true) where T : IPointerable => Pointer.Get<T>(path, dot);
+        protected T GetObj<T>(string path, bool dot = true) where T : IBaseRuntimeObject => T.Create(RuntimePointer<T>.Create(Pointer.Get<RuntimePointer<T>>(path, dot)));
 
         protected void SetProp(string path, NBTType val) => Pointer.Get<NBTType>(path).Set(val);
-        protected void SetProp<T>(string path, IPointer<T> pointer) where T : Pointerable
+        protected void SetProp<T>(string path, IPointer<T> pointer) where T : IPointerable
         {
-            var place = GetProp<T>(path).Get<NBTString>("obj");
-            if (typeof(T).IsAssignableTo(typeof(IBaseRuntimeObject))) ((IBaseRuntimeObject)pointer.Self).ReferenceCount.Pointer.With(i => i.Add(1));
-            Project.ActiveProject.Std.StorePointer([.. place.StandardMacros([], "1"), .. pointer.StandardMacros([], "2")]);
+            if (typeof(T).IsAssignableTo(typeof(IBaseRuntimeObject)))
+            {
+                var place = GetProp<T>(path).Get<NBTString>("obj");
+                if (Project.Settings.ReferenceChecking) ((IBaseRuntimeObject)pointer.Self).ReferenceCount.Pointer.With(i => i.Add(1));
+                Project.ActiveProject.Std.StorePointer([.. place.StandardMacros([], "1"), .. pointer.StandardMacros([], "2")]);
+            }
+            else pointer.Copy(GetProp<T>(path));
         }
 
-        protected void SetProp<T>(string path, IRuntimeProperty<T> prop) where T : Pointerable
+        protected void SetProp<T>(string path, IRuntimeProperty<T> prop) where T : IPointerable
         {
             if (prop.Pointer is not null) SetProp(path, prop.Pointer);
             else if (NBTType.IsNBTType<T>()) SetProp(path, NBTType.ToNBT(prop.PropValue ?? throw new ArgumentException("RuntimeProperty was not created properly")) ?? throw new Exception("How did we get here?"));
@@ -67,10 +85,10 @@ namespace Datapack.Net.CubeLib
 
         public virtual void FreeObj()
         {
-            FreePointers();
             Pointer.Free();
             Freed = true;
         }
+
         public void CopyObj(IPointer<TSelf> dest) => Pointer.Copy(dest);
         public void MoveObj(IPointer<TSelf> dest) => Pointer.Move(dest);
         public void MoveObj(TSelf dest) => Pointer.Move(dest.Pointer);
@@ -103,7 +121,11 @@ namespace Datapack.Net.CubeLib
             throw new Exception($"Cannot get method {name} from object");
         }
 
-        public virtual void FreePointers() { }
+        public virtual void Destruct()
+        {
+            if (!Project.Settings.ReferenceChecking) throw new Exception("Reference checking disabled");
+            if (HasMethod("deinit")) Project.ActiveProject.AddCommand(Project.ActiveProject.Lambda(() => Project.ActiveProject.CallArg(GetMethod("deinit"), [this])));
+        }
 
         private static TProject? _state = null;
         public static TProject State
@@ -115,9 +137,9 @@ namespace Datapack.Net.CubeLib
             }
         }
 
-        public static IBaseRuntimeObject Create<T>(IPointer<T> pointer) where T : Pointerable
+        public static T Create<T>(IPointer<T> pointer) where T : IPointerable
         {
-            return (IBaseRuntimeObject?)Activator.CreateInstance(typeof(TSelf), [pointer]) ?? throw new ArgumentException("Failed to create runtime object");
+            return (T?)Activator.CreateInstance(typeof(TSelf), [pointer]) ?? throw new ArgumentException("Failed to create runtime object");
         }
 
         public static IRuntimeArgument Create(ScoreRef arg) => Create((IPointer<TSelf>)HeapPointer<TSelf>.Create(arg));

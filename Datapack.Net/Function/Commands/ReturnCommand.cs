@@ -18,7 +18,7 @@ namespace Datapack.Net.Function.Commands
         }
 
         /// <summary>
-        /// By default it fails the function.
+        /// <c>return fail</c>
         /// </summary>
         /// <param name="macro"></param>
         public ReturnCommand(bool macro = false) : base(macro)

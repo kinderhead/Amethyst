@@ -3,7 +3,7 @@ using System;
 
 namespace Datapack.Net.CubeLib
 {
-    public class RuntimeProperty<T> : IRuntimeProperty<T> where T : Pointerable
+    public class RuntimeProperty<T> : IRuntimeProperty<T> where T : IPointerable
     {
         public IPointer<T> Pointer { get; protected set; }
         public T PropValue { get; }

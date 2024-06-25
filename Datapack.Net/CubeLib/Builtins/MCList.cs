@@ -10,27 +10,28 @@ using System.Threading.Tasks;
 namespace Datapack.Net.CubeLib.Builtins
 {
     [RuntimeObject("list", false)]
-    public partial class MCList<T>(IPointer<MCList<T>> loc) : RuntimeObject<CubeLibStd, MCList<T>>(loc) where T : Pointerable
+    public partial class MCList<T>(IPointer<MCList<T>> loc) : RuntimeObject<CubeLibStd, MCList<T>>(loc) where T : IBaseRuntimeObject
     {
+        internal sealed class Props
+        {
+            [RuntimeProperty("list")]
+            public NBTList List { get; set; }
+        }
+
         public void Add(T value)
         {
-            if (NBTType.IsNBTType<T>()) InternalAdd(value?.ToString() ?? throw new Exception("How did we get here?"));
-            else InternalAdd(value ?? throw new ArgumentException("Cannot be null"));
+            Project.ActiveProject.Std.PointerAppend(List.Pointer.StandardMacros([new("value", new NBTCompound())]), true);
+            value.GetPointer().ToRTP(this[-1].GetPointer().ToRTP<T>());
+            if (Project.Settings.ReferenceChecking) value.ReferenceCount.Pointer.With(i => i.Add(1));
         }
 
-        public void Add(ScoreRef value)
-        {
-            if (typeof(T) != typeof(NBTInt)) throw new ArgumentException("Cannot convert a ScoreRef to a non integer");
-            InternalAdd(value ?? throw new ArgumentException("Cannot be null"));
-        }
-
-        public void Remove(int index) => this[index].Free();
-        public void Remove(ScoreRef index) => this[index].Free();
-        public void Remove(IPointer<NBTInt> index) => this[index].Free();
+        public void Remove(int index) => this[index].GetPointer().Free();
+        public void Remove(ScoreRef index) => this[index].GetPointer().Free();
+        public void Remove(IPointer<NBTInt> index) => this[index].GetPointer().Free();
 
         public void Clear() => Pointer.Set(new NBTList());
 
-        public void ForEach(Action<IPointer<T>, ScoreRef> loop)
+        public void ForEach(Action<T, ScoreRef> loop)
         {
             var proj = Project.ActiveProject;
 
@@ -50,64 +51,50 @@ namespace Datapack.Net.CubeLib.Builtins
             return reg;
         }
 
-        public RuntimePointer<T> Index(object index)
+        public RuntimePointer<RuntimePointer<T>> Index(object index)
         {
             var proj = Project.ActiveProject;
 
-            var ptr = proj.AllocObj<RuntimePointer<T>>(false);
-            proj.Std.PointerIndexList([.. ptr.Obj.Pointer.StandardMacros([], "1"), .. Pointer.StandardMacros([], "2"), new("index", index)]);
+            var ptr = proj.AllocObj<RuntimePointer<RuntimePointer<T>>>(false);
+            proj.Std.PointerIndexList([.. ptr.Obj.Pointer.StandardMacros([], "1"), .. List.Pointer.StandardMacros([], "2"), new("index", index)]);
             proj.WithCleanup(ptr.FreeObj);
             return ptr;
         }
 
-        public IPointer<T> this[int index]
+        public T this[int index]
         {
-            get => GetProp<T>($"[{index}]", false);
-            set => value.Copy(GetProp<T>($"[{index}]", false));
+            get => T.Create(new RuntimePointer<T>(List.Pointer.Get<RuntimePointer<T>>($"[{index}]", false)));
+            set => value.GetPointer().CopyUnsafe(List.Pointer.Get<T>($"[{index}]", false));
         }
 
-        public IPointer<T> this[ScoreRef index]
+        public T this[ScoreRef index]
         {
-            get => Index(index);
-            set => value.Copy(Index(index));
+            get => T.Create(new RuntimePointer<T>(Index(index)));
+            set => value.GetPointer().CopyUnsafe(Index(index));
         }
 
-        public IPointer<T> this[IPointer<NBTInt> index]
+        public T this[IPointer<NBTInt> index]
         {
-            get => Index(index);
-            set => value.Copy(Index(index));
+            get => T.Create(new RuntimePointer<T>(Index(index)));
+            set => value.GetPointer().CopyUnsafe(Index(index));
+        }
+
+        public override void Destruct()
+        {
+            ForEach((i, idex) =>
+            {
+                if (i.GetPointer() is RuntimePointer<T> ptr)
+                {
+                    ptr.RemoveOneReference();
+                }
+                else throw new Exception();
+            });
         }
 
         [DeclareMC("init")]
         private static void _Init(MCList<T> self)
         {
-            self.Pointer.Set(new NBTList());
-        }
-
-        public override void FreePointers()
-        {
-            if (typeof(T).IsAssignableTo(typeof(IBaseRuntimeObject)))
-            {
-                ForEach((i, idex) =>
-                {
-                    if (i is RuntimePointer<T> ptr)
-                    {
-                        ptr.RemoveOneReference();
-                    }
-                });
-            }
-        }
-
-        private void InternalAdd(object value)
-        {
-            if (value is IBaseRuntimeObject obj)
-            {
-                Project.ActiveProject.Std.PointerAppend(Pointer.StandardMacros([new("value", new NBTCompound())]), true);
-                var rtp = obj.GetPointer().ToRTP<T>();
-                rtp.Pointer.Copy(this[-1].Cast<RuntimePointer<T>>());
-                obj.ReferenceCount.Pointer.With(i => i.Add(1));
-            }
-            else Project.ActiveProject.Std.PointerAppend(Pointer.StandardMacros([new("value", value)]), true);
+            self.List = new NBTList();
         }
     }
 }

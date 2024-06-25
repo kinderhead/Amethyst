@@ -58,7 +58,8 @@ namespace Datapack.Net.SourceGenerator
                                 }
 
                                 var name = new StringBuilder(clsSymbol.Name);
-                                if (clsSymbol.TypeParameters.Length > 0) {
+                                if (clsSymbol.TypeParameters.Length > 0)
+                                {
                                     name.Append("<");
                                     foreach (var t in clsSymbol.TypeParameters)
                                     {
@@ -116,13 +117,13 @@ namespace Datapack.Net.SourceGenerator
 
             if (obj.ImplementCleanup)
             {
-                things.Append("\n\n        public override void FreePointers()\n        {\n");
+                things.Append($"\n\n        [global::Datapack.Net.CubeLib.DeclareMC(\"deinit\")]\n        private static void _FreePointers({obj.Name} self)\n        {{\n");
 
                 if (obj.Properties.Length > 0)
                 {
                     foreach (var i in obj.Properties)
                     {
-                        if (i.IsObj) things.Append($"            ((global::Datapack.Net.CubeLib.Builtins.RuntimePointer<{i.Type}>){i.Name}.Pointer).RemoveOneReference();\n");
+                        if (i.IsObj) things.Append($"            global::Datapack.Net.CubeLib.Project.ActiveProject.If(self.{i.Name}.Pointer.Exists(), ((global::Datapack.Net.CubeLib.Builtins.RuntimePointer<{i.Type}>)self.{i.Name}.Pointer).RemoveOneReference);\n");
                     }
                 }
 

@@ -11,7 +11,7 @@ namespace Datapack.Net.CubeLib
             Execute.Conditional branch = If ? cmd.If : cmd.Unless;
 
             var tempVar = Project.ActiveProject.Temp(tmp, "cmp");
-            Project.ActiveProject.Std.PointerExists(Pointer.StandardMacros(), tempVar);
+            Project.ActiveProject.Std.PointerExists([new("pointer", "a"), .. Pointer.StandardMacros()], tempVar);
 
             branch.Score(tempVar.Target, tempVar.Score, 1);
 
