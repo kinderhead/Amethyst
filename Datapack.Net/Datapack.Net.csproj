@@ -37,7 +37,7 @@
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<RepositoryUrl>https://github.com/kinderhead/Datapack.Net</RepositoryUrl>
 		<PackageTags>minecraft,datapack</PackageTags>
-		<Version>0.1.1</Version>
+		<Version>0.1.2</Version>
 		<PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
 	</PropertyGroup>
 

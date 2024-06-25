@@ -966,6 +966,7 @@ namespace Datapack.Net.CubeLib
             {
                 if (i.GetMethod()?.DeclaringType?.Namespace?.StartsWith("Datapack.Net") == true) continue;
                 else if (i.GetMethod()?.DeclaringType?.BaseType != typeof(Project)) continue;
+                else if (i.GetFileName() is null) continue;
                 else return ($"{Path.GetFileName(i.GetFileName())}:{i.GetFileLineNumber()}", File.ReadLines(i.GetFileName() ?? throw new Exception("Couldn't read file")).Skip(i.GetFileLineNumber() - 1).Take(1).First().Trim());
             }
 

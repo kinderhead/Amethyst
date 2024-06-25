@@ -29,7 +29,7 @@
 		<GetTargetPathDependsOn>$(GetTargetPathDependsOn);GetDependencyTargetPaths</GetTargetPathDependsOn>
 		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
 		<Title>Datapack.Net.SourceGenerator</Title>
-		<Version>0.1.0</Version>
+		<Version>0.1.1</Version>
 		<Authors>kinderhead</Authors>
 		<Description>Code analyzers and generators for Datapack.Net</Description>
 		<PackageProjectUrl>https://github.com/kinderhead/Datapack.Net</PackageProjectUrl>
