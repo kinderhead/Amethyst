@@ -810,8 +810,8 @@ namespace Datapack.Net.CubeLib
 
         public T AttachObj<T>(ScoreRef loc, bool rtp = true) where T : IBaseRuntimeObject
         {
-            if (!rtp) return (T)T.Create(Attach<T>(loc));
-            return (T)T.Create(AttachObj<RuntimePointer<T>>(loc, false));
+            if (!rtp) return T.Create(Attach<T>(loc));
+            return T.Create(AttachObj<RuntimePointer<T>>(loc, false));
         }
 
         public T AllocObjIfNull<T>(ScoreRef loc, bool rtp = true) where T : IBaseRuntimeObject
@@ -821,14 +821,22 @@ namespace Datapack.Net.CubeLib
             return obj;
         }
 
-        public HeapPointer<T> Alloc<T>() where T : NBTType => Alloc<T>(Local());
-        public HeapPointer<T> Alloc<T>(ScoreRef loc) where T : NBTType => Heap.Alloc<T>(loc);
-
-        public HeapPointer<T> Alloc<T>(ScoreRef loc, T val) where T : NBTType
+        public HeapPointer<T> Alloc<T>(bool free = true) where T : NBTType => Alloc<T>(Local(), free);
+        public HeapPointer<T> Alloc<T>(T val, bool free = true) where T : NBTType => Alloc(Local(), val, free);
+        public HeapPointer<T> Alloc<T>(ScoreRef loc, bool free = true) where T : NBTType
         {
             var pointer = Heap.Alloc<T>(loc);
+
+            if (loc.Global) Console.WriteLine("Warning: allocating using a global variable without AllocIfNull<T>()");
+
+            if (!loc.Global && free) WithCleanup(pointer.Free);
+            return pointer;
+        }
+
+        public HeapPointer<T> Alloc<T>(ScoreRef loc, T val, bool free = true) where T : NBTType
+        {
+            var pointer = Alloc<T>(loc, free);
             pointer.Set(val);
-            if (!loc.Global) WithCleanup(pointer.Free);
             return pointer;
         }
 

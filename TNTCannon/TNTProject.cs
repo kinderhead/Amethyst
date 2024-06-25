@@ -26,7 +26,8 @@ namespace TNTCannon
 
             Heap.Clear();
 
-            AllocObj<Funny>();
+            var obj = AllocObj<Funny>();
+            obj.Prop = 4;
         }
     }
 }
