@@ -1,9 +1,10 @@
 using System;
+using Datapack.Net.CubeLib.Utils;
 using Datapack.Net.Function.Commands;
 
 namespace Datapack.Net.CubeLib
 {
-    public class ScoreRefOperation
+    public class ScoreRefOperation : ToScoreUtil
     {
         public ScoreRef? LeftScore;
         public ScoreRef? RightScore;
@@ -12,6 +13,8 @@ namespace Datapack.Net.CubeLib
         public ScoreOperation Operation;
 
         public void Process(ScoreRef dest, int tmp = 0) => Resolve(dest, tmp);
+
+        public override ScoreRef ToScore() => Resolve(Project.ActiveProject.Local(), 0);
 
         private ScoreRef Resolve(ScoreRef dest, int tmp)
         {

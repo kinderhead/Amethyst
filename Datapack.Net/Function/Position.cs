@@ -36,6 +36,14 @@ namespace Datapack.Net.Function
         }
 
         public static implicit operator Coord(double val) => new(val);
+        public static implicit operator Coord(string val)
+        {
+            if (val == "~") return new(0, CoordType.Relative);
+            if (val == "^") return new(0, CoordType.Local);
+            if (val.StartsWith('~')) return new(float.Parse(val[1..]), CoordType.Relative);
+            if (val.StartsWith('^')) return new(float.Parse(val[1..]), CoordType.Local);
+            return new(float.Parse(val));
+        }
         public static Coord operator ~(Coord coord) => new(coord.Value, CoordType.Relative);
         public static Coord operator !(Coord coord) => new(coord.Value, CoordType.Local);
     }

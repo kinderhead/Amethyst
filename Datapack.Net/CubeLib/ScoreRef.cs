@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Datapack.Net.CubeLib
 {
-    public class ScoreRef(Score score, IEntityTarget target, bool @readonly = false, bool global = false) : IRuntimeArgument
+    public class ScoreRef(Score score, IEntityTarget target, bool @readonly = false, bool global = false) : ToScoreUtil, IRuntimeArgument
     {
         public readonly Score Score = score;
         public readonly IEntityTarget Target = target.RequireOne();
@@ -79,66 +79,14 @@ namespace Datapack.Net.CubeLib
 
         public ScoreRefComparison Exists() => this >= -2147483648;
 
-        public static ScoreRefComparison operator ==(ScoreRef a, ScoreRef b) => new() { LeftScore = a, RightScore = b, Op = Comparison.Equal };
-        public static ScoreRefComparison operator ==(int a, ScoreRef b) => new() { Left = a, RightScore = b, Op = Comparison.Equal };
-        public static ScoreRefComparison operator ==(ScoreRef a, int b) => new() { LeftScore = a, Right = b, Op = Comparison.Equal };
-
-        public static ScoreRefComparison operator !=(ScoreRef a, ScoreRef b) => new() { LeftScore = a, RightScore = b, Op = Comparison.Equal, If = false };
-        public static ScoreRefComparison operator !=(int a, ScoreRef b) => new() { Left = a, RightScore = b, Op = Comparison.Equal, If = false };
-        public static ScoreRefComparison operator !=(ScoreRef a, int b) => new() { LeftScore = a, Right = b, Op = Comparison.Equal, If = false };
-
-        public static ScoreRefComparison operator >(ScoreRef a, ScoreRef b) => new() { LeftScore = a, RightScore = b, Op = Comparison.GreaterThan};
-        public static ScoreRefComparison operator >(int a, ScoreRef b) => new() { Left = a, RightScore = b, Op = Comparison.GreaterThan};
-        public static ScoreRefComparison operator >(ScoreRef a, int b) => new() { LeftScore = a, Right = b, Op = Comparison.GreaterThan};
-
-        public static ScoreRefComparison operator <(ScoreRef a, ScoreRef b) => new() { LeftScore = a, RightScore = b, Op = Comparison.LessThan};
-        public static ScoreRefComparison operator <(int a, ScoreRef b) => new() { Left = a, RightScore = b, Op = Comparison.LessThan};
-        public static ScoreRefComparison operator <(ScoreRef a, int b) => new() { LeftScore = a, Right = b, Op = Comparison.LessThan};
-
-        public static ScoreRefComparison operator >=(ScoreRef a, ScoreRef b) => new() { LeftScore = a, RightScore = b, Op = Comparison.GreaterThanOrEqual};
-        public static ScoreRefComparison operator >=(int a, ScoreRef b) => new() { Left = a, RightScore = b, Op = Comparison.GreaterThanOrEqual};
-        public static ScoreRefComparison operator >=(ScoreRef a, int b) => new() { LeftScore = a, Right = b, Op = Comparison.GreaterThanOrEqual};
-
-        public static ScoreRefComparison operator <=(ScoreRef a, ScoreRef b) => new() { LeftScore = a, RightScore = b, Op = Comparison.LessThanOrEqual};
-        public static ScoreRefComparison operator <=(int a, ScoreRef b) => new() { Left = a, RightScore = b, Op = Comparison.LessThanOrEqual};
-        public static ScoreRefComparison operator <=(ScoreRef a, int b) => new() { LeftScore = a, Right = b, Op = Comparison.LessThanOrEqual};
-
-        public static ScoreRefOperation operator +(ScoreRef a, ScoreRef b) => new() { LeftScore = a, RightScore = b, Operation = ScoreOperation.Add };
-        public static ScoreRefOperation operator +(ScoreRefOperation a, ScoreRef b) => new() { LeftBranch = a, RightScore = b, Operation = ScoreOperation.Add };
-        public static ScoreRefOperation operator +(ScoreRef a, ScoreRefOperation b) => new() { LeftScore = a, RightBranch = b, Operation = ScoreOperation.Add };
-
-        public static ScoreRefOperation operator -(ScoreRef a, ScoreRef b) => new() { LeftScore = a, RightScore = b, Operation = ScoreOperation.Sub };
-        public static ScoreRefOperation operator -(ScoreRefOperation a, ScoreRef b) => new() { LeftBranch = a, RightScore = b, Operation = ScoreOperation.Sub };
-        public static ScoreRefOperation operator -(ScoreRef a, ScoreRefOperation b) => new() { LeftScore = a, RightBranch = b, Operation = ScoreOperation.Sub };
-
-        public static ScoreRefOperation operator *(ScoreRef a, ScoreRef b) => new() { LeftScore = a, RightScore = b, Operation = ScoreOperation.Mul };
-        public static ScoreRefOperation operator *(ScoreRefOperation a, ScoreRef b) => new() { LeftBranch = a, RightScore = b, Operation = ScoreOperation.Mul };
-        public static ScoreRefOperation operator *(ScoreRef a, ScoreRefOperation b) => new() { LeftScore = a, RightBranch = b, Operation = ScoreOperation.Mul };
-
-        public static ScoreRefOperation operator /(ScoreRef a, ScoreRef b) => new() { LeftScore = a, RightScore = b, Operation = ScoreOperation.Div };
-        public static ScoreRefOperation operator /(ScoreRefOperation a, ScoreRef b) => new() { LeftBranch = a, RightScore = b, Operation = ScoreOperation.Div };
-        public static ScoreRefOperation operator /(ScoreRef a, ScoreRefOperation b) => new() { LeftScore = a, RightBranch = b, Operation = ScoreOperation.Div };
-
-        public static ScoreRefOperation operator %(ScoreRef a, ScoreRef b) => new() { LeftScore = a, RightScore = b, Operation = ScoreOperation.Mod };
-        public static ScoreRefOperation operator %(ScoreRefOperation a, ScoreRef b) => new() { LeftBranch = a, RightScore = b, Operation = ScoreOperation.Mod };
-        public static ScoreRefOperation operator %(ScoreRef a, ScoreRefOperation b) => new() { LeftScore = a, RightBranch = b, Operation = ScoreOperation.Mod };
-
         public static implicit operator ScoreRef(int a) => Project.ActiveProject.Constant(a);
-
-        public override bool Equals(object? obj)
-        {
-            return base.Equals(obj);
-        }
-
-        public override int GetHashCode()
-        {
-            return base.GetHashCode();
-        }
 
         public ScoreRef GetAsArg() => this;
 
         public ScoreRef AsReadonly() => new(Score, Target, true, Global);
 
         public static IRuntimeArgument Create(ScoreRef arg) => new ScoreRef(arg.Score, arg.Target, global: arg.Global);
+
+        public override ScoreRef ToScore() => this;
     }
 }

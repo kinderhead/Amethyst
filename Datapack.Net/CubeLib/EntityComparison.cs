@@ -29,4 +29,39 @@ namespace Datapack.Net.CubeLib
             return cmd;
         }
     }
+
+    public class RawEntityComparison(IEntityTarget entity) : Conditional
+    {
+        public readonly IEntityTarget Entity = entity;
+
+        public override Execute Process(Execute cmd, int tmp = 0)
+        {
+            Execute.Conditional branch = If ? cmd.If : cmd.Unless;
+
+            branch.Entity(Entity);
+
+            return cmd;
+        }
+    }
+
+    public class EntityExists(Entity entity) : Conditional
+    {
+        public readonly Entity Entity = entity;
+
+        public override Execute Process(Execute cmd, int tmp = 0)
+        {
+            var test = Project.ActiveProject.Temp(tmp, 0, "cond");
+            Project.ActiveProject.AddCommand(Entity.As(new Execute()).Run(new Scoreboard.Players.Set(test.Target, test.Score, 1)));
+
+            if (If) (test == 1).Process(cmd);
+            else (test != 1).Process(cmd);
+
+            return cmd;
+        }
+    }
+
+    public static class EntityTargetUtils
+    {
+        public static RawEntityComparison Exists(this IEntityTarget entity) => new(entity);
+    }
 }

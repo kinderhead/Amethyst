@@ -272,6 +272,20 @@ namespace Datapack.Net.CubeLib
 
         /// <summary>
         /// Arguments: <br/>
+        /// <b>storage</b>: Storage identifier <br/>
+        /// <b>path</b>: Path in storage to heap <br/>
+        /// <b>pointer</b>: The pointer <br/>
+        /// <b>ext</b>: Extension path including "." <br/>
+        /// <b>epath</b>: Entity NBT path <br/>
+        /// </summary>
+        [DeclareMC("entity_nbt_to_pointer_path", ["storage", "path", "pointer", "ext", "epath"])]
+        private void _EntityNBTToPointerPath()
+        {
+            AddCommand(new DataCommand.Modify(new StorageMacro("$(storage)"), "$(path).$(pointer)$(ext)", true).Set().From(TargetSelector.Self, "$(epath)"));
+        }
+
+        /// <summary>
+        /// Arguments: <br/>
         /// <b>path</b>: Path in entity NBT <br/>
         /// <b>value</b>: Value <br/>
         /// </summary>

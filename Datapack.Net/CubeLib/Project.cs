@@ -1,5 +1,6 @@
 ﻿using Datapack.Net.CubeLib.Builtins;
 using Datapack.Net.CubeLib.Builtins.Static;
+using Datapack.Net.CubeLib.EntityWrappers;
 using Datapack.Net.CubeLib.Utils;
 using Datapack.Net.Data;
 using Datapack.Net.Function;
@@ -425,7 +426,9 @@ namespace Datapack.Net.CubeLib
         }
 
         public void Print<T>(IPointer<T> ptr) where T : IPointerable => Std.PointerPrint(ptr.StandardMacros());
+        public void Print<T>(RuntimePointer<T> ptr) where T : IPointerable => Print((IPointer<T>)ptr);
         public void Print<T>(IRuntimeProperty<T> prop) where T : IPointerable => Print(prop.Pointer);
+        public void Print<T>(EntityProperty<T> prop) where T : NBTType => Print(prop.ToPointer());
 
         public void Print(params object[] args)
         {
@@ -661,7 +664,7 @@ namespace Datapack.Net.CubeLib
         public MCFunction ProcessRuntimeObjectMethod(MethodInfo method, RuntimeObjectAttribute attr)
         {
             var funcAttr = DeclareMCAttribute.Get(method);
-            
+
             var func = DelegateUtils.Create(method, null);
             var mcFunc = new MCFunction(new(Namespace, $"{attr.Name}/{funcAttr.Path}"), true);
             MCFunctions[func] = mcFunc;
@@ -736,7 +739,16 @@ namespace Datapack.Net.CubeLib
             return new(score, GlobalScoreEntity, global: true);
         }
 
+        public ScoreRef GetGlobal(string name)
+        {
+            var score = new Score($"_cl_{Namespace}_var_{name}", "dummy");
+            Scores.Add(score);
+
+            return new(score, GlobalScoreEntity, global: true);
+        }
+
         public ScoreRef Global() => GetGlobal(Globals.Count);
+        public ScoreRef Global(string name) => GetGlobal(name);
 
         public ScoreRef Global(int val)
         {
@@ -893,12 +905,39 @@ namespace Datapack.Net.CubeLib
         }
 
         public Entity Summon(EntityType type) => Summon(type, Position.Current);
+        public Entity Summon(EntityType type, Position pos) => Summon(Local(), type, pos);
 
-        public Entity Summon(EntityType type, Position pos)
+        public Entity Summon(ScoreRef loc, EntityType type, Position pos)
         {
-            var id = Local();
-            AddCommand(new Execute().Positioned(pos).Summon(type).Store(id).Run(new FunctionCommand(Std.GetEntityID_Function())));
-            return new(id);
+            AddCommand(new Execute().Positioned(pos).Summon(type).Store(loc).Run(new FunctionCommand(Std.GetEntityID_Function())));
+            return new(loc);
+        }
+
+        public T Summon<T>(ScoreRef loc, Position pos) where T : EntityWrapper
+        {
+            var entity = (T?)Activator.CreateInstance(typeof(T), [loc]) ?? throw new ArgumentException("Failed to create entity");
+            Summon(loc, entity.Type, pos);
+            return entity;
+        }
+
+        public T Summon<T>(Position pos) where T : EntityWrapper => Summon<T>(Local(), pos);
+        public T Summon<T>() where T : EntityWrapper => Summon<T>(Local(), Position.Current);
+
+        public Entity SummonIfNull(ScoreRef loc, EntityType type, Position pos)
+        {
+            var e = new Entity(loc);
+            If(!e.Exists(), () => Summon(loc, type, pos));
+            return e;
+        }
+
+        public Entity SummonIfDead(ScoreRef loc, EntityType type) => SummonIfNull(loc, type, Position.Current);
+        public T SummonIfDead<T>(ScoreRef loc) where T : EntityWrapper => SummonIfDead<T>(loc, Position.Current);
+
+        public T SummonIfDead<T>(ScoreRef loc, Position pos) where T : EntityWrapper
+        {
+            var entity = (T?)Activator.CreateInstance(typeof(T), [loc]) ?? throw new ArgumentException("Failed to create entity");
+            SummonIfNull(loc, entity.Type, pos);
+            return entity;
         }
 
         public void Random(MCRange<int> range, ScoreRef score) => AddCommand(new Execute().Store(score).Run(new RandomCommand(range)));
@@ -1000,6 +1039,15 @@ namespace Datapack.Net.CubeLib
 
             return new(var);
         }
+
+        public T EntityRef<T>(TargetSelector sel, ScoreRef var) where T : EntityWrapper
+        {
+            var entity = EntityWrapper.Create<T>(EntityRef(sel, var));
+            if (sel.Type?.First()?.Value != entity.Type) throw new ArgumentException("Entity target selector type is invalid");
+            return entity;
+        }
+
+        public T EntityRef<T>(TargetSelector sel) where T : EntityWrapper => EntityRef<T>(sel, Local());
 
         public void Async(Action func, int ticks) => Async(GuaranteeFunc(func, []), ticks);
         public void Async(MCFunction func, int ticks) => AddCommand(new ScheduleCommand(func, ticks));

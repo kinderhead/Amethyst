@@ -41,6 +41,9 @@ namespace Datapack.Net.CubeLib
             }
         }
 
+        public EntityProperty<T> Get<T>(string path) where T : NBTType => new() { Entity = this, Path = path };
+        public T GetAs<T>(string path) where T : EntityProperty, new() => new() { Entity = this, Path = path };
+
         public void As(Action func, bool at = true)
         {
             var proj = Project.ActiveProject;
@@ -65,6 +68,7 @@ namespace Datapack.Net.CubeLib
         public void Kill() => Project.ActiveProject.AddCommand(As(new Execute().Run(new KillCommand(TargetSelector.Self))));
 
         public void CopyTo(IPointer<NBTCompound> loc) => As(() => Project.ActiveProject.Std.EntityNBTToPointer(loc.StandardMacros()), false);
+        public void CopyTo<T>(IPointer<T> loc, string path) where T : NBTType => As(() => Project.ActiveProject.Std.EntityNBTToPointerPath(loc.StandardMacros([new("epath", path)])), false);
 
         public void SetNBT(string path, NBTType value)
         {
@@ -74,7 +78,16 @@ namespace Datapack.Net.CubeLib
             });
         }
 
-        public void PlayerCheck()
+        public void SetNBT<T>(string path, IPointer<T> value) where T : NBTType
+        {
+            As(() =>
+            {
+                PlayerCheck();
+                Project.ActiveProject.Std.EntityWrite([new("path", path), new("value", value)]);
+            });
+        }
+
+        public virtual void PlayerCheck()
         {
             if (Project.Settings.EntityCheckPlayer) Project.ActiveProject.If(Is(new TargetSelector(TargetType.s, type: Entities.Player)), new TellrawCommand(new TargetSelector(TargetType.a), new FormattedText().Entity(TargetSelector.Self).Text(" is a player and cannot be edited")));
         }
@@ -96,6 +109,7 @@ namespace Datapack.Net.CubeLib
         public bool IsCurrentTarget() => AsStack.TryPeek(out var cur) && cur == this;
 
         public EntityComparison Is(TargetSelector sel) => new(this, sel);
+        public EntityExists Exists() => new(this);
 
         private ScoreRef Unique(string key)
         {

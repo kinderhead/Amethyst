@@ -23,6 +23,31 @@ namespace Datapack.Net.Data
             return Build();
         }
 
+        public NBTNumberType? NumberType
+        {
+            get
+            {
+                if (this is NBTInt) return NBTNumberType.Int;
+                if (this is NBTLong) return NBTNumberType.Long;
+                if (this is NBTShort) return NBTNumberType.Short;
+                if (this is NBTFloat) return NBTNumberType.Float;
+                if (this is NBTDouble) return NBTNumberType.Double;
+                if (this is NBTByte) return NBTNumberType.Byte;
+                return null;
+            }
+        }
+
+        public static NBTNumberType? IsNumberType<T>() where T : NBTType
+        {
+            if (typeof(T) == typeof(NBTInt)) return NBTNumberType.Int;
+            if (typeof(T) == typeof(NBTLong)) return NBTNumberType.Long;
+            if (typeof(T) == typeof(NBTShort)) return NBTNumberType.Short;
+            if (typeof(T) == typeof(NBTFloat)) return NBTNumberType.Float;
+            if (typeof(T) == typeof(NBTDouble)) return NBTNumberType.Double;
+            if (typeof(T) == typeof(NBTByte)) return NBTNumberType.Byte;
+            return null;
+        }
+
         public static implicit operator NBTType(string val) => new NBTString(val);
         public static implicit operator NBTType(int val) => new NBTInt(val);
         public static implicit operator NBTType(byte val) => new NBTByte(val);
