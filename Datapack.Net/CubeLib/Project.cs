@@ -923,20 +923,20 @@ namespace Datapack.Net.CubeLib
         public T Summon<T>(Position pos) where T : EntityWrapper => Summon<T>(Local(), pos);
         public T Summon<T>() where T : EntityWrapper => Summon<T>(Local(), Position.Current);
 
-        public Entity SummonIfNull(ScoreRef loc, EntityType type, Position pos)
+        public Entity SummonIfDead(ScoreRef loc, EntityType type, Position pos)
         {
             var e = new Entity(loc);
             If(!e.Exists(), () => Summon(loc, type, pos));
             return e;
         }
 
-        public Entity SummonIfDead(ScoreRef loc, EntityType type) => SummonIfNull(loc, type, Position.Current);
+        public Entity SummonIfDead(ScoreRef loc, EntityType type) => SummonIfDead(loc, type, Position.Current);
         public T SummonIfDead<T>(ScoreRef loc) where T : EntityWrapper => SummonIfDead<T>(loc, Position.Current);
 
         public T SummonIfDead<T>(ScoreRef loc, Position pos) where T : EntityWrapper
         {
             var entity = (T?)Activator.CreateInstance(typeof(T), [loc]) ?? throw new ArgumentException("Failed to create entity");
-            SummonIfNull(loc, entity.Type, pos);
+            SummonIfDead(loc, entity.Type, pos);
             return entity;
         }
 
@@ -1031,7 +1031,7 @@ namespace Datapack.Net.CubeLib
         }
 
         public Entity EntityRef(IEntityTarget sel) => EntityRef(sel, Local());
-        public Entity GlobalEntityRef(IEntityTarget sel) => WithInit(() => EntityRef(sel, Global()));
+        public Entity GlobalEntityRef(IEntityTarget sel) => EntityRef(sel, Global());
 
         public Entity EntityRef(IEntityTarget sel, ScoreRef var)
         {

@@ -21,7 +21,7 @@ namespace Datapack.Net.CubeLib.EntityWrappers
             get
             {
                 if (_attacker is not null) return _attacker;
-                var id = State.Local();
+                var id = State.Local(-1);
                 State.AddCommand(As(new Execute()).On(OnRelation.Attacker).Store(id).Run(new FunctionCommand(State.Std.GetEntityID_Function())));
                 //State.If(id == -1, new TellrawCommand(new TargetSelector(TargetType.a), new FormattedText().Text("Interaction attacker is null", new() { Color = Color.RED })));
                 _attacker = new(id);
@@ -35,7 +35,7 @@ namespace Datapack.Net.CubeLib.EntityWrappers
             get
             {
                 if (_interactor is not null) return _interactor;
-                var id = State.Local();
+                var id = State.Local(-1);
                 State.AddCommand(As(new Execute()).On(OnRelation.Target).Store(id).Run(new FunctionCommand(State.Std.GetEntityID_Function())));
                 //State.If(id == -1, new TellrawCommand(new TargetSelector(TargetType.a), new FormattedText().Text("Interaction attacker is null", new() { Color = Color.RED })));
                 _interactor = new(id);

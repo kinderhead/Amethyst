@@ -50,8 +50,7 @@ namespace TNTCannon
 
         protected override void Tick()
         {
-            If(Test.Width > 100, () => Multiplier.Set(-1))
-            .ElseIf(Test.Width <= 1, () => Multiplier.Set(1));
+            If(Test.Width != new MCRange<int>(1, 100), () => Multiplier.Mul(-1));
 
             Test.Width += Multiplier;
             Test.Height += Multiplier;

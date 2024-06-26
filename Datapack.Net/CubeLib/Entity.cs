@@ -44,15 +44,15 @@ namespace Datapack.Net.CubeLib
         public EntityProperty<T> Get<T>(string path) where T : NBTType => new() { Entity = this, Path = path };
         public T GetAs<T>(string path) where T : EntityProperty, new() => new() { Entity = this, Path = path };
 
-        public void As(Action func, bool at = true)
+        public void As(Action func, bool at = true, bool force = false)
         {
-            if (AsStack.TryPeek(out var cur) && cur == this && (!at || (AtStack.TryPeek(out var atcur) && atcur == this)))
+            if (!force && AsStack.TryPeek(out var cur) && cur == this && (!at || (AtStack.TryPeek(out var atcur) && atcur == this)))
             {
                 func();
                 return;
             }
             var proj = Project.ActiveProject;
-            var cmd = As(new Execute()).Run(proj.Lambda(() =>
+            var cmd = As(new Execute(), force).Run(proj.Lambda(() =>
             {
                 AsStack.Push(this);
                 if (at) AtStack.Push(this);
