@@ -22,6 +22,8 @@ namespace TNTCannon
         Interaction Test;
         Entity Player;
         ScoreRef Multiplier;
+        ScoreRef Left;
+        ScoreRef Right;
 
         protected override void Main()
         {
@@ -41,6 +43,9 @@ namespace TNTCannon
             Test.Width = 1;
             Test.Height = 1;
             Test.As(() => Test.Teleport(new Position("~", 100, "~")));
+
+            Left = Global(0);
+            Right = Global(0);
         }
 
         protected override void Tick()
@@ -50,6 +55,26 @@ namespace TNTCannon
 
             Test.Width += Multiplier;
             Test.Height += Multiplier;
+
+            Test.Attacker.As(() =>
+            {
+                Left.Add(1);
+                Test.ClearAttacker();
+            });
+
+            Test.Interactor.As(() =>
+            {
+                Right.Add(1);
+                Test.ClearInteractor();
+            });
+
+            Printer();
+        }
+
+        [DeclareMC("printer")]
+        private void _Printer()
+        {
+            Print("Left clicks:", Left, "Right clicks:", Right);
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using Datapack.Net.Function.Commands;
+﻿using Datapack.Net.Data;
+using Datapack.Net.Function.Commands;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -25,6 +26,19 @@ namespace Datapack.Net.CubeLib
 
             branch.Score(a.Target, a.Score, Op, b.Target, b.Score);
 
+            return cmd;
+        }
+    }
+
+    public class ScoreRefMatches : Conditional
+    {
+        public ScoreRef Score;
+        public MCRange<int> Range;
+
+        public override Execute Process(Execute cmd, int tmp = 0)
+        {
+            Execute.Conditional branch = If ? cmd.If : cmd.Unless;
+            branch.Score(Score.Target, Score.Score, Range);
             return cmd;
         }
     }

@@ -46,6 +46,11 @@ namespace Datapack.Net.CubeLib
 
         public void As(Action func, bool at = true)
         {
+            if (AsStack.TryPeek(out var cur) && cur == this && (!at || (AtStack.TryPeek(out var atcur) && atcur == this)))
+            {
+                func();
+                return;
+            }
             var proj = Project.ActiveProject;
             var cmd = As(new Execute()).Run(proj.Lambda(() =>
             {
@@ -84,6 +89,15 @@ namespace Datapack.Net.CubeLib
             {
                 PlayerCheck();
                 Project.ActiveProject.Std.EntityWrite([new("path", path), new("value", value)]);
+            });
+        }
+
+        public void RemoveNBT(string path)
+        {
+            As(() =>
+            {
+                PlayerCheck();
+                Project.ActiveProject.AddCommand(new DataCommand.Remove(TargetSelector.Self, path));
             });
         }
 

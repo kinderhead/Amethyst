@@ -8,5 +8,7 @@ namespace Datapack.Net.CubeLib.EntityWrappers
         public abstract EntityType Type { get; }
 
         public static T Create<T>(Entity entity) where T : EntityWrapper => (T?)Activator.CreateInstance(typeof(T), [entity.ID]) ?? throw new ArgumentException("Could not create entity");
+
+        public static Project State => Project.ActiveProject;
     }
 }
