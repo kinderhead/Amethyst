@@ -11,15 +11,20 @@ namespace Datapack.Net.CubeLib
     {
         public Entity? Entity;
         public string? Path;
+
+        public NBTType? RawValue;
+        public ScoreRef? Score;
+
+        public abstract void Set(Entity entity, string path);
     }
 
     public class EntityProperty<T> : EntityProperty where T : NBTType
     {
-        public T? Value;
-        public ScoreRef? Score;
+        public T? Value { get => (T?)RawValue; set => RawValue = value; }
+        
         public IPointer<T>? Pointer;
 
-        public void Set(Entity entity, string path)
+        public override void Set(Entity entity, string path)
         {
             if (Value is not null) entity.SetNBT(path, Value);
             else if (Score is not null && NBTType.IsNumberType<T>() is NBTNumberType type)
@@ -33,14 +38,15 @@ namespace Datapack.Net.CubeLib
             else throw new ArgumentException("Invalid InputEntityProperty or type is not a number type");
         }
 
-        public ScoreRef ToScore(ScoreRef score)
+        public ScoreRef ToScore(ScoreRef score, double scale = 1)
         {
             if (Entity is null) throw new ArgumentException("Can only convert an OutputEntityProperty");
-            Entity.As(() => Project.ActiveProject.AddCommand(new Execute().Store(score.Target, score.Score).Run(new DataCommand.Get(TargetSelector.Self, Path))), false);
+            Entity.As(() => Project.ActiveProject.AddCommand(new Execute().Store(score.Target, score.Score).Run(new DataCommand.Get(TargetSelector.Self, Path, scale))), false);
             return score;
         }
 
         public override ScoreRef ToScore() => ToScore(Project.ActiveProject.Local());
+        public ScoreRef ToScore(double scale) => ToScore(Project.ActiveProject.Local(), scale);
 
         public IPointer<T> ToPointer(IPointer<T> ptr)
         {
@@ -87,6 +93,18 @@ namespace Datapack.Net.CubeLib
 
     public class FloatEntityProperty : EntityProperty<NBTFloat>
     {
+        public void Set(ScoreRef val, double scale)
+        {
+            if (Entity is not null && Path is not null)
+            {
+                Entity.As(() =>
+                {
+                    Project.ActiveProject.AddCommand(new Execute().Store(TargetSelector.Self, Path, NBTNumberType.Float, scale).Run(val.Get()));
+                }, false);
+            }
+            else throw new ArgumentException("Invalid entity property");
+        }
+
         public static implicit operator FloatEntityProperty(float value) => new() { Value = value };
         public static implicit operator FloatEntityProperty(ScoreRef value) => new() { Score = value.ToScore() };
         public static implicit operator FloatEntityProperty(ScoreRefOperation value) => new() { Score = value.ToScore() };
@@ -94,6 +112,18 @@ namespace Datapack.Net.CubeLib
 
     public class DoubleEntityProperty : EntityProperty<NBTDouble>
     {
+        public void Set(ScoreRef val, double scale)
+        {
+            if (Entity is not null && Path is not null)
+            {
+                Entity.As(() =>
+                {
+                    Project.ActiveProject.AddCommand(new Execute().Store(TargetSelector.Self, Path, NBTNumberType.Double, scale).Run(val.Get()));
+                }, false);
+            }
+            else throw new ArgumentException("Invalid entity property");
+        }
+
         public static implicit operator DoubleEntityProperty(double value) => new() { Value = value };
         public static implicit operator DoubleEntityProperty(ScoreRef value) => new() { Score = value.ToScore() };
         public static implicit operator DoubleEntityProperty(ScoreRefOperation value) => new() { Score = value.ToScore() };
@@ -111,5 +141,12 @@ namespace Datapack.Net.CubeLib
         public static implicit operator BoolEntityProperty(bool value) => new() { Value = value };
         public static implicit operator BoolEntityProperty(ScoreRef value) => new() { Score = value.ToScore() };
         public static implicit operator BoolEntityProperty(ScoreRefOperation value) => new() { Score = value.ToScore() };
+    }
+
+    public class StringEntityProperty : EntityProperty<NBTString>
+    {
+        public static implicit operator StringEntityProperty(string value) => new() { Value = value };
+        public static implicit operator StringEntityProperty(ScoreRef value) => new() { Score = value.ToScore() };
+        public static implicit operator StringEntityProperty(ScoreRefOperation value) => new() { Score = value.ToScore() };
     }
 }

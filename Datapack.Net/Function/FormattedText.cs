@@ -10,6 +10,7 @@ namespace Datapack.Net.Function
     public class FormattedText
     {
         private readonly JArray Obj = [];
+        public bool HasHoverOrClickEvents = false;
 
         public FormattedText Text(string str, Modifiers? modifiers = null)
         {
@@ -54,7 +55,12 @@ namespace Datapack.Net.Function
             public readonly JObject Process(JObject obj, FormattedText self)
             {
                 if (Color != "") obj["color"] = Color;
-                if (HoverText is not null) obj["hoverEvent"] = new JObject(new JProperty("action", "show_text"), new JProperty("value", HoverText.Obj));
+                if (HoverText is not null)
+                {
+                    if (HoverText.HasHoverOrClickEvents) throw new ArgumentException("Formatted text has hover or click events in invalid places");
+                    self.HasHoverOrClickEvents = true;
+                    obj["hoverEvent"] = new JObject(new JProperty("action", "show_text"), new JProperty("value", HoverText.Obj));
+                }
                 return obj;
             }
         }

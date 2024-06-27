@@ -79,8 +79,8 @@ namespace Datapack.Net.CubeLib
         {
             As(() => {
                 PlayerCheck();
-                Project.ActiveProject.Std.EntityWrite([new("path", path), new("value", value)]);
-            });
+                Project.ActiveProject.AddCommand(new DataCommand.Modify(TargetSelector.Self, path).Set().Value(value.Build()));
+            }, false);
         }
 
         public void SetNBT<T>(string path, IPointer<T> value) where T : NBTType
@@ -89,7 +89,7 @@ namespace Datapack.Net.CubeLib
             {
                 PlayerCheck();
                 Project.ActiveProject.Std.EntityWrite([new("path", path), new("value", value)]);
-            });
+            }, false);
         }
 
         public void RemoveNBT(string path)

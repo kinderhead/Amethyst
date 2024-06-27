@@ -19,11 +19,11 @@ namespace TNTCannon
     {
         public override string Namespace => "tnt";
 
-        Interaction Test;
+        TextDisplay Text;
         Entity Player;
-        ScoreRef Multiplier;
-        ScoreRef Left;
-        ScoreRef Right;
+
+        ScoreRef Funny;
+        ScoreRef Scale;
 
         protected override void Main()
         {
@@ -36,44 +36,22 @@ namespace TNTCannon
 
             Player.As(() =>
             {
-                Test = SummonIfDead<Interaction>(Global("Boo"));
+                Text = SummonIfDead<TextDisplay>(Global("Boo"));
+                Text.SetText(new FormattedText().Text("Boo"));
+                Text.SetBillboard(Billboard.Fixed);
             });
 
-            Multiplier = Global(1);
-            Test.Width = 1;
-            Test.Height = 1;
-            Test.As(() => Test.Teleport(new Position("~", 100, "~")));
-
-            Left = Global(0);
-            Right = Global(0);
+            Funny = Global(10);
+            Scale = Global(100);
         }
 
         protected override void Tick()
         {
-            If(Test.Width != new MCRange<int>(1, 100), () => Multiplier.Mul(-1));
+            If(Scale != new MCRange<int>(100, 1000), () => Funny.Mul(-1));
 
-            Test.Width += Multiplier;
-            Test.Height += Multiplier;
+            Scale.Add(Funny);
 
-            Test.Attacker.As(() =>
-            {
-                Left.Add(1);
-                Test.ClearAttacker();
-            });
-
-            Test.Interactor.As(() =>
-            {
-                Right.Add(1);
-                Test.ClearInteractor();
-            });
-
-            Printer();
-        }
-
-        [DeclareMC("printer")]
-        private void _Printer()
-        {
-            Print("Left clicks:", Left, "Right clicks:", Right);
+            Text.Scale.X.Set(Scale, .01);
         }
     }
 }
