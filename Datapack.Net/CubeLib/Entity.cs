@@ -77,10 +77,16 @@ namespace Datapack.Net.CubeLib
 
         public void SetNBT(string path, NBTType value)
         {
-            As(() => {
-                PlayerCheck();
-                Project.ActiveProject.AddCommand(new DataCommand.Modify(TargetSelector.Self, path).Set().Value(value.Build()));
-            }, false);
+            var cmd = new DataCommand.Modify(TargetSelector.Self, path).Set().Value(value.Build());
+            if (NeedsPlayerCheck())
+            {
+                As(() =>
+                {
+                    PlayerCheck();
+                    Project.ActiveProject.AddCommand(cmd);
+                }, false);
+            }
+            else Project.ActiveProject.AddCommand(As(new Execute()).Run(cmd));
         }
 
         public void SetNBT<T>(string path, IPointer<T> value) where T : NBTType
@@ -94,16 +100,24 @@ namespace Datapack.Net.CubeLib
 
         public void RemoveNBT(string path)
         {
-            As(() =>
+            var cmd = new DataCommand.Remove(TargetSelector.Self, path);
+            if (NeedsPlayerCheck())
             {
-                PlayerCheck();
-                Project.ActiveProject.AddCommand(new DataCommand.Remove(TargetSelector.Self, path));
-            });
+                As(() =>
+                {
+                    PlayerCheck();
+                    Project.ActiveProject.AddCommand(cmd);
+                });
+            }
+            else Project.ActiveProject.AddCommand(As(new Execute()).Run(cmd));
         }
+
+        public virtual bool NeedsPlayerCheck() => Project.Settings.EntityCheckPlayer;
 
         public virtual void PlayerCheck()
         {
-            if (Project.Settings.EntityCheckPlayer) Project.ActiveProject.If(Is(new TargetSelector(TargetType.s, type: Entities.Player)), new TellrawCommand(new TargetSelector(TargetType.a), new FormattedText().Entity(TargetSelector.Self).Text(" is a player and cannot be edited")));
+            if (!NeedsPlayerCheck()) return;
+            Project.ActiveProject.If(Is(new TargetSelector(TargetType.s, type: Entities.Player)), new TellrawCommand(new TargetSelector(TargetType.a), new FormattedText().Entity(TargetSelector.Self).Text(" is a player and cannot be edited")));
         }
 
         /// <summary>

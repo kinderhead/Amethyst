@@ -22,9 +22,6 @@ namespace TNTCannon
         TextDisplay Text;
         Entity Player;
 
-        ScoreRef Funny;
-        ScoreRef Scale;
-
         protected override void Main()
         {
             //RegisterObject<Funny>();
@@ -39,19 +36,15 @@ namespace TNTCannon
                 Text = SummonIfDead<TextDisplay>(Global("Boo"));
                 Text.SetText(new FormattedText().Text("Boo"));
                 Text.SetBillboard(Billboard.Fixed);
+                Text.InterpolationDuration = 100;
+                Text.StartAnimation();
+                Text.Scale = new(1, 5, 1);
             });
-
-            Funny = Global(10);
-            Scale = Global(100);
         }
 
         protected override void Tick()
         {
-            If(Scale != new MCRange<int>(100, 1000), () => Funny.Mul(-1));
-
-            Scale.Add(Funny);
-
-            Text.Scale.X.Set(Scale, .01);
+            
         }
     }
 }

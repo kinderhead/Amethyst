@@ -45,10 +45,5 @@ namespace Datapack.Net.CubeLib.EntityWrappers
 
         public void ClearAttacker() => RemoveNBT("attack");
         public void ClearInteractor() => RemoveNBT("interaction");
-
-        public override void PlayerCheck()
-        {
-
-        }
     }
 }
