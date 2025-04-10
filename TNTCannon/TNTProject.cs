@@ -29,17 +29,25 @@ namespace TNTCannon
             Print("Running");
             Heap.Clear();
 
-            Player = GlobalEntityRef(new TargetSelector(TargetType.p));
+            var x = Local(5);
+            var y = Local(8);
 
-            Player.As(() =>
-            {
-                Text = SummonIfDead<TextDisplay>(Global("Boo"));
-                Text.SetText(new FormattedText().Text("Boo"));
-                Text.SetBillboard(Billboard.Fixed);
-                Text.InterpolationDuration = 100;
-                Text.StartAnimation();
-                Text.Scale = new(1, 5, 1);
-            });
+            Print(x + y);
+
+            var obj = AllocObj<Funny>();
+            obj.Say();
+
+            // Player = GlobalEntityRef(new TargetSelector(TargetType.p));
+
+            // Player.As(() =>
+            // {
+            //     Text = SummonIfDead<TextDisplay>(Global("Boo"));
+            //     Text.SetText(new FormattedText().Text("Boo"));
+            //     Text.SetBillboard(Billboard.Fixed);
+            //     Text.InterpolationDuration = 100;
+            //     Text.StartAnimation();
+            //     Text.Scale = new(1, 5, 1);
+            // });
         }
 
         protected override void Tick()
