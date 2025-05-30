@@ -26,7 +26,7 @@ namespace Datapack.Net.Data
                     if (value == null) continue;
                     if (i.Name == "ID") continue;
 
-                    values.Add(i.Name.ToLower(), $"{value}".ToLower());
+                    values.Add(i.Name.ToLower(), $"{value}".ToLower().Trim('_'));
                 }
                 return $"{ID}[{TargetSelector.CompileDict(values)}]";
             }

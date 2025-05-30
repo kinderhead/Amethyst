@@ -81,7 +81,7 @@ namespace Datapack.Net.Function.Commands
 
         public T Get<T>() where T : Subcommand
         {
-            foreach (var i in Subcommands) if (i is T) return (T)i;
+            foreach (var i in Subcommands) if (i is T t) return t;
             throw new Exception("Execute command does not have the requested subcommand");
         }
 

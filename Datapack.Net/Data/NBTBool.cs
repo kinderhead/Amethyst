@@ -6,9 +6,10 @@ using System.Threading.Tasks;
 
 namespace Datapack.Net.Data
 {
-    public class NBTBool(bool val) : NBTType
+    public class NBTBool(bool val) : NBTValue
     {
-        public readonly bool Value = val;
+		public override NBTType Type => NBTType.Boolean;
+		public readonly bool Value = val;
 
         public override void Build(StringBuilder sb)
         {

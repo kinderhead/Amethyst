@@ -64,7 +64,7 @@ namespace Datapack.Net.CubeLib
         protected IPointer<T> GetProp<T>(string path, bool dot = true) where T : IPointerable => Pointer.Get<T>(path, dot);
         protected T GetObj<T>(string path, bool dot = true) where T : IBaseRuntimeObject => T.Create(RuntimePointer<T>.Create(Pointer.Get<RuntimePointer<T>>(path, dot)));
 
-        protected void SetProp(string path, NBTType val) => Pointer.Get<NBTType>(path).Set(val);
+        protected void SetProp(string path, NBTValue val) => Pointer.Get<NBTValue>(path).Set(val);
         protected void SetProp<T>(string path, IPointer<T> pointer) where T : IPointerable
         {
             if (typeof(T).IsAssignableTo(typeof(IBaseRuntimeObject)))
@@ -79,7 +79,7 @@ namespace Datapack.Net.CubeLib
         protected void SetProp<T>(string path, IRuntimeProperty<T> prop) where T : IPointerable
         {
             if (prop.Pointer is not null) SetProp(path, prop.Pointer);
-            else if (NBTType.IsNBTType<T>()) SetProp(path, NBTType.ToNBT(prop.PropValue ?? throw new ArgumentException("RuntimeProperty was not created properly")) ?? throw new Exception("How did we get here?"));
+            else if (NBTValue.IsNBTType<T>()) SetProp(path, NBTValue.ToNBT(prop.PropValue ?? throw new ArgumentException("RuntimeProperty was not created properly")) ?? throw new Exception("How did we get here?"));
             else throw new ArgumentException("RuntimeProperty was not created properly");
         }
 

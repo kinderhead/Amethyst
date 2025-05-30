@@ -17,3 +17,6 @@ dotnet_diagnostic.CA1822.severity = none
 
 # CA2211: Non-constant fields should not be visible
 dotnet_diagnostic.CA2211.severity = none
+
+# CS3021: Type or member does not need a CLSCompliant attribute because the assembly does not have a CLSCompliant attribute
+dotnet_diagnostic.CS3021.severity = none

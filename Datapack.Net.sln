@@ -18,6 +18,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Datapack.Net.SourceGenerato
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WikiScraper", "WikiScraper\WikiScraper.csproj", "{16DC446E-DDBA-40C3-B188-5181B42EC267}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Amethyst", "Amethyst\Amethyst.csproj", "{398C91AC-F6EE-478C-8F57-CB62218300E9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -44,6 +46,10 @@ Global
 		{16DC446E-DDBA-40C3-B188-5181B42EC267}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{16DC446E-DDBA-40C3-B188-5181B42EC267}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{16DC446E-DDBA-40C3-B188-5181B42EC267}.Release|Any CPU.Build.0 = Release|Any CPU
+		{398C91AC-F6EE-478C-8F57-CB62218300E9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{398C91AC-F6EE-478C-8F57-CB62218300E9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{398C91AC-F6EE-478C-8F57-CB62218300E9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{398C91AC-F6EE-478C-8F57-CB62218300E9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

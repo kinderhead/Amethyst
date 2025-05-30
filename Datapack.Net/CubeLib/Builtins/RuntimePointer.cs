@@ -34,7 +34,7 @@ namespace Datapack.Net.CubeLib.Builtins
 
         }
 
-        public void Set(NBTType val)
+        public void Set(NBTValue val)
         {
             Project.ActiveProject.Std.PointerSet(StandardMacros([new("value", val.ToString())]));
         }

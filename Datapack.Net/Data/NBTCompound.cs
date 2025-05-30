@@ -8,11 +8,12 @@ using System.Threading.Tasks;
 
 namespace Datapack.Net.Data
 {
-    public class NBTCompound : NBTType, IDictionary<string, NBTType>, INegatable<NBTCompound>
+    public class NBTCompound : NBTValue, IDictionary<string, NBTValue>, INegatable<NBTCompound>
     {
-        public Dictionary<string, NBTType> Values = [];
+		public override NBTType Type => NBTType.Compound;
+		public Dictionary<string, NBTValue> Values = [];
 
-        public NBTType this[string key] { get => Values[key]; set => Values[key] = value; }
+        public NBTValue this[string key] { get => Values[key]; set => Values[key] = value; }
 
         public ICollection<string> Keys => Values.Keys;
 
@@ -20,14 +21,14 @@ namespace Datapack.Net.Data
 
         public bool IsReadOnly => false;
 
-        ICollection<NBTType> IDictionary<string, NBTType>.Values => Values.Values;
+        ICollection<NBTValue> IDictionary<string, NBTValue>.Values => Values.Values;
 
-        public void Add(string key, NBTType value)
+        public void Add(string key, NBTValue value)
         {
             Values.Add(key, value);
         }
 
-        public void Add(KeyValuePair<string, NBTType> item)
+        public void Add(KeyValuePair<string, NBTValue> item)
         {
             Values.Add(item.Key, item.Value);
         }
@@ -53,7 +54,7 @@ namespace Datapack.Net.Data
             Values.Clear();
         }
 
-        public bool Contains(KeyValuePair<string, NBTType> item)
+        public bool Contains(KeyValuePair<string, NBTValue> item)
         {
             return Values.Contains(item);
         }
@@ -63,12 +64,12 @@ namespace Datapack.Net.Data
             return Values.ContainsKey(key);
         }
 
-        public void CopyTo(KeyValuePair<string, NBTType>[] array, int arrayIndex)
+        public void CopyTo(KeyValuePair<string, NBTValue>[] array, int arrayIndex)
         {
             throw new NotImplementedException();
         }
 
-        public IEnumerator<KeyValuePair<string, NBTType>> GetEnumerator()
+        public IEnumerator<KeyValuePair<string, NBTValue>> GetEnumerator()
         {
             return Values.GetEnumerator();
         }
@@ -83,12 +84,12 @@ namespace Datapack.Net.Data
             return Values.Remove(key);
         }
 
-        public bool Remove(KeyValuePair<string, NBTType> item)
+        public bool Remove(KeyValuePair<string, NBTValue> item)
         {
             return Values.Remove(item.Key);
         }
 
-        public bool TryGetValue(string key, [MaybeNullWhen(false)] out NBTType value)
+        public bool TryGetValue(string key, [MaybeNullWhen(false)] out NBTValue value)
         {
             return Values.TryGetValue(key, out value);
         }

@@ -41,7 +41,7 @@ namespace Datapack.Net.CubeLib
             }
         }
 
-        public EntityProperty<T> Get<T>(string path) where T : NBTType => new() { Entity = this, Path = path };
+        public EntityProperty<T> Get<T>(string path) where T : NBTValue => new() { Entity = this, Path = path };
         public T GetAs<T>(string path) where T : EntityProperty, new() => new() { Entity = this, Path = path };
 
         public void As(Action func, bool at = true, bool force = false)
@@ -73,9 +73,9 @@ namespace Datapack.Net.CubeLib
         public void Kill() => Project.ActiveProject.AddCommand(As(new Execute().Run(new KillCommand(TargetSelector.Self))));
 
         public void CopyTo(IPointer<NBTCompound> loc) => As(() => Project.ActiveProject.Std.EntityNBTToPointer(loc.StandardMacros()), false);
-        public void CopyTo<T>(IPointer<T> loc, string path) where T : NBTType => As(() => Project.ActiveProject.Std.EntityNBTToPointerPath(loc.StandardMacros([new("epath", path)])), false);
+        public void CopyTo<T>(IPointer<T> loc, string path) where T : NBTValue => As(() => Project.ActiveProject.Std.EntityNBTToPointerPath(loc.StandardMacros([new("epath", path)])), false);
 
-        public void SetNBT(string path, NBTType value)
+        public void SetNBT(string path, NBTValue value)
         {
             var cmd = new DataCommand.Modify(TargetSelector.Self, path).Set().Value(value.Build());
             if (NeedsPlayerCheck())
@@ -89,7 +89,7 @@ namespace Datapack.Net.CubeLib
             else Project.ActiveProject.AddCommand(As(new Execute()).Run(cmd));
         }
 
-        public void SetNBT<T>(string path, IPointer<T> value) where T : NBTType
+        public void SetNBT<T>(string path, IPointer<T> value) where T : NBTValue
         {
             As(() =>
             {

@@ -7,9 +7,10 @@ using System.Threading.Tasks;
 
 namespace Datapack.Net.Data
 {
-    public class NBTList<T>(string prefix = "") : NBTType, IList<T> where T : NBTType
+    public class NBTList<T>(string prefix = "") : NBTValue, IList<T> where T : NBTValue
     {
-        public List<T> Values = [];
+		public override NBTType Type => NBTType.List;
+		public List<T> Values = [];
 
         protected readonly string Prefix = prefix;
 
@@ -83,8 +84,20 @@ namespace Datapack.Net.Data
         }
     }
 
-    public class NBTList : NBTList<NBTType> { }
-    public class NBTIntArray() : NBTList<NBTInt>("I;") { }
-    public class NBTByteArray() : NBTList<NBTByte>("B;") { }
-    public class NBTLongArray() : NBTList<NBTLong>("L;") { }
+    public class NBTList : NBTList<NBTValue> { }
+
+    public class NBTIntArray() : NBTList<NBTInt>("I;")
+    {
+		public override NBTType Type => NBTType.IntArray;
+	}
+
+    public class NBTByteArray() : NBTList<NBTByte>("B;")
+    {
+		public override NBTType Type => NBTType.ByteArray;
+	}
+
+    public class NBTLongArray() : NBTList<NBTLong>("L;")
+    {
+		public override NBTType Type => NBTType.LongArray;
+	}
 }

@@ -6,9 +6,10 @@ using System.Threading.Tasks;
 
 namespace Datapack.Net.Data
 {
-    public class NBTString(string val) : NBTType
+    public class NBTString(string val) : NBTValue
     {
-        public readonly string Value = val;
+		public override NBTType Type => NBTType.String;
+		public readonly string Value = val;
 
         public override void Build(StringBuilder sb)
         {
@@ -21,12 +22,13 @@ namespace Datapack.Net.Data
             return val.Replace("\"", "\\\"");
         }
 
-        public static implicit operator NBTString(string val) => new(val);
+		public static implicit operator NBTString(string val) => new(val);
         public static implicit operator string(NBTString val) => val.Value;
     }
 
-    public class NBTRawString(string val) : NBTType
+    public class NBTRawString(string val) : NBTValue
     {
+        public override NBTType Type => NBTType.String;
         public readonly string Value = val;
 
         public override void Build(StringBuilder sb)

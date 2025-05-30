@@ -1,0 +1,6 @@
+namespace test;
+
+void main()
+{
+    int x = 4;
+}

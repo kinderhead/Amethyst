@@ -18,8 +18,8 @@ namespace Datapack.Net.CubeLib
 
         protected override void Main()
         {
-            RegisterObject<MCList<RuntimePointer<NBTType>>>();
-            RegisterObject<RuntimePointer<NBTType>>();
+            RegisterObject<MCList<RuntimePointer<NBTValue>>>();
+            RegisterObject<RuntimePointer<NBTValue>>();
         }
 
         /// <summary>

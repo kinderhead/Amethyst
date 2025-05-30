@@ -19,8 +19,8 @@ namespace TNTCannon
     {
         public override string Namespace => "tnt";
 
-        TextDisplay Text;
-        Entity Player;
+        //TextDisplay Text;
+        //Entity Player;
 
         protected override void Main()
         {

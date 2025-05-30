@@ -24,7 +24,7 @@ namespace Datapack.Net.CubeLib
         public abstract ScoreRef GetAsArg();
         public abstract BaseHeapPointer GetHeapPointer();
         public abstract void MoveUnsafe(IStandardPointerMacros dest);
-        public abstract void Set(NBTType val);
+        public abstract void Set(NBTValue val);
         public abstract void Set(ScoreRef val);
         public abstract KeyValuePair<string, object>[] StandardMacros(KeyValuePair<string, object>[]? extras = null, string postfix = "");
         public abstract IPointer ToPointer();
@@ -42,7 +42,7 @@ namespace Datapack.Net.CubeLib
 
         public T Self => (T?)typeof(T).GetMethod("Create")?.Invoke(null, [this]) ?? throw new ArgumentException("Not a pointer to a RuntimeObject");
 
-        public override void Set(NBTType val)
+        public override void Set(NBTValue val)
         {
             Project.ActiveProject.Std.PointerSet(StandardMacros([new("value", val.ToString())]));
         }
@@ -136,7 +136,7 @@ namespace Datapack.Net.CubeLib
 
         public static void CheckValidType()
         {
-            if (NBTType.IsNBTType<T>()) return;
+            if (NBTValue.IsNBTType<T>()) return;
             if (typeof(T).IsSubclassOf(typeof(IBaseRuntimeObject))) return;
             if (typeof(T).IsSubclassOf(typeof(IRuntimeArgument))) return;
 

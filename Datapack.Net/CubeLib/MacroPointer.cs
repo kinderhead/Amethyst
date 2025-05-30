@@ -68,7 +68,7 @@ namespace Datapack.Net.CubeLib
             throw new NotImplementedException();
         }
 
-        public void Set(NBTType val)
+        public void Set(NBTValue val)
         {
             throw new NotImplementedException();
         }

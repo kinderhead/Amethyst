@@ -348,8 +348,8 @@ namespace Datapack.Net.CubeLib
             var newScores = 0;
             foreach (var i in args)
             {
-                if (NBTType.ToNBT(i.Value) != null) parameters[i.Key] = NBTType.ToNBT(i.Value) ?? throw new Exception("How did we get here?");
-                else if (i.Value.GetType().IsAssignableTo(typeof(NBTType))) parameters[i.Key] = (NBTType)i.Value;
+                if (NBTValue.ToNBT(i.Value) != null) parameters[i.Key] = NBTValue.ToNBT(i.Value) ?? throw new Exception("How did we get here?");
+                else if (i.Value.GetType().IsAssignableTo(typeof(NBTValue))) parameters[i.Key] = (NBTValue)i.Value;
                 else if (i.Value is ScoreRef score) runtimeScores[i.Key] = score;
                 else if (i.Value is ScoreRefOperation op)
                 {
@@ -428,7 +428,7 @@ namespace Datapack.Net.CubeLib
         public void Print<T>(IPointer<T> ptr) where T : IPointerable => Std.PointerPrint(ptr.StandardMacros());
         public void Print<T>(RuntimePointer<T> ptr) where T : IPointerable => Print((IPointer<T>)ptr);
         public void Print<T>(IRuntimeProperty<T> prop) where T : IPointerable => Print(prop.Pointer);
-        public void Print<T>(EntityProperty<T> prop) where T : NBTType => Print(prop.ToPointer());
+        public void Print<T>(EntityProperty<T> prop) where T : NBTValue => Print(prop.ToPointer());
 
         public void Print(params object[] args)
         {
@@ -833,9 +833,9 @@ namespace Datapack.Net.CubeLib
             return obj;
         }
 
-        public HeapPointer<T> Alloc<T>(bool free = true) where T : NBTType => Alloc<T>(Local(), free);
-        public HeapPointer<T> Alloc<T>(T val, bool free = true) where T : NBTType => Alloc(Local(), val, free);
-        public HeapPointer<T> Alloc<T>(ScoreRef loc, bool free = true) where T : NBTType
+        public HeapPointer<T> Alloc<T>(bool free = true) where T : NBTValue => Alloc<T>(Local(), free);
+        public HeapPointer<T> Alloc<T>(T val, bool free = true) where T : NBTValue => Alloc(Local(), val, free);
+        public HeapPointer<T> Alloc<T>(ScoreRef loc, bool free = true) where T : NBTValue
         {
             var pointer = Heap.Alloc<T>(loc);
 
@@ -845,7 +845,7 @@ namespace Datapack.Net.CubeLib
             return pointer;
         }
 
-        public HeapPointer<T> Alloc<T>(ScoreRef loc, T val, bool free = true) where T : NBTType
+        public HeapPointer<T> Alloc<T>(ScoreRef loc, T val, bool free = true) where T : NBTValue
         {
             var pointer = Alloc<T>(loc, free);
             pointer.Set(val);
@@ -854,7 +854,7 @@ namespace Datapack.Net.CubeLib
 
         public HeapPointer<T> Attach<T>(ScoreRef loc) where T : IPointerable => new(Heap, loc);
 
-        public HeapPointer<T> AllocIfNull<T>(ScoreRef loc, T defaultValue) where T : NBTType
+        public HeapPointer<T> AllocIfNull<T>(ScoreRef loc, T defaultValue) where T : NBTValue
         {
             var ptr = Attach<T>(loc);
             If(!ptr.Exists(), () => Alloc(loc, defaultValue));

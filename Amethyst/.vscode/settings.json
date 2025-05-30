@@ -1,0 +1,6 @@
+{
+    "antlr4.generation": {
+        "package": "Amethyst.Antlr",
+        "outputDir": "Antlr"
+    }
+}

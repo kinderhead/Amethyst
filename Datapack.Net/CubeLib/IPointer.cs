@@ -17,7 +17,7 @@ namespace Datapack.Net.CubeLib
         public void Free();
         public IPointer<R> Get<R>(string path, bool dot = true) where R : IPointerable;
         public void MoveUnsafe(IStandardPointerMacros dest);
-        public void Set(NBTType val);
+        public void Set(NBTValue val);
         public void Set(ScoreRef val);
         public IPointer<R> Cast<R>() where R : IPointerable;
         public IPointer Cast(Type type);

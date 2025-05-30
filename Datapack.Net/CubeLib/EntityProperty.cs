@@ -12,13 +12,13 @@ namespace Datapack.Net.CubeLib
         public Entity? Entity;
         public string? Path;
 
-        public NBTType? RawValue;
+        public NBTValue? RawValue;
         public ScoreRef? Score;
 
         public abstract void Set(Entity entity, string path);
     }
 
-    public class EntityProperty<T> : EntityProperty where T : NBTType
+    public class EntityProperty<T> : EntityProperty where T : NBTValue
     {
         public T? Value { get => (T?)RawValue; set => RawValue = value; }
         
@@ -27,7 +27,7 @@ namespace Datapack.Net.CubeLib
         public override void Set(Entity entity, string path)
         {
             if (Value is not null) entity.SetNBT(path, Value);
-            else if (Score is not null && NBTType.IsNumberType<T>() is NBTNumberType type)
+            else if (Score is not null && NBTValue.IsNumberType<T>() is NBTNumberType type)
             {
                 entity.As(() =>
                 {

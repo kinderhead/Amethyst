@@ -3,7 +3,7 @@ using Datapack.Net.Data;
 
 namespace Datapack.Net.CubeLib.EntityProperties
 {
-    public class EntityStructure<T>() : EntityProperty<T> where T : NBTType
+    public class EntityStructure<T>() : EntityProperty<T> where T : NBTValue
     {
         public R GetProp<R>(string path) where R : EntityProperty, new()
         {

@@ -1,0 +1,12 @@
+{
+  "profiles": {
+    "Amethyst": {
+      "commandName": "Project",
+      "commandLineArgs": "examples/test.ame -o output.zip"
+    },
+    "Amethyst Help": {
+      "commandName": "Project",
+      "commandLineArgs": "--help"
+    }
+  }
+}

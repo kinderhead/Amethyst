@@ -7,8 +7,9 @@ using System.Threading.Tasks;
 
 namespace Datapack.Net.Data
 {
-    public abstract class NBTType : IPointerable
+    public abstract class NBTValue : IPointerable
     {
+        public abstract NBTType Type { get; }
         public abstract void Build(StringBuilder sb);
 
         public virtual string Build()
@@ -37,7 +38,7 @@ namespace Datapack.Net.Data
             }
         }
 
-        public static NBTNumberType? IsNumberType<T>() where T : NBTType
+        public static NBTNumberType? IsNumberType<T>() where T : NBTValue
         {
             if (typeof(T) == typeof(NBTInt)) return NBTNumberType.Int;
             if (typeof(T) == typeof(NBTLong)) return NBTNumberType.Long;
@@ -48,18 +49,18 @@ namespace Datapack.Net.Data
             return null;
         }
 
-        public static implicit operator NBTType(string val) => new NBTString(val);
-        public static implicit operator NBTType(int val) => new NBTInt(val);
-        public static implicit operator NBTType(byte val) => new NBTByte(val);
-        public static implicit operator NBTType(short val) => new NBTShort(val);
-        public static implicit operator NBTType(long val) => new NBTLong(val);
-        public static implicit operator NBTType(float val) => new NBTFloat(val);
-        public static implicit operator NBTType(double val) => new NBTDouble(val);
-        public static implicit operator NBTType(bool val) => new NBTBool(val);
+        public static implicit operator NBTValue(string val) => new NBTString(val);
+        public static implicit operator NBTValue(int val) => new NBTInt(val);
+        public static implicit operator NBTValue(byte val) => new NBTByte(val);
+        public static implicit operator NBTValue(short val) => new NBTShort(val);
+        public static implicit operator NBTValue(long val) => new NBTLong(val);
+        public static implicit operator NBTValue(float val) => new NBTFloat(val);
+        public static implicit operator NBTValue(double val) => new NBTDouble(val);
+        public static implicit operator NBTValue(bool val) => new NBTBool(val);
 
-        public static NBTType? ToNBT(object obj)
+        public static NBTValue? ToNBT(object obj)
         {
-            if (obj is NBTType nbt) return nbt;
+            if (obj is NBTValue nbt) return nbt;
 
             return obj switch
             {
@@ -77,13 +78,30 @@ namespace Datapack.Net.Data
 
         public static bool IsNBTType<T>()
         {
-            if (typeof(T).IsAssignableTo(typeof(NBTType))) return true;
+            if (typeof(T).IsAssignableTo(typeof(NBTValue))) return true;
 
             return RawNBTTypes.Contains(typeof(T));
         }
 
-        public static readonly Type[] RawNBTTypes = [typeof(string), typeof(int), typeof(byte), typeof(short), typeof(long), typeof(float), typeof(double), typeof(bool)];
+        public static readonly Type[] RawNBTTypes = [typeof(string), typeof(int), typeof(byte), typeof(short), typeof(long), typeof(float), typeof(double), typeof(bool), typeof(int[]), typeof(byte[]), typeof(long[])];
     }
+
+    public enum NBTType
+    {
+		Byte,
+        Boolean,
+		Short,
+		Int,
+		Long,
+		Float,
+		Double,
+        String,
+        List,
+        Compound,
+        ByteArray,
+        IntArray,
+        LongArray
+	}
 
     public enum NBTNumberType
     {
