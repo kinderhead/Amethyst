@@ -2,8 +2,7 @@ namespace test;
 
 void main()
 {
-    float x = 1;
-    int a = 213;
-
-    double b = a;
+    int x = 1;
+    int y = 2;
+    int z = x + y;
 }

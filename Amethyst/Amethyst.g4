@@ -39,8 +39,12 @@ expression
     ;
 
 assignmentExpression
-    : primaryExpression
+    : additiveExpression
     | Identifier Eq expression
+    ;
+
+additiveExpression
+    : primaryExpression ((Plus | Minus) primaryExpression)*
     ;
 
 primaryExpression
@@ -68,6 +72,8 @@ RParen: ')';
 LBrak: '{';
 RBrak: '}';
 Eq: '=';
+Plus: '+';
+Minus: '-';
 
 Identifier: ([a-z] | [A-Z]) ([a-z] | [A-Z] | [0-9] | '_' | '-')*;
 String: '"' ( ~[\\"\n\r] | '\\' [\\"] )* '"';

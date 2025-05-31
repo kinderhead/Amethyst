@@ -5,6 +5,7 @@ using Antlr4.Runtime;
 using Antlr4.Runtime.Misc;
 using Antlr4.Runtime.Tree;
 using Datapack.Net.Data;
+using Datapack.Net.Function.Commands;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -64,8 +65,19 @@ namespace Amethyst.AST
 
 		public override Node VisitAssignmentExpression([NotNull] AmethystParser.AssignmentExpressionContext context)
 		{
-			if (context.primaryExpression() is not null) return Visit(context.primaryExpression());
+			if (context.additiveExpression() is not null) return Visit(context.additiveExpression());
 			else return new AssignmentExpression(Loc(context), context.Identifier().GetText(), Visit(context.expression()));
+		}
+
+		public override Node VisitAdditiveExpression([NotNull] AmethystParser.AdditiveExpressionContext context)
+		{
+			Expression node = (Expression)Visit(context.children.First());
+			for (int i = 1; i < context.children.Count; i++)
+			{
+				var op = context.children[i].GetText() == "+" ? ScoreOperation.Add : ScoreOperation.Sub;
+				node = new ArithmeticExpression(Loc(context), node, op, (Expression)Visit(context.children[i++]));
+			}
+			return node;
 		}
 
 		public override Node VisitPrimaryExpression([NotNull] AmethystParser.PrimaryExpressionContext context)

@@ -105,33 +105,20 @@ namespace Datapack.Net.Function.Commands
                 }
             }
 
-            public static string FromOperation(ScoreOperation op)
-            {
-                switch (op)
-                {
-                    case ScoreOperation.Assign:
-                        return "=";
-                    case ScoreOperation.Add:
-                        return "+=";
-                    case ScoreOperation.Sub:
-                        return "-=";
-                    case ScoreOperation.Mul:
-                        return "*=";
-                    case ScoreOperation.Div:
-                        return "/=";
-                    case ScoreOperation.Mod:
-                        return "%=";
-                    case ScoreOperation.Swap:
-                        return "><";
-                    case ScoreOperation.Min:
-                        return "<";
-                    case ScoreOperation.Max:
-                        return ">";
-                    default:
-                        throw new ArgumentException("Invalid operation");
-                }
-            }
-        }
+            public static string FromOperation(ScoreOperation op) => op switch
+			{
+				ScoreOperation.Assign => "=",
+				ScoreOperation.Add => "+=",
+				ScoreOperation.Sub => "-=",
+				ScoreOperation.Mul => "*=",
+				ScoreOperation.Div => "/=",
+				ScoreOperation.Mod => "%=",
+				ScoreOperation.Swap => "><",
+				ScoreOperation.Min => "<",
+				ScoreOperation.Max => ">",
+				_ => throw new ArgumentException("Invalid operation"),
+			};
+		}
     }
 
     public enum ScoreOperation
