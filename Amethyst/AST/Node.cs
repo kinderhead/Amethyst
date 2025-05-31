@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace Amethyst.AST
 {
-	public abstract class Node(LocationRange loc)
+	public abstract class Node(LocationRange loc) : ILocatable
 	{
-		public readonly LocationRange Location = loc;
+		public LocationRange Location { get; } = loc;
 	}
 }

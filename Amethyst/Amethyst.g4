@@ -22,6 +22,7 @@ statement
     : (
         initAssignmentStatement
         | block
+        | expressionStatement
     ) Semi+
     ;
 
@@ -29,8 +30,17 @@ initAssignmentStatement
     : type Identifier Eq expression
     ;
 
+expressionStatement
+    : expression
+    ;
+
 expression
+    : assignmentExpression
+    ;
+
+assignmentExpression
     : primaryExpression
+    | Identifier Eq expression
     ;
 
 primaryExpression
@@ -59,7 +69,7 @@ LBrak: '{';
 RBrak: '}';
 Eq: '=';
 
-Identifier: ([a-z] | [A-Z]) ([a-z] | [A-Z] | [0-9] | '_')*;
+Identifier: ([a-z] | [A-Z]) ([a-z] | [A-Z] | [0-9] | '_' | '-')*;
 String: '"' ( ~[\\"\n\r] | '\\' [\\"] )* '"';
 Integer: [0-9]+;
 

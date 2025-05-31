@@ -24,7 +24,15 @@ namespace Datapack.Net.Function
             if (command.Macro) Macro = true;
         }
 
-        public void Prepend(Command command)
+		public void Add(params Command[] commands)
+		{
+			foreach (var i in commands)
+			{
+                Add(i);
+			}
+		}
+
+		public void Prepend(Command command)
         {
             Commands.Insert(0, command);
             if (command.Macro) Macro = true;

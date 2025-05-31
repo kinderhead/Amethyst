@@ -2,5 +2,8 @@ namespace test;
 
 void main()
 {
-    int x = 4;
+    float x = 1;
+    int a = 213;
+
+    double b = a;
 }

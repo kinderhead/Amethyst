@@ -13,15 +13,16 @@ using System.Threading.Tasks;
 
 namespace Amethyst.AST
 {
-	public class Visitor(string filename) : AmethystBaseVisitor<Node>
+	public class Visitor(string filename, Compiler compiler) : AmethystBaseVisitor<Node>
 	{
 		public readonly string Filename = filename;
+		public readonly Compiler Compiler = compiler;
 
 		private string currentNamespace = "minecraft";
 
 		public override Node VisitRoot([NotNull] AmethystParser.RootContext context)
 		{
-			var root = new RootNode(Loc(context));
+			var root = new RootNode(Loc(context), Compiler);
 
 			foreach (var i in context.children)
 			{
@@ -51,28 +52,35 @@ namespace Amethyst.AST
 		}
 
 		public override Node VisitInitAssignmentStatement([NotNull] AmethystParser.InitAssignmentStatementContext context) => new InitAssignmentNode(Loc(context), Visit(context.type()), context.Identifier().GetText(), Visit(context.expression()));
+		public override Node VisitExpressionStatement([NotNull] AmethystParser.ExpressionStatementContext context) => new ExpressionStatement(Loc(context), Visit(context.expression()));
 
 		public override Node VisitType([NotNull] AmethystParser.TypeContext context)
 		{
-			if (context.Identifier() is ITerminalNode id) return new SimpleAbstractTypeDeclaration(Loc(context), id.GetText());
+			if (context.Identifier() is ITerminalNode id) return new SimpleAbstractTypeSpecifier(Loc(context), id.GetText());
 			else throw new NotImplementedException();
 		}
 
 		public override Node VisitExpression([NotNull] AmethystParser.ExpressionContext context) => Visit(context.children.First());
 
+		public override Node VisitAssignmentExpression([NotNull] AmethystParser.AssignmentExpressionContext context)
+		{
+			if (context.primaryExpression() is not null) return Visit(context.primaryExpression());
+			else return new AssignmentExpression(Loc(context), context.Identifier().GetText(), Visit(context.expression()));
+		}
+
 		public override Node VisitPrimaryExpression([NotNull] AmethystParser.PrimaryExpressionContext context)
 		{
-			if (context.Identifier() is ITerminalNode id) return new AbstractVariableExpression(Loc(context), id.GetText());
-			else if (context.String() is ITerminalNode str) return new AbstractLiteralExpression(Loc(context), new NBTRawString(str.GetText()));
-			else if (context.Integer() is ITerminalNode i) return new AbstractLiteralExpression(Loc(context), new NBTInt(int.Parse(i.GetText())));
+			if (context.Identifier() is ITerminalNode id) return new VariableExpression(Loc(context), id.GetText());
+			else if (context.String() is ITerminalNode str) return new LiteralExpression(Loc(context), new NBTRawString(str.GetText()));
+			else if (context.Integer() is ITerminalNode i) return new LiteralExpression(Loc(context), new NBTInt(int.Parse(i.GetText())));
 			else if (context.expression() is AmethystParser.ExpressionContext expr) return Visit(expr);
 			else throw new NotImplementedException();
 		}
 
-		public AbstractTypeDeclaration Visit(AmethystParser.TypeContext context) => (AbstractTypeDeclaration)Visit((IParseTree)context);
+		public AbstractTypeSpecifier Visit(AmethystParser.TypeContext context) => (AbstractTypeSpecifier)Visit((IParseTree)context);
 		public BlockNode Visit(AmethystParser.BlockContext context) => (BlockNode)Visit((IParseTree)context);
 		public AbstractStatement Visit(AmethystParser.StatementContext context) => (AbstractStatement)Visit((IParseTree)context);
-		public AbstractExpression Visit(AmethystParser.ExpressionContext context) => (AbstractExpression)Visit((IParseTree)context);
+		public Expression Visit(AmethystParser.ExpressionContext context) => (Expression)Visit((IParseTree)context);
 
 		public LocationRange Loc(ParserRuleContext ctx) => LocationRange.From(Filename, ctx);
 	}

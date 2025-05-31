@@ -22,7 +22,7 @@ namespace Datapack.Net.Pack
             }
         }
 
-        public string ComputePath(NamespacedID id, string extraPath = "")
+        public virtual string ComputePath(NamespacedID id, string extraPath = "")
         {
             return $"data/{id.Namespace}/{Path}/{extraPath}{id.Path}{FileExtension}";
         }
@@ -107,9 +107,10 @@ namespace Datapack.Net.Pack
     }
 
     public class Functions : GenericResourceType
-    {
-        public Functions() : base("functions", ".mcfunction")
+	{
+        public Functions() : base("function", ".mcfunction")
         {
+        
         }
     }
 }

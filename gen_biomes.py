@@ -66,4 +66,4 @@ data = {
 }
 
 for i in list(data.keys()):
-    print(f"public static readonly Biome {data[i].replace(" ", "")} = new(new(\"{i.replace(".", ":")}\"));")
+    print(f"public static readonly Biome {data[i].replace(' ', '')} = new(new(\"{i.replace('.', ':')}\"));")

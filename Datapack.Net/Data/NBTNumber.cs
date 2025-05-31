@@ -1,17 +1,25 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace Datapack.Net.Data
 {
-    public abstract class NBTNumber<T>(T val, string postfix) : NBTValue
+	public interface INBTNumber
+    {
+        public object RawValue { get; }
+    }
+
+
+	public abstract class NBTNumber<T>(T val, string postfix) : NBTValue, INBTNumber where T : INumber<T>
     {
         public readonly T Value = val;
         protected readonly string Postfix = postfix;
+		public object RawValue => Value;
 
-        public override void Build(StringBuilder sb)
+		public override void Build(StringBuilder sb)
         {
             sb.Append(Value);
             sb.Append(Postfix);

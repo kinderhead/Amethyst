@@ -24,4 +24,9 @@ namespace Amethyst.AST
 			else return $"{Start.File}: {Start.Line}:{Start.Column}-{End.Line}:{End.Column}";
 		}
 	}
+
+	public interface ILocatable
+	{
+		public LocationRange Location { get; }
+	}
 }

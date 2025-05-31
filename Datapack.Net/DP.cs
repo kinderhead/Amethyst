@@ -64,7 +64,10 @@ namespace Datapack.Net
             }
         }
 
-        public T GetResource<T>() where T : ResourceType
+        public Functions Functions { get => GetResource<Functions>(); }
+        public Tags Tags { get => GetResource<Tags>(); }
+
+		public T GetResource<T>() where T : ResourceType
         {
             var type = types.Find(i => i is T);
             if (type != null) return (T)type;

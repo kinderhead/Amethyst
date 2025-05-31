@@ -28,8 +28,9 @@ namespace Datapack.Net.Data
         {
             get
             {
+                if (this is NBTBool) return NBTNumberType.Boolean;
                 if (this is NBTInt) return NBTNumberType.Int;
-                if (this is NBTLong) return NBTNumberType.Long;
+				if (this is NBTLong) return NBTNumberType.Long;
                 if (this is NBTShort) return NBTNumberType.Short;
                 if (this is NBTFloat) return NBTNumberType.Float;
                 if (this is NBTDouble) return NBTNumberType.Double;
@@ -40,8 +41,9 @@ namespace Datapack.Net.Data
 
         public static NBTNumberType? IsNumberType<T>() where T : NBTValue
         {
+            if (typeof(T) == typeof(NBTBool)) return NBTNumberType.Boolean;
             if (typeof(T) == typeof(NBTInt)) return NBTNumberType.Int;
-            if (typeof(T) == typeof(NBTLong)) return NBTNumberType.Long;
+			if (typeof(T) == typeof(NBTLong)) return NBTNumberType.Long;
             if (typeof(T) == typeof(NBTShort)) return NBTNumberType.Short;
             if (typeof(T) == typeof(NBTFloat)) return NBTNumberType.Float;
             if (typeof(T) == typeof(NBTDouble)) return NBTNumberType.Double;
@@ -49,7 +51,20 @@ namespace Datapack.Net.Data
             return null;
         }
 
-        public static implicit operator NBTValue(string val) => new NBTString(val);
+        public static bool IsNumberType(NBTType type) => type switch
+        {
+            NBTType.Boolean or NBTType.Byte or NBTType.Short or NBTType.Int or NBTType.Float or NBTType.Double => true,
+            _ => false
+        };
+
+        public static bool IsOperableType(NBTType type) => type switch
+		{
+			NBTType.Byte or NBTType.Short or NBTType.Int => true,
+			_ => false
+		};
+
+
+		public static implicit operator NBTValue(string val) => new NBTString(val);
         public static implicit operator NBTValue(int val) => new NBTInt(val);
         public static implicit operator NBTValue(byte val) => new NBTByte(val);
         public static implicit operator NBTValue(short val) => new NBTShort(val);
@@ -88,8 +103,8 @@ namespace Datapack.Net.Data
 
     public enum NBTType
     {
+		Boolean,
 		Byte,
-        Boolean,
 		Short,
 		Int,
 		Long,
@@ -105,6 +120,7 @@ namespace Datapack.Net.Data
 
     public enum NBTNumberType
     {
+        Boolean,
         Byte,
         Short,
         Int,

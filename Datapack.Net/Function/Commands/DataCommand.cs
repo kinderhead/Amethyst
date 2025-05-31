@@ -7,10 +7,10 @@ using System.Threading.Tasks;
 
 namespace Datapack.Net.Function.Commands
 {
-    public static class DataCommand
+    public abstract class DataCommand(bool macro) : Command(macro)
     {
-        public class Get : Command
-        {
+        public class Get : DataCommand
+		{
             public readonly Position? TargetPos;
             public readonly IEntityTarget? EntityTarget;
             public readonly Storage? StorageTarget;
@@ -55,8 +55,8 @@ namespace Datapack.Net.Function.Commands
             }
         }
 
-        public class Merge : Command
-        {
+        public class Merge : DataCommand
+		{
             public readonly Position? TargetPos;
             public readonly IEntityTarget? EntityTarget;
             public readonly Storage? StorageTarget;
@@ -92,8 +92,8 @@ namespace Datapack.Net.Function.Commands
             }
         }
 
-        public class Modify : Command
-        {
+        public class Modify : DataCommand
+		{
             public readonly Position? TargetPos;
             public readonly IEntityTarget? EntityTarget;
             public readonly Storage? StorageTarget;
@@ -141,7 +141,7 @@ namespace Datapack.Net.Function.Commands
                 return this;
             }
 
-            public Modify Merge()
+            new public Modify Merge()
             {
                 Type = "merge";
                 return this;
@@ -248,8 +248,8 @@ namespace Datapack.Net.Function.Commands
             }
         }
 
-        public class Remove : Command
-        {
+        public class Remove : DataCommand
+		{
             public readonly Position? TargetPos;
             public readonly IEntityTarget? EntityTarget;
             public readonly Storage? StorageTarget;

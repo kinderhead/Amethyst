@@ -33,6 +33,6 @@ void main() {
     /say $(str)
 
     var t = Test(15); // Stack alloc
-    print(t.Method());
+    !print(t.Method()); // ! means exit function if error
 }
 ```

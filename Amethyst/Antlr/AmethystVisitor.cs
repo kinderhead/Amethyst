@@ -69,11 +69,23 @@ public interface IAmethystVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <return>The visitor result.</return>
 	Result VisitInitAssignmentStatement([NotNull] AmethystParser.InitAssignmentStatementContext context);
 	/// <summary>
+	/// Visit a parse tree produced by <see cref="AmethystParser.expressionStatement"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitExpressionStatement([NotNull] AmethystParser.ExpressionStatementContext context);
+	/// <summary>
 	/// Visit a parse tree produced by <see cref="AmethystParser.expression"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
 	Result VisitExpression([NotNull] AmethystParser.ExpressionContext context);
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="AmethystParser.assignmentExpression"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitAssignmentExpression([NotNull] AmethystParser.AssignmentExpressionContext context);
 	/// <summary>
 	/// Visit a parse tree produced by <see cref="AmethystParser.primaryExpression"/>.
 	/// </summary>
