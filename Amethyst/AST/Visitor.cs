@@ -6,6 +6,7 @@ using Antlr4.Runtime.Misc;
 using Antlr4.Runtime.Tree;
 using Datapack.Net.Data;
 using Datapack.Net.Function.Commands;
+using Datapack.Net.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -36,7 +37,13 @@ namespace Amethyst.AST
 			return root;
 		}
 
-		public override Node VisitFunction([NotNull] AmethystParser.FunctionContext context) => new FunctionNode(Loc(context), Visit(context.type()), new(currentNamespace, context.name.Text), Visit(context.block()));
+		public override Node VisitFunction([NotNull] AmethystParser.FunctionContext context) => new FunctionNode(Loc(context), [.. context.functionTag().Select(i =>
+		{
+			var text = i.Identifier().GetText();
+			if (text.Contains(':')) return new NamespacedID(text);
+			else if (text == "load" || text == "tick") return new NamespacedID("minecraft", text);
+			else return new NamespacedID(currentNamespace, text);
+		})], Visit(context.type()), IdentifierToID(context.name.Text), Visit(context.block()));
 
 		public override Node VisitStatement([NotNull] AmethystParser.StatementContext context) => Visit(context.children[0]);
 
@@ -81,10 +88,23 @@ namespace Amethyst.AST
 			return node;
 		}
 
+		public override Node VisitPostfixExpression([NotNull] AmethystParser.PostfixExpressionContext context)
+		{
+			Expression node = (Expression)Visit(context.children.First());
+
+			for (int i = 1; i < context.children.Count; i++)
+			{
+				if (context.children[i] is AmethystParser.ExpressionListContext call) node = new CallExpression(Loc(context), node, Visit(call));
+				else throw new NotImplementedException();
+			}
+
+			return node;
+		}
+
 		public override Node VisitPrimaryExpression([NotNull] AmethystParser.PrimaryExpressionContext context)
 		{
 			if (context.Identifier() is ITerminalNode id) return new VariableExpression(Loc(context), id.GetText());
-			else if (context.String() is ITerminalNode str) return new LiteralExpression(Loc(context), new NBTRawString(str.GetText()));
+			else if (context.String() is ITerminalNode str) return new LiteralExpression(Loc(context), new NBTString(NBTString.Unescape(str.GetText()[1..^1])));
 			else if (context.Integer() is ITerminalNode i) return new LiteralExpression(Loc(context), new NBTInt(int.Parse(i.GetText())));
 			else if (context.expression() is AmethystParser.ExpressionContext expr) return Visit(expr);
 			else throw new NotImplementedException();
@@ -94,7 +114,13 @@ namespace Amethyst.AST
 		public BlockNode Visit(AmethystParser.BlockContext context) => (BlockNode)Visit((IParseTree)context);
 		public Statement Visit(AmethystParser.StatementContext context) => (Statement)Visit((IParseTree)context);
 		public Expression Visit(AmethystParser.ExpressionContext context) => (Expression)Visit((IParseTree)context);
+		public List<Expression> Visit(AmethystParser.ExpressionListContext context) => [.. context.expression().Select(Visit)];
 
 		public LocationRange Loc(ParserRuleContext ctx) => LocationRange.From(Filename, ctx);
+		public NamespacedID IdentifierToID(string name)
+		{
+			if (name.Contains(':')) return new(name);
+			else return new(currentNamespace, name);
+		}
 	}
 }

@@ -1,5 +1,6 @@
 ﻿using Amethyst.Codegen;
 using Amethyst.Codegen.IR;
+using Amethyst.Errors;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,7 +19,8 @@ namespace Amethyst.AST.Expressions
 		protected override Value _Execute(FunctionContext ctx)
 		{
 			var val = ctx.GetVariable(Name);
-			Expression.Cast(val.Type).Store(ctx, val);
+			if (val is MutableValue v) Expression.Cast(val.Type).Store(ctx, v);
+			else throw new ImmutableValueError(Location);
 			return val;
 		}
 	}

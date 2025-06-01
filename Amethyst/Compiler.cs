@@ -1,6 +1,7 @@
 ﻿using Amethyst.Antlr;
 using Amethyst.AST;
 using Amethyst.Codegen;
+using Amethyst.Codegen.Functions;
 using Amethyst.Codegen.IR;
 using Amethyst.Errors;
 using Antlr4.Runtime;
@@ -24,6 +25,7 @@ namespace Amethyst
 		public readonly Dictionary<string, RootNode> Roots = [];
 		public readonly Dictionary<NamespacedID, GlobalSymbol> Symbols = [];
 		public readonly Dictionary<NamespacedID, FunctionContext> Functions = [];
+		public readonly Dictionary<NamespacedID, CompileTimeFunction> CompileTimeFunctions = [];
 
 		private readonly HashSet<Score> registeredScores = [];
 
@@ -33,6 +35,7 @@ namespace Amethyst
 		{
 			Options = opts;
 			Datapack = GetDP(Options);
+			SetupDefaultCompileTimeFunctions();
 		}
 
 		public Compiler(string[] args)
@@ -42,6 +45,7 @@ namespace Amethyst
 			Options = res.Value;
 			Options.Output ??= Path.GetFileName(Options.Inputs.First()) + ".zip";
 			Datapack = GetDP(Options);
+			SetupDefaultCompileTimeFunctions();
 		}
 
 		public bool Compile()
@@ -86,6 +90,7 @@ namespace Amethyst
 
 		public void Register(MCFunction func) => Datapack.Functions.Add(func);
 		public void Register(Score score) => registeredScores.Add(score);
+		public void Register(CompileTimeFunction func) => CompileTimeFunctions[func.ID] = func;
 
 		public bool ParseFile(string filename)
 		{
@@ -145,6 +150,11 @@ namespace Amethyst
 			}
 
 			return func;
+		}
+
+		private void SetupDefaultCompileTimeFunctions()
+		{
+			Register(new PrintFunction());
 		}
 
 		private static DP GetDP(Options opts) => new("Project generated with Amethyst", opts.Output, opts.PackFormat);

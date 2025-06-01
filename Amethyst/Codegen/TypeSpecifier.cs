@@ -47,13 +47,21 @@ namespace Amethyst.Codegen
 		protected override string AsString() => Enum.GetName(Type)?.ToLower() ?? throw new InvalidOperationException();
 	}
 
-	public class FunctionTypeSpecifier(TypeSpecifier returnType) : TypeSpecifier
+	public class DynamicFunctionTypeSpecifier(TypeSpecifier returnType) : TypeSpecifier
 	{
 		public readonly TypeSpecifier ReturnType = returnType;
 
 		public override NBTType Type => NBTType.String;
 
-		protected override bool AreEqual(TypeSpecifier obj) => obj is FunctionTypeSpecifier f && f.ReturnType == ReturnType;
+		protected override bool AreEqual(TypeSpecifier obj) => obj is DynamicFunctionTypeSpecifier f && f.ReturnType == ReturnType;
+		protected override string AsString() => $"() => {ReturnType}";
+	}
+
+	public class FunctionTypeSpecifier(TypeSpecifier returnType) : DynamicFunctionTypeSpecifier(returnType)
+	{
+		public override NBTType Type => NBTType.String;
+
+		protected override bool AreEqual(TypeSpecifier obj) => base.AreEqual(obj) && obj is FunctionTypeSpecifier;
 		protected override string AsString() => $"() => {ReturnType}";
 	}
 }

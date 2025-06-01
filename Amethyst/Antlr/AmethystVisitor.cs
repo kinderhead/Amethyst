@@ -51,6 +51,12 @@ public interface IAmethystVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <return>The visitor result.</return>
 	Result VisitFunction([NotNull] AmethystParser.FunctionContext context);
 	/// <summary>
+	/// Visit a parse tree produced by <see cref="AmethystParser.functionTag"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitFunctionTag([NotNull] AmethystParser.FunctionTagContext context);
+	/// <summary>
 	/// Visit a parse tree produced by <see cref="AmethystParser.block"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>

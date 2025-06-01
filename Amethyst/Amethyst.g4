@@ -11,7 +11,11 @@ namespace
     ;
 
 function
-    : (Hash Identifier)* type name=Identifier paramList block
+    : functionTag* type name=Identifier paramList block
+    ;
+
+functionTag
+    : Hash Identifier
     ;
 
 block
@@ -49,7 +53,7 @@ assignmentExpression
     ;
 
 additiveExpression
-    : primaryExpression ((Plus | Minus) primaryExpression)*
+    : postfixExpression ((Plus | Minus) postfixExpression)*
     ;
 
 postfixExpression
@@ -70,7 +74,7 @@ paramList
     ;
 
 expressionList
-    : LParen ((Identifier) (Comma Identifier)*)? RParen
+    : LParen ((expression) (Comma expression)*)? RParen
     ;
 
 type
@@ -91,10 +95,10 @@ Plus: '+';
 Minus: '-';
 Hash: '#';
 
-Identifier: ([a-z] | [A-Z]) ([a-z] | [A-Z] | [0-9] | '_' | '-')*;
+Identifier: ([a-z] | [A-Z]) ([a-z] | [A-Z] | [0-9] | '_' | '-' | ':')*;
 String: '"' ( ~[\\"\n\r] | '\\' [\\"] )* '"';
 Command: '/' ( ~[\n\r] )* ('\r' | '\n');
-Integer: [0-9]+;
+Integer: '-'? [0-9]+;
 
 Whitespace: (' '|'\t'|'\n'|'\r')+ -> skip;
 Comment: '/*' .*? '*/' -> skip;

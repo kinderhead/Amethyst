@@ -14,8 +14,13 @@ namespace Datapack.Net.Function
 
         public FormattedText Text(string str, Modifiers? modifiers = null)
         {
-            modifiers ??= new();
-            Obj.Add(modifiers.Value.Process(new JObject(new JProperty("text", str)), this));
+            if (modifiers is null) Obj.Add(str);
+			else
+            {
+                modifiers ??= new();
+                Obj.Add(modifiers.Value.Process(new JObject(new JProperty("text", str)), this));
+            }
+
             return this;
         }
 
@@ -41,6 +46,20 @@ namespace Datapack.Net.Function
         }
 
         public void RemoveLast() => Obj.RemoveAt(Obj.Count - 1);
+
+        public FormattedText Optimize()
+        {
+			for (int i = 1; i < Obj.Count; i++)
+			{
+				if (Obj[i - 1] is JValue v1 && v1.Type == JTokenType.String && Obj[i] is JValue v2 && v2.Type == JTokenType.String)
+                {
+                    v1.Value += (string?)v2.Value;
+                    Obj.RemoveAt(i--);
+				}
+			}
+
+            return this;
+		}
 
         public override string ToString()
         {

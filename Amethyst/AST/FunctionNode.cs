@@ -10,20 +10,24 @@ using System.Threading.Tasks;
 
 namespace Amethyst.AST
 {
-	public class FunctionNode(LocationRange loc, AbstractTypeSpecifier ret, NamespacedID id, BlockNode body) : Node(loc)
+	public class FunctionNode(LocationRange loc, List<NamespacedID> tags, AbstractTypeSpecifier ret, NamespacedID id, BlockNode body) : Node(loc)
 	{
+		public readonly List<NamespacedID> Tags = tags;
 		public readonly AbstractTypeSpecifier ReturnType = ret;
 		public readonly NamespacedID ID = id;
 		public readonly BlockNode Body = body;
 
 		public bool Compile(Compiler compiler)
 		{
-			var ctx = new FunctionContext(compiler);
+			var ctx = new FunctionContext(compiler, new MCFunction(ID));
 			compiler.Functions[ID] = ctx;
 
-			ctx.OnFunctionReturn += i => i.Add(new ExitFrameInstruction(Body.Location));
+			foreach (var i in Tags)
+			{
+				compiler.Datapack.Tags.GetTag(i, "function").Values.Add(ID);
+			}
 
-			ctx.PushFunc(new MCFunction(ID));
+			ctx.OnFunctionReturn += i => i.Add(new ExitFrameInstruction(Body.Location));
 
 			ctx.Add(new InitFrameInstruction(Body.Location));
 			var ret = Body.CompileWithErrorChecking(ctx);

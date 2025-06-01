@@ -2,6 +2,7 @@
 using Datapack.Net.Data;
 using Datapack.Net.Function;
 using Datapack.Net.Function.Commands;
+using Datapack.Net.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -76,6 +77,26 @@ namespace Amethyst.Codegen.IR
 		public override void Build()
 		{
 			Add(new Scoreboard.Players.Operation(Dest.Target, Dest.Score, Op, Value.Target, Value.Score));
+		}
+	}
+
+	public class CallInstruction(LocationRange loc, NamespacedID id) : Instruction(loc)
+	{
+		public readonly NamespacedID ID = id;
+
+		public override void Build()
+		{
+			Add(new FunctionCommand(Ctx.Ctx.Compiler.Functions[ID].MainFunction));
+		}
+	}
+
+	public class TellrawInstruction(LocationRange loc, FormattedText text) : Instruction(loc)
+	{
+		public readonly FormattedText Text = text;
+
+		public override void Build()
+		{
+			Add(new TellrawCommand(new TargetSelector(TargetType.a), Text));
 		}
 	}
 }

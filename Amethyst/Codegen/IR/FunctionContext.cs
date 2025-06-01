@@ -10,11 +10,12 @@ using System.Xml.Linq;
 
 namespace Amethyst.Codegen.IR
 {
-	public class FunctionContext(Compiler compiler)
+	public class FunctionContext
 	{
-		public readonly Compiler Compiler = compiler;
+		public readonly Compiler Compiler;
 		public readonly Dictionary<string, LocalSymbol> Variables = [];
 		public readonly List<Instruction> Instructions = [];
+		public readonly MCFunction MainFunction;
 
 		private readonly Stack<Frame> frames = [];
 		public Frame CurrentFrame { get => frames.Peek(); }
@@ -24,6 +25,13 @@ namespace Amethyst.Codegen.IR
 
 		private int tempStack = 0;
 		private int tempScore = 0;
+
+		public FunctionContext(Compiler compiler, MCFunction func)
+		{
+			Compiler = compiler;
+			MainFunction = func;
+			PushFunc(func);
+		}
 
 		public event Action<FunctionContext> OnFunctionReturn;
 
@@ -49,10 +57,27 @@ namespace Amethyst.Codegen.IR
 			tempScore = 0;
 		}
 
-		public StorageValue GetVariable(string name)
+		public Value GetVariable(string name)
+		{
+			if (GetVariableNoThrow(name) is Value v) return v;
+			throw new UndefinedSymbolError(CurrentLocator.Location, name);
+		}
+
+		public Value? GetVariableNoThrow(string name)
 		{
 			if (Variables.TryGetValue(name, out var val)) return val.Value;
-			throw new UndefinedSymbolError(CurrentLocator.Location, name);
+			else
+			{
+				if (!name.Contains(':'))
+				{
+					if (GetVariableNoThrow($"amethyst:{name}") is Value v) return v;
+					name = $"{CurrentFrame.Function.ID.Namespace}:{name}";
+				}
+
+				if (Compiler.CompileTimeFunctions.TryGetValue(name, out var func)) return func;
+				else if (Compiler.Symbols.TryGetValue(name, out var gval)) return gval.Value;
+			}
+			return null;
 		}
 		
 		public StorageValue AllocTemp(TypeSpecifier type)

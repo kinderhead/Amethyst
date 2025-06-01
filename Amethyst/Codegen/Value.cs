@@ -4,6 +4,7 @@ using Amethyst.Errors;
 using Datapack.Net.Data;
 using Datapack.Net.Function;
 using Datapack.Net.Function.Commands;
+using Datapack.Net.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,6 +20,7 @@ namespace Amethyst.Codegen
 		public abstract Command WriteTo(Storage storage, string path);
 		public abstract Command WriteTo(IEntityTarget target, Score score);
 		public abstract Command Get();
+		public abstract FormattedText Format(FormattedText text);
 
 		public virtual ScoreValue AsScore(FunctionContext ctx)
 		{
@@ -34,8 +36,8 @@ namespace Amethyst.Codegen
 		public readonly NBTValue Value = val;
 		public override TypeSpecifier Type => new PrimitiveTypeSpecifier(Value.Type);
 
+		public override FormattedText Format(FormattedText text) => Value is NBTString str ? text.Text(str.Value) : text.Text(Value.ToString());
 		public override Command Get() => throw new InvalidOperationException(); // Maybe implement this
-
 		public override Command WriteTo(Storage storage, string path) => new DataCommand.Modify(storage, path).Set().Value(Value.ToString());
 
 		public override Command WriteTo(IEntityTarget target, Score score)
@@ -44,6 +46,22 @@ namespace Amethyst.Codegen
 
 			return new Scoreboard.Players.Set(target, score, Convert.ToInt32(num.RawValue));
 		}
+	}
+
+	public class VoidValue : Value
+	{
+		public override TypeSpecifier Type => new VoidTypeSpecifier();
+
+		public override FormattedText Format(FormattedText text) => text.Text("void");
+		public override Command Get() => throw new InvalidOperationException();
+		public override Command WriteTo(Storage storage, string path) => throw new InvalidOperationException();
+		public override Command WriteTo(IEntityTarget target, Score score) => throw new InvalidOperationException();
+	}
+
+	public class StaticFunctionValue(NamespacedID id, DynamicFunctionTypeSpecifier type) : LiteralValue(new NBTString(id.ToString()))
+	{
+		public readonly NamespacedID ID = id;
+		public override TypeSpecifier Type => type;
 	}
 
 	public abstract class MutableValue : Value
@@ -58,6 +76,7 @@ namespace Amethyst.Codegen
 		public readonly string Path = path;
 		public override TypeSpecifier Type => type;
 
+		public override FormattedText Format(FormattedText text) => text.Storage(Storage, Path);
 		public override Command Get() => new DataCommand.Get(Storage, Path);
 
 		public override void Store(FunctionContext ctx, Value val)
@@ -91,5 +110,6 @@ namespace Amethyst.Codegen
 		public override Command WriteTo(Storage storage, string path) => new Execute().Store(storage, path, NBTNumberType.Int, 1).Run(Get());
 		public override Command WriteTo(IEntityTarget target, Score score) => new Scoreboard.Players.Operation(target, score, ScoreOperation.Assign, Target, Score);
 		public override ScoreValue AsScore(FunctionContext ctx) => this;
+		public override FormattedText Format(FormattedText text) => text.Score(Target, Score);
 	}
 }

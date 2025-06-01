@@ -1,7 +1,9 @@
 namespace test;
 
+#load
 void main()
 {
-    /say test
-    
+    int x = 69;
+    int y = -123;
+    print(x + y);
 }
