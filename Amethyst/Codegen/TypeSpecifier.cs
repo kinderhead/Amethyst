@@ -25,6 +25,9 @@ namespace Amethyst.Codegen
 		{
 			return base.GetHashCode();
 		}
+
+		public override string ToString() => AsString();
+		protected abstract string AsString();
 	}
 
 	public class VoidTypeSpecifier : TypeSpecifier
@@ -33,7 +36,7 @@ namespace Amethyst.Codegen
 
 		protected override bool AreEqual(TypeSpecifier obj) => obj is VoidTypeSpecifier;
 
-		public override string ToString() => "void";
+		protected override string AsString() => "void";
 	}
 
 	public class PrimitiveTypeSpecifier(NBTType type) : TypeSpecifier
@@ -41,7 +44,7 @@ namespace Amethyst.Codegen
 		public override NBTType Type => type;
 
 		protected override bool AreEqual(TypeSpecifier obj) => obj is PrimitiveTypeSpecifier p && p.Type == Type;
-		public override string ToString() => Enum.GetName(Type)?.ToLower() ?? throw new InvalidOperationException();
+		protected override string AsString() => Enum.GetName(Type)?.ToLower() ?? throw new InvalidOperationException();
 	}
 
 	public class FunctionTypeSpecifier(TypeSpecifier returnType) : TypeSpecifier
@@ -51,5 +54,6 @@ namespace Amethyst.Codegen
 		public override NBTType Type => NBTType.String;
 
 		protected override bool AreEqual(TypeSpecifier obj) => obj is FunctionTypeSpecifier f && f.ReturnType == ReturnType;
+		protected override string AsString() => $"() => {ReturnType}";
 	}
 }

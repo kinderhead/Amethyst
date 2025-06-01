@@ -13,10 +13,12 @@ namespace Amethyst.AST.Expressions
 		public readonly string Name = name;
 		public readonly Expression Expression = expr;
 
+		protected override TypeSpecifier _ComputeType(FunctionContext ctx) => ctx.GetVariable(Name).Type;
+
 		protected override Value _Execute(FunctionContext ctx)
 		{
 			var val = ctx.GetVariable(Name);
-			val.Store(ctx, Expression.Cast(ctx, val.Type));
+			Expression.Cast(val.Type).Store(ctx, val);
 			return val;
 		}
 	}

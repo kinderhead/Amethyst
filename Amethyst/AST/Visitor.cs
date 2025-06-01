@@ -36,7 +36,7 @@ namespace Amethyst.AST
 			return root;
 		}
 
-		public override Node VisitFunction([NotNull] AmethystParser.FunctionContext context) => new FunctionNode(Loc(context), Visit(context.type()), new(currentNamespace, context.Identifier().GetText()), Visit(context.block()));
+		public override Node VisitFunction([NotNull] AmethystParser.FunctionContext context) => new FunctionNode(Loc(context), Visit(context.type()), new(currentNamespace, context.name.Text), Visit(context.block()));
 
 		public override Node VisitStatement([NotNull] AmethystParser.StatementContext context) => Visit(context.children[0]);
 
@@ -54,6 +54,7 @@ namespace Amethyst.AST
 
 		public override Node VisitInitAssignmentStatement([NotNull] AmethystParser.InitAssignmentStatementContext context) => new InitAssignmentNode(Loc(context), Visit(context.type()), context.Identifier().GetText(), Visit(context.expression()));
 		public override Node VisitExpressionStatement([NotNull] AmethystParser.ExpressionStatementContext context) => new ExpressionStatement(Loc(context), Visit(context.expression()));
+		public override Node VisitCommandStatement([NotNull] AmethystParser.CommandStatementContext context) => new CommandStatement(Loc(context), context.Command().GetText().Trim()[1..]);
 
 		public override Node VisitType([NotNull] AmethystParser.TypeContext context)
 		{
@@ -75,7 +76,7 @@ namespace Amethyst.AST
 			for (int i = 1; i < context.children.Count; i++)
 			{
 				var op = context.children[i].GetText() == "+" ? ScoreOperation.Add : ScoreOperation.Sub;
-				node = new ArithmeticExpression(Loc(context), node, op, (Expression)Visit(context.children[i++]));
+				node = new ArithmeticExpression(Loc(context), node, op, (Expression)Visit(context.children[++i]));
 			}
 			return node;
 		}
@@ -91,7 +92,7 @@ namespace Amethyst.AST
 
 		public AbstractTypeSpecifier Visit(AmethystParser.TypeContext context) => (AbstractTypeSpecifier)Visit((IParseTree)context);
 		public BlockNode Visit(AmethystParser.BlockContext context) => (BlockNode)Visit((IParseTree)context);
-		public AbstractStatement Visit(AmethystParser.StatementContext context) => (AbstractStatement)Visit((IParseTree)context);
+		public Statement Visit(AmethystParser.StatementContext context) => (Statement)Visit((IParseTree)context);
 		public Expression Visit(AmethystParser.ExpressionContext context) => (Expression)Visit((IParseTree)context);
 
 		public LocationRange Loc(ParserRuleContext ctx) => LocationRange.From(Filename, ctx);

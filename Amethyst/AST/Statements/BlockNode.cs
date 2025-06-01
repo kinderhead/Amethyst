@@ -8,9 +8,9 @@ using System.Threading.Tasks;
 
 namespace Amethyst.AST.Statements
 {
-	public class BlockNode(LocationRange loc) : AbstractStatement(loc)
+	public class BlockNode(LocationRange loc) : Statement(loc)
 	{
-		public readonly List<AbstractStatement> Statements = [];
+		public readonly List<Statement> Statements = [];
 
 		protected override void _Compile(FunctionContext ctx)
 		{

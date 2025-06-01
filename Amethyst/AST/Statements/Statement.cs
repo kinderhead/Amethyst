@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Amethyst.AST.Statements
 {
-	public abstract class AbstractStatement(LocationRange loc) : Node(loc)
+	public abstract class Statement(LocationRange loc) : Node(loc)
 	{
 		public void Compile(FunctionContext ctx)
 		{
@@ -31,7 +31,7 @@ namespace Amethyst.AST.Statements
 		protected abstract void _Compile(FunctionContext ctx);
 	}
 
-	public class ExpressionStatement(LocationRange loc, Expression expr) : AbstractStatement(loc)
+	public class ExpressionStatement(LocationRange loc, Expression expr) : Statement(loc)
 	{
 		public readonly Expression Expression = expr;
 

@@ -22,7 +22,8 @@ namespace Amethyst.Codegen.IR
 		private readonly Stack<ILocatable> locators = [];
 		public ILocatable CurrentLocator { get => locators.Peek(); }
 
-		private int temps = 0;
+		private int tempStack = 0;
+		private int tempScore = 0;
 
 		public event Action<FunctionContext> OnFunctionReturn;
 
@@ -32,7 +33,7 @@ namespace Amethyst.Codegen.IR
 		public void PushFunc(MCFunction func)
 		{
 			Compiler.Register(func);
-			frames.Push(new(func));
+			frames.Push(new(func, this));
 		}
 
 		public void Add(Instruction insn)
@@ -42,7 +43,11 @@ namespace Amethyst.Codegen.IR
 		}
 
 		public void FireReturn() => OnFunctionReturn?.Invoke(this);
-		public void ClearTemps() => temps = 0;
+		public void ClearTemps()
+		{
+			tempStack = 0;
+			tempScore = 0;
+		}
 
 		public StorageValue GetVariable(string name)
 		{
@@ -52,9 +57,17 @@ namespace Amethyst.Codegen.IR
 		
 		public StorageValue AllocTemp(TypeSpecifier type)
 		{
-			var name = $"$tmp{temps++}";
-			return new StorageValue(new(Compiler.RuntimeID), $"stack[-1].{name}", type);
-		} 
+			var name = $"$tmp{tempStack++}";
+			return new(new(Compiler.RuntimeID), $"stack[-1].{name}", type);
+		}
+
+		public ScoreValue AllocTempScore()
+		{
+			var name = $"_tmp{tempScore++}";
+			var score = new Score(name, "dummy");
+			Compiler.Register(score);
+			return new(Compiler.RuntimeEntity, score);
+		}
 
 		public bool Compile()
 		{
@@ -72,6 +85,6 @@ namespace Amethyst.Codegen.IR
 			return success;
 		}
 
-		public record class Frame(MCFunction Function);
+		public record class Frame(MCFunction Function, FunctionContext Ctx);
 	}
 }

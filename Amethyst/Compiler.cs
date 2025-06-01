@@ -25,6 +25,8 @@ namespace Amethyst
 		public readonly Dictionary<NamespacedID, GlobalSymbol> Symbols = [];
 		public readonly Dictionary<NamespacedID, FunctionContext> Functions = [];
 
+		private readonly HashSet<Score> registeredScores = [];
+
 		public Dictionary<string, string> Files { get; } = [];
 
 		public Compiler(Options opts)
@@ -83,6 +85,7 @@ namespace Amethyst
 		}
 
 		public void Register(MCFunction func) => Datapack.Functions.Add(func);
+		public void Register(Score score) => registeredScores.Add(score);
 
 		public bool ParseFile(string filename)
 		{
@@ -136,6 +139,11 @@ namespace Amethyst
 
 			func.Add(new DataCommand.Modify(new Storage(new("amethyst", "runtime")), "stack").Set().Value("[]"));
 
+			foreach (var i in registeredScores)
+			{
+				func.Add(new Scoreboard.Objectives.Add(i));
+			}
+
 			return func;
 		}
 
@@ -145,6 +153,7 @@ namespace Amethyst
 
 		public static string RandomString { get => Guid.NewGuid().ToString(); }
 		public static readonly NamespacedID RuntimeID = new("amethyst", "runtime");
+		public static readonly IEntityTarget RuntimeEntity = new NamedTarget("amethyst");
 	}
 
 	public interface IFileHandler

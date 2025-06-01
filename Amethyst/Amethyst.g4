@@ -11,7 +11,7 @@ namespace
     ;
 
 function
-    : type Identifier paramList block
+    : (Hash Identifier)* type name=Identifier paramList block
     ;
 
 block
@@ -24,6 +24,7 @@ statement
         | block
         | expressionStatement
     ) Semi+
+    | commandStatement
     ;
 
 initAssignmentStatement
@@ -32,6 +33,10 @@ initAssignmentStatement
 
 expressionStatement
     : expression
+    ;
+
+commandStatement
+    : Command
     ;
 
 expression
@@ -47,6 +52,12 @@ additiveExpression
     : primaryExpression ((Plus | Minus) primaryExpression)*
     ;
 
+postfixExpression
+    : primaryExpression (
+        expressionList
+    )*
+    ;
+
 primaryExpression
     : Identifier
     | String
@@ -56,6 +67,10 @@ primaryExpression
 
 paramList
     : LParen ((type Identifier) (Comma type Identifier)*)? RParen
+    ;
+
+expressionList
+    : LParen ((Identifier) (Comma Identifier)*)? RParen
     ;
 
 type
@@ -74,9 +89,13 @@ RBrak: '}';
 Eq: '=';
 Plus: '+';
 Minus: '-';
+Hash: '#';
 
 Identifier: ([a-z] | [A-Z]) ([a-z] | [A-Z] | [0-9] | '_' | '-')*;
 String: '"' ( ~[\\"\n\r] | '\\' [\\"] )* '"';
+Command: '/' ( ~[\n\r] )* ('\r' | '\n');
 Integer: [0-9]+;
 
 Whitespace: (' '|'\t'|'\n'|'\r')+ -> skip;
+Comment: '/*' .*? '*/' -> skip;
+LineComment: '//' ~[\n\r]* -> skip;

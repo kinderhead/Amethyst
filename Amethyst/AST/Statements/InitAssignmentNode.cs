@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Amethyst.AST.Statements
 {
-	public class InitAssignmentNode(LocationRange loc, AbstractTypeSpecifier type, string name, Expression expr) : AbstractStatement(loc)
+	public class InitAssignmentNode(LocationRange loc, AbstractTypeSpecifier type, string name, Expression expr) : Statement(loc)
 	{
 		public readonly AbstractTypeSpecifier Type = type;
 		public readonly string Name = name;
@@ -24,7 +24,7 @@ namespace Amethyst.AST.Statements
 			if (type is VoidTypeSpecifier) throw new InvalidTypeError(Location, "void");
 
 			ctx.Variables[Name] = new(Name, type, Location, new(new(Compiler.RuntimeID), $"stack[-1].{Name}", type));
-			ctx.Variables[Name].Value.Store(ctx, Expression.Cast(ctx, type));
+			Expression.Cast(type).Store(ctx, ctx.Variables[Name].Value);
 		}
 	}
 }

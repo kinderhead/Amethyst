@@ -75,6 +75,12 @@ public interface IAmethystVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <return>The visitor result.</return>
 	Result VisitExpressionStatement([NotNull] AmethystParser.ExpressionStatementContext context);
 	/// <summary>
+	/// Visit a parse tree produced by <see cref="AmethystParser.commandStatement"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitCommandStatement([NotNull] AmethystParser.CommandStatementContext context);
+	/// <summary>
 	/// Visit a parse tree produced by <see cref="AmethystParser.expression"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
@@ -93,6 +99,12 @@ public interface IAmethystVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <return>The visitor result.</return>
 	Result VisitAdditiveExpression([NotNull] AmethystParser.AdditiveExpressionContext context);
 	/// <summary>
+	/// Visit a parse tree produced by <see cref="AmethystParser.postfixExpression"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitPostfixExpression([NotNull] AmethystParser.PostfixExpressionContext context);
+	/// <summary>
 	/// Visit a parse tree produced by <see cref="AmethystParser.primaryExpression"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
@@ -104,6 +116,12 @@ public interface IAmethystVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
 	Result VisitParamList([NotNull] AmethystParser.ParamListContext context);
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="AmethystParser.expressionList"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitExpressionList([NotNull] AmethystParser.ExpressionListContext context);
 	/// <summary>
 	/// Visit a parse tree produced by <see cref="AmethystParser.type"/>.
 	/// </summary>

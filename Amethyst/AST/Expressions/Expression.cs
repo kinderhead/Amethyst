@@ -12,12 +12,22 @@ namespace Amethyst.AST.Expressions
 {
 	public abstract class Expression(LocationRange loc) : Node(loc)
 	{
-		public Value Execute(FunctionContext ctx)
+		public TypeSpecifier ComputeType(FunctionContext ctx) => LocatorGuard(ctx, () => _ComputeType(ctx));
+		public Value Execute(FunctionContext ctx) => LocatorGuard(ctx, () => _Execute(ctx));
+		public void Store(FunctionContext ctx, MutableValue dest) => LocatorGuard(ctx, () => _Store(ctx, dest));
+
+		public void LocatorGuard(FunctionContext ctx, Action cb) => LocatorGuard(ctx, () =>
+		{
+			cb();
+			return 0;
+		});
+
+		public T LocatorGuard<T>(FunctionContext ctx, Func<T> cb)
 		{
 			ctx.PushLocator(this);
 			try
 			{
-				return _Execute(ctx);
+				return cb();
 			}
 			catch (Exception) // Saw somewhere that it might be necessary to explicitly catch all errors so finally is run
 			{
@@ -29,55 +39,21 @@ namespace Amethyst.AST.Expressions
 			}
 		}
 
-		// Cast is here so location is populated
-		public Value Cast(FunctionContext ctx, TypeSpecifier type)
-		{
-			var val = Execute(ctx);
-			if (type == val.Type) return val;
-			else if (
-				type is VoidTypeSpecifier ||
-				(NBTValue.IsNumberType(val.Type.Type) != NBTValue.IsNumberType(type.Type))
-			) throw new InvalidCastError(Location, val.Type, type);
-			else if (val is LiteralValue l)
-			{
-				if (l.Value is not INBTNumber num || !NBTValue.IsNumberType(type.Type)) throw new InvalidCastError(Location, val.Type, type);
-				switch (type.Type)
-				{
-					case NBTType.Boolean:
-						return new LiteralValue(new NBTBool((bool)num.RawValue));
-					case NBTType.Byte:
-						return new LiteralValue(new NBTByte((byte)num.RawValue));
-					case NBTType.Short:
-						return new LiteralValue(new NBTShort((short)num.RawValue));
-					case NBTType.Int:
-						return new LiteralValue(new NBTInt((int)num.RawValue));
-					case NBTType.Long:
-						return new LiteralValue(new NBTLong(Convert.ToInt64(num.RawValue)));
-					case NBTType.Float:
-						return new LiteralValue(new NBTFloat(Convert.ToSingle(num.RawValue)));
-					case NBTType.Double:
-						return new LiteralValue(new NBTDouble(Convert.ToDouble(num.RawValue)));
-					default:
-						break;
-				}
-			}
-			else if (NBTValue.IsOperableType(type.Type) || NBTValue.IsOperableType(val.Type.Type))
-			{
-				var tmp = ctx.AllocTemp(type);
-				ctx.Add(new StoreAsTypeInstruction(Location, tmp, val, (NBTNumberType)type.Type));
-				return tmp;
-			}
+		public virtual Expression Cast(TypeSpecifier type) => new CastExpression(Location, type, this);
 
-			throw new InvalidCastError(Location, val.Type, type);
-		}
-
+		protected abstract TypeSpecifier _ComputeType(FunctionContext ctx);
 		protected abstract Value _Execute(FunctionContext ctx);
+		protected virtual void _Store(FunctionContext ctx, MutableValue dest)
+		{
+			dest.Store(ctx, Execute(ctx));
+		}
 	}
 
 	public class LiteralExpression(LocationRange loc, NBTValue val) : Expression(loc)
 	{
 		public readonly NBTValue Value = val;
 
+		protected override TypeSpecifier _ComputeType(FunctionContext ctx) => new PrimitiveTypeSpecifier(Value.Type);
 		protected override Value _Execute(FunctionContext ctx) => new LiteralValue(Value);
 	}
 
@@ -85,6 +61,7 @@ namespace Amethyst.AST.Expressions
 	{
 		public readonly string Name = name;
 
+		protected override TypeSpecifier _ComputeType(FunctionContext ctx) => ctx.GetVariable(Name).Type;
 		protected override Value _Execute(FunctionContext ctx) => ctx.GetVariable(Name);
 	}
 }

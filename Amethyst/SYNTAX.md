@@ -18,7 +18,8 @@ class Test {
 
 int globalVariable = 324;
 
-@load // @<tag>
+// #<tag>. #load and #tick resolve to minecraft:load and minecraft:tick instead of current namespace
+#load
 void main() {
     int x = 4;
     var b = true; // Type inference

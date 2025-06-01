@@ -59,7 +59,7 @@ namespace Datapack.Net.Function
                 {
                     if (HoverText.HasHoverOrClickEvents) throw new ArgumentException("Formatted text has hover or click events in invalid places");
                     self.HasHoverOrClickEvents = true;
-                    obj["hoverEvent"] = new JObject(new JProperty("action", "show_text"), new JProperty("value", HoverText.Obj));
+                    obj["hover_event"] = new JObject(new JProperty("action", "show_text"), new JProperty("value", HoverText.Obj));
                 }
                 return obj;
             }

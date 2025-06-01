@@ -16,21 +16,40 @@ namespace Amethyst.Codegen
 	{
 		public abstract TypeSpecifier Type { get; }
 
-		public abstract DataCommand.Modify WriteTo(DataCommand.Modify src);
+		public abstract Command WriteTo(Storage storage, string path);
+		public abstract Command WriteTo(IEntityTarget target, Score score);
 		public abstract Command Get();
+
+		public virtual ScoreValue AsScore(FunctionContext ctx)
+		{
+			if (!NBTValue.IsOperableType(Type.Type)) throw new InvalidOperationException();
+			var tmp = ctx.AllocTempScore();
+			tmp.Store(ctx, this);
+			return tmp;
+		}
 	}
 
 	public class LiteralValue(NBTValue val) : Value
 	{
 		public readonly NBTValue Value = val;
 		public override TypeSpecifier Type => new PrimitiveTypeSpecifier(Value.Type);
+
 		public override Command Get() => throw new InvalidOperationException(); // Maybe implement this
-		public override DataCommand.Modify WriteTo(DataCommand.Modify src) => src.Value(Value.ToString());
+
+		public override Command WriteTo(Storage storage, string path) => new DataCommand.Modify(storage, path).Set().Value(Value.ToString());
+
+		public override Command WriteTo(IEntityTarget target, Score score)
+		{
+			if (!NBTValue.IsOperableType(Value.Type) || Value is not INBTNumber num) throw new InvalidOperationException();
+
+			return new Scoreboard.Players.Set(target, score, Convert.ToInt32(num.RawValue));
+		}
 	}
 
 	public abstract class MutableValue : Value
 	{
 		public abstract void Store(FunctionContext ctx, Value val);
+		public abstract void Store(FunctionContext ctx, Value val, NBTNumberType type);
 	}
 
 	public class StorageValue(Storage storage, string path, TypeSpecifier type) : MutableValue
@@ -46,6 +65,31 @@ namespace Amethyst.Codegen
 			ctx.Add(new StoreInstruction(ctx.CurrentLocator.Location, this, val));
 		}
 
-		public override DataCommand.Modify WriteTo(DataCommand.Modify src) => src.From(Storage, Path);
+		public override void Store(FunctionContext ctx, Value val, NBTNumberType type)
+		{
+			ctx.Add(new StoreAsTypeInstruction(ctx.CurrentLocator.Location, this, val, type));
+		}
+
+		public override Command WriteTo(Storage storage, string path) => new DataCommand.Modify(storage, path).Set().From(Storage, Path);
+		public override Command WriteTo(IEntityTarget target, Score score)
+		{
+			if (!NBTValue.IsOperableType(Type.Type)) throw new InvalidOperationException();
+
+			return new Execute().Store(target, score).Run(Get());
+		}
+	}
+
+	public class ScoreValue(IEntityTarget target, Score score) : MutableValue
+	{
+		public readonly IEntityTarget Target = target;
+		public readonly Score Score = score;
+
+		public override TypeSpecifier Type => new PrimitiveTypeSpecifier(NBTType.Int);
+		public override Command Get() => new Scoreboard.Players.Get(Target, Score);
+		public override void Store(FunctionContext ctx, Value val) => ctx.Add(new StoreScoreInstruction(ctx.CurrentLocator.Location, this, val));
+		public override void Store(FunctionContext ctx, Value val, NBTNumberType type) => Store(ctx, val);
+		public override Command WriteTo(Storage storage, string path) => new Execute().Store(storage, path, NBTNumberType.Int, 1).Run(Get());
+		public override Command WriteTo(IEntityTarget target, Score score) => new Scoreboard.Players.Operation(target, score, ScoreOperation.Assign, Target, Score);
+		public override ScoreValue AsScore(FunctionContext ctx) => this;
 	}
 }
