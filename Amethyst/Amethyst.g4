@@ -25,10 +25,11 @@ block
 statement
     : (
         initAssignmentStatement
-        | block
         | expressionStatement
     ) Semi+
     | commandStatement
+    | block
+    | ifStatement
     ;
 
 initAssignmentStatement
@@ -43,17 +44,37 @@ commandStatement
     : Command
     ;
 
+ifStatement
+    : If LParen expression RParen statement (Else statement)?
+    ;
+
 expression
     : assignmentExpression
     ;
 
 assignmentExpression
-    : additiveExpression
+    : logicalExpression
     | Identifier Eq expression
     ;
 
+logicalExpression
+    : equalityExpression ((AndAnd | OrOr) equalityExpression)*
+    ;
+
+equalityExpression
+    : relationalExpression ((EqEq | Neq) relationalExpression)*
+    ;
+
+relationalExpression
+    : additiveExpression ((Gt | Gte | Lt | Lte) additiveExpression)*
+    ;
+
 additiveExpression
-    : postfixExpression ((Plus | Minus) postfixExpression)*
+    : multiplicativeExpression ((Plus | Minus) multiplicativeExpression)*
+    ;
+
+multiplicativeExpression
+    : postfixExpression ((Star | Slash) postfixExpression)*
     ;
 
 postfixExpression
@@ -70,11 +91,11 @@ primaryExpression
     ;
 
 paramList
-    : LParen ((type Identifier) (Comma type Identifier)*)? RParen
+    : LParen (type Identifier (Comma type Identifier)*)? RParen
     ;
 
 expressionList
-    : LParen ((expression) (Comma expression)*)? RParen
+    : LParen (expression (Comma expression)*)? RParen
     ;
 
 type
@@ -84,6 +105,9 @@ type
 // Lexer
 
 Namespace: 'namespace';
+If: 'if';
+Else: 'else';
+
 Semi: ';';
 Comma: ',';
 LParen: '(';
@@ -93,11 +117,21 @@ RBrak: '}';
 Eq: '=';
 Plus: '+';
 Minus: '-';
+Star: '*';
+Slash: '/';
 Hash: '#';
+EqEq: '==';
+Neq: '!=';
+Gt: '>';
+Gte: '>=';
+Lt: '<';
+Lte: '<=';
+AndAnd: '&&';
+OrOr: '||';
 
 Identifier: ([a-z] | [A-Z]) ([a-z] | [A-Z] | [0-9] | '_' | '-' | ':')*;
 String: '"' ( ~[\\"\n\r] | '\\' [\\"] )* '"';
-Command: '/' ( ~[\n\r] )* ('\r' | '\n');
+Command: '@/' ( ~[\n\r] )* ('\r' | '\n');
 Integer: '-'? [0-9]+;
 
 Whitespace: (' '|'\t'|'\n'|'\r')+ -> skip;

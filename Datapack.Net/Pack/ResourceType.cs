@@ -30,10 +30,8 @@ namespace Datapack.Net.Pack
 
     public abstract class GenericResourceType(string path, string fileExtension = ".json") : ResourceType(path, fileExtension)
     {
-        public void Add(Resource resource)
-        {
-            Resources.Add(resource);
-        }
+        public void Add(Resource resource) => Resources.Add(resource);
+		public void Remove(Resource resource) => Resources.Remove(resource);
     }
 
     public class Advancements : GenericResourceType

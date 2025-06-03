@@ -38,8 +38,7 @@ namespace Datapack.Net.Function.Commands
                 sb.Append(' ');
             }
 
-            if (run is null) throw new ArgumentException($"Execute command {sb} does not have a run");
-            else sb.Append(run.ToString());
+            if (run is not null) sb.Append(run.ToString());
 
             return sb.ToString().TrimEnd();
         }

@@ -19,6 +19,8 @@ namespace Amethyst.AST.Expressions
 
 		protected override Value _Execute(FunctionContext ctx)
 		{
+			if (Expression.ComputeType(ctx) == Type) return Execute(ctx);
+
 			(Value src, Value? post) = PreExecute(ctx);
 
 			if (post is not null) return post;
@@ -34,6 +36,12 @@ namespace Amethyst.AST.Expressions
 
 		protected override void _Store(FunctionContext ctx, MutableValue val)
 		{
+			if (Expression.ComputeType(ctx) == Type)
+			{
+				Expression.Store(ctx, val);
+				return;
+			}
+
 			(Value src, Value? post) = PreExecute(ctx);
 
 			if (post is not null) val.Store(ctx, post);

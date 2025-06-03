@@ -23,7 +23,10 @@ namespace Amethyst.AST.Statements
 			var type = Type.Resolve(ctx);
 			if (type is VoidTypeSpecifier) throw new InvalidTypeError(Location, "void");
 
-			ctx.Variables[Name] = new(Name, type, Location, new(new(Compiler.RuntimeID), $"stack[-1].{Name}", type));
+			MutableValue val;
+			if (type.Type != Datapack.Net.Data.NBTType.Int || ctx.Compiler.Options.KeepLocalsOnStack) val = new StorageValue(new(Compiler.RuntimeID), $"stack[-1].{Name}", type);
+			else val = ctx.AllocScore();
+			ctx.Variables[Name] = new(Name, type, Location, val);
 			Expression.Cast(type).Store(ctx, ctx.Variables[Name].Value);
 		}
 	}

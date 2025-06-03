@@ -41,7 +41,7 @@ namespace Amethyst.Codegen.IR
 
 		public override void Build()
 		{
-			Add(Value.WriteTo(Dest.Storage, Dest.Path));
+			Add(Value.ReadTo(Dest.Storage, Dest.Path));
 		}
 	}
 
@@ -57,6 +57,18 @@ namespace Amethyst.Codegen.IR
 		}
 	}
 
+	public class StoreIfSuccessInstruction(LocationRange loc, Execute exec, ScoreValue dest, Value val) : Instruction(loc)
+	{
+		public readonly Execute Command = exec;
+		public readonly ScoreValue Dest = dest;
+		public readonly Value Value = val;
+
+		public override void Build()
+		{
+			Add(Command.Run(Value.ReadTo(Dest.Target, Dest.Score)));
+		}
+	}
+
 	public class StoreScoreInstruction(LocationRange loc, ScoreValue dest, Value val) : Instruction(loc)
 	{
 		public readonly ScoreValue Dest = dest;
@@ -64,7 +76,7 @@ namespace Amethyst.Codegen.IR
 
 		public override void Build()
 		{
-			Add(Value.WriteTo(Dest.Target, Dest.Score));
+			Add(Value.ReadTo(Dest.Target, Dest.Score));
 		}
 	}
 
@@ -97,6 +109,18 @@ namespace Amethyst.Codegen.IR
 		public override void Build()
 		{
 			Add(new TellrawCommand(new TargetSelector(TargetType.a), Text));
+		}
+	}
+
+	public class CompareJumpInstruction(LocationRange loc, Execute cmd, SubFunction func) : Instruction(loc)
+	{
+		public readonly Execute Command = cmd;
+		public readonly SubFunction Func = func;
+
+		public override void Build()
+		{
+			if (Command.Subcommands.Count == 0) Add(Func.Call());
+			else Add(Command.Run(Func.Call()));
 		}
 	}
 }

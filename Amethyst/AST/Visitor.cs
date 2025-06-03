@@ -61,7 +61,8 @@ namespace Amethyst.AST
 
 		public override Node VisitInitAssignmentStatement([NotNull] AmethystParser.InitAssignmentStatementContext context) => new InitAssignmentNode(Loc(context), Visit(context.type()), context.Identifier().GetText(), Visit(context.expression()));
 		public override Node VisitExpressionStatement([NotNull] AmethystParser.ExpressionStatementContext context) => new ExpressionStatement(Loc(context), Visit(context.expression()));
-		public override Node VisitCommandStatement([NotNull] AmethystParser.CommandStatementContext context) => new CommandStatement(Loc(context), context.Command().GetText().Trim()[1..]);
+		public override Node VisitCommandStatement([NotNull] AmethystParser.CommandStatementContext context) => new CommandStatement(Loc(context), context.Command().GetText().Trim()[2..]);
+		public override Node VisitIfStatement([NotNull] AmethystParser.IfStatementContext context) => context.statement().Length != 0 ? new IfStatement(Loc(context), Visit(context.expression()), Visit(context.statement().First()), context.statement().Length == 2 ? Visit(context.statement().Last()) : null) : new ExpressionStatement(Loc(context), new LiteralExpression(Loc(context), new NBTString("uh")));
 
 		public override Node VisitType([NotNull] AmethystParser.TypeContext context)
 		{
@@ -73,8 +74,47 @@ namespace Amethyst.AST
 
 		public override Node VisitAssignmentExpression([NotNull] AmethystParser.AssignmentExpressionContext context)
 		{
-			if (context.additiveExpression() is not null) return Visit(context.additiveExpression());
+			if (context.logicalExpression() is not null) return Visit(context.logicalExpression());
 			else return new AssignmentExpression(Loc(context), context.Identifier().GetText(), Visit(context.expression()));
+		}
+
+		public override Node VisitLogicalExpression([NotNull] AmethystParser.LogicalExpressionContext context)
+		{
+			Expression node = (Expression)Visit(context.children.First());
+			for (int i = 1; i < context.children.Count; i++)
+			{
+				var op = context.children[i].GetText() == "&&" ? LogicalOperation.And : LogicalOperation.Or;
+				node = new LogicalExpression(Loc(context), node, op, (Expression)Visit(context.children[++i]));
+			}
+			return node;
+		}
+
+		public override Node VisitEqualityExpression([NotNull] AmethystParser.EqualityExpressionContext context)
+		{
+			Expression node = (Expression)Visit(context.children.First());
+			for (int i = 1; i < context.children.Count; i++)
+			{
+				var op = context.children[i].GetText() == "==" ? ComparisonOperator.Eq : ComparisonOperator.Neq;
+				node = new ComparisonExpression(Loc(context), node, op, (Expression)Visit(context.children[++i]));
+			}
+			return node;
+		}
+
+		public override Node VisitRelationalExpression([NotNull] AmethystParser.RelationalExpressionContext context)
+		{
+			Expression node = (Expression)Visit(context.children.First());
+			for (int i = 1; i < context.children.Count; i++)
+			{
+				var op = context.children[i].GetText() switch
+				{ 
+					">" => ComparisonOperator.Gt,
+					"<" => ComparisonOperator.Lt,
+					">=" => ComparisonOperator.Gte,
+					_ => ComparisonOperator.Lte,
+				};
+				node = new ComparisonExpression(Loc(context), node, op, (Expression)Visit(context.children[++i]));
+			}
+			return node;
 		}
 
 		public override Node VisitAdditiveExpression([NotNull] AmethystParser.AdditiveExpressionContext context)
@@ -83,6 +123,17 @@ namespace Amethyst.AST
 			for (int i = 1; i < context.children.Count; i++)
 			{
 				var op = context.children[i].GetText() == "+" ? ScoreOperation.Add : ScoreOperation.Sub;
+				node = new ArithmeticExpression(Loc(context), node, op, (Expression)Visit(context.children[++i]));
+			}
+			return node;
+		}
+
+		public override Node VisitMultiplicativeExpression([NotNull] AmethystParser.MultiplicativeExpressionContext context)
+		{
+			Expression node = (Expression)Visit(context.children.First());
+			for (int i = 1; i < context.children.Count; i++)
+			{
+				var op = context.children[i].GetText() == "*" ? ScoreOperation.Mul : ScoreOperation.Div;
 				node = new ArithmeticExpression(Loc(context), node, op, (Expression)Visit(context.children[++i]));
 			}
 			return node;

@@ -1,4 +1,5 @@
 ﻿using Antlr4.Runtime;
+using CommandLine;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,7 +17,7 @@ namespace Amethyst.AST
 
 	public readonly record struct LocationRange(Location Start, Location End)
 	{
-		public static LocationRange From(string path, ParserRuleContext ctx) => new(Location.From(path, ctx.Start), Location.From(path, ctx.Stop));
+		public static LocationRange From(string path, ParserRuleContext ctx) => new(Location.From(path, ctx.Start), Location.From(path, ctx.Stop)); // TODO: Make the range cover the whole last token
 
 		public override string ToString()
 		{

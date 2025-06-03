@@ -31,7 +31,7 @@ void main() {
     int[] arr = [1, 2, 3, 4, 5];
 
     // Command interpolation
-    /say $(str)
+    @/say $(str)
 
     var t = Test(15); // Stack alloc
     !print(t.Method()); // ! means exit function if error

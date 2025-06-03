@@ -87,6 +87,12 @@ public interface IAmethystVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <return>The visitor result.</return>
 	Result VisitCommandStatement([NotNull] AmethystParser.CommandStatementContext context);
 	/// <summary>
+	/// Visit a parse tree produced by <see cref="AmethystParser.ifStatement"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitIfStatement([NotNull] AmethystParser.IfStatementContext context);
+	/// <summary>
 	/// Visit a parse tree produced by <see cref="AmethystParser.expression"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
@@ -99,11 +105,35 @@ public interface IAmethystVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <return>The visitor result.</return>
 	Result VisitAssignmentExpression([NotNull] AmethystParser.AssignmentExpressionContext context);
 	/// <summary>
+	/// Visit a parse tree produced by <see cref="AmethystParser.logicalExpression"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitLogicalExpression([NotNull] AmethystParser.LogicalExpressionContext context);
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="AmethystParser.equalityExpression"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitEqualityExpression([NotNull] AmethystParser.EqualityExpressionContext context);
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="AmethystParser.relationalExpression"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitRelationalExpression([NotNull] AmethystParser.RelationalExpressionContext context);
+	/// <summary>
 	/// Visit a parse tree produced by <see cref="AmethystParser.additiveExpression"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
 	Result VisitAdditiveExpression([NotNull] AmethystParser.AdditiveExpressionContext context);
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="AmethystParser.multiplicativeExpression"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitMultiplicativeExpression([NotNull] AmethystParser.MultiplicativeExpressionContext context);
 	/// <summary>
 	/// Visit a parse tree produced by <see cref="AmethystParser.postfixExpression"/>.
 	/// </summary>

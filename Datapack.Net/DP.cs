@@ -76,12 +76,10 @@ namespace Datapack.Net
 
         public void Optimize()
         {
-            EmptyFunctions();
-            EmptyFunctions(); // 2nd pass
-            EmptyFunctions(); // 3rd pass
+            while (EmptyFunctions()) ;
         }
 
-        private void EmptyFunctions()
+        private bool EmptyFunctions()
         {
             var toRemove = new List<MCFunction>();
 
@@ -127,6 +125,8 @@ namespace Datapack.Net
                     }
                 }
             }
+
+            return toRemove.Count != 0;
         }
 
         private readonly List<string> FilesWriten = [];

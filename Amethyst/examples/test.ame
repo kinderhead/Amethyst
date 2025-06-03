@@ -3,7 +3,9 @@ namespace test;
 #load
 void main()
 {
-    int x = 69;
-    int y = -123;
-    print(x + y);
+    int x = 3;
+    int y = 12;
+
+    if (x == 4 || y >= x) print("Hi");
+    else print("Sad");
 }

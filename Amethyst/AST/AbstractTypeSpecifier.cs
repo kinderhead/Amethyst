@@ -1,5 +1,6 @@
 ﻿using Amethyst.Codegen;
 using Amethyst.Codegen.IR;
+using Amethyst.Errors;
 using Datapack.Net.Data;
 using System;
 using System.Collections.Generic;
@@ -39,11 +40,13 @@ namespace Amethyst.AST
 					return new PrimitiveTypeSpecifier(NBTType.Float);
 				case "double":
 					return new PrimitiveTypeSpecifier(NBTType.Double);
+				case "string":
+					return new PrimitiveTypeSpecifier(NBTType.String);
 				default:
 					break;
 			}
 
-			throw new NotImplementedException();
+			throw new UnknownTypeError(Location, Type);
 		}
 	}
 }

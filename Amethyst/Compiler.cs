@@ -35,7 +35,7 @@ namespace Amethyst
 		{
 			Options = opts;
 			Datapack = GetDP(Options);
-			SetupDefaultCompileTimeFunctions();
+			SetupDefaults();
 		}
 
 		public Compiler(string[] args)
@@ -45,7 +45,7 @@ namespace Amethyst
 			Options = res.Value;
 			Options.Output ??= Path.GetFileName(Options.Inputs.First()) + ".zip";
 			Datapack = GetDP(Options);
-			SetupDefaultCompileTimeFunctions();
+			SetupDefaults();
 		}
 
 		public bool Compile()
@@ -74,7 +74,7 @@ namespace Amethyst
 
 			foreach (var i in Functions)
 			{
-				if (!i.Value.Compile()) errored = true;
+				if (!i.Value.RequireCompiled()) errored = true;
 			}
 
 			if (errored) return false;
@@ -82,6 +82,10 @@ namespace Amethyst
 			var init = GetInitFunc();
 			Register(init);
 			Datapack.Tags.GetTag(new("minecraft", "load"), "function").Values.Insert(0, init.ID);
+
+			var cleanup = GetCleanupFunc();
+			Register(cleanup);
+			Datapack.Tags.GetTag(new("amethyst", "cleanup"), "function").Values.Insert(0, cleanup.ID);
 
 			Datapack.Build();
 
@@ -91,6 +95,8 @@ namespace Amethyst
 		public void Register(MCFunction func) => Datapack.Functions.Add(func);
 		public void Register(Score score) => registeredScores.Add(score);
 		public void Register(CompileTimeFunction func) => CompileTimeFunctions[func.ID] = func;
+
+		public void Unregister(MCFunction func) => Datapack.Functions.Remove(func);
 
 		public bool ParseFile(string filename)
 		{
@@ -140,7 +146,7 @@ namespace Amethyst
 
 		private MCFunction GetInitFunc()
 		{
-			var func = new MCFunction(new("amethyst", $"load/{RandomString}"));
+			var func = new MCFunction(new("amethyst", $"zz_internal/{RandomString}"));
 
 			func.Add(new DataCommand.Modify(new Storage(new("amethyst", "runtime")), "stack").Set().Value("[]"));
 
@@ -149,11 +155,28 @@ namespace Amethyst
 				func.Add(new Scoreboard.Objectives.Add(i));
 			}
 
+			//func.Add(new Scoreboard.Players.Set(RuntimeEntity, NullScore, 0));
+
 			return func;
 		}
 
-		private void SetupDefaultCompileTimeFunctions()
+		private MCFunction GetCleanupFunc()
 		{
+			var func = new MCFunction(new("amethyst", $"zz_internal/{RandomString}"));
+
+			func.Add(new DataCommand.Remove(new Storage(new("amethyst", "runtime")), "stack"));
+
+			foreach (var i in registeredScores)
+			{
+				func.Add(new Scoreboard.Objectives.Remove(i));
+			}
+
+			return func;
+		}
+
+		private void SetupDefaults()
+		{
+			//Register(NullScore);
 			Register(new PrintFunction());
 		}
 
@@ -164,6 +187,7 @@ namespace Amethyst
 		public static string RandomString { get => Guid.NewGuid().ToString(); }
 		public static readonly NamespacedID RuntimeID = new("amethyst", "runtime");
 		public static readonly IEntityTarget RuntimeEntity = new NamedTarget("amethyst");
+		//public static readonly Score NullScore = new("null", "dummy");
 	}
 
 	public interface IFileHandler

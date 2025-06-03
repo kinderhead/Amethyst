@@ -21,6 +21,9 @@ namespace Amethyst.AST.Expressions
 
 		protected override Value _Execute(FunctionContext ctx)
 		{
+			ThrowIfInvalid(ctx);
+			if (IsLiteral() is LiteralValue l) return l;
+
 			var tmp = ctx.AllocTempScore();
 			Store(ctx, tmp);
 			return tmp;
@@ -28,19 +31,53 @@ namespace Amethyst.AST.Expressions
 
 		protected override void _Store(FunctionContext ctx, MutableValue dest)
 		{
+			ThrowIfInvalid(ctx);
+
+			if (IsLiteral() is LiteralValue l)
+			{
+				dest.Store(ctx, l);
+				return;
+			}
+
 			if (dest is not ScoreValue sval)
 			{
 				dest.Store(ctx, Execute(ctx));
 				return;
 			}
 			
+			
+
+			Left.Store(ctx, sval);
+			ctx.Add(new ScoreOperationInstruction(Location, sval, Op, Right.Execute(ctx).AsScore(ctx)));
+		}
+
+		private void ThrowIfInvalid(FunctionContext ctx)
+		{
 			var lt = Left.ComputeType(ctx);
 			var rt = Right.ComputeType(ctx);
 			if (!NBTValue.IsOperableType(lt.Type)) throw new InvalidTypeError(Location, lt.ToString());
 			if (!NBTValue.IsOperableType(rt.Type)) throw new InvalidTypeError(Location, rt.ToString());
+		}
 
-			Left.Store(ctx, sval);
-			ctx.Add(new ScoreOperationInstruction(Location, sval, Op, Right.Execute(ctx).AsScore(ctx)));
+		private LiteralValue? IsLiteral()
+		{
+			if (Left is LiteralExpression l && Right is LiteralExpression r)
+			{
+				var left = int.Parse(l.Value.ToString()); // This is certainly one way to do this
+				var right = int.Parse(r.Value.ToString());
+				var ret = Op switch
+				{
+					ScoreOperation.Add => left + right,
+					ScoreOperation.Sub => left - right,
+					ScoreOperation.Mul => left * right,
+					ScoreOperation.Div => left / right,
+					ScoreOperation.Mod => left % right,
+					_ => throw new NotImplementedException(),
+				};
+				return new LiteralValue(new NBTInt(ret));
+			}
+
+			return null;
 		}
 	}
 }
