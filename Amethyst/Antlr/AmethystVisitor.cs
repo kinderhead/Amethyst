@@ -159,6 +159,12 @@ public interface IAmethystVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <return>The visitor result.</return>
 	Result VisitParamList([NotNull] AmethystParser.ParamListContext context);
 	/// <summary>
+	/// Visit a parse tree produced by <see cref="AmethystParser.paramPair"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitParamPair([NotNull] AmethystParser.ParamPairContext context);
+	/// <summary>
 	/// Visit a parse tree produced by <see cref="AmethystParser.expressionList"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>

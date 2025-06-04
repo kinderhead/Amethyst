@@ -3,6 +3,7 @@ using Amethyst.AST.Statements;
 using Amethyst.Errors;
 using Datapack.Net.Function;
 using Datapack.Net.Function.Commands;
+using Datapack.Net.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,7 +19,10 @@ namespace Amethyst.Codegen.IR
 		public readonly Dictionary<string, LocalSymbol> Variables = [];
 		public readonly List<ScoreValue> LocalScores = [];
 		public readonly MCFunction MainFunction;
+		public readonly List<MCFunction> TotalFunctions = [];
 		public readonly FunctionTypeSpecifier FunctionType;
+
+		public bool KeepLocalsOnStack = false;
 
 		private readonly List<Frame> totalFrames = [];
 		private readonly Stack<Frame> frames = [];
@@ -39,6 +43,7 @@ namespace Amethyst.Codegen.IR
 			Compiler = compiler;
 			MainFunction = func;
 			FunctionType = funcType;
+			KeepLocalsOnStack = compiler.Options.KeepLocalsOnStack;
 			PushFunc(func);
 		}
 
@@ -47,7 +52,7 @@ namespace Amethyst.Codegen.IR
 
 		public void PushFunc(MCFunction func)
 		{
-			Compiler.Register(func);
+			TotalFunctions.Add(func);
 			var frame = new Frame(func, this, frames.Count == 0);
 			totalFrames.Add(frame);
 			if (frames.Count != 0) CurrentFrame.Subframes.Add(frame);
@@ -56,9 +61,10 @@ namespace Amethyst.Codegen.IR
 
 		public void PopFunc() => frames.Pop();
 
+		public NamespacedID NewInternalID() => new(CurrentFrame.Function.ID.Namespace, $"zz_internal/{Compiler.RandomString}");
 		public SubFunction SubFunc(Statement stmt)
 		{
-			var func = new MCFunction(new(CurrentFrame.Function.ID.Namespace, $"zz_internal/{Compiler.RandomString}"));
+			var func = new MCFunction(NewInternalID());
 			PushFunc(func);
 			var frame = CurrentFrame;
 			stmt.Compile(this);

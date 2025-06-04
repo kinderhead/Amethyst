@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace Amethyst.AST.Statements
@@ -15,7 +16,16 @@ namespace Amethyst.AST.Statements
 
 		protected override void _Compile(FunctionContext ctx)
 		{
-			ctx.Add(new RawCommandInstruction(Location, Command));
+			var matches = Datapack.Net.Function.Command.MacroRegex.Matches(Command);
+			if (matches.Count != 0)
+			{
+				foreach (Match i in matches)
+				{
+					var val = ctx.GetVariable(i.Groups[1].Value);
+					
+				}
+			}
+			else ctx.Add(new RawCommandInstruction(Location, Command));
 		}
 	}
 }

@@ -43,7 +43,11 @@ namespace Amethyst.AST
 			if (text.Contains(':')) return new NamespacedID(text);
 			else if (text == "load" || text == "tick") return new NamespacedID("minecraft", text);
 			else return new NamespacedID(currentNamespace, text);
-		})], Visit(context.type()), IdentifierToID(context.name.Text), Visit(context.block()));
+		})], Visit(context.type()),
+			IdentifierToID(context.name.Text),
+			[.. context.paramList().paramPair().Select(i => new Parameter(Visit(i.type()), i.Identifier().GetText()))],
+			Visit(context.block())
+		);
 
 		public override Node VisitStatement([NotNull] AmethystParser.StatementContext context) => Visit(context.children[0]);
 

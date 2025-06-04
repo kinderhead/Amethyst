@@ -13,7 +13,7 @@ namespace Amethyst.Codegen.IR
 	{
 		public override void Build()
 		{
-			Add(new DataCommand.Modify(new Storage(Compiler.RuntimeID), "stack").Append().Value("{}"));
+			if (Ctx.Ctx.FunctionType.Parameters.Length == 0) Add(new DataCommand.Modify(new Storage(Compiler.RuntimeID), "stack").Append().Value("{}"));
 
 			foreach (var i in Ctx.Ctx.LocalScores)
 			{

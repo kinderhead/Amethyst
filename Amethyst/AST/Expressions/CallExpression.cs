@@ -2,6 +2,8 @@
 using Amethyst.Codegen.Functions;
 using Amethyst.Codegen.IR;
 using Amethyst.Errors;
+using CommandLine;
+using Datapack.Net.Data;
 using Datapack.Net.Function.Commands;
 using System;
 using System.Collections.Generic;
@@ -26,11 +28,24 @@ namespace Amethyst.AST.Expressions
 		protected override Value _Execute(FunctionContext ctx)
 		{
 			var func = Function.Execute(ctx);
-			List<Value> parameters = [.. Args.Select(i => i.Execute(ctx))];
 
-			if (func is CompileTimeFunction cfunc) return cfunc.Execute(ctx, parameters);
+			if (func is CompileTimeFunction cfunc) return cfunc.Execute(ctx, [.. Args.Select(i => i.Execute(ctx))]);
 			else if (func is StaticFunctionValue f)
 			{
+				if (f.FuncType.Parameters.Length != Args.Count) throw new MismatchedArgumentCountError(Location, f.FuncType.Parameters.Length, Args.Count);
+
+				if (f.FuncType.Parameters.Length != 0)
+				{
+					var argHolder = ctx.AllocTemp(new PrimitiveTypeSpecifier(NBTType.Compound));
+					var args = new Dictionary<string, Value>();
+					for (var i = 0; i < Args.Count; i++)
+					{
+						args[$"$arg{i}"] = Args[i].Cast(f.FuncType.Parameters[i]).Execute(ctx);
+					}
+					ctx.Add(new PopulateInstruction(Location, argHolder, args));
+					ctx.Add(new StackPushInstruction(Location, argHolder));
+				}
+
 				ctx.Add(new CallInstruction(Location, f.ID));
 
 				if (f.FuncType.ReturnType is VoidTypeSpecifier) return new VoidValue();

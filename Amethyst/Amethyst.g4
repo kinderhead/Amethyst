@@ -96,7 +96,11 @@ primaryExpression
     ;
 
 paramList
-    : LParen (type Identifier (Comma type Identifier)*)? RParen
+    : LParen (paramPair (Comma paramPair)*)? RParen
+    ;
+
+paramPair
+    : type Identifier
     ;
 
 expressionList

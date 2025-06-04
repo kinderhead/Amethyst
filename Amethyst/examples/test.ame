@@ -3,17 +3,7 @@ namespace test;
 #load
 void main()
 {
-    int x = other();
-    print(x);
-}
-
-int other()
-{
-    int x = 2;
-    if (x == 213)
-    {
-        x = 3;
-        return x;
-    }
-    return x;
+    int x = 3;
+    
+    @/say $(x)
 }

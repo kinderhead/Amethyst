@@ -47,9 +47,10 @@ namespace Amethyst.Codegen
 		protected override string AsString() => Enum.GetName(Type)?.ToLower() ?? throw new InvalidOperationException();
 	}
 
-	public class FunctionTypeSpecifier(TypeSpecifier returnType) : TypeSpecifier
+	public class FunctionTypeSpecifier(TypeSpecifier returnType, IEnumerable<TypeSpecifier> paramters) : TypeSpecifier
 	{
 		public readonly TypeSpecifier ReturnType = returnType;
+		public readonly TypeSpecifier[] Parameters = [.. paramters];
 
 		public override NBTType Type => NBTType.String;
 
@@ -57,7 +58,7 @@ namespace Amethyst.Codegen
 		protected override string AsString() => $"() => {ReturnType}";
 	}
 
-	public class DynamicFunctionTypeSpecifier(TypeSpecifier returnType) : FunctionTypeSpecifier(returnType)
+	public class DynamicFunctionTypeSpecifier(TypeSpecifier returnType) : FunctionTypeSpecifier(returnType, [])
 	{
 		public override NBTType Type => NBTType.String;
 

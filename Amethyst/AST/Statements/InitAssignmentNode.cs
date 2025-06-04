@@ -2,6 +2,7 @@
 using Amethyst.Codegen;
 using Amethyst.Codegen.IR;
 using Amethyst.Errors;
+using Datapack.Net.Data;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -25,7 +26,7 @@ namespace Amethyst.AST.Statements
 			if (type is VoidTypeSpecifier) throw new InvalidTypeError(Location, "void");
 
 			MutableValue val;
-			if (type.Type != Datapack.Net.Data.NBTType.Int || ctx.Compiler.Options.KeepLocalsOnStack) val = new StorageValue(new(Compiler.RuntimeID), $"stack[-1].{Name}", type);
+			if (type.Type != NBTType.Int || ctx.KeepLocalsOnStack) val = new StorageValue(new(Compiler.RuntimeID), $"stack[-1].{Name}", type);
 			else val = ctx.AllocScore();
 			ctx.Variables[Name] = new(Name, type, Location, val);
 			Expression.Cast(type).Store(ctx, val);

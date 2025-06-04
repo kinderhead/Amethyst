@@ -69,13 +69,13 @@ namespace Amethyst
 				if (!i.Value.CompileFunctions()) errored = true;
 			}
 
-			// Maybe remove this?
-			if (errored) return false;
+			//// Maybe remove this?
+			//if (errored) return false;
 
-			foreach (var i in Functions)
-			{
-				if (!i.Value.RequireCompiled()) errored = true;
-			}
+			//foreach (var i in Functions)
+			//{
+			//	if (!i.Value.RequireCompiled()) errored = true;
+			//}
 
 			if (errored) return false;
 

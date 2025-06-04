@@ -19,6 +19,7 @@ namespace Amethyst.Codegen.IR
 
 		private FunctionContext.Frame? ctx = null;
 
+		protected void Prepend(Command cmd) => Commands.Insert(0, cmd);
 		protected void Add(Command cmd) => Commands.Add(cmd);
 		protected void Add(IEnumerable<Command> cmd) => Commands.AddRange(cmd);
 
@@ -99,7 +100,8 @@ namespace Amethyst.Codegen.IR
 
 		public override void Build()
 		{
-			Add(new FunctionCommand(Ctx.Ctx.Compiler.Functions[ID].MainFunction));
+			// Fix this later
+			Add(new FunctionCommand(new(ID, true)));
 		}
 	}
 
@@ -121,6 +123,16 @@ namespace Amethyst.Codegen.IR
 		public override void Build()
 		{
 			Add(Func.Call(Command));
+		}
+	}
+
+	public class StackPushInstruction(LocationRange loc, StorageValue val) : Instruction(loc)
+	{
+		public readonly StorageValue Value = val;
+
+		public override void Build()
+		{
+			Add(new DataCommand.Modify(new Storage(Compiler.RuntimeID), "stack").Append().From(Value.Storage, Value.Path));
 		}
 	}
 }
