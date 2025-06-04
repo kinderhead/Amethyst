@@ -22,8 +22,7 @@ namespace Amethyst.AST
 				if (!Ctx.WrapError(() =>
 				{
 					if (Ctx.Symbols.TryGetValue(i.ID, out var sym)) throw new RedefinedSymbolError(i.Location, i.ID.ToString(), sym.Location);
-					var type = new FunctionTypeSpecifier(i.ReturnType.Resolve(Ctx));
-					Ctx.Symbols[i.ID] = new(i.ID, type, i.Location, new StaticFunctionValue(i.ID, type));
+					Ctx.Symbols[i.ID] = new(i.ID, i.GetFunctionType(Ctx), i.Location, new StaticFunctionValue(i.ID, i.GetFunctionType(Ctx)));
 				})) success = false;
 				
 			}

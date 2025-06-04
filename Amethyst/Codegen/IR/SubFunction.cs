@@ -15,16 +15,21 @@ namespace Amethyst.Codegen.IR
 		public readonly NamespacedID ID = id;
 		public readonly MCFunction Func = func;
 
-		public Command Call()
+		public Command Call(Execute baseCmd)
 		{
 			Context.RequireCompiled();
 			var commands = Context.Commands;
 			if (commands.Count == 1 && !Context.Ctx.Compiler.Options.AllowOneLiners)
 			{
 				Context.Ctx.Compiler.Unregister(Func);
-				return commands.First();
+				return baseCmd.Run(commands.First());
 			}
-			else return new FunctionCommand(Func);
+
+			if (Context.HasInstruction<ExitFrameInstruction>())
+			{
+				return baseCmd.If.Function(Func).Run(new ReturnCommand(1));
+			}
+			else return baseCmd.Run(new FunctionCommand(Func));
 		}
 	}
 }

@@ -53,7 +53,7 @@ namespace Amethyst.AST
 
 			foreach (var i in context.statement())
 			{
-				block.Statements.Add(Visit(i));
+				block.Add(Visit(i));
 			}
 
 			return block;
@@ -63,6 +63,7 @@ namespace Amethyst.AST
 		public override Node VisitExpressionStatement([NotNull] AmethystParser.ExpressionStatementContext context) => new ExpressionStatement(Loc(context), Visit(context.expression()));
 		public override Node VisitCommandStatement([NotNull] AmethystParser.CommandStatementContext context) => new CommandStatement(Loc(context), context.Command().GetText().Trim()[2..]);
 		public override Node VisitIfStatement([NotNull] AmethystParser.IfStatementContext context) => context.statement().Length != 0 ? new IfStatement(Loc(context), Visit(context.expression()), Visit(context.statement().First()), context.statement().Length == 2 ? Visit(context.statement().Last()) : null) : new ExpressionStatement(Loc(context), new LiteralExpression(Loc(context), new NBTString("uh")));
+		public override Node VisitReturnStatement([NotNull] AmethystParser.ReturnStatementContext context) => new ReturnStatement(Loc(context), context.expression() is null ? null : Visit(context.expression()));
 
 		public override Node VisitType([NotNull] AmethystParser.TypeContext context)
 		{

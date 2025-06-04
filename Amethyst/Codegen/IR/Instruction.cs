@@ -20,6 +20,7 @@ namespace Amethyst.Codegen.IR
 		private FunctionContext.Frame? ctx = null;
 
 		protected void Add(Command cmd) => Commands.Add(cmd);
+		protected void Add(IEnumerable<Command> cmd) => Commands.AddRange(cmd);
 
 		public abstract void Build();
 	}
@@ -119,8 +120,7 @@ namespace Amethyst.Codegen.IR
 
 		public override void Build()
 		{
-			if (Command.Subcommands.Count == 0) Add(Func.Call());
-			else Add(Command.Run(Func.Call()));
+			Add(Func.Call(Command));
 		}
 	}
 }

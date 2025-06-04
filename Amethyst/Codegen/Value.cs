@@ -62,10 +62,11 @@ namespace Amethyst.Codegen
 		public override Command ReadTo(IEntityTarget target, Score score) => throw new InvalidOperationException();
 	}
 
-	public class StaticFunctionValue(NamespacedID id, DynamicFunctionTypeSpecifier type) : LiteralValue(new NBTString(id.ToString()))
+	public class StaticFunctionValue(NamespacedID id, FunctionTypeSpecifier type) : LiteralValue(new NBTString(id.ToString()))
 	{
 		public readonly NamespacedID ID = id;
 		public override TypeSpecifier Type => type;
+		public FunctionTypeSpecifier FuncType => (FunctionTypeSpecifier)Type;
 	}
 
 	public abstract class MutableValue : Value

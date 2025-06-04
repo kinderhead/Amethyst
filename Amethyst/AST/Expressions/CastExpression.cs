@@ -19,7 +19,7 @@ namespace Amethyst.AST.Expressions
 
 		protected override Value _Execute(FunctionContext ctx)
 		{
-			if (Expression.ComputeType(ctx) == Type) return Execute(ctx);
+			if (Expression.ComputeType(ctx) == Type) return Expression.Execute(ctx);
 
 			(Value src, Value? post) = PreExecute(ctx);
 
@@ -63,13 +63,13 @@ namespace Amethyst.AST.Expressions
 				switch (Type.Type)
 				{
 					case NBTType.Boolean:
-						return (val, new LiteralValue(new NBTBool((bool)num.RawValue)));
+						return (val, new LiteralValue(new NBTBool(Convert.ToBoolean(num.RawValue))));
 					case NBTType.Byte:
-						return (val, new LiteralValue(new NBTByte((byte)num.RawValue)));
+						return (val, new LiteralValue(new NBTByte(Convert.ToByte(num.RawValue))));
 					case NBTType.Short:
-						return (val, new LiteralValue(new NBTShort((short)num.RawValue)));
+						return (val, new LiteralValue(new NBTShort(Convert.ToInt16(num.RawValue))));
 					case NBTType.Int:
-						return (val, new LiteralValue(new NBTInt((int)num.RawValue)));
+						return (val, new LiteralValue(new NBTInt(Convert.ToInt32(num.RawValue))));
 					case NBTType.Long:
 						return (val, new LiteralValue(new NBTLong(Convert.ToInt64(num.RawValue))));
 					case NBTType.Float:

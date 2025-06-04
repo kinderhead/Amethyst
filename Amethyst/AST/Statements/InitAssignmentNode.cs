@@ -15,6 +15,7 @@ namespace Amethyst.AST.Statements
 		public readonly AbstractTypeSpecifier Type = type;
 		public readonly string Name = name;
 		public readonly Expression Expression = expr;
+		public override IEnumerable<Statement> Statements => [];
 
 		protected override void _Compile(FunctionContext ctx)
 		{
@@ -27,7 +28,7 @@ namespace Amethyst.AST.Statements
 			if (type.Type != Datapack.Net.Data.NBTType.Int || ctx.Compiler.Options.KeepLocalsOnStack) val = new StorageValue(new(Compiler.RuntimeID), $"stack[-1].{Name}", type);
 			else val = ctx.AllocScore();
 			ctx.Variables[Name] = new(Name, type, Location, val);
-			Expression.Cast(type).Store(ctx, ctx.Variables[Name].Value);
+			Expression.Cast(type).Store(ctx, val);
 		}
 	}
 }

@@ -14,6 +14,11 @@ namespace Amethyst.Codegen.IR
 		public override void Build()
 		{
 			Add(new DataCommand.Modify(new Storage(Compiler.RuntimeID), "stack").Append().Value("{}"));
+
+			foreach (var i in Ctx.Ctx.LocalScores)
+			{
+				Add(i.ReadTo(new Storage(Compiler.RuntimeID), $"stack[-1].$score{i.Score.Name}"));
+			}
 		}
 	}
 
@@ -21,7 +26,24 @@ namespace Amethyst.Codegen.IR
 	{
 		public override void Build()
 		{
+			foreach (var i in Ctx.Ctx.LocalScores)
+			{
+				Add(new StorageValue(new Storage(Compiler.RuntimeID), $"stack[-1].$score{i.Score.Name}", i.Type).ReadTo(i.Target, i.Score));
+			}
+
 			Add(new DataCommand.Remove(new Storage(Compiler.RuntimeID), "stack[-1]"));
+		}
+	}
+
+	public class ReturnInstruction(LocationRange loc, Value val) : ExitFrameInstruction(loc)
+	{
+		public readonly Value Value = val;
+
+		public override void Build()
+		{
+			Add(Value.ReadTo(Compiler.RuntimeID, "return"));
+			base.Build();
+			Add(new ReturnCommand(1));
 		}
 	}
 }

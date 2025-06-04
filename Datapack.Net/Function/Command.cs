@@ -17,7 +17,7 @@ namespace Datapack.Net.Function
         {
             var txt = PreBuild().Trim();
 
-            if (Macro && MacroRegex.IsMatch(txt)) txt = "$" + txt;
+            if (Macro && MacroRegex.IsMatch(txt) && txt[0] != '$') txt = "$" + txt;
             return txt;
         }
 

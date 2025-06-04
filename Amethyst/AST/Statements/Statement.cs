@@ -10,6 +10,8 @@ namespace Amethyst.AST.Statements
 {
 	public abstract class Statement(LocationRange loc) : Node(loc)
 	{
+		public abstract IEnumerable<Statement> Statements { get; }
+
 		public void Compile(FunctionContext ctx)
 		{
 			ctx.PushLocator(this);
@@ -34,6 +36,7 @@ namespace Amethyst.AST.Statements
 	public class ExpressionStatement(LocationRange loc, Expression expr) : Statement(loc)
 	{
 		public readonly Expression Expression = expr;
+		public override IEnumerable<Statement> Statements => [];
 
 		protected override void _Compile(FunctionContext ctx)
 		{

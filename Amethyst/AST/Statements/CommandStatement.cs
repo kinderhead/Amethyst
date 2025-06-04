@@ -11,6 +11,7 @@ namespace Amethyst.AST.Statements
 	public class CommandStatement(LocationRange loc, string cmd) : Statement(loc)
 	{
 		public readonly string Command = cmd;
+		public override IEnumerable<Statement> Statements => [];
 
 		protected override void _Compile(FunctionContext ctx)
 		{

@@ -165,6 +165,7 @@ namespace Amethyst
 			var func = new MCFunction(new("amethyst", $"zz_internal/{RandomString}"));
 
 			func.Add(new DataCommand.Remove(new Storage(new("amethyst", "runtime")), "stack"));
+			func.Add(new DataCommand.Remove(new Storage(new("amethyst", "runtime")), "return"));
 
 			foreach (var i in registeredScores)
 			{
@@ -187,7 +188,7 @@ namespace Amethyst
 		public static string RandomString { get => Guid.NewGuid().ToString(); }
 		public static readonly NamespacedID RuntimeID = new("amethyst", "runtime");
 		public static readonly IEntityTarget RuntimeEntity = new NamedTarget("amethyst");
-		//public static readonly Score NullScore = new("null", "dummy");
+		//public static readonly Score ReturnScore = new("returned", "dummy");
 	}
 
 	public interface IFileHandler

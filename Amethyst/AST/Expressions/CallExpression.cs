@@ -2,6 +2,7 @@
 using Amethyst.Codegen.Functions;
 using Amethyst.Codegen.IR;
 using Amethyst.Errors;
+using Datapack.Net.Function.Commands;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -31,7 +32,9 @@ namespace Amethyst.AST.Expressions
 			else if (func is StaticFunctionValue f)
 			{
 				ctx.Add(new CallInstruction(Location, f.ID));
-				return new VoidValue();
+
+				if (f.FuncType.ReturnType is VoidTypeSpecifier) return new VoidValue();
+				else return new StorageValue(Compiler.RuntimeID, "return", f.FuncType.ReturnType);
 			}
 
 			throw new CallError(Location);

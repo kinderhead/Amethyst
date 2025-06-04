@@ -10,12 +10,15 @@ namespace Amethyst.AST.Statements
 {
 	public class BlockNode(LocationRange loc) : Statement(loc)
 	{
-		public readonly List<Statement> Statements = [];
+		private readonly List<Statement> statements = [];
+		public override IEnumerable<Statement> Statements => statements;
 
 		protected override void _Compile(FunctionContext ctx)
 		{
 			if (!CompileWithErrorChecking(ctx)) throw new EmptyAmethystError();
 		}
+
+		public void Add(Statement stmt) => statements.Add(stmt);
 
 		public bool CompileWithErrorChecking(FunctionContext ctx)
 		{
@@ -24,6 +27,7 @@ namespace Amethyst.AST.Statements
 			foreach (var i in Statements)
 			{
 				if (!ctx.Compiler.WrapError(() => i.Compile(ctx))) success = false;
+				if (ctx.CurrentFrame.Instructions.Last() is ExitFrameInstruction) break;
 			}
 
 			return success;

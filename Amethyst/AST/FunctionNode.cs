@@ -1,4 +1,5 @@
 ﻿using Amethyst.AST.Statements;
+using Amethyst.Codegen;
 using Amethyst.Codegen.IR;
 using Datapack.Net.Function;
 using Datapack.Net.Utils;
@@ -17,9 +18,12 @@ namespace Amethyst.AST
 		public readonly NamespacedID ID = id;
 		public readonly BlockNode Body = body;
 
+		private FunctionTypeSpecifier? funcType = null;
+		public FunctionTypeSpecifier GetFunctionType(Compiler ctx) => funcType ??= new(ReturnType.Resolve(ctx));
+
 		public bool Compile(Compiler compiler)
 		{
-			var ctx = new FunctionContext(compiler, new MCFunction(ID));
+			var ctx = new FunctionContext(compiler, new MCFunction(ID), GetFunctionType(compiler));
 			compiler.Functions[ID] = ctx;
 
 			foreach (var i in Tags)
@@ -27,11 +31,10 @@ namespace Amethyst.AST
 				compiler.Datapack.Tags.GetTag(i, "function").Values.Add(ID);
 			}
 
-			ctx.OnFunctionReturn += i => i.Add(new ExitFrameInstruction(Body.Location));
-
 			ctx.Add(new InitFrameInstruction(Body.Location));
 			var ret = Body.CompileWithErrorChecking(ctx);
-			ctx.FireReturn();
+
+			if (ctx.CurrentFrame.Instructions.Last() is not ExitFrameInstruction) ctx.Add(new ExitFrameInstruction(Body.Location));
 
 			return ret;
 		}

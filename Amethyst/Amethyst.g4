@@ -26,6 +26,7 @@ statement
     : (
         initAssignmentStatement
         | expressionStatement
+        | returnStatement
     ) Semi+
     | commandStatement
     | block
@@ -46,6 +47,10 @@ commandStatement
 
 ifStatement
     : If LParen expression RParen statement (Else statement)?
+    ;
+
+returnStatement
+    : Return (expression)?
     ;
 
 expression
@@ -107,6 +112,7 @@ type
 Namespace: 'namespace';
 If: 'if';
 Else: 'else';
+Return: 'return';
 
 Semi: ';';
 Comma: ',';

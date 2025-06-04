@@ -2,6 +2,7 @@
 using Amethyst.AST.Statements;
 using Amethyst.Errors;
 using Datapack.Net.Function;
+using Datapack.Net.Function.Commands;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,6 +18,7 @@ namespace Amethyst.Codegen.IR
 		public readonly Dictionary<string, LocalSymbol> Variables = [];
 		public readonly List<ScoreValue> LocalScores = [];
 		public readonly MCFunction MainFunction;
+		public readonly FunctionTypeSpecifier FunctionType;
 
 		private readonly List<Frame> totalFrames = [];
 		private readonly Stack<Frame> frames = [];
@@ -32,14 +34,13 @@ namespace Amethyst.Codegen.IR
 		private bool compiled = false;
 		private bool compiledSuccess = true;
 
-		public FunctionContext(Compiler compiler, MCFunction func)
+		public FunctionContext(Compiler compiler, MCFunction func, FunctionTypeSpecifier funcType)
 		{
 			Compiler = compiler;
 			MainFunction = func;
+			FunctionType = funcType;
 			PushFunc(func);
 		}
-
-		public event Action<FunctionContext> OnFunctionReturn;
 
 		public void PushLocator(ILocatable loc) => locators.Push(loc);
 		public void PopLocator() => locators.Pop();
@@ -47,8 +48,9 @@ namespace Amethyst.Codegen.IR
 		public void PushFunc(MCFunction func)
 		{
 			Compiler.Register(func);
-			var frame = new Frame(func, this);
+			var frame = new Frame(func, this, frames.Count == 0);
 			totalFrames.Add(frame);
+			if (frames.Count != 0) CurrentFrame.Subframes.Add(frame);
 			frames.Push(frame);
 		}
 
@@ -70,7 +72,6 @@ namespace Amethyst.Codegen.IR
 			CurrentFrame.Instructions.Add(insn);
 		}
 
-		public void FireReturn() => OnFunctionReturn?.Invoke(this);
 		public void ClearTemps()
 		{
 			tempStack = 0;
@@ -141,11 +142,13 @@ namespace Amethyst.Codegen.IR
 			return compiledSuccess;
 		}
 
-		public class Frame(MCFunction function, FunctionContext ctx)
+		public class Frame(MCFunction function, FunctionContext ctx, bool isBase)
 		{
 			public readonly MCFunction Function = function;
 			public readonly FunctionContext Ctx = ctx;
+			public readonly bool IsBase = isBase;
 			public readonly List<Instruction> Instructions = [];
+			public readonly List<Frame> Subframes = [];
 			
 			public List<Command> Commands
 			{
@@ -185,6 +188,21 @@ namespace Amethyst.Codegen.IR
 				int count = 0;
 				foreach (var i in Instructions) { count += i.Commands.Count; }
 				return count;
+			}
+
+			public bool HasInstruction<T>() where T : Instruction
+			{
+				foreach (var i in Instructions)
+				{
+					if (i is T) return true;
+				}
+
+				foreach (var i in Subframes)
+				{
+					if (i.HasInstruction<T>()) return true;
+				}
+
+				return false;
 			}
 		}
 	}
