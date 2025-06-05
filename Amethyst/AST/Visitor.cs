@@ -163,9 +163,11 @@ namespace Amethyst.AST
 			else if (context.String() is ITerminalNode str) return new LiteralExpression(Loc(context), new NBTString(NBTString.Unescape(str.GetText()[1..^1])));
 			else if (context.Integer() is ITerminalNode i) return new LiteralExpression(Loc(context), new NBTInt(int.Parse(i.GetText())));
 			else if (context.expression() is AmethystParser.ExpressionContext expr) return Visit(expr);
-			else throw new NotImplementedException();
+			else return Visit(context.children[0]);
 		}
 
+		public override Node VisitListLiteral([NotNull] AmethystParser.ListLiteralContext context) => new ListExpression(Loc(context), [.. context.expression().Select(Visit)]);
+		
 		public AbstractTypeSpecifier Visit(AmethystParser.TypeContext context) => (AbstractTypeSpecifier)Visit((IParseTree)context);
 		public BlockNode Visit(AmethystParser.BlockContext context) => (BlockNode)Visit((IParseTree)context);
 		public Statement Visit(AmethystParser.StatementContext context) => (Statement)Visit((IParseTree)context);

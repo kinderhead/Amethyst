@@ -55,8 +55,8 @@ namespace Amethyst.AST.Expressions
 		{
 			var lt = Left.ComputeType(ctx);
 			var rt = Right.ComputeType(ctx);
-			if (!NBTValue.IsOperableType(lt.Type)) throw new InvalidTypeError(Location, lt.ToString());
-			if (!NBTValue.IsOperableType(rt.Type)) throw new InvalidTypeError(Location, rt.ToString());
+			if (!lt.Operable) throw new InvalidTypeError(Location, lt.ToString());
+			if (!rt.Operable) throw new InvalidTypeError(Location, rt.ToString());
 		}
 
 		private LiteralValue? IsLiteral()

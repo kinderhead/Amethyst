@@ -16,6 +16,7 @@ namespace Amethyst.Codegen.IR
 	public class FunctionContext
 	{
 		public readonly Compiler Compiler;
+		public readonly FunctionNode Node;
 		public readonly Dictionary<string, LocalSymbol> Variables = [];
 		public readonly List<ScoreValue> LocalScores = [];
 		public readonly MCFunction MainFunction;
@@ -38,9 +39,10 @@ namespace Amethyst.Codegen.IR
 		private bool compiled = false;
 		private bool compiledSuccess = true;
 
-		public FunctionContext(Compiler compiler, MCFunction func, FunctionTypeSpecifier funcType)
+		public FunctionContext(Compiler compiler, FunctionNode node, MCFunction func, FunctionTypeSpecifier funcType)
 		{
 			Compiler = compiler;
+			Node = node;
 			MainFunction = func;
 			FunctionType = funcType;
 			KeepLocalsOnStack = compiler.Options.KeepLocalsOnStack;

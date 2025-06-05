@@ -1,6 +1,7 @@
 ﻿using Amethyst.AST.Statements;
 using Amethyst.Codegen;
 using Amethyst.Codegen.IR;
+using Amethyst.Errors;
 using Datapack.Net.Data;
 using Datapack.Net.Function;
 using Datapack.Net.Utils;
@@ -39,6 +40,11 @@ namespace Amethyst.AST
 
 			PickShortest(compiler, ctxs);
 
+			foreach (var i in Tags)
+			{
+				compiler.Datapack.Tags.GetTag(i, "function").Values.Add(ID);
+			}
+
 			return true;
 		}
 
@@ -58,14 +64,9 @@ namespace Amethyst.AST
 		private bool SubCompile(Compiler compiler, out FunctionContext ctx, bool keepLocalsOnStack = false)
 		{
 			var funcType = GetFunctionType(compiler);
-			ctx = new FunctionContext(compiler, new MCFunction(ID), funcType);
+			ctx = new FunctionContext(compiler, this, new MCFunction(ID), funcType);
 			ctx.KeepLocalsOnStack = ctx.KeepLocalsOnStack || keepLocalsOnStack;
 			ctx.PushLocator(Body);
-
-			foreach (var i in Tags)
-			{
-				compiler.Datapack.Tags.GetTag(i, "function").Values.Add(ID);
-			}
 
 			ctx.Add(new InitFrameInstruction(Body.Location));
 
@@ -74,7 +75,7 @@ namespace Amethyst.AST
 				var stackVal = new StorageValue(new(Compiler.RuntimeID), $"stack[-1].$arg{i}", funcType.Parameters[i]);
 
 				MutableValue val;
-				if (funcType.Parameters[i].Type != NBTType.Int || ctx.KeepLocalsOnStack) val = stackVal;
+				if (funcType.Parameters[i].EffectiveType != NBTType.Int || ctx.KeepLocalsOnStack) val = stackVal;
 				else
 				{
 					val = ctx.AllocScore();

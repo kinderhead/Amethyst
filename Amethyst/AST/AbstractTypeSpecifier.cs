@@ -12,20 +12,23 @@ namespace Amethyst.AST
 {
 	public abstract class AbstractTypeSpecifier(LocationRange loc) : Node(loc)
 	{
-		public TypeSpecifier Resolve(FunctionContext ctx) => Resolve(ctx.Compiler);
-		public abstract TypeSpecifier Resolve(Compiler ctx);
+		public TypeSpecifier Resolve(FunctionContext ctx, bool allowAuto = false) => Resolve(ctx.Compiler, allowAuto);
+		public abstract TypeSpecifier Resolve(Compiler ctx, bool allowAuto = false);
 	}
 
 	public class SimpleAbstractTypeSpecifier(LocationRange loc, string type) : AbstractTypeSpecifier(loc)
 	{
 		public readonly string Type = type;
 
-		public override TypeSpecifier Resolve(Compiler ctx)
+		public override TypeSpecifier Resolve(Compiler ctx, bool allowAuto = false)
 		{
 			switch (Type)
 			{
 				case "void":
 					return new VoidTypeSpecifier();
+				case "var":
+					if (allowAuto) return new VarTypeSpecifier();
+					else throw new InvalidTypeError(Location, Type);
 				case "bool":
 					return new PrimitiveTypeSpecifier(NBTType.Boolean);
 				case "byte":
@@ -42,11 +45,13 @@ namespace Amethyst.AST
 					return new PrimitiveTypeSpecifier(NBTType.Double);
 				case "string":
 					return new PrimitiveTypeSpecifier(NBTType.String);
+				case "list":
+					return new PrimitiveTypeSpecifier(NBTType.List);
 				default:
 					break;
 			}
 
 			throw new UnknownTypeError(Location, Type);
 		}
-	}
+    }
 }

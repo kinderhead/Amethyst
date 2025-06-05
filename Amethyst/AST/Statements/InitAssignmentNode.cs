@@ -22,11 +22,12 @@ namespace Amethyst.AST.Statements
 		{
 			if (ctx.Variables.TryGetValue(Name, out var sym)) throw new RedefinedSymbolError(Location, Name, sym.Location);
 
-			var type = Type.Resolve(ctx);
+			var type = Type.Resolve(ctx, true);
 			if (type is VoidTypeSpecifier) throw new InvalidTypeError(Location, "void");
+			else if (type is VarTypeSpecifier) type = Expression.ComputeType(ctx);
 
 			MutableValue val;
-			if (type.Type != NBTType.Int || ctx.KeepLocalsOnStack) val = new StorageValue(new(Compiler.RuntimeID), $"stack[-1].{Name}", type);
+			if (type is PrimitiveTypeSpecifier p && p.Type != NBTType.Int || ctx.KeepLocalsOnStack) val = new StorageValue(new(Compiler.RuntimeID), $"stack[-1].{Name}", type);
 			else val = ctx.AllocScore();
 			ctx.Variables[Name] = new(Name, type, Location, val);
 			Expression.Cast(type).Store(ctx, val);

@@ -36,14 +36,14 @@ namespace Amethyst.Codegen.IR
 		}
 	}
 
-	public class StoreInstruction(LocationRange loc, StorageValue dest, Value val) : Instruction(loc)
+	public class StoreInstruction(LocationRange loc, MutableValue dest, Value val) : Instruction(loc)
 	{
-		public readonly StorageValue Dest = dest;
+		public readonly MutableValue Dest = dest;
 		public readonly Value Value = val;
 
 		public override void Build()
 		{
-			Add(Value.ReadTo(Dest.Storage, Dest.Path));
+			Add(Value.ReadTo(Dest));
 		}
 	}
 
@@ -59,26 +59,15 @@ namespace Amethyst.Codegen.IR
 		}
 	}
 
-	public class StoreIfSuccessInstruction(LocationRange loc, Execute exec, ScoreValue dest, Value val) : Instruction(loc)
+	public class StoreIfSuccessInstruction(LocationRange loc, Execute exec, MutableValue dest, Value val) : Instruction(loc)
 	{
 		public readonly Execute Command = exec;
-		public readonly ScoreValue Dest = dest;
+		public readonly MutableValue Dest = dest;
 		public readonly Value Value = val;
 
 		public override void Build()
 		{
-			Add(Command.Run(Value.ReadTo(Dest.Target, Dest.Score)));
-		}
-	}
-
-	public class StoreScoreInstruction(LocationRange loc, ScoreValue dest, Value val) : Instruction(loc)
-	{
-		public readonly ScoreValue Dest = dest;
-		public readonly Value Value = val;
-
-		public override void Build()
-		{
-			Add(Value.ReadTo(Dest.Target, Dest.Score));
+			Add(Command.Run(Value.ReadTo(Dest)));
 		}
 	}
 
@@ -102,6 +91,18 @@ namespace Amethyst.Codegen.IR
 		{
 			// Fix this later
 			Add(new FunctionCommand(new(ID, true)));
+		}
+	}
+
+	public class CallMacroInstruction(LocationRange loc, NamespacedID id, StorageValue val) : Instruction(loc)
+	{
+		public readonly NamespacedID ID = id;
+		public readonly StorageValue Value = val;
+
+		public override void Build()
+		{
+			// Fix this later
+			Add(new FunctionCommand(new(ID, true), Value.Storage, Value.Path));
 		}
 	}
 

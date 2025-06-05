@@ -67,7 +67,7 @@ namespace Datapack.Net
         public Functions Functions { get => GetResource<Functions>(); }
         public Tags Tags { get => GetResource<Tags>(); }
 
-		public T GetResource<T>() where T : ResourceType
+        public T GetResource<T>() where T : ResourceType
         {
             var type = types.Find(i => i is T);
             if (type != null) return (T)type;
@@ -132,7 +132,7 @@ namespace Datapack.Net
         private readonly List<string> FilesWriten = [];
         internal void WriteFile(string path, string content)
         {
-            Console.WriteLine($"Writing to file \"{path}\":\n{content}\n");
+            if (path.EndsWith(".mcfunction")) Console.WriteLine($"Writing to file \"{path}\":\n{content}\n");
 
             if (zipFile != null)
             {

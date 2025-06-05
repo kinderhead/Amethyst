@@ -25,6 +25,7 @@ namespace Amethyst.AST
 			AnsiConsole.MarkupLine("[red]" + Lines[line - 1] + "[/]");
 			AnsiConsole.MarkupLine(new string(' ', charPositionInLine) + "[yellow]^[/]");
 			AnsiConsole.MarkupLine($"[red]Syntax error:[/] [turquoise2]{msg}[/]\n\n");
+			Console.Out.Flush(); // Weird
 		}
 	}
 }

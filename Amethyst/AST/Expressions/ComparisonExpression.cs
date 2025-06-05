@@ -1,5 +1,6 @@
 ﻿using Amethyst.Codegen;
 using Amethyst.Codegen.IR;
+using Amethyst.Errors;
 using Datapack.Net.Data;
 using Datapack.Net.Function.Commands;
 using System;
@@ -37,7 +38,10 @@ namespace Amethyst.AST.Expressions
 
 		protected override void _Store(FunctionContext ctx, MutableValue dest)
 		{
-			throw new NotImplementedException();
+			dest.Store(ctx, new LiteralExpression(Location, new NBTBool(false)).Cast(dest.Type).Execute(ctx));
+			var exec = new ExecuteWrapper();
+			Compare(ctx, exec);
+			ctx.Add(new StoreIfSuccessInstruction(Location, exec.Cmd, dest, new LiteralExpression(Location, new NBTBool(true)).Cast(dest.Type).Execute(ctx)));
 		}
 
 		protected override void _Compare(FunctionContext ctx, ExecuteWrapper truthy)

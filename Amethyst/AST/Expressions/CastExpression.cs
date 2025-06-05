@@ -24,10 +24,10 @@ namespace Amethyst.AST.Expressions
 			(Value src, Value? post) = PreExecute(ctx);
 
 			if (post is not null) return post;
-			else if (NBTValue.IsOperableType(Type.Type) || NBTValue.IsOperableType(src.Type.Type))
+			else if (Type.Operable || src.Type.Operable)
 			{
 				var tmp = ctx.AllocTemp(Type);
-				ctx.Add(new StoreAsTypeInstruction(Location, tmp, src, (NBTNumberType)Type.Type));
+				ctx.Add(new StoreAsTypeInstruction(Location, tmp, src, (NBTNumberType)Type.EffectiveType));
 				return tmp;
 			}
 
@@ -45,7 +45,7 @@ namespace Amethyst.AST.Expressions
 			(Value src, Value? post) = PreExecute(ctx);
 
 			if (post is not null) val.Store(ctx, post);
-			else if (NBTValue.IsOperableType(Type.Type) || NBTValue.IsOperableType(src.Type.Type)) val.Store(ctx, src, (NBTNumberType)Type.Type);
+			else if (Type.Operable || src.Type.Operable) val.Store(ctx, src, (NBTNumberType)Type.EffectiveType);
 			else throw new InvalidCastError(Location, src.Type, Type);
 		}
 
@@ -55,12 +55,12 @@ namespace Amethyst.AST.Expressions
 			if (Type == val.Type) return (val, val);
 			else if (
 				Type is VoidTypeSpecifier ||
-				(NBTValue.IsNumberType(val.Type.Type) != NBTValue.IsNumberType(Type.Type))
+				(NBTValue.IsNumberType(val.Type.EffectiveType) != NBTValue.IsNumberType(Type.EffectiveType))
 			) throw new InvalidCastError(Location, val.Type, Type);
 			else if (val is LiteralValue l)
 			{
-				if (l.Value is not INBTNumber num || !NBTValue.IsNumberType(Type.Type)) throw new InvalidCastError(Location, val.Type, Type);
-				switch (Type.Type)
+				if (l.Value is not INBTNumber num || !NBTValue.IsNumberType(Type.EffectiveType)) throw new InvalidCastError(Location, val.Type, Type);
+				switch (Type.EffectiveType)
 				{
 					case NBTType.Boolean:
 						return (val, new LiteralValue(new NBTBool(Convert.ToBoolean(num.RawValue))));

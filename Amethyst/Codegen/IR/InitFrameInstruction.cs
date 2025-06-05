@@ -1,4 +1,5 @@
 ﻿using Amethyst.AST;
+using Amethyst.Errors;
 using Datapack.Net.Function;
 using Datapack.Net.Function.Commands;
 using System;
@@ -13,7 +14,11 @@ namespace Amethyst.Codegen.IR
 	{
 		public override void Build()
 		{
-			if (Ctx.Ctx.FunctionType.Parameters.Length == 0) Add(new DataCommand.Modify(new Storage(Compiler.RuntimeID), "stack").Append().Value("{}"));
+			if (Ctx.Ctx.FunctionType.Parameters.Length == 0)
+			{
+				Add(new DataCommand.Modify(new Storage(Compiler.RuntimeID), "stack").Append().Value("{}"));
+			}
+			else if (Ctx.Ctx.Node.Tags.Count != 0) throw new TagError(Ctx.Ctx.Node.Location, "Functions with arguments cannot have tags");
 
 			foreach (var i in Ctx.Ctx.LocalScores)
 			{

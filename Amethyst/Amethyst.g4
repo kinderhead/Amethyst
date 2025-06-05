@@ -85,6 +85,7 @@ multiplicativeExpression
 postfixExpression
     : primaryExpression (
         expressionList
+        | LSquareBrak expression RSquareBrak
     )*
     ;
 
@@ -92,7 +93,12 @@ primaryExpression
     : Identifier
     | String
     | Integer
+    | listLiteral
     | LParen expression RParen
+    ;
+
+listLiteral
+    : LSquareBrak (expression (Comma expression)*)? RSquareBrak
     ;
 
 paramList
@@ -122,6 +128,8 @@ Semi: ';';
 Comma: ',';
 LParen: '(';
 RParen: ')';
+LSquareBrak: '[';
+RSquareBrak: ']';
 LBrak: '{';
 RBrak: '}';
 Eq: '=';
