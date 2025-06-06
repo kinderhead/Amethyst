@@ -3,15 +3,8 @@ namespace test;
 #load
 void main()
 {
-    var x = 34;
-    var y = -2;
-    var a = x > y || x == 2;
-    print(a);
-}
+    int[] arr = [1, 2, 3, 4, 5];
 
-#tick
-void tick(int test)
-{
-    var x = 13498;
-    print("ticking time", x);
+    int x = 2;
+    print(arr[x]);
 }

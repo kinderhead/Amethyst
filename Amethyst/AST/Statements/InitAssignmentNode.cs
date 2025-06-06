@@ -20,16 +20,14 @@ namespace Amethyst.AST.Statements
 
 		protected override void _Compile(FunctionContext ctx)
 		{
-			if (ctx.Variables.TryGetValue(Name, out var sym)) throw new RedefinedSymbolError(Location, Name, sym.Location);
-
 			var type = Type.Resolve(ctx, true);
 			if (type is VoidTypeSpecifier) throw new InvalidTypeError(Location, "void");
 			else if (type is VarTypeSpecifier) type = Expression.ComputeType(ctx);
 
 			MutableValue val;
-			if (type is PrimitiveTypeSpecifier p && p.Type != NBTType.Int || ctx.KeepLocalsOnStack) val = new StorageValue(new(Compiler.RuntimeID), $"stack[-1].{Name}", type);
-			else val = ctx.AllocScore();
-			ctx.Variables[Name] = new(Name, type, Location, val);
+			if (!ctx.KeepLocalsOnStack && type is PrimitiveTypeSpecifier p && p.Type == NBTType.Int) val = ctx.AllocScore();
+			else val = new StorageValue(new(Compiler.RuntimeID), $"stack[-1].{Name}", type);
+			ctx.RegisterVariable(Name, val);
 			Expression.Cast(type).Store(ctx, val);
 		}
 	}

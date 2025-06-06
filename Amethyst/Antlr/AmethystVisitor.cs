@@ -57,6 +57,12 @@ public interface IAmethystVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <return>The visitor result.</return>
 	Result VisitFunctionTag([NotNull] AmethystParser.FunctionTagContext context);
 	/// <summary>
+	/// Visit a parse tree produced by <see cref="AmethystParser.functionModifier"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitFunctionModifier([NotNull] AmethystParser.FunctionModifierContext context);
+	/// <summary>
 	/// Visit a parse tree produced by <see cref="AmethystParser.block"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
@@ -147,6 +153,12 @@ public interface IAmethystVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <return>The visitor result.</return>
 	Result VisitPostfixExpression([NotNull] AmethystParser.PostfixExpressionContext context);
 	/// <summary>
+	/// Visit a parse tree produced by <see cref="AmethystParser.indexExpression"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitIndexExpression([NotNull] AmethystParser.IndexExpressionContext context);
+	/// <summary>
 	/// Visit a parse tree produced by <see cref="AmethystParser.primaryExpression"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
@@ -170,6 +182,12 @@ public interface IAmethystVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
 	Result VisitParamPair([NotNull] AmethystParser.ParamPairContext context);
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="AmethystParser.paramModifier"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitParamModifier([NotNull] AmethystParser.ParamModifierContext context);
 	/// <summary>
 	/// Visit a parse tree produced by <see cref="AmethystParser.expressionList"/>.
 	/// </summary>

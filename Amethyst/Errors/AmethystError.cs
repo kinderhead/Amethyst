@@ -24,9 +24,9 @@ namespace Amethyst.Errors
 			if (Location.Start.Line != Location.End.Line) lastCol = lines[Location.Start.Line - 1].Length;
 
 			AnsiConsole.MarkupLine($"[red]Error at {Location.Start}\n│[/]");
-			AnsiConsole.MarkupLine("[red]│[/]   [turquoise2]" + lines[Location.Start.Line - 1] + "[/]");
+			AnsiConsole.MarkupLine("[red]│[/]   [turquoise2]" + lines[Location.Start.Line - 1].EscapeMarkup() + "[/]");
 			AnsiConsole.MarkupLine("[red]│[/]   " + new string(' ', Location.Start.Column - 1) + $"[red]{new string('~', lastCol - Location.Start.Column + 1)}[/]");
-			AnsiConsole.MarkupLine($"[red]{(last ? "└─" : "│ ")}  {GetType().Name}:[/] [yellow]{RawMessage}[/]{(last ? "\n\n" : "")}");
+			AnsiConsole.MarkupLine($"[red]{(last ? "└─" : "│ ")}  {GetType().Name}:[/] [yellow]{RawMessage.EscapeMarkup()}[/]{(last ? "\n\n" : "")}");
 		}
 	}
 

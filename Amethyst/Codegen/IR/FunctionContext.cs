@@ -17,7 +17,6 @@ namespace Amethyst.Codegen.IR
 	{
 		public readonly Compiler Compiler;
 		public readonly FunctionNode Node;
-		public readonly Dictionary<string, LocalSymbol> Variables = [];
 		public readonly List<ScoreValue> LocalScores = [];
 		public readonly MCFunction MainFunction;
 		public readonly List<MCFunction> TotalFunctions = [];
@@ -25,12 +24,16 @@ namespace Amethyst.Codegen.IR
 
 		public bool KeepLocalsOnStack = false;
 
+		public bool UsesStack { get; private set; } = false;
+
 		private readonly List<Frame> totalFrames = [];
 		private readonly Stack<Frame> frames = [];
 		public Frame CurrentFrame { get => frames.Peek(); }
 
 		private readonly Stack<ILocatable> locators = [];
 		public ILocatable CurrentLocator { get => locators.Peek(); }
+
+		private readonly Dictionary<string, LocalSymbol> Variables = [];
 
 		private int tempStack = 0;
 		private int tempScore = 0;
@@ -86,6 +89,13 @@ namespace Amethyst.Codegen.IR
 			tempScore = 0;
 		}
 
+		public void RegisterVariable(string name, Value val)
+		{
+			if (Variables.TryGetValue(name, out var sym)) throw new RedefinedSymbolError(CurrentLocator.Location, name, sym.Location);
+			Variables[name] = new(name, CurrentLocator.Location, val);
+			if (val is StorageValue s && s.Path.StartsWith("stack")) UsesStack = true;
+		}
+
 		public Value GetVariable(string name)
 		{
 			if (GetVariableNoThrow(name) is Value v) return v;
@@ -108,8 +118,12 @@ namespace Amethyst.Codegen.IR
 			}
 			return null;
 		}
-		
-		public StorageValue AllocTemp(TypeSpecifier type) => new(new(Compiler.RuntimeID), $"stack[-1].$tmp{tempStack++}", type);
+
+		public StorageValue AllocTemp(TypeSpecifier type)
+		{
+			UsesStack = true;
+			return new(new(Compiler.RuntimeID), $"stack[-1].$tmp{tempStack++}", type);
+		}
 
 		public ScoreValue AllocTempScore()
 		{

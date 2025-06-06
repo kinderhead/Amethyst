@@ -34,19 +34,28 @@ namespace Amethyst.AST.Expressions
 			{
 				if (f.FuncType.Parameters.Length != Args.Count) throw new MismatchedArgumentCountError(Location, f.FuncType.Parameters.Length, Args.Count);
 
+				var args = new Dictionary<string, Value>();
+				var macros = new Dictionary<string, Value>();
+
 				if (f.FuncType.Parameters.Length != 0)
 				{
-					var argHolder = ctx.AllocTemp(new PrimitiveTypeSpecifier(NBTType.Compound));
-					var args = new Dictionary<string, Value>();
+					//var argHolder = ctx.AllocTemp(new PrimitiveTypeSpecifier(NBTType.Compound));
+
 					for (var i = 0; i < Args.Count; i++)
 					{
-						args[$"$arg{i}"] = Args[i].Cast(f.FuncType.Parameters[i]).Execute(ctx);
+						var val = Args[i].Cast(f.FuncType.Parameters[i].Type).Execute(ctx);
+						if ((f.FuncType.Parameters[i].Modifiers & ParameterModifiers.Macro) == ParameterModifiers.Macro) macros[f.FuncType.Parameters[i].Name] = val;
+						else args[f.FuncType.Parameters[i].Name] = val;
 					}
-					ctx.Add(new PopulateInstruction(Location, argHolder, args));
-					ctx.Add(new StackPushInstruction(Location, argHolder));
+
+					// if (args.Count != 0)
+					// {
+					// 	ctx.Add(new PopulateInstruction(Location, argHolder, args));
+					// 	ctx.Add(new StackPushInstruction(Location, argHolder));
+					// }
 				}
 
-				ctx.Add(new CallInstruction(Location, f.ID));
+				ctx.Add(new CallInstruction(Location, f.ID, args, macros));
 
 				if (f.FuncType.ReturnType is VoidTypeSpecifier) return new VoidValue();
 				else return new StorageValue(Compiler.RuntimeID, "return", f.FuncType.ReturnType);

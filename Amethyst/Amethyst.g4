@@ -11,11 +11,15 @@ namespace
     ;
 
 function
-    : functionTag* type name=Identifier paramList block
+    : functionTag* functionModifier* type name=Identifier paramList block
     ;
 
 functionTag
     : Hash Identifier
+    ;
+
+functionModifier
+    : NoStack
     ;
 
 block
@@ -84,9 +88,12 @@ multiplicativeExpression
 
 postfixExpression
     : primaryExpression (
-        expressionList
-        | LSquareBrak expression RSquareBrak
+        expressionList | indexExpression
     )*
+    ;
+
+indexExpression
+    : LSquareBrak expression RSquareBrak
     ;
 
 primaryExpression
@@ -106,7 +113,11 @@ paramList
     ;
 
 paramPair
-    : type Identifier
+    : (paramModifier)* type Identifier
+    ;
+
+paramModifier
+    : Macro
     ;
 
 expressionList
@@ -115,6 +126,7 @@ expressionList
 
 type
     : Identifier
+    | type LSquareBrak RSquareBrak
     ;
 
 // Lexer
@@ -123,6 +135,9 @@ Namespace: 'namespace';
 If: 'if';
 Else: 'else';
 Return: 'return';
+
+Macro: 'macro';
+NoStack: 'nostack';
 
 Semi: ';';
 Comma: ',';
@@ -147,7 +162,7 @@ Lte: '<=';
 AndAnd: '&&';
 OrOr: '||';
 
-Identifier: ([a-z] | [A-Z]) ([a-z] | [A-Z] | [0-9] | '_' | '-' | ':')*;
+Identifier: ([a-z] | [A-Z]) ([a-z] | [A-Z] | [0-9] | '_' | '-' | ':' | '/')*;
 String: '"' ( ~[\\"\n\r] | '\\' [\\"] )* '"';
 Command: '@/' ( ~[\n\r] )* ('\r' | '\n');
 Integer: '-'? [0-9]+;

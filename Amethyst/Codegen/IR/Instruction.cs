@@ -26,13 +26,14 @@ namespace Amethyst.Codegen.IR
 		public abstract void Build();
 	}
 
-	public class RawCommandInstruction(LocationRange loc, string cmd) : Instruction(loc)
+	public class RawCommandInstruction(LocationRange loc, string cmd, bool macro = false) : Instruction(loc)
 	{
 		public readonly string Command = cmd;
+		public readonly bool Macro = macro;
 
 		public override void Build()
 		{
-			Add(new RawCommand(Command));
+			Add(new RawCommand(Command, Macro));
 		}
 	}
 
@@ -83,14 +84,26 @@ namespace Amethyst.Codegen.IR
 		}
 	}
 
-	public class CallInstruction(LocationRange loc, NamespacedID id) : Instruction(loc)
+	public class CallInstruction(LocationRange loc, NamespacedID id, Dictionary<string, Value> args, Dictionary<string, Value> macros) : Instruction(loc)
 	{
 		public readonly NamespacedID ID = id;
+		public readonly Dictionary<string, Value> Arguments = args;
+		public readonly Dictionary<string, Value> Macros = macros;
 
 		public override void Build()
 		{
-			// Fix this later
-			Add(new FunctionCommand(new(ID, true)));
+			var args = new StorageValue(Compiler.RuntimeID, "tmp_args", new PrimitiveTypeSpecifier(NBTType.Compound));
+			var macros = new StorageValue(Compiler.RuntimeID, "tmp_macros", new PrimitiveTypeSpecifier(NBTType.Compound));
+			Add(PopulateInstruction.Apply(args, Arguments, out var actualArgs, out bool argsShouldMacro));
+			Add(PopulateInstruction.Apply(macros, Macros, out var actualMacros, out bool shouldMacro));
+
+			if (actualArgs.AsConstant() is NBTCompound a) Add(new DataCommand.Modify(new Storage(Compiler.RuntimeID), "stack", argsShouldMacro).Append().Value(a.ToString()));
+			else if (Arguments.Count != 0) Add(new DataCommand.Modify(new Storage(Compiler.RuntimeID), "stack").Append().From(args.Storage, args.Path));
+
+			// TODO: Fix this later
+			if (actualMacros.AsConstant() is NBTCompound c) Add(new FunctionCommand(new(ID, true), c, shouldMacro));
+			else if (Macros.Count != 0) Add(new FunctionCommand(new(ID, true), macros.Storage, macros.Path));
+			else Add(new FunctionCommand(new(ID, true)));
 		}
 	}
 
@@ -127,13 +140,13 @@ namespace Amethyst.Codegen.IR
 		}
 	}
 
-	public class StackPushInstruction(LocationRange loc, StorageValue val) : Instruction(loc)
-	{
-		public readonly StorageValue Value = val;
+	// public class StackPushInstruction(LocationRange loc, StorageValue val) : Instruction(loc)
+	// {
+	// 	public readonly StorageValue Value = val;
 
-		public override void Build()
-		{
-			Add(new DataCommand.Modify(new Storage(Compiler.RuntimeID), "stack").Append().From(Value.Storage, Value.Path));
-		}
-	}
+	// 	public override void Build()
+	// 	{
+	// 		Add(new DataCommand.Modify(new Storage(Compiler.RuntimeID), "stack").Append().From(Value.Storage, Value.Path));
+	// 	}
+	// }
 }

@@ -11,11 +11,12 @@ namespace Datapack.Net.Function
     {
         private readonly JArray Obj = [];
         public bool HasHoverOrClickEvents = false;
+        public bool Macro = false;
 
         public FormattedText Text(string str, Modifiers? modifiers = null)
         {
             if (modifiers is null) Obj.Add(str);
-			else
+            else
             {
                 modifiers ??= new();
                 Obj.Add(modifiers.Value.Process(new JObject(new JProperty("text", str)), this));

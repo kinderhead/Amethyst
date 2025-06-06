@@ -14,16 +14,24 @@ using System.Xml.Linq;
 
 namespace Amethyst.AST
 {
-	public class FunctionNode(LocationRange loc, List<NamespacedID> tags, AbstractTypeSpecifier ret, NamespacedID id, List<Parameter> parameters, BlockNode body) : Node(loc)
+	[Flags]
+	public enum FunctionModifiers
+	{
+		None = 0,
+		NoStack = 1
+	}
+
+	public class FunctionNode(LocationRange loc, List<NamespacedID> tags, FunctionModifiers modifiers, AbstractTypeSpecifier ret, NamespacedID id, List<AbstractParameter> parameters, BlockNode body) : Node(loc)
 	{
 		public readonly List<NamespacedID> Tags = tags;
+		public readonly FunctionModifiers Modifiers = modifiers;
 		public readonly AbstractTypeSpecifier ReturnType = ret;
 		public readonly NamespacedID ID = id;
-		public readonly List<Parameter> Parameters = parameters;
+		public readonly List<AbstractParameter> Parameters = parameters;
 		public readonly BlockNode Body = body;
 
 		private FunctionTypeSpecifier? funcType = null;
-		public FunctionTypeSpecifier GetFunctionType(Compiler ctx) => funcType ??= new(ReturnType.Resolve(ctx), Parameters.Select(i => i.Type.Resolve(ctx)));
+		public FunctionTypeSpecifier GetFunctionType(Compiler ctx) => funcType ??= new(ReturnType.Resolve(ctx), Parameters.Select(i => new Parameter(i.Modifiers, i.Type.Resolve(ctx), i.Name)));
 
 		public bool Compile(Compiler compiler)
 		{
@@ -72,17 +80,24 @@ namespace Amethyst.AST
 
 			for (var i = 0; i < funcType.Parameters.Length; i++)
 			{
-				var stackVal = new StorageValue(new(Compiler.RuntimeID), $"stack[-1].$arg{i}", funcType.Parameters[i]);
-
-				MutableValue val;
-				if (funcType.Parameters[i].EffectiveType != NBTType.Int || ctx.KeepLocalsOnStack) val = stackVal;
+				if ((funcType.Parameters[i].Modifiers & ParameterModifiers.Macro) != 0)
+				{
+					ctx.RegisterVariable(funcType.Parameters[i].Name, new MacroValue(funcType.Parameters[i].Name, funcType.Parameters[i].Type));
+				}
 				else
 				{
-					val = ctx.AllocScore();
-					val.Store(ctx, stackVal);
-				}
+					var stackVal = new StorageValue(Compiler.RuntimeID, $"stack[-1].{funcType.Parameters[i].Name}", funcType.Parameters[i].Type);
 
-				ctx.Variables[Parameters[i].Name] = new(Parameters[i].Name, val.Type, Location, val);
+					MutableValue val;
+					if (funcType.Parameters[i].Type.EffectiveType != NBTType.Int || ctx.KeepLocalsOnStack) val = stackVal;
+					else
+					{
+						val = ctx.AllocScore();
+						val.Store(ctx, stackVal);
+					}
+
+					ctx.RegisterVariable(Parameters[i].Name, val);
+				}
 			}
 
 			var ret = Body.CompileWithErrorChecking(ctx);
@@ -95,5 +110,13 @@ namespace Amethyst.AST
 		}
 	}
 
-	public readonly record struct Parameter(AbstractTypeSpecifier Type, string Name);
+	[Flags]
+	public enum ParameterModifiers
+	{
+		None = 0,
+		Macro = 1
+	}
+
+	public readonly record struct AbstractParameter(ParameterModifiers Modifiers, AbstractTypeSpecifier Type, string Name);
+	public readonly record struct Parameter(ParameterModifiers Modifiers, TypeSpecifier Type, string Name);
 }

@@ -1,4 +1,5 @@
-﻿using Amethyst.Codegen.IR;
+﻿using Amethyst.AST;
+using Amethyst.Codegen.IR;
 using Amethyst.Errors;
 using Datapack.Net.Data;
 using System;
@@ -39,7 +40,7 @@ namespace Amethyst.Codegen
 	{
 		public override bool Operable => false;
 
-        protected override bool AreEqual(TypeSpecifier obj) => obj is VoidTypeSpecifier;
+		protected override bool AreEqual(TypeSpecifier obj) => obj is VoidTypeSpecifier;
 		protected override string AsString() => "void";
 	}
 
@@ -53,7 +54,7 @@ namespace Amethyst.Codegen
 	public class PrimitiveTypeSpecifier(NBTType type) : TypeSpecifier
 	{
 		public override bool Operable => NBTValue.IsOperableType(Type);
-        public override bool IsArray => Type == NBTType.List || Type == NBTType.IntArray || Type == NBTType.LongArray || Type == NBTType.ByteArray;
+		public override bool IsArray => Type == NBTType.List || Type == NBTType.IntArray || Type == NBTType.LongArray || Type == NBTType.ByteArray;
 		public readonly NBTType Type = type;
 		public override NBTType EffectiveType => Type;
 
@@ -61,13 +62,16 @@ namespace Amethyst.Codegen
 		protected override string AsString() => Enum.GetName(Type)?.ToLower() ?? throw new InvalidOperationException();
 	}
 
-	public class FunctionTypeSpecifier(TypeSpecifier returnType, IEnumerable<TypeSpecifier> paramters) : TypeSpecifier
+	public class FunctionTypeSpecifier(TypeSpecifier returnType, IEnumerable<Parameter> paramters) : TypeSpecifier
 	{
 		public readonly TypeSpecifier ReturnType = returnType;
-		public readonly TypeSpecifier[] Parameters = [.. paramters];
+		public readonly Parameter[] Parameters = [.. paramters];
 		public override bool Operable => false;
 
-        protected override bool AreEqual(TypeSpecifier obj) => obj is FunctionTypeSpecifier f && f.ReturnType == ReturnType;
+		protected override bool AreEqual(TypeSpecifier obj) => obj is FunctionTypeSpecifier f
+			&& f.ReturnType == ReturnType
+			&& Parameters.Length == f.Parameters.Length
+			&& Parameters.Zip(f.Parameters).All(i => i.First == i.Second);
 		protected override string AsString() => $"() => {ReturnType}";
 	}
 
@@ -76,4 +80,13 @@ namespace Amethyst.Codegen
 		protected override bool AreEqual(TypeSpecifier obj) => base.AreEqual(obj) && obj is DynamicFunctionTypeSpecifier;
 		protected override string AsString() => $"() => {ReturnType}";
 	}
+
+    public class ListTypeSpecifier(TypeSpecifier inner) : TypeSpecifier
+    {
+		public readonly TypeSpecifier Inner = inner;
+        public override bool Operable => false;
+        public override NBTType EffectiveType => NBTType.List;
+		protected override bool AreEqual(TypeSpecifier obj) => obj is ListTypeSpecifier arr && arr.Inner == Inner;
+		protected override string AsString() => $"{Inner}[]";
+    }
 }

@@ -17,6 +17,7 @@ namespace Amethyst.Codegen
 	public abstract class Value
 	{
 		public abstract TypeSpecifier Type { get; }
+		public virtual bool IsMacro => false;
 
 		public abstract Command AppendTo(Storage storage, string path);
 		public abstract Command ReadTo(Storage storage, string path);
@@ -39,13 +40,22 @@ namespace Amethyst.Codegen
 			return tmp;
 		}
 
+		public virtual StorageValue AsStorage(FunctionContext ctx)
+		{
+			var tmp = ctx.AllocTemp(Type);
+			tmp.Store(ctx, this);
+			return tmp;
+		}
+
+		public virtual NBTValue? AsConstant() => null;
+
 		public virtual Value AsNotScore(FunctionContext ctx) => this;
 	}
 
-	public class LiteralValue(NBTValue val) : Value
+	public class LiteralValue(NBTValue val, TypeSpecifier? type = null) : Value
 	{
 		public readonly NBTValue Value = val;
-		public override TypeSpecifier Type => new PrimitiveTypeSpecifier(Value.Type);
+		public override TypeSpecifier Type => type ?? new PrimitiveTypeSpecifier(Value.Type);
 
 		public int ToScoreInt()
 		{
@@ -60,6 +70,7 @@ namespace Amethyst.Codegen
 		public override Command ReadTo(Storage storage, string path) => new DataCommand.Modify(storage, path).Set().Value(Value.ToString());
 		public override Command ReadTo(IEntityTarget target, Score score) => new Scoreboard.Players.Set(target, score, ToScoreInt());
 		public override Command AppendTo(Storage storage, string path) => new DataCommand.Modify(storage, path).Append().Value(Value.ToString());
+		public override NBTValue? AsConstant() => Value;
 
 		public static LiteralValue BooleanEquivalent(FunctionContext ctx, NBTType type, bool value)
 		{
@@ -67,7 +78,7 @@ namespace Amethyst.Codegen
 			{
 				if (value) return new(new NBTBool(true));
 				else return new(new NBTBool(false));
-				
+
 			}
 			else if (type == NBTType.Byte)
 			{
@@ -106,7 +117,26 @@ namespace Amethyst.Codegen
 		public FunctionTypeSpecifier FuncType => (FunctionTypeSpecifier)Type;
 	}
 
-	public abstract class MutableValue : Value
+    public class MacroValue(string name, TypeSpecifier type) : Value
+    {
+		public readonly string Name = name;
+        public override TypeSpecifier Type => type;
+        public override bool IsMacro => true;
+
+		public override Command AppendTo(Storage storage, string path) => new DataCommand.Modify(storage, path, true).Append().Value($"$({Name})");
+		public override FormattedText Format(FormattedText text)
+		{
+			text.Macro = true;
+			return text.Text($"$({Name})");
+		}
+
+        public override Command Get() => throw new NotImplementedException();
+		public override NBTValue? AsConstant() => new NBTRawString($"$({Name})");
+		public override Command ReadTo(Storage storage, string path) => new DataCommand.Modify(storage, path, true).Set().Value($"$({Name})");
+		public override Command ReadTo(IEntityTarget target, Score score) => new Scoreboard.Players.Set(target, score, $"$({Name})");
+    }
+
+    public abstract class MutableValue : Value
 	{
 		public abstract void Store(FunctionContext ctx, Value val);
 		public abstract void Store(FunctionContext ctx, Value val, NBTNumberType type);
@@ -143,6 +173,7 @@ namespace Amethyst.Codegen
 
 		public override Execute WriteFrom(Execute cmd, bool result = true) => cmd.Store(Storage, Path, (NBTNumberType)Type.EffectiveType, 1, result);
 		public override Command AppendTo(Storage storage, string path) => new DataCommand.Modify(storage, path).Append().From(Storage, Path);
+		public override StorageValue AsStorage(FunctionContext ctx) => this;
 	}
 
 	public class ScoreValue(IEntityTarget target, Score score) : MutableValue

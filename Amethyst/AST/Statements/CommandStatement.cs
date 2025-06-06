@@ -27,13 +27,17 @@ namespace Amethyst.AST.Statements
 					values[i.Groups[1].Value] = ctx.GetVariable(i.Groups[1].Value);
 				}
 
-				var func = new MCFunction(ctx.NewInternalID());
-				func.Add(new RawCommand(Command, true));
-				ctx.TotalFunctions.Add(func);
+				if (values.Any(i => i.Value is not MacroValue))
+				{
+					var func = new MCFunction(ctx.NewInternalID());
+					func.Add(new RawCommand(Command, true));
+					ctx.TotalFunctions.Add(func);
 
-				var args = ctx.AllocTemp(new PrimitiveTypeSpecifier(NBTType.Compound));
-				ctx.Add(new PopulateInstruction(Location, args, values));
-				ctx.Add(new CallMacroInstruction(Location, func.ID, args));
+					var args = ctx.AllocTemp(new PrimitiveTypeSpecifier(NBTType.Compound));
+					ctx.Add(new PopulateInstruction(Location, args, values));
+					ctx.Add(new CallMacroInstruction(Location, func.ID, args));
+				}
+				else ctx.Add(new RawCommandInstruction(Location, Command, true));
 			}
 			else ctx.Add(new RawCommandInstruction(Location, Command));
 		}

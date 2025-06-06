@@ -14,11 +14,12 @@ namespace Amethyst.Codegen.IR
 	{
 		public override void Build()
 		{
-			if (Ctx.Ctx.FunctionType.Parameters.Length == 0)
+			if (Ctx.Ctx.Node.Tags.Count != 0 && Ctx.Ctx.FunctionType.Parameters.Length != 0) throw new TagError(Ctx.Ctx.Node.Location, "functions with arguments cannot have tags");
+
+			if (Ctx.Ctx.UsesStack && !Ctx.Ctx.FunctionType.Parameters.Any(i => (i.Modifiers & ParameterModifiers.Macro) != 0))
 			{
 				Add(new DataCommand.Modify(new Storage(Compiler.RuntimeID), "stack").Append().Value("{}"));
 			}
-			else if (Ctx.Ctx.Node.Tags.Count != 0) throw new TagError(Ctx.Ctx.Node.Location, "Functions with arguments cannot have tags");
 
 			foreach (var i in Ctx.Ctx.LocalScores)
 			{
@@ -36,7 +37,11 @@ namespace Amethyst.Codegen.IR
 				Add(new StorageValue(new Storage(Compiler.RuntimeID), $"stack[-1].$score{i.Score.Name}", i.Type).ReadTo(i.Target, i.Score));
 			}
 
-			Add(new DataCommand.Remove(new Storage(Compiler.RuntimeID), "stack[-1]"));
+			if (Ctx.Ctx.UsesStack)
+			{
+				if ((Ctx.Ctx.Node.Modifiers & FunctionModifiers.NoStack) == FunctionModifiers.NoStack) throw new ModifierError(Location, "function uses stack when it is not supposed to");
+				Add(new DataCommand.Remove(new Storage(Compiler.RuntimeID), "stack[-1]"));
+			}
 		}
 	}
 

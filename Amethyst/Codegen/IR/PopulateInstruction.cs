@@ -1,5 +1,6 @@
 ﻿using Amethyst.AST;
 using Datapack.Net.Data;
+using Datapack.Net.Function;
 using Datapack.Net.Function.Commands;
 using System;
 using System.Collections.Generic;
@@ -17,13 +18,39 @@ namespace Amethyst.Codegen.IR
 
 		public override void Build()
 		{
+			Add(Apply(Dest, Values));
+		}
+
+		public static List<Command> Apply(StorageValue dest, Dictionary<string, Value> values)
+		{
+			var cmds = Apply(dest, values, out var actual, out var macro);
+			if (actual.AsConstant() is NBTCompound c) return [new DataCommand.Modify(dest.Storage, dest.Path, macro).Set().Value(c.ToString())];
+			return cmds;
+		}
+
+		public static List<Command> Apply(StorageValue dest, Dictionary<string, Value> values, out Value actual, out bool macro)
+		{
 			var consts = new NBTCompound();
-			foreach (var i in Values)
+			var cmds = new List<Command>();
+			macro = false;
+			foreach (var i in values)
 			{
-				if (i.Value is LiteralValue v) consts[i.Key] = v.Value;
-				else Add(i.Value.ReadTo(Dest.Storage, Dest.Path + $".{i.Key}"));
+				if (i.Value.IsMacro) macro = true;
+				if (i.Value.AsConstant() is NBTValue c) consts[i.Key] = c;
+				else cmds.Add(i.Value.ReadTo(dest.Storage, dest.Path + $".{i.Key}"));
 			}
-			if (consts.Count != 0) Prepend(new DataCommand.Modify(Dest.Storage, Dest.Path).Set().Value(consts.ToString()));
+			if (consts.Count != 0) cmds.Insert(0, new DataCommand.Modify(dest.Storage, dest.Path, macro).Set().Value(consts.ToString()));
+
+			if (consts.Count == values.Count && values.Count != 0)
+			{
+				actual = new LiteralValue(consts);
+				return [];
+			}
+			else
+			{
+				actual = dest;
+				return cmds;
+			}
 		}
 	}
 

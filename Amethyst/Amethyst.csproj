@@ -20,7 +20,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="examples\test.ame">
+    <None Update="examples\**">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="core\**">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>

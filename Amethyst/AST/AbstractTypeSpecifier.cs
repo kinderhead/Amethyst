@@ -53,5 +53,12 @@ namespace Amethyst.AST
 
 			throw new UnknownTypeError(Location, Type);
 		}
+	}
+
+    public class AbstractListTypeSpecifier(LocationRange loc, AbstractTypeSpecifier inner) : AbstractTypeSpecifier(loc)
+    {
+		public readonly AbstractTypeSpecifier Inner = inner;
+
+		public override TypeSpecifier Resolve(Compiler ctx, bool allowAuto = false) => new ListTypeSpecifier(Inner.Resolve(ctx, allowAuto));
     }
 }

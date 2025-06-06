@@ -44,11 +44,25 @@ namespace Datapack.Net.Function.Commands
                 }
             }
 
-            public class Set(IEntityTarget target, Score score, int value, bool macro = false) : Command(macro)
+            public class Set : Command
             {
-                public readonly IEntityTarget Target = target;
-                public readonly Score Score = score;
-                public readonly int Value = value;
+                public readonly IEntityTarget Target;
+                public readonly Score Score;
+                public readonly string Value;
+
+                public Set(IEntityTarget target, Score score, int value, bool macro = false) : base(macro)
+                {
+                    Target = target;
+                    Score = score;
+                    Value = value.ToString();
+                }
+
+                public Set(IEntityTarget target, Score score, string value) : base(true)
+                {
+                    Target = target;
+                    Score = score;
+                    Value = value;
+                }
 
                 protected override string PreBuild()
                 {

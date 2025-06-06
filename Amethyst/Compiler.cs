@@ -13,6 +13,7 @@ using Datapack.Net.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -51,7 +52,7 @@ namespace Amethyst
 		public bool Compile()
 		{
 			var errored = false;
-			foreach (var i in Options.Inputs)
+			foreach (var i in new List<string>([..Options.Inputs, ..CoreLibrary.Select(i => Path.Join(Path.GetDirectoryName(Assembly.GetEntryAssembly()?.Location), "core", i))]))
 			{
 				if (!ParseFile(i)) errored = true;
 			}
@@ -87,6 +88,7 @@ namespace Amethyst
 			Register(cleanup);
 			Datapack.Tags.GetTag(new("amethyst", "cleanup"), "function").Values.Insert(0, cleanup.ID);
 
+			Datapack.Optimize();
 			Datapack.Build();
 
 			return true;
@@ -164,8 +166,10 @@ namespace Amethyst
 		{
 			var func = new MCFunction(new("amethyst", $"zz_internal/{RandomString}"));
 
-			func.Add(new DataCommand.Remove(new Storage(new("amethyst", "runtime")), "stack"));
-			func.Add(new DataCommand.Remove(new Storage(new("amethyst", "runtime")), "return"));
+			foreach (var i in RuntimeStorageUsed)
+			{
+				func.Add(new DataCommand.Remove(new Storage(new("amethyst", "runtime")), i));
+			}
 
 			foreach (var i in registeredScores)
 			{
@@ -188,6 +192,8 @@ namespace Amethyst
 		public static string RandomString { get => Guid.NewGuid().ToString(); }
 		public static readonly NamespacedID RuntimeID = new("amethyst", "runtime");
 		public static readonly IEntityTarget RuntimeEntity = new NamedTarget("amethyst");
+		public static readonly List<string> RuntimeStorageUsed = ["stack", "return", "tmp_args", "tmp_macros"];
+		public static readonly List<string> CoreLibrary = ["macros.ame"];
 		//public static readonly Score ReturnScore = new("returned", "dummy");
 	}
 
