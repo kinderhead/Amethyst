@@ -16,7 +16,7 @@ namespace Amethyst.Codegen.IR
 		{
 			if (Ctx.Ctx.Node.Tags.Count != 0 && Ctx.Ctx.FunctionType.Parameters.Length != 0) throw new TagError(Ctx.Ctx.Node.Location, "functions with arguments cannot have tags");
 
-			if (Ctx.Ctx.UsesStack && !Ctx.Ctx.FunctionType.Parameters.Any(i => (i.Modifiers & ParameterModifiers.Macro) != 0))
+			if (Ctx.Ctx.UsesStack && !Ctx.Ctx.FunctionType.Parameters.Any(i => i.Modifiers.HasFlag(ParameterModifiers.Macro)))
 			{
 				Add(new DataCommand.Modify(new Storage(Compiler.RuntimeID), "stack").Append().Value("{}"));
 			}

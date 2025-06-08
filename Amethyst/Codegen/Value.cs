@@ -72,6 +72,12 @@ namespace Amethyst.Codegen
 		public override Command AppendTo(Storage storage, string path) => new DataCommand.Modify(storage, path).Append().Value(Value.ToString());
 		public override NBTValue? AsConstant() => Value;
 
+		public override ScoreValue AsScore(FunctionContext ctx)
+		{
+			if (ctx.Compiler.Options.NoConstantScores || Value is not NBTInt i) return base.AsScore(ctx);
+			else return ctx.Constant(i.Value);
+        }
+
 		public static LiteralValue BooleanEquivalent(FunctionContext ctx, NBTType type, bool value)
 		{
 			if (type == NBTType.Boolean)

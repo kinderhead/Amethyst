@@ -12,14 +12,22 @@ namespace Datapack.Net.Data
     {
 		public override NBTType Type => NBTType.Compound;
 		public Dictionary<string, NBTValue> Values = [];
-
         public NBTValue this[string key] { get => Values[key]; set => Values[key] = value; }
-
         public ICollection<string> Keys => Values.Keys;
-
         public int Count => Values.Count;
-
         public bool IsReadOnly => false;
+
+        public NBTCompound()
+        {
+        }
+
+        public NBTCompound(IEnumerable<KeyValuePair<string, NBTValue>> values)
+        {
+            foreach (var i in values)
+            {
+                Values.Add(i.Key, i.Value);
+            }
+        }
 
         ICollection<NBTValue> IDictionary<string, NBTValue>.Values => Values.Values;
 

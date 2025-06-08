@@ -44,8 +44,6 @@ namespace Amethyst.AST.Expressions
 				dest.Store(ctx, Execute(ctx));
 				return;
 			}
-			
-			
 
 			Left.Store(ctx, sval);
 			ctx.Add(new ScoreOperationInstruction(Location, sval, Op, Right.Execute(ctx).AsScore(ctx)));

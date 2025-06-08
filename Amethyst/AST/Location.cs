@@ -17,7 +17,14 @@ namespace Amethyst.AST
 
 	public readonly record struct LocationRange(Location Start, Location End)
 	{
-		public static LocationRange From(string path, ParserRuleContext ctx) => new(Location.From(path, ctx.Start), Location.From(path, ctx.Stop)); // TODO: Make the range cover the whole last token
+		public static LocationRange From(string path, ParserRuleContext ctx)
+		{
+			var stopToken = ctx.Stop;
+			// Might have to fix if there are multiline tokens, but I don't think there are any
+			int endColumn = stopToken.Column + stopToken.StopIndex - stopToken.StartIndex + 1;
+			var end = new Location(path, stopToken.Line, endColumn);
+			return new LocationRange(Location.From(path, ctx.Start), end);
+		}
 
 		public override string ToString()
 		{

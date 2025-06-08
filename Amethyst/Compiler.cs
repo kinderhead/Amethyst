@@ -28,7 +28,9 @@ namespace Amethyst
 		public readonly Dictionary<NamespacedID, FunctionContext> Functions = [];
 		public readonly Dictionary<NamespacedID, CompileTimeFunction> CompileTimeFunctions = [];
 
+		private readonly Dictionary<int, ScoreValue> constants = [];
 		private readonly HashSet<Score> registeredScores = [];
+		private readonly List<MCFunction> functionsToRemove = [];
 
 		public Dictionary<string, string> Files { get; } = [];
 
@@ -78,6 +80,11 @@ namespace Amethyst
 			//	if (!i.Value.RequireCompiled()) errored = true;
 			//}
 
+			foreach (var i in functionsToRemove)
+			{
+				Datapack.Functions.Remove(i);
+			}
+
 			if (errored) return false;
 
 			var init = GetInitFunc();
@@ -98,7 +105,19 @@ namespace Amethyst
 		public void Register(Score score) => registeredScores.Add(score);
 		public void Register(CompileTimeFunction func) => CompileTimeFunctions[func.ID] = func;
 
-		public void Unregister(MCFunction func) => Datapack.Functions.Remove(func);
+		public void Unregister(MCFunction func) => functionsToRemove.Add(func);
+
+		public ScoreValue Constant(int num)
+		{
+			if (constants.TryGetValue(num, out var val)) return val;
+
+			var score = new Score($"_{num}", "dummy");
+			Register(score);
+			val = new ScoreValue(RuntimeEntity, score);
+			constants[num] = val;
+
+			return val;
+		}
 
 		public bool ParseFile(string filename)
 		{
@@ -155,6 +174,11 @@ namespace Amethyst
 			foreach (var i in registeredScores)
 			{
 				func.Add(new Scoreboard.Objectives.Add(i));
+			}
+
+			foreach (var i in constants)
+			{
+				func.Add(new Scoreboard.Players.Set(i.Value.Target, i.Value.Score, i.Key));
 			}
 
 			//func.Add(new Scoreboard.Players.Set(RuntimeEntity, NullScore, 0));

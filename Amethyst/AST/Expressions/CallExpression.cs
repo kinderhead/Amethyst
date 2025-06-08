@@ -39,20 +39,12 @@ namespace Amethyst.AST.Expressions
 
 				if (f.FuncType.Parameters.Length != 0)
 				{
-					//var argHolder = ctx.AllocTemp(new PrimitiveTypeSpecifier(NBTType.Compound));
-
 					for (var i = 0; i < Args.Count; i++)
 					{
 						var val = Args[i].Cast(f.FuncType.Parameters[i].Type).Execute(ctx);
-						if ((f.FuncType.Parameters[i].Modifiers & ParameterModifiers.Macro) == ParameterModifiers.Macro) macros[f.FuncType.Parameters[i].Name] = val;
+						if (f.FuncType.Parameters[i].Modifiers.HasFlag(ParameterModifiers.Macro)) macros[f.FuncType.Parameters[i].Name] = val;
 						else args[f.FuncType.Parameters[i].Name] = val;
 					}
-
-					// if (args.Count != 0)
-					// {
-					// 	ctx.Add(new PopulateInstruction(Location, argHolder, args));
-					// 	ctx.Add(new StackPushInstruction(Location, argHolder));
-					// }
 				}
 
 				ctx.Add(new CallInstruction(Location, f.ID, args, macros));

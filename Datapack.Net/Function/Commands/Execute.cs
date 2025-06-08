@@ -537,7 +537,7 @@ namespace Datapack.Net.Function.Commands
 
                     if (TargetPos != null)
                     {
-                        postfix = $"block {TargetPos} {Path} {Enum.GetName(DataType)?.ToLower()} {Scale}";
+                        postfix = $"block {TargetPos} {Path} {GetDataTypeName(DataType)} {Scale}";
                     }
                     else if (BossbarID != null)
                     {
@@ -549,14 +549,20 @@ namespace Datapack.Net.Function.Commands
                     }
                     else if (Target != null)
                     {
-                        postfix = $"entity {Target.Get()} {Path} {Enum.GetName(DataType)?.ToLower()} {Scale}";
+                        postfix = $"entity {Target.Get()} {Path} {GetDataTypeName(DataType)} {Scale}";
                     }
                     else if (StorageTarget != null)
                     {
-                        postfix = $"storage {StorageTarget} {Path} {Enum.GetName(DataType)?.ToLower()} {Scale}";
+                        postfix = $"storage {StorageTarget} {Path} {GetDataTypeName(DataType)} {Scale}";
                     }
 
                     return prefix + postfix;
+                }
+
+                public static string GetDataTypeName(NBTNumberType type)
+                {
+                    if (type == NBTNumberType.Boolean) return "byte";
+                    return Enum.GetName(type)?.ToLower() ?? throw new InvalidOperationException($"Unknown NBTNumberType: {type}");
                 }
             }
         }

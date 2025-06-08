@@ -3,8 +3,5 @@ namespace test;
 #load
 void main()
 {
-    int[] arr = [1, 2, 3, 4, 5];
-
-    int x = 2;
-    print(arr[x]);
+    int x = 4;
 }

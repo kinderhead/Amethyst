@@ -1,6 +1,7 @@
 ﻿using Amethyst.AST;
 using Amethyst.AST.Statements;
 using Amethyst.Errors;
+using Datapack.Net.Data;
 using Datapack.Net.Function;
 using Datapack.Net.Function.Commands;
 using Datapack.Net.Utils;
@@ -33,7 +34,7 @@ namespace Amethyst.Codegen.IR
 		private readonly Stack<ILocatable> locators = [];
 		public ILocatable CurrentLocator { get => locators.Peek(); }
 
-		private readonly Dictionary<string, LocalSymbol> Variables = [];
+		private readonly Dictionary<string, LocalSymbol> variables = [];
 
 		private int tempStack = 0;
 		private int tempScore = 0;
@@ -91,8 +92,8 @@ namespace Amethyst.Codegen.IR
 
 		public void RegisterVariable(string name, Value val)
 		{
-			if (Variables.TryGetValue(name, out var sym)) throw new RedefinedSymbolError(CurrentLocator.Location, name, sym.Location);
-			Variables[name] = new(name, CurrentLocator.Location, val);
+			if (variables.TryGetValue(name, out var sym)) throw new RedefinedSymbolError(CurrentLocator.Location, name, sym.Location);
+			variables[name] = new(name, CurrentLocator.Location, val);
 			if (val is StorageValue s && s.Path.StartsWith("stack")) UsesStack = true;
 		}
 
@@ -104,7 +105,7 @@ namespace Amethyst.Codegen.IR
 
 		public Value? GetVariableNoThrow(string name)
 		{
-			if (Variables.TryGetValue(name, out var val)) return val.Value;
+			if (variables.TryGetValue(name, out var val)) return val.Value;
 			else
 			{
 				if (!name.Contains(':'))
@@ -149,6 +150,8 @@ namespace Amethyst.Codegen.IR
 			LocalScores.Add(val);
 			return val;
 		}
+
+		public ScoreValue Constant(int num) => Compiler.Constant(num);
 
 		public bool RequireCompiled()
 		{

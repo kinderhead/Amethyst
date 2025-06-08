@@ -80,7 +80,7 @@ namespace Amethyst.AST
 
 			for (var i = 0; i < funcType.Parameters.Length; i++)
 			{
-				if ((funcType.Parameters[i].Modifiers & ParameterModifiers.Macro) != 0)
+				if (funcType.Parameters[i].Modifiers.HasFlag(ParameterModifiers.Macro))
 				{
 					ctx.RegisterVariable(funcType.Parameters[i].Name, new MacroValue(funcType.Parameters[i].Name, funcType.Parameters[i].Type));
 				}
