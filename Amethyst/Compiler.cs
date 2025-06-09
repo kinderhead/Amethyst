@@ -101,6 +101,13 @@ namespace Amethyst
 			return true;
 		}
 
+		public Score Score(string name)
+		{
+			var score = new Score(name, "dummy");
+			Register(score);
+			return score;
+		}
+
 		public void Register(MCFunction func) => Datapack.Functions.Add(func);
 		public void Register(Score score) => registeredScores.Add(score);
 		public void Register(CompileTimeFunction func) => CompileTimeFunctions[func.ID] = func;

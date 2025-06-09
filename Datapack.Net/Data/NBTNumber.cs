@@ -62,10 +62,10 @@ namespace Datapack.Net.Data
         public static implicit operator double(NBTDouble val) => val.Value;
     }
 
-    public class NBTByte(byte val) : NBTNumber<byte>(val, "b")
+    public class NBTByte(sbyte val) : NBTNumber<sbyte>(val, "b")
     {
 		public override NBTType Type => NBTType.Byte;
-		public static implicit operator NBTByte(byte val) => new(val);
-        public static implicit operator byte(NBTByte val) => val.Value;
+		public static implicit operator NBTByte(sbyte val) => new(val);
+        public static implicit operator sbyte(NBTByte val) => val.Value;
     }
 }

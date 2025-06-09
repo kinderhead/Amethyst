@@ -12,26 +12,36 @@ namespace Amethyst.Codegen.IR
 {
 	public class SubFunction(FunctionContext.Frame ctx, NamespacedID id, MCFunction func)
 	{
-		public readonly FunctionContext.Frame Context = ctx;
+		public readonly FunctionContext.Frame Frame = ctx;
 		public readonly NamespacedID ID = id;
 		public readonly MCFunction Func = func;
 
-		public Command Call(Execute baseCmd)
+		public Command[] Call(Execute baseCmd)
 		{
-			Context.RequireCompiled();
-			var commands = Context.Commands;
-			if (commands.Count == 1 && !Context.Ctx.Compiler.Options.AllowOneLiners)
+			Frame.RequireCompiled();
+			var commands = Frame.Commands;
+			if (commands.Count == 1 && !Frame.Ctx.Compiler.Options.AllowOneLiners)
 			{
-				Context.Ctx.Compiler.Unregister(Func);
-				return baseCmd.Run(commands.First());
+				Frame.Ctx.Compiler.Unregister(Func);
+				return [baseCmd.Run(commands.First())];
 			}
 
-			if (Context.HasInstruction<ExitFrameInstruction>())
+			var macroCall = new FunctionCommand(Func, [.. Frame.Ctx.FunctionType.Parameters.Where(i => i.Modifiers.HasFlag(AST.ParameterModifiers.Macro)).Select(i => new KeyValuePair<string, NBTValue>(i.Name, $"$({i.Name})"))], true);
+
+			if (Frame.HasInstruction<ExitFrameInstruction>())
 			{
-				if (Context.Ctx.FunctionType.Parameters.Any(i => i.Modifiers.HasFlag(AST.ParameterModifiers.Macro))) throw new NotImplementedException();
-				return baseCmd.If.Function(Func).Run(new ReturnCommand(1));
+				if (Frame.Ctx.HasMacros)
+				{
+					var score = Frame.Ctx.Compiler.Score("_fail");
+					return [ // Don't make copy of baseCmd because the sub function could modify the effect
+						new Scoreboard.Players.Set(Compiler.RuntimeEntity, score, 0),
+						baseCmd.Store(Compiler.RuntimeEntity, score).Run(macroCall),
+						new Execute().If.Score(Compiler.RuntimeEntity, score, 1).Run(new ReturnCommand(1))
+					];
+				}
+				else return [baseCmd.If.Function(Func).Run(new ReturnCommand(1))];
 			}
-			else return baseCmd.Run(new FunctionCommand(Func, [.. Context.Ctx.FunctionType.Parameters.Where(i => i.Modifiers.HasFlag(AST.ParameterModifiers.Macro)).Select(i => new KeyValuePair<string, NBTValue>(i.Name, $"$({i.Name})"))], true));
+			else return [baseCmd.Run(macroCall)];
 		}
 	}
 }

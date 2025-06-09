@@ -33,6 +33,7 @@ namespace Amethyst.Codegen.IR
 
 		private readonly Stack<ILocatable> locators = [];
 		public ILocatable CurrentLocator { get => locators.Peek(); }
+		public bool HasMacros => FunctionType.Parameters.Any(i => i.Modifiers.HasFlag(AST.ParameterModifiers.Macro));
 
 		private readonly Dictionary<string, LocalSymbol> variables = [];
 

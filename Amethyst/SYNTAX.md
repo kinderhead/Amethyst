@@ -1,7 +1,7 @@
 # Amethyst Syntax
 
 Example program:
-```cs
+``` cs
 namespace test;
 
 class Test {
@@ -24,11 +24,9 @@ void main() {
     int x = 4;
     var b = true; // Type inference
     string str = "Yay";
-    object obj = { 
-        int prop1 = 4;
-        string prop2 = str;
-    };
+    
     int[] arr = [1, 2, 3, 4, 5];
+    compound obj = { name: "womp", "other_property": 234 };
 
     // Command interpolation
     @/say $(str)

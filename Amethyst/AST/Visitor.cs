@@ -180,7 +180,7 @@ namespace Amethyst.AST
 		{
 			if (context.Identifier() is ITerminalNode id) return new VariableExpression(Loc(context), id.GetText());
 			else if (context.String() is ITerminalNode str) return new LiteralExpression(Loc(context), new NBTString(NBTString.Unescape(str.GetText()[1..^1])));
-			else if (context.Integer() is ITerminalNode i) return new LiteralExpression(Loc(context), new NBTInt(int.Parse(i.GetText())));
+			else if (context.Integer() is ITerminalNode i) return new LiteralExpression(Loc(context), ParseNumber(i.GetText()));
 			else if (context.expression() is AmethystParser.ExpressionContext expr) return Visit(expr);
 			else return Visit(context.children[0]);
 		}
@@ -198,6 +198,28 @@ namespace Amethyst.AST
 		{
 			if (name.Contains(':')) return new(name);
 			else return new(currentNamespace, name);
+		}
+
+		public NBTValue ParseNumber(string raw)
+		{
+			switch (char.ToLower(raw.Last()))
+			{
+				case 'b':
+					return new NBTByte(sbyte.Parse(raw[..^1]));
+				case 's':
+					return new NBTShort(short.Parse(raw[..^1]));
+				case 'i':
+					return new NBTInt(int.Parse(raw[..^1]));
+				default:
+					if (raw.Contains('.')) return new NBTDouble(double.Parse(raw));
+					return new NBTInt(int.Parse(raw));
+				case 'l':
+					return new NBTLong(long.Parse(raw[..^1]));
+				case 'f':
+					return new NBTFloat(float.Parse(raw[..^1]));
+				case 'd':
+					return new NBTDouble(double.Parse(raw[..^1]));
+			}
 		}
 	}
 }

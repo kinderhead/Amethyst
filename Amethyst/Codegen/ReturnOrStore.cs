@@ -30,7 +30,11 @@ namespace Amethyst.Codegen
         public void Store(Value val)
         {
             if (dest is not null) dest.Store(Ctx, val);
-            else value = val;
+            else
+            {
+                value = val;
+                value.Type = Type;
+            }
         }
 
         public void Store(Value val, NBTNumberType type)

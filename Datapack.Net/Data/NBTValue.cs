@@ -66,7 +66,7 @@ namespace Datapack.Net.Data
 
 		public static implicit operator NBTValue(string val) => new NBTString(val);
         public static implicit operator NBTValue(int val) => new NBTInt(val);
-        public static implicit operator NBTValue(byte val) => new NBTByte(val);
+        public static implicit operator NBTValue(sbyte val) => new NBTByte(val);
         public static implicit operator NBTValue(short val) => new NBTShort(val);
         public static implicit operator NBTValue(long val) => new NBTLong(val);
         public static implicit operator NBTValue(float val) => new NBTFloat(val);
@@ -81,7 +81,7 @@ namespace Datapack.Net.Data
             {
                 string str => new NBTString(str),
                 int i => new NBTInt(i),
-                byte b => new NBTByte(b),
+                sbyte b => new NBTByte(b),
                 short s => new NBTShort(s),
                 long l => new NBTLong(l),
                 float f => new NBTFloat(f),

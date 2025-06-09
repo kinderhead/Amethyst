@@ -165,7 +165,7 @@ OrOr: '||';
 Identifier: ([a-z] | [A-Z] | '_' ) ([a-z] | [A-Z] | [0-9] | '_' | '-' | ':' | '/')*;
 String: '"' ( ~[\\"\n\r] | '\\' [\\"] )* '"';
 Command: '@/' ( ~[\n\r] )* ('\r' | '\n');
-Integer: '-'? [0-9]+;
+Integer: '-'? [0-9.]+ [bsilfdBSILFD]?;
 
 Whitespace: (' '|'\t'|'\n'|'\r')+ -> skip;
 Comment: '/*' .*? '*/' -> skip;

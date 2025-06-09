@@ -14,9 +14,9 @@ using System.Threading.Tasks;
 
 namespace Amethyst.Codegen
 {
-	public abstract class Value
+	public abstract class Value(TypeSpecifier type)
 	{
-		public abstract TypeSpecifier Type { get; }
+		public TypeSpecifier Type = type;
 		public virtual bool IsMacro => false;
 
 		public abstract Command AppendTo(Storage storage, string path);
@@ -52,12 +52,11 @@ namespace Amethyst.Codegen
 		public virtual Value AsNotScore(FunctionContext ctx) => this;
 	}
 
-	public class LiteralValue(NBTValue val, TypeSpecifier? type = null) : Value
+	public class LiteralValue(NBTValue val, TypeSpecifier? type = null) : Value(type ?? new PrimitiveTypeSpecifier(val.Type))
 	{
 		public readonly NBTValue Value = val;
-		public override TypeSpecifier Type => type ?? new PrimitiveTypeSpecifier(Value.Type);
 
-		public int ToScoreInt()
+        public int ToScoreInt()
 		{
 			if (NBTValue.IsOperableType(Value.Type) && Value is INBTNumber num) return Convert.ToInt32(num.RawValue);
 			else if (Value is ICollection l) return l.Count;
@@ -103,12 +102,10 @@ namespace Amethyst.Codegen
 			}
 			else throw new InvalidTypeError(ctx.CurrentLocator.Location, Enum.GetName(type)?.ToLower() ?? "void");
 		}
-	}
+    }
 
-	public class VoidValue : Value
+	public class VoidValue() : Value(new VoidTypeSpecifier())
 	{
-		public override TypeSpecifier Type => new VoidTypeSpecifier();
-
 		public override Command AppendTo(Storage storage, string path) => throw new InvalidOperationException();
 		public override FormattedText Format(FormattedText text) => text.Text("void");
 		public override Command Get() => throw new InvalidOperationException();
@@ -116,17 +113,15 @@ namespace Amethyst.Codegen
 		public override Command ReadTo(IEntityTarget target, Score score) => throw new InvalidOperationException();
 	}
 
-	public class StaticFunctionValue(NamespacedID id, FunctionTypeSpecifier type) : LiteralValue(new NBTString(id.ToString()))
+	public class StaticFunctionValue(NamespacedID id, FunctionTypeSpecifier type) : LiteralValue(new NBTString(id.ToString()), type)
 	{
 		public readonly NamespacedID ID = id;
-		public override TypeSpecifier Type => type;
 		public FunctionTypeSpecifier FuncType => (FunctionTypeSpecifier)Type;
 	}
 
-    public class MacroValue(string name, TypeSpecifier type) : Value
+    public class MacroValue(string name, TypeSpecifier type) : Value(type)
     {
 		public readonly string Name = name;
-        public override TypeSpecifier Type => type;
         public override bool IsMacro => true;
 
 		public override Command AppendTo(Storage storage, string path) => new DataCommand.Modify(storage, path, true).Append().Value($"$({Name})");
@@ -142,7 +137,7 @@ namespace Amethyst.Codegen
 		public override Command ReadTo(IEntityTarget target, Score score) => new Scoreboard.Players.Set(target, score, $"$({Name})");
     }
 
-    public abstract class MutableValue : Value
+    public abstract class MutableValue(TypeSpecifier type) : Value(type)
 	{
 		public abstract void Store(FunctionContext ctx, Value val);
 		public abstract void Store(FunctionContext ctx, Value val, NBTNumberType type);
@@ -150,11 +145,10 @@ namespace Amethyst.Codegen
 		public abstract Execute WriteFrom(Execute cmd, bool result = true);
 	}
 
-	public class StorageValue(Storage storage, string path, TypeSpecifier type) : MutableValue
+	public class StorageValue(Storage storage, string path, TypeSpecifier type) : MutableValue(type)
 	{
 		public readonly Storage Storage = storage;
 		public readonly string Path = path;
-		public override TypeSpecifier Type => type;
 
 		public override FormattedText Format(FormattedText text) => text.Storage(Storage, Path);
 		public override Command Get() => new DataCommand.Get(Storage, Path);
@@ -182,12 +176,11 @@ namespace Amethyst.Codegen
 		public override StorageValue AsStorage(FunctionContext ctx) => this;
 	}
 
-	public class ScoreValue(IEntityTarget target, Score score) : MutableValue
+	public class ScoreValue(IEntityTarget target, Score score) : MutableValue(new PrimitiveTypeSpecifier(NBTType.Int))
 	{
 		public readonly IEntityTarget Target = target;
 		public readonly Score Score = score;
 
-		public override TypeSpecifier Type => new PrimitiveTypeSpecifier(NBTType.Int);
 		public override Command Get() => new Scoreboard.Players.Get(Target, Score);
 		public override void Store(FunctionContext ctx, Value val) => ctx.Add(new StoreInstruction(ctx.CurrentLocator.Location, this, val));
 		public override void Store(FunctionContext ctx, Value val, NBTNumberType type) => Store(ctx, val);

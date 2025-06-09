@@ -27,6 +27,15 @@ namespace Amethyst.AST.Expressions
 
 		protected override void _Store(FunctionContext ctx, MutableValue val)
 		{
+			var ctype = Expression.ComputeType(ctx);
+			if (ctype == Type || (ctype.EffectiveType == NBTType.List && val.Type.IsList))
+			{
+				Expression.Store(ctx, val);
+				return;
+			}
+
+			if (val.Type != Type) throw new InvalidTypeError(Location, val.Type.ToString());
+
 			var src = Expression.Execute(ctx);
 			src.Type.Cast(ctx, src, new(ctx, val));
 		}

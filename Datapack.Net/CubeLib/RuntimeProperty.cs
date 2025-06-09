@@ -113,7 +113,7 @@ namespace Datapack.Net.CubeLib
         {
         }
 
-        public static implicit operator ByteRuntimeProperty(byte val) => new(val);
+        public static implicit operator ByteRuntimeProperty(sbyte val) => new(val);
     }
 
     public class StringRuntimeProperty : RuntimeProperty<NBTString>

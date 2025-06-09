@@ -13,7 +13,8 @@ namespace Amethyst.Codegen
 	public abstract class TypeSpecifier
 	{
 		public abstract bool Operable { get; }
-		public virtual bool IsArray => false;
+		public virtual bool IsList => false;
+		public virtual TypeSpecifier? PossibleInnerType => null;
 
 		// TODO: Make this not throw an error
 		public virtual NBTType EffectiveType => throw new InvalidOperationException(ToString());
@@ -29,7 +30,7 @@ namespace Amethyst.Codegen
 						dest.Store(new LiteralValue(new NBTBool(Convert.ToBoolean(num.RawValue)), dest.Type));
 						break;
 					case NBTType.Byte:
-						dest.Store(new LiteralValue(new NBTByte(Convert.ToByte(num.RawValue)), dest.Type));
+						dest.Store(new LiteralValue(new NBTByte(Convert.ToSByte(num.RawValue)), dest.Type));
 						break;
 					case NBTType.Short:
 						dest.Store(new LiteralValue(new NBTShort(Convert.ToInt16(num.RawValue)), dest.Type));
@@ -93,7 +94,7 @@ namespace Amethyst.Codegen
 	public class PrimitiveTypeSpecifier(NBTType type) : TypeSpecifier
 	{
 		public override bool Operable => NBTValue.IsOperableType(Type);
-		public override bool IsArray => Type == NBTType.List || Type == NBTType.IntArray || Type == NBTType.LongArray || Type == NBTType.ByteArray;
+		public override bool IsList => Type == NBTType.List || Type == NBTType.IntArray || Type == NBTType.LongArray || Type == NBTType.ByteArray;
 		public readonly NBTType Type = type;
 		public override NBTType EffectiveType => Type;
 
@@ -119,14 +120,9 @@ namespace Amethyst.Codegen
 				dest.Store(src, (NBTNumberType)dest.Type.EffectiveType);
 				return true;
 			}
-			else if (src.AsConstant() is NBTList list && dest.Type is ListTypeSpecifier lType)
+			else if (Type == NBTType.List && dest.Type is ListTypeSpecifier)
 			{
-				foreach (var i in list)
-				{
-					if (i.Type != lType.Inner.EffectiveType) return false;
-				}
-
-				dest.Store(new LiteralValue(list, lType));
+				dest.Store(src);
 				return true;
 			}
 
@@ -158,6 +154,8 @@ namespace Amethyst.Codegen
 		public readonly TypeSpecifier Inner = inner;
 		public override bool Operable => false;
 		public override NBTType EffectiveType => NBTType.List;
+		public override TypeSpecifier? PossibleInnerType => Inner;
+        public override bool IsList => true;
 		protected override bool AreEqual(TypeSpecifier obj) => obj is ListTypeSpecifier arr && arr.Inner == Inner;
 		protected override string _ToString() => $"{Inner}[]";
 	}

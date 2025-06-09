@@ -131,7 +131,7 @@ namespace Datapack.Net.CubeLib
 
     public class ByteEntityProperty : EntityProperty<NBTByte>
     {
-        public static implicit operator ByteEntityProperty(byte value) => new() { Value = value };
+        public static implicit operator ByteEntityProperty(sbyte value) => new() { Value = value };
         public static implicit operator ByteEntityProperty(ScoreRef value) => new() { Score = value.ToScore() };
         public static implicit operator ByteEntityProperty(ScoreRefOperation value) => new() { Score = value.ToScore() };
     }

@@ -31,12 +31,15 @@ namespace Amethyst.AST.Expressions
 
         protected override void _Store(FunctionContext ctx, MutableValue dest)
         {
-            Compute(ctx, dest, [.. Expressions.Select(i => i.Execute(ctx))]);
+            List<Value> vals;
+            if (dest.Type.PossibleInnerType is TypeSpecifier t) vals = [.. Expressions.Select(i => i.Cast(t).Execute(ctx))];
+            else vals = [.. Expressions.Select(i => i.Execute(ctx))];
+            Compute(ctx, dest, vals);
         }
 
         private void Compute(FunctionContext ctx, MutableValue dest, List<Value> values)
         {
-            if (dest.Type.IsArray) throw new InvalidTypeError(Location, dest.Type.ToString());
+            if (!dest.Type.IsList) throw new InvalidTypeError(Location, dest.Type.ToString());
 
             for (int i = 0; i < values.Count; i++)
             {

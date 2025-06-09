@@ -1,7 +1,14 @@
 namespace test;
 
 #load
-void main()
-{
-    int x = 4;
+void main() {
+    print(test(5));
+}
+
+int test(macro int val) {
+    if (val == 5) {
+        return val - 1;
+    }
+
+    return val;
 }
