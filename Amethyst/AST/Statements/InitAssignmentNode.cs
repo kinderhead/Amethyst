@@ -26,7 +26,7 @@ namespace Amethyst.AST.Statements
 
 			MutableValue val;
 			if (!ctx.KeepLocalsOnStack && type is PrimitiveTypeSpecifier p && p.Type == NBTType.Int) val = ctx.AllocScore();
-			else val = new StorageValue(new(Compiler.RuntimeID), $"stack[-1].{Name}", type);
+			else val = new StorageValue(new(Compiler.RuntimeID), ctx.GetStackVariablePath(Name), type);
 			ctx.RegisterVariable(Name, val);
 			Expression.Cast(type).Store(ctx, val);
 		}

@@ -46,15 +46,7 @@ namespace Amethyst.AST.Expressions
             {
                 arrStorage = arr.AsStorage(ctx);
                 dest ??= ctx.AllocTemp(lType.Inner);
-                var args = new Dictionary<string, Value>
-                {
-                    ["src_storage"] = new LiteralValue(arrStorage.Storage.ToString()),
-                    ["src_path"] = new LiteralValue(arrStorage.Path),
-                    ["dest_storage"] = new LiteralValue(dest.Storage.ToString()),
-                    ["dest_path"] = new LiteralValue(dest.Path),
-                    ["index"] = ind
-                };
-                ctx.Add(new CallInstruction(Location, "amethyst:core/index-list", [], args));
+                ctx.Call("amethyst:core/index-list", [new LiteralValue(dest.Storage.ToString()), new LiteralValue(dest.Path), new LiteralValue(arrStorage.Storage.ToString()), new LiteralValue(arrStorage.Path), ind]);
                 return dest;
             }
         }

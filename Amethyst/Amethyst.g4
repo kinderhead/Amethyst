@@ -19,7 +19,7 @@ functionTag
     ;
 
 functionModifier
-    : NoStack
+    : NoStack | Inline
     ;
 
 block
@@ -138,6 +138,7 @@ Return: 'return';
 
 Macro: 'macro';
 NoStack: 'nostack';
+Inline: 'inline';
 
 Semi: ';';
 Comma: ',';

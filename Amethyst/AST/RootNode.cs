@@ -22,7 +22,7 @@ namespace Amethyst.AST
 				if (!Ctx.WrapError(() =>
 				{
 					if (Ctx.Symbols.TryGetValue(i.ID, out var sym)) throw new RedefinedSymbolError(i.Location, i.ID.ToString(), sym.Location);
-					Ctx.Symbols[i.ID] = new(i.ID, i.GetFunctionType(Ctx), i.Location, new StaticFunctionValue(i.ID, i.GetFunctionType(Ctx)));
+					Ctx.Symbols[i.ID] = new(i.ID, i.Location, new StaticFunctionValue(i.ID, i.GetFunctionType(Ctx)), i);
 				})) success = false;
 				
 			}

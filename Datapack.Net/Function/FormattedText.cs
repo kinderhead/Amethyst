@@ -12,6 +12,7 @@ namespace Datapack.Net.Function
         private readonly JArray Obj = [];
         public bool HasHoverOrClickEvents = false;
         public bool Macro = false;
+        public int Count => Obj.Count;
 
         public FormattedText Text(string str, Modifiers? modifiers = null)
         {
@@ -50,17 +51,17 @@ namespace Datapack.Net.Function
 
         public FormattedText Optimize()
         {
-			for (int i = 1; i < Obj.Count; i++)
-			{
-				if (Obj[i - 1] is JValue v1 && v1.Type == JTokenType.String && Obj[i] is JValue v2 && v2.Type == JTokenType.String)
+            for (int i = 1; i < Obj.Count; i++)
+            {
+                if (Obj[i - 1] is JValue v1 && v1.Type == JTokenType.String && Obj[i] is JValue v2 && v2.Type == JTokenType.String)
                 {
                     v1.Value += (string?)v2.Value;
                     Obj.RemoveAt(i--);
-				}
-			}
+                }
+            }
 
             return this;
-		}
+        }
 
         public override string ToString()
         {

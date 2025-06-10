@@ -54,6 +54,8 @@ namespace Amethyst.Codegen
 			else if (!_Cast(ctx, src, dest)) throw new InvalidCastError(ctx.CurrentLocator.Location, src.Type, dest.Type);
 		}
 
+		public virtual bool IsAssignableTo(TypeSpecifier other) => this == other;
+
 		public override bool Equals(object? obj)
 		{
 			if (obj is null || obj?.GetType() != GetType()) return false;
@@ -98,6 +100,8 @@ namespace Amethyst.Codegen
 		public readonly NBTType Type = type;
 		public override NBTType EffectiveType => Type;
 
+        public override bool IsAssignableTo(TypeSpecifier other) => (other.IsList && Type == NBTType.List) || base.IsAssignableTo(other);
+
 		protected override bool AreEqual(TypeSpecifier obj) => obj is PrimitiveTypeSpecifier p && p.Type == Type;
 		protected override string _ToString() => Enum.GetName(Type)?.ToLower() ?? throw new InvalidOperationException();
 
@@ -106,13 +110,7 @@ namespace Amethyst.Codegen
 			if (NBTValue.IsNumberType(Type) && dest.Type.EffectiveType == NBTType.Boolean)
 			{
 				var newDest = dest.RequireStorage();
-				var args = new Dictionary<string, Value>
-				{
-					["dest_storage"] = new LiteralValue(newDest.Storage.ToString()),
-					["dest_path"] = new LiteralValue(newDest.Path),
-					["value"] = src
-				};
-				ctx.Add(new CallInstruction(ctx.CurrentLocator.Location, "amethyst:core/bool", [], args));
+				ctx.Call("amethyst:core/bool", [new LiteralValue(newDest.Storage.ToString()), new LiteralValue(newDest.Path), src]);
 				return true;
 			}
 			else if (NBTValue.IsNumberType(dest.Type.EffectiveType) && (NBTValue.IsOperableType(dest.Type.EffectiveType) || NBTValue.IsOperableType(EffectiveType)))
@@ -130,23 +128,24 @@ namespace Amethyst.Codegen
 		}
 	}
 
-	public class FunctionTypeSpecifier(TypeSpecifier returnType, IEnumerable<Parameter> paramters) : TypeSpecifier
+	public class FunctionTypeSpecifier(FunctionModifiers modifiers, TypeSpecifier returnType, IEnumerable<Parameter> paramters) : TypeSpecifier
 	{
+		public readonly FunctionModifiers Modifiers = modifiers;
 		public readonly TypeSpecifier ReturnType = returnType;
 		public readonly Parameter[] Parameters = [.. paramters];
 		public override bool Operable => false;
 
 		protected override bool AreEqual(TypeSpecifier obj) => obj is FunctionTypeSpecifier f
+			&& f.Modifiers == Modifiers
 			&& f.ReturnType == ReturnType
 			&& Parameters.Length == f.Parameters.Length
 			&& Parameters.Zip(f.Parameters).All(i => i.First == i.Second);
 		protected override string _ToString() => $"() => {ReturnType}";
 	}
 
-	public class DynamicFunctionTypeSpecifier(TypeSpecifier returnType) : FunctionTypeSpecifier(returnType, [])
+	public class DynamicFunctionTypeSpecifier(TypeSpecifier returnType) : FunctionTypeSpecifier(FunctionModifiers.None, returnType, [])
 	{
 		protected override bool AreEqual(TypeSpecifier obj) => base.AreEqual(obj) && obj is DynamicFunctionTypeSpecifier;
-		protected override string _ToString() => $"() => {ReturnType}";
 	}
 
 	public class ListTypeSpecifier(TypeSpecifier inner) : TypeSpecifier
@@ -156,6 +155,7 @@ namespace Amethyst.Codegen
 		public override NBTType EffectiveType => NBTType.List;
 		public override TypeSpecifier? PossibleInnerType => Inner;
         public override bool IsList => true;
+		// public override bool IsAssignableTo(TypeSpecifier other) => other.EffectiveType == NBTType.List || base.IsAssignableTo(other);
 		protected override bool AreEqual(TypeSpecifier obj) => obj is ListTypeSpecifier arr && arr.Inner == Inner;
 		protected override string _ToString() => $"{Inner}[]";
 	}

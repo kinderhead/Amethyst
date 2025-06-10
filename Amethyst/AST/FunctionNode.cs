@@ -18,7 +18,8 @@ namespace Amethyst.AST
 	public enum FunctionModifiers
 	{
 		None = 0,
-		NoStack = 1
+		NoStack = 1,
+		Inline = 2
 	}
 
 	public class FunctionNode(LocationRange loc, List<NamespacedID> tags, FunctionModifiers modifiers, AbstractTypeSpecifier ret, NamespacedID id, List<AbstractParameter> parameters, BlockNode body) : Node(loc)
@@ -31,10 +32,16 @@ namespace Amethyst.AST
 		public readonly BlockNode Body = body;
 
 		private FunctionTypeSpecifier? funcType = null;
-		public FunctionTypeSpecifier GetFunctionType(Compiler ctx) => funcType ??= new(ReturnType.Resolve(ctx), Parameters.Select(i => new Parameter(i.Modifiers, i.Type.Resolve(ctx), i.Name)));
+		public FunctionTypeSpecifier GetFunctionType(Compiler ctx) => funcType ??= new(Modifiers, ReturnType.Resolve(ctx), Parameters.Select(i => new Parameter(i.Modifiers, i.Type.Resolve(ctx), i.Name)));
 
 		public bool Compile(Compiler compiler)
 		{
+			if (Modifiers.HasFlag(FunctionModifiers.Inline))
+			{
+				if (GetFunctionType(compiler).Parameters.Any(i => i.Modifiers.HasFlag(ParameterModifiers.Macro))) throw new ModifierError(Location, "inline functions cannot have macro arguments");
+				return true;
+			}
+
 			var ctxs = new List<FunctionContext>();
 
 			if (!SubCompile(compiler, out var ctx1)) return false;

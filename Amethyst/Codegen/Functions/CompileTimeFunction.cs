@@ -12,6 +12,6 @@ namespace Amethyst.Codegen.Functions
 {
 	public abstract class CompileTimeFunction(NamespacedID id, DynamicFunctionTypeSpecifier type) : StaticFunctionValue(id, type)
 	{
-		public abstract Value Execute(FunctionContext ctx, List<Value> parameters);
+		public abstract Value Execute(FunctionContext ctx, IEnumerable<Value> parameters);
 	}
 }

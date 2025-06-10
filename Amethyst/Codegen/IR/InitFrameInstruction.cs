@@ -45,13 +45,10 @@ namespace Amethyst.Codegen.IR
 		}
 	}
 
-	public class ReturnInstruction(LocationRange loc, Value val) : ExitFrameInstruction(loc)
+	public class ReturnInstruction(LocationRange loc) : ExitFrameInstruction(loc)
 	{
-		public readonly Value Value = val;
-
 		public override void Build()
 		{
-			Add(Value.ReadTo(Compiler.RuntimeID, "return"));
 			base.Build();
 			Add(new ReturnCommand(1));
 		}

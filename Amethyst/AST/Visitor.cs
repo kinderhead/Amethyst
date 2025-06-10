@@ -42,6 +42,7 @@ namespace Amethyst.AST
 			foreach (var i in context.functionModifier())
 			{
 				if (i.GetText() == "nostack") mod |= FunctionModifiers.NoStack;
+				else if (i.GetText() == "inline") mod |= FunctionModifiers.Inline;
 			}
 
 			return new FunctionNode(Loc(context), [.. context.functionTag().Select(i =>

@@ -2,13 +2,10 @@ namespace test;
 
 #load
 void main() {
-    print(test(5));
+    string x = test();
+    print(x);
 }
 
-int test(macro int val) {
-    if (val == 5) {
-        return val - 1;
-    }
-
-    return val;
+inline string test() {
+    return "hmm";
 }

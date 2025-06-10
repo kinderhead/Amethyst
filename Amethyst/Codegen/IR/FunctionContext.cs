@@ -1,5 +1,6 @@
 ﻿using Amethyst.AST;
 using Amethyst.AST.Statements;
+using Amethyst.Codegen.Functions;
 using Amethyst.Errors;
 using Datapack.Net.Data;
 using Datapack.Net.Function;
@@ -33,9 +34,12 @@ namespace Amethyst.Codegen.IR
 
 		private readonly Stack<ILocatable> locators = [];
 		public ILocatable CurrentLocator { get => locators.Peek(); }
-		public bool HasMacros => FunctionType.Parameters.Any(i => i.Modifiers.HasFlag(AST.ParameterModifiers.Macro));
+		public bool HasMacros => FunctionType.Parameters.Any(i => i.Modifiers.HasFlag(ParameterModifiers.Macro));
 
-		private readonly Dictionary<string, LocalSymbol> variables = [];
+		public int InlineDepth { get; private set; } = 0;
+		public MutableValue ReturnValue;
+
+		private Dictionary<string, LocalSymbol> variables = [];
 
 		private int tempStack = 0;
 		private int tempScore = 0;
@@ -43,6 +47,7 @@ namespace Amethyst.Codegen.IR
 		private int elseScores = 0;
 		private bool compiled = false;
 		private bool compiledSuccess = true;
+		private string variablePrefix = "";
 
 		public FunctionContext(Compiler compiler, FunctionNode node, MCFunction func, FunctionTypeSpecifier funcType)
 		{
@@ -51,6 +56,7 @@ namespace Amethyst.Codegen.IR
 			MainFunction = func;
 			FunctionType = funcType;
 			KeepLocalsOnStack = compiler.Options.KeepLocalsOnStack;
+			ReturnValue = new StorageValue(Compiler.RuntimeID, "return", FunctionType.ReturnType);
 			PushFunc(func);
 		}
 
@@ -91,6 +97,8 @@ namespace Amethyst.Codegen.IR
 			tempScore = 0;
 		}
 
+		public string GetStackVariablePath(string name) => $"stack[-1].{variablePrefix}{name}";
+
 		public void RegisterVariable(string name, Value val)
 		{
 			if (variables.TryGetValue(name, out var sym)) throw new RedefinedSymbolError(CurrentLocator.Location, name, sym.Location);
@@ -119,6 +127,24 @@ namespace Amethyst.Codegen.IR
 				else if (Compiler.Symbols.TryGetValue(name, out var gval)) return gval.Value;
 			}
 			return null;
+		}
+
+		public void WithNewVariables(Action cb)
+		{
+			var oldVars = variables;
+			var oldPrefix = variablePrefix;
+			variables = [];
+			variablePrefix = $"${InlineDepth++}_";
+			try
+			{
+				cb();
+			}
+			finally
+			{
+				variables = oldVars;
+				variablePrefix = oldPrefix;
+				InlineDepth--;
+			}
 		}
 
 		public StorageValue AllocTemp(TypeSpecifier type)
@@ -153,6 +179,67 @@ namespace Amethyst.Codegen.IR
 		}
 
 		public ScoreValue Constant(int num) => Compiler.Constant(num);
+
+		public Value Call(NamespacedID id, IList<Value> rawArgs, StorageValue? dest = null)
+		{
+			if (!Compiler.Symbols.TryGetValue(id, out var sym) || sym.Value is not StaticFunctionValue f) throw new UndefinedSymbolError(CurrentLocator.Location, id.ToString());
+			if (f is CompileTimeFunction c)
+			{
+				var ret = c.Execute(this, rawArgs);
+				dest?.Store(this, ret);
+				return ret;
+			}
+
+			if (f.FuncType.Parameters.Length != rawArgs.Count) throw new MismatchedArgumentCountError(CurrentLocator.Location, f.FuncType.Parameters.Length, rawArgs.Count);
+
+			for (var i = 0; i < rawArgs.Count; i++)
+			{
+				if (!rawArgs[i].Type.IsAssignableTo(f.FuncType.Parameters[i].Type)) throw new InvalidCastError(CurrentLocator.Location, rawArgs[i].Type, f.FuncType.Parameters[i].Type);
+			}
+
+			var retVal = new StorageValue(Compiler.RuntimeID, "return", f.FuncType.ReturnType);
+
+			if (f.FuncType.Modifiers.HasFlag(FunctionModifiers.Inline))
+			{
+				retVal = dest ?? retVal;
+
+				WithNewVariables(() =>
+				{
+					for (int i = 0; i < rawArgs.Count; i++)
+					{
+						RegisterVariable(f.FuncType.Parameters[i].Name, rawArgs[i]);
+					}
+
+					var oldRetVal = ReturnValue;
+					ReturnValue = retVal;
+					((FunctionNode)sym.Node).Body.Compile(this);
+					ReturnValue = oldRetVal;
+				});
+
+				return retVal.Type is VoidTypeSpecifier ? new VoidValue() : retVal;
+			}
+			else
+			{
+				var args = new Dictionary<string, Value>();
+				var macros = new Dictionary<string, Value>();
+
+				if (f.FuncType.Parameters.Length != 0)
+				{
+					for (var i = 0; i < rawArgs.Count; i++)
+					{
+						if (f.FuncType.Parameters[i].Modifiers.HasFlag(ParameterModifiers.Macro)) macros[f.FuncType.Parameters[i].Name] = rawArgs[i];
+						else args[f.FuncType.Parameters[i].Name] = rawArgs[i];
+					}
+				}
+
+				Add(new CallInstruction(CurrentLocator.Location, f.ID, args, macros));
+
+				if (f.FuncType.ReturnType is VoidTypeSpecifier) return new VoidValue();
+
+				dest?.Store(this, retVal);
+				return dest ?? retVal;
+			}
+		}
 
 		public bool RequireCompiled()
 		{

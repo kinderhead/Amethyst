@@ -34,7 +34,7 @@ namespace Amethyst.AST.Expressions
 				return;
 			}
 
-			if (val.Type != Type) throw new InvalidTypeError(Location, val.Type.ToString());
+			if (val.Type != Type) throw new InvalidTypeError(Location, val.Type.ToString(), Type.ToString());
 
 			var src = Expression.Execute(ctx);
 			src.Type.Cast(ctx, src, new(ctx, val));

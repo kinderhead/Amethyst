@@ -12,7 +12,7 @@ namespace Amethyst.Codegen.Functions
 {
 	public class PrintFunction() : CompileTimeFunction(new("amethyst", "print"), new DynamicFunctionTypeSpecifier(new VoidTypeSpecifier()))
 	{
-		public override Value Execute(FunctionContext ctx, List<Value> parameters)
+		public override Value Execute(FunctionContext ctx, IEnumerable<Value> parameters)
 		{
 			var formatter = new FormattedText();
 
@@ -22,7 +22,7 @@ namespace Amethyst.Codegen.Functions
 				formatter.Text(" ");
 			}
 
-			if (parameters.Count != 0) formatter.RemoveLast();
+			if (formatter.Count != 0) formatter.RemoveLast();
 			formatter.Optimize();
 
 			ctx.Add(new TellrawInstruction(ctx.CurrentLocator.Location, formatter));
