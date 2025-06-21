@@ -57,10 +57,25 @@ namespace Amethyst.AST
 		}
 	}
 
-    public class AbstractListTypeSpecifier(LocationRange loc, AbstractTypeSpecifier inner) : AbstractTypeSpecifier(loc)
-    {
+	public class AbstractListTypeSpecifier(LocationRange loc, AbstractTypeSpecifier inner) : AbstractTypeSpecifier(loc)
+	{
 		public readonly AbstractTypeSpecifier Inner = inner;
 
 		public override TypeSpecifier Resolve(Compiler ctx, bool allowAuto = false) => new ListTypeSpecifier(Inner.Resolve(ctx, allowAuto));
-    }
+	}
+
+	public class AbstractInterfaceTypeSpecifier(LocationRange loc, string name, Dictionary<string, AbstractObjectProperty> props) : AbstractTypeSpecifier(loc), IRootChild
+	{
+		public readonly string Name = name;
+		public readonly Dictionary<string, AbstractObjectProperty> Properties = props;
+
+        public void Process(Compiler ctx)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override TypeSpecifier Resolve(Compiler ctx, bool allowAuto = false) => new InterfaceType(new(Properties.Select(i => new KeyValuePair<string, ObjectProperty>(i.Key, new ObjectProperty(i.Value.Type.Resolve(ctx), i.Value.Name)))));
+	}
+
+	public readonly record struct AbstractObjectProperty(AbstractTypeSpecifier Type, string Name);
 }

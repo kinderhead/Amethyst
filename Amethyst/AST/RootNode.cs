@@ -13,22 +13,13 @@ namespace Amethyst.AST
 	{
 		public readonly Compiler Ctx = ctx;
 		public readonly List<FunctionNode> Functions = [];
-		public readonly List<GlobalVariableNode> GlobalVariables = [];
+		public readonly List<IRootChild> Children = [];
 
 		public bool BuildSymbols()
 		{
 			var success = true;
 
-			foreach (var i in Functions)
-			{
-				if (!Ctx.WrapError(() =>
-				{
-					if (Ctx.Symbols.TryGetValue(i.ID, out var sym)) throw new RedefinedSymbolError(i.Location, i.ID.ToString(), sym.Location);
-					Ctx.Symbols[i.ID] = new(i.ID, i.Location, new StaticFunctionValue(i.ID, i.GetFunctionType(Ctx)), i);
-				})) success = false;
-			}
-
-			foreach (var i in GlobalVariables)
+			foreach (var i in Children.Concat(Functions))
 			{
 				if (!Ctx.WrapError(() =>
 				{
@@ -47,8 +38,13 @@ namespace Amethyst.AST
 			{
 				if (!i.Compile(Ctx)) success = false;
 			}
-			
+
 			return success;
 		}
+	}
+
+	public interface IRootChild
+	{
+		public void Process(Compiler ctx);
 	}
 }

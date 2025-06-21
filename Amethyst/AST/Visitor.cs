@@ -31,7 +31,8 @@ namespace Amethyst.AST
 				if (i.GetText() == "<EOF>" || i.GetText() == ";") continue;
 				else if (i is AmethystParser.NamespaceContext ns) currentNamespace = Visit(ns.id());
 				else if (i is AmethystParser.FunctionContext func) root.Functions.Add((FunctionNode)Visit(func));
-				else if (i is AmethystParser.InitAssignmentStatementContext init) root.GlobalVariables.Add(new(Loc(init), Visit(init.type()), IdentifierToID(Visit(init.id())), init.expression() is null ? null : Visit(init.expression())));
+				else if (i is AmethystParser.InitAssignmentStatementContext init) root.Children.Add(new GlobalVariableNode(Loc(init), Visit(init.type()), IdentifierToID(Visit(init.id())), init.expression() is null ? null : Visit(init.expression())));
+				else if (i is AmethystParser.InterfaceContext type) root.Children.Add((IRootChild)Visit(type));
 			}
 
 			return root;
@@ -81,6 +82,11 @@ namespace Amethyst.AST
 
 			return block;
 		}
+
+        public override Node VisitInterface([NotNull] AmethystParser.InterfaceContext context)
+        {
+            
+        }
 
 		public override Node VisitInitAssignmentStatement([NotNull] AmethystParser.InitAssignmentStatementContext context) => new InitAssignmentNode(Loc(context), Visit(context.type()), Visit(context.id()), context.expression() is null ? null : Visit(context.expression()));
 		public override Node VisitExpressionStatement([NotNull] AmethystParser.ExpressionStatementContext context) => new ExpressionStatement(Loc(context), Visit(context.expression()));

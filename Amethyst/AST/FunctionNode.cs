@@ -22,7 +22,7 @@ namespace Amethyst.AST
 		Inline = 2
 	}
 
-	public class FunctionNode(LocationRange loc, List<NamespacedID> tags, FunctionModifiers modifiers, AbstractTypeSpecifier ret, NamespacedID id, List<AbstractParameter> parameters, BlockNode body) : Node(loc)
+	public class FunctionNode(LocationRange loc, List<NamespacedID> tags, FunctionModifiers modifiers, AbstractTypeSpecifier ret, NamespacedID id, List<AbstractParameter> parameters, BlockNode body) : Node(loc), IRootChild
 	{
 		public readonly List<NamespacedID> Tags = tags;
 		public readonly FunctionModifiers Modifiers = modifiers;
@@ -115,7 +115,13 @@ namespace Amethyst.AST
 
 			return ret;
 		}
-	}
+
+        public void Process(Compiler ctx)
+        {
+			if (ctx.Symbols.TryGetValue(ID, out var sym)) throw new RedefinedSymbolError(Location, ID.ToString(), sym.Location);
+			ctx.Symbols[ID] = new(ID, Location, new StaticFunctionValue(ID, GetFunctionType(ctx)), this);
+		}
+    }
 
 	[Flags]
 	public enum ParameterModifiers

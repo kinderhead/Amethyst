@@ -7,7 +7,7 @@ using Datapack.Net.Utils;
 
 namespace Amethyst.AST.Statements
 {
-    public class GlobalVariableNode(LocationRange loc, AbstractTypeSpecifier type, NamespacedID name, Expression? expr) : Node(loc)
+    public class GlobalVariableNode(LocationRange loc, AbstractTypeSpecifier type, NamespacedID name, Expression? expr) : Node(loc), IRootChild
     {
         public readonly AbstractTypeSpecifier Type = type;
         public readonly NamespacedID Name = name;
