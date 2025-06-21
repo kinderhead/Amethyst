@@ -28,9 +28,12 @@ namespace Amethyst
 		public readonly Dictionary<NamespacedID, FunctionContext> Functions = [];
 		public readonly Dictionary<NamespacedID, CompileTimeFunction> CompileTimeFunctions = [];
 
+		public readonly List<Command> UserInitCommands = [];
+
 		private readonly Dictionary<int, ScoreValue> constants = [];
 		private readonly HashSet<Score> registeredScores = [];
 		private readonly List<MCFunction> functionsToRemove = [];
+		private readonly List<(Storage Storage, string Path)> userVariables = [];
 
 		public Dictionary<string, string> Files { get; } = [];
 
@@ -111,6 +114,7 @@ namespace Amethyst
 		public void Register(MCFunction func) => Datapack.Functions.Add(func);
 		public void Register(Score score) => registeredScores.Add(score);
 		public void Register(CompileTimeFunction func) => CompileTimeFunctions[func.ID] = func;
+		public void Register(Storage storage, string path) => userVariables.Add((storage, path));
 
 		public void Unregister(MCFunction func) => functionsToRemove.Add(func);
 
@@ -145,7 +149,10 @@ namespace Amethyst
 
 			try
 			{
-				Roots[filename] = (RootNode)visitor.Visit(parser.root());
+				var root = parser.root();
+				if (error.Errored) return false;
+				
+				Roots[filename] = (RootNode)visitor.Visit(root);
 			}
 			catch
 			{
@@ -188,6 +195,8 @@ namespace Amethyst
 				func.Add(new Scoreboard.Players.Set(i.Value.Target, i.Value.Score, i.Key));
 			}
 
+			func.Add([.. UserInitCommands]);
+
 			//func.Add(new Scoreboard.Players.Set(RuntimeEntity, NullScore, 0));
 
 			return func;
@@ -200,6 +209,11 @@ namespace Amethyst
 			foreach (var i in RuntimeStorageUsed)
 			{
 				func.Add(new DataCommand.Remove(new Storage(new("amethyst", "runtime")), i));
+			}
+
+			foreach (var i in userVariables)
+			{
+				func.Add(new DataCommand.Remove(i.Storage, i.Path));
 			}
 
 			foreach (var i in registeredScores)
@@ -216,7 +230,13 @@ namespace Amethyst
 			Register(new PrintFunction());
 		}
 
-		private static DP GetDP(Options opts) => new("Project generated with Amethyst", opts.Output, opts.PackFormat);
+		public FunctionContext FauxCtx(LocationRange loc)
+		{
+			var node = new FunctionNode(loc, [], FunctionModifiers.None, new SimpleAbstractTypeSpecifier(loc, "void"), "amethyst:null", [], new(loc));
+			return new(this, node, new(node.ID, true), node.GetFunctionType(this));
+		}
+
+        private static DP GetDP(Options opts) => new("Project generated with Amethyst", opts.Output, opts.PackFormat);
 
 		//private static readonly Random Random = new(); new ([.. Enumerable.Repeat("abcdefghijklmnopqrstuvwxyz1234567890", 10).Select(s => s[Random.Next(s.Length)])]);
 

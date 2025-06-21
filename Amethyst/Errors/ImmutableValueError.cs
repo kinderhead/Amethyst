@@ -10,4 +10,8 @@ namespace Amethyst.Errors
 	public class ImmutableValueError(LocationRange loc) : AmethystError(loc, "value is not mutable")
 	{
 	}
+
+	public class MutableValueError(LocationRange loc) : AmethystError(loc, "value is mutable")
+	{
+	}
 }

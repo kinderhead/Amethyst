@@ -51,10 +51,12 @@ namespace Amethyst.Codegen
 						break;
 				}
 			}
+			else if (dest.Type is PrimitiveTypeSpecifier t && t.Type == NBTType.Compound) dest.Store(src); // TODO: maybe make fix for if dest might return a score
 			else if (!_Cast(ctx, src, dest)) throw new InvalidCastError(ctx.CurrentLocator.Location, src.Type, dest.Type);
 		}
 
 		public virtual bool IsAssignableTo(TypeSpecifier other) => this == other;
+		public virtual TypeSpecifier? Property(string name) => null;
 
 		public override bool Equals(object? obj)
 		{
@@ -101,6 +103,7 @@ namespace Amethyst.Codegen
 		public override NBTType EffectiveType => Type;
 
         public override bool IsAssignableTo(TypeSpecifier other) => (other.IsList && Type == NBTType.List) || base.IsAssignableTo(other);
+		public override TypeSpecifier? Property(string name) => Type == NBTType.Compound ? new PrimitiveTypeSpecifier(NBTType.Compound) : base.Property(name);
 
 		protected override bool AreEqual(TypeSpecifier obj) => obj is PrimitiveTypeSpecifier p && p.Type == Type;
 		protected override string _ToString() => Enum.GetName(Type)?.ToLower() ?? throw new InvalidOperationException();
@@ -119,6 +122,11 @@ namespace Amethyst.Codegen
 				return true;
 			}
 			else if (Type == NBTType.List && dest.Type is ListTypeSpecifier)
+			{
+				dest.Store(src);
+				return true;
+			}
+			else if (Type == NBTType.Compound && dest.Type.EffectiveType == NBTType.Compound)
 			{
 				dest.Store(src);
 				return true;

@@ -21,11 +21,22 @@ namespace Amethyst.AST
 		{
 			Errored = true;
 
-			AnsiConsole.MarkupLine($"[red]Error at {Path} line {line}:[/]");
-			AnsiConsole.MarkupLine("[red]" + Lines[line - 1] + "[/]");
-			AnsiConsole.MarkupLine(new string(' ', charPositionInLine) + "[yellow]^[/]");
-			AnsiConsole.MarkupLine($"[red]Syntax error:[/] [turquoise2]{msg}[/]\n\n");
-			Console.Out.Flush(); // Weird
+			try
+			{
+				AnsiConsole.MarkupLine($"[red]Error at {Path} line {line}:[/]");
+				AnsiConsole.MarkupLine("[red]" + Lines[line - 1].EscapeMarkup() + "[/]");
+				AnsiConsole.MarkupLine(new string(' ', charPositionInLine) + "[yellow]^[/]");
+				AnsiConsole.MarkupLine($"[red]Syntax error:[/] [turquoise2]{msg.EscapeMarkup()}[/]\n\n");
+				Console.Out.Flush(); // Weird
+			}
+			catch (Exception e)
+			{
+				AnsiConsole.MarkupLine($"[red]Error displaying error: {e.Message}[/]");
+			}
+			finally
+			{
+				Environment.Exit(1);
+			}
 		}
 	}
 }

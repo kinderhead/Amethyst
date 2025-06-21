@@ -159,6 +159,12 @@ public interface IAmethystVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <return>The visitor result.</return>
 	Result VisitIndexExpression([NotNull] AmethystParser.IndexExpressionContext context);
 	/// <summary>
+	/// Visit a parse tree produced by <see cref="AmethystParser.propertyExpression"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitPropertyExpression([NotNull] AmethystParser.PropertyExpressionContext context);
+	/// <summary>
 	/// Visit a parse tree produced by <see cref="AmethystParser.primaryExpression"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
@@ -170,6 +176,18 @@ public interface IAmethystVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
 	Result VisitListLiteral([NotNull] AmethystParser.ListLiteralContext context);
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="AmethystParser.compoundLiteral"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitCompoundLiteral([NotNull] AmethystParser.CompoundLiteralContext context);
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="AmethystParser.compoundKeyPair"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitCompoundKeyPair([NotNull] AmethystParser.CompoundKeyPairContext context);
 	/// <summary>
 	/// Visit a parse tree produced by <see cref="AmethystParser.paramList"/>.
 	/// </summary>
@@ -200,5 +218,11 @@ public interface IAmethystVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
 	Result VisitType([NotNull] AmethystParser.TypeContext context);
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="AmethystParser.id"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitId([NotNull] AmethystParser.IdContext context);
 }
 } // namespace Amethyst.Antlr

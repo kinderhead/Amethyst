@@ -9,16 +9,16 @@ using System.Threading.Tasks;
 
 namespace Amethyst.AST.Expressions
 {
-	public class AssignmentExpression(LocationRange loc, string name, Expression expr) : Expression(loc)
+	public class AssignmentExpression(LocationRange loc, Expression dest, Expression expr) : Expression(loc)
 	{
-		public readonly string Name = name;
+		public readonly Expression Dest = dest;
 		public readonly Expression Expression = expr;
 
-		protected override TypeSpecifier _ComputeType(FunctionContext ctx) => ctx.GetVariable(Name).Type;
+		protected override TypeSpecifier _ComputeType(FunctionContext ctx) => Dest.ComputeType(ctx);
 
 		protected override Value _Execute(FunctionContext ctx)
 		{
-			var val = ctx.GetVariable(Name);
+			var val = Dest.Execute(ctx);
 			if (val is MutableValue v) Expression.Cast(val.Type).Store(ctx, v);
 			else throw new ImmutableValueError(Location);
 			return val;

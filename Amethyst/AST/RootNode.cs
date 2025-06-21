@@ -1,4 +1,5 @@
-﻿using Amethyst.Codegen;
+﻿using Amethyst.AST.Statements;
+using Amethyst.Codegen;
 using Amethyst.Errors;
 using System;
 using System.Collections.Generic;
@@ -12,6 +13,7 @@ namespace Amethyst.AST
 	{
 		public readonly Compiler Ctx = ctx;
 		public readonly List<FunctionNode> Functions = [];
+		public readonly List<GlobalVariableNode> GlobalVariables = [];
 
 		public bool BuildSymbols()
 		{
@@ -24,7 +26,14 @@ namespace Amethyst.AST
 					if (Ctx.Symbols.TryGetValue(i.ID, out var sym)) throw new RedefinedSymbolError(i.Location, i.ID.ToString(), sym.Location);
 					Ctx.Symbols[i.ID] = new(i.ID, i.Location, new StaticFunctionValue(i.ID, i.GetFunctionType(Ctx)), i);
 				})) success = false;
-				
+			}
+
+			foreach (var i in GlobalVariables)
+			{
+				if (!Ctx.WrapError(() =>
+				{
+					i.Process(Ctx);
+				})) success = false;
 			}
 
 			return success;

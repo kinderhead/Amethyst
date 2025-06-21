@@ -47,6 +47,8 @@ namespace Amethyst.Codegen
 			return tmp;
 		}
 
+		public virtual MutableValue GetProperty(FunctionContext ctx, string prop) => throw new InvalidTypeError(ctx.CurrentLocator.Location, Type.ToString());
+
 		public virtual NBTValue? AsConstant() => null;
 
 		public virtual Value AsNotScore(FunctionContext ctx) => this;
@@ -76,6 +78,12 @@ namespace Amethyst.Codegen
 			if (ctx.Compiler.Options.NoConstantScores || Value is not NBTInt i) return base.AsScore(ctx);
 			else return ctx.Constant(i.Value);
         }
+
+		// public override MutableValue GetProperty(FunctionContext ctx, string prop)
+		// {
+		// 	if (Value is not NBTCompound nbt || !nbt.ContainsKey(prop)) return base.GetProperty(ctx, prop);
+		// 	else return 
+        // }
 
 		public static LiteralValue BooleanEquivalent(FunctionContext ctx, NBTType type, bool value)
 		{
@@ -174,6 +182,12 @@ namespace Amethyst.Codegen
 		public override Execute WriteFrom(Execute cmd, bool result = true) => cmd.Store(Storage, Path, (NBTNumberType)Type.EffectiveType, 1, result);
 		public override Command AppendTo(Storage storage, string path) => new DataCommand.Modify(storage, path).Append().From(Storage, Path);
 		public override StorageValue AsStorage(FunctionContext ctx) => this;
+
+		public override MutableValue GetProperty(FunctionContext ctx, string prop)
+		{
+			if (Type.Property(prop) is not TypeSpecifier t) return base.GetProperty(ctx, prop);
+			return new StorageValue(Storage, Path + $".{prop}", t);
+        }
 	}
 
 	public class ScoreValue(IEntityTarget target, Score score) : MutableValue(new PrimitiveTypeSpecifier(NBTType.Int))

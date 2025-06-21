@@ -1,11 +1,11 @@
 namespace test;
 
+
+
 #load
 void main() {
-    string x = test();
-    print(x);
+    int x = 234;
+    nbt obj = {one:238746, two: "womp", three: [1,2,3,4,5], four: 5.4f, x: x};
+    print(obj);
 }
 
-inline string test() {
-    return "hmm";
-}

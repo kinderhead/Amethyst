@@ -3,19 +3,19 @@ grammar Amethyst;
 // Parser
 
 root
-    : (namespace | function)* EOF
+    : (namespace | function | (initAssignmentStatement Semi) | Semi)* EOF
     ;
 
 namespace
-    : Namespace Identifier Semi
+    : Namespace id Semi
     ;
 
 function
-    : functionTag* functionModifier* type name=Identifier paramList block
+    : functionTag* functionModifier* type name=id paramList block
     ;
 
 functionTag
-    : Hash Identifier
+    : Hash id
     ;
 
 functionModifier
@@ -38,7 +38,7 @@ statement
     ;
 
 initAssignmentStatement
-    : type Identifier Eq expression
+    : type id (Eq expression)?
     ;
 
 expressionStatement
@@ -62,8 +62,7 @@ expression
     ;
 
 assignmentExpression
-    : logicalExpression
-    | Identifier Eq expression
+    : logicalExpression (Eq expression)?
     ;
 
 logicalExpression
@@ -88,7 +87,7 @@ multiplicativeExpression
 
 postfixExpression
     : primaryExpression (
-        expressionList | indexExpression
+        expressionList | indexExpression | propertyExpression
     )*
     ;
 
@@ -96,11 +95,16 @@ indexExpression
     : LSquareBrak expression RSquareBrak
     ;
 
+propertyExpression
+    : Dot RawIdentifier
+    ;
+
 primaryExpression
-    : Identifier
+    : id
     | String
     | Integer
     | listLiteral
+    | compoundLiteral
     | LParen expression RParen
     ;
 
@@ -108,12 +112,20 @@ listLiteral
     : LSquareBrak (expression (Comma expression)*)? RSquareBrak
     ;
 
+compoundLiteral
+    : LBrak (compoundKeyPair (Comma compoundKeyPair)*)? RBrak
+    ;
+
+compoundKeyPair
+    : RawIdentifier Colon expression
+    ;
+
 paramList
     : LParen (paramPair (Comma paramPair)*)? RParen
     ;
 
 paramPair
-    : (paramModifier)* type Identifier
+    : (paramModifier)* type id
     ;
 
 paramModifier
@@ -125,8 +137,12 @@ expressionList
     ;
 
 type
-    : Identifier
+    : id
     | type LSquareBrak RSquareBrak
+    ;
+
+id
+    : RawIdentifier (Colon RawIdentifier)?
     ;
 
 // Lexer
@@ -141,6 +157,7 @@ NoStack: 'nostack';
 Inline: 'inline';
 
 Semi: ';';
+Colon: ':';
 Comma: ',';
 LParen: '(';
 RParen: ')';
@@ -162,11 +179,13 @@ Lt: '<';
 Lte: '<=';
 AndAnd: '&&';
 OrOr: '||';
+Dot: '.';
 
-Identifier: ([a-z] | [A-Z] | '_' ) ([a-z] | [A-Z] | [0-9] | '_' | '-' | ':' | '/')*;
+RawIdentifier: ([a-z] | [A-Z] | '_' ) ([a-z] | [A-Z] | [0-9] | '_' | '-' | '/')*;
+//Identifier: ([a-z] | [A-Z] | [0-9] | '_' | '-')* ':' ([a-z] | [A-Z] | [0-9] | '_' | '-' | '/')*;
 String: '"' ( ~[\\"\n\r] | '\\' [\\"] )* '"';
 Command: '@/' ( ~[\n\r] )* ('\r' | '\n');
-Integer: '-'? [0-9.]+ [bsilfdBSILFD]?;
+Integer: '-'? (([0-9]+ [bsilBSIL]?) | ([0-9] [0-9.]* [fdFD]?));
 
 Whitespace: (' '|'\t'|'\n'|'\r')+ -> skip;
 Comment: '/*' .*? '*/' -> skip;

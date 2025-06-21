@@ -47,6 +47,8 @@ namespace Amethyst.AST
 					return new PrimitiveTypeSpecifier(NBTType.String);
 				case "list":
 					return new PrimitiveTypeSpecifier(NBTType.List);
+				case "nbt":
+					return new PrimitiveTypeSpecifier(NBTType.Compound);
 				default:
 					break;
 			}
