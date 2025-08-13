@@ -1,14 +1,8 @@
-﻿using Amethyst.AST;
-using Amethyst.Codegen;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Amethyst.Geode;
 
 namespace Amethyst.Errors
 {
-	public class InvalidCastError(LocationRange loc, TypeSpecifier oldType, TypeSpecifier newType) : AmethystError(loc, $"{oldType} cannot be casted to {newType}")
+	public class InvalidCastError(TypeSpecifier oldType, TypeSpecifier newType) : AmethystError($"{oldType} cannot be casted to {newType}")
 	{
 	}
 }

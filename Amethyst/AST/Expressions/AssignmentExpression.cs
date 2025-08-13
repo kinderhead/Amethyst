@@ -1,11 +1,5 @@
-﻿using Amethyst.Codegen;
-using Amethyst.Codegen.IR;
-using Amethyst.Errors;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Amethyst.Geode;
+using Amethyst.Geode.IR;
 
 namespace Amethyst.AST.Expressions
 {
@@ -14,14 +8,11 @@ namespace Amethyst.AST.Expressions
 		public readonly Expression Dest = dest;
 		public readonly Expression Expression = expr;
 
-		protected override TypeSpecifier _ComputeType(FunctionContext ctx) => Dest.ComputeType(ctx);
+		public override TypeSpecifier ComputeType(FunctionContext ctx) => Dest.ComputeType(ctx);
 
-		protected override Value _Execute(FunctionContext ctx)
+		public override ValueRef Execute(FunctionContext ctx)
 		{
-			var val = Dest.Execute(ctx);
-			if (val is MutableValue v) Expression.Cast(val.Type).Store(ctx, v);
-			else throw new ImmutableValueError(Location);
-			return val;
+			throw new NotImplementedException();
 		}
 	}
 }

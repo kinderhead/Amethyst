@@ -1,12 +1,7 @@
-﻿using Amethyst.Codegen;
-using Amethyst.Codegen.IR;
-using Amethyst.Errors;
+﻿using Amethyst.Errors;
+using Amethyst.Geode;
+using Amethyst.Geode.IR;
 using Datapack.Net.Data;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Amethyst.AST
 {
@@ -28,7 +23,7 @@ namespace Amethyst.AST
 					return new VoidTypeSpecifier();
 				case "var":
 					if (allowAuto) return new VarTypeSpecifier();
-					else throw new InvalidTypeError(Location, Type);
+					else throw new InvalidTypeError(Type);
 				case "bool":
 					return new PrimitiveTypeSpecifier(NBTType.Boolean);
 				case "byte":
@@ -53,7 +48,7 @@ namespace Amethyst.AST
 					break;
 			}
 
-			throw new UnknownTypeError(Location, Type);
+			throw new UnknownTypeError(Type);
 		}
 	}
 
@@ -69,12 +64,12 @@ namespace Amethyst.AST
 		public readonly string Name = name;
 		public readonly Dictionary<string, AbstractObjectProperty> Properties = props;
 
-        public void Process(Compiler ctx)
-        {
-            throw new NotImplementedException();
-        }
+		public void Process(Compiler ctx)
+		{
+			throw new NotImplementedException();
+		}
 
-        public override TypeSpecifier Resolve(Compiler ctx, bool allowAuto = false) => new InterfaceType(new(Properties.Select(i => new KeyValuePair<string, ObjectProperty>(i.Key, new ObjectProperty(i.Value.Type.Resolve(ctx), i.Value.Name)))));
+		public override TypeSpecifier Resolve(Compiler ctx, bool allowAuto = false) => new InterfaceType(new(Properties.Select(i => new KeyValuePair<string, ObjectProperty>(i.Key, new ObjectProperty(i.Value.Type.Resolve(ctx), i.Value.Name)))));
 	}
 
 	public readonly record struct AbstractObjectProperty(AbstractTypeSpecifier Type, string Name);

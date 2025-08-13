@@ -1,11 +1,4 @@
-﻿using Amethyst.AST.Statements;
-using Amethyst.Codegen;
-using Amethyst.Errors;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Amethyst.Geode.IR;
 
 namespace Amethyst.AST
 {
@@ -21,7 +14,7 @@ namespace Amethyst.AST
 
 			foreach (var i in Children.Concat(Functions))
 			{
-				if (!Ctx.WrapError(() =>
+				if (!Ctx.WrapError(i.Location, () =>
 				{
 					i.Process(Ctx);
 				})) success = false;
@@ -30,13 +23,15 @@ namespace Amethyst.AST
 			return success;
 		}
 
-		public bool CompileFunctions()
+		public bool CompileFunctions(out List<FunctionContext> funcs)
 		{
 			var success = true;
+			funcs = [];
 
 			foreach (var i in Functions)
 			{
-				if (!i.Compile(Ctx)) success = false;
+				if (!i.Compile(Ctx, out var ctx) || ctx is null) success = false;
+				else funcs.Add(ctx);
 			}
 
 			return success;
@@ -45,6 +40,8 @@ namespace Amethyst.AST
 
 	public interface IRootChild
 	{
+		public LocationRange Location { get; }
+
 		public void Process(Compiler ctx);
 	}
 }

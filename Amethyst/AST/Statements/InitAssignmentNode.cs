@@ -1,13 +1,6 @@
 ﻿using Amethyst.AST.Expressions;
-using Amethyst.Codegen;
-using Amethyst.Codegen.IR;
-using Amethyst.Errors;
-using Datapack.Net.Data;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Amethyst.Geode.IR;
+using Amethyst.Geode.IR.Instructions;
 
 namespace Amethyst.AST.Statements
 {
@@ -18,21 +11,10 @@ namespace Amethyst.AST.Statements
 		public readonly Expression? Expression = expr;
 		public override IEnumerable<Statement> Statements => [];
 
-		protected override void _Compile(FunctionContext ctx)
+		public override void Compile(FunctionContext ctx)
 		{
-			var type = Type.Resolve(ctx, true);
-			if (type is VoidTypeSpecifier) throw new InvalidTypeError(Location, "void");
-			else if (type is VarTypeSpecifier)
-			{
-				if (Expression is null) throw new InvalidTypeError(Location, "var");
-				type = Expression.ComputeType(ctx);
-			}
-
-			MutableValue val;
-			if (!ctx.KeepLocalsOnStack && type is PrimitiveTypeSpecifier p && p.Type == NBTType.Int) val = ctx.AllocScore();
-			else val = new StorageValue(new(Compiler.RuntimeID), ctx.GetStackVariablePath(Name), type);
-			ctx.RegisterVariable(Name, val);
-			Expression?.Cast(type).Store(ctx, val);
+			var val = ctx.RegisterLocal(Name, Type.Resolve(ctx));
+			if (Expression is not null) ctx.Add(new StoreInsn(val, Expression.Execute(ctx)));
 		}
 	}
 }

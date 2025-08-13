@@ -1,43 +1,36 @@
 ﻿using Amethyst.AST;
 using Spectre.Console;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace Amethyst.Errors
 {
-	public class AmethystError(LocationRange loc, string msg) : Exception
+	public class AmethystError(string msg) : Exception
 	{
-		public readonly LocationRange Location = loc;
 		public readonly string RawMessage = msg;
 
-		public override string Message => $"{GetType().Name} at {Location}: {RawMessage}";
+		public override string Message => $"{GetType().Name}: {RawMessage}";
 
-		public virtual void Display(IFileHandler handler, bool last = true)
+		public virtual void Display(IFileHandler handler, LocationRange loc, bool last = true)
 		{
-			var lines = handler.Files[Location.Start.File].Split('\n');
+			var lines = handler.Files[loc.Start.File].Split('\n');
 
-			var lastCol = Location.End.Column;
-			if (Location.Start.Line != Location.End.Line) lastCol = lines[Location.Start.Line - 1].Length;
+			var lastCol = loc.End.Column;
+			if (loc.Start.Line != loc.End.Line) lastCol = lines[loc.Start.Line - 1].Length;
 
-			AnsiConsole.MarkupLine($"[red]Error at {Location.Start}\n│[/]");
-			AnsiConsole.MarkupLine("[red]│[/]   [turquoise2]" + lines[Location.Start.Line - 1].EscapeMarkup() + "[/]");
-			AnsiConsole.MarkupLine("[red]│[/]   " + new string(' ', Location.Start.Column - 1) + $"[red]{new string('~', lastCol - Location.Start.Column + 1)}[/]");
+			AnsiConsole.MarkupLine($"[red]Error at {loc.Start}\n│[/]");
+			AnsiConsole.MarkupLine("[red]│[/]   [turquoise2]" + lines[loc.Start.Line - 1].EscapeMarkup() + "[/]");
+			AnsiConsole.MarkupLine("[red]│[/]   " + new string(' ', loc.Start.Column - 1) + $"[red]{new string('~', lastCol - loc.Start.Column + 1)}[/]");
 			AnsiConsole.MarkupLine($"[red]{(last ? "└─" : "│ ")}  {GetType().Name}:[/] [yellow]{RawMessage.EscapeMarkup()}[/]{(last ? "\n\n" : "")}");
 		}
 	}
 
-	public class DoubleAmethystError(LocationRange loc1, string msg1, LocationRange loc2, string msg2) : AmethystError(loc1, msg1)
+	public class DoubleAmethystError(string msg1, LocationRange loc2, string msg2) : AmethystError(msg1)
 	{
 		public readonly LocationRange Location2 = loc2;
 		public readonly string RawMessage2 = msg2;
 
-		public override void Display(IFileHandler handler, bool last = true)
+		public override void Display(IFileHandler handler, LocationRange loc, bool last = true)
 		{
-			base.Display(handler, false);
+			base.Display(handler, loc, false);
 
 			var lines = handler.Files[Location2.Start.File].Split('\n');
 
@@ -50,11 +43,11 @@ namespace Amethyst.Errors
 		}
 	}
 
-	public class EmptyAmethystError() : AmethystError(new(new("", 0, 0), new("", 0, 0)), "")
+	public class EmptyAmethystError() : AmethystError("")
 	{
-		public override void Display(IFileHandler handler, bool lastNewlines = true)
+		public override void Display(IFileHandler handler, LocationRange loc, bool lastNewlines = true)
 		{
-			
+
 		}
 	}
 }

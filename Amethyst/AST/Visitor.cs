@@ -7,11 +7,6 @@ using Antlr4.Runtime.Tree;
 using Datapack.Net.Data;
 using Datapack.Net.Function.Commands;
 using Datapack.Net.Utils;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Amethyst.AST
 {
@@ -83,10 +78,10 @@ namespace Amethyst.AST
 			return block;
 		}
 
-        public override Node VisitInterface([NotNull] AmethystParser.InterfaceContext context)
-        {
-            
-        }
+		// public override Node VisitInterface([NotNull] AmethystParser.InterfaceContext context)
+		// {
+
+		// }
 
 		public override Node VisitInitAssignmentStatement([NotNull] AmethystParser.InitAssignmentStatementContext context) => new InitAssignmentNode(Loc(context), Visit(context.type()), Visit(context.id()), context.expression() is null ? null : Visit(context.expression()));
 		public override Node VisitExpressionStatement([NotNull] AmethystParser.ExpressionStatementContext context) => new ExpressionStatement(Loc(context), Visit(context.expression()));
@@ -106,7 +101,7 @@ namespace Amethyst.AST
 		public override Node VisitAssignmentExpression([NotNull] AmethystParser.AssignmentExpressionContext context)
 		{
 			if (context.expression() is null) return Visit(context.logicalExpression());
-			else return new AssignmentExpression(Loc(context), (Expression) Visit(context.logicalExpression()), Visit(context.expression()));
+			else return new AssignmentExpression(Loc(context), (Expression)Visit(context.logicalExpression()), Visit(context.expression()));
 		}
 
 		public override Node VisitLogicalExpression([NotNull] AmethystParser.LogicalExpressionContext context)

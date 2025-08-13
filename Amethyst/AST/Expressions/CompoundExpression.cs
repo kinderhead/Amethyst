@@ -1,7 +1,5 @@
-using System;
-using Amethyst.Codegen;
-using Amethyst.Codegen.IR;
-using Amethyst.Errors;
+using Amethyst.Geode;
+using Amethyst.Geode.IR;
 using Datapack.Net.Data;
 
 namespace Amethyst.AST.Expressions
@@ -10,39 +8,11 @@ namespace Amethyst.AST.Expressions
     {
         public readonly Dictionary<string, Expression> Values = new(values);
 
-        protected override TypeSpecifier _ComputeType(FunctionContext ctx) => new PrimitiveTypeSpecifier(NBTType.Compound);
+        public override TypeSpecifier ComputeType(FunctionContext ctx) => PrimitiveTypeSpecifier.Compound;
 
-        protected override Value _Execute(FunctionContext ctx)
+        public override ValueRef Execute(FunctionContext ctx)
         {
-            List<KeyValuePair<string, Value>> vals = [.. Values.Select(i => new KeyValuePair<string, Value>(i.Key, i.Value.Execute(ctx)))];
-            // TODO: figure out a good way to differentiate constants from non constants before execution
-
-            if (vals.FindIndex(i => i.Value.AsConstant() is null) == -1)
-            {
-                return new LiteralValue(new NBTCompound([.. vals.Select(i => new KeyValuePair<string, NBTValue>(i.Key, i.Value.AsConstant() ?? throw new InvalidOperationException()))]));
-            }
-            else
-            {
-                var tmp = ctx.AllocTemp(new PrimitiveTypeSpecifier(NBTType.Compound));
-                ctx.Add(new PopulateInstruction(Location, tmp, new(vals)));
-                return tmp;
-            }
-        }
-
-        protected override void _Store(FunctionContext ctx, MutableValue dest)
-        {
-            List<KeyValuePair<string, Value>> vals = [.. Values.Select(i => new KeyValuePair<string, Value>(i.Key, i.Value.Execute(ctx)))];
-            // TODO: figure out a good way to differentiate constants from non constants before execution
-
-            if (vals.FindIndex(i => i.Value.AsConstant() is null) == -1)
-            {
-                dest.Store(ctx, new LiteralValue(new NBTCompound([.. vals.Select(i => new KeyValuePair<string, NBTValue>(i.Key, i.Value.AsConstant() ?? throw new InvalidOperationException()))])));
-            }
-            else
-            {
-                if (dest is not StorageValue s) throw new InvalidTypeError(Location, dest.Type.ToString());
-                ctx.Add(new PopulateInstruction(Location, s, new(vals)));
-            }
+            throw new NotImplementedException();
         }
     }
 }

@@ -1,16 +1,8 @@
 ﻿using Amethyst.AST.Statements;
-using Amethyst.Codegen;
-using Amethyst.Codegen.IR;
 using Amethyst.Errors;
-using Datapack.Net.Data;
-using Datapack.Net.Function;
+using Amethyst.Geode;
+using Amethyst.Geode.IR;
 using Datapack.Net.Utils;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml.Linq;
 
 namespace Amethyst.AST
 {
@@ -34,94 +26,30 @@ namespace Amethyst.AST
 		private FunctionTypeSpecifier? funcType = null;
 		public FunctionTypeSpecifier GetFunctionType(Compiler ctx) => funcType ??= new(Modifiers, ReturnType.Resolve(ctx), Parameters.Select(i => new Parameter(i.Modifiers, i.Type.Resolve(ctx), i.Name)));
 
-		public bool Compile(Compiler compiler)
+		public bool Compile(Compiler compiler, out FunctionContext? ctx)
 		{
+			ctx = null;
+
+			var funcType = GetFunctionType(compiler);
+
 			if (Modifiers.HasFlag(FunctionModifiers.Inline))
 			{
-				if (GetFunctionType(compiler).Parameters.Any(i => i.Modifiers.HasFlag(ParameterModifiers.Macro))) throw new ModifierError(Location, "inline functions cannot have macro arguments");
-				return true;
+				if (funcType.Parameters.Any(i => i.Modifiers.HasFlag(ParameterModifiers.Macro))) throw new ModifierError("inline functions cannot have macro arguments");
+				return false;
 			}
 
-			var ctxs = new List<FunctionContext>();
-
-			if (!SubCompile(compiler, out var ctx1)) return false;
-			ctxs.Add(ctx1);
-
-			if (!compiler.Options.KeepLocalsOnStack)
-			{
-				if (!SubCompile(compiler, out var ctx2, true)) return false;
-				ctxs.Add(ctx2);
-			}
-
-			PickShortest(compiler, ctxs);
-
-			foreach (var i in Tags)
-			{
-				compiler.Datapack.Tags.GetTag(i, "function").Values.Add(ID);
-			}
+			ctx = new FunctionContext(compiler, (StaticFunctionValue)compiler.Symbols[ID].Value);
+			if (!Body.CompileWithErrorChecking(ctx)) return false;
 
 			return true;
 		}
 
-		private void PickShortest(Compiler compiler, List<FunctionContext> ctxs)
+		public void Process(Compiler ctx)
 		{
-			var keep = ctxs.MinBy(i => i.TotalFunctions.Sum(e => e.Length));
-			if (keep is not null)
-			{
-				compiler.Functions[ID] = keep;
-				foreach (var i in keep.TotalFunctions)
-				{
-					compiler.Register(i);
-				}
-			}
-		}
-
-		private bool SubCompile(Compiler compiler, out FunctionContext ctx, bool keepLocalsOnStack = false)
-		{
-			var funcType = GetFunctionType(compiler);
-			ctx = new FunctionContext(compiler, this, new MCFunction(ID), funcType);
-			ctx.KeepLocalsOnStack = ctx.KeepLocalsOnStack || keepLocalsOnStack;
-			ctx.PushLocator(Body);
-
-			ctx.Add(new InitFrameInstruction(Body.Location));
-
-			for (var i = 0; i < funcType.Parameters.Length; i++)
-			{
-				if (funcType.Parameters[i].Modifiers.HasFlag(ParameterModifiers.Macro))
-				{
-					ctx.RegisterVariable(funcType.Parameters[i].Name, new MacroValue(funcType.Parameters[i].Name, funcType.Parameters[i].Type));
-				}
-				else
-				{
-					var stackVal = new StorageValue(Compiler.RuntimeID, $"stack[-1].{funcType.Parameters[i].Name}", funcType.Parameters[i].Type);
-
-					MutableValue val;
-					if (funcType.Parameters[i].Type.EffectiveType != NBTType.Int || ctx.KeepLocalsOnStack) val = stackVal;
-					else
-					{
-						val = ctx.AllocScore();
-						val.Store(ctx, stackVal);
-					}
-
-					ctx.RegisterVariable(Parameters[i].Name, val);
-				}
-			}
-
-			var ret = Body.CompileWithErrorChecking(ctx);
-
-			if (ctx.CurrentFrame.Instructions.Last() is not ExitFrameInstruction) ctx.Add(new ExitFrameInstruction(Body.Location));
-
-			if (ret) ret = ctx.RequireCompiled();
-
-			return ret;
-		}
-
-        public void Process(Compiler ctx)
-        {
-			if (ctx.Symbols.TryGetValue(ID, out var sym)) throw new RedefinedSymbolError(Location, ID.ToString(), sym.Location);
+			if (ctx.Symbols.TryGetValue(ID, out var sym)) throw new RedefinedSymbolError(ID.ToString(), sym.Location);
 			ctx.Symbols[ID] = new(ID, Location, new StaticFunctionValue(ID, GetFunctionType(ctx)), this);
 		}
-    }
+	}
 
 	[Flags]
 	public enum ParameterModifiers

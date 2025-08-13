@@ -1,4 +1,4 @@
-namespace amethyst;
+/*namespace amethyst;
 
 nostack void core/index-list(macro string dest_storage, macro string dest_path, macro string src_storage, macro string src_path, macro int index) {
     @/data modify storage $(dest_storage) $(dest_path) set from storage $(src_storage) $(src_path)[$(index)]
@@ -8,3 +8,4 @@ nostack void core/bool(macro string dest_storage, macro string dest_path, macro 
     // New 1.21.5 syntax
     @/data modify storage $(dest_storage) $(dest_path) set value bool($(value))
 }
+*/

@@ -1,9 +1,6 @@
-using System;
-using Amethyst.AST;
-
 namespace Amethyst.Errors
 {
-    public class ModifierError(LocationRange loc, string msg) : AmethystError(loc, msg)
+    public class ModifierError(string msg) : AmethystError(msg)
     {
     }
 }

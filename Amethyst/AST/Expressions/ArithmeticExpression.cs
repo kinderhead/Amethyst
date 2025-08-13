@@ -1,13 +1,7 @@
-﻿using Amethyst.Codegen;
-using Amethyst.Codegen.IR;
-using Amethyst.Errors;
-using Datapack.Net.Data;
+﻿using Amethyst.Geode;
+using Amethyst.Geode.IR;
+using Amethyst.Geode.IR.Instructions;
 using Datapack.Net.Function.Commands;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Amethyst.AST.Expressions
 {
@@ -17,65 +11,22 @@ namespace Amethyst.AST.Expressions
 		public readonly ScoreOperation Op = op;
 		public readonly Expression Right = right;
 
-		protected override TypeSpecifier _ComputeType(FunctionContext ctx) => new PrimitiveTypeSpecifier(NBTType.Int);
+		public override TypeSpecifier ComputeType(FunctionContext ctx) => PrimitiveTypeSpecifier.Int;
 
-		protected override Value _Execute(FunctionContext ctx)
+		public override ValueRef Execute(FunctionContext ctx)
 		{
-			ThrowIfInvalid(ctx);
-			if (IsLiteral() is LiteralValue l) return l;
+			var left = Left.Execute(ctx);
+			var right = Right.Execute(ctx);
 
-			var tmp = ctx.AllocTempScore();
-			Store(ctx, tmp);
-			return tmp;
-		}
-
-		protected override void _Store(FunctionContext ctx, MutableValue dest)
-		{
-			ThrowIfInvalid(ctx);
-
-			if (IsLiteral() is LiteralValue l)
+			return Op switch
 			{
-				dest.Store(ctx, l);
-				return;
-			}
-
-			if (dest is not ScoreValue sval)
-			{
-				dest.Store(ctx, Execute(ctx));
-				return;
-			}
-
-			Left.Store(ctx, sval);
-			ctx.Add(new ScoreOperationInstruction(Location, sval, Op, Right.Execute(ctx).AsScore(ctx)));
-		}
-
-		private void ThrowIfInvalid(FunctionContext ctx)
-		{
-			var lt = Left.ComputeType(ctx);
-			var rt = Right.ComputeType(ctx);
-			if (!lt.Operable) throw new InvalidTypeError(Location, lt.ToString());
-			if (!rt.Operable) throw new InvalidTypeError(Location, rt.ToString());
-		}
-
-		private LiteralValue? IsLiteral()
-		{
-			if (Left is LiteralExpression l && Right is LiteralExpression r)
-			{
-				var left = int.Parse(l.Value.ToString()); // This is certainly one way to do this
-				var right = int.Parse(r.Value.ToString());
-				var ret = Op switch
-				{
-					ScoreOperation.Add => left + right,
-					ScoreOperation.Sub => left - right,
-					ScoreOperation.Mul => left * right,
-					ScoreOperation.Div => left / right,
-					ScoreOperation.Mod => left % right,
-					_ => throw new NotImplementedException(),
-				};
-				return new LiteralValue(new NBTInt(ret));
-			}
-
-			return null;
+				ScoreOperation.Add => ctx.Add(new AddInsn(left, right)),
+				ScoreOperation.Sub => ctx.Add(new SubInsn(left, right)),
+				ScoreOperation.Mul => ctx.Add(new MulInsn(left, right)),
+				ScoreOperation.Div => ctx.Add(new DivInsn(left, right)),
+				ScoreOperation.Mod => ctx.Add(new ModInsn(left, right)),
+				_ => throw new NotImplementedException(),
+			};
 		}
 	}
 }

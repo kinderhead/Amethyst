@@ -1,10 +1,5 @@
-﻿using Amethyst.Codegen.IR;
-using Amethyst.Errors;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Amethyst.Errors;
+using Amethyst.Geode.IR;
 
 namespace Amethyst.AST.Statements
 {
@@ -13,7 +8,7 @@ namespace Amethyst.AST.Statements
 		private readonly List<Statement> statements = [];
 		public override IEnumerable<Statement> Statements => statements;
 
-		protected override void _Compile(FunctionContext ctx)
+		public override void Compile(FunctionContext ctx)
 		{
 			if (!CompileWithErrorChecking(ctx)) throw new EmptyAmethystError();
 		}
@@ -26,8 +21,7 @@ namespace Amethyst.AST.Statements
 
 			foreach (var i in Statements)
 			{
-				if (!ctx.Compiler.WrapError(() => i.Compile(ctx))) success = false;
-				if (ctx.CurrentFrame.Instructions.Last() is ExitFrameInstruction) break;
+				if (!ctx.Compiler.WrapError(i.Location, () => i.Compile(ctx))) success = false;
 			}
 
 			return success;

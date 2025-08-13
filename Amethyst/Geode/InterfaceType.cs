@@ -1,6 +1,4 @@
-using System;
-
-namespace Amethyst.Codegen
+namespace Amethyst.Geode
 {
     public class InterfaceType(Dictionary<string, ObjectProperty> props) : TypeSpecifier
     {
@@ -8,7 +6,7 @@ namespace Amethyst.Codegen
 
         public override bool Operable => false;
         protected override bool AreEqual(TypeSpecifier obj) => obj is InterfaceType other && Properties.Count == other.Properties.Count && Properties.All(kv => other.Properties.TryGetValue(kv.Key, out var prop) && prop.Equals(kv.Value));
-        protected override string _ToString() => $"interface {{\n{string.Join('\n', Properties.Select(i => $"    {i.Value.Type} {i.Key};"))}\n}}";
+        public override string ToString() => $"interface {{\n{string.Join('\n', Properties.Select(i => $"    {i.Value.Type} {i.Key};"))}\n}}";
         public override bool IsAssignableTo(TypeSpecifier other) => (other is InterfaceType i && i.Properties.All(kv => Properties.TryGetValue(kv.Key, out var prop) && prop.Equals(kv.Value))) || base.IsAssignableTo(other);
         public override TypeSpecifier? Property(string name) => Properties.TryGetValue(name, out var prop) ? prop.Type : base.Property(name);
     }

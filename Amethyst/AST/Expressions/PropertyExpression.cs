@@ -1,7 +1,6 @@
-using System;
-using Amethyst.Codegen;
-using Amethyst.Codegen.IR;
 using Amethyst.Errors;
+using Amethyst.Geode;
+using Amethyst.Geode.IR;
 
 namespace Amethyst.AST.Expressions
 {
@@ -10,12 +9,11 @@ namespace Amethyst.AST.Expressions
         public readonly Expression Expression = expression;
         public readonly string Property = prop;
 
-        protected override TypeSpecifier _ComputeType(FunctionContext ctx) => Expression.ComputeType(ctx).Property(Property) ?? throw new PropertyError(Location, Expression.ComputeType(ctx).ToString(), Property);
+        public override TypeSpecifier ComputeType(FunctionContext ctx) => Expression.ComputeType(ctx).Property(Property) ?? throw new PropertyError(Expression.ComputeType(ctx).ToString(), Property);
 
-        protected override Value _Execute(FunctionContext ctx)
+        public override ValueRef Execute(FunctionContext ctx)
         {
-            var obj = Expression.Execute(ctx);
-            return obj.GetProperty(ctx, Property);
+            throw new NotImplementedException();
         }
     }
 }

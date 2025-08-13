@@ -1,10 +1,4 @@
 ﻿using Antlr4.Runtime;
-using CommandLine;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Amethyst.AST
 {
@@ -20,9 +14,10 @@ namespace Amethyst.AST
 		public static LocationRange From(string path, ParserRuleContext ctx)
 		{
 			var stopToken = ctx.Stop;
+
 			// Might have to fix if there are multiline tokens, but I don't think there are any
-			int endColumn = stopToken.Column + stopToken.StopIndex - stopToken.StartIndex + 1;
-			var end = new Location(path, stopToken.Line, endColumn);
+			int endColumn = stopToken is not null ? stopToken.Column + stopToken.StopIndex - stopToken.StartIndex + 1 : 0;
+			var end = new Location(path, stopToken?.Line ?? 0, endColumn);
 			return new LocationRange(Location.From(path, ctx.Start), end);
 		}
 
