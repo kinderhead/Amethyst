@@ -5,7 +5,7 @@ namespace Amethyst.Geode.IR
 {
     public abstract class Instruction
     {
-        public readonly ValueRef[] Arguments;
+        public readonly IInstructionArg[] Arguments;
         public readonly ValueRef ReturnValue;
 
         public abstract string Name { get; }
@@ -14,7 +14,7 @@ namespace Amethyst.Geode.IR
 
         public bool MarkedForRemoval { get; private set; } = false;
 
-        public Instruction(IEnumerable<ValueRef> args)
+        public Instruction(IEnumerable<IInstructionArg> args)
         {
             Arguments = [.. args];
             ReturnValue = new(ReturnType);
@@ -24,16 +24,16 @@ namespace Amethyst.Geode.IR
             int i = 0;
             foreach (var arg in Arguments)
             {
-                if (ArgTypes[i] is not null && ArgTypes[i] != arg.Type.EffectiveType)
+                if (ArgTypes[i] is not null && arg is ValueRef v && ArgTypes[i] != v.Type.EffectiveType)
                 {
-                    throw new InvalidOperationException($"Argument {i + 1} is of type {arg.Type}, but expected {ArgTypes[i]}");
+                    throw new InvalidOperationException($"Argument {i + 1} is of type {v.Type}, but expected {ArgTypes[i]}");
                 }
 
                 i++;
             }
         }
 
-        public ValueRef Arg(int index) => Arguments[index];
+        public T Arg<T>(int index) where T : IInstructionArg => (T)Arguments[index];
 
         public void Resolve()
         {
@@ -47,7 +47,7 @@ namespace Amethyst.Geode.IR
             if (ret.IsLiteral) Remove();
         }
 
-        public virtual string Dump(Func<ValueRef, string> valueMap)
+        public virtual string Dump(Func<IInstructionArg, string> valueMap)
         {
             var builder = new StringBuilder();
 
@@ -71,7 +71,7 @@ namespace Amethyst.Geode.IR
         protected bool AreArgsLiteral(out LiteralValue[] args)
         {
 #pragma warning disable CS8601
-            args = [.. Arguments.Select(a => a.Value as LiteralValue)];
+            args = [.. Arguments.Select(a => (a as ValueRef)?.Value as LiteralValue)];
 #pragma warning restore CS8601
 
             return args.All(v => v is not null);

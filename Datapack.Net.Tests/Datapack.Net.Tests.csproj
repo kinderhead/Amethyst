@@ -18,6 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="../Amethyst/Amethyst.csproj" />
     <ProjectReference Include="..\Datapack.Net\Datapack.Net.csproj" />
   </ItemGroup>
 

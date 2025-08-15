@@ -1,8 +1,9 @@
 namespace Amethyst.Geode
 {
-    public class Variable(string name, TypeSpecifier type) : Value
+    public class Variable(string name, TypeSpecifier type) : LValue
     {
-        public override string Name => name;
+        public readonly string Name = name;
         public override TypeSpecifier Type => type;
+        public override string ToString() => Name;
     }
 }

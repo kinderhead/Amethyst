@@ -1,6 +1,6 @@
 ﻿using Amethyst.Geode;
 using Amethyst.Geode.IR;
-using Datapack.Net.Data;
+using Amethyst.Geode.IR.Instructions;
 
 namespace Amethyst.AST.Expressions
 {
@@ -24,7 +24,14 @@ namespace Amethyst.AST.Expressions
 
 		public override ValueRef Execute(FunctionContext ctx)
 		{
-			throw new NotImplementedException();
+			var left = Left.Execute(ctx);
+			var right = Right.Execute(ctx);
+
+			return Op switch
+			{
+				ComparisonOperator.Eq => ctx.Add(new EqInsn(left, right)),
+				_ => throw new NotImplementedException(),
+			};
 		}
 	}
 }

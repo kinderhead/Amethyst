@@ -2,9 +2,12 @@ using System.Text;
 
 namespace Amethyst.Geode.IR
 {
-    public class Block(string name)
+    public class Block(string name) : IInstructionArg
     {
-        public readonly string Name = name;
+        public string Name => name;
+
+        public bool NeedsScoreReg => false;
+
         public readonly List<Instruction> Instructions = [];
         public readonly List<Block> Previous = [];
         public readonly List<Block> Next = [];
@@ -15,7 +18,13 @@ namespace Amethyst.Geode.IR
             return insn.ReturnValue;
         }
 
-        public string Dump(Func<ValueRef, string> valueMap)
+        public void Link(Block next)
+        {
+            Next.Add(next);
+            next.Previous.Add(this);
+        }
+
+        public string Dump(Func<IInstructionArg, string> valueMap)
         {
             var builder = new StringBuilder();
 

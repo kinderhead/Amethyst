@@ -34,6 +34,13 @@ namespace Amethyst.Geode
             if (Options.DumpIR)
             {
                 DumpIR();
+            }
+
+            AllocateRegisters();
+
+            if (Options.DumpIR)
+            {
+                DumpIR();
                 return true;
             }
 
@@ -56,12 +63,29 @@ namespace Amethyst.Geode
             return true;
         }
 
-        public void ApplyPass<T>() where T : Pass, new() => ApplyPass(new T());
-        public void ApplyPass(Pass pass)
+        public T ApplyPass<T>() where T : Pass, new() => ApplyPass(new T());
+        public T ApplyPass<T>(T pass) where T : Pass
         {
             foreach (var i in Functions)
             {
                 pass.Apply(i);
+            }
+
+            return pass;
+        }
+
+        public void AllocateRegisters()
+        {
+            var inout = ApplyPass<InOutPass>();
+            var graph = ApplyPass(new LifetimePass(inout));
+
+            foreach (var func in Functions)
+            {
+                var colors = graph.Graphs[func].CalculateDSatur();
+                foreach (var kv in colors)
+                {
+                    kv.Key.SetValue(new ScoreValue(RuntimeEntity, Temp(kv.Value)));
+                }
             }
         }
 
@@ -79,6 +103,8 @@ namespace Amethyst.Geode
             Register(score);
             return score;
         }
+
+        public Score Temp(int num) => Score($"tmp_{num}");
 
         public void Register(MCFunction func) => Datapack.Functions.Add(func);
         public void Register(Score score) => registeredScores.Add(score);

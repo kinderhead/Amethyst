@@ -40,6 +40,7 @@ namespace Amethyst.AST
 
 			ctx = new FunctionContext(compiler, (StaticFunctionValue)compiler.Symbols[ID].Value);
 			if (!Body.CompileWithErrorChecking(ctx)) return false;
+			ctx.Finish();
 
 			return true;
 		}

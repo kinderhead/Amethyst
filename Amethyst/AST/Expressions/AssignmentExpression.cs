@@ -1,5 +1,6 @@
 ﻿using Amethyst.Geode;
 using Amethyst.Geode.IR;
+using Amethyst.Geode.IR.Instructions;
 
 namespace Amethyst.AST.Expressions
 {
@@ -12,7 +13,12 @@ namespace Amethyst.AST.Expressions
 
 		public override ValueRef Execute(FunctionContext ctx)
 		{
-			throw new NotImplementedException();
+			var val = Expression.Execute(ctx);
+			var dest = Dest.Execute(ctx);
+
+			ctx.Add(new StoreInsn(dest, val));
+
+			return val;
 		}
 	}
 }

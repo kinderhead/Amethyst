@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Datapack.Net.Function
+﻿namespace Datapack.Net.Function
 {
-    public class Score(string name, string criteria, string displayName = "")
+    public readonly struct Score(string name, string criteria, string displayName = "")
     {
         public readonly string Name = name;
         public readonly string Criteria = criteria;

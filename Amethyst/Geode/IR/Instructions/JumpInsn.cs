@@ -2,11 +2,11 @@ using Datapack.Net.Data;
 
 namespace Amethyst.Geode.IR.Instructions
 {
-    public class StoreInsn(ValueRef dest, ValueRef src) : Instruction([dest, src])
+    public class JumpInsn(Block dest) : Instruction([dest])
     {
-        public override string Name => "store";
+        public override string Name => "jump";
+        public override NBTType?[] ArgTypes => [null];
         public override TypeSpecifier ReturnType => new VoidTypeSpecifier();
-        public override NBTType?[] ArgTypes => [null, null];
 
         protected override Value? ComputeReturnValue() => new VoidValue();
     }
