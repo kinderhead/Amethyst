@@ -47,6 +47,11 @@ namespace Amethyst.Geode.IR
             if (ret.IsLiteral) Remove();
         }
 
+        public virtual void CheckPotentialScoreReuse(Func<ValueRef, ValueRef, bool> tryLink)
+        {
+
+        }
+
         public virtual string Dump(Func<IInstructionArg, string> valueMap)
         {
             var builder = new StringBuilder();

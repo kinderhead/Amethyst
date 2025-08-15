@@ -65,6 +65,13 @@ namespace Amethyst.Geode.IR.Passes
             {
                 alive.Remove(insn.ReturnValue);
 
+                insn.CheckPotentialScoreReuse((val1, val2) =>
+                {
+                    if (Graphs[ctx].DoConnect(val1, val2)) return false;
+
+                    return true;
+                });
+
                 foreach (var arg in insn.Arguments)
                 {
                     if (arg.NeedsScoreReg && arg is ValueRef v)
@@ -96,6 +103,8 @@ namespace Amethyst.Geode.IR.Passes
                 valNode.Connect(Connect(i));
             }
         }
+
+        public bool DoConnect(ValueRef val1, ValueRef val2) => Graph.TryGetValue(val1, out var val1Node) && Graph.TryGetValue(val2, out var val2Node) && val1Node.Edges.Contains(val2Node);
 
         // Probably could find a better algorithm
         public Dictionary<ValueRef, int> CalculateDSatur()
@@ -135,6 +144,9 @@ namespace Amethyst.Geode.IR.Passes
         private readonly HashSet<LifetimeGraphNode> edges = [];
         public IReadOnlyCollection<LifetimeGraphNode> Edges => edges;
 
+        private readonly HashSet<LifetimeGraphNode> links = [];
+        public IReadOnlyCollection<LifetimeGraphNode> Links => links;
+
         public int Degree { get; private set; }
         public int Saturation { get; private set; }
         public int Color { get; private set; }
@@ -145,6 +157,13 @@ namespace Amethyst.Geode.IR.Passes
             else if (Saturation != other.Saturation) return other.Saturation - Saturation;
             else if (Degree != other.Degree) return other.Degree - Degree;
             else return 0;
+        }
+
+        public void Link(LifetimeGraphNode other)
+        {
+            if (other == this) return;
+            links.Add(other);
+            other.links.Add(this);
         }
 
         public void Connect(LifetimeGraphNode other)
