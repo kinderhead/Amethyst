@@ -65,13 +65,6 @@ namespace Amethyst.Geode.IR.Passes
             {
                 alive.Remove(insn.ReturnValue);
 
-                insn.CheckPotentialScoreReuse((val1, val2) =>
-                {
-                    if (Graphs[ctx].DoConnect(val1, val2)) return false;
-
-                    return true;
-                });
-
                 foreach (var arg in insn.Arguments)
                 {
                     if (arg.NeedsScoreReg && arg is ValueRef v)
@@ -80,6 +73,13 @@ namespace Amethyst.Geode.IR.Passes
                         Graphs[ctx].Connect(v, alive);
                     }
                 }
+
+                insn.CheckPotentialScoreReuse((val1, val2) =>
+                {
+                    if (Graphs[ctx].DoConnect(val1, val2)) return false;
+                    Graphs[ctx].Link(val1, val2);
+                    return true;
+                });
             }
         }
     }
@@ -94,17 +94,12 @@ namespace Amethyst.Geode.IR.Passes
             return valNode;
         }
 
-        public void Connect(ValueRef val, params IEnumerable<ValueRef> vals)
-        {
-            var valNode = Connect(val);
-
-            foreach (var i in vals)
-            {
-                valNode.Connect(Connect(i));
-            }
-        }
-
+        public void Connect(ValueRef val, params IEnumerable<ValueRef> vals) => Connect(val).Connect(vals.Select(Connect));
         public bool DoConnect(ValueRef val1, ValueRef val2) => Graph.TryGetValue(val1, out var val1Node) && Graph.TryGetValue(val2, out var val2Node) && val1Node.Edges.Contains(val2Node);
+        public void Link(ValueRef val1, ValueRef val2)
+        {
+            if (Graph.TryGetValue(val1, out var val1Node) && Graph.TryGetValue(val2, out var val2Node)) val1Node.Link(val2Node);
+        }
 
         // Probably could find a better algorithm
         public Dictionary<ValueRef, int> CalculateDSatur()
@@ -131,6 +126,15 @@ namespace Amethyst.Geode.IR.Passes
                 }
 
                 node.SetColor(Array.IndexOf(colors, false), nodes);
+
+                foreach (var i in node.Links)
+                {
+                    if (i.Color < 0)
+                    {
+                        nodes.Remove(i);
+                        i.SetColor(node.Color, nodes);
+                    }
+                }
             }
 
             return new(Graph.Select(i => new KeyValuePair<ValueRef, int>(i.Key, i.Value.Color)));
@@ -149,14 +153,14 @@ namespace Amethyst.Geode.IR.Passes
 
         public int Degree { get; private set; }
         public int Saturation { get; private set; }
-        public int Color { get; private set; }
+        public int Color { get; private set; } = -1;
 
         public int CompareTo(LifetimeGraphNode? other)
         {
             if (other is null) return -1;
             else if (Saturation != other.Saturation) return other.Saturation - Saturation;
             else if (Degree != other.Degree) return other.Degree - Degree;
-            else return 0;
+            else return GetHashCode() - other.GetHashCode(); // idk
         }
 
         public void Link(LifetimeGraphNode other)

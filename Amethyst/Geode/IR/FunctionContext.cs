@@ -73,6 +73,7 @@ namespace Amethyst.Geode.IR
 
         public void Finish()
         {
+            FirstBlock.InsertAtBeginning(AllLocals.Select(i => new DeclareInsn(i)));
             CurrentBlock.Link(ExitBlock);
             CurrentBlock = ExitBlock;
         }

@@ -18,6 +18,8 @@ namespace Amethyst.Geode.IR
             return insn.ReturnValue;
         }
 
+        public void InsertAtBeginning(params IEnumerable<Instruction> insns) => Instructions.InsertRange(0, insns);
+
         public void Link(Block next)
         {
             Next.Add(next);
