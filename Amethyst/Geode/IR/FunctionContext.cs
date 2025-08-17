@@ -1,6 +1,8 @@
 using System.Text;
 using Amethyst.Errors;
 using Amethyst.Geode.IR.Instructions;
+using Datapack.Net.Function.Commands;
+using Datapack.Net.Utils;
 
 namespace Amethyst.Geode.IR
 {
@@ -10,7 +12,7 @@ namespace Amethyst.Geode.IR
         public readonly StaticFunctionValue Decl;
 
         public Block FirstBlock => blocks.First();
-        public readonly Block ExitBlock = new("exit");
+        public readonly Block ExitBlock;
         public Block CurrentBlock { get; private set; }
 
         public bool IsFinished => CurrentBlock == ExitBlock;
@@ -30,8 +32,10 @@ namespace Amethyst.Geode.IR
 
             PushScope();
 
-            blocks.Add(new("entry"));
+            blocks.Add(new("entry", Decl.ID));
             CurrentBlock = blocks.Last();
+
+            ExitBlock = new("exit", GetNewInternalID());
         }
 
         public void PushScope()
@@ -71,9 +75,15 @@ namespace Amethyst.Geode.IR
             return val;
         }
 
+        public ValueRef ImplicitCast(ValueRef val, TypeSpecifier type)
+        {
+            if (val.Type != type) throw new InvalidTypeError(val.Type.ToString(), type.ToString());
+            return val;
+        }
+
         public void Finish()
         {
-            FirstBlock.InsertAtBeginning(AllLocals.Select(i => new DeclareInsn(i)));
+            //FirstBlock.InsertAtBeginning(AllLocals.Select(i => new DeclareInsn(i)));
             CurrentBlock.Link(ExitBlock);
             CurrentBlock = ExitBlock;
         }
@@ -102,8 +112,8 @@ namespace Amethyst.Geode.IR
             label = GetNewLabelName(label);
 
             var startingBlock = CurrentBlock;
-            var trueBlock = new Block($"{label}.true");
-            var endBlock = new Block($"{label}.end");
+            var trueBlock = new Block($"{label}.true", GetNewInternalID());
+            var endBlock = new Block($"{label}.end", GetNewInternalID());
 
             blocks.Add(trueBlock);
             blocks.Add(endBlock);
@@ -127,9 +137,9 @@ namespace Amethyst.Geode.IR
             label = GetNewLabelName(label);
 
             var startingBlock = CurrentBlock;
-            var trueBlock = new Block($"{label}.true");
-            var falseBlock = new Block($"{label}.false");
-            var endBlock = new Block($"{label}.end");
+            var trueBlock = new Block($"{label}.true", GetNewInternalID());
+            var falseBlock = new Block($"{label}.false", GetNewInternalID());
+            var endBlock = new Block($"{label}.end", GetNewInternalID());
 
             blocks.Add(trueBlock);
             blocks.Add(falseBlock);
@@ -153,6 +163,19 @@ namespace Amethyst.Geode.IR
             CurrentBlock = endBlock;
 
             return (trueBlock, falseBlock);
+        }
+
+        public void Render(GeodeBuilder ctx)
+        {
+            if (AllLocals.Any()) FirstBlock.Function.Add(new DataCommand.Modify(GeodeBuilder.RuntimeID, "stack").Append().Value("[]"));
+
+            foreach (var i in blocks)
+            {
+                i.Render(ctx);
+            }
+
+            ctx.Unregister(ExitBlock.Function);
+            if (AllLocals.Any()) FirstBlock.Function.Add(new DataCommand.Remove(GeodeBuilder.RuntimeID, "stack[-1]"));
         }
 
         public string Dump()
@@ -187,6 +210,8 @@ namespace Amethyst.Geode.IR
 
             return builder.ToString();
         }
+
+        public NamespacedID GetNewInternalID() => new(Decl.ID.Namespace, $"zz_internal/{GeodeBuilder.RandomString}");
 
         private class Scope
         {

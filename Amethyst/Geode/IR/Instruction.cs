@@ -47,6 +47,8 @@ namespace Amethyst.Geode.IR
             if (ret.IsLiteral) Remove();
         }
 
+        public abstract void Render(RenderContext ctx);
+
         public virtual void CheckPotentialScoreReuse(Func<ValueRef, ValueRef, bool> tryLink)
         {
 

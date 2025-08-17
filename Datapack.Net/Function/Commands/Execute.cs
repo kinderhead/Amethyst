@@ -1,9 +1,5 @@
-﻿using Datapack.Net.Data;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Text;
+using Datapack.Net.Data;
 
 namespace Datapack.Net.Function.Commands
 {
@@ -307,7 +303,7 @@ namespace Datapack.Net.Function.Commands
                     {
                         if (Operator != null)
                         {
-                            return $"score {Target.Get()} {TargetObjective} {GetOperator((Comparison) Operator)} {Source?.Get()} {SourceObjective}";
+                            return $"score {Target.Get()} {TargetObjective} {GetOperator((Comparison)Operator)} {Source?.Get()} {SourceObjective}";
                         }
                         else
                         {

@@ -8,6 +8,11 @@ namespace Amethyst.Geode.IR.Instructions
         public override NBTType?[] ArgTypes => [null];
         public override TypeSpecifier ReturnType => new VoidTypeSpecifier();
 
+        public override void Render(RenderContext ctx)
+        {
+            throw new NotImplementedException();
+        }
+
         protected override Value? ComputeReturnValue() => new VoidValue();
     }
 }

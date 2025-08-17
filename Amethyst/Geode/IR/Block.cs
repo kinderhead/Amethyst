@@ -1,8 +1,10 @@
 using System.Text;
+using Datapack.Net.Function;
+using Datapack.Net.Utils;
 
 namespace Amethyst.Geode.IR
 {
-    public class Block(string name) : IInstructionArg
+    public class Block(string name, NamespacedID funcID) : IInstructionArg
     {
         public string Name => name;
 
@@ -11,6 +13,8 @@ namespace Amethyst.Geode.IR
         public readonly List<Instruction> Instructions = [];
         public readonly List<Block> Previous = [];
         public readonly List<Block> Next = [];
+
+        public readonly MCFunction Function = new(funcID);
 
         public ValueRef Add(Instruction insn)
         {
@@ -37,6 +41,16 @@ namespace Amethyst.Geode.IR
             }
 
             return builder.ToString();
+        }
+
+        public void Render(GeodeBuilder ctx)
+        {
+            foreach (var i in Instructions)
+            {
+                i.Render(new(Function, this, ctx));
+            }
+
+            ctx.Register(Function);
         }
     }
 }

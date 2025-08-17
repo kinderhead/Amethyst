@@ -1,5 +1,6 @@
 using Datapack.Net.Data;
 using Datapack.Net.Function;
+using Datapack.Net.Function.Commands;
 using Datapack.Net.Utils;
 
 namespace Amethyst.Geode
@@ -9,19 +10,33 @@ namespace Amethyst.Geode
         public abstract TypeSpecifier Type { get; }
         public bool IsLiteral => this is LiteralValue;
 
+        public abstract ScoreValue AsScore(RenderContext ctx, int tmp = 0);
+
         public override string ToString() => "";
+        public abstract override bool Equals(object? obj);
+        public override int GetHashCode() => base.GetHashCode();
+
+        public static bool operator ==(Value left, Value right) => left.Equals(right);
+        public static bool operator !=(Value left, Value right) => !left.Equals(right);
     }
 
     public class LiteralValue(NBTValue val) : Value
     {
         public readonly NBTValue Value = val;
         public override TypeSpecifier Type => new PrimitiveTypeSpecifier(Value.Type);
+
+        public override ScoreValue AsScore(RenderContext ctx, int tmp = 0) => Value is NBTInt n ? ctx.Builder.Constant(n) : throw new InvalidOperationException($"\"{Value}\" is not an integer");
+        public override bool Equals(object? obj) => obj is LiteralValue l && l.Value == Value;
         public override string ToString() => Value.ToString();
+        public override int GetHashCode() => Value.GetHashCode();
     }
 
     public class VoidValue : Value
     {
         public override TypeSpecifier Type => new VoidTypeSpecifier();
+        public override ScoreValue AsScore(RenderContext ctx, int tmp = 0) => throw new InvalidOperationException();
+        public override bool Equals(object? obj) => obj is VoidValue;
+        public override int GetHashCode() => 0; // hmm
     }
 
     public class StaticFunctionValue(NamespacedID id, FunctionTypeSpecifier type) : LiteralValue(new NBTString(id.ToString()))
@@ -32,17 +47,58 @@ namespace Amethyst.Geode
         public FunctionTypeSpecifier FuncType => (FunctionTypeSpecifier)Type;
     }
 
-    public class ScoreValue(IEntityTarget target, Score score) : Value
+    public abstract class LValue : Value
+    {
+        public void Store(Value val, RenderContext ctx)
+        {
+            if (val is LiteralValue literal) Store(literal, ctx);
+            else if (val is ScoreValue score) Store(score, ctx);
+            else if (val is StorageValue storage) Store(storage, ctx);
+            else throw new NotImplementedException();
+        }
+
+        public abstract void Store(LiteralValue literal, RenderContext ctx);
+        public abstract void Store(ScoreValue score, RenderContext ctx);
+        public abstract void Store(StorageValue score, RenderContext ctx);
+    }
+
+    public class ScoreValue(IEntityTarget target, Score score) : LValue
     {
         public readonly IEntityTarget Target = target;
         public readonly Score Score = score;
         public override string ToString() => $"@{Target.Get()}.{Score}";
 
+        public override void Store(ScoreValue score, RenderContext ctx) => ctx.Add(new Scoreboard.Players.Operation(Target, Score, ScoreOperation.Assign, score.Target, score.Score));
+        public override void Store(LiteralValue literal, RenderContext ctx) => ctx.Add(new Scoreboard.Players.Set(Target, Score, literal.ToString()));
+        public override void Store(StorageValue score, RenderContext ctx) => ctx.Add(new Execute().Store(Target, Score).Run(new DataCommand.Get(score.Storage, score.Path)));
+
+        public override ScoreValue AsScore(RenderContext ctx, int tmp = 0) => this;
+        public override bool Equals(object? obj) => obj is ScoreValue s && s.Score == Score && s.Target.Get() == Target.Get();
+
         public override TypeSpecifier Type => PrimitiveTypeSpecifier.Int;
+
+        public override int GetHashCode() => Target.GetHashCode() * Score.GetHashCode();
     }
 
-    public abstract class LValue : Value
+    public class StorageValue(Storage storage, string path, TypeSpecifier type) : LValue
     {
+        public readonly Storage Storage = storage;
+        public readonly string Path = path;
+        public override TypeSpecifier Type => type;
 
+        public override ScoreValue AsScore(RenderContext ctx, int tmp = 0)
+        {
+            // No type checking because this acts like a cast to int
+            var val = ctx.Builder.Temp(tmp);
+            val.Store(this, ctx);
+            return val;
+        }
+
+        public override bool Equals(object? obj) => obj is StorageValue s && s.Storage == Storage && s.Path == Path;
+        public override void Store(ScoreValue score, RenderContext ctx) => ctx.Add(new Execute().Store(Storage, Path, Type.EffectiveNumberType, 1).Run(new Scoreboard.Players.Get(score.Target, score.Score)));
+        public override void Store(LiteralValue literal, RenderContext ctx) => ctx.Add(new DataCommand.Modify(Storage, Path).Set().Value(literal.ToString()));
+        public override void Store(StorageValue score, RenderContext ctx) => ctx.Add(new DataCommand.Modify(Storage, Path).Set().From(score.Storage, score.Path));
+        public override string ToString() => $"{Storage}.{Path}";
+        public override int GetHashCode() => Storage.GetHashCode() * Path.GetHashCode() * Type.GetHashCode();
     }
 }

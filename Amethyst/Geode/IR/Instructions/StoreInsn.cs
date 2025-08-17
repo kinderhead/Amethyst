@@ -8,6 +8,11 @@ namespace Amethyst.Geode.IR.Instructions
         public override TypeSpecifier ReturnType => new VoidTypeSpecifier();
         public override NBTType?[] ArgTypes => [null, null];
 
+        public override void Render(RenderContext ctx)
+        {
+            Arg<ValueRef>(0).Expect<LValue>().Store(Arg<ValueRef>(1).Expect(), ctx);
+        }
+
         protected override Value? ComputeReturnValue() => new VoidValue();
     }
 }

@@ -14,7 +14,7 @@ namespace Amethyst.AST.Statements
 		public override void Compile(FunctionContext ctx)
 		{
 			var val = ctx.RegisterLocal(Name, Type.Resolve(ctx));
-			if (Expression is not null) ctx.Add(new StoreInsn(val, Expression.Execute(ctx)));
+			if (Expression is not null) ctx.Add(new StoreInsn(val, ctx.ImplicitCast(Expression.Execute(ctx), val.Type)));
 		}
 	}
 }

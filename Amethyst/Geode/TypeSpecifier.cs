@@ -12,6 +12,8 @@ namespace Amethyst.Geode
 		// TODO: Make this not throw an error
 		public virtual NBTType EffectiveType => throw new InvalidOperationException(ToString());
 
+		public NBTNumberType EffectiveNumberType => Enum.IsDefined((NBTNumberType)EffectiveType) ? (NBTNumberType)EffectiveType : throw new InvalidOperationException($"Value \"{this}\" is not a number");
+
 		public virtual bool IsAssignableTo(TypeSpecifier other) => this == other;
 		public virtual TypeSpecifier? Property(string name) => null;
 

@@ -29,11 +29,14 @@ namespace Amethyst.Geode
         {
             if (Value is null || Value.Type.EffectiveType != type)
             {
-                throw new InvalidCastException($"Expected value of type \"{Enum.GetName(type)}\", but got \"{(Value is not null ? Enum.GetName(Value.Type.EffectiveType) : "null")}\"");
+                throw new InvalidOperationException($"Expected value of type \"{Enum.GetName(type)}\", but got \"{(Value is not null ? Enum.GetName(Value.Type.EffectiveType) : "null")}\"");
             }
 
             return Value;
         }
+
+        public T Expect<T>() where T : Value => (T?)Value ?? throw new InvalidOperationException($"Expected {typeof(T).Name}, but got {Value?.GetType().Name}");
+        public Value Expect() => Expect<Value>();
 
         public void SetValue(Value val)
         {

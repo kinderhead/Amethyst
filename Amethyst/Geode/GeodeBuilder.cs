@@ -17,6 +17,7 @@ namespace Amethyst.Geode
         public readonly List<Command> UserInitCommands = [];
 
         private readonly HashSet<Score> registeredScores = [];
+        private readonly Dictionary<int, ScoreValue> constants = [];
         private readonly List<MCFunction> functionsToRemove = [];
 
         public GeodeBuilder(Options opts)
@@ -42,6 +43,11 @@ namespace Amethyst.Geode
             {
                 DumpIR();
                 return true;
+            }
+
+            foreach (var i in Functions)
+            {
+                i.Render(this);
             }
 
             foreach (var i in functionsToRemove)
@@ -84,7 +90,7 @@ namespace Amethyst.Geode
                 var colors = graph.Graphs[func].CalculateDSatur();
                 foreach (var kv in colors)
                 {
-                    kv.Key.SetValue(new ScoreValue(RuntimeEntity, Temp(kv.Value)));
+                    kv.Key.SetValue(Reg(kv.Value));
                 }
             }
         }
@@ -97,14 +103,20 @@ namespace Amethyst.Geode
             }
         }
 
-        public Score Score(string name)
+        public ScoreValue Score(string name)
         {
             var score = new Score(name, "dummy");
             Register(score);
-            return score;
+            return new(RuntimeEntity, score);
         }
 
-        public Score Temp(int num) => Score($"tmp_{num}");
+        public ScoreValue Reg(int num) => Score($"reg_{num}");
+        public ScoreValue Temp(int num) => Score($"tmp_{num}");
+        public ScoreValue Constant(int num)
+        {
+            if (!constants.TryGetValue(num, out var score)) constants[num] = score = Score($"_{num}");
+            return score;
+        }
 
         public void Register(MCFunction func) => Datapack.Functions.Add(func);
         public void Register(Score score) => registeredScores.Add(score);
@@ -122,10 +134,10 @@ namespace Amethyst.Geode
                 func.Add(new Scoreboard.Objectives.Add(i));
             }
 
-            // foreach (var i in constants)
-            // {
-            // 	func.Add(new Scoreboard.Players.Set(i.Value.Target, i.Value.Score, i.Key));
-            // }
+            foreach (var i in constants)
+            {
+                func.Add(new Scoreboard.Players.Set(i.Value.Target, i.Value.Score, i.Key));
+            }
 
             func.Add([.. UserInitCommands]);
 
@@ -154,7 +166,7 @@ namespace Amethyst.Geode
         public static string RandomString { get => Guid.NewGuid().ToString(); }
         public static readonly NamespacedID RuntimeID = new("amethyst", "runtime");
         public static readonly IEntityTarget RuntimeEntity = new NamedTarget("amethyst");
-        public static readonly List<string> RuntimeStorageUsed = ["stack", "return", "tmp_args", "tmp_macros"];
+        public static readonly string[] RuntimeStorageUsed = ["stack", "return", "tmp_args", "tmp_macros"];
 
         private static DP GetDP(Options opts) => new("Project generated with Amethyst", opts.Output, opts.PackFormat);
     }

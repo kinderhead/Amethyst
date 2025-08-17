@@ -16,6 +16,8 @@ namespace Amethyst.AST.Expressions
 			var val = Expression.Execute(ctx);
 			var dest = Dest.Execute(ctx);
 
+			val = ctx.ImplicitCast(val, dest.Type);
+
 			ctx.Add(new StoreInsn(dest, val));
 
 			return val;

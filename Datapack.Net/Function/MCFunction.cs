@@ -1,11 +1,7 @@
-﻿using Datapack.Net.Function.Commands;
+﻿using System.Text;
+using Datapack.Net.Function.Commands;
 using Datapack.Net.Pack;
 using Datapack.Net.Utils;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Datapack.Net.Function
 {
@@ -24,15 +20,15 @@ namespace Datapack.Net.Function
             if (command.Macro) Macro = true;
         }
 
-		public void Add(params Command[] commands)
-		{
-			foreach (var i in commands)
-			{
+        public void Add(params IEnumerable<Command> commands)
+        {
+            foreach (var i in commands)
+            {
                 Add(i);
-			}
-		}
+            }
+        }
 
-		public void Prepend(Command command)
+        public void Prepend(Command command)
         {
             Commands.Insert(0, command);
             if (command.Macro) Macro = true;
@@ -53,8 +49,8 @@ namespace Datapack.Net.Function
 
         public bool SameContents(MCFunction other) => Build() == other.Build();
 
-        public static bool operator==(MCFunction a, MCFunction b) => a.ID == b.ID;
-        public static bool operator!=(MCFunction a, MCFunction b) => a.ID != b.ID;
+        public static bool operator ==(MCFunction a, MCFunction b) => a.ID == b.ID;
+        public static bool operator !=(MCFunction a, MCFunction b) => a.ID != b.ID;
 
         public override bool Equals(object? obj)
         {
