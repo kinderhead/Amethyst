@@ -3,6 +3,10 @@ namespace test;
 #load
 void main() {
     int x = 4;
-    int y = 8 / x;
-    int z = x / 6 - y * 90;
+    
+    if (x == 4) {
+        x = 1;
+    }
+
+    int y = x;
 }

@@ -40,7 +40,6 @@ namespace Amethyst.Geode.IR
             var ret = ComputeReturnValue();
 
             if (ret is null) return;
-
             if (ret.Type != ReturnType) throw new InvalidOperationException($"Instruction returned {ret.Type}, but expected {ReturnType}");
 
             ReturnValue.SetValue(ret);
@@ -48,11 +47,7 @@ namespace Amethyst.Geode.IR
         }
 
         public abstract void Render(RenderContext ctx);
-
-        public virtual void CheckPotentialScoreReuse(Func<ValueRef, ValueRef, bool> tryLink)
-        {
-
-        }
+        public virtual void CheckPotentialScoreReuse(Func<ValueRef, ValueRef, bool> tryLink) { }
 
         public virtual string Dump(Func<IInstructionArg, string> valueMap)
         {
