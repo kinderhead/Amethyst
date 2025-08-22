@@ -14,11 +14,18 @@ namespace Amethyst.Geode.IR
 
         public bool MarkedForRemoval { get; private set; } = false;
 
+        public virtual bool IsReturn { get; } = false;
+
         public Instruction(IEnumerable<IInstructionArg> args)
         {
             Arguments = [.. args];
             ReturnValue = new(ReturnType);
 
+            AreArgumentsValid();
+        }
+
+        public virtual void AreArgumentsValid()
+        {
             if (Arguments.Length != ArgTypes.Length) throw new InvalidOperationException("Mismatched argument count");
 
             int i = 0;

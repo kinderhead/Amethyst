@@ -1,4 +1,6 @@
 ﻿using Amethyst.AST.Expressions;
+using Amethyst.Errors;
+using Amethyst.Geode;
 using Amethyst.Geode.IR;
 
 namespace Amethyst.AST.Statements
@@ -10,7 +12,9 @@ namespace Amethyst.AST.Statements
 
 		public override void Compile(FunctionContext ctx)
 		{
-			throw new NotImplementedException();
+			if (ctx.Decl.FuncType.ReturnType is not VoidTypeSpecifier) throw new NotImplementedException();
+
+			if (Expression is not null) throw new InvalidTypeError(Expression.ComputeType(ctx).ToString(), "void");
 		}
 	}
 }

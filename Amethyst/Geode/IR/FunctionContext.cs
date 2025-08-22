@@ -84,6 +84,7 @@ namespace Amethyst.Geode.IR
         public void Finish()
         {
             //FirstBlock.InsertAtBeginning(AllLocals.Select(i => new DeclareInsn(i)));
+            if (CurrentBlock.Instructions.Count == 0 || !CurrentBlock.Instructions.Last().IsReturn) throw new InvalidOperationException("Last block in function must have a return statement");
             CurrentBlock.Link(ExitBlock);
             CurrentBlock = ExitBlock;
         }
@@ -165,16 +166,16 @@ namespace Amethyst.Geode.IR
             return (trueBlock, falseBlock);
         }
 
-        public void Render(GeodeBuilder ctx)
+        public void Render(GeodeBuilder builder)
         {
             if (AllLocals.Any()) FirstBlock.Function.Add(new DataCommand.Modify(GeodeBuilder.RuntimeID, "stack").Append().Value("[]"));
 
             foreach (var i in blocks)
             {
-                i.Render(ctx);
+                i.Render(builder, this);
             }
 
-            ctx.Unregister(ExitBlock.Function);
+            builder.Unregister(ExitBlock.Function);
             if (AllLocals.Any()) FirstBlock.Function.Add(new DataCommand.Remove(GeodeBuilder.RuntimeID, "stack[-1]"));
         }
 
@@ -212,6 +213,10 @@ namespace Amethyst.Geode.IR
         }
 
         public NamespacedID GetNewInternalID() => new(Decl.ID.Namespace, $"zz_internal/{GeodeBuilder.RandomString}");
+
+        // This is separate from the global NBT return value so that it can handle branch conclusions.
+        // If a better way is found, then it won't have to move NBT at return.
+        public StorageValue GetFunctionReturnValue() => new(GeodeBuilder.RuntimeID, "stack[-1].$ret", Decl.FuncType.ReturnType);
 
         private class Scope
         {

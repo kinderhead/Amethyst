@@ -9,7 +9,7 @@ namespace Amethyst.Geode
         public TypeSpecifier Type { get; private set; }
 
         public bool IsLiteral => Value is not null && Value.IsLiteral;
-        public bool NeedsScoreReg => Value is null && Type.EffectiveType == NBTType.Int;
+        public bool NeedsScoreReg => Value is null && (Type.EffectiveType == NBTType.Int || Type.EffectiveType == NBTType.Boolean);
 
         private string? customName;
         public string Name => customName is null ? Value is not null ? $"{(Value.IsLiteral ? "" : "%")}{Value}" : "" : customName;

@@ -43,14 +43,14 @@ namespace Amethyst.Geode.IR
             return builder.ToString();
         }
 
-        public void Render(GeodeBuilder ctx)
+        public void Render(GeodeBuilder builder, FunctionContext ctx)
         {
             foreach (var i in Instructions)
             {
-                i.Render(new(Function, this, ctx));
+                i.Render(new(Function, this, builder, ctx));
             }
 
-            ctx.Register(Function);
+            builder.Register(Function);
         }
     }
 }
