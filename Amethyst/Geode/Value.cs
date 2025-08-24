@@ -10,7 +10,8 @@ namespace Amethyst.Geode
         public abstract TypeSpecifier Type { get; }
         public bool IsLiteral => this is LiteralValue;
 
-        public abstract ScoreValue AsScore(RenderContext ctx, int tmp = 0);
+        public abstract ScoreValue AsScore(RenderContext ctx);
+        public abstract Execute If(Execute cmd);
 
         public override string ToString() => "";
         public abstract override bool Equals(object? obj);
@@ -20,22 +21,24 @@ namespace Amethyst.Geode
         public static bool operator !=(Value left, Value right) => !left.Equals(right);
     }
 
-    public class LiteralValue(NBTValue val) : Value
+	public class LiteralValue(NBTValue val) : Value
     {
         public readonly NBTValue Value = val;
         public override TypeSpecifier Type => new PrimitiveTypeSpecifier(Value.Type);
 
-        public override ScoreValue AsScore(RenderContext ctx, int tmp = 0) => Value is NBTInt n ? ctx.Builder.Constant(n) : throw new InvalidOperationException($"\"{Value}\" is not an integer");
-        public override bool Equals(object? obj) => obj is LiteralValue l && l.Value == Value;
+        public override ScoreValue AsScore(RenderContext ctx) => Value is NBTInt n ? ctx.Builder.Constant(n) : throw new InvalidOperationException($"\"{Value}\" is not an integer");
+		public override Execute If(Execute cmd) => throw new NotImplementedException(); // Ideally this shouldn't happen
+		public override bool Equals(object? obj) => obj is LiteralValue l && l.Value == Value;
         public override string ToString() => Value.ToString();
         public override int GetHashCode() => Value.GetHashCode();
-    }
+	}
 
     public class VoidValue : Value
     {
         public override TypeSpecifier Type => new VoidTypeSpecifier();
-        public override ScoreValue AsScore(RenderContext ctx, int tmp = 0) => throw new InvalidOperationException();
-        public override bool Equals(object? obj) => obj is VoidValue;
+        public override ScoreValue AsScore(RenderContext ctx) => throw new InvalidOperationException();
+		public override Execute If(Execute cmd) => throw new NotImplementedException(); // Ideally this shouldn't happen, also idk how to make the execute always fail consistently
+		public override bool Equals(object? obj) => obj is VoidValue;
         public override int GetHashCode() => 0; // hmm
     }
 
@@ -47,7 +50,18 @@ namespace Amethyst.Geode
         public FunctionTypeSpecifier FuncType => (FunctionTypeSpecifier)Type;
     }
 
-    public abstract class LValue : Value
+	public class ConditionalValue(Func<Execute, Execute> apply) : Value
+	{
+        public readonly Func<Execute, Execute> Apply = apply;
+		public override TypeSpecifier Type => PrimitiveTypeSpecifier.Bool;
+
+		public override ScoreValue AsScore(RenderContext ctx) => throw new InvalidOperationException("Cannot implicitly convert a conditional to a score");
+        public override bool Equals(object? obj) => obj is ConditionalValue c && c.Apply == Apply; // I don't like this but oh well
+        public override Execute If(Execute cmd) => Apply(cmd);
+		public override int GetHashCode() => Apply.GetHashCode();
+	}
+
+	public abstract class LValue : Value
     {
         public void Store(Value val, RenderContext ctx)
         {
@@ -72,12 +86,13 @@ namespace Amethyst.Geode
         public override void Store(LiteralValue literal, RenderContext ctx) => ctx.Add(new Scoreboard.Players.Set(Target, Score, literal.ToString()));
         public override void Store(StorageValue score, RenderContext ctx) => ctx.Add(new Execute().Store(Target, Score).Run(new DataCommand.Get(score.Storage, score.Path)));
 
-        public override ScoreValue AsScore(RenderContext ctx, int tmp = 0) => this;
+        public override ScoreValue AsScore(RenderContext ctx) => this;
+		public override Execute If(Execute cmd) => cmd.Unless.Score(Target, Score, 0);
         public override bool Equals(object? obj) => obj is ScoreValue s && s.Score == Score && s.Target.Get() == Target.Get();
 
         public override TypeSpecifier Type => PrimitiveTypeSpecifier.Int;
 
-        public override int GetHashCode() => Target.GetHashCode() * Score.GetHashCode();
+        public override int GetHashCode() => HashCode.Combine(Target, Score);
     }
 
     public class StorageValue(Storage storage, string path, TypeSpecifier type) : LValue
@@ -86,13 +101,16 @@ namespace Amethyst.Geode
         public readonly string Path = path;
         public override TypeSpecifier Type => type;
 
-        public override ScoreValue AsScore(RenderContext ctx, int tmp = 0)
+        public override ScoreValue AsScore(RenderContext ctx)
         {
-            // No type checking because this acts like a cast to int
-            var val = ctx.Builder.Temp(tmp);
-            val.Store(this, ctx);
-            return val;
+            throw new InvalidOperationException("Cannot implicitly convert a storage value to a score");
+            //// No type checking because this acts like a cast to int
+            //var val = ctx.Builder.Temp(tmp);
+            //val.Store(this, ctx);
+            //return val;
         }
+
+        public override Execute If(Execute cmd) => throw new InvalidOperationException("Cannot use storage for conditions");
 
         public override bool Equals(object? obj) => obj is StorageValue s && s.Storage == Storage && s.Path == Path;
         public override void Store(ScoreValue score, RenderContext ctx) => ctx.Add(new Execute().Store(Storage, Path, Type.EffectiveNumberType, 1).Run(new Scoreboard.Players.Get(score.Target, score.Score)));

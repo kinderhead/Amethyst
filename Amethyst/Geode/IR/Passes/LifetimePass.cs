@@ -61,18 +61,27 @@ namespace Amethyst.Geode.IR.Passes
         {
             HashSet<ValueRef> alive = [.. InOut.Outs[block]];
 
+            void markAlive(IInstructionArg arg)
+            {
+				if (arg.NeedsScoreReg && arg is ValueRef v)
+				{
+					alive.Add(v);
+					Graphs[ctx].Connect(v, alive);
+				}
+			}
+
             foreach (var insn in block.Instructions.AsEnumerable().Reverse())
             {
                 alive.Remove(insn.ReturnValue);
 
                 foreach (var arg in insn.Arguments)
                 {
-                    if (arg.NeedsScoreReg && arg is ValueRef v)
-                    {
-                        alive.Add(v);
-                        Graphs[ctx].Connect(v, alive);
-                    }
-                }
+                    markAlive(arg);
+					foreach (var dep in arg.Dependencies)
+					{
+                        markAlive(dep);
+					}
+				}
 
                 insn.CheckPotentialScoreReuse((val1, val2) =>
                 {

@@ -12,9 +12,11 @@ namespace Amethyst.Geode
         public bool NeedsScoreReg => Value is null && (Type.EffectiveType == NBTType.Int || Type.EffectiveType == NBTType.Boolean);
 
         private string? customName;
-        public string Name => customName is null ? Value is not null ? $"{(Value.IsLiteral ? "" : "%")}{Value}" : "" : customName;
+        public string Name => customName is null ? Value is not null ? $"{(Value.IsLiteral || Value is StorageValue ? "" : "%")}{Value}" : "" : customName;
 
-        public ValueRef(Value val)
+		public HashSet<ValueRef> Dependencies { get; } = [];
+
+		public ValueRef(Value val)
         {
             Value = val;
             Type = val.Type;

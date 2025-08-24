@@ -38,7 +38,7 @@ namespace Amethyst.AST
 				return false;
 			}
 
-			ctx = new FunctionContext(compiler, (StaticFunctionValue)compiler.Symbols[ID].Value);
+			ctx = new FunctionContext(compiler, (StaticFunctionValue)compiler.Symbols[ID].Value, Tags);
 
 			if (Body.Statements.Last() is not ReturnStatement)
 			{

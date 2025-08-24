@@ -16,7 +16,9 @@ namespace Amethyst.Geode.IR
 
         public readonly MCFunction Function = new(funcID);
 
-        public ValueRef Add(Instruction insn)
+		public HashSet<ValueRef> Dependencies { get; } = [];
+
+		public ValueRef Add(Instruction insn)
         {
             Instructions.Add(insn);
             return insn.ReturnValue;

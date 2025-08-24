@@ -10,6 +10,7 @@ namespace Amethyst.Geode.IR
     {
         public readonly Compiler Compiler;
         public readonly StaticFunctionValue Decl;
+        public readonly IEnumerable<NamespacedID> Tags;
 
         public Block FirstBlock => blocks.First();
         public readonly Block ExitBlock;
@@ -25,10 +26,11 @@ namespace Amethyst.Geode.IR
 
         public IEnumerable<Variable> AllLocals => totalScopes.SelectMany(i => i.Locals.Values);
 
-        public FunctionContext(Compiler compiler, StaticFunctionValue decl)
+        public FunctionContext(Compiler compiler, StaticFunctionValue decl, IEnumerable<NamespacedID> tags)
         {
             Compiler = compiler;
             Decl = decl;
+            Tags = tags;
 
             PushScope();
 
@@ -37,6 +39,8 @@ namespace Amethyst.Geode.IR
 
             ExitBlock = new("exit", GetNewInternalID());
         }
+
+        public FunctionContext(Compiler compiler, StaticFunctionValue decl) : this(compiler, decl, []) { }
 
         public void PushScope()
         {
@@ -62,7 +66,7 @@ namespace Amethyst.Geode.IR
 
         public Variable RegisterLocal(string name, TypeSpecifier type)
         {
-            var val = new Variable(name, type);
+            var val = new Variable(name, $"frame{activeScopes.Count - 1}.{name}", type);
             activeScopes.Peek().Locals[name] = val;
             return val;
         }
@@ -84,7 +88,7 @@ namespace Amethyst.Geode.IR
         public void Finish()
         {
             //FirstBlock.InsertAtBeginning(AllLocals.Select(i => new DeclareInsn(i)));
-            if (CurrentBlock.Instructions.Count == 0 || !CurrentBlock.Instructions.Last().IsReturn) throw new InvalidOperationException("Last block in function must have a return statement");
+            if (CurrentBlock.Instructions.Count == 0 || !CurrentBlock.Instructions.Last().IsReturn) throw new InvalidOperationException("Last block in function must have a return instruction");
             CurrentBlock.Link(ExitBlock);
             CurrentBlock = ExitBlock;
         }
@@ -168,7 +172,7 @@ namespace Amethyst.Geode.IR
 
         public void Render(GeodeBuilder builder)
         {
-            if (AllLocals.Any()) FirstBlock.Function.Add(new DataCommand.Modify(GeodeBuilder.RuntimeID, "stack").Append().Value("[]"));
+            if (AllLocals.Any()) FirstBlock.Function.Add(new DataCommand.Modify(GeodeBuilder.RuntimeID, "stack").Append().Value("{}"));
 
             foreach (var i in blocks)
             {
@@ -176,8 +180,13 @@ namespace Amethyst.Geode.IR
             }
 
             builder.Unregister(ExitBlock.Function);
-            if (AllLocals.Any()) FirstBlock.Function.Add(new DataCommand.Remove(GeodeBuilder.RuntimeID, "stack[-1]"));
-        }
+			//if (AllLocals.Any()) FirstBlock.Function.Add(new DataCommand.Remove(GeodeBuilder.RuntimeID, "stack[-1]"));
+
+			foreach (var i in Tags)
+			{
+                builder.Datapack.Tags.GetTag(i, "function").Values.Add(Decl.ID);
+			}
+		}
 
         public string Dump()
         {

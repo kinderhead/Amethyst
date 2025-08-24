@@ -14,7 +14,7 @@ namespace Amethyst.AST.Expressions
 		public override ValueRef Execute(FunctionContext ctx)
 		{
 			var val = Expression.Execute(ctx);
-			var dest = Dest.Execute(ctx);
+			var dest = Dest.PrepareToStore(ctx);
 
 			val = ctx.ImplicitCast(val, dest.Type);
 

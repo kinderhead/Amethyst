@@ -17,18 +17,11 @@
         }
     }
 
-    public class NamedTarget(string name) : IEntityTarget
+    public readonly record struct NamedTarget(string name) : IEntityTarget
     {
         public readonly string Name = name;
 
-        public string Get()
-        {
-            return Name;
-        }
-
-        public bool IsOne()
-        {
-            return true;
-        }
+        public string Get() => Name;
+        public bool IsOne() => true;
     }
 }

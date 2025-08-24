@@ -1,4 +1,5 @@
 using System.Text;
+using Amethyst.Errors;
 using Datapack.Net.Data;
 
 namespace Amethyst.Geode.IR
@@ -21,19 +22,19 @@ namespace Amethyst.Geode.IR
             Arguments = [.. args];
             ReturnValue = new(ReturnType);
 
-            AreArgumentsValid();
+            CheckArguments();
         }
 
-        public virtual void AreArgumentsValid()
+        public virtual void CheckArguments()
         {
-            if (Arguments.Length != ArgTypes.Length) throw new InvalidOperationException("Mismatched argument count");
+            if (Arguments.Length != ArgTypes.Length) throw new MismatchedArgumentCountError(ArgTypes.Length, Arguments.Length);
 
             int i = 0;
             foreach (var arg in Arguments)
             {
                 if (ArgTypes[i] is not null && arg is ValueRef v && ArgTypes[i] != v.Type.EffectiveType)
                 {
-                    throw new InvalidOperationException($"Argument {i + 1} is of type {v.Type}, but expected {ArgTypes[i]}");
+                    throw new InvalidTypeError(v.Type.ToString(), $"{ArgTypes[i]}"); // Use string interpolation to handle the null case
                 }
 
                 i++;

@@ -11,6 +11,7 @@ namespace Amethyst.Geode.IR.Instructions
         public override string Name => "ret";
         public override NBTType?[] ArgTypes => [null];
         public override TypeSpecifier ReturnType => new VoidTypeSpecifier();
+		public override bool IsReturn => true;
 
         public override void Render(RenderContext ctx)
         {
@@ -25,5 +26,12 @@ namespace Amethyst.Geode.IR.Instructions
         }
 
         protected override Value? ComputeReturnValue() => new VoidValue();
+
+		public override void CheckArguments()
+		{
+            if (Arguments.Length == 0) return;
+            if (Arguments.Length != 1) throw new MismatchedArgumentCountError(1, Arguments.Length);
+            return;
+		}
     }
 }

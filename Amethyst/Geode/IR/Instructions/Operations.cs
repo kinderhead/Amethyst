@@ -23,8 +23,8 @@ namespace Amethyst.Geode.IR.Instructions
         public override void Render(RenderContext ctx)
         {
             var left = Arg<ValueRef>(0).Expect(NBTType.Int);
-            var right = Arg<ValueRef>(1).Expect(NBTType.Int).AsScore(ctx, 0);
-            var ret = ReturnValue.Expect(NBTType.Int).AsScore(ctx, 1);
+            var right = Arg<ValueRef>(1).Expect(NBTType.Int).AsScore(ctx);
+            var ret = ReturnValue.Expect(NBTType.Int).AsScore(ctx);
 
             if (left != ret) ret.Store(left, ctx);
 

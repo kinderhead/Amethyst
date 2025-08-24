@@ -2,7 +2,7 @@ namespace test;
 
 #load
 void main() {
-    int x = 4;
+    int x = 3;
     
     if (x == 4) {
         x = x + 1;
@@ -10,5 +10,5 @@ void main() {
         x = -2;
     }
 
-    int y = x;
+    int y = x * 2;
 }

@@ -18,6 +18,7 @@ namespace Amethyst.AST.Expressions
 
 		public override ValueRef Execute(FunctionContext ctx)
 		{
+			var func = Function.Execute(ctx);
 			throw new NotImplementedException();
 		}
 	}
