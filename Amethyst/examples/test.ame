@@ -3,7 +3,6 @@ namespace test;
 #load
 void main() {
     int x = 3;
-    int y = -2;
-
-    print(x * y + 8 / x - 1, "womp");
+    bool y = x == 3;
+    print(y);
 }

@@ -76,12 +76,18 @@ namespace Amethyst.Geode
             if (val is LiteralValue literal) Store(literal, ctx);
             else if (val is ScoreValue score) Store(score, ctx);
             else if (val is StorageValue storage) Store(storage, ctx);
+            else if (val is ConditionalValue cond) Store(cond, ctx);
             else throw new NotImplementedException();
         }
 
         public abstract void Store(LiteralValue literal, RenderContext ctx);
         public abstract void Store(ScoreValue score, RenderContext ctx);
         public abstract void Store(StorageValue score, RenderContext ctx);
+        public virtual void Store(ConditionalValue cond, RenderContext ctx)
+        {
+            Store(new LiteralValue(false), ctx);
+            ctx.Add(cond.If(new()).Run(ctx.WithFaux(i => Store(new LiteralValue(true), i)).Single()));
+        }
     }
 
     public class ScoreValue(IEntityTarget target, Score score) : LValue
