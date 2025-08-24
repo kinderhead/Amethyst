@@ -18,7 +18,7 @@ namespace Datapack.Net.Tests
 
             var entry = ctx.CurrentBlock;
 
-            var x = new Variable("x", PrimitiveTypeSpecifier.Int);
+            var x = new Variable("x", "x", PrimitiveTypeSpecifier.Int);
             ctx.Add(new StoreInsn(x, new LiteralValue(0)));
 
             var a = ctx.Add(new AddInsn(x, new LiteralValue(4)), "%a");
@@ -33,6 +33,7 @@ namespace Datapack.Net.Tests
             }, () => ctx.Add(new StoreInsn(x, a)));
 
             ctx.Add(new StoreInsn(x, b));
+            ctx.Add(new ReturnInsn());
 
             var ifEnd = ctx.CurrentBlock;
             ctx.Finish();

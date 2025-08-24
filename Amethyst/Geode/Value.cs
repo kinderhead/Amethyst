@@ -12,6 +12,7 @@ namespace Amethyst.Geode
 
         public abstract ScoreValue AsScore(RenderContext ctx);
         public abstract Execute If(Execute cmd);
+        public abstract FormattedText Render(FormattedText text);
 
         public override string ToString() => "";
         public abstract override bool Equals(object? obj);
@@ -31,16 +32,18 @@ namespace Amethyst.Geode
 		public override bool Equals(object? obj) => obj is LiteralValue l && l.Value == Value;
         public override string ToString() => Value.ToString();
         public override int GetHashCode() => Value.GetHashCode();
+        public override FormattedText Render(FormattedText text) => Value is NBTString str ? text.Text(str.Value) : text.Text(Value.ToString());
 	}
 
-    public class VoidValue : Value
+	public class VoidValue : Value
     {
         public override TypeSpecifier Type => new VoidTypeSpecifier();
         public override ScoreValue AsScore(RenderContext ctx) => throw new InvalidOperationException();
 		public override Execute If(Execute cmd) => throw new NotImplementedException(); // Ideally this shouldn't happen, also idk how to make the execute always fail consistently
 		public override bool Equals(object? obj) => obj is VoidValue;
         public override int GetHashCode() => 0; // hmm
-    }
+        public override FormattedText Render(FormattedText text) => text.Text("void");
+	}
 
     public class StaticFunctionValue(NamespacedID id, FunctionTypeSpecifier type) : LiteralValue(new NBTString(id.ToString()))
     {
@@ -59,6 +62,11 @@ namespace Amethyst.Geode
         public override bool Equals(object? obj) => obj is ConditionalValue c && c.Apply == Apply; // I don't like this but oh well
         public override Execute If(Execute cmd) => Apply(cmd);
 		public override int GetHashCode() => Apply.GetHashCode();
+
+		public override FormattedText Render(FormattedText text)
+		{
+			throw new NotImplementedException("Cannot print conditionals at the moment. Assign to a variable for now");
+		}
 	}
 
 	public abstract class LValue : Value
@@ -88,12 +96,13 @@ namespace Amethyst.Geode
 
         public override ScoreValue AsScore(RenderContext ctx) => this;
 		public override Execute If(Execute cmd) => cmd.Unless.Score(Target, Score, 0);
-        public override bool Equals(object? obj) => obj is ScoreValue s && s.Score == Score && s.Target.Get() == Target.Get();
+        public override FormattedText Render(FormattedText text) => text.Score(Target, Score);
+		public override bool Equals(object? obj) => obj is ScoreValue s && s.Score == Score && s.Target.Get() == Target.Get();
 
         public override TypeSpecifier Type => PrimitiveTypeSpecifier.Int;
 
         public override int GetHashCode() => HashCode.Combine(Target, Score);
-    }
+	}
 
     public class StorageValue(Storage storage, string path, TypeSpecifier type) : LValue
     {
@@ -111,6 +120,7 @@ namespace Amethyst.Geode
         }
 
         public override Execute If(Execute cmd) => throw new InvalidOperationException("Cannot use storage for conditions");
+		public override FormattedText Render(FormattedText text) => text.Storage(Storage, Path);
 
         public override bool Equals(object? obj) => obj is StorageValue s && s.Storage == Storage && s.Path == Path;
         public override void Store(ScoreValue score, RenderContext ctx) => ctx.Add(new Execute().Store(Storage, Path, Type.EffectiveNumberType, 1).Run(new Scoreboard.Players.Get(score.Target, score.Score)));

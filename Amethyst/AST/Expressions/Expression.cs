@@ -12,7 +12,7 @@ namespace Amethyst.AST.Expressions
 		public abstract TypeSpecifier ComputeType(FunctionContext ctx);
 		public abstract ValueRef Execute(FunctionContext ctx);
 
-		public virtual ValueRef PrepareToStore(FunctionContext ctx) => Execute(ctx);
+		public virtual ValueRef ExecuteWithoutLoad(FunctionContext ctx) => Execute(ctx);
 	}
 
 	public class LiteralExpression(LocationRange loc, NBTValue val) : Expression(loc)
@@ -27,8 +27,8 @@ namespace Amethyst.AST.Expressions
 	{
 		public readonly string Name = name;
 
-		public override TypeSpecifier ComputeType(FunctionContext ctx) => ctx.GetLocal(Name).Type;
-		public override ValueRef Execute(FunctionContext ctx) => ctx.Add(new LoadInsn(ctx.GetLocal(Name)));
-		public override ValueRef PrepareToStore(FunctionContext ctx) => ctx.GetLocal(Name);
+		public override TypeSpecifier ComputeType(FunctionContext ctx) => ctx.GetVariable(Name).Type;
+		public override ValueRef Execute(FunctionContext ctx) => ctx.Add(new LoadInsn(ctx.GetVariable(Name)));
+		public override ValueRef ExecuteWithoutLoad(FunctionContext ctx) => ctx.GetVariable(Name);
 	}
 }

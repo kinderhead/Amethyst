@@ -18,7 +18,9 @@ namespace Amethyst.AST.Expressions
 
 		public override ValueRef Execute(FunctionContext ctx)
 		{
-			var func = Function.Execute(ctx);
+			var func = Function.ExecuteWithoutLoad(ctx);
+			if (func.Value is Intrinsic i) return i.Execute(ctx, Args);
+
 			throw new NotImplementedException();
 		}
 	}

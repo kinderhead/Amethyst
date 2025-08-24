@@ -90,7 +90,7 @@ namespace Amethyst.Geode
                 var colors = graph.Graphs[func].CalculateDSatur();
                 foreach (var kv in colors)
                 {
-                    kv.Key.SetValue(Reg(kv.Value));
+                    if (kv.Key.NeedsScoreReg) kv.Key.SetValue(Reg(kv.Value));
                 }
             }
         }

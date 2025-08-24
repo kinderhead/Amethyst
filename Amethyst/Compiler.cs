@@ -1,6 +1,7 @@
 ﻿using System.Reflection;
 using Amethyst.Antlr;
 using Amethyst.AST;
+using Amethyst.AST.Intrinsics;
 using Amethyst.Errors;
 using Amethyst.Geode;
 using Antlr4.Runtime;
@@ -21,6 +22,7 @@ namespace Amethyst
 		{
 			Options = opts;
 			IR = new(Options);
+			RegisterGlobals();
 		}
 
 		public Compiler(string[] args)
@@ -30,6 +32,7 @@ namespace Amethyst
 			Options = res.Value;
 			Options.Output ??= Path.GetFileName(Options.Inputs.First()) + ".zip";
 			IR = new(Options);
+			RegisterGlobals();
 		}
 
 		public bool Compile()
@@ -107,6 +110,13 @@ namespace Amethyst
 
 			return true;
 		}
+
+		protected virtual void RegisterGlobals()
+		{
+			Register(new Print());
+		}
+
+		public void Register(Intrinsic func) => Symbols[func.ID] = new(func.ID, LocationRange.Empty, func);
 
 		public static readonly List<string> CoreLibrary = ["macros.ame"];
 		//public static readonly Score ReturnScore = new("returned", "dummy");

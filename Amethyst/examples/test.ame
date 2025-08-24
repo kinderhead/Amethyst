@@ -3,12 +3,7 @@ namespace test;
 #load
 void main() {
     int x = 3;
-    
-    if (x == 4) {
-        x = x + 1;
-    } else {
-        x = -2;
-    }
+    int y = -2;
 
-    int y = x * 2;
+    print(x * y + 8 / x - 1, "womp");
 }

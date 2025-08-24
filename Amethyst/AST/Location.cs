@@ -26,6 +26,8 @@ namespace Amethyst.AST
 			if (Start.Line == End.Line) return $"{Start.File}: {Start.Line}:{Start.Column}-{End.Column}";
 			else return $"{Start.File}: {Start.Line}:{Start.Column}-{End.Line}:{End.Column}";
 		}
+
+		public static LocationRange Empty => new(new("", 0, 0), new("", 0, 0));
 	}
 
 	public interface ILocatable

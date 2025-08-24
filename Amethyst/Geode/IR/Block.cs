@@ -8,8 +8,6 @@ namespace Amethyst.Geode.IR
     {
         public string Name => name;
 
-        public bool NeedsScoreReg => false;
-
         public readonly List<Instruction> Instructions = [];
         public readonly List<Block> Previous = [];
         public readonly List<Block> Next = [];

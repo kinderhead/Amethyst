@@ -55,7 +55,7 @@ namespace Amethyst.Geode.IR
         }
 
         public abstract void Render(RenderContext ctx);
-        public virtual void CheckPotentialScoreReuse(Func<ValueRef, ValueRef, bool> tryLink) { }
+        public virtual void ConfigureLifetime(Func<ValueRef, ValueRef, bool> tryLink, Action<ValueRef, ValueRef> markOverlap) { }
 
         public virtual string Dump(Func<IInstructionArg, string> valueMap)
         {

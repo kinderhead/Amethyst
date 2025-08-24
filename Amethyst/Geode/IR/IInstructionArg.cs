@@ -6,8 +6,6 @@ namespace Amethyst.Geode.IR
         /// Empty string if no name
         /// </summary>
         public string Name { get; }
-
-        public bool NeedsScoreReg { get; }
 		public HashSet<ValueRef> Dependencies { get; }
 	}
 }

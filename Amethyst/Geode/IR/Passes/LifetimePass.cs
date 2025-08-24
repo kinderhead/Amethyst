@@ -21,8 +21,12 @@ namespace Amethyst.Geode.IR.Passes
             {
                 foreach (var arg in i.Arguments)
                 {
-                    if (arg.NeedsScoreReg && arg is ValueRef v) ins.Add(v);
-                }
+                    if (arg is ValueRef v && v.NeedsScoreReg) ins.Add(v);
+					foreach (var dep in arg.Dependencies)
+					{
+						if (dep is ValueRef d && d.NeedsScoreReg) ins.Add(d);
+					}
+				}
             }
 
             // Maybe somehow put this in the other loop
@@ -63,7 +67,7 @@ namespace Amethyst.Geode.IR.Passes
 
             void markAlive(IInstructionArg arg)
             {
-				if (arg.NeedsScoreReg && arg is ValueRef v)
+				if (arg is ValueRef v && v.NeedsScoreReg)
 				{
 					alive.Add(v);
 					Graphs[ctx].Connect(v, alive);
@@ -83,11 +87,15 @@ namespace Amethyst.Geode.IR.Passes
 					}
 				}
 
-                insn.CheckPotentialScoreReuse((val1, val2) =>
+                insn.ConfigureLifetime((val1, val2) =>
+				{
+					if (Graphs[ctx].DoConnect(val1, val2)) return false;
+					Graphs[ctx].Link(val1, val2);
+					return true;
+				},
+                (val1, val2) =>
                 {
-                    if (Graphs[ctx].DoConnect(val1, val2)) return false;
-                    Graphs[ctx].Link(val1, val2);
-                    return true;
+                    Graphs[ctx].Connect(val1, val2);
                 });
             }
         }

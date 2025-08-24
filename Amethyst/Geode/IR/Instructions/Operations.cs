@@ -9,15 +9,19 @@ namespace Amethyst.Geode.IR.Instructions
         public abstract bool IsCommunitive { get; }
         public abstract ScoreOperation Op { get; }
 
-        public override void CheckPotentialScoreReuse(Func<ValueRef, ValueRef, bool> tryLink)
-        {
-            if (Arguments[0] is ValueRef v0 && tryLink(ReturnValue, v0)) return;
-            else if (IsCommunitive && Arguments[1] is ValueRef v1)
+        public override void ConfigureLifetime(Func<ValueRef, ValueRef, bool> tryLink, Action<ValueRef, ValueRef> markOverlap)
+		{
+            if (!(Arguments[0] is ValueRef v0 && tryLink(ReturnValue, v0)))
             {
-                tryLink(ReturnValue, v1);
-                Arguments[1] = Arguments[0];
-                Arguments[0] = v1;
+                if (IsCommunitive && Arguments[1] is ValueRef v1)
+                {
+                    tryLink(ReturnValue, v1);
+                    Arguments[1] = Arguments[0];
+                    Arguments[0] = v1;
+                }
             }
+            
+            if (Arguments[1] is ValueRef v) markOverlap(ReturnValue, v);
         }
 
         public override void Render(RenderContext ctx)

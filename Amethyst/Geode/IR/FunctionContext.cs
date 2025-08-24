@@ -54,14 +54,17 @@ namespace Amethyst.Geode.IR
             activeScopes.Pop();
         }
 
-        public Value GetLocal(string name)
+        public Value GetVariable(string name)
         {
             foreach (var i in activeScopes.Reverse())
             {
                 if (i.Locals.TryGetValue(name, out var variable)) return variable;
             }
 
-            throw new UndefinedSymbolError(name);
+            if (Compiler.Symbols.TryGetValue(new NamespacedID(Decl.ID.Namespace, name), out var sym)) return sym.Value;
+            if (Compiler.Symbols.TryGetValue(new NamespacedID("builtin", name), out var sym2)) return sym2.Value;
+
+			throw new UndefinedSymbolError(name);
         }
 
         public Variable RegisterLocal(string name, TypeSpecifier type)
@@ -180,7 +183,7 @@ namespace Amethyst.Geode.IR
             }
 
             builder.Unregister(ExitBlock.Function);
-			//if (AllLocals.Any()) FirstBlock.Function.Add(new DataCommand.Remove(GeodeBuilder.RuntimeID, "stack[-1]"));
+			if (AllLocals.Any()) FirstBlock.Function.Add(new DataCommand.Remove(GeodeBuilder.RuntimeID, "stack[-1]"));
 
 			foreach (var i in Tags)
 			{
