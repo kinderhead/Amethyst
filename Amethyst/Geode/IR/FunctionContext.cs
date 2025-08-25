@@ -1,6 +1,7 @@
 using System.Text;
 using Amethyst.Errors;
 using Amethyst.Geode.IR.Instructions;
+using Amethyst.Geode.IR.Passes;
 using Datapack.Net.Function.Commands;
 using Datapack.Net.Utils;
 
@@ -17,12 +18,17 @@ namespace Amethyst.Geode.IR
         public Block CurrentBlock { get; private set; }
 
         public bool IsFinished => CurrentBlock == ExitBlock;
+        public bool UsesStack => AllLocals.Any() || registersInUse.Count != 0 || tmpStackVars != 0;
 
         public IReadOnlyCollection<Block> Blocks => blocks;
         private readonly List<Block> blocks = [];
         private readonly List<Scope> totalScopes = [];
         private readonly Stack<Scope> activeScopes = [];
         private readonly Dictionary<string, int> labelCounters = [];
+
+        // Could just be the max register used, but who knows if one goes poof somewhere
+        private readonly HashSet<int> registersInUse = [];
+        private int tmpStackVars = 0;
 
         public IEnumerable<Variable> AllLocals => totalScopes.SelectMany(i => i.Locals.Values);
 
@@ -38,6 +44,12 @@ namespace Amethyst.Geode.IR
             CurrentBlock = blocks.Last();
 
             ExitBlock = new("exit", GetNewInternalID());
+
+            foreach (var i in Decl.FuncType.Parameters)
+            {
+                // Maybe make it so that if the stack isn't used by the function, then use [-1] and don't push new frame
+                RegisterLocal(i.Name, $"stack[-2].args.{i.Name}", i.Type);
+            }
         }
 
         public FunctionContext(Compiler compiler, StaticFunctionValue decl) : this(compiler, decl, []) { }
@@ -64,15 +76,19 @@ namespace Amethyst.Geode.IR
             if (Compiler.Symbols.TryGetValue(new NamespacedID(Decl.ID.Namespace, name), out var sym)) return sym.Value;
             if (Compiler.Symbols.TryGetValue(new NamespacedID("builtin", name), out var sym2)) return sym2.Value;
 
-			throw new UndefinedSymbolError(name);
+            throw new UndefinedSymbolError(name);
         }
 
-        public Variable RegisterLocal(string name, TypeSpecifier type)
+        public Variable RegisterLocal(string name, TypeSpecifier type) => RegisterLocal(name, $"stack[-1].frame{activeScopes.Count - 1}.{name}", type);
+
+        public Variable RegisterLocal(string name, string loc, TypeSpecifier type)
         {
-            var val = new Variable(name, $"frame{activeScopes.Count - 1}.{name}", type);
+            var val = new Variable(name, loc, type);
             activeScopes.Peek().Locals[name] = val;
             return val;
         }
+
+        public StorageValue Temp(TypeSpecifier type) => new(GeodeBuilder.RuntimeID, $"stack[-1].tmp{tmpStackVars++}", type);
 
         public ValueRef Add(Instruction insn, string? customName = null)
         {
@@ -173,9 +189,28 @@ namespace Amethyst.Geode.IR
             return (trueBlock, falseBlock);
         }
 
+        public void AllocateRegisters(GeodeBuilder builder, LifetimeGraph graph)
+        {
+            var colors = graph.CalculateDSatur();
+            foreach (var kv in colors)
+            {
+                if (kv.Key.NeedsScoreReg)
+                {
+                    registersInUse.Add(kv.Value);
+                    kv.Key.SetValue(builder.Reg(kv.Value));
+                }
+            }
+        }
+
         public void Render(GeodeBuilder builder)
         {
-            if (AllLocals.Any()) FirstBlock.Function.Add(new DataCommand.Modify(GeodeBuilder.RuntimeID, "stack").Append().Value("{}"));
+            var firstBlockRenderer = FirstBlock.GetRenderCtx(builder, this);
+            if (UsesStack) firstBlockRenderer.Add(new DataCommand.Modify(GeodeBuilder.RuntimeID, "stack").Append().Value("{}"));
+
+            foreach (var i in registersInUse)
+            {
+                new StorageValue(GeodeBuilder.RuntimeID, $"stack[-1].reg_{i}", PrimitiveTypeSpecifier.Int).Store(builder.Reg(i), firstBlockRenderer);
+            }
 
             foreach (var i in blocks)
             {
@@ -183,13 +218,19 @@ namespace Amethyst.Geode.IR
             }
 
             builder.Unregister(ExitBlock.Function);
-			if (AllLocals.Any()) FirstBlock.Function.Add(new DataCommand.Remove(GeodeBuilder.RuntimeID, "stack[-1]"));
 
-			foreach (var i in Tags)
-			{
+            foreach (var i in registersInUse)
+            {
+                builder.Reg(i).Store(new StorageValue(GeodeBuilder.RuntimeID, $"stack[-1].reg_{i}", PrimitiveTypeSpecifier.Int), firstBlockRenderer);
+            }
+
+            if (UsesStack) firstBlockRenderer.Add(new DataCommand.Remove(GeodeBuilder.RuntimeID, "stack[-1]"));
+
+            foreach (var i in Tags)
+            {
                 builder.Datapack.Tags.GetTag(i, "function").Values.Add(Decl.ID);
-			}
-		}
+            }
+        }
 
         public string Dump()
         {
@@ -226,9 +267,9 @@ namespace Amethyst.Geode.IR
 
         public NamespacedID GetNewInternalID() => new(Decl.ID.Namespace, $"zz_internal/{GeodeBuilder.RandomString}");
 
-        // This is separate from the global NBT return value so that it can handle branch conclusions.
-        // If a better way is found, then it won't have to move NBT at return.
-        public StorageValue GetFunctionReturnValue() => new(GeodeBuilder.RuntimeID, "stack[-1].$ret", Decl.FuncType.ReturnType);
+        public StorageValue GetIsFunctionReturningValue() => new(GeodeBuilder.RuntimeID, $"stack[-1].returning", PrimitiveTypeSpecifier.Bool);
+        public StorageValue GetFunctionReturnValue() => GetFunctionReturnValue(Decl.FuncType.ReturnType, UsesStack ? -2 : -1);
+        public static StorageValue GetFunctionReturnValue(TypeSpecifier type, int depth = -2) => new(GeodeBuilder.RuntimeID, $"stack[{depth}].ret", type);
 
         private class Scope
         {

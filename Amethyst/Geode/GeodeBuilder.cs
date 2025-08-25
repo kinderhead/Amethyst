@@ -87,11 +87,7 @@ namespace Amethyst.Geode
 
             foreach (var func in Functions)
             {
-                var colors = graph.Graphs[func].CalculateDSatur();
-                foreach (var kv in colors)
-                {
-                    if (kv.Key.NeedsScoreReg) kv.Key.SetValue(Reg(kv.Value));
-                }
+                func.AllocateRegisters(this, graph.Graphs[func]);
             }
         }
 
@@ -127,7 +123,7 @@ namespace Amethyst.Geode
         {
             var func = new MCFunction(new("amethyst", $"zz_internal/{RandomString}"));
 
-            func.Add(new DataCommand.Modify(new Storage(new("amethyst", "runtime")), "stack").Set().Value("[]"));
+            func.Add(new DataCommand.Modify(new Storage(new("amethyst", "runtime")), "stack").Set().Value("[{}]"));
 
             foreach (var i in registeredScores)
             {
@@ -166,7 +162,7 @@ namespace Amethyst.Geode
         public static string RandomString { get => Guid.NewGuid().ToString(); }
         public static readonly NamespacedID RuntimeID = new("amethyst", "runtime");
         public static readonly IEntityTarget RuntimeEntity = new NamedTarget("amethyst");
-        public static readonly string[] RuntimeStorageUsed = ["stack", "return", "tmp_args", "tmp_macros"];
+        public static readonly string[] RuntimeStorageUsed = ["stack"];
 
         private static DP GetDP(Options opts) => new("Project generated with Amethyst", opts.Output, opts.PackFormat);
     }

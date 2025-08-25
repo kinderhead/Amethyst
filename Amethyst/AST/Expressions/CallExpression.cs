@@ -1,6 +1,7 @@
 ﻿using Amethyst.Errors;
 using Amethyst.Geode;
 using Amethyst.Geode.IR;
+using Amethyst.Geode.IR.Instructions;
 
 namespace Amethyst.AST.Expressions
 {
@@ -20,8 +21,12 @@ namespace Amethyst.AST.Expressions
 		{
 			var func = Function.ExecuteWithoutLoad(ctx);
 			if (func.Value is Intrinsic i) return i.Execute(ctx, Args);
-
-			throw new NotImplementedException();
+			else if (func.Value is StaticFunctionValue f)
+			{
+				if (f.FuncType.Parameters.Length != Args.Count) throw new MismatchedArgumentCountError(f.FuncType.Parameters.Length, Args.Count);
+				return ctx.Add(new CallInsn(func, Args.Zip(f.FuncType.Parameters).Select(i => ctx.ImplicitCast(i.First.ExecuteWithoutLoad(ctx), i.Second.Type))));
+			}
+			else throw new NotImplementedException();
 		}
 	}
 }

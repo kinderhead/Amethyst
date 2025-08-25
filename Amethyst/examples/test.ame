@@ -2,7 +2,13 @@ namespace test;
 
 #load
 void main() {
-    int x = 3;
-    bool y = x == 3;
-    print(y);
+    print(test1(), test2());
+}
+
+int test1() {
+    return 5;
+}
+
+string test2() {
+    return "hi";
 }

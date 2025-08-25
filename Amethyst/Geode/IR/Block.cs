@@ -14,9 +14,9 @@ namespace Amethyst.Geode.IR
 
         public readonly MCFunction Function = new(funcID);
 
-		public HashSet<ValueRef> Dependencies { get; } = [];
+        public HashSet<ValueRef> Dependencies { get; } = [];
 
-		public ValueRef Add(Instruction insn)
+        public ValueRef Add(Instruction insn)
         {
             Instructions.Add(insn);
             return insn.ReturnValue;
@@ -47,10 +47,12 @@ namespace Amethyst.Geode.IR
         {
             foreach (var i in Instructions)
             {
-                i.Render(new(Function, this, builder, ctx));
+                i.Render(GetRenderCtx(builder, ctx));
             }
 
             builder.Register(Function);
         }
+
+        public RenderContext GetRenderCtx(GeodeBuilder builder, FunctionContext ctx) => new(Function, this, builder, ctx);
     }
 }

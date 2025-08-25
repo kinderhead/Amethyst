@@ -40,7 +40,7 @@ namespace Amethyst.AST
 
 			ctx = new FunctionContext(compiler, (StaticFunctionValue)compiler.Symbols[ID].Value, Tags);
 
-			if (Body.Statements.Last() is not ReturnStatement)
+			if (!Body.Statements.Any() || Body.Statements.Last() is not ReturnStatement)
 			{
 				if (funcType.ReturnType is VoidTypeSpecifier) Body.Add(new ReturnStatement(Location, null));
 				else throw new MissingReturnError();

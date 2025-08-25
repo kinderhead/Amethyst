@@ -9,14 +9,15 @@ namespace Amethyst.Geode
         public TypeSpecifier Type { get; private set; }
 
         public bool IsLiteral => Value is not null && Value.IsLiteral;
-        public bool NeedsScoreReg => Value is null && (Type.EffectiveType == NBTType.Int || Type.EffectiveType == NBTType.Boolean);
+        public bool NeedsScoreReg => Value is null && Type.ShouldStoreInScore;
+        public bool NeedsStackVar => Value is null && !Type.ShouldStoreInScore;
 
         private string? customName;
         public string Name => customName is null ? Value is not null ? $"{(Value.IsLiteral || Value is StorageValue ? "" : "%")}{Value}" : "" : customName;
 
-		public HashSet<ValueRef> Dependencies { get; } = [];
+        public HashSet<ValueRef> Dependencies { get; } = [];
 
-		public ValueRef(Value val)
+        public ValueRef(Value val)
         {
             Value = val;
             Type = val.Type;

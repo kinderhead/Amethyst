@@ -43,11 +43,16 @@ namespace Amethyst.Geode.IR
 
         public T Arg<T>(int index) where T : IInstructionArg => (T)Arguments[index];
 
-        public void Resolve()
+        public void Resolve(FunctionContext ctx)
         {
             var ret = ComputeReturnValue();
 
-            if (ret is null) return;
+            if (ret is null)
+            {
+                if (ReturnValue.NeedsStackVar) ReturnValue.SetValue(ctx.Temp(ReturnType));
+                return;
+            }
+
             if (ret.Type != ReturnType) throw new InvalidOperationException($"Instruction returned {ret.Type}, but expected {ReturnType}");
 
             ReturnValue.SetValue(ret);
