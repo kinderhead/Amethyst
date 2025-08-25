@@ -2,13 +2,15 @@ namespace test;
 
 #load
 void main() {
-    print(test1(), test2());
+    int x = 11;
+    print(test1(50, x));
 }
 
-int test1() {
-    return 5;
-}
+int test1(macro int x, int y) {
+    if (y > 10) {
+        print(x);
+        return 10;
+    }
 
-string test2() {
-    return "hi";
+    return 9;
 }

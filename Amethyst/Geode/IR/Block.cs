@@ -1,4 +1,5 @@
 using System.Text;
+using Amethyst.Geode.IR.Instructions;
 using Datapack.Net.Function;
 using Datapack.Net.Utils;
 
@@ -12,13 +13,13 @@ namespace Amethyst.Geode.IR
         public readonly List<Block> Previous = [];
         public readonly List<Block> Next = [];
 
-        public readonly MCFunction Function = new(funcID);
+        public readonly MCFunction Function = new(funcID, true);
 
         public HashSet<ValueRef> Dependencies { get; } = [];
 
         public ValueRef Add(Instruction insn)
         {
-            Instructions.Add(insn);
+            if (Instructions.Count == 0 || Instructions.Last() is not ReturnInsn) Instructions.Add(insn);
             return insn.ReturnValue;
         }
 

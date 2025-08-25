@@ -13,15 +13,26 @@ namespace Amethyst.Geode.IR.Instructions
         public override void Render(RenderContext ctx)
         {
             var func = Arg<ValueRef>(0).Expect<StaticFunctionValue>();
+            Value? processedMacros = null;
 
             if (Arguments.Length > 1)
             {
-                ctx.StoreCompound(new(GeodeBuilder.RuntimeID, "stack[-1].args", PrimitiveTypeSpecifier.Compound),
-                    new(func.FuncType.Parameters.Zip(Arguments[1..]).Select(i => new KeyValuePair<string, ValueRef>(i.First.Name, ((ValueRef)i.Second).Expect())))
-                );
+                var args = new Dictionary<string, ValueRef>();
+                var macros = new Dictionary<string, ValueRef>();
+
+                foreach (var (param, val) in FuncType.Parameters.Zip(Arguments[1..].Select(i => (ValueRef)i)))
+                {
+                    if (param.Modifiers.HasFlag(AST.ParameterModifiers.Macro)) macros.Add(param.Name, val);
+                    else args.Add(param.Name, val);
+                }
+
+                if (args.Count != 0) ctx.StoreCompound(new(GeodeBuilder.RuntimeID, "stack[-1].args", PrimitiveTypeSpecifier.Compound), args);
+                if (macros.Count != 0) processedMacros = ctx.StoreCompoundOrReturnConstant(new(GeodeBuilder.RuntimeID, "stack[-1].macros", PrimitiveTypeSpecifier.Compound), macros);
             }
 
-            ctx.Add(new FunctionCommand(new(func.ID, true)));
+            if (processedMacros is StorageValue s) ctx.Add(new FunctionCommand(new(func.ID, true), s.Storage, s.Path));
+            else if (processedMacros is LiteralValue l) ctx.Add(new FunctionCommand(new(func.ID, true), (NBTCompound)l.Value));
+            else ctx.Add(new FunctionCommand(new(func.ID, true)));
 
             if (ReturnValue.Expect() is LValue ret) ret.Store(FunctionContext.GetFunctionReturnValue(ReturnType, -1), ctx);
         }

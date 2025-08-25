@@ -35,6 +35,18 @@ namespace Amethyst.Geode
         public override FormattedText Render(FormattedText text) => Value is NBTString str ? text.Text(str.Value) : text.Text(Value.ToString());
     }
 
+    public class MacroValue(string name, TypeSpecifier type) : Value
+    {
+        public readonly string Name = name;
+        public override TypeSpecifier Type => type;
+
+        public override ScoreValue AsScore(RenderContext ctx) => throw new InvalidOperationException();
+        public override bool Equals(object? obj) => this is MacroValue m && m.Name == Name;
+        public override Execute If(Execute cmd) => throw new InvalidOperationException();
+        public override FormattedText Render(FormattedText text) => text.Text($"$({Name})");
+        public override int GetHashCode() => HashCode.Combine(Name, Type);
+    }
+
     public class VoidValue : Value
     {
         public override TypeSpecifier Type => new VoidTypeSpecifier();
@@ -77,6 +89,7 @@ namespace Amethyst.Geode
             else if (val is ScoreValue score) Store(score, ctx);
             else if (val is StorageValue storage) Store(storage, ctx);
             else if (val is ConditionalValue cond) Store(cond, ctx);
+            else if (val is MacroValue macro) Store(macro, ctx);
             else throw new NotImplementedException();
         }
 
@@ -88,6 +101,8 @@ namespace Amethyst.Geode
             Store(new LiteralValue(false), ctx);
             ctx.Add(cond.If(new()).Run(ctx.WithFaux(i => Store(new LiteralValue(true), i)).Single()));
         }
+
+        public virtual void Store(MacroValue macro, RenderContext ctx) => Store(new LiteralValue(new NBTRawString($"$({macro.Name})")), ctx);
     }
 
     public class ScoreValue(IEntityTarget target, Score score) : LValue

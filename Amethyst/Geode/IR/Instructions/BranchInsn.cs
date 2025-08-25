@@ -17,8 +17,8 @@ namespace Amethyst.Geode.IR.Instructions
 
             var returning = ctx.Func.GetIsFunctionReturningValue();
 
-            ctx.Add(cond.If(new()).Run(new FunctionCommand(ifTrue.Function)));
-            ctx.Add(new Execute().Unless.Data(returning.Storage, returning.Path).Run(new FunctionCommand(ifFalse.Function)));
+            ctx.Add(cond.If(new()).Run(ctx.CallFunction(ifTrue.Function)));
+            ctx.Add(new Execute().Unless.Data(returning.Storage, returning.Path).Run(ctx.CallFunction(ifFalse.Function)));
         }
 
         protected override Value? ComputeReturnValue() => new VoidValue();

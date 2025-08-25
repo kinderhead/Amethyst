@@ -18,7 +18,8 @@ namespace Amethyst.Geode.IR
         public Block CurrentBlock { get; private set; }
 
         public bool IsFinished => CurrentBlock == ExitBlock;
-        public bool UsesStack => AllLocals.Any() || registersInUse.Count != 0 || tmpStackVars != 0;
+        public bool UsesStack => AllLocals.Any(i => i is StorageValue) || registersInUse.Count != 0 || tmpStackVars != 0;
+        public readonly bool IsMacroFunction;
 
         public IReadOnlyCollection<Block> Blocks => blocks;
         private readonly List<Block> blocks = [];
@@ -30,13 +31,14 @@ namespace Amethyst.Geode.IR
         private readonly HashSet<int> registersInUse = [];
         private int tmpStackVars = 0;
 
-        public IEnumerable<Variable> AllLocals => totalScopes.SelectMany(i => i.Locals.Values);
+        public IEnumerable<Value> AllLocals => totalScopes.SelectMany(i => i.Locals.Values);
 
         public FunctionContext(Compiler compiler, StaticFunctionValue decl, IEnumerable<NamespacedID> tags)
         {
             Compiler = compiler;
             Decl = decl;
             Tags = tags;
+            IsMacroFunction = Decl.FuncType.Parameters.Any(i => i.Modifiers.HasFlag(AST.ParameterModifiers.Macro));
 
             PushScope();
 
@@ -47,8 +49,15 @@ namespace Amethyst.Geode.IR
 
             foreach (var i in Decl.FuncType.Parameters)
             {
-                // Maybe make it so that if the stack isn't used by the function, then use [-1] and don't push new frame
-                RegisterLocal(i.Name, $"stack[-2].args.{i.Name}", i.Type);
+                if (i.Modifiers.HasFlag(AST.ParameterModifiers.Macro))
+                {
+                    RegisterLocal(i.Name, new MacroValue(i.Name, i.Type));
+                }
+                else
+                {
+                    // Maybe make it so that if the stack isn't used by the function, then use [-1] and don't push new frame
+                    RegisterLocal(i.Name, $"stack[-2].args.{i.Name}", i.Type);
+                }
             }
         }
 
@@ -84,9 +93,11 @@ namespace Amethyst.Geode.IR
         public Variable RegisterLocal(string name, string loc, TypeSpecifier type)
         {
             var val = new Variable(name, loc, type);
-            activeScopes.Peek().Locals[name] = val;
+            RegisterLocal(name, val);
             return val;
         }
+
+        public void RegisterLocal(string name, Value val) => activeScopes.Peek().Locals[name] = val;
 
         public StorageValue Temp(TypeSpecifier type) => new(GeodeBuilder.RuntimeID, $"stack[-1].tmp{tmpStackVars++}", type);
 
@@ -273,7 +284,7 @@ namespace Amethyst.Geode.IR
 
         private class Scope
         {
-            public readonly Dictionary<string, Variable> Locals = [];
+            public readonly Dictionary<string, Value> Locals = [];
         }
     }
 }

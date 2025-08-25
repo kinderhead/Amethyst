@@ -1,13 +1,28 @@
 using Amethyst.Geode.IR;
 using Datapack.Net.Function;
+using Datapack.Net.Function.Commands;
 
 namespace Amethyst.Geode
 {
     public record class RenderContext(MCFunction MCFunction, Block Block, GeodeBuilder Builder, FunctionContext Func)
     {
-        public virtual void Add(params IEnumerable<Command> cmds) => MCFunction.Add(cmds);
+        public virtual void Add(params IEnumerable<Command> cmds)
+        {
+            if (Func.IsMacroFunction) MCFunction.Add(cmds.Select(i =>
+            {
+                i.Macro = true;
+                return i;
+            }));
+            else MCFunction.Add(cmds);
+        }
 
         public void StoreCompound(StorageValue dest, Dictionary<string, ValueRef> dict)
+        {
+            var ret = StoreCompoundOrReturnConstant(dest, dict);
+            if (ret is LiteralValue l) dest.Store(l, this);
+        }
+
+        public Value StoreCompoundOrReturnConstant(StorageValue dest, Dictionary<string, ValueRef> dict)
         {
             var nbt = new Datapack.Net.Data.NBTCompound();
             var runtime = new Dictionary<string, Value>();
@@ -18,12 +33,22 @@ namespace Amethyst.Geode
                 else runtime[key] = val;
             }
 
+            if (nbt.Count == dict.Count) return new LiteralValue(nbt);
+
             dest.Store(new LiteralValue(nbt), this);
 
             foreach (var (key, value) in runtime)
             {
                 dest.Property(key, value.Type).Store(value, this);
             }
+
+            return dest;
+        }
+
+        public Command CallFunction(MCFunction func)
+        {
+            if (Func.IsMacroFunction) return new FunctionCommand(func, [.. Func.Decl.FuncType.Parameters.Where(i => i.Modifiers.HasFlag(AST.ParameterModifiers.Macro)).Select(i => new KeyValuePair<string, Datapack.Net.Data.NBTValue>(i.Name, $"$({i.Name})"))]);
+            else return new FunctionCommand(func);
         }
 
         public List<Command> WithFaux(Action<FauxRenderContext> func)

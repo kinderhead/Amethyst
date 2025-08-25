@@ -1,5 +1,4 @@
 using Datapack.Net.Data;
-using Datapack.Net.Function.Commands;
 
 namespace Amethyst.Geode.IR.Instructions
 {
@@ -12,7 +11,7 @@ namespace Amethyst.Geode.IR.Instructions
         public override void Render(RenderContext ctx)
         {
             var block = Arg<Block>(0);
-            ctx.Add(new FunctionCommand(block.Function));
+            ctx.Add(ctx.CallFunction(block.Function));
         }
 
         protected override Value? ComputeReturnValue() => new VoidValue();
