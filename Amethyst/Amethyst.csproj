@@ -2,16 +2,29 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
+	<TargetName>amethyst</TargetName>
     <TargetFramework>net9.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <Authors>kinderhead</Authors>
     <Version>0.1.0</Version>
+    <PublishTrimmed>True</PublishTrimmed>
+    <PublishAot>True</PublishAot>
+	<TrimMode>partial</TrimMode>
   </PropertyGroup>
+
+    <PropertyGroup Condition="'$(Configuration)'=='Release'">
+	    <DebugSymbols>False</DebugSymbols>
+	    <DebugType>None</DebugType>
+		<AllowedReferenceRelatedFileExtensions>*.pdb</AllowedReferenceRelatedFileExtensions>
+		<NativeDebugSymbols>False</NativeDebugSymbols>
+		<StripSymbols>true</StripSymbols>
+    </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Antlr4.Runtime.Standard" Version="4.13.1" />
     <PackageReference Include="CommandLineParser" Version="2.9.1" />
+    <PackageReference Include="Glob" Version="1.1.9" />
     <PackageReference Include="Spectre.Console" Version="0.50.0" />
   </ItemGroup>
 
@@ -26,6 +39,9 @@
     <None Update="core\**">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+	<None Update="tests\**">
+		<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	</None>
   </ItemGroup>
 
 </Project>

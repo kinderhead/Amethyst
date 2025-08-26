@@ -3,6 +3,11 @@
   "displayName": "amethyst-language",
   "description": "Syntax highlighting for the Amethyst programming language",
   "version": "0.0.1",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/kinderhead/Datapack.Net"
+  },
+  "license": "MIT",
   "engines": {
     "vscode": "^1.100.0"
   },

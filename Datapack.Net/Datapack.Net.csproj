@@ -8,7 +8,7 @@
 
   <ItemGroup>
     <None Include="..\.editorconfig" Link=".editorconfig" />
-    <None Include="..\LICENSE.txt">
+    <None Include="..\LICENSE">
       <Pack>True</Pack>
       <PackagePath>\</PackagePath>
     </None>
@@ -37,8 +37,8 @@
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<RepositoryUrl>https://github.com/kinderhead/Datapack.Net</RepositoryUrl>
 		<PackageTags>minecraft,datapack</PackageTags>
-		<Version>0.1.2</Version>
-		<PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
+		<Version>0.2.0</Version>
+		<PackageLicenseFile>LICENSE</PackageLicenseFile>
 	</PropertyGroup>
 
 </Project>

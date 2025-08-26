@@ -1,0 +1,44 @@
+name: Amethyst Publish
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+jobs:
+  build:
+
+    runs-on: ${{ matrix.type.os }}
+
+    strategy:
+      matrix:
+        type: [
+          {os: ubuntu-latest, name: linux},
+          {os: ubuntu-24.04-arm, name: linux-arm},
+          {os: windows-latest, name: windows},
+          {os: windows-11-arm, name: windows-arm},
+          {os: macos-13, name: "mac-intel"},
+          {os: macos-latest, name: "mac"}
+        ]
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 9.0.x
+    - name: Restore dependencies
+      run: dotnet restore
+    - name: Build
+      run: dotnet build --no-restore
+    - name: Publish
+      working-directory: ./Amethyst
+      run: dotnet publish --configuration Release --output dist
+    - uses: actions/upload-artifact@v4
+      with:
+        name: amethyst-${{ matrix.type.name }}
+        path: |
+          Amethyst/dist/
+          !**/*.pdb
+          !**/*.dbg

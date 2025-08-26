@@ -22,10 +22,10 @@ namespace Amethyst.Geode
         public static bool operator !=(Value left, Value right) => !left.Equals(right);
     }
 
-    public class LiteralValue(NBTValue val) : Value
+    public class LiteralValue(NBTValue val, TypeSpecifier? type = null) : Value
     {
         public readonly NBTValue Value = val;
-        public override TypeSpecifier Type => new PrimitiveTypeSpecifier(Value.Type);
+        public override TypeSpecifier Type => type ?? new PrimitiveTypeSpecifier(Value.Type);
 
         public override ScoreValue AsScore(RenderContext ctx) => Value is NBTInt n ? ctx.Builder.Constant(n) : throw new InvalidOperationException($"\"{Value}\" is not an integer");
         public override Execute If(Execute cmd) => throw new NotImplementedException(); // Ideally this shouldn't happen

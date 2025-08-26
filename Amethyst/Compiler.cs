@@ -8,6 +8,7 @@ using Amethyst.Geode.IR;
 using Amethyst.Geode.IR.Instructions;
 using Antlr4.Runtime;
 using Datapack.Net.Utils;
+using GlobExpressions;
 
 namespace Amethyst
 {
@@ -46,7 +47,7 @@ namespace Amethyst
 		public bool Compile()
 		{
 			var errored = false;
-			foreach (var i in new List<string>([.. Options.Inputs, .. CoreLibrary.Select(i => Path.Join(Path.GetDirectoryName(Assembly.GetEntryAssembly()?.Location), "core", i))]))
+			foreach (var i in new List<string>([.. Options.Inputs.SelectMany(i => Glob.Files(".", i)), .. CoreLibrary.Select(i => Path.Join(AppContext.BaseDirectory, "core", i))]))
 			{
 				if (!ParseFile(i)) errored = true;
 			}

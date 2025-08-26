@@ -19,7 +19,7 @@
 
   <ItemGroup>
     <None Include="$(OutputPath)\$(AssemblyName).dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
-    <None Include="..\LICENSE.txt">
+    <None Include="..\LICENSE">
       <Pack>True</Pack>
       <PackagePath>\</PackagePath>
     </None>
@@ -35,7 +35,7 @@
 		<PackageProjectUrl>https://github.com/kinderhead/Datapack.Net</PackageProjectUrl>
 		<RepositoryUrl>https://github.com/kinderhead/Datapack.Net</RepositoryUrl>
 		<PackageTags>minecraft,datapack</PackageTags>
-		<PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
+		<PackageLicenseFile>LICENSE</PackageLicenseFile>
 	</PropertyGroup>
 	
 	<Target Name="GetDependencyTargetPaths">

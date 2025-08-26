@@ -7,6 +7,10 @@
     "Amethyst Help": {
       "commandName": "Project",
       "commandLineArgs": "--help"
+    },
+    "Test Suite": {
+      "commandName": "Project",
+      "commandLineArgs": "tests/*.ame -o output.zip"
     }
   }
 }

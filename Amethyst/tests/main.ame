@@ -13,11 +13,11 @@ void run_tests() {
     print("Tests passed: ", successfulTests, "/", total);
 }
 
-void start(macro string name) {
+void start(string name) {
     currentTest = name;
 }
 
 void complete() {
-    print("Test \"", currentTest, "\" passed")
+    print("Test \"", currentTest, "\" passed");
     successfulTests = successfulTests + 1;
 }

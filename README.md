@@ -2,15 +2,14 @@
 
 ![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/kinderhead/Datapack.Net/dotnet.yml) ![NuGet Downloads](https://img.shields.io/nuget/dt/Datapack.Net?label=NuGet%20Downloads)
 
-A Minecraft datapack generator and utility library. Also contains an experimental C# to commands "transpiler" for high level vanilla programming.
+A Minecraft datapack generator and utility library. Also contains an experimental [programming language](https://github.com/kinderhead/Datapack.Net/tree/master/Amethyst)
 
 Datapack.Net still has a long way to go, so feel free to play around and catch bugs. I might notice when bug reports are made.
 
 ## Features
 
-* .NET 8
+* .NET 9
 * Datpack generation
-* C# to commands generator
 * Typesafe commands
   * As well as blocks, block states, biomes, and entities
   * Full target selector support
@@ -31,16 +30,18 @@ Datapack.Net still has a long way to go, so feel free to play around and catch b
 * Supports 1.20.4
   * 1.20.5+ support is limited due to the new item components replacing NBT. Most things should still work. This will change in the future
 
+## Planned features
+
+* Fully generated data using SpyglassMC
+
 ## Installation
 
-Datapack.Net can be installed via NuGet [here](https://www.nuget.org/packages/Datapack.Net/). The CubeLib analyzer is a separate package located [here](https://www.nuget.org/packages/Datapack.Net.SourceGenerator).
+Datapack.Net can be installed via NuGet [here](https://www.nuget.org/packages/Datapack.Net/). The CubeLib (deprecated) analyzer is a separate package located [here](https://www.nuget.org/packages/Datapack.Net.SourceGenerator).
 
 ```sh
 dotnet add package Datapack.Net
 dotnet add package Datapack.Net.SourceGenerator
 ```
-
-Don't forget to update frequently.
 
 If cloning locally, you need to build the project and restart your IDE for the source generator to come into effect.
 
@@ -76,7 +77,7 @@ pack.Build();
 
 See the tests for examples of commands and other features.
 
-## CubeLib
+## CubeLib (Deprecated in favor of [Amethyst](https://github.com/kinderhead/Datapack.Net/tree/master/Amethyst))
 
 Have you ever struggled to multiply a score by a constant number? Have you ever wanted better control flow? With the recent addition of function macros in Minecraft, everything is possible. CubeLib is a system to achieve just that by dynamically generating commands based on function calls. It's optional and fully separate from the rest of the library under the `Datapack.Net.CubeLib` namespace.
 
