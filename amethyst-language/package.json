@@ -1,0 +1,40 @@
+{
+  "name": "amethyst-language",
+  "displayName": "amethyst-language",
+  "description": "Syntax highlighting for the Amethyst programming language",
+  "version": "0.0.1",
+  "engines": {
+    "vscode": "^1.100.0"
+  },
+  "categories": [
+    "Programming Languages"
+  ],
+  "contributes": {
+    "languages": [
+      {
+        "id": "amethyst",
+        "aliases": [
+          "Amethyst",
+          "amethyst"
+        ],
+        "extensions": [
+          ".ame"
+        ],
+        "configuration": "./language-configuration.json"
+      }
+    ],
+    "grammars": [
+      {
+        "language": "amethyst",
+        "scopeName": "source.ame",
+        "path": "./syntaxes/amethyst.tmLanguage.json"
+      }
+    ]
+  },
+  "devDependencies": {
+    "@vscode/vsce": "^3.6.0"
+  },
+  "scripts": {
+    "build": "npx vsce package"
+  }
+}
