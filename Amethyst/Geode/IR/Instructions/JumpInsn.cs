@@ -14,6 +14,6 @@ namespace Amethyst.Geode.IR.Instructions
             ctx.Add(ctx.CallFunction(block.Function));
         }
 
-        protected override Value? ComputeReturnValue() => new VoidValue();
+        protected override Value? ComputeReturnValue(FunctionContext ctx) => new VoidValue();
     }
 }

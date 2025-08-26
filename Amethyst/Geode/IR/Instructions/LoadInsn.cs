@@ -1,9 +1,4 @@
 ﻿using Datapack.Net.Data;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Amethyst.Geode.IR.Instructions
 {
@@ -22,7 +17,7 @@ namespace Amethyst.Geode.IR.Instructions
 			ret.Store(val, ctx);
 		}
 
-		protected override Value? ComputeReturnValue()
+		protected override Value? ComputeReturnValue(FunctionContext ctx)
 		{
 			var val = Arg<ValueRef>(0);
 			if (val.Value is ScoreValue score) return score;

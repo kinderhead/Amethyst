@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO.Compression;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.IO.Compression;
 using Datapack.Net.Function;
 using Datapack.Net.Function.Commands;
 using Datapack.Net.Pack;
 using Newtonsoft.Json.Linq;
+
 using static Datapack.Net.Function.Commands.Execute.Subcommand;
 
 namespace Datapack.Net
@@ -99,12 +95,12 @@ namespace Datapack.Net
                 for (int e = 0; e < i.Length; e++)
                 {
                     var remove = false;
-                    if (i.Commands[e] is FunctionCommand cmd && toRemove.Contains(cmd.Function)) remove = true;
-                    else if (i.Commands[e] is ReturnCommand ret && ret.Cmd is FunctionCommand retfunc && toRemove.Contains(retfunc.Function))
+                    if (i.Commands[e] is FunctionCommand cmd && toRemove.Select(i => i.ID).Contains(cmd.Function)) remove = true;
+                    else if (i.Commands[e] is ReturnCommand ret && ret.Cmd is FunctionCommand retfunc && toRemove.Select(i => i.ID).Contains(retfunc.Function))
                     {
                         i.Commands[e] = new ReturnCommand();
                     }
-                    else if (i.Commands[e] is Execute ex && ex.Get<Run>().Command is FunctionCommand exfunc && toRemove.Contains(exfunc.Function)) remove = true;
+                    else if (i.Commands[e] is Execute ex && ex.Get<Run>().Command is FunctionCommand exfunc && toRemove.Select(i => i.ID).Contains(exfunc.Function)) remove = true;
 
                     if (remove)
                     {

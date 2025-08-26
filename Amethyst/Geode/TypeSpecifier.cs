@@ -67,6 +67,7 @@ namespace Amethyst.Geode
 
 		public static PrimitiveTypeSpecifier Int => new(NBTType.Int);
 		public static PrimitiveTypeSpecifier Bool => new(NBTType.Boolean);
+		public static PrimitiveTypeSpecifier String => new(NBTType.String);
 		public static PrimitiveTypeSpecifier Compound => new(NBTType.Compound);
 		public static PrimitiveTypeSpecifier List => new(NBTType.List);
 	}
@@ -87,6 +88,8 @@ namespace Amethyst.Geode
 		// TODO: properly do this
 		public override string ToString() => $"{ReturnType}({string.Join(", ", Parameters.Select(p => $"{p.Type} {p.Name}"))})";
 		public string ToString(string name) => $"{ReturnType} {name}({string.Join(", ", Parameters.Select(p => $"{p.Type} {p.Name}"))})";
+
+		public static FunctionTypeSpecifier VoidFunc => new(FunctionModifiers.None, new VoidTypeSpecifier(), []);
 	}
 
 	public class DynamicFunctionTypeSpecifier(TypeSpecifier returnType) : FunctionTypeSpecifier(FunctionModifiers.None, returnType, [])

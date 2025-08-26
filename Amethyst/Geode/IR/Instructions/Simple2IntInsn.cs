@@ -7,7 +7,7 @@ namespace Amethyst.Geode.IR.Instructions
         public override NBTType?[] ArgTypes => [NBTType.Int, NBTType.Int];
         public abstract TOut Compute(NBTInt left, NBTInt right);
 
-        protected override Value? ComputeReturnValue()
+        protected override Value? ComputeReturnValue(FunctionContext ctx)
         {
             if (AreArgsLiteral(out NBTInt left, out NBTInt right)) return new LiteralValue(Compute(left, right));
             return null;

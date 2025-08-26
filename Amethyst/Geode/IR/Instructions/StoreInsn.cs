@@ -13,6 +13,6 @@ namespace Amethyst.Geode.IR.Instructions
             Arg<ValueRef>(0).Expect<LValue>().Store(Arg<ValueRef>(1).Expect(), ctx);
         }
 
-        protected override Value? ComputeReturnValue() => new VoidValue();
+        protected override Value? ComputeReturnValue(FunctionContext ctx) => new VoidValue();
     }
 }

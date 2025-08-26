@@ -55,8 +55,7 @@ namespace Amethyst.AST
 
 		public void Process(Compiler ctx)
 		{
-			if (ctx.Symbols.TryGetValue(ID, out var sym)) throw new RedefinedSymbolError(ID.ToString(), sym.Location);
-			ctx.Symbols[ID] = new(ID, Location, new StaticFunctionValue(ID, GetFunctionType(ctx)), this);
+			ctx.AddSymbol(new(ID, Location, new StaticFunctionValue(ID, GetFunctionType(ctx)), this));
 		}
 	}
 

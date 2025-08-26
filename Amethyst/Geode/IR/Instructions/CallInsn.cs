@@ -30,14 +30,14 @@ namespace Amethyst.Geode.IR.Instructions
                 if (macros.Count != 0) processedMacros = ctx.StoreCompoundOrReturnConstant(new(GeodeBuilder.RuntimeID, "stack[-1].macros", PrimitiveTypeSpecifier.Compound), macros);
             }
 
-            if (processedMacros is StorageValue s) ctx.Add(new FunctionCommand(new(func.ID, true), s.Storage, s.Path));
-            else if (processedMacros is LiteralValue l) ctx.Add(new FunctionCommand(new(func.ID, true), (NBTCompound)l.Value));
-            else ctx.Add(new FunctionCommand(new(func.ID, true)));
+            if (processedMacros is StorageValue s) ctx.Add(new FunctionCommand(func.ID, s.Storage, s.Path));
+            else if (processedMacros is LiteralValue l) ctx.Add(new FunctionCommand(func.ID, (NBTCompound)l.Value));
+            else ctx.Add(new FunctionCommand(func.ID));
 
             if (ReturnValue.Expect() is LValue ret) ret.Store(FunctionContext.GetFunctionReturnValue(ReturnType, -1), ctx);
         }
 
-        protected override Value? ComputeReturnValue()
+        protected override Value? ComputeReturnValue(FunctionContext ctx)
         {
             if (ReturnType is VoidTypeSpecifier) return new VoidValue();
             return null;

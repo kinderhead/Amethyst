@@ -1,4 +1,5 @@
 ﻿using Amethyst.Geode.IR;
+using Amethyst.Geode.IR.Instructions;
 
 namespace Amethyst.AST.Statements
 {
@@ -9,7 +10,7 @@ namespace Amethyst.AST.Statements
 
 		public override void Compile(FunctionContext ctx)
 		{
-			throw new NotImplementedException();
+			ctx.Add(new CommandInsn(Command));
 		}
 	}
 }

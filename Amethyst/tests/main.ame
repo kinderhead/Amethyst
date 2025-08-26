@@ -1,0 +1,23 @@
+namespace test;
+
+string currentTest = "None";
+int successfulTests = 0;
+
+#load
+void run_tests() {
+    print("Running tests");
+
+    @/function #test:test
+
+    var total = countOf("test:test");
+    print("Tests passed: ", successfulTests, "/", total);
+}
+
+void start(macro string name) {
+    currentTest = name;
+}
+
+void complete() {
+    print("Test \"", currentTest, "\" passed")
+    successfulTests = successfulTests + 1;
+}

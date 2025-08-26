@@ -1,0 +1,8 @@
+namespace test;
+
+#test
+void simple_test() {
+    start("Simple Test");
+    complete();
+}
+

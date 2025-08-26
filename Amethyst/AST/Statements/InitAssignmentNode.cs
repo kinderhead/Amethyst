@@ -1,4 +1,5 @@
 ﻿using Amethyst.AST.Expressions;
+using Amethyst.Geode;
 using Amethyst.Geode.IR;
 using Amethyst.Geode.IR.Instructions;
 
@@ -13,8 +14,14 @@ namespace Amethyst.AST.Statements
 
 		public override void Compile(FunctionContext ctx)
 		{
-			var val = ctx.RegisterLocal(Name, Type.Resolve(ctx));
-			if (Expression is not null) ctx.Add(new StoreInsn(val, ctx.ImplicitCast(Expression.Execute(ctx), val.Type)));
+			var type = Type.Resolve(ctx, Expression is not null);
+			if (type is VarTypeSpecifier && Expression is not null) type = Expression.ComputeType(ctx);
+			var val = ctx.RegisterLocal(Name, type);
+
+			if (Expression is not null)
+			{
+				ctx.Add(new StoreInsn(val, ctx.ImplicitCast(Expression.Execute(ctx), val.Type)));
+			}
 		}
 	}
 }

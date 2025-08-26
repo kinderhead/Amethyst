@@ -13,6 +13,17 @@
             "console": "integratedTerminal"
         },
         {
+            "name": "Amethyst Test Suite",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build",
+            "program": "${workspaceFolder}/Amethyst/bin/Debug/net9.0/Amethyst.dll",
+            "args": ["tests/main.ame", "tests/test.ame", "-o", "test.zip"],
+            "cwd": "${workspaceFolder}/Amethyst",
+            "stopAtEntry": false,
+            "console": "integratedTerminal"
+        },
+        {
             // Use IntelliSense to find out which attributes exist for C# debugging
             // Use hover for the description of the existing attributes
             // For further information visit https://github.com/dotnet/vscode-csharp/blob/main/debugger-launchjson.md

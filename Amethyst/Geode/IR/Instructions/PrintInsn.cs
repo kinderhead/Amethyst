@@ -1,11 +1,6 @@
 ﻿using Datapack.Net.Data;
 using Datapack.Net.Function;
 using Datapack.Net.Function.Commands;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Amethyst.Geode.IR.Instructions
 {
@@ -23,10 +18,10 @@ namespace Amethyst.Geode.IR.Instructions
 			{
 				if (i is not ValueRef vref || vref.Value is not Value val) throw new InvalidOperationException($"Invalid print argument of type {i.GetType().Name}");
 				val.Render(msg);
-				msg.Text(", ");
+				//msg.Text(" ");
 			}
 
-			if (Arguments.Length > 0) msg.RemoveLast();
+			//if (Arguments.Length > 0) msg.RemoveLast();
 			msg.Optimize();
 
 			// TODO: Make the target configurable
@@ -34,6 +29,6 @@ namespace Amethyst.Geode.IR.Instructions
 		}
 
 		public override void CheckArguments() { }
-		protected override Value? ComputeReturnValue() => new VoidValue();
+		protected override Value? ComputeReturnValue(FunctionContext ctx) => new VoidValue();
 	}
 }

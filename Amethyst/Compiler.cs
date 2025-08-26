@@ -4,6 +4,8 @@ using Amethyst.AST;
 using Amethyst.AST.Intrinsics;
 using Amethyst.Errors;
 using Amethyst.Geode;
+using Amethyst.Geode.IR;
+using Amethyst.Geode.IR.Instructions;
 using Antlr4.Runtime;
 using Datapack.Net.Utils;
 
@@ -16,12 +18,16 @@ namespace Amethyst
 		public readonly Dictionary<string, RootNode> Roots = [];
 		public readonly Dictionary<NamespacedID, GlobalSymbol> Symbols = [];
 
+		public readonly FunctionContext GlobalInitFunc;
+
 		public Dictionary<string, string> Files { get; } = [];
 
 		public Compiler(Options opts)
 		{
 			Options = opts;
 			IR = new(Options);
+
+			GlobalInitFunc = GetGlobalInitFunc();
 			RegisterGlobals();
 		}
 
@@ -32,6 +38,8 @@ namespace Amethyst
 			Options = res.Value;
 			Options.Output ??= Path.GetFileName(Options.Inputs.First()) + ".zip";
 			IR = new(Options);
+
+			GlobalInitFunc = GetGlobalInitFunc();
 			RegisterGlobals();
 		}
 
@@ -55,6 +63,13 @@ namespace Amethyst
 			{
 				if (!i.Value.CompileFunctions(out var funcs)) errored = true;
 				else IR.AddFunctions(funcs);
+			}
+
+			if (GlobalInitFunc.FirstBlock.Instructions.Count != 0)
+			{
+				GlobalInitFunc.Add(new ReturnInsn());
+				GlobalInitFunc.Finish();
+				IR.AddFunctions(GlobalInitFunc);
 			}
 
 			if (errored) return false;
@@ -111,10 +126,19 @@ namespace Amethyst
 			return true;
 		}
 
+		public void AddSymbol(GlobalSymbol sym)
+		{
+			if (Symbols.TryGetValue(sym.ID, out var old)) throw new RedefinedSymbolError(sym.ID.ToString(), old.Location);
+			else Symbols[sym.ID] = sym;
+		}
+
 		protected virtual void RegisterGlobals()
 		{
 			Register(new Print());
+			Register(new CountOf());
 		}
+
+		protected FunctionContext GetGlobalInitFunc() => new(this, new(new("amethyst", GeodeBuilder.RandomString), FunctionTypeSpecifier.VoidFunc), ["minecraft:load"]);
 
 		public void Register(Intrinsic func) => Symbols[func.ID] = new(func.ID, LocationRange.Empty, func);
 

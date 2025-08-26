@@ -26,7 +26,7 @@ namespace Amethyst.Geode
             Datapack = GetDP(Options);
         }
 
-        public void AddFunctions(IEnumerable<FunctionContext> funcs) => Functions.AddRange(funcs);
+        public void AddFunctions(params IEnumerable<FunctionContext> funcs) => Functions.AddRange(funcs);
 
         public bool Compile()
         {

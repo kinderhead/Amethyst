@@ -13,7 +13,7 @@ namespace Amethyst.AST.Expressions
 
 		public override ValueRef Execute(FunctionContext ctx)
 		{
-			var val = Expression.Execute(ctx);
+			var val = Expression.ExecuteWithoutLoad(ctx);
 			var dest = Dest.ExecuteWithoutLoad(ctx);
 
 			val = ctx.ImplicitCast(val, dest.Type);

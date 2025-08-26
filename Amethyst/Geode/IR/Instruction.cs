@@ -45,7 +45,7 @@ namespace Amethyst.Geode.IR
 
         public void Resolve(FunctionContext ctx)
         {
-            var ret = ComputeReturnValue();
+            var ret = ComputeReturnValue(ctx);
 
             if (ret is null)
             {
@@ -115,6 +115,6 @@ namespace Amethyst.Geode.IR
         /// Compute return value. Return null to allow Geode to allocate automatically.
         /// </summary>
         /// <returns>Value or null</returns>
-        protected abstract Value? ComputeReturnValue();
+        protected abstract Value? ComputeReturnValue(FunctionContext ctx);
     }
 }

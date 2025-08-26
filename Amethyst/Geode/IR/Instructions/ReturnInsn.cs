@@ -24,7 +24,7 @@ namespace Amethyst.Geode.IR.Instructions
             if (val is not null) ctx.Func.GetFunctionReturnValue().Store(val, ctx);
         }
 
-        protected override Value? ComputeReturnValue() => new VoidValue();
+        protected override Value? ComputeReturnValue(FunctionContext ctx) => new VoidValue();
 
         public override void CheckArguments()
         {
