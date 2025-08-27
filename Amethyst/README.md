@@ -10,4 +10,12 @@ There's been many different attempts at making a high-level programming language
 
 ## Usage
 
+Binaries are built for each commit and can be found [here](https://github.com/kinderhead/Datapack.Net/actions/workflows/amethyst.yml). Note that published builds are experimental and may fail at runtime.
+
+Examples:
+```sh
+amethyst --help
+amethyst example/test.ame -o datapack.zip
+amethyst tests/*.ame -o tests.zip
+```
 
