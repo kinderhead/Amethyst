@@ -36,12 +36,12 @@ jobs:
       working-directory: ./Amethyst
       run: dotnet publish --configuration Release --output dist
 
-    - name: Test Build
+    - name: Test build unix
       if: runner.os == 'Linux' || runner.os == 'macOS'
       working-directory: ./Amethyst/dist
       run: ./amethyst tests/*.ame -o ../out.zip
 
-    - name: Test Build
+    - name: Test build windows
       if: runner.os == 'Windows'
       working-directory: ./Amethyst/dist
       run: .\amethyst.exe tests\*.ame -o ..\out.zip

@@ -2,7 +2,7 @@
 
 # Amethyst
 
-*Yet another programming language targetting Minecraft datapacks. We have enough already.*
+*Yet another programming language targetting Minecraft datapacks? We have enough already.*
 
 -- Someone (probably)
 
