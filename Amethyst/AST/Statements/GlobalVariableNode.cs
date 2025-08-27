@@ -18,7 +18,7 @@ namespace Amethyst.AST.Statements
 
             if (Expression is not null)
             {
-                ctx.GlobalInitFunc.Add(new StoreInsn(val, Expression.Execute(ctx.GlobalInitFunc)));
+                ctx.GlobalInitFunc.Add(new StoreInsn(val, ctx.GlobalInitFunc.ImplicitCast(Expression.ExecuteWithoutLoad(ctx.GlobalInitFunc), val.Type)));
             }
         }
     }

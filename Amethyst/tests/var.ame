@@ -1,0 +1,24 @@
+namespace test;
+
+#test
+void test_var_int() {
+    start("var int");
+
+    int x = 5;
+    assert(x == 5);
+
+    complete();
+}
+
+#test
+void test_var_bool() {
+    start("var bool");
+
+    bool t = true;
+    assert(t);
+
+    bool f = false;
+    assert(f == 0);
+
+    complete();
+}

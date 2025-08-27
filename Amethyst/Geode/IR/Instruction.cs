@@ -32,9 +32,13 @@ namespace Amethyst.Geode.IR
             int i = 0;
             foreach (var arg in Arguments)
             {
+                // Merge if statements
                 if (ArgTypes[i] is not null && arg is ValueRef v && ArgTypes[i] != v.Type.EffectiveType)
                 {
-                    throw new InvalidTypeError(v.Type.ToString(), $"{ArgTypes[i]}"); // Use string interpolation to handle the null case
+                    if (!(ArgTypes[i] == NBTType.Int && (v.NeedsScoreReg || v.Value is ScoreValue)))
+                    {
+                        throw new InvalidTypeError(v.Type.ToString(), $"{ArgTypes[i]}".ToLower()); // Use string interpolation to handle the null case
+                    }
                 }
 
                 i++;

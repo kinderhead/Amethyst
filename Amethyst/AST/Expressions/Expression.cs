@@ -7,8 +7,6 @@ namespace Amethyst.AST.Expressions
 {
 	public abstract class Expression(LocationRange loc) : Node(loc)
 	{
-		public virtual Expression Cast(TypeSpecifier type) => new CastExpression(Location, type, this);
-
 		public abstract TypeSpecifier ComputeType(FunctionContext ctx);
 		public abstract ValueRef Execute(FunctionContext ctx);
 
@@ -28,7 +26,12 @@ namespace Amethyst.AST.Expressions
 		public readonly string Name = name;
 
 		public override TypeSpecifier ComputeType(FunctionContext ctx) => ctx.GetVariable(Name).Type;
-		public override ValueRef Execute(FunctionContext ctx) => ctx.Add(new LoadInsn(ctx.GetVariable(Name)));
+		public override ValueRef Execute(FunctionContext ctx)
+		{
+			var val = ctx.GetVariable(Name);
+			if (val is LiteralValue) return val;
+			return ctx.Add(new LoadInsn(val));
+		}
 		public override ValueRef ExecuteWithoutLoad(FunctionContext ctx) => ctx.GetVariable(Name);
 	}
 }

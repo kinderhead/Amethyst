@@ -5,7 +5,7 @@ namespace Amethyst.Geode.IR.Instructions
 	public class LoadInsn(ValueRef val) : Instruction([val])
 	{
 		public override string Name => "load";
-		public override NBTType?[] ArgTypes => [NBTType.Int];
+		public override NBTType?[] ArgTypes => [null];
 		public override TypeSpecifier ReturnType => PrimitiveTypeSpecifier.Int;
 
 		public override void Render(RenderContext ctx)

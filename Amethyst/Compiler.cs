@@ -1,5 +1,4 @@
-﻿using System.Reflection;
-using Amethyst.Antlr;
+﻿using Amethyst.Antlr;
 using Amethyst.AST;
 using Amethyst.AST.Intrinsics;
 using Amethyst.Errors;
@@ -137,6 +136,9 @@ namespace Amethyst
 		{
 			Register(new Print());
 			Register(new CountOf());
+
+			AddSymbol(new("builtin:true", LocationRange.Empty, new LiteralValue(true)));
+			AddSymbol(new("builtin:false", LocationRange.Empty, new LiteralValue(false)));
 		}
 
 		protected FunctionContext GetGlobalInitFunc() => new(this, new(new("amethyst", GeodeBuilder.RandomString), FunctionTypeSpecifier.VoidFunc), ["minecraft:load"]);

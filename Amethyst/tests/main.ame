@@ -1,9 +1,10 @@
 namespace test;
 
 string currentTest = "None";
+bool currentTestFailed = false;
 int successfulTests = 0;
 
-#load
+//#load
 void run_tests() {
     print("Running tests");
 
@@ -15,9 +16,18 @@ void run_tests() {
 
 void start(string name) {
     currentTest = name;
+    currentTestFailed = false;
+}
+
+void assert(bool condition) {
+    if (condition == 0) currentTestFailed = true;
 }
 
 void complete() {
-    print("Test \"", currentTest, "\" passed");
-    successfulTests = successfulTests + 1;
+    if (currentTestFailed) {
+        print("Test \"", currentTest, "\" failed");
+    } else {
+        print("Test \"", currentTest, "\" passed");
+        successfulTests = successfulTests + 1;
+    }
 }

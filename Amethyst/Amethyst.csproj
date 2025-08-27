@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-	<TargetName>amethyst</TargetName>
+	<TargetName>Amethyst</TargetName>
     <TargetFramework>net9.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
@@ -16,6 +16,7 @@
     <PropertyGroup Condition="'$(Configuration)'=='Release'">
 	    <DebugSymbols>False</DebugSymbols>
 	    <DebugType>None</DebugType>
+      <TargetName>amethyst</TargetName>
 		<AllowedReferenceRelatedFileExtensions>*.pdb</AllowedReferenceRelatedFileExtensions>
 		<NativeDebugSymbols>False</NativeDebugSymbols>
 		<StripSymbols>true</StripSymbols>

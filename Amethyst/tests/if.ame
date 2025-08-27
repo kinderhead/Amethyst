@@ -1,0 +1,22 @@
+namespace test;
+
+#test
+void test_if() {
+    start("if");
+
+    int x = 5;
+    
+    if (x == 5) {
+        assert(true);
+    } else {
+        assert(false);
+    }
+
+    if (x != 5) {
+        assert(false);
+    } else {
+        assert(true);
+    }
+
+    complete();
+}
