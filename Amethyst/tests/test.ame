@@ -1,8 +1,8 @@
 namespace test;
 
 #test
-void simple_test() {
-    start("Simple Test");
+void test_simple() {
+    start("test");
     assert(true);
     complete();
 }

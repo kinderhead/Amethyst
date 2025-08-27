@@ -1,0 +1,65 @@
+namespace test;
+
+#test
+void test_add() {
+    start("int add");
+
+    int x = 5;
+    int y = x + 70;
+
+    assert(y == 75);
+
+    complete();
+}
+
+#test
+void test_sub() {
+    start("int sub");
+
+    int x = 5;
+    int y = 70 - x;
+
+    assert(y == 65);
+    
+    complete();
+}
+
+#test
+void test_mul() {
+    start("int mul");
+
+    int x = 5;
+    int y = 6 * x;
+
+    assert(y == 30);
+    
+    complete();
+}
+
+#test
+void test_div() {
+    start("int div");
+
+    int x = 100;
+    int y = x / 4;
+
+    assert(y == 25);
+    
+    complete();
+}
+
+// #test
+// void test_big_math() {
+//     start("int big math");
+
+//     int a = 4;
+//     int b = 2;
+//     int c = 10;
+//     int d = -3;
+
+//     int ret = a + b - 10 * c / d + 80 - a * b;
+
+//     assert(ret == 108);
+    
+//     complete();
+// }

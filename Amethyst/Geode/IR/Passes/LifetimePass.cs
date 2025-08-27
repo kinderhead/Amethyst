@@ -22,11 +22,11 @@ namespace Amethyst.Geode.IR.Passes
                 foreach (var arg in i.Arguments)
                 {
                     if (arg is ValueRef v && v.NeedsScoreReg) ins.Add(v);
-					foreach (var dep in arg.Dependencies)
-					{
-						if (dep is ValueRef d && d.NeedsScoreReg) ins.Add(d);
-					}
-				}
+                    foreach (var dep in arg.Dependencies)
+                    {
+                        if (dep is ValueRef d && d.NeedsScoreReg) ins.Add(d);
+                    }
+                }
             }
 
             // Maybe somehow put this in the other loop
@@ -67,12 +67,12 @@ namespace Amethyst.Geode.IR.Passes
 
             void markAlive(IInstructionArg arg)
             {
-				if (arg is ValueRef v && v.NeedsScoreReg)
-				{
-					alive.Add(v);
-					Graphs[ctx].Connect(v, alive);
-				}
-			}
+                if (arg is ValueRef v && v.NeedsScoreReg)
+                {
+                    alive.Add(v);
+                    Graphs[ctx].Connect(v, alive);
+                }
+            }
 
             foreach (var insn in block.Instructions.AsEnumerable().Reverse())
             {
@@ -81,18 +81,18 @@ namespace Amethyst.Geode.IR.Passes
                 foreach (var arg in insn.Arguments)
                 {
                     markAlive(arg);
-					foreach (var dep in arg.Dependencies)
-					{
+                    foreach (var dep in arg.Dependencies)
+                    {
                         markAlive(dep);
-					}
-				}
+                    }
+                }
 
                 insn.ConfigureLifetime((val1, val2) =>
-				{
-					if (Graphs[ctx].DoConnect(val1, val2)) return false;
-					Graphs[ctx].Link(val1, val2);
-					return true;
-				},
+                {
+                    if (Graphs[ctx].DoConnect(val1, val2)) return false;
+                    Graphs[ctx].Link(val1, val2);
+                    return true;
+                },
                 (val1, val2) =>
                 {
                     Graphs[ctx].Connect(val1, val2);
@@ -179,6 +179,9 @@ namespace Amethyst.Geode.IR.Passes
             else if (Degree != other.Degree) return other.Degree - Degree;
             else return GetHashCode() - other.GetHashCode(); // idk
         }
+
+        public override bool Equals(object? obj) => ReferenceEquals(obj, this);
+        public override int GetHashCode() => Value.GetHashCode();
 
         public void Link(LifetimeGraphNode other)
         {
