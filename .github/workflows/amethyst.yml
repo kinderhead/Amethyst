@@ -35,6 +35,9 @@ jobs:
     - name: Publish
       working-directory: ./Amethyst
       run: dotnet publish --configuration Release --output dist
+    - name: Test Build
+      working-directory: ./Amethyst/dist
+      run: amethyst tests/test.ame -o ../out.zip
     - uses: actions/upload-artifact@v4
       with:
         name: amethyst-${{ matrix.type.name }}

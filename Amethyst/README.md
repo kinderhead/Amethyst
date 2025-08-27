@@ -10,7 +10,7 @@ There's been many different attempts at making a high-level programming language
 
 ## Usage
 
-Binaries are built for each commit and can be found [here](https://github.com/kinderhead/Datapack.Net/actions/workflows/amethyst.yml). Note that published builds are experimental and may fail at runtime.
+Binaries are built for each commit and can be found [here](https://github.com/kinderhead/Datapack.Net/actions/workflows/amethyst.yml).
 
 Examples:
 ```sh
