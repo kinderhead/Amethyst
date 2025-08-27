@@ -35,9 +35,17 @@ jobs:
     - name: Publish
       working-directory: ./Amethyst
       run: dotnet publish --configuration Release --output dist
+
     - name: Test Build
+      if: runner.os == 'Linux' || runner.os == 'macOS'
       working-directory: ./Amethyst/dist
-      run: amethyst tests/test.ame -o ../out.zip
+      run: ./amethyst tests/test.ame -o ../out.zip
+
+    - name: Test Build
+      if: runner.os == 'Windows'
+      working-directory: ./Amethyst/dist
+      run: .\amethyst.exe tests\test.ame -o ..\out.zip
+
     - uses: actions/upload-artifact@v4
       with:
         name: amethyst-${{ matrix.type.name }}
