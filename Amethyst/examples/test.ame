@@ -1,8 +1,10 @@
-namespace test;
+namespace test:folder;
 
-int x = 0;
+void func() {
+    print("Hi");
+    other-func();
+}
 
-#load
-void main() {
-    print(countOf("minecraft:load"));
+void other-func() {
+    print("womp");
 }

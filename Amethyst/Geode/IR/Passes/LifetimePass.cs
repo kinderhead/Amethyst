@@ -121,7 +121,7 @@ namespace Amethyst.Geode.IR.Passes
         // Probably could find a better algorithm
         public Dictionary<ValueRef, int> CalculateDSatur()
         {
-            SortedSet<LifetimeGraphNode> nodes = [];
+            List<LifetimeGraphNode> nodes = new(Graph.Values.Count);
 
             foreach (var i in Graph.Values)
             {
@@ -129,29 +129,32 @@ namespace Amethyst.Geode.IR.Passes
                 nodes.Add(i);
             }
 
+            nodes.Sort();
+
             while (nodes.Count > 0)
             {
                 var colors = new bool[Graph.Count]; // Apparently this is cheaper than Array.Clear for reasonable sizes
 
-                var node = nodes.Min;
-                if (node is null) break;
-                nodes.Remove(node);
+                var node = nodes[0];
+                nodes.RemoveAt(0);
 
                 foreach (var i in node.Edges)
                 {
                     if (i.Color >= 0) colors[i.Color] = true;
                 }
 
-                node.SetColor(Array.IndexOf(colors, false), nodes);
+                node.SetColor(Array.IndexOf(colors, false));
 
                 foreach (var i in node.Links)
                 {
                     if (i.Color < 0)
                     {
                         nodes.Remove(i);
-                        i.SetColor(node.Color, nodes);
+                        i.SetColor(node.Color);
                     }
                 }
+
+                nodes.Sort();
             }
 
             return new(Graph.Select(i => new KeyValuePair<ValueRef, int>(i.Key, i.Value.Color)));
@@ -180,9 +183,6 @@ namespace Amethyst.Geode.IR.Passes
             else return GetHashCode() - other.GetHashCode(); // idk
         }
 
-        public override bool Equals(object? obj) => ReferenceEquals(obj, this);
-        public override int GetHashCode() => Value.GetHashCode();
-
         public void Link(LifetimeGraphNode other)
         {
             if (other == this) return;
@@ -207,7 +207,7 @@ namespace Amethyst.Geode.IR.Passes
 
         public void ResetDegree() => Degree = Edges.Count;
 
-        public void SetColor(int value, SortedSet<LifetimeGraphNode> nodes)
+        public void SetColor(int value)
         {
             if (Color < 0 && value >= 0)
             {
@@ -215,7 +215,6 @@ namespace Amethyst.Geode.IR.Passes
                 {
                     i.Saturation++;
                     i.Degree--;
-                    if (nodes.Remove(i)) nodes.Add(i);
                 }
             }
             else if (Color >= 0 && value < 0)
@@ -224,7 +223,6 @@ namespace Amethyst.Geode.IR.Passes
                 {
                     i.Saturation--;
                     i.Degree++;
-                    if (nodes.Remove(i)) nodes.Add(i);
                 }
             }
 

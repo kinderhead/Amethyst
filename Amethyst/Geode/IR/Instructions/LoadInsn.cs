@@ -20,7 +20,11 @@ namespace Amethyst.Geode.IR.Instructions
 		protected override Value? ComputeReturnValue(FunctionContext ctx)
 		{
 			var val = Arg<ValueRef>(0);
-			if (val.Value is ScoreValue score) return score;
+			if (val.Value is ScoreValue score)
+			{
+				Remove();
+				return score;
+			}
 			return null;
 		}
 	}

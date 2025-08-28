@@ -4,7 +4,7 @@ string currentTest = "None";
 bool currentTestFailed = false;
 int successfulTests = 0;
 
-//#load
+#load
 void run_tests() {
     print("Running tests");
 

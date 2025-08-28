@@ -1,24 +1,32 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace Datapack.Net.Utils
 {
-    public readonly struct NamespacedID(string @namespace, string path)
-    {
-        public readonly string Namespace = @namespace;
-        public readonly string Path = path;
+    public readonly partial struct NamespacedID
+	{
+		public readonly string Namespace;
+		public readonly string Path;
 
-        public NamespacedID(string id) : this(id.Split(":")[0], id.Split(":")[1])
+		public NamespacedID(string @namespace, string path) : this($"{@namespace}{(@namespace.Contains(':') ? '/' : ':')}{path}") { }
+
+		public NamespacedID(string id)
         {
-            if (!id.Contains(':'))
+            if (id.Count(c => c == ':') != 1)
             {
                 throw new FormatException($"Invalid namespaced id: {id}");
             }
-        }
+
+            var parts = id.Split(":");
+			Namespace = parts[0];
+			Path = DuplicateSlashRegex().Replace(parts[1], "/");
+		}
 
         public override string ToString()
         {
@@ -44,7 +52,16 @@ namespace Datapack.Net.Utils
         {
             return Namespace.GetHashCode() * Path.GetHashCode();
         }
-    }
+
+		[GeneratedRegex(@"/+")]
+		private static partial Regex DuplicateSlashRegex();
+
+		public string ContainingFolder()
+		{
+            if (Path.Contains('/')) return $"{Namespace}:{string.Join('/', Path.Split('/')[..^1])}";
+            else return Namespace;
+		}
+	}
 
     public class NamespacedIDSerializer : JsonConverter<NamespacedID>
     {

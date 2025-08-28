@@ -141,7 +141,7 @@ namespace Amethyst
 			AddSymbol(new("builtin:false", LocationRange.Empty, new LiteralValue(false)));
 		}
 
-		protected FunctionContext GetGlobalInitFunc() => new(this, new(new("amethyst", GeodeBuilder.RandomString), FunctionTypeSpecifier.VoidFunc), ["minecraft:load"]);
+		protected FunctionContext GetGlobalInitFunc() => new(this, new(new("amethyst", "zz_internal/" + GeodeBuilder.RandomString), FunctionTypeSpecifier.VoidFunc), ["minecraft:load"], hasTagPriority: true);
 
 		public void Register(Intrinsic func) => Symbols[func.ID] = new(func.ID, LocationRange.Empty, func);
 

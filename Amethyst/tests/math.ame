@@ -48,18 +48,17 @@ void test_div() {
     complete();
 }
 
-// #test
-// void test_big_math() {
-//     start("int big math");
+#test
+void test_big_math() {
+    start("int big math");
 
-//     int a = 4;
-//     int b = 2;
-//     int c = 10;
-//     int d = -3;
+    int a = 4;
+    int b = 2;
+    int c = 10;
+    int d = -3;
 
-//     int ret = a + b - 10 * c / d + 80 - a * b;
-
-//     assert(ret == 108);
+    int ret = a + b - 10 * c / d + 80 - a * b;
+    assert(ret == 112); // I think scoreboard division floors while C truncates
     
-//     complete();
-// }
+    complete();
+}

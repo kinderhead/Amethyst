@@ -20,6 +20,7 @@ namespace Amethyst.Geode.IR
         public bool IsFinished => CurrentBlock == ExitBlock;
         public bool UsesStack => AllLocals.Any(i => i is StorageValue) || registersInUse.Count != 0 || tmpStackVars != 0;
         public readonly bool IsMacroFunction;
+        public readonly bool HasTagPriority;
 
         public IReadOnlyCollection<Block> Blocks => blocks;
         private readonly List<Block> blocks = [];
@@ -33,12 +34,13 @@ namespace Amethyst.Geode.IR
 
         public IEnumerable<Value> AllLocals => totalScopes.SelectMany(i => i.Locals.Values);
 
-        public FunctionContext(Compiler compiler, StaticFunctionValue decl, IEnumerable<NamespacedID> tags)
+        public FunctionContext(Compiler compiler, StaticFunctionValue decl, IEnumerable<NamespacedID> tags, bool hasTagPriority = false)
         {
             Compiler = compiler;
             Decl = decl;
             Tags = tags;
             IsMacroFunction = Decl.FuncType.Parameters.Any(i => i.Modifiers.HasFlag(AST.ParameterModifiers.Macro));
+            HasTagPriority = hasTagPriority;
 
             PushScope();
 
@@ -82,7 +84,7 @@ namespace Amethyst.Geode.IR
                 if (i.Locals.TryGetValue(name, out var variable)) return variable;
             }
 
-            if (Compiler.Symbols.TryGetValue(new NamespacedID(Decl.ID.Namespace, name), out var sym)) return sym.Value;
+            if (Compiler.Symbols.TryGetValue(new NamespacedID(Decl.ID.ContainingFolder(), name), out var sym)) return sym.Value;
             if (Compiler.Symbols.TryGetValue(new NamespacedID("builtin", name), out var sym2)) return sym2.Value;
 
             throw new UndefinedSymbolError(name);
@@ -239,7 +241,10 @@ namespace Amethyst.Geode.IR
 
             foreach (var i in Tags)
             {
-                builder.Datapack.Tags.GetTag(i, "function").Values.Add(Decl.ID);
+                var tags = builder.Datapack.Tags.GetTag(i, "function").Values;
+
+                if (HasTagPriority) tags.Insert(0, Decl.ID);
+                else tags.Add(Decl.ID);
             }
         }
 

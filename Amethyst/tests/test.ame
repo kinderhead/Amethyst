@@ -6,4 +6,3 @@ void test_simple() {
     assert(true);
     complete();
 }
-

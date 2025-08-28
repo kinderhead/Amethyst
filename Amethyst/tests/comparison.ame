@@ -1,0 +1,21 @@
+namespace test;
+
+#test
+void test_int_comp() {
+    start("int compare");
+
+    int x = 50;
+    int y = -50;
+
+    assert(x == x);
+    assert(y == y);
+    assert(x != y);
+    assert(x > y);
+    assert(x >= y);
+    assert(x >= x);
+    assert(y < x);
+    assert(y <= x);
+    assert(y <= y);
+
+    complete();
+}
