@@ -2,7 +2,7 @@
 
 ![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/kinderhead/Datapack.Net/dotnet.yml) ![NuGet Downloads](https://img.shields.io/nuget/dt/Datapack.Net?label=NuGet%20Downloads)
 
-A Minecraft datapack generator and utility library. Also contains an experimental [programming language](https://github.com/kinderhead/Datapack.Net/tree/master/Amethyst)
+A Minecraft datapack generator and utility library. Also contains an experimental [programming language](https://github.com/kinderhead/Datapack.Net/tree/master/Amethyst).
 
 Datapack.Net still has a long way to go, so feel free to play around and catch bugs. I might notice when bug reports are made.
 
@@ -50,28 +50,28 @@ If cloning locally, you need to build the project and restart your IDE for the s
 This is basic datapack creation and building. Scroll down for the more interesting stuff.
 
 Creating a datapack:
-```csharp
+```cs
 var pack = new DP("The best description", "out.zip");
 ```
 
 Creating a `.mcfunction` file:
-```csharp
+```cs
 var func = new MCFunction(new NamespacedID("namespace", "test"));
-// Alternatively new("namespace", "test") can be used, and will be for the rest of the documentation where possible.
+// Alternatively "namespace:test" can be used because there is an implicit cast from string to NamespacedID
 ```
 
 Adding a command:
-```csharp
+```cs
 func.Add(new Execute().As(new NamedTarget("player")).Run(new SayCommand("Hi")));
 ```
 
 Adding the function to the pack:
-```csharp
-pack.GetResource<Functions>().Add(func);
+```cs
+pack.Functions.Add(func);
 ```
 
 Building the pack:
-```csharp
+```cs
 pack.Build();
 ```
 
@@ -83,7 +83,7 @@ Have you ever struggled to multiply a score by a constant number? Have you ever 
 
 A quick example:
 
-```csharp
+```cs
 var x = Local(17);
 x.Mul(45);
 Print("Value: ", x);
@@ -128,7 +128,7 @@ If(x > 20, () => Print("Big number"))
 The `TNTCannon` project is where I do my testing, so it's a good place to see an example. Eventually it will have an actual function.
 
 Creating a project:
-```csharp
+```cs
 [Project]
 public partial class MyProject(DP pack) : Project(pack)
 {
@@ -148,7 +148,7 @@ public partial class MyProject(DP pack) : Project(pack)
 ```
 
 Compiling the project:
-```csharp
+```cs
 var pack = new DP("Wow", "test.zip");
 
 // Optional, but very useful if something goes wrong
@@ -163,7 +163,7 @@ pack.Build();
 ```
 
 Custom functions:
-```csharp
+```cs
 [DeclareMC("test")]
 private void _Test(MyObject obj)
 {
@@ -175,12 +175,12 @@ private void _Test(MyObject obj)
 Custom functions are declared as private and with a leading underscore in their name (custom object methods are also static to prevent confusion). This is so the source generator can generate wrapper methods for easier use. If the source generators are not used, then they can be public. In the future, the source generator will contain an analyzer to catch this error.
 
 Which then can be called as follows anywhere:
-```csharp
+```cs
 Test(obj);
 ```
 
 Pointers:
-```csharp
+```cs
 var ptr = Alloc<NBTString>();
 ptr.Set("Boo");
 ptr.Copy(otherPointer);
@@ -189,7 +189,7 @@ ptr.Copy(otherPointer);
 Objects are allocated using `AllocObj<T>` instead because they have additional requirements. They will also be allocated using a `RuntimePointer<T>` for efficiency reasons, so that means two objects will be allocated (the pointer and the object).
 
 Custom objects (as seen in `TNTCannon`):
-```csharp
+```cs
 [RuntimeObject("funny")]
 public partial class Funny(IPointer<Funny> prop) : RuntimeObject<TNTProject, Funny>(prop)
 {
@@ -224,7 +224,7 @@ public partial class Funny(IPointer<Funny> prop) : RuntimeObject<TNTProject, Fun
 ```
 
 Register the objects in your project:
-```csharp
+```cs
 protected override void Init()
 {
     RegisterObject<Funny>();
