@@ -5,6 +5,7 @@ on:
     branches: [ "master" ]
     paths:
      - AmethystLanguageServer/**
+     - .github/workflows/language_server.yml
   pull_request:
     branches: [ "master" ]
 
@@ -23,6 +24,7 @@ jobs:
       working-directory: AmethystLanguageServer
       run: npm install
     - name: Build
+      working-directory: AmethystLanguageServer
       run: npm run build
     
     - name: Upload artifact
