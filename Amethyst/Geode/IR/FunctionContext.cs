@@ -114,7 +114,15 @@ namespace Amethyst.Geode.IR
 
         public ValueRef ImplicitCast(ValueRef val, TypeSpecifier type)
         {
+            if (ImplicitCastNoThrow(val, type) is ValueRef ret) return ret;
+            throw new InvalidTypeError(val.Type.ToString(), type.ToString());
+        }
+
+        public ValueRef? ImplicitCastNoThrow(ValueRef val, TypeSpecifier type)
+        {
             if (val.Type == type) return val;
+            else if (type is AnyTypeSpecifier) return val; // maybe make it actually change type
+            else if (val.Type is AnyTypeSpecifier) return ExplicitCast(val, type);
             else if (val.Value is LiteralValue literal && type is PrimitiveTypeSpecifier)
             {
                 if (literal.Value.NumberType is NBTNumberType && type.EffectiveNumberType is NBTNumberType destType)
@@ -123,12 +131,22 @@ namespace Amethyst.Geode.IR
                 }
             }
 
+            return null;
+        }
+
+        public ValueRef ExplicitCast(ValueRef val, TypeSpecifier type)
+        {
+            if (ImplicitCastNoThrow(val, type) is ValueRef ret) return ret;
+            else if (type.EffectiveType == NBTType.Int) return Add(new LoadInsn(val, type));
+            else if (val.Type is AnyTypeSpecifier) return val; // maybe make it actually change type
+
             throw new InvalidTypeError(val.Type.ToString(), type.ToString());
         }
 
         public ValueRef GetProperty(ValueRef val, string name)
         {
-            throw new NotImplementedException();
+            if (val.Type.Property(name) is TypeSpecifier t) return Add(new PropertyInsn(val, new LiteralValue(name), t));
+            else throw new PropertyError(val.Type.ToString(), name);
         }
 
         public void Finish()

@@ -23,13 +23,11 @@ namespace Amethyst.Geode
 		public override bool Equals(object? obj)
 		{
 			if (obj is null || obj?.GetType() != GetType()) return false;
-			return AreEqual(obj as TypeSpecifier ?? throw new InvalidOperationException());
+			else if (obj is not TypeSpecifier other) return false;
+			else return AreEqual(other);
 		}
 
-		public override int GetHashCode()
-		{
-			return base.GetHashCode();
-		}
+		public override int GetHashCode() => ToString().GetHashCode();
 
 		public abstract override string ToString();
 
@@ -51,11 +49,18 @@ namespace Amethyst.Geode
 	public class VarTypeSpecifier : TypeSpecifier
 	{
 		public override bool Operable => false;
-
 		public override LiteralValue DefaultValue => throw new InvalidTypeError("var");
-
-		protected override bool AreEqual(TypeSpecifier obj) => obj is VarTypeSpecifier;
 		public override string ToString() => "var";
+		protected override bool AreEqual(TypeSpecifier obj) => obj is VarTypeSpecifier;
+	}
+
+	public class AnyTypeSpecifier : TypeSpecifier
+	{
+		public override bool Operable => false;
+		public override LiteralValue DefaultValue => new(new NBTCompound());
+		public override NBTType EffectiveType => NBTType.Compound;
+		public override string ToString() => "any";
+		protected override bool AreEqual(TypeSpecifier obj) => obj is AnyTypeSpecifier;
 	}
 
 	public class PrimitiveTypeSpecifier(NBTType type) : TypeSpecifier
@@ -66,7 +71,7 @@ namespace Amethyst.Geode
 		public override NBTType EffectiveType => Type;
 
 		public override bool IsAssignableTo(TypeSpecifier other) => (other.IsList && Type == NBTType.List) || base.IsAssignableTo(other);
-		public override TypeSpecifier? Property(string name) => Type == NBTType.Compound ? new PrimitiveTypeSpecifier(NBTType.Compound) : base.Property(name);
+		public override TypeSpecifier? Property(string name) => Type == NBTType.Compound ? new AnyTypeSpecifier() : base.Property(name);
 
 		protected override bool AreEqual(TypeSpecifier obj) => obj is PrimitiveTypeSpecifier p && p.Type == Type;
 		public override string ToString() => Enum.GetName(Type)?.ToLower() ?? throw new InvalidOperationException();

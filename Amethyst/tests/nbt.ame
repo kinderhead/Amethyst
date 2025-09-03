@@ -1,0 +1,23 @@
+namespace test;
+
+#test
+void test_nbt() {
+    start("nbt");
+    
+    nbt obj;
+    obj.x = 100;
+    assert(obj.x == 100);
+
+    complete();
+}
+
+#test
+void test_nbt_math() {
+    start("nbt math");
+    
+    nbt obj;
+    obj.x = 100;
+    assert(obj.x == 100);
+
+    complete();
+}

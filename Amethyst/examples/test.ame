@@ -4,5 +4,5 @@ namespace test;
 void main() {
     nbt x;
     x.test = 5;
-    print(x);
+    print(x.test + 2);
 }
