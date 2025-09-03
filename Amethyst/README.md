@@ -14,6 +14,8 @@ There's been many different attempts at making a high-level programming language
 
 Binaries are built for each commit and can be found [here](https://github.com/kinderhead/Datapack.Net/actions/workflows/amethyst.yml).
 
+VSCode extension builds can be found [here](https://github.com/kinderhead/Datapack.Net/actions/workflows/language_server.yml).
+
 Examples:
 ```sh
 amethyst --help

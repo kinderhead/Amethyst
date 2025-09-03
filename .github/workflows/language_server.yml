@@ -4,7 +4,7 @@ on:
   push:
     branches: [ "master" ]
     paths:
-     - AmethystLanguageServer
+     - AmethystLanguageServer/**
   pull_request:
     branches: [ "master" ]
 
