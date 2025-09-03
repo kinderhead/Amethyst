@@ -24,9 +24,24 @@ namespace Datapack.Net.Data
             sb.Append(Value);
             sb.Append(Postfix);
         }
-    }
 
-    public class NBTInt(int val) : NBTNumber<int>(val, "")
+		public override NBTValue Cast(NBTNumberType type)
+		{
+			return type switch
+			{
+				NBTNumberType.Boolean => Convert.ToBoolean(RawValue),
+				NBTNumberType.Byte => Convert.ToSByte(RawValue),
+				NBTNumberType.Short => Convert.ToInt16(RawValue),
+				NBTNumberType.Int => Convert.ToInt32(RawValue),
+				NBTNumberType.Long => Convert.ToInt64(RawValue),
+				NBTNumberType.Float => Convert.ToSingle(RawValue),
+				NBTNumberType.Double => Convert.ToDouble(RawValue),
+				_ => throw new NotImplementedException(),
+			};
+		}
+	}
+
+	public class NBTInt(int val) : NBTNumber<int>(val, "")
     {
         public override NBTType Type => NBTType.Int;
 

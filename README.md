@@ -33,6 +33,7 @@ Datapack.Net still has a long way to go, so feel free to play around and catch b
 ## Planned features
 
 * Fully generated data using SpyglassMC
+* 1.20.5 item components
 
 ## Installation
 

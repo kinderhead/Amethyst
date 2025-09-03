@@ -28,6 +28,8 @@ namespace Datapack.Net.Data
 			return val.Replace("\\\\", "\\");
 		}
 
+        public override NBTValue Cast(NBTNumberType type) => throw new InvalidOperationException();
+
 		public static implicit operator NBTString(string val) => new(val);
         public static implicit operator string(NBTString val) => val.Value;
     }
@@ -37,7 +39,9 @@ namespace Datapack.Net.Data
         public override NBTType Type => NBTType.String;
         public readonly string Value = val;
 
-        public override void Build(StringBuilder sb)
+		public override NBTValue Cast(NBTNumberType type) => throw new InvalidOperationException();
+
+		public override void Build(StringBuilder sb)
         {
             sb.Append(Value);
         }

@@ -25,7 +25,9 @@ namespace Datapack.Net.Data
             Values.Add(item);
         }
 
-        public override void Build(StringBuilder sb)
+		public override NBTValue Cast(NBTNumberType type) => throw new InvalidOperationException();
+
+		public override void Build(StringBuilder sb)
         {
             sb.Append('[');
             sb.Append(Prefix);

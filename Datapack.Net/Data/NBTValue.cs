@@ -35,6 +35,8 @@ namespace Datapack.Net.Data
             }
         }
 
+        public abstract NBTValue Cast(NBTNumberType type);
+
         public static NBTNumberType? IsNumberType<T>() where T : NBTValue
         {
             if (typeof(T) == typeof(NBTBool)) return NBTNumberType.Boolean;
@@ -58,7 +60,6 @@ namespace Datapack.Net.Data
             NBTType.Byte or NBTType.Short or NBTType.Int => true,
             _ => false
         };
-
 
         public static implicit operator NBTValue(string val) => new NBTString(val);
         public static implicit operator NBTValue(int val) => new NBTInt(val);

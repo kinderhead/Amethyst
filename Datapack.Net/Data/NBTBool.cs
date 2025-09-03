@@ -16,6 +16,21 @@ namespace Datapack.Net.Data
             sb.Append(Value ? "true" : "false");
         }
 
+		public override NBTValue Cast(NBTNumberType type)
+		{
+			return type switch
+			{
+				NBTNumberType.Boolean => this,
+				NBTNumberType.Byte => (NBTValue)Convert.ToSByte(Value),
+				NBTNumberType.Short => (NBTValue)Convert.ToInt16(Value),
+				NBTNumberType.Int => (NBTValue)Convert.ToInt32(Value),
+				NBTNumberType.Long => (NBTValue)Convert.ToInt64(Value),
+				NBTNumberType.Float => (NBTValue)Convert.ToSingle(Value),
+				NBTNumberType.Double => (NBTValue)Convert.ToDouble(Value),
+				_ => throw new NotImplementedException(),
+			};
+		}
+
         public static implicit operator NBTBool(bool val) => new(val);
         public static implicit operator bool(NBTBool val) => val.Value;
     }

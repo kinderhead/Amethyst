@@ -72,7 +72,7 @@ namespace Datapack.Net
 
         public void Optimize()
         {
-            while (EmptyFunctions()) ;
+            while (EmptyFunctions());
         }
 
         private bool EmptyFunctions()

@@ -1,4 +1,5 @@
-﻿using Amethyst.Geode;
+﻿using Amethyst.Errors;
+using Amethyst.Geode;
 using Amethyst.Geode.IR;
 using Amethyst.Geode.IR.Instructions;
 using Datapack.Net.Function.Commands;
@@ -15,6 +16,11 @@ namespace Amethyst.AST.Expressions
 
 		public override ValueRef Execute(FunctionContext ctx)
 		{
+			var lType = Left.ComputeType(ctx);
+			var rType = Right.ComputeType(ctx);
+			if (lType.EffectiveType != Datapack.Net.Data.NBTType.Int) throw new InvalidTypeError(lType.ToString(), "int");
+			if (rType.EffectiveType != Datapack.Net.Data.NBTType.Int) throw new InvalidTypeError(rType.ToString(), "int");
+
 			var left = Left.Execute(ctx);
 			var right = Right.Execute(ctx);
 

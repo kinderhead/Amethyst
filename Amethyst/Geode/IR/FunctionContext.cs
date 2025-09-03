@@ -2,6 +2,7 @@ using System.Text;
 using Amethyst.Errors;
 using Amethyst.Geode.IR.Instructions;
 using Amethyst.Geode.IR.Passes;
+using Datapack.Net.Data;
 using Datapack.Net.Function.Commands;
 using Datapack.Net.Utils;
 
@@ -113,8 +114,21 @@ namespace Amethyst.Geode.IR
 
         public ValueRef ImplicitCast(ValueRef val, TypeSpecifier type)
         {
-            if (val.Type != type) throw new InvalidTypeError(val.Type.ToString(), type.ToString());
-            return val;
+            if (val.Type == type) return val;
+            else if (val.Value is LiteralValue literal && type is PrimitiveTypeSpecifier)
+            {
+                if (literal.Value.NumberType is NBTNumberType && type.EffectiveNumberType is NBTNumberType destType)
+                {
+                    return new LiteralValue(literal.Value.Cast(destType));
+                }
+            }
+
+            throw new InvalidTypeError(val.Type.ToString(), type.ToString());
+        }
+
+        public ValueRef GetProperty(ValueRef val, string name)
+        {
+            throw new NotImplementedException();
         }
 
         public void Finish()

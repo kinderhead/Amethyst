@@ -1,4 +1,5 @@
 ﻿using Amethyst.AST;
+using Amethyst.Errors;
 using Datapack.Net.Data;
 
 namespace Amethyst.Geode
@@ -13,10 +14,11 @@ namespace Amethyst.Geode
 		public virtual NBTType EffectiveType => throw new InvalidOperationException(ToString());
 		public bool ShouldStoreInScore => EffectiveType == NBTType.Int || EffectiveType == NBTType.Boolean;
 
-		public NBTNumberType EffectiveNumberType => Enum.IsDefined((NBTNumberType)EffectiveType) ? (NBTNumberType)EffectiveType : throw new InvalidOperationException($"Value \"{this}\" is not a number");
+		public NBTNumberType? EffectiveNumberType => Enum.IsDefined((NBTNumberType)EffectiveType) ? (NBTNumberType)EffectiveType : null;
 
 		public virtual bool IsAssignableTo(TypeSpecifier other) => this == other;
 		public virtual TypeSpecifier? Property(string name) => null;
+		public abstract LiteralValue DefaultValue { get; }
 
 		public override bool Equals(object? obj)
 		{
@@ -40,6 +42,7 @@ namespace Amethyst.Geode
 	public class VoidTypeSpecifier : TypeSpecifier
 	{
 		public override bool Operable => false;
+		public override LiteralValue DefaultValue => new(0, this);
 
 		protected override bool AreEqual(TypeSpecifier obj) => obj is VoidTypeSpecifier;
 		public override string ToString() => "void";
@@ -48,6 +51,9 @@ namespace Amethyst.Geode
 	public class VarTypeSpecifier : TypeSpecifier
 	{
 		public override bool Operable => false;
+
+		public override LiteralValue DefaultValue => throw new InvalidTypeError("var");
+
 		protected override bool AreEqual(TypeSpecifier obj) => obj is VarTypeSpecifier;
 		public override string ToString() => "var";
 	}
@@ -64,6 +70,20 @@ namespace Amethyst.Geode
 
 		protected override bool AreEqual(TypeSpecifier obj) => obj is PrimitiveTypeSpecifier p && p.Type == Type;
 		public override string ToString() => Enum.GetName(Type)?.ToLower() ?? throw new InvalidOperationException();
+
+		public override LiteralValue DefaultValue => Type switch
+		{
+			NBTType.Boolean => new(false),
+			NBTType.Byte => new(new NBTByte(0)),
+			NBTType.Short => new(new NBTShort(0)),
+			NBTType.Int => new(new NBTInt(0)),
+			NBTType.Long => new(new NBTLong(0)),
+			NBTType.Float => new(new NBTFloat(0)),
+			NBTType.Double => new(new NBTDouble(0)),
+			NBTType.List => new(new NBTList()),
+			NBTType.Compound => new(new NBTCompound()),
+			_ => throw new NotImplementedException()
+		};
 
 		public static PrimitiveTypeSpecifier Int => new(NBTType.Int);
 		public static PrimitiveTypeSpecifier Bool => new(NBTType.Boolean);
@@ -90,6 +110,8 @@ namespace Amethyst.Geode
 		public string ToString(string name) => $"{ReturnType} {name}({string.Join(", ", Parameters.Select(p => $"{p.Type} {p.Name}"))})";
 
 		public static FunctionTypeSpecifier VoidFunc => new(FunctionModifiers.None, new VoidTypeSpecifier(), []);
+
+		public override LiteralValue DefaultValue => throw new InvalidTypeError(ToString());
 	}
 
 	public class DynamicFunctionTypeSpecifier(TypeSpecifier returnType) : FunctionTypeSpecifier(FunctionModifiers.None, returnType, [])
@@ -104,6 +126,9 @@ namespace Amethyst.Geode
 		public override NBTType EffectiveType => NBTType.List;
 		public override TypeSpecifier? PossibleInnerType => Inner;
 		public override bool IsList => true;
+
+		public override LiteralValue DefaultValue => new(new NBTList(), this);
+
 		// public override bool IsAssignableTo(TypeSpecifier other) => other.EffectiveType == NBTType.List || base.IsAssignableTo(other);
 		protected override bool AreEqual(TypeSpecifier obj) => obj is ListTypeSpecifier arr && arr.Inner == Inner;
 		public override string ToString() => $"{Inner}[]";

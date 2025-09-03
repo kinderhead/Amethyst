@@ -29,7 +29,9 @@ namespace Datapack.Net.Data
             }
         }
 
-        ICollection<NBTValue> IDictionary<string, NBTValue>.Values => Values.Values;
+		public override NBTValue Cast(NBTNumberType type) => throw new InvalidOperationException();
+
+		ICollection<NBTValue> IDictionary<string, NBTValue>.Values => Values.Values;
 
         public void Add(string key, NBTValue value)
         {
