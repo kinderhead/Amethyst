@@ -11,7 +11,7 @@ namespace Amethyst.Geode.IR
     public class FunctionContext
     {
         public readonly Compiler Compiler;
-        public readonly StaticFunctionValue Decl;
+        public readonly FunctionValue Decl;
         public readonly IEnumerable<NamespacedID> Tags;
 
         public Block FirstBlock => blocks.First();
@@ -35,7 +35,7 @@ namespace Amethyst.Geode.IR
 
         public IEnumerable<Value> AllLocals => totalScopes.SelectMany(i => i.Locals.Values);
 
-        public FunctionContext(Compiler compiler, StaticFunctionValue decl, IEnumerable<NamespacedID> tags, bool hasTagPriority = false)
+        public FunctionContext(Compiler compiler, FunctionValue decl, IEnumerable<NamespacedID> tags, bool hasTagPriority = false)
         {
             Compiler = compiler;
             Decl = decl;
@@ -64,7 +64,7 @@ namespace Amethyst.Geode.IR
             }
         }
 
-        public FunctionContext(Compiler compiler, StaticFunctionValue decl) : this(compiler, decl, []) { }
+        public FunctionContext(Compiler compiler, FunctionValue decl) : this(compiler, decl, []) { }
 
         public void PushScope()
         {

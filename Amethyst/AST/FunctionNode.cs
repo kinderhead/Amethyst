@@ -38,7 +38,7 @@ namespace Amethyst.AST
 				return false;
 			}
 
-			ctx = new FunctionContext(compiler, (StaticFunctionValue)compiler.Symbols[ID].Value, Tags);
+			ctx = new FunctionContext(compiler, (FunctionValue)compiler.Symbols[ID].Value, Tags);
 
 			if (!Body.Statements.Any() || Body.Statements.Last() is not ReturnStatement)
 			{
@@ -55,7 +55,7 @@ namespace Amethyst.AST
 
 		public void Process(Compiler ctx)
 		{
-			ctx.AddSymbol(new(ID, Location, new StaticFunctionValue(ID, GetFunctionType(ctx)), this));
+			ctx.AddSymbol(new(ID, Location, new FunctionValue(ID, GetFunctionType(ctx)), this));
 		}
 	}
 

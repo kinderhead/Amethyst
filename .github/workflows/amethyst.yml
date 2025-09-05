@@ -3,6 +3,9 @@ name: Amethyst Publish
 on:
   push:
     branches: [ "master" ]
+    paths:
+      - Amethyst/**
+      - .github/workflows/Amethyst.yml
   pull_request:
     branches: [ "master" ]
 

@@ -1,7 +1,9 @@
+using Amethyst.Errors;
 using Datapack.Net.Data;
 using Datapack.Net.Function;
 using Datapack.Net.Function.Commands;
 using Datapack.Net.Utils;
+using System;
 
 namespace Amethyst.Geode
 {
@@ -57,12 +59,38 @@ namespace Amethyst.Geode
         public override FormattedText Render(FormattedText text) => text.Text("void");
     }
 
-    public class StaticFunctionValue(NamespacedID id, FunctionTypeSpecifier type) : LiteralValue(new NBTString(id.ToString()))
+    public class FunctionValue(NamespacedID id, FunctionTypeSpecifier type) : LiteralValue(new NBTString(id.ToString()))
     {
         public readonly NamespacedID ID = id;
         public override TypeSpecifier Type => type;
         public override string ToString() => ID.ToString();
         public FunctionTypeSpecifier FuncType => (FunctionTypeSpecifier)Type;
+
+        public virtual void Call(RenderContext ctx, IEnumerable<ValueRef> args)
+        {
+			Value? processedMacros = null;
+
+            if (args.Count() != FuncType.Parameters.Length) throw new MismatchedArgumentCountError(FuncType.Parameters.Length, args.Count());
+
+			if (args.Any())
+			{
+				var processedArgs = new Dictionary<string, ValueRef>();
+				var macros = new Dictionary<string, ValueRef>();
+
+				foreach (var (param, val) in FuncType.Parameters.Zip(args))
+				{
+					if (param.Modifiers.HasFlag(AST.ParameterModifiers.Macro)) macros.Add(param.Name, val);
+					else processedArgs.Add(param.Name, val);
+				}
+
+				if (processedArgs.Count != 0) ctx.StoreCompound(new(GeodeBuilder.RuntimeID, "stack[-1].args", PrimitiveTypeSpecifier.Compound), processedArgs);
+				if (macros.Count != 0) processedMacros = ctx.StoreCompoundOrReturnConstant(new(GeodeBuilder.RuntimeID, "stack[-1].macros", PrimitiveTypeSpecifier.Compound), macros);
+			}
+
+			if (processedMacros is StorageValue s) ctx.Add(new FunctionCommand(ID, s.Storage, s.Path));
+			else if (processedMacros is LiteralValue l) ctx.Add(new FunctionCommand(ID, (NBTCompound)l.Value));
+			else ctx.Add(new FunctionCommand(ID));
+		}
     }
 
     public class ConditionalValue(Func<Execute, Execute> apply) : Value

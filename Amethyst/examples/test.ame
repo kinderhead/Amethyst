@@ -2,7 +2,9 @@ namespace test;
 
 #load
 void main() {
-    nbt x;
-    x.test = 5;
-    print(x.test + 2);
+    func();
+}
+
+void func(int x) {
+    print(x);
 }

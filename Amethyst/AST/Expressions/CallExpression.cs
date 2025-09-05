@@ -21,7 +21,7 @@ namespace Amethyst.AST.Expressions
 		{
 			var func = Function.ExecuteWithoutLoad(ctx);
 			if (func.Value is Intrinsic i) return i.Execute(ctx, Args);
-			else if (func.Value is StaticFunctionValue f)
+			else if (func.Value is FunctionValue f)
 			{
 				if (f.FuncType.Parameters.Length != Args.Count) throw new MismatchedArgumentCountError(f.FuncType.Parameters.Length, Args.Count);
 				return ctx.Add(new CallInsn(func, Args.Zip(f.FuncType.Parameters).Select(i => ctx.ImplicitCast(i.First.ExecuteWithoutLoad(ctx), i.Second.Type))));

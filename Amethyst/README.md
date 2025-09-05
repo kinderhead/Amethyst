@@ -12,9 +12,15 @@ There's been many different attempts at making a high-level programming language
 
 ## Usage
 
-Binaries are built for each commit and can be found [here](https://github.com/kinderhead/Datapack.Net/actions/workflows/amethyst.yml).
+Nightly builds can be accessed through Github Actions or here:
 
-VSCode extension builds can be found [here](https://github.com/kinderhead/Datapack.Net/actions/workflows/language_server.yml).
+| OS | Builds |
+| -- | ------ |
+| Windows | [64 bit Windows](https://nightly.link/kinderhead/Datapack.Net/workflows/amethyst/master/amethyst-windows.zip) <br> [Windows 11 Arm](https://nightly.link/kinderhead/Datapack.Net/workflows/amethyst/master/amethyst-windows-arm.zip)|
+| Linux | [x86-64](https://nightly.link/kinderhead/Datapack.Net/workflows/amethyst/master/amethyst-linux.zip) <br> [Arm](https://nightly.link/kinderhead/Datapack.Net/workflows/amethyst/master/amethyst-windows-arm.zip) |
+| Mac | [Apple Silicon](https://nightly.link/kinderhead/Datapack.Net/workflows/amethyst/master/amethyst-mac.zip) <br> [Intel](https://nightly.link/kinderhead/Datapack.Net/workflows/amethyst/master/amethyst-mac-intel.zip) |
+
+The latest VSCode extension build can be found [here](https://nightly.link/kinderhead/Datapack.Net/workflows/language_server/master/language-server-vscode-extension.zip).
 
 Examples:
 ```sh
@@ -90,6 +96,18 @@ void main() {
 ### Math
 
 All the normal operators work as expected (except `%` for now).
+
+Note: Minecraft handles integer division slightly differently than some other languages do.
+
+### Objects
+
+Typeless NBT compounds can be created using the `nbt` type:
+
+```cs
+nbt x;
+x.property = "Hi";
+print(x);
+```
 
 ### Inline commands
 
