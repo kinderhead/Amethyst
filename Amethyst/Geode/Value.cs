@@ -83,13 +83,24 @@ namespace Amethyst.Geode
 					else processedArgs.Add(param.Name, val);
 				}
 
-				if (processedArgs.Count != 0) ctx.StoreCompound(new(GeodeBuilder.RuntimeID, "stack[-1].args", PrimitiveTypeSpecifier.Compound), processedArgs);
-				if (macros.Count != 0) processedMacros = ctx.StoreCompoundOrReturnConstant(new(GeodeBuilder.RuntimeID, "stack[-1].macros", PrimitiveTypeSpecifier.Compound), macros);
+				if (processedArgs.Count != 0) ctx.StoreCompound(new(GeodeBuilder.RuntimeID, "stack[-1].args", PrimitiveTypeSpecifier.Compound), processedArgs, setEmpty: false);
+				if (macros.Count != 0) processedMacros = ctx.StoreCompoundOrReturnConstant(new(GeodeBuilder.RuntimeID, "stack[-1].macros", PrimitiveTypeSpecifier.Compound), macros); // Minecraft throws an error if there are mismatched macro args, so we always reset it
 			}
 
 			if (processedMacros is StorageValue s) ctx.Add(new FunctionCommand(ID, s.Storage, s.Path));
 			else if (processedMacros is LiteralValue l) ctx.Add(new FunctionCommand(ID, (NBTCompound)l.Value));
 			else ctx.Add(new FunctionCommand(ID));
+		}
+    }
+
+    public class MethodValue(FunctionValue val, ValueRef self) : FunctionValue(val.ID, new(val.FuncType.Modifiers, val.FuncType.ReturnType, val.FuncType.Parameters[1..]))
+    {
+        public readonly FunctionValue BaseFunction = val;
+        public readonly ValueRef Self = self;
+
+		public override void Call(RenderContext ctx, IEnumerable<ValueRef> args)
+		{
+			BaseFunction.Call(ctx, [Self, ..args]);
 		}
     }
 

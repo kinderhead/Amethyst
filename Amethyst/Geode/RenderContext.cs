@@ -16,13 +16,13 @@ namespace Amethyst.Geode
             else MCFunction.Add(cmds);
         }
 
-        public void StoreCompound(StorageValue dest, Dictionary<string, ValueRef> dict)
+        public void StoreCompound(StorageValue dest, Dictionary<string, ValueRef> dict, bool setEmpty = true)
         {
-            var ret = StoreCompoundOrReturnConstant(dest, dict);
+            var ret = StoreCompoundOrReturnConstant(dest, dict, setEmpty);
             if (ret is LiteralValue l) dest.Store(l, this);
         }
 
-        public Value StoreCompoundOrReturnConstant(StorageValue dest, Dictionary<string, ValueRef> dict)
+        public Value StoreCompoundOrReturnConstant(StorageValue dest, Dictionary<string, ValueRef> dict, bool setEmpty = true)
         {
             var nbt = new Datapack.Net.Data.NBTCompound();
             var runtime = new Dictionary<string, Value>();
@@ -35,7 +35,7 @@ namespace Amethyst.Geode
 
             if (nbt.Count == dict.Count) return new LiteralValue(nbt);
 
-            dest.Store(new LiteralValue(nbt), this);
+            if (setEmpty || !(nbt.Count == 0)) dest.Store(new LiteralValue(nbt), this);
 
             foreach (var (key, value) in runtime)
             {

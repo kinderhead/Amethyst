@@ -9,6 +9,8 @@ namespace Amethyst.Geode
 		public abstract bool Operable { get; }
 		public virtual bool IsList => false;
 		public virtual TypeSpecifier? PossibleInnerType => null;
+		public virtual string BasePath => "minecraft";
+		public virtual TypeSpecifier BaseClass => PrimitiveTypeSpecifier.Compound;
 
 		// TODO: Make this not throw an error
 		public virtual NBTType EffectiveType => throw new InvalidOperationException(ToString());
@@ -25,6 +27,13 @@ namespace Amethyst.Geode
 			if (obj is null || obj?.GetType() != GetType()) return false;
 			else if (obj is not TypeSpecifier other) return false;
 			else return AreEqual(other);
+		}
+
+		public bool Implements(TypeSpecifier other)
+		{
+			if (this == other) return true;
+			else if (this == BaseClass) return false;
+			else return BaseClass.Implements(other);
 		}
 
 		public override int GetHashCode() => ToString().GetHashCode();
@@ -131,6 +140,8 @@ namespace Amethyst.Geode
 		public override NBTType EffectiveType => NBTType.List;
 		public override TypeSpecifier? PossibleInnerType => Inner;
 		public override bool IsList => true;
+		public override string BasePath => Inner.BasePath;
+		public override TypeSpecifier BaseClass => PrimitiveTypeSpecifier.List;
 
 		public override LiteralValue DefaultValue => new(new NBTList(), this);
 

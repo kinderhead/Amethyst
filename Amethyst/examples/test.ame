@@ -2,9 +2,15 @@ namespace test;
 
 #load
 void main() {
-    func();
+    int x = 9;
+    x.say();
+
+    string y = "womp";
+    y.say();
 }
 
-void func(int x) {
-    print(x);
+namespace minecraft;
+
+void say(nbt this) {
+    print(this);
 }

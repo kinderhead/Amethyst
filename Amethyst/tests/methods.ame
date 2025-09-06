@@ -1,0 +1,19 @@
+namespace test;
+
+#test
+void test_methods() {
+    start("methods");
+    
+    int x = 4;
+    string y = "yay";
+    assert(x.ret_true());
+    assert(y.ret_true());
+
+    complete();
+}
+
+namespace minecraft;
+
+bool ret_true(nbt this) {
+    return true;
+}
