@@ -138,6 +138,48 @@ Amethyst exposes some special Geode IR instructions as inline functions
  * `print(args...)`: `/tellraw`s all players. Arguments are concatenated with no separators.
  * `countOf(constant string id)`: gets the number of functions that have a specified tag. Only accepts constant strings.
 
+### Extension Methods
+
+Methods can be added to any type at any time. When searching for a method to call, Amethyst will see if any functions exist that satisfy the following conditions:
+
+* The first argument is the target type or is a base class of the target type.
+* The function is in the same namespace and path as the type.
+
+For example, this is adding an extension method to all objects:
+
+```cs
+void test() {
+    int x = 8;
+    string y = "yay";
+
+    x.say();
+    y.say();
+}
+
+namespace minecraft;
+
+void say(nbt this) {
+    print(this);
+}
+```
+
+As all objects inherit `nbt`. Here are the inheritance chains for builtin types:
+
+* `minecraft:nbt`
+  * `minecraft:bool`
+  * `minecraft:byte`
+  * `minecraft:short`
+  * `minecraft:int`
+  * `minecraft:long`
+  * `minecraft:float`
+  * `minecraft:double`
+  * `minecraft:list`
+    * `minecraft:byte_array` (not implemented yet)
+    * `minecraft:int_array` (not implemented yet)
+    * `minecraft:long_array` (not implemented yet)
+    * `T[]` where `T` is any type (so all statically-typed lists)
+  * All user-defined types
+
 ## Planned features
 
  * Objects

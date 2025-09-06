@@ -102,14 +102,9 @@ namespace Amethyst.Geode.IR
 
 		public ValueRef GetProperty(ValueRef val, string name)
 		{
-			if (val.Type.Property(name) is TypeSpecifier t) return Add(new PropertyInsn(val, new LiteralValue(name), t));
-			else return GetMethod(val, name);
-		}
-
-		public MethodValue GetMethod(ValueRef val, string name)
-		{
-            if (GetGlobal(new(val.Type.BasePath, name)) is FunctionValue func && func.FuncType.Parameters.Length >= 1 && val.Type.Implements(func.FuncType.Parameters[0].Type)) return new(func, ImplicitCast(val, func.FuncType.Parameters[0].Type));
-			throw new PropertyError(val.Type.ToString(), name);
+			if (GetGlobal(new(val.Type.BasePath, name)) is FunctionValue func && func.FuncType.Parameters.Length >= 1 && val.Type.Implements(func.FuncType.Parameters[0].Type)) return new MethodValue(func, ImplicitCast(val, func.FuncType.Parameters[0].Type));
+			else if (val.Type.Property(name) is TypeSpecifier t) return Add(new PropertyInsn(val, new LiteralValue(name), t));
+			else throw new PropertyError(val.Type.ToString(), name);
 		}
 
 		public Variable RegisterLocal(string name, TypeSpecifier type) => RegisterLocal(name, $"stack[-1].frame{activeScopes.Count - 1}.{name}", type);
