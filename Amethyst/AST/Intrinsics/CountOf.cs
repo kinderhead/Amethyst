@@ -7,7 +7,7 @@ using Datapack.Net.Data;
 
 namespace Amethyst.AST.Intrinsics
 {
-    public class CountOf() : Intrinsic("countOf")
+    public class CountOf() : Intrinsic("count_of")
     {
         public override TypeSpecifier Type => new FunctionTypeSpecifier(FunctionModifiers.None, PrimitiveTypeSpecifier.Int, [new(ParameterModifiers.None, PrimitiveTypeSpecifier.String, "id")]);
 

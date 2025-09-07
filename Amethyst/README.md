@@ -93,6 +93,8 @@ void main() {
 }
 ```
 
+Note: Minecraft does not allow capital letters in function names, so Amethyst throws an error when encountering them.
+
 ### Math
 
 All the normal operators work as expected (except `%` for now).
@@ -131,12 +133,35 @@ As you can see, macro arguments can be mixed with regular arguments.
 
 **WARNING**: macro string arguments will likely throw a runtime error if there are any spaces in the string.
 
+### Global Variables
+
+Variables can be declared outside of functions. They follow the same namespace rules as functions. Amethyst internally puts them into NBT storage under the same namespace and path. For example, a global variable `example:x` is can be retrieved in-game with `/data get storage example:globals x`.
+
+If a global variable does not has an initializer, then it will not be reset upon reload. For example:
+
+```cs
+int keep;
+int reset = 0;
+
+#load
+void main() {
+    // The ++ operator has not been implemented yet
+    keep = keep + 1;
+    reset = reset + 1;
+
+    print(keep); // Increments by 1 each reload
+    print(reset); // Will always print 0
+}
+```
+
+Be careful, uninitialized global variables will always persist, even if you reuse a variable name that you previously had stopped using. It is recommended to add a special initializing function that the user can call. Eventually, null checks will be properly implemented, so one could create a `load` function that does initialization upon first load.
+
 ### Intrinsics
 
-Amethyst exposes some special Geode IR instructions as inline functions
+Amethyst exposes some special Geode IR instructions as inline functions:
 
  * `print(args...)`: `/tellraw`s all players. Arguments are concatenated with no separators.
- * `countOf(constant string id)`: gets the number of functions that have a specified tag. Only accepts constant strings.
+ * `count_of(constant string id)`: gets the number of functions that have a specified tag. Only accepts constant strings.
 
 ### Extension Methods
 
@@ -145,7 +170,7 @@ Methods can be added to any type at any time. When searching for a method to cal
 * The first argument is the target type or is a base class of the target type.
 * The function is in the same namespace and path as the type.
 
-For example, this is adding an extension method to all objects:
+For example, this adds an extension method to all objects:
 
 ```cs
 void test() {
@@ -163,7 +188,7 @@ void say(nbt this) {
 }
 ```
 
-As all objects inherit `nbt`. Here are the inheritance chains for builtin types:
+Here is the inheritance chain for types:
 
 * `minecraft:nbt`
   * `minecraft:bool`

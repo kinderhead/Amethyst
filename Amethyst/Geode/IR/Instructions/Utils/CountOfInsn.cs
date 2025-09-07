@@ -4,7 +4,7 @@ namespace Amethyst.Geode.IR.Instructions.Utils
 {
     public class CountOfInsn(string id) : Instruction([new ValueRef(new LiteralValue(id))])
     {
-        public override string Name => "countOf";
+        public override string Name => "count_of";
         public override NBTType?[] ArgTypes => [NBTType.String];
         public override TypeSpecifier ReturnType => PrimitiveTypeSpecifier.Int;
 

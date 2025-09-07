@@ -1,16 +1,9 @@
-namespace test;
+namespace example;
+
+int womp;
 
 #load
 void main() {
-    int x = 9;
-    x.say();
-
-    string y = "womp";
-    y.say();
-}
-
-namespace minecraft;
-
-void say(nbt this) {
-    print(this);
+    womp = womp + 1;
+    print(womp);
 }

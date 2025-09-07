@@ -10,7 +10,7 @@ void run_tests() {
 
     @/function #test:test
 
-    var total = countOf("test:test");
+    var total = count_of("test:test");
     print("Tests passed: ", successfulTests, "/", total);
 }
 
