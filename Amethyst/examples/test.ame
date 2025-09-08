@@ -1,9 +1,13 @@
 namespace example;
 
-int womp;
-
 #load
 void main() {
-    womp = womp + 1;
-    print(womp);
+    int y = 3;
+    y.hi();
+}
+
+namespace minecraft;
+
+void hi(nbt num) {
+    print(num);
 }

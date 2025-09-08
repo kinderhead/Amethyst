@@ -150,7 +150,7 @@ void main() {
     reset = reset + 1;
 
     print(keep); // Increments by 1 each reload
-    print(reset); // Will always print 0
+    print(reset); // Will always print 1
 }
 ```
 
