@@ -4,6 +4,7 @@ using Amethyst.AST.Intrinsics;
 using Amethyst.Errors;
 using Amethyst.Geode;
 using Amethyst.Geode.IR;
+using Amethyst.Geode.IR.InlineFunctions;
 using Amethyst.Geode.IR.Instructions;
 using Antlr4.Runtime;
 using Datapack.Net.Utils;
@@ -139,6 +140,9 @@ namespace Amethyst
 
 			AddSymbol(new("builtin:true", LocationRange.Empty, new LiteralValue(true)));
 			AddSymbol(new("builtin:false", LocationRange.Empty, new LiteralValue(false)));
+
+			var listAdd = new ListAdd();
+			AddSymbol(new(listAdd.ID, LocationRange.Empty, listAdd));
 		}
 
 		protected FunctionContext GetGlobalInitFunc() => new(this, new(new("amethyst", "zz_internal/" + GeodeBuilder.RandomString), FunctionTypeSpecifier.VoidFunc), ["minecraft:load"], hasTagPriority: true);

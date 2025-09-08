@@ -13,8 +13,8 @@ namespace Amethyst.AST.Expressions
         public override TypeSpecifier ComputeType(FunctionContext ctx)
         {
             var type = List.ComputeType(ctx);
-            if (type is not ListTypeSpecifier lType) throw new InvalidTypeError(type.ToString());
-            return lType.Inner;
+            if (!type.IsList || !type.Subtypes.Any()) throw new InvalidTypeError(type.ToString());
+            return type.Subtypes.First();
         }
 
         public override ValueRef Execute(FunctionContext ctx)

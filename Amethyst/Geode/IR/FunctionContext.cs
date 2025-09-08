@@ -1,11 +1,10 @@
+using System.Text;
 using Amethyst.Errors;
 using Amethyst.Geode.IR.Instructions;
 using Amethyst.Geode.IR.Passes;
 using Datapack.Net.Data;
 using Datapack.Net.Function.Commands;
 using Datapack.Net.Utils;
-using System.Text;
-using System.Xml.Linq;
 
 namespace Amethyst.Geode.IR
 {
@@ -81,33 +80,39 @@ namespace Amethyst.Geode.IR
 
         public Value GetVariable(string name) => GetVariableOrNull(name) ?? throw new UndefinedSymbolError(name);
 
-		public Value? GetVariableOrNull(string name)
+        public Value? GetVariableOrNull(string name)
         {
-			foreach (var i in activeScopes.Reverse())
-			{
-				if (i.Locals.TryGetValue(name, out var variable)) return variable;
-			}
+            foreach (var i in activeScopes.Reverse())
+            {
+                if (i.Locals.TryGetValue(name, out var variable)) return variable;
+            }
 
             if (GetGlobal(new(Decl.ID.ContainingFolder(), name)) is Value v) return v;
-			if (GetGlobal(new("builtin", name)) is Value v2) return v2;
+            if (GetGlobal(new("builtin", name)) is Value v2) return v2;
 
             return null;
-		}
+        }
 
         public Value? GetGlobal(NamespacedID id)
         {
-			if (Compiler.Symbols.TryGetValue(id, out var sym)) return sym.Value;
+            if (Compiler.Symbols.TryGetValue(id, out var sym)) return sym.Value;
             return null;
-		}
+        }
 
-		public ValueRef GetProperty(ValueRef val, string name)
-		{
-			if (GetGlobal(new(val.Type.BasePath, name)) is FunctionValue func && func.FuncType.Parameters.Length >= 1 && val.Type.Implements(func.FuncType.Parameters[0].Type)) return new MethodValue(func, ImplicitCast(val, func.FuncType.Parameters[0].Type));
-			else if (val.Type.Property(name) is TypeSpecifier t) return Add(new PropertyInsn(val, new LiteralValue(name), t));
-			else throw new PropertyError(val.Type.ToString(), name);
-		}
+        public ValueRef GetProperty(ValueRef val, string name)
+        {
+            if (GetGlobal(new(val.Type.BasePath, name)) is FunctionValue func && func.FuncType.Parameters.Length >= 1)
+            {
+                func = new(func.ID, func.FuncType.ApplyGenericWithParams([val.Type]));
+                var firstArgType = func.FuncType.Parameters[0].Type;
+                if (val.Type.Implements(firstArgType)) return new MethodValue(func, ImplicitCast(val, firstArgType));
+            }
+            else if (val.Type.Property(name) is TypeSpecifier t) return Add(new PropertyInsn(val, new LiteralValue(name), t));
 
-		public Variable RegisterLocal(string name, TypeSpecifier type) => RegisterLocal(name, $"stack[-1].frame{activeScopes.Count - 1}.{name}", type);
+            throw new PropertyError(val.Type.ToString(), name);
+        }
+
+        public Variable RegisterLocal(string name, TypeSpecifier type) => RegisterLocal(name, $"stack[-1].frame{activeScopes.Count - 1}.{name}", type);
 
         public Variable RegisterLocal(string name, string loc, TypeSpecifier type)
         {

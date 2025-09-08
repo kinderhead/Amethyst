@@ -3,7 +3,6 @@ using Datapack.Net.Data;
 using Datapack.Net.Function;
 using Datapack.Net.Function.Commands;
 using Datapack.Net.Utils;
-using System;
 
 namespace Amethyst.Geode
 {
@@ -68,29 +67,29 @@ namespace Amethyst.Geode
 
         public virtual void Call(RenderContext ctx, IEnumerable<ValueRef> args)
         {
-			Value? processedMacros = null;
+            Value? processedMacros = null;
 
             if (args.Count() != FuncType.Parameters.Length) throw new MismatchedArgumentCountError(FuncType.Parameters.Length, args.Count());
 
-			if (args.Any())
-			{
-				var processedArgs = new Dictionary<string, ValueRef>();
-				var macros = new Dictionary<string, ValueRef>();
+            if (args.Any())
+            {
+                var processedArgs = new Dictionary<string, ValueRef>();
+                var macros = new Dictionary<string, ValueRef>();
 
-				foreach (var (param, val) in FuncType.Parameters.Zip(args))
-				{
-					if (param.Modifiers.HasFlag(AST.ParameterModifiers.Macro)) macros.Add(param.Name, val);
-					else processedArgs.Add(param.Name, val);
-				}
+                foreach (var (param, val) in FuncType.Parameters.Zip(args))
+                {
+                    if (param.Modifiers.HasFlag(AST.ParameterModifiers.Macro)) macros.Add(param.Name, val);
+                    else processedArgs.Add(param.Name, val);
+                }
 
-				if (processedArgs.Count != 0) ctx.StoreCompound(new(GeodeBuilder.RuntimeID, "stack[-1].args", PrimitiveTypeSpecifier.Compound), processedArgs, setEmpty: false);
-				if (macros.Count != 0) processedMacros = ctx.StoreCompoundOrReturnConstant(new(GeodeBuilder.RuntimeID, "stack[-1].macros", PrimitiveTypeSpecifier.Compound), macros); // Minecraft throws an error if there are mismatched macro args, so we always reset it
-			}
+                if (processedArgs.Count != 0) ctx.StoreCompound(new(GeodeBuilder.RuntimeID, "stack[-1].args", PrimitiveTypeSpecifier.Compound), processedArgs, setEmpty: false);
+                if (macros.Count != 0) processedMacros = ctx.StoreCompoundOrReturnConstant(new(GeodeBuilder.RuntimeID, "stack[-1].macros", PrimitiveTypeSpecifier.Compound), macros); // Minecraft throws an error if there are mismatched macro args, so we always reset it
+            }
 
-			if (processedMacros is StorageValue s) ctx.Add(new FunctionCommand(ID, s.Storage, s.Path));
-			else if (processedMacros is LiteralValue l) ctx.Add(new FunctionCommand(ID, (NBTCompound)l.Value));
-			else ctx.Add(new FunctionCommand(ID));
-		}
+            if (processedMacros is StorageValue s) ctx.Add(new FunctionCommand(ID, s.Storage, s.Path));
+            else if (processedMacros is LiteralValue l) ctx.Add(new FunctionCommand(ID, (NBTCompound)l.Value));
+            else ctx.Add(new FunctionCommand(ID));
+        }
     }
 
     public class MethodValue(FunctionValue val, ValueRef self) : FunctionValue(val.ID, new(val.FuncType.Modifiers, val.FuncType.ReturnType, val.FuncType.Parameters[1..]))
@@ -98,10 +97,10 @@ namespace Amethyst.Geode
         public readonly FunctionValue BaseFunction = val;
         public readonly ValueRef Self = self;
 
-		public override void Call(RenderContext ctx, IEnumerable<ValueRef> args)
-		{
-			BaseFunction.Call(ctx, [Self, ..args]);
-		}
+        public override void Call(RenderContext ctx, IEnumerable<ValueRef> args)
+        {
+            BaseFunction.Call(ctx, [Self, .. args]);
+        }
     }
 
     public class ConditionalValue(Func<Execute, Execute> apply) : Value
@@ -173,7 +172,7 @@ namespace Amethyst.Geode
         public StorageValue Property(string member, TypeSpecifier type) => new(Storage, $"{Path}.{member}", type);
         public StorageValue Index(int index, TypeSpecifier type) => new(Storage, $"{Path}[{index}]", type);
 
-		public override ScoreValue AsScore(RenderContext ctx)
+        public override ScoreValue AsScore(RenderContext ctx)
         {
             throw new InvalidOperationException("Cannot implicitly convert a storage value to a score");
             //// No type checking because this acts like a cast to int
