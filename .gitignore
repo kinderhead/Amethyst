@@ -367,3 +367,4 @@ blocks.txt
 entities.json
 blocks.json
 *.zip
+.antlr/
