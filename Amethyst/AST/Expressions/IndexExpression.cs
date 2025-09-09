@@ -19,7 +19,7 @@ namespace Amethyst.AST.Expressions
 
         public override ValueRef Execute(FunctionContext ctx)
         {
-            return ctx.Add(new IndexInsn(List.ExecuteWithoutLoad(ctx), ctx.ImplicitCast(Index.ExecuteWithoutLoad(ctx), PrimitiveTypeSpecifier.Int)));
+            return ctx.Add(new IndexInsn(List.Execute(ctx), ctx.ImplicitCast(Index.Execute(ctx), PrimitiveTypeSpecifier.Int)));
         }
     }
 }

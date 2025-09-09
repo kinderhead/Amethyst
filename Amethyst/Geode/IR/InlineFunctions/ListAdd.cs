@@ -1,13 +1,22 @@
+using Datapack.Net.Utils;
+
 namespace Amethyst.Geode.IR.InlineFunctions
 {
-    public class ListAdd() : FunctionValue("minecraft:add", new FunctionTypeSpecifier(AST.FunctionModifiers.None, new VoidTypeSpecifier(), [
-        new(AST.ParameterModifiers.None, new ListTypeSpecifier(new GenericTypeSpecifier("T")), "this"),
-        new(AST.ParameterModifiers.None, new GenericTypeSpecifier("T"), "value")
-    ]))
+    public class ListAdd(NamespacedID id, FunctionTypeSpecifier type) : FunctionValue(id, type)
     {
-        public override void Call(RenderContext ctx, IEnumerable<ValueRef> args)
+        public ListAdd() : this("minecraft:add", new FunctionTypeSpecifier(AST.FunctionModifiers.None, new VoidTypeSpecifier(), [
+            new(AST.ParameterModifiers.None, new ListTypeSpecifier(new GenericTypeSpecifier("T")), "this"),
+            new(AST.ParameterModifiers.None, new GenericTypeSpecifier("T"), "value")
+        ]))
         {
-            throw new NotImplementedException();
         }
+
+        public override void Call(RenderContext ctx, ValueRef[] args)
+        {
+            var list = args[0].Expect<LValue>();
+            list.ListAdd(args[1].Expect(), ctx);
+        }
+
+        public override FunctionValue CloneWithType(FunctionTypeSpecifier type) => new ListAdd(ID, type);
     }
 }

@@ -1,6 +1,5 @@
 ﻿using Amethyst.Geode;
 using Amethyst.Geode.IR;
-using Amethyst.Geode.IR.Instructions;
 using Datapack.Net.Data;
 
 namespace Amethyst.AST.Expressions
@@ -9,8 +8,6 @@ namespace Amethyst.AST.Expressions
 	{
 		public abstract TypeSpecifier ComputeType(FunctionContext ctx);
 		public abstract ValueRef Execute(FunctionContext ctx);
-
-		public virtual ValueRef ExecuteWithoutLoad(FunctionContext ctx) => Execute(ctx);
 	}
 
 	public class LiteralExpression(LocationRange loc, NBTValue val) : Expression(loc)
@@ -26,12 +23,6 @@ namespace Amethyst.AST.Expressions
 		public readonly string Name = name;
 
 		public override TypeSpecifier ComputeType(FunctionContext ctx) => ctx.GetVariable(Name).Type;
-		public override ValueRef Execute(FunctionContext ctx)
-		{
-			var val = ctx.GetVariable(Name);
-			if (val is LiteralValue) return val;
-			return ctx.Add(new LoadInsn(val));
-		}
-		public override ValueRef ExecuteWithoutLoad(FunctionContext ctx) => ctx.GetVariable(Name);
+		public override ValueRef Execute(FunctionContext ctx) => ctx.GetVariable(Name);
 	}
 }

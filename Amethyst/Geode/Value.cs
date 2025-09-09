@@ -65,7 +65,7 @@ namespace Amethyst.Geode
         public override string ToString() => ID.ToString();
         public FunctionTypeSpecifier FuncType => (FunctionTypeSpecifier)Type;
 
-        public virtual void Call(RenderContext ctx, IEnumerable<ValueRef> args)
+        public virtual void Call(RenderContext ctx, ValueRef[] args)
         {
             Value? processedMacros = null;
 
@@ -90,6 +90,8 @@ namespace Amethyst.Geode
             else if (processedMacros is LiteralValue l) ctx.Add(new FunctionCommand(ID, (NBTCompound)l.Value));
             else ctx.Add(new FunctionCommand(ID));
         }
+
+        public virtual FunctionValue CloneWithType(FunctionTypeSpecifier type) => new(ID, type);
     }
 
     public class MethodValue(FunctionValue val, ValueRef self) : FunctionValue(val.ID, new(val.FuncType.Modifiers, val.FuncType.ReturnType, val.FuncType.Parameters[1..]))
@@ -97,10 +99,12 @@ namespace Amethyst.Geode
         public readonly FunctionValue BaseFunction = val;
         public readonly ValueRef Self = self;
 
-        public override void Call(RenderContext ctx, IEnumerable<ValueRef> args)
+        public override void Call(RenderContext ctx, ValueRef[] args)
         {
             BaseFunction.Call(ctx, [Self, .. args]);
         }
+
+        public override FunctionValue CloneWithType(FunctionTypeSpecifier type) => new MethodValue(BaseFunction.CloneWithType(type), Self);
     }
 
     public class ConditionalValue(Func<Execute, Execute> apply) : Value
@@ -134,13 +138,42 @@ namespace Amethyst.Geode
         public abstract void Store(LiteralValue literal, RenderContext ctx);
         public abstract void Store(ScoreValue score, RenderContext ctx);
         public abstract void Store(StorageValue score, RenderContext ctx);
+        public virtual void Store(MacroValue macro, RenderContext ctx) => Store(new LiteralValue(new NBTRawString($"$({macro.Name})")), ctx);
         public virtual void Store(ConditionalValue cond, RenderContext ctx)
         {
             Store(new LiteralValue(false), ctx);
             ctx.Add(cond.If(new()).Run(ctx.WithFaux(i => Store(new LiteralValue(true), i)).Single()));
         }
 
-        public virtual void Store(MacroValue macro, RenderContext ctx) => Store(new LiteralValue(new NBTRawString($"$({macro.Name})")), ctx);
+        public void ListAdd(Value val, RenderContext ctx)
+        {
+            if (val is LiteralValue literal) ListAdd(literal, ctx);
+            else if (val is ScoreValue score) ListAdd(score, ctx);
+            else if (val is StorageValue storage) ListAdd(storage, ctx);
+            else if (val is ConditionalValue cond) ListAdd(cond, ctx);
+            else if (val is MacroValue macro) ListAdd(macro, ctx);
+            else throw new NotImplementedException();
+        }
+
+        public abstract void ListAdd(LiteralValue literal, RenderContext ctx);
+
+        public virtual void ListAdd(ScoreValue score, RenderContext ctx)
+        {
+            var tmp = ctx.Builder.TempStorage(0, PrimitiveTypeSpecifier.Compound);
+            tmp.Store(score, ctx);
+            ListAdd(tmp, ctx);
+        }
+
+        public abstract void ListAdd(StorageValue storage, RenderContext ctx);
+
+        public virtual void ListAdd(ConditionalValue cond, RenderContext ctx)
+        {
+            var tmp = ctx.Builder.TempStorage(0, PrimitiveTypeSpecifier.Compound);
+            tmp.Store(cond, ctx);
+            ListAdd(tmp, ctx);
+        }
+
+        public virtual void ListAdd(MacroValue macro, RenderContext ctx) => ListAdd(new LiteralValue(new NBTRawString($"$({macro.Name})")), ctx);
     }
 
     public class ScoreValue(IEntityTarget target, Score score) : LValue
@@ -161,6 +194,9 @@ namespace Amethyst.Geode
         public override TypeSpecifier Type => PrimitiveTypeSpecifier.Int;
 
         public override int GetHashCode() => HashCode.Combine(Target, Score);
+
+        public override void ListAdd(LiteralValue literal, RenderContext ctx) => throw new InvalidTypeError("int", "list");
+        public override void ListAdd(StorageValue score, RenderContext ctx) => throw new InvalidTypeError("int", "list");
     }
 
     public class StorageValue(Storage storage, string path, TypeSpecifier type) : LValue
@@ -190,5 +226,8 @@ namespace Amethyst.Geode
         public override void Store(StorageValue score, RenderContext ctx) => ctx.Add(new DataCommand.Modify(Storage, Path).Set().From(score.Storage, score.Path));
         public override string ToString() => $"{Storage}.{Path}";
         public override int GetHashCode() => Storage.GetHashCode() * Path.GetHashCode() * Type.GetHashCode();
+
+        public override void ListAdd(LiteralValue literal, RenderContext ctx) => ctx.Add(new DataCommand.Modify(Storage, Path).Append().Value(literal.ToString()));
+        public override void ListAdd(StorageValue storage, RenderContext ctx) => ctx.Add(new DataCommand.Modify(Storage, Path).Append().From(storage.Storage, storage.Path));
     }
 }

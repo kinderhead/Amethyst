@@ -1,6 +1,5 @@
 using Amethyst.Geode;
 using Amethyst.Geode.IR;
-using Datapack.Net.Data;
 
 namespace Amethyst.AST.Expressions
 {

@@ -25,10 +25,10 @@ namespace Amethyst.Geode
 		public override bool Equals(object? obj)
 		{
 			if (obj is not TypeSpecifier other) return false;
-			else return AreEqual(other);
+			else return GetEquatableType().AreEqual(other.GetEquatableType());
 		}
 
-		public bool Implements(TypeSpecifier other)
+		public virtual bool Implements(TypeSpecifier other)
 		{
 			if (this == other) return true;
 			else if (this == BaseClass) return false;
@@ -66,6 +66,7 @@ namespace Amethyst.Geode
 
 		public abstract override string ToString();
 		protected abstract bool AreEqual(TypeSpecifier obj);
+		public virtual TypeSpecifier GetEquatableType() => this;
 		public abstract object Clone();
 
 		public static bool operator ==(TypeSpecifier a, TypeSpecifier b) => a.Equals(b);
@@ -216,6 +217,12 @@ namespace Amethyst.Geode
 		public override string ToString() => Resolved ? Constraint.ToString() : Name;
 
 		public override bool ConstraintSatisfiedBy(TypeSpecifier other) => other.Implements(Constraint);
+		public override bool Implements(TypeSpecifier other)
+		{
+			if (this == other) return true;
+			else if (Constraint == other) return true;
+			else return BaseClass.Implements(other);
+		}
 
 		public void Set(TypeSpecifier type)
 		{
@@ -227,15 +234,17 @@ namespace Amethyst.Geode
 		{
 			if (!Resolved)
 			{
+				if (typeMap.TryGetValue(Name, out var type)) other = type;
 				Set(other);
 				typeMap[Name] = other;
 			}
-			else if (other != typeMap[Name]) throw new NotImplementedException();
+			else if (other != typeMap[Name]) throw new NotImplementedException(); // Maybe remove this
 
 			base.ApplyGeneric(other, typeMap);
 		}
 
 		protected override bool AreEqual(TypeSpecifier obj) => obj is GenericTypeSpecifier other && other.Name == Name && other.Constraint == Constraint;
+		public override TypeSpecifier GetEquatableType() => Resolved ? Constraint.GetEquatableType() : this;
 		public override int GetHashCode() => HashCode.Combine(Name, Constraint);
 		public override object Clone() => new GenericTypeSpecifier(Name, Constraint, Resolved);
 	}

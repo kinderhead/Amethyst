@@ -1,7 +1,6 @@
 using Amethyst.Errors;
 using Amethyst.Geode;
 using Amethyst.Geode.IR;
-using Amethyst.Geode.IR.Instructions;
 
 namespace Amethyst.AST.Expressions
 {
@@ -14,12 +13,7 @@ namespace Amethyst.AST.Expressions
 
         public override ValueRef Execute(FunctionContext ctx)
         {
-            return ctx.Add(new LoadInsn(ctx.GetProperty(Expression.ExecuteWithoutLoad(ctx), Property)));
+            return ctx.GetProperty(Expression.Execute(ctx), Property);
         }
-
-		public override ValueRef ExecuteWithoutLoad(FunctionContext ctx)
-		{
-			return ctx.GetProperty(Expression.ExecuteWithoutLoad(ctx), Property);
-		}
     }
 }

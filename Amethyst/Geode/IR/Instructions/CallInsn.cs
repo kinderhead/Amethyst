@@ -1,5 +1,4 @@
 using Datapack.Net.Data;
-using Datapack.Net.Function.Commands;
 
 namespace Amethyst.Geode.IR.Instructions
 {
@@ -13,9 +12,9 @@ namespace Amethyst.Geode.IR.Instructions
         public override void Render(RenderContext ctx)
         {
             var func = Arg<ValueRef>(0).Expect<FunctionValue>();
-            func.Call(ctx, Arguments[1..].Cast<ValueRef>());
-			if (ReturnValue.Expect() is LValue ret) ret.Store(FunctionContext.GetFunctionReturnValue(ReturnType, -1), ctx);
-		}
+            func.Call(ctx, [.. Arguments[1..].Cast<ValueRef>()]);
+            if (ReturnValue.Expect() is LValue ret) ret.Store(FunctionContext.GetFunctionReturnValue(ReturnType, -1), ctx);
+        }
 
         protected override Value? ComputeReturnValue(FunctionContext ctx)
         {

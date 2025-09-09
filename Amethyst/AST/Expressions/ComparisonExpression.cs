@@ -24,8 +24,8 @@ namespace Amethyst.AST.Expressions
 
 		public override ValueRef Execute(FunctionContext ctx)
 		{
-			var left = Left.Execute(ctx);
-			var right = Right.Execute(ctx);
+			var left = ctx.Add(new LoadInsn(Left.Execute(ctx)));
+			var right = ctx.Add(new LoadInsn(Right.Execute(ctx)));
 
 			return Op switch
 			{

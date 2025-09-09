@@ -114,6 +114,8 @@ namespace Amethyst.Geode
             return score;
         }
 
+        public StorageValue TempStorage(int num, TypeSpecifier type) => new(RuntimeID, $"tmp{num}", type);
+
         public void Register(MCFunction func) => Datapack.Functions.Add(func);
         public void Register(Score score) => registeredScores.Add(score);
 
@@ -146,7 +148,7 @@ namespace Amethyst.Geode
 
             foreach (var i in RuntimeStorageUsed)
             {
-                func.Add(new DataCommand.Remove(new Storage(new("amethyst", "runtime")), i));
+                func.Add(new DataCommand.Remove(RuntimeID, i));
             }
 
             foreach (var i in registeredScores)
@@ -162,7 +164,7 @@ namespace Amethyst.Geode
         public static string RandomString { get => Guid.NewGuid().ToString(); }
         public static readonly NamespacedID RuntimeID = new("amethyst", "runtime");
         public static readonly IEntityTarget RuntimeEntity = new NamedTarget("amethyst");
-        public static readonly string[] RuntimeStorageUsed = ["stack"];
+        public static readonly string[] RuntimeStorageUsed = ["stack", "tmp"];
 
         private static DP GetDP(Options opts) => new("Project generated with Amethyst", opts.Output, opts.PackFormat);
     }

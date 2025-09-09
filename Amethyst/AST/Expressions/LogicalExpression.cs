@@ -1,6 +1,5 @@
 ﻿using Amethyst.Geode;
 using Amethyst.Geode.IR;
-using Datapack.Net.Data;
 
 using static Datapack.Net.Data._1_20_4.Blocks;
 

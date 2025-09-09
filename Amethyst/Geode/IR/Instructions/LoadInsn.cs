@@ -25,6 +25,7 @@ namespace Amethyst.Geode.IR.Instructions
 				Remove();
 				return score;
 			}
+			else if (val.Value is LiteralValue literal) return literal;
 			return null;
 		}
 	}

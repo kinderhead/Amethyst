@@ -15,8 +15,8 @@ namespace Amethyst.AST.Expressions
 
 		public override ValueRef Execute(FunctionContext ctx)
 		{
-			var left = ctx.ImplicitCast(Left.Execute(ctx), PrimitiveTypeSpecifier.Int);
-			var right = ctx.ImplicitCast(Right.Execute(ctx), PrimitiveTypeSpecifier.Int);
+			var left = ctx.ImplicitCast(ctx.Add(new LoadInsn(Left.Execute(ctx))), PrimitiveTypeSpecifier.Int);
+			var right = ctx.ImplicitCast(ctx.Add(new LoadInsn(Right.Execute(ctx))), PrimitiveTypeSpecifier.Int);
 
 			return Op switch
 			{
