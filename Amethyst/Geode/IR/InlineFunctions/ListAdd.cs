@@ -1,3 +1,4 @@
+using Amethyst.Geode.Values;
 using Datapack.Net.Utils;
 
 namespace Amethyst.Geode.IR.InlineFunctions

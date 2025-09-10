@@ -2,13 +2,12 @@ namespace example;
 
 #load
 void main() {
-    int[] arr;
-    int x = 300;
+    int x = 4;
 
-    arr.add(5);
-    arr.add(x);
-    arr.add(-10);
-
-    print(arr[0]);
+    if (x) {
+        print("yay");
+    } else {
+        print("nay");
+    }
 }
 

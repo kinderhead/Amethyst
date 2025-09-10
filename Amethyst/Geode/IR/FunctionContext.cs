@@ -2,6 +2,7 @@ using System.Text;
 using Amethyst.Errors;
 using Amethyst.Geode.IR.Instructions;
 using Amethyst.Geode.IR.Passes;
+using Amethyst.Geode.Values;
 using Datapack.Net.Data;
 using Datapack.Net.Function.Commands;
 using Datapack.Net.Utils;

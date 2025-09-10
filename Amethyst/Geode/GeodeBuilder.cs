@@ -1,5 +1,6 @@
 using Amethyst.Geode.IR;
 using Amethyst.Geode.IR.Passes;
+using Amethyst.Geode.Values;
 using Datapack.Net;
 using Datapack.Net.Function;
 using Datapack.Net.Function.Commands;
@@ -107,7 +108,8 @@ namespace Amethyst.Geode
         }
 
         public ScoreValue Reg(int num) => Score($"reg_{num}");
-        //public ScoreValue Temp(int num) => Score($"tmp_{num}");
+        public ScoreValue Temp(int num) => Score($"tmp_{num}");
+
         public ScoreValue Constant(int num)
         {
             if (!constants.TryGetValue(num, out var score)) constants[num] = score = Score($"_{num}");

@@ -1,4 +1,5 @@
 using Amethyst.Geode.IR;
+using Amethyst.Geode.Values;
 using Datapack.Net.Function;
 using Datapack.Net.Function.Commands;
 

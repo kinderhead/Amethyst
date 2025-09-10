@@ -2,6 +2,7 @@
 using Amethyst.Errors;
 using Amethyst.Geode;
 using Amethyst.Geode.IR;
+using Amethyst.Geode.Values;
 using Datapack.Net.Utils;
 
 namespace Amethyst.AST

@@ -1,8 +1,8 @@
 namespace test;
 
 #test
-void test_list_int_add() {
-    start("list int add");
+void test_int_list_add() {
+    start("int list add");
 
     int[] x;
     int y = 6;

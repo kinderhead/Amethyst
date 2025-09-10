@@ -1,3 +1,5 @@
+using Amethyst.Geode.Values;
+
 namespace Amethyst.Geode
 {
     public class Variable(string name, string loc, TypeSpecifier type) : StorageValue(GeodeBuilder.RuntimeID, loc, type)

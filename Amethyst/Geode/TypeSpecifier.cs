@@ -1,5 +1,6 @@
 ﻿using Amethyst.AST;
 using Amethyst.Errors;
+using Amethyst.Geode.Values;
 using Datapack.Net.Data;
 
 namespace Amethyst.Geode

@@ -2,6 +2,7 @@
 using Amethyst.Geode;
 using Amethyst.Geode.IR;
 using Amethyst.Geode.IR.Instructions;
+using Amethyst.Geode.Values;
 
 namespace Amethyst.AST.Expressions
 {
@@ -10,7 +11,7 @@ namespace Amethyst.AST.Expressions
 		public readonly Expression Function = func;
 		public readonly List<Expression> Args = args;
 
-		public override TypeSp ecifier ComputeType(FunctionContext ctx)
+		public override TypeSpecifier ComputeType(FunctionContext ctx)
 		{
 			var funcType = Function.ComputeType(ctx);
 			if (funcType is FunctionTypeSpecifier f) return f.ReturnType;

@@ -1,5 +1,6 @@
 using System.Text;
 using Amethyst.Errors;
+using Amethyst.Geode.Values;
 using Datapack.Net.Data;
 
 namespace Amethyst.Geode.IR
@@ -57,7 +58,7 @@ namespace Amethyst.Geode.IR
                 return;
             }
 
-            if (ret.Type != ReturnType) throw new InvalidOperationException($"Instruction returned {ret.Type}, but expected {ReturnType}");
+            if (ReturnType is not AnyTypeSpecifier && ret.Type != ReturnType) throw new InvalidOperationException($"Instruction returned {ret.Type}, but expected {ReturnType}");
 
             ReturnValue.SetValue(ret);
             if (ret.IsLiteral) Remove();
