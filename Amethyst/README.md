@@ -111,6 +111,24 @@ x.property = "Hi";
 print(x);
 ```
 
+### Lists
+
+Lists are currently WIP. Indexing with a variable and base `minecraft:list` methods are not available at the moment.
+
+Anyway, lists work mostly as expected:
+
+```cs
+int[] list;
+
+list.add(10);
+list.add(5);
+list.add(x * y);
+
+print(list[2]);
+```
+
+Note: there is currently no bounds check. Eventually it will be included in debug builds and optionally in release mode builds.
+
 ### Inline commands
 
 Commands can be directly inlined into functions like so:
