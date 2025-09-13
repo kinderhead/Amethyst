@@ -5,7 +5,7 @@ on:
     branches: [ "master" ]
     paths:
       - Amethyst/**
-      - .github/workflows/Amethyst.yml
+      - .github/workflows/amethyst.yml
   pull_request:
     branches: [ "master" ]
 
