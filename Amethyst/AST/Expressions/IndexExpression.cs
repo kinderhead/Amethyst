@@ -17,7 +17,7 @@ namespace Amethyst.AST.Expressions
             return type.Subtypes.First();
         }
 
-        public override ValueRef Execute(FunctionContext ctx)
+        protected override ValueRef _Execute(FunctionContext ctx)
         {
             return ctx.Add(new IndexInsn(List.Execute(ctx), ctx.ImplicitCast(Index.Execute(ctx), PrimitiveTypeSpecifier.Int)));
         }

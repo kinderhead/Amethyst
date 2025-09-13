@@ -11,7 +11,7 @@ namespace Amethyst.AST.Expressions
 
         public override TypeSpecifier ComputeType(FunctionContext ctx) => Expression.ComputeType(ctx).Property(Property) ?? throw new PropertyError(Expression.ComputeType(ctx).ToString(), Property);
 
-        public override ValueRef Execute(FunctionContext ctx)
+        protected override ValueRef _Execute(FunctionContext ctx)
         {
             return ctx.GetProperty(Expression.Execute(ctx), Property);
         }

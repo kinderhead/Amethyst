@@ -18,7 +18,7 @@ namespace Amethyst.AST.Expressions
 			throw new CallError();
 		}
 
-		public override ValueRef Execute(FunctionContext ctx)
+		protected override ValueRef _Execute(FunctionContext ctx)
 		{
 			var func = Function.Execute(ctx);
 			if (func.Value is Intrinsic i) return i.Execute(ctx, Args);

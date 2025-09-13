@@ -5,5 +5,11 @@
         "package": "Amethyst.Antlr",
         "outputDir": "Antlr",
         "language": "CSharp"
-    }
+    },
+    "VSCodeCounter.exclude": [
+        "**/.gitignore",
+        "**/.vscode/**",
+        "**/node_modules/**",
+        "**/1_20_4/**"
+    ]
 }

@@ -368,3 +368,4 @@ entities.json
 blocks.json
 *.zip
 .antlr/
+.VSCodeCounter/

@@ -13,7 +13,7 @@ namespace Amethyst.AST.Expressions
 
 		public override TypeSpecifier ComputeType(FunctionContext ctx) => PrimitiveTypeSpecifier.Int;
 
-		public override ValueRef Execute(FunctionContext ctx)
+		protected override ValueRef _Execute(FunctionContext ctx)
 		{
 			var left = ctx.ImplicitCast(ctx.Add(new LoadInsn(Left.Execute(ctx))), PrimitiveTypeSpecifier.Int);
 			var right = ctx.ImplicitCast(ctx.Add(new LoadInsn(Right.Execute(ctx))), PrimitiveTypeSpecifier.Int);

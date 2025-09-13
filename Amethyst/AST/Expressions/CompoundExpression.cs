@@ -9,7 +9,7 @@ namespace Amethyst.AST.Expressions
 
         public override TypeSpecifier ComputeType(FunctionContext ctx) => PrimitiveTypeSpecifier.Compound;
 
-        public override ValueRef Execute(FunctionContext ctx)
+        protected override ValueRef _Execute(FunctionContext ctx)
         {
             throw new NotImplementedException();
         }

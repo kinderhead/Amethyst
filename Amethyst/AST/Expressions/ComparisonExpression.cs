@@ -22,7 +22,7 @@ namespace Amethyst.AST.Expressions
 
 		public override TypeSpecifier ComputeType(FunctionContext ctx) => PrimitiveTypeSpecifier.Bool;
 
-		public override ValueRef Execute(FunctionContext ctx)
+		protected override ValueRef _Execute(FunctionContext ctx)
 		{
 			var left = ctx.Add(new LoadInsn(Left.Execute(ctx)));
 			var right = ctx.Add(new LoadInsn(Right.Execute(ctx)));
