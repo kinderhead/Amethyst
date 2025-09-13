@@ -90,7 +90,7 @@ namespace Amethyst
 			var parser = new AmethystParser(tokens);
 			var visitor = new Visitor(filename, this);
 
-			var error = new ParserErrorHandler(filename, file);
+			var error = new ParserErrorHandler(filename, file, visitor);
 			lexer.RemoveErrorListeners();
 			lexer.AddErrorListener(error);
 			parser.RemoveErrorListeners();
@@ -133,6 +133,14 @@ namespace Amethyst
 			if (Symbols.TryGetValue(sym.ID, out var old)) throw new RedefinedSymbolError(sym.ID.ToString(), old.Location);
 			else Symbols[sym.ID] = sym;
 		}
+
+		public (FunctionContext ctx, FunctionValue func) AnonymousFunction(FunctionTypeSpecifier type)
+		{
+			var func = new FunctionValue(new("amethyst", "zz_internal/" + GeodeBuilder.RandomString), type);
+			var ctx = new FunctionContext(this, func, []);
+			IR.AddFunctions(ctx);
+			return (ctx, func);
+        }
 
 		protected virtual void RegisterGlobals()
 		{

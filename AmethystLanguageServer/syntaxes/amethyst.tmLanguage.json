@@ -1417,19 +1417,54 @@
     "macro-name": {
       "patterns": [
         {
-          "captures": {
+          "begin": "(\\$\\()",
+          "end": "(\\))",
+          "beginCaptures": {
             "1": {
               "name": "punctuation.definition.template-expression.begin.mcfunction"
-            },
-            "2": {
-              "name": "variable.other.mcfunction"
-            },
-            "3": {
+            }
+          },
+          "endCaptures": {
+            "1": {
               "name": "punctuation.definition.template-expression.end.mcfunction"
             }
           },
-          "match": "(\\$\\()([A-Za-z0-9_]*)(\\))",
-          "name": "meta.macro-name"
+          "name": "meta.macro-name",
+          "patterns": [
+            {
+			"include": "#keywords"
+		},
+		{
+			"include": "#types"
+		},
+		{
+            "include": "#function-calls"
+        },
+		{
+			"include": "#identifiers"
+		},
+        {
+            "include": "#tags"
+        },
+		{
+			"include": "#strings"
+		},
+		{
+			"include": "#numbers"
+		},
+		{
+			"include": "#comments"
+		},
+		{
+			"include": "#operators"
+		},
+		{
+			"include": "#commands"
+		},
+		{
+			"include": "#punctuation"
+		}
+          ]
         }
       ]
     }

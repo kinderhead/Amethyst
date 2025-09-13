@@ -7,10 +7,11 @@ using Antlr4.Runtime.Tree;
 using Datapack.Net.Data;
 using Datapack.Net.Function.Commands;
 using Datapack.Net.Utils;
+using System.Text.RegularExpressions;
 
 namespace Amethyst.AST
 {
-	public class Visitor(string filename, Compiler compiler) : AmethystBaseVisitor<Node>
+	public partial class Visitor(string filename, Compiler compiler) : AmethystBaseVisitor<Node>
 	{
 		public readonly string Filename = filename;
 		public readonly Compiler Compiler = compiler;
@@ -85,11 +86,49 @@ namespace Amethyst.AST
 
 		public override Node VisitInitAssignmentStatement([NotNull] AmethystParser.InitAssignmentStatementContext context) => new InitAssignmentNode(Loc(context), Visit(context.type()), Visit(context.id()), context.expression() is null ? null : Visit(context.expression()));
 		public override Node VisitExpressionStatement([NotNull] AmethystParser.ExpressionStatementContext context) => new ExpressionStatement(Loc(context), Visit(context.expression()));
-		public override Node VisitCommandStatement([NotNull] AmethystParser.CommandStatementContext context) => new CommandStatement(Loc(context), context.Command().GetText().Trim()[2..]);
 		public override Node VisitIfStatement([NotNull] AmethystParser.IfStatementContext context) => context.statement().Length != 0 ? new IfStatement(Loc(context), Visit(context.expression()), Visit(context.statement().First()), context.statement().Length == 2 ? Visit(context.statement().Last()) : null) : new ExpressionStatement(Loc(context), new LiteralExpression(Loc(context), new NBTString("uh")));
 		public override Node VisitReturnStatement([NotNull] AmethystParser.ReturnStatementContext context) => new ReturnStatement(Loc(context), context.expression() is null ? null : Visit(context.expression()));
 
-		public override Node VisitType([NotNull] AmethystParser.TypeContext context)
+        public override Node VisitCommandStatement([NotNull] AmethystParser.CommandStatementContext context)
+		{
+			var cmd = context.Command().GetText().Trim()[2..];
+			var loc = Loc(context);
+			var frags = new List<CommandFragment>();
+
+            foreach (Match i in CommandExprRegex().Matches(cmd))
+			{
+				if (i.Groups["other"].Success)
+				{
+					frags.Add(new CommandTextFragment(i.Groups["other"].Value));
+					continue;
+                }
+
+                var match = i.Groups["content"];
+
+				var input = CharStreams.fromString(match.Value);
+                var lexer = new AmethystLexer(input);
+                var tokens = new CommonTokenStream(lexer);
+                var parser = new AmethystParser(tokens);
+                var visitor = new SubVisitor(this, new(loc.Start.File, loc.Start.Line, loc.Start.Column + 2 + match.Index));
+
+                var error = new ParserErrorHandler(Filename, Compiler.Files[Filename], visitor);
+                lexer.RemoveErrorListeners();
+                lexer.AddErrorListener(error);
+                parser.RemoveErrorListeners();
+                parser.AddErrorListener(error);
+
+				var expr = parser.expression();
+				var node = visitor.Visit(expr);
+
+				frags.Add(new CommandExprFragment(node));
+
+				if (error.Errored) throw new Exception(); // Do this later
+            }
+
+			return new CommandStatement(loc, frags);
+		}
+
+        public override Node VisitType([NotNull] AmethystParser.TypeContext context)
 		{
 			if (context.id() is AmethystParser.IdContext id) return new SimpleAbstractTypeSpecifier(Loc(context), Visit(id));
 			else if (context.type() is AmethystParser.TypeContext t) return new AbstractListTypeSpecifier(Loc(context), Visit(t));
@@ -203,8 +242,12 @@ namespace Amethyst.AST
 		public List<Expression> Visit(AmethystParser.ExpressionListContext context) => [.. context.expression().Select(Visit)];
 		public string Visit(AmethystParser.IdContext context) => context.GetText();
 
-		public LocationRange Loc(ParserRuleContext ctx) => LocationRange.From(Filename, ctx);
-		public NamespacedID IdentifierToID(string name)
+		public LocationRange Loc(ParserRuleContext ctx) => LocOffset(LocationRange.From(Filename, ctx));
+
+		public virtual Location LocOffset(Location loc) => loc;
+		public virtual LocationRange LocOffset(LocationRange loc) => new(LocOffset(loc.Start), LocOffset(loc.End));
+
+        public NamespacedID IdentifierToID(string name)
 		{
 			if (name.Contains(':')) return new(name);
 			else return new(currentNamespace, name);
@@ -231,5 +274,8 @@ namespace Amethyst.AST
 					return new NBTDouble(double.Parse(raw[..^1]));
 			}
 		}
+
+		[GeneratedRegex(@"(?<other>[^\$]+)|\$\((?<content>(?>[^()]+|(?<open>\()|(?<-open>\)))+(?(open)(?!)))\)")]
+		private static partial Regex CommandExprRegex();
 	}
 }

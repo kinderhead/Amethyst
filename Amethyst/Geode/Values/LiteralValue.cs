@@ -8,6 +8,7 @@ namespace Amethyst.Geode.Values
     {
         public readonly NBTValue Value = val;
         public override TypeSpecifier Type => type ?? new PrimitiveTypeSpecifier(Value.Type);
+		public override bool IsLiteral => true;
 
         public override ScoreValue AsScore(RenderContext ctx) => Value is NBTInt n ? ctx.Builder.Constant(n) : throw new InvalidOperationException($"\"{Value}\" is not an integer");
         public override Execute If(Execute cmd, RenderContext ctx, int tmp = 0) => throw new NotImplementedException(); // Ideally this shouldn't happen

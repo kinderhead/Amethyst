@@ -1,12 +1,11 @@
 namespace example;
 
-void main() {}
-
 #load
-void main( {
-    int x = 764ewew;
-    int y = ;
-    
-    //@/say $(x)
+void main() {
+    test(10, "yay");
+}
+
+void test(macro int t, macro string womp) {
+    @/say $(t) $(womp) e
 }
 

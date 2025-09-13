@@ -8,7 +8,7 @@ namespace Amethyst.Geode
     public abstract class Value
     {
         public abstract TypeSpecifier Type { get; }
-        public bool IsLiteral => this is LiteralValue;
+        public virtual bool IsLiteral => false;
 
         public abstract ScoreValue AsScore(RenderContext ctx);
         public abstract Execute If(Execute cmd, RenderContext ctx, int tmp = 0);

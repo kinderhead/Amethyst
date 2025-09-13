@@ -9,9 +9,10 @@ using System.Threading.Tasks;
 
 namespace Amethyst.AST
 {
-	public class ParserErrorHandler(string path, string file) : BaseErrorListener, IAntlrErrorListener<int>, IFileHandler
+	public class ParserErrorHandler(string path, string file, Visitor visitor) : BaseErrorListener, IAntlrErrorListener<int>, IFileHandler
 	{
 		public readonly string Path = path;
+		public readonly Visitor Visitor = visitor;
 		public bool Errored { get; private set; } = false;
 
 		public Dictionary<string, string> Files => new([new KeyValuePair<string, string>(Path, file)]);
@@ -30,7 +31,7 @@ namespace Amethyst.AST
 				//AnsiConsole.MarkupLine(new string(' ', charPositionInLine) + "[yellow]^[/]");
 				//AnsiConsole.MarkupLine($"[red]Syntax error:[/] [turquoise2]{msg.EscapeMarkup()}[/]\n\n");
 
-				var loc = new Location(Path, line, charPositionInLine + 1);
+				var loc = Visitor.LocOffset(new Location(Path, line, charPositionInLine + 1));
                 var term = new CompilerMessager(Color.Red);
 				term.Header($"Error at {loc}");
 				term.AddCode(this, new(loc, new(loc.File, loc.Line, loc.Column + length - 1)));

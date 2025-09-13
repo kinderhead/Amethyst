@@ -13,7 +13,7 @@ namespace Amethyst.Geode.IR.Instructions
 
         public override void Render(RenderContext ctx)
         {
-            ctx.Add(new RawCommand(Command));
+            ctx.Add(new RawCommand(Command, true)); // Not worrying about turning on macros manually bc I don't care
         }
 
         public override string Dump(Func<IInstructionArg, string> valueMap) => $"/{Command}";
