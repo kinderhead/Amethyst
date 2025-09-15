@@ -2,10 +2,11 @@ namespace example;
 
 #load
 void main() {
-    int[] arr;
-    int x = 0;
-
-    arr.add(10);
+    string x = "wooo";
     
-    print(arr[x]);
+    say(&x);
+}
+
+void say(macro string* womp) {
+    @/say $(womp)
 }

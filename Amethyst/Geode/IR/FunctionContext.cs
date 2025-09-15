@@ -2,6 +2,7 @@ using System.Text;
 using Amethyst.Errors;
 using Amethyst.Geode.IR.Instructions;
 using Amethyst.Geode.IR.Passes;
+using Amethyst.Geode.Types;
 using Amethyst.Geode.Values;
 using Datapack.Net.Data;
 using Datapack.Net.Function.Commands;
@@ -143,9 +144,9 @@ namespace Amethyst.Geode.IR
         public ValueRef? ImplicitCastOrNull(ValueRef val, TypeSpecifier type)
         {
             if (val.Type == type) return val;
-            else if (type is AnyTypeSpecifier) return val; // maybe make it actually change type
-            else if (val.Type is AnyTypeSpecifier) return val;
-            else if (val.Type.Implements(type)) return val;
+            else if (type is AnyTypeSpecifier) return val.SetType(type); // This hopefully shouldn't cause problems with reusing values
+            else if (val.Type is AnyTypeSpecifier) return val.SetType(type);
+            else if (val.Type.Implements(type)) return val.SetType(type);
             else if (val.Value is LiteralValue literal && type is PrimitiveTypeSpecifier)
             {
                 if (literal.Value.NumberType is NBTNumberType && type.EffectiveNumberType is NBTNumberType destType)

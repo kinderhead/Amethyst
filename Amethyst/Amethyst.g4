@@ -90,7 +90,11 @@ additiveExpression
     ;
 
 multiplicativeExpression
-    : postfixExpression ((Star | Slash) postfixExpression)*
+    : unaryExpression ((Star | Slash) unaryExpression)*
+    ;
+
+unaryExpression
+    : (And)* postfixExpression
     ;
 
 postfixExpression
@@ -147,6 +151,7 @@ expressionList
 type
     : id
     | type LSquareBrak RSquareBrak
+    | type Star
     ;
 
 id
@@ -187,6 +192,7 @@ Gt: '>';
 Gte: '>=';
 Lt: '<';
 Lte: '<=';
+And: '&';
 AndAnd: '&&';
 OrOr: '||';
 Dot: '.';

@@ -2,6 +2,7 @@
 using Amethyst.Geode;
 using Amethyst.Geode.IR;
 using Amethyst.Geode.IR.Instructions;
+using Amethyst.Geode.Types;
 using Amethyst.Geode.Values;
 
 namespace Amethyst.AST.Expressions

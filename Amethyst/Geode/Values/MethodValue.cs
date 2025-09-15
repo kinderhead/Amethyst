@@ -1,3 +1,5 @@
+using Amethyst.Geode.Types;
+
 namespace Amethyst.Geode.Values
 {
 	public class MethodValue(FunctionValue val, ValueRef self) : FunctionValue(val.ID, new(val.FuncType.Modifiers, val.FuncType.ReturnType, val.FuncType.Parameters[1..]))

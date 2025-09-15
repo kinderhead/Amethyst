@@ -2,6 +2,7 @@
 using Amethyst.Errors;
 using Amethyst.Geode;
 using Amethyst.Geode.IR;
+using Amethyst.Geode.Types;
 using Amethyst.Geode.Values;
 using Datapack.Net.Utils;
 
@@ -34,12 +35,6 @@ namespace Amethyst.AST
 			var funcType = GetFunctionType(compiler);
 
 			if (ID.Path.Any(char.IsUpper)) throw new InvalidNameError(ID.ToString());
-
-			if (Modifiers.HasFlag(FunctionModifiers.Inline))
-			{
-				if (funcType.Parameters.Any(i => i.Modifiers.HasFlag(ParameterModifiers.Macro))) throw new ModifierError("inline functions cannot have macro arguments");
-				return false;
-			}
 
 			ctx = new FunctionContext(compiler, (FunctionValue)compiler.Symbols[ID].Value, Tags);
 

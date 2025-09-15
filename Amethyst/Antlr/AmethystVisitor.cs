@@ -159,6 +159,12 @@ public interface IAmethystVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <return>The visitor result.</return>
 	Result VisitMultiplicativeExpression([NotNull] AmethystParser.MultiplicativeExpressionContext context);
 	/// <summary>
+	/// Visit a parse tree produced by <see cref="AmethystParser.unaryExpression"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitUnaryExpression([NotNull] AmethystParser.UnaryExpressionContext context);
+	/// <summary>
 	/// Visit a parse tree produced by <see cref="AmethystParser.postfixExpression"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>

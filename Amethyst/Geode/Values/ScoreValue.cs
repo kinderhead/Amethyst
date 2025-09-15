@@ -1,4 +1,5 @@
 using Amethyst.Errors;
+using Amethyst.Geode.Types;
 using Datapack.Net.Function;
 using Datapack.Net.Function.Commands;
 

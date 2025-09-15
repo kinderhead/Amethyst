@@ -1,6 +1,7 @@
 ﻿using Amethyst.Errors;
 using Amethyst.Geode;
 using Amethyst.Geode.IR;
+using Amethyst.Geode.Types;
 using Datapack.Net.Data;
 
 namespace Amethyst.AST
@@ -67,7 +68,14 @@ namespace Amethyst.AST
         protected override TypeSpecifier _Resolve(Compiler ctx, bool allowAuto = false) => new ListTypeSpecifier(Inner.Resolve(ctx, allowAuto));
 	}
 
-	public class AbstractInterfaceTypeSpecifier(LocationRange loc, string name, Dictionary<string, AbstractObjectProperty> props) : AbstractTypeSpecifier(loc), IRootChild
+    public class AbstractPointerTypeSpecifier(LocationRange loc, AbstractTypeSpecifier inner) : AbstractTypeSpecifier(loc)
+    {
+        public readonly AbstractTypeSpecifier Inner = inner;
+
+        protected override TypeSpecifier _Resolve(Compiler ctx, bool allowAuto = false) => new PointerTypeSpecifier(Inner.Resolve(ctx, allowAuto));
+    }
+
+    public class AbstractInterfaceTypeSpecifier(LocationRange loc, string name, Dictionary<string, AbstractObjectProperty> props) : AbstractTypeSpecifier(loc), IRootChild
 	{
 		public readonly string Name = name;
 		public readonly Dictionary<string, AbstractObjectProperty> Properties = props;

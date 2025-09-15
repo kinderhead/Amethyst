@@ -131,8 +131,9 @@ namespace Amethyst.AST
         public override Node VisitType([NotNull] AmethystParser.TypeContext context)
 		{
 			if (context.id() is AmethystParser.IdContext id) return new SimpleAbstractTypeSpecifier(Loc(context), Visit(id));
-			else if (context.type() is AmethystParser.TypeContext t) return new AbstractListTypeSpecifier(Loc(context), Visit(t));
-			else throw new NotImplementedException();
+			else if (context.LSquareBrak() is not null) return new AbstractListTypeSpecifier(Loc(context), Visit(context.type()));
+			else if (context.Star() is not null) return new AbstractPointerTypeSpecifier(Loc(context), Visit(context.type()));
+            else throw new NotImplementedException();
 		}
 
 		public override Node VisitExpression([NotNull] AmethystParser.ExpressionContext context) => Visit(context.children.First());
@@ -145,7 +146,7 @@ namespace Amethyst.AST
 
 		public override Node VisitLogicalExpression([NotNull] AmethystParser.LogicalExpressionContext context)
 		{
-			Expression node = (Expression)Visit(context.children.First());
+			var node = (Expression)Visit(context.children.First());
 			for (int i = 1; i < context.children.Count; i++)
 			{
 				var op = context.children[i].GetText() == "&&" ? LogicalOperation.And : LogicalOperation.Or;
@@ -156,7 +157,7 @@ namespace Amethyst.AST
 
 		public override Node VisitEqualityExpression([NotNull] AmethystParser.EqualityExpressionContext context)
 		{
-			Expression node = (Expression)Visit(context.children.First());
+			var node = (Expression)Visit(context.children.First());
 			for (int i = 1; i < context.children.Count; i++)
 			{
 				var op = context.children[i].GetText() == "==" ? ComparisonOperator.Eq : ComparisonOperator.Neq;
@@ -167,7 +168,7 @@ namespace Amethyst.AST
 
 		public override Node VisitRelationalExpression([NotNull] AmethystParser.RelationalExpressionContext context)
 		{
-			Expression node = (Expression)Visit(context.children.First());
+			var node = (Expression)Visit(context.children.First());
 			for (int i = 1; i < context.children.Count; i++)
 			{
 				var op = context.children[i].GetText() switch
@@ -184,7 +185,7 @@ namespace Amethyst.AST
 
 		public override Node VisitAdditiveExpression([NotNull] AmethystParser.AdditiveExpressionContext context)
 		{
-			Expression node = (Expression)Visit(context.children.First());
+			var node = (Expression)Visit(context.children.First());
 			for (int i = 1; i < context.children.Count; i++)
 			{
 				var op = context.children[i].GetText() == "+" ? ScoreOperation.Add : ScoreOperation.Sub;
@@ -195,7 +196,7 @@ namespace Amethyst.AST
 
 		public override Node VisitMultiplicativeExpression([NotNull] AmethystParser.MultiplicativeExpressionContext context)
 		{
-			Expression node = (Expression)Visit(context.children.First());
+			var node = (Expression)Visit(context.children.First());
 			for (int i = 1; i < context.children.Count; i++)
 			{
 				var op = context.children[i].GetText() == "*" ? ScoreOperation.Mul : ScoreOperation.Div;
@@ -203,6 +204,17 @@ namespace Amethyst.AST
 			}
 			return node;
 		}
+
+		public override Node VisitUnaryExpression([NotNull] AmethystParser.UnaryExpressionContext context)
+		{
+			var node = (Expression)Visit(context.children.Last());
+			for (int i = context.children.Count - 2; i >= 0; i--)
+			{
+				if (context.children[i].GetText() == "&") node = new ReferenceExpression(Loc(context), node);
+				// No check for other cases because parser errors might hit it and we don't want to stop the error checker
+			}
+			return node;
+        }
 
 		public override Node VisitPostfixExpression([NotNull] AmethystParser.PostfixExpressionContext context)
 		{

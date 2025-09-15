@@ -187,7 +187,7 @@ namespace Datapack.Net.Function.Commands
                     return builder.ToString();
                 }
 
-                builder.Append($" {Source?.GetTarget() ?? ""} {Start?.ToString() ?? ""} {End?.ToString() ?? ""}");
+                builder.Append($"{Source?.GetTarget() ?? ""} {Start?.ToString() ?? ""} {End?.ToString() ?? ""}");
 
                 return builder.ToString();
             }

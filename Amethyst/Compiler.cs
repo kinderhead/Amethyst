@@ -6,6 +6,7 @@ using Amethyst.Geode;
 using Amethyst.Geode.IR;
 using Amethyst.Geode.IR.InlineFunctions;
 using Amethyst.Geode.IR.Instructions;
+using Amethyst.Geode.Types;
 using Amethyst.Geode.Values;
 using Antlr4.Runtime;
 using Datapack.Net.Utils;

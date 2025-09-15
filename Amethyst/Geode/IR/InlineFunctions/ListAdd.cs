@@ -1,3 +1,4 @@
+using Amethyst.Geode.Types;
 using Amethyst.Geode.Values;
 using Datapack.Net.Utils;
 
@@ -5,7 +6,7 @@ namespace Amethyst.Geode.IR.InlineFunctions
 {
     public class ListAdd(NamespacedID id, FunctionTypeSpecifier type) : FunctionValue(id, type)
     {
-        public ListAdd() : this("minecraft:add", new FunctionTypeSpecifier(AST.FunctionModifiers.None, new VoidTypeSpecifier(), [
+        public ListAdd() : this("amethyst:add", new FunctionTypeSpecifier(AST.FunctionModifiers.None, new VoidTypeSpecifier(), [
             new(AST.ParameterModifiers.None, new ListTypeSpecifier(new GenericTypeSpecifier("T")), "this"),
             new(AST.ParameterModifiers.None, new GenericTypeSpecifier("T"), "value")
         ]))

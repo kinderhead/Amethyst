@@ -1,3 +1,4 @@
+using Amethyst.Geode.Types;
 using Amethyst.Geode.Values;
 using Datapack.Net.Data;
 using Datapack.Net.Function.Commands;

@@ -48,6 +48,12 @@ namespace Amethyst.Geode
             Type = val.Type;
         }
 
+        public ValueRef SetType(TypeSpecifier type)
+        {
+            Type = type;
+            return this;
+        }
+
         public void SetCustomName(string? name) => customName = name;
 
         public static implicit operator ValueRef(Value val) => new(val);

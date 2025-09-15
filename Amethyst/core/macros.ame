@@ -1,6 +1,6 @@
 // namespace amethyst;
 
-// void core/index-list(macro string dest, macro string src, macro int index) {
+// inline void core/index-list(macro string dest, macro string src, macro int index) {
 //     @/data modify $(dest) set from storage $(src)[$(index)]
 // }
 

@@ -1,5 +1,6 @@
 using System.Text;
 using Amethyst.Errors;
+using Amethyst.Geode.Types;
 using Amethyst.Geode.Values;
 using Datapack.Net.Data;
 
