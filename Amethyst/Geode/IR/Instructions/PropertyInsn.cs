@@ -20,11 +20,11 @@ namespace Amethyst.Geode.IR.Instructions
             var val = Arg<ValueRef>(0);
             var prop = Arg<ValueRef>(1);
 
-            if (val.Value is StorageValue sv && prop.Value is LiteralValue l)
+            if (val.Value is DataTargetValue nbt && prop.Value is LiteralValue l)
             {
                 if (l.Value is not NBTString name) throw new InvalidTypeError(prop.Type.ToString(), "string");
                 Remove();
-                return sv.Property(name, ReturnType);
+                return nbt.Property(name, ReturnType);
             }
 
             return null;

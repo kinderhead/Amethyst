@@ -28,7 +28,7 @@ namespace Amethyst.Geode
         {
             if (val is LiteralValue literal) Store(literal, ctx);
             else if (val is ScoreValue score) Store(score, ctx);
-            else if (val is StorageValue storage) Store(storage, ctx);
+            else if (val is DataTargetValue storage) Store(storage, ctx);
             else if (val is ConditionalValue cond) Store(cond, ctx);
             else if (val is MacroValue macro) Store(macro, ctx);
             else throw new NotImplementedException();
@@ -36,7 +36,7 @@ namespace Amethyst.Geode
 
         public abstract void Store(LiteralValue literal, RenderContext ctx);
         public abstract void Store(ScoreValue score, RenderContext ctx);
-        public abstract void Store(StorageValue score, RenderContext ctx);
+        public abstract void Store(DataTargetValue nbt, RenderContext ctx);
         public virtual void Store(MacroValue macro, RenderContext ctx) => Store(new LiteralValue(new NBTRawString($"$({macro.Name})")), ctx);
         public virtual void Store(ConditionalValue cond, RenderContext ctx)
         {
@@ -48,7 +48,7 @@ namespace Amethyst.Geode
         {
             if (val is LiteralValue literal) ListAdd(literal, ctx);
             else if (val is ScoreValue score) ListAdd(score, ctx);
-            else if (val is StorageValue storage) ListAdd(storage, ctx);
+            else if (val is DataTargetValue storage) ListAdd(storage, ctx);
             else if (val is ConditionalValue cond) ListAdd(cond, ctx);
             else if (val is MacroValue macro) ListAdd(macro, ctx);
             else throw new NotImplementedException();
@@ -63,7 +63,7 @@ namespace Amethyst.Geode
             ListAdd(tmp, ctx);
         }
 
-        public abstract void ListAdd(StorageValue storage, RenderContext ctx);
+        public abstract void ListAdd(DataTargetValue nbt, RenderContext ctx);
 
         public virtual void ListAdd(ConditionalValue cond, RenderContext ctx)
         {

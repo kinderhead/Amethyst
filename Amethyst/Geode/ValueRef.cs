@@ -14,7 +14,7 @@ namespace Amethyst.Geode
         public bool NeedsStackVar => Value is null && !Type.ShouldStoreInScore;
 
         private string? customName;
-        public string Name => customName is null ? Value is not null ? $"{(Value.IsLiteral || Value is StorageValue ? "" : "%")}{Value}" : "" : customName;
+        public string Name => customName is null ? Value is not null ? $"{(Value.IsLiteral || Value is DataTargetValue ? "" : "%")}{Value}" : "" : customName;
 
         public HashSet<ValueRef> Dependencies { get; } = [];
 

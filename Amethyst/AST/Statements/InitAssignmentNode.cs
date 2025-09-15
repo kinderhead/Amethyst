@@ -10,7 +10,7 @@ namespace Amethyst.AST.Statements
 		public readonly AbstractTypeSpecifier Type = type;
 		public readonly string Name = name;
 		public readonly Expression? Expression = expr;
-		public override IEnumerable<Statement> Statements => [];
+		public override IEnumerable<Statement> SubStatements => [];
 
 		public override void Compile(FunctionContext ctx)
 		{

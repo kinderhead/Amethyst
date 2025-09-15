@@ -66,11 +66,12 @@ namespace Datapack.Net.Function.Commands
         public Execute Rotated(Rotation rotation) => Add(new Subcommand.Rotated(rotation));
         public Execute Rotated(IEntityTarget target) => Add(new Subcommand.Rotated(target));
         public Execute Summon(EntityType target) => Add(new Subcommand.Summon(target));
-        public Execute Store(Position pos, string path, NBTNumberType type, double scale, bool result = true) => Add(new Subcommand.Store { TargetPos = pos, Path = path, DataType = type, Scale = scale, Result = result });
+        public Execute Store(IDataTarget target, NBTNumberType type, double scale, bool result = true) => Add(new Subcommand.Store { Target = target, DataType = type, Scale = scale, Result = result });
+        public Execute Store(Position pos, string path, NBTNumberType type, double scale, bool result = true) => Add(new Subcommand.Store { Target = new BlockDataTarget(pos, path), DataType = type, Scale = scale, Result = result });
         public Execute Store(Bossbar id, BossbarValueType type, bool result = true) => Add(new Subcommand.Store { BossbarID = id, BossbarType = type, Result = result });
-        public Execute Store(IEntityTarget target, string path, NBTNumberType type, double scale, bool result = true) => Add(new Subcommand.Store { Target = target, Path = path, DataType = type, Scale = scale, Result = result });
-        public Execute Store(IEntityTarget target, Score objective, bool result = true) => Add(new Subcommand.Store { Target = target, Objective = objective, Result = result });
-        public Execute Store(Storage target, string path, NBTNumberType type, double scale, bool result = true) => Add(new Subcommand.Store { StorageTarget = target, Path = path, DataType = type, Scale = scale, Result = result });
+        public Execute Store(IEntityTarget target, string path, NBTNumberType type, double scale, bool result = true) => Add(new Subcommand.Store { Target = new EntityDataTarget(target, path), DataType = type, Scale = scale, Result = result });
+        public Execute Store(IEntityTarget target, Score objective, bool result = true) => Add(new Subcommand.Store { EntityTarget = target, Objective = objective, Result = result });
+        public Execute Store(Storage target, string path, NBTNumberType type, double scale, bool result = true) => Add(new Subcommand.Store { Target = new StorageTarget(target, path), DataType = type, Scale = scale, Result = result });
 
         public Execute Add(Subcommand sbc)
         {
@@ -514,16 +515,14 @@ namespace Datapack.Net.Function.Commands
             {
                 public bool Result;
 
-                public Position? TargetPos;
-                public IEntityTarget? Target;
-                public Storage? StorageTarget;
-                public string? Path;
+                public IDataTarget? Target;
                 public NBTNumberType DataType;
                 public double? Scale;
 
                 public Bossbar? BossbarID;
                 public BossbarValueType BossbarType;
 
+                public IEntityTarget? EntityTarget;
                 public Score? Objective;
 
                 public override string ToString()
@@ -531,9 +530,9 @@ namespace Datapack.Net.Function.Commands
                     var prefix = $"store {(Result ? "result" : "success")} ";
                     var postfix = "";
 
-                    if (TargetPos != null)
+                    if (Target is not null)
                     {
-                        postfix = $"block {TargetPos} {Path} {GetDataTypeName(DataType)} {Scale}";
+                        postfix = $"{Target.GetTarget()} {GetDataTypeName(DataType)} {Scale}";
                     }
                     else if (BossbarID != null)
                     {
@@ -541,15 +540,7 @@ namespace Datapack.Net.Function.Commands
                     }
                     else if (Objective != null)
                     {
-                        postfix = $"score {Target?.Get()} {Objective}";
-                    }
-                    else if (Target != null)
-                    {
-                        postfix = $"entity {Target.Get()} {Path} {GetDataTypeName(DataType)} {Scale}";
-                    }
-                    else if (StorageTarget != null)
-                    {
-                        postfix = $"storage {StorageTarget} {Path} {GetDataTypeName(DataType)} {Scale}";
+                        postfix = $"score {EntityTarget?.Get()} {Objective}";
                     }
 
                     return prefix + postfix;

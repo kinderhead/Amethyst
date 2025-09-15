@@ -9,15 +9,16 @@ namespace Amethyst.AST.Expressions
 	public abstract class Expression(LocationRange loc) : Node(loc)
 	{
 		public abstract TypeSpecifier ComputeType(FunctionContext ctx);
-		protected abstract ValueRef _Execute(FunctionContext ctx);
-
+		
 		public ValueRef Execute(FunctionContext ctx)
 		{
 			ValueRef? ret = null;
 			if (!ctx.Compiler.WrapError(Location, () => ret = _Execute(ctx))) throw new EmptyAmethystError();
 			return ret!;
 		}
-	}
+
+        protected abstract ValueRef _Execute(FunctionContext ctx);
+    }
 
 	public class LiteralExpression(LocationRange loc, NBTValue val) : Expression(loc)
 	{

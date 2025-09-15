@@ -9,7 +9,7 @@ namespace Amethyst.AST.Statements
 	public class ReturnStatement(LocationRange loc, Expression? expr) : Statement(loc)
 	{
 		public readonly Expression? Expression = expr;
-		public override IEnumerable<Statement> Statements => [];
+		public override IEnumerable<Statement> SubStatements => [];
 
 		public override void Compile(FunctionContext ctx)
 		{

@@ -6,7 +6,7 @@ namespace Amethyst.AST.Statements
 	public class BlockNode(LocationRange loc) : Statement(loc)
 	{
 		private readonly List<Statement> statements = [];
-		public override IEnumerable<Statement> Statements => statements;
+		public override IEnumerable<Statement> SubStatements => statements;
 
 		public override void Compile(FunctionContext ctx)
 		{
@@ -19,7 +19,7 @@ namespace Amethyst.AST.Statements
 		{
 			var success = true;
 
-			foreach (var i in Statements)
+			foreach (var i in SubStatements)
 			{
 				if (!ctx.Compiler.WrapError(i.Location, () => i.Compile(ctx))) success = false;
 			}

@@ -9,49 +9,24 @@ namespace Datapack.Net.Function.Commands
 {
     public abstract class DataCommand(bool macro) : Command(macro)
     {
-        public class Get : DataCommand
+        public class Get(IDataTarget target, double? scale = null, bool macro = false) : DataCommand(macro)
 		{
-            public readonly Position? TargetPos;
-            public readonly IEntityTarget? EntityTarget;
-            public readonly Storage? StorageTarget;
+            public readonly IDataTarget Target = target;
 
-            public readonly string? Path;
-            public readonly double? Scale;
+            public readonly double? Scale = scale;
 
-            public Get(Position pos, string? path = null, double? scale = null, bool macro = false) : base(macro)
-            {
-                TargetPos = pos;
-                Path = path;
-                Scale = scale;
-            }
-
-            public Get(IEntityTarget target, string? path = null, double? scale = null, bool macro = false) : base(macro)
-            {
-                EntityTarget = target.RequireOne();
-                Path = path;
-                Scale = scale;
-            }
-
-            public Get(Storage target, string? path = null, double? scale = null, bool macro = false) : base(macro)
-            {
-                StorageTarget = target;
-                Path = path;
-                Scale = scale;
-            }
+            public Get(Position pos, string? path = null, double? scale = null, bool macro = false) : this(new BlockDataTarget(pos, path), scale, macro) { }
+            public Get(IEntityTarget target, string? path = null, double? scale = null, bool macro = false) : this(new EntityDataTarget(target, path), scale, macro) { }
+            public Get(Storage target, string? path = null, double? scale = null, bool macro = false) : this(new StorageTarget(target, path), scale, macro) { }
 
             protected override string PreBuild()
             {
-                var target = "";
-                if (TargetPos != null) target = "block " + TargetPos.ToString();
-                if (EntityTarget != null) target = "entity " + EntityTarget.Get();
-                if (StorageTarget != null) target = "storage " + StorageTarget.ToString();
-
-                if (Scale != null && Path == null)
+                if (Scale is not null && Target.Path is null)
                 {
                     throw new ArgumentException("Invalid syntax. Path cannot be null here.");
                 }
 
-                return $"data get {target} {Path} {Scale}";
+                return $"data get {Target.GetTarget()} {Scale}";
             }
         }
 
@@ -92,17 +67,10 @@ namespace Datapack.Net.Function.Commands
             }
         }
 
-        public class Modify : DataCommand
+        public class Modify(IDataTarget target, bool macro = false) : DataCommand(macro)
 		{
-            public readonly Position? TargetPos;
-            public readonly IEntityTarget? EntityTarget;
-            public readonly Storage? StorageTarget;
-            public readonly string TargetPath;
-
-            public Position? SourcePos;
-            public IEntityTarget? EntitySource;
-            public Storage? StorageSource;
-            public string? SourcePath;
+            public readonly IDataTarget Target = target;
+            public IDataTarget Source;
 
             public int? Start;
             public int? End;
@@ -111,23 +79,9 @@ namespace Datapack.Net.Function.Commands
             public string Type;
             public string Modifier;
 
-            public Modify(Position target, string targetPath, bool macro = false) : base(macro)
-            {
-                TargetPos = target;
-                TargetPath = targetPath;
-            }
-
-            public Modify(IEntityTarget target, string targetPath, bool macro = false) : base(macro)
-            {
-                EntityTarget = target.RequireOne();
-                TargetPath = targetPath;
-            }
-
-            public Modify(Storage target, string targetPath, bool macro = false) : base(macro)
-            {
-                StorageTarget = target;
-                TargetPath = targetPath;
-            }
+            public Modify(Position target, string targetPath, bool macro = false) : this(new BlockDataTarget(target, targetPath), macro) { }
+            public Modify(IEntityTarget target, string targetPath, bool macro = false) : this(new EntityDataTarget(target, targetPath), macro) { }
+            public Modify(Storage target, string targetPath, bool macro = false) : this(new StorageTarget(target, targetPath), macro) { }
 
             public Modify Append()
             {
@@ -159,35 +113,38 @@ namespace Datapack.Net.Function.Commands
                 return this;
             }
 
+            public Modify From(IDataTarget target)
+            {
+                Modifier = "from";
+                Source = target;
+                return this;
+            }
+
             public Modify From(Position source, string? sourcePath = null)
             {
                 Modifier = "from";
-                SourcePos = source;
-                SourcePath = sourcePath;
+                Source = new BlockDataTarget(source, sourcePath);
                 return this;
             }
 
             public Modify From(IEntityTarget source, string? sourcePath = null)
             {
                 Modifier = "from";
-                EntitySource = source.RequireOne();
-                SourcePath = sourcePath;
+                Source = new EntityDataTarget(source, sourcePath);
                 return this;
             }
 
             public Modify From(Storage source, string? sourcePath = null)
             {
                 Modifier = "from";
-                StorageSource = source;
-                SourcePath = sourcePath;
+                Source = new StorageTarget(source, sourcePath);
                 return this;
             }
 
             public Modify String(Position source, string? sourcePath = null, int? start = null, int? end = null)
             {
                 Modifier = "string";
-                SourcePos = source;
-                SourcePath = sourcePath;
+                Source = new BlockDataTarget(source, sourcePath);
                 Start = start;
                 End = end;
                 return this;
@@ -196,8 +153,7 @@ namespace Datapack.Net.Function.Commands
             public Modify String(IEntityTarget source, string? sourcePath = null, int? start = null, int? end = null)
             {
                 Modifier = "string";
-                EntitySource = source.RequireOne();
-                SourcePath = sourcePath;
+                Source = new EntityDataTarget(source, sourcePath);
                 Start = start;
                 End = end;
                 return this;
@@ -206,8 +162,7 @@ namespace Datapack.Net.Function.Commands
             public Modify String(Storage source, string? sourcePath = null, int? start = null, int? end = null)
             {
                 Modifier = "string";
-                StorageSource = source;
-                SourcePath = sourcePath;
+                Source = new StorageTarget(source, sourcePath);
                 Start = start;
                 End = end;
                 return this;
@@ -224,12 +179,7 @@ namespace Datapack.Net.Function.Commands
             {
                 var builder = new StringBuilder($"data modify ");
 
-                if (TargetPos != null) builder.Append($"block {TargetPos}");
-                else if (EntityTarget != null) builder.Append($"entity {EntityTarget.Get()}");
-                else if (StorageTarget != null) builder.Append($"storage {StorageTarget}");
-                else throw new ArgumentException("Invalid data modify command");
-
-                builder.Append($" {TargetPath} {Type} {Modifier} ");
+                builder.Append($"{Target.GetTarget()} {Type} {Modifier} ");
 
                 if (Val != null)
                 {
@@ -237,54 +187,24 @@ namespace Datapack.Net.Function.Commands
                     return builder.ToString();
                 }
 
-                if (SourcePos != null) builder.Append($"block {SourcePos}");
-                else if (EntitySource != null) builder.Append($"entity {EntitySource.Get()}");
-                else if (StorageSource != null) builder.Append($"storage {StorageSource}");
-                else throw new ArgumentException("Invalid data modify command");
-
-                builder.Append($" {SourcePath ?? ""} {Start?.ToString() ?? ""} {End?.ToString() ?? ""}");
+                builder.Append($" {Source?.GetTarget() ?? ""} {Start?.ToString() ?? ""} {End?.ToString() ?? ""}");
 
                 return builder.ToString();
             }
         }
 
-        public class Remove : DataCommand
+        public class Remove(IDataTarget target, bool macro = false) : DataCommand(macro)
 		{
-            public readonly Position? TargetPos;
-            public readonly IEntityTarget? EntityTarget;
-            public readonly Storage? StorageTarget;
+            public readonly IDataTarget Target = target;
             public readonly string TargetPath;
 
-            public Remove(Position target, string targetPath, bool macro = false) : base(macro)
-            {
-                TargetPos = target;
-                TargetPath = targetPath;
-            }
-
-            public Remove(IEntityTarget target, string targetPath, bool macro = false) : base(macro)
-            {
-                EntityTarget = target.RequireOne();
-                TargetPath = targetPath;
-            }
-
-            public Remove(Storage target, string targetPath, bool macro = false) : base(macro)
-            {
-                StorageTarget = target;
-                TargetPath = targetPath;
-            }
+            public Remove(Position target, string targetPath, bool macro = false) : this(new BlockDataTarget(target, targetPath), macro) { }
+            public Remove(IEntityTarget target, string targetPath, bool macro = false) : this(new EntityDataTarget(target, targetPath), macro) { }
+            public Remove(Storage target, string targetPath, bool macro = false) : this(new StorageTarget(target, targetPath), macro) { }
 
             protected override string PreBuild()
             {
-                var builder = new StringBuilder($"data remove ");
-
-                if (TargetPos != null) builder.Append($"block {TargetPos}");
-                else if (EntityTarget != null) builder.Append($"entity {EntityTarget.Get()}");
-                else if (StorageTarget != null) builder.Append($"storage {StorageTarget}");
-                else throw new ArgumentException("Invalid data remove command");
-
-                builder.Append($" {TargetPath}");
-
-                return builder.ToString();
+                return $"data remove {Target.GetTarget()}";
             }
         }
     }

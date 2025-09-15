@@ -2,6 +2,8 @@
 
 ![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/kinderhead/Datapack.Net/dotnet.yml) ![NuGet Downloads](https://img.shields.io/nuget/dt/Datapack.Net?label=NuGet%20Downloads)
 
+#### Go [here](https://github.com/kinderhead/Datapack.Net/tree/master/Amethyst) for the Amethyst programming language.
+
 A Minecraft datapack generator and utility library. Also contains an experimental [programming language](https://github.com/kinderhead/Datapack.Net/tree/master/Amethyst).
 
 Datapack.Net still has a long way to go, so feel free to play around and catch bugs. I might notice when bug reports are made.

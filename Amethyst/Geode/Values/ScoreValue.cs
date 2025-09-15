@@ -12,7 +12,7 @@ namespace Amethyst.Geode.Values
 
         public override void Store(ScoreValue score, RenderContext ctx) => ctx.Add(new Scoreboard.Players.Operation(Target, Score, ScoreOperation.Assign, score.Target, score.Score));
         public override void Store(LiteralValue literal, RenderContext ctx) => ctx.Add(new Scoreboard.Players.Set(Target, Score, literal.ToString()));
-        public override void Store(StorageValue score, RenderContext ctx) => ctx.Add(new Execute().Store(Target, Score).Run(new DataCommand.Get(score.Storage, score.Path)));
+        public override void Store(DataTargetValue nbt, RenderContext ctx) => ctx.Add(new Execute().Store(Target, Score).Run(new DataCommand.Get(nbt.Target)));
 
         public override ScoreValue AsScore(RenderContext ctx) => this;
         public override Execute If(Execute cmd, RenderContext ctx, int tmp = 0) => cmd.Unless.Score(Target, Score, 0);
@@ -24,6 +24,6 @@ namespace Amethyst.Geode.Values
         public override int GetHashCode() => HashCode.Combine(Target, Score);
 
         public override void ListAdd(LiteralValue literal, RenderContext ctx) => throw new InvalidTypeError("int", "list");
-        public override void ListAdd(StorageValue score, RenderContext ctx) => throw new InvalidTypeError("int", "list");
+        public override void ListAdd(DataTargetValue nbt, RenderContext ctx) => throw new InvalidTypeError("int", "list");
     }
 }

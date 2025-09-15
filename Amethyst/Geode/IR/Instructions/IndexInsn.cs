@@ -21,7 +21,7 @@ namespace Amethyst.Geode.IR.Instructions
 			{
 				if (i.Value is not NBTInt val) throw new InvalidTypeError(index.Type.ToString(), "int");
 				Remove();
-				return Arg<ValueRef>(0).Expect<StorageValue>().Index(val.Value, ReturnType);
+				return Arg<ValueRef>(0).Expect<DataTargetValue>().Index(val.Value, ReturnType);
 			}
 
 			return null;

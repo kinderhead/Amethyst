@@ -29,8 +29,8 @@ namespace Amethyst.Geode.Values
                     else processedArgs.Add(param.Name, val);
                 }
 
-                if (processedArgs.Count != 0) ctx.StoreCompound(new(GeodeBuilder.RuntimeID, "stack[-1].args", PrimitiveTypeSpecifier.Compound), processedArgs, setEmpty: false);
-                if (macros.Count != 0) processedMacros = ctx.StoreCompoundOrReturnConstant(new(GeodeBuilder.RuntimeID, "stack[-1].macros", PrimitiveTypeSpecifier.Compound), macros); // Minecraft throws an error if there are mismatched macro args, so we always reset it
+                if (processedArgs.Count != 0) ctx.StoreCompound(new StorageValue(GeodeBuilder.RuntimeID, "stack[-1].args", PrimitiveTypeSpecifier.Compound), processedArgs, setEmpty: false);
+                if (macros.Count != 0) processedMacros = ctx.StoreCompoundOrReturnConstant(new StorageValue(GeodeBuilder.RuntimeID, "stack[-1].macros", PrimitiveTypeSpecifier.Compound), macros); // Minecraft throws an error if there are mismatched macro args, so we always reset it
             }
 
             if (processedMacros is StorageValue s) ctx.Add(new FunctionCommand(ID, s.Storage, s.Path));

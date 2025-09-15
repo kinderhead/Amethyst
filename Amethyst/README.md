@@ -137,7 +137,13 @@ Commands can be directly inlined into functions like so:
 @/say hi
 ```
 
-Inlining expressions is a planned feature.
+You can also inline expressions into commands:
+
+```cs
+@/say $(x + y)
+```
+
+Inline expressions are applied as macros.
 
 ### Macro functions
 

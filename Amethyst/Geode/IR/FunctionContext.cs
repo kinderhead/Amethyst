@@ -144,7 +144,7 @@ namespace Amethyst.Geode.IR
         {
             if (val.Type == type) return val;
             else if (type is AnyTypeSpecifier) return val; // maybe make it actually change type
-            else if (val.Type is AnyTypeSpecifier) return ExplicitCast(val, type);
+            else if (val.Type is AnyTypeSpecifier) return val;
             else if (val.Type.Implements(type)) return val;
             else if (val.Value is LiteralValue literal && type is PrimitiveTypeSpecifier)
             {
@@ -161,7 +161,6 @@ namespace Amethyst.Geode.IR
         {
             if (ImplicitCastOrNull(val, type) is ValueRef ret) return ret;
             else if (type.EffectiveType == NBTType.Int) return Add(new LoadInsn(val, type));
-            else if (val.Type is AnyTypeSpecifier) return val; // maybe make it actually change type
 
             throw new InvalidTypeError(val.Type.ToString(), type.ToString());
         }
