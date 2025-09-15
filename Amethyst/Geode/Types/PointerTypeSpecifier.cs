@@ -1,8 +1,5 @@
 ﻿using Amethyst.Geode.Values;
 using Datapack.Net.Data;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Amethyst.Geode.Types
 {
@@ -16,13 +13,8 @@ namespace Amethyst.Geode.Types
 		public override NBTType EffectiveType => NBTType.String;
 		public override string BasePath => "amethyst";
 
-        protected override bool AreEqual(TypeSpecifier obj) => obj is PointerTypeSpecifier p && p.Inner == Inner;
-
-        public static LiteralValue From(DataTargetValue val) => new(val.Target.GetTarget(), new PointerTypeSpecifier(val.Type));
-
-		public override object Clone()
-		{
-			throw new NotImplementedException();
-		}
+		protected override bool AreEqual(TypeSpecifier obj) => obj is PointerTypeSpecifier p && p.Inner == Inner;
+		public static LiteralValue From(DataTargetValue val) => new(val.Target.GetTarget(), new PointerTypeSpecifier(val.Type));
+		public override object Clone() => new PointerTypeSpecifier((TypeSpecifier)Inner.Clone());
 	}
 }
