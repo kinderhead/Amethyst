@@ -155,7 +155,7 @@ void func(macro int arg, string non_macro_arg) { ... }
 
 As you can see, macro arguments can be mixed with regular arguments.
 
-**WARNING**: macro string arguments will likely throw a runtime error if there are any spaces in the string.
+**WARNING**: macro string arguments have quotes automatically placed at each use. It is recommended to use a different type like `nbt` if this is not the desired effect.
 
 ### Global Variables
 

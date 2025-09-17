@@ -38,7 +38,7 @@ namespace Amethyst.Geode
         public abstract void Store(LiteralValue literal, RenderContext ctx);
         public abstract void Store(ScoreValue score, RenderContext ctx);
         public abstract void Store(DataTargetValue nbt, RenderContext ctx);
-        public virtual void Store(MacroValue macro, RenderContext ctx) => Store(new LiteralValue(new NBTRawString($"$({macro.Name})")), ctx);
+        public virtual void Store(MacroValue macro, RenderContext ctx) => Store(new LiteralValue(new NBTRawString(macro.GetMacro())), ctx);
         public virtual void Store(ConditionalValue cond, RenderContext ctx)
         {
             Store(new LiteralValue(false), ctx);
@@ -73,6 +73,6 @@ namespace Amethyst.Geode
             ListAdd(tmp, ctx);
         }
 
-        public virtual void ListAdd(MacroValue macro, RenderContext ctx) => ListAdd(new LiteralValue(new NBTRawString($"$({macro.Name})")), ctx);
+        public virtual void ListAdd(MacroValue macro, RenderContext ctx) => ListAdd(new LiteralValue(new NBTRawString(macro.GetMacro())), ctx);
     }
 }

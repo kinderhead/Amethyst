@@ -159,7 +159,7 @@ namespace Amethyst
 
 		public void Register(Intrinsic func) => Symbols[func.ID] = new(func.ID, LocationRange.Empty, func);
 
-		public static readonly List<string> CoreLibrary = ["macros.ame"];
+		public static readonly List<string> CoreLibrary = ["indexing.ame"];
 		//public static readonly Score ReturnScore = new("returned", "dummy");
 	}
 

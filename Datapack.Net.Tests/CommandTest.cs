@@ -245,12 +245,12 @@ namespace Datapack.Net.Tests
             var cmd = new Execute()
                 .Store(new Position(0, 0, 0), "hi", NBTNumberType.Byte, 1)
                 .Store(new Bossbar(new("test:test")), BossbarValueType.Max, false)
-                .Store(new TargetSelector(TargetType.e), "test", NBTNumberType.Int, 4)
-                .Store(new TargetSelector(TargetType.e), new Score("test", "dummy"), false)
+                .Store(new TargetSelector(TargetType.p), "test", NBTNumberType.Int, 4)
+                .Store(new TargetSelector(TargetType.p), new Score("test", "dummy"), false)
                 .Store(new Storage("test:test"), "wah", NBTNumberType.Double, 4.3)
                 .Run(new FunctionCommand(func));
 
-            Assert.That(cmd.Build(), Is.EqualTo("execute store result block 0 0 0 hi byte 1 store success bossbar test:test max store result entity @e test int 4 store success score @e test store result storage test:test wah double 4.3 run function test:func"));
+            Assert.That(cmd.Build(), Is.EqualTo("execute store result block 0 0 0 hi byte 1 store success bossbar test:test max store result entity @p test int 4 store success score @p test store result storage test:test wah double 4.3 run function test:func"));
         }
 
         #endregion

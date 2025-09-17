@@ -10,8 +10,11 @@ namespace Amethyst.Geode.Types
 		public readonly NBTType Type = type;
 		public override NBTType EffectiveType => Type;
 
-		//public override bool IsAssignableTo(TypeSpecifier other) => (other.IsList && Type == NBTType.List) || base.IsAssignableTo(other);
-		public override TypeSpecifier? Property(string name) => Type == NBTType.Compound ? new AnyTypeSpecifier() : base.Property(name);
+		public override string MacroGuardStart => Type == NBTType.String ? "\"" : "";
+		public override string MacroGuardEnd => Type == NBTType.String ? "\"" : "";
+
+        //public override bool IsAssignableTo(TypeSpecifier other) => (other.IsList && Type == NBTType.List) || base.IsAssignableTo(other);
+        public override TypeSpecifier? Property(string name) => Type == NBTType.Compound ? new AnyTypeSpecifier() : base.Property(name);
 
 		protected override bool AreEqual(TypeSpecifier obj) => obj is PrimitiveTypeSpecifier p && p.Type == Type;
 		public override string ToString() => Enum.GetName(Type)?.ToLower() ?? throw new InvalidOperationException();

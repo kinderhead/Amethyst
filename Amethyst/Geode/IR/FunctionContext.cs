@@ -144,8 +144,8 @@ namespace Amethyst.Geode.IR
         public ValueRef? ImplicitCastOrNull(ValueRef val, TypeSpecifier type)
         {
             if (val.Type == type) return val;
-            else if (type is AnyTypeSpecifier) return val.SetType(type); // This hopefully shouldn't cause problems with reusing values
-            else if (val.Type is AnyTypeSpecifier) return val.SetType(type);
+            else if (type is AnyTypeSpecifier) return val; // Don't set type so that things like macro guards can propagate
+            else if (val.Type is AnyTypeSpecifier) return val.SetType(type); // This hopefully shouldn't cause problems with reusing values
             else if (val.Type.Implements(type)) return val.SetType(type);
             else if (val.Value is LiteralValue literal && type is PrimitiveTypeSpecifier)
             {
