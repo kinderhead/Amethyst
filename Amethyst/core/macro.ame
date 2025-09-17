@@ -1,0 +1,6 @@
+namespace amethyst:core/macro;
+
+inline void guard(macro nbt* dest, macro nbt start, macro nbt value, macro nbt end) {
+    @/data modify $(dest) set value $(start)$(value)$(end)
+}
+

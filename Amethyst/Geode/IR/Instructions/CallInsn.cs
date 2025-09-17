@@ -7,7 +7,7 @@ namespace Amethyst.Geode.IR.Instructions
     public class CallInsn(ValueRef func, IEnumerable<ValueRef> args) : Instruction([func, .. args])
     {
         public override string Name => "call";
-        public override NBTType?[] ArgTypes => [null, .. FuncType.Parameters.Select(i => i.Type.EffectiveType)];
+        public override NBTType?[] ArgTypes => [null, .. FuncType.Parameters.Select(i => i.Type is VarTypeSpecifier ? (NBTType?)null : i.Type.EffectiveType)];
         public override TypeSpecifier ReturnType => FuncType.ReturnType;
         public FunctionTypeSpecifier FuncType => Arg<ValueRef>(0).Expect<FunctionValue>().FuncType;
 

@@ -6,7 +6,7 @@
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build",
-            "program": "${workspaceFolder}/Amethyst/bin/Debug/net9.0/Amethyst.dll",
+            "program": "${workspaceFolder}/Amethyst/bin/Debug/net10.0/Amethyst.dll",
             "args": ["examples/test.ame", "-o", "test.zip"],
             "cwd": "${workspaceFolder}/Amethyst",
             "stopAtEntry": false,
@@ -17,7 +17,7 @@
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build",
-            "program": "${workspaceFolder}/Amethyst/bin/Debug/net9.0/Amethyst.dll",
+            "program": "${workspaceFolder}/Amethyst/bin/Debug/net10.0/Amethyst.dll",
             "args": ["tests/*.ame", "-o", "test.zip"],
             "cwd": "${workspaceFolder}/Amethyst",
             "stopAtEntry": false,
@@ -32,7 +32,7 @@
             "request": "launch",
             "preLaunchTask": "build",
             // If you have changed target frameworks, make sure to update the program path.
-            "program": "${workspaceFolder}/TNTCannon/bin/Debug/net8.0/TNTCannon.dll",
+            "program": "${workspaceFolder}/TNTCannon/bin/Debug/net10.0/TNTCannon.dll",
             "args": [],
             "cwd": "${workspaceFolder}/TNTCannon",
             // For more information about the 'console' field, see https://aka.ms/VSCode-CS-LaunchJson-Console

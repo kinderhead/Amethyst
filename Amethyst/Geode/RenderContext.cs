@@ -1,7 +1,9 @@
+using Amethyst.Errors;
 using Amethyst.Geode.IR;
 using Amethyst.Geode.Values;
 using Datapack.Net.Function;
 using Datapack.Net.Function.Commands;
+using Datapack.Net.Utils;
 
 namespace Amethyst.Geode
 {
@@ -30,7 +32,7 @@ namespace Amethyst.Geode
 
             foreach (var (key, val) in dict.Select(i => (i.Key, i.Value.Expect())))
             {
-                if (val.IsLiteral) nbt[key] = ((LiteralValue)val).Value;
+                if (val is ILiteralValue l) nbt[key] = l.Value;
                 else runtime[key] = val;
             }
 
@@ -46,11 +48,19 @@ namespace Amethyst.Geode
             return dest;
         }
 
-        public Command CallFunction(MCFunction func)
+        public Command CallSubFunction(MCFunction func)
         {
-            if (Func.IsMacroFunction) return new FunctionCommand(func, [.. Func.Decl.FuncType.Parameters.Where(i => i.Modifiers.HasFlag(AST.ParameterModifiers.Macro)).Select(i => new KeyValuePair<string, Datapack.Net.Data.NBTValue>(i.Name, $"$({i.Name})"))]);
+            if (Func.IsMacroFunction) return new FunctionCommand(func, [.. Func.Decl.FuncType.Parameters.Where(i => i.Modifiers.HasFlag(AST.ParameterModifiers.Macro)).Select(i => new KeyValuePair<string, Datapack.Net.Data.NBTValue>(i.Name, $"\"$({i.Name})\""))]);
             else return new FunctionCommand(func);
         }
+
+        public void Call(NamespacedID id, bool applyGuard, params ValueRef[] args)
+        {
+            if (Func.GetGlobal(id) is not FunctionValue func) throw new UndefinedSymbolError(id.ToString());
+            func.Call(this, args, applyGuard);
+        }
+
+        public void Call(NamespacedID id, params ValueRef[] args) => Call(id, true, args);
 
         public List<Command> WithFaux(Action<FauxRenderContext> func)
         {

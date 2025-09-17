@@ -7,8 +7,8 @@ namespace Amethyst.Geode
 	public abstract class TypeSpecifier : ICloneable
 	{
 		public abstract bool Operable { get; }
-        public abstract LiteralValue DefaultValue { get; }
-        public virtual bool IsList => false;
+		public abstract LiteralValue DefaultValue { get; }
+		public virtual bool IsList => false;
 		public virtual IEnumerable<TypeSpecifier> Subtypes => [];
 		public virtual string BasePath => "minecraft";
 		public virtual TypeSpecifier BaseClass => PrimitiveTypeSpecifier.Compound;
@@ -25,7 +25,7 @@ namespace Amethyst.Geode
 		public virtual string MacroGuardStart => "";
 		public virtual string MacroGuardEnd => "";
 
-        public override bool Equals(object? obj)
+		public override bool Equals(object? obj)
 		{
 			if (obj is not TypeSpecifier other) return false;
 			else return GetEquatableType().AreEqual(other.GetEquatableType());

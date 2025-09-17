@@ -13,7 +13,7 @@ namespace Amethyst.Geode.IR.Instructions
         public override void Render(RenderContext ctx)
         {
             var block = Arg<Block>(0);
-            ctx.Add(ctx.CallFunction(block.Function));
+            ctx.Add(ctx.CallSubFunction(block.Function));
         }
 
         protected override Value? ComputeReturnValue(FunctionContext ctx) => new VoidValue();

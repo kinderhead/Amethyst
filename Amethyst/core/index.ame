@@ -1,0 +1,9 @@
+namespace amethyst:core/index;
+
+inline void list-get(macro nbt* dest, macro nbt* src, macro int index) {
+    @/data modify $(dest) set from $(src)[$(index)]
+}
+
+inline void list-set(macro nbt* src, macro int index, macro nbt value) {
+    @/data modify $(src)[$(index)] set value $(value)
+}

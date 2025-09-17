@@ -1,15 +1,12 @@
 ﻿using Datapack.Net.Data;
 using Datapack.Net.Function;
 using Datapack.Net.Function.Commands;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Amethyst.Geode.Values
 {
-	public abstract class DataTargetValue : LValue
-	{
-		public abstract IDataTarget Target { get; }
+    public abstract class DataTargetValue : LValue, IValueWithProperties<DataTargetValue>
+    {
+        public abstract IDataTarget Target { get; }
 
         public abstract DataTargetValue Property(string member, TypeSpecifier type);
         public abstract DataTargetValue Index(int index, TypeSpecifier type);

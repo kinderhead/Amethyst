@@ -49,7 +49,7 @@ namespace Amethyst
 		public bool Compile()
 		{
 			var errored = false;
-			foreach (var i in new List<string>([.. Options.Inputs.SelectMany(i => Glob.Files(".", i)), .. CoreLibrary.Select(i => Path.Join(AppContext.BaseDirectory, "core", i))]))
+			foreach (var i in new List<string>([.. Options.Inputs.SelectMany(i => Glob.Files(".", i)), .. Glob.Files(Path.Join(AppContext.BaseDirectory, "core"), "**/*.ame").Select(i => Path.Join(AppContext.BaseDirectory, "core", i))]))
 			{
 				if (!ParseFile(i)) errored = true;
 			}
@@ -141,7 +141,7 @@ namespace Amethyst
 			var ctx = new FunctionContext(this, func, []);
 			IR.AddFunctions(ctx);
 			return (ctx, func);
-        }
+		}
 
 		protected virtual void RegisterGlobals()
 		{
@@ -159,7 +159,6 @@ namespace Amethyst
 
 		public void Register(Intrinsic func) => Symbols[func.ID] = new(func.ID, LocationRange.Empty, func);
 
-		public static readonly List<string> CoreLibrary = ["indexing.ame"];
 		//public static readonly Score ReturnScore = new("returned", "dummy");
 	}
 
