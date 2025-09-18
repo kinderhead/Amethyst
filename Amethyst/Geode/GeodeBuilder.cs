@@ -1,3 +1,4 @@
+using Amethyst.Errors;
 using Amethyst.Geode.IR;
 using Amethyst.Geode.IR.Passes;
 using Amethyst.Geode.Values;
@@ -46,10 +47,21 @@ namespace Amethyst.Geode
                 return true;
             }
 
+            bool failed = false;
+
             foreach (var i in Functions)
             {
-                i.Render(this);
+                try
+                {
+                    i.Render(this);
+                }
+                catch (EmptyAmethystError)
+                {
+                    failed = true;
+                }
             }
+
+            if (failed) return false;
 
             foreach (var i in functionsToRemove)
             {

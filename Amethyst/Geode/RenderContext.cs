@@ -29,16 +29,18 @@ namespace Amethyst.Geode
         {
             var nbt = new Datapack.Net.Data.NBTCompound();
             var runtime = new Dictionary<string, Value>();
+            var forceUseStorage = false;
 
             foreach (var (key, val) in dict.Select(i => (i.Key, i.Value.Expect())))
             {
-                if (val is ILiteralValue l) nbt[key] = l.Value;
+                if (val is VoidValue) forceUseStorage = true;
+                else if (val is ILiteralValue l) nbt[key] = l.Value;
                 else runtime[key] = val;
             }
 
-            if (nbt.Count == dict.Count) return new LiteralValue(nbt);
+            if (!forceUseStorage || nbt.Count == dict.Count) return new LiteralValue(nbt);
 
-            if (setEmpty || !(nbt.Count == 0)) dest.Store(new LiteralValue(nbt), this);
+            if (setEmpty || nbt.Count != 0) dest.Store(new LiteralValue(nbt), this);
 
             foreach (var (key, value) in runtime)
             {

@@ -1,4 +1,5 @@
 using System.Text;
+using Amethyst.AST;
 using Amethyst.Errors;
 using Amethyst.Geode.Types;
 using Amethyst.Geode.Values;
@@ -10,6 +11,8 @@ namespace Amethyst.Geode.IR
     {
         public readonly IInstructionArg[] Arguments;
         public readonly ValueRef ReturnValue;
+
+        public LocationRange Location = LocationRange.None;
 
         public abstract string Name { get; }
         public abstract NBTType?[] ArgTypes { get; }

@@ -13,7 +13,7 @@ namespace Amethyst.Geode.IR.InlineFunctions
         {
         }
 
-        public override void Call(RenderContext ctx, ValueRef[] args)
+        public override void Call(RenderContext ctx, ValueRef[] args, bool applyGuard = true)
         {
             var list = args[0].Expect<LValue>();
             list.ListAdd(args[1].Expect(), ctx);

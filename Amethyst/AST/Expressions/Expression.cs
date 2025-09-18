@@ -14,7 +14,7 @@ namespace Amethyst.AST.Expressions
 		public ValueRef Execute(FunctionContext ctx)
 		{
 			ValueRef? ret = null;
-			if (!ctx.Compiler.WrapError(Location, () => ret = _Execute(ctx))) throw new EmptyAmethystError();
+			if (!ctx.Compiler.WrapError(Location, ctx, () => ret = _Execute(ctx))) throw new EmptyAmethystError();
 			return ret!;
 		}
 

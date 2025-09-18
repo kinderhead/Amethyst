@@ -21,7 +21,7 @@ namespace Amethyst.AST.Statements
 
 			foreach (var i in SubStatements)
 			{
-				if (!ctx.Compiler.WrapError(i.Location, () => i.Compile(ctx))) success = false;
+				if (!ctx.Compiler.WrapError(i.Location, ctx, () => i.Compile(ctx))) success = false;
 			}
 
 			return success;

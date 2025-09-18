@@ -6,18 +6,9 @@ void main() {
     
     // say(&x);
 
-    test(10);
     test("10");
 }
 
-void test(macro var womp) {
-    test2(womp);
-}
-
-void test2(macro var womp) {
+void test(macro string womp) {
     @/say $(womp)
 }
-
-// void say(macro string* womp) {
-//     @/say $(womp)
-// }

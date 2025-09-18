@@ -27,7 +27,7 @@ namespace Amethyst.AST
 			else return $"{Start.File}: {Start.Line}:{Start.Column}-{End.Line}:{End.Column}";
 		}
 
-		public static LocationRange Empty => new(new("", 0, 0), new("", 0, 0));
+		public static LocationRange None => new(new("", 0, 0), new("", 0, 0));
 	}
 
 	public interface ILocatable

@@ -7,9 +7,9 @@ namespace Amethyst.Geode.Values
         public readonly FunctionValue BaseFunction = val;
         public readonly ValueRef Self = self;
 
-        public override void Call(RenderContext ctx, ValueRef[] args)
+        public override void Call(RenderContext ctx, ValueRef[] args, bool applyGuard = true)
         {
-            BaseFunction.Call(ctx, [Self, .. args]);
+            BaseFunction.Call(ctx, [Self, .. args], applyGuard);
         }
 
         public override FunctionValue CloneWithType(FunctionTypeSpecifier type) => new MethodValue(BaseFunction.CloneWithType(type), Self);

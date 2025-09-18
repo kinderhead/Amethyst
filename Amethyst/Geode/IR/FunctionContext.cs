@@ -1,4 +1,5 @@
 using System.Text;
+using Amethyst.AST;
 using Amethyst.Errors;
 using Amethyst.Geode.IR.Instructions;
 using Amethyst.Geode.IR.Passes;
@@ -15,6 +16,8 @@ namespace Amethyst.Geode.IR
         public readonly Compiler Compiler;
         public readonly FunctionValue Decl;
         public readonly IEnumerable<NamespacedID> Tags;
+
+        public readonly Stack<LocationRange> LocationStack = [];
 
         public Block FirstBlock => blocks.First();
         public readonly Block ExitBlock;
@@ -54,7 +57,7 @@ namespace Amethyst.Geode.IR
 
             foreach (var i in Decl.FuncType.Parameters)
             {
-                if (i.Modifiers.HasFlag(AST.ParameterModifiers.Macro))
+                if (i.Modifiers.HasFlag(ParameterModifiers.Macro))
                 {
                     RegisterLocal(i.Name, new MacroValue(i.Name, i.Type));
                 }
@@ -130,6 +133,8 @@ namespace Amethyst.Geode.IR
         public ValueRef Add(Instruction insn, string? customName = null)
         {
             if (IsFinished) throw new InvalidOperationException("Function is finished");
+
+            if (LocationStack.Count != 0) insn.Location = LocationStack.Peek();
             var val = CurrentBlock.Add(insn);
             val.SetCustomName(customName);
             return val;

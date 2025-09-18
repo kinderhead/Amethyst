@@ -1,3 +1,4 @@
+using Amethyst.AST;
 using Amethyst.Errors;
 using Amethyst.Geode.Types;
 using Datapack.Net.Data;
@@ -25,16 +26,30 @@ namespace Amethyst.Geode.Values
                 var macros = new Dictionary<string, ValueRef>();
                 var macroStorageLocation = new StorageValue(GeodeBuilder.RuntimeID, "stack[-1].macros", PrimitiveTypeSpecifier.Compound);
 
-                // Minecraft throws an error if there are mismatched macro args, so we always reset it
-                if (macros.Count != 0) macroStorageLocation.Store(new LiteralValue(new NBTCompound()), ctx);
+                var alreadyResetMacros = false;
 
                 foreach (var (param, val) in FuncType.Parameters.Zip(args))
                 {
-                    if (param.Modifiers.HasFlag(AST.ParameterModifiers.Macro))
+                    if (param.Modifiers.HasFlag(ParameterModifiers.Macro))
                     {
-                        if (applyGuard && val.Type.MacroGuardStart != "" && val.Type.MacroGuardEnd != "")
+                        if (val.Value is MacroValue m && m.Type == PrimitiveTypeSpecifier.String) throw new InvalidTypeError("macro string", "string");
+                        else if (applyGuard && param.Type.MacroGuardStart != "" && param.Type.MacroGuardEnd != "")
                         {
-                            //ctx.Call("amethyst:core/macro/guard", false, macroStorageLocation.Property(param.Name))
+                            if (val.Value is ILiteralValue l)
+                            {
+                                macros.Add(param.Name, new LiteralValue($"{param.Type.MacroGuardStart}{(l.Value is NBTString str ? str.Value : l.Value.ToString())}{param.Type.MacroGuardEnd}"));
+                            }
+                            else
+                            {
+                                if (!alreadyResetMacros)
+                                {
+                                    macroStorageLocation.Store(new LiteralValue(new NBTCompound()), ctx);
+                                    alreadyResetMacros = true;
+                                }
+
+                                ctx.Call("amethyst:core/macro/guard", false, PointerTypeSpecifier.From(macroStorageLocation.Property(param.Name, param.Type)), new LiteralValue(param.Type.MacroGuardStart), val, new LiteralValue(param.Type.MacroGuardEnd));
+                                macros.Add(param.Name, new VoidValue());
+                            }
                         }
                         else macros.Add(param.Name, val);
                     }
@@ -42,7 +57,9 @@ namespace Amethyst.Geode.Values
                 }
 
                 if (processedArgs.Count != 0) ctx.StoreCompound(new StorageValue(GeodeBuilder.RuntimeID, "stack[-1].args", PrimitiveTypeSpecifier.Compound), processedArgs, setEmpty: false);
-                if (macros.Count != 0) processedMacros = ctx.StoreCompoundOrReturnConstant(macroStorageLocation, macros, setEmpty: false); // Allow for macro guards
+
+                // Minecraft throws an error if there are mismatched macro args, so we always reset it
+                if (macros.Count != 0) processedMacros = ctx.StoreCompoundOrReturnConstant(macroStorageLocation, macros, !alreadyResetMacros);
             }
 
             if (processedMacros is StorageValue s) ctx.Add(new FunctionCommand(ID, s.Storage, s.Path));

@@ -1,4 +1,5 @@
 using System.Text;
+using Amethyst.Errors;
 using Amethyst.Geode.IR.Instructions;
 using Datapack.Net.Function;
 using Datapack.Net.Utils;
@@ -48,7 +49,10 @@ namespace Amethyst.Geode.IR
         {
             foreach (var i in Instructions)
             {
-                i.Render(GetRenderCtx(builder, ctx));
+                if (!ctx.Compiler.WrapError(i.Location, ctx, () =>
+                {
+                    i.Render(GetRenderCtx(builder, ctx));
+                })) throw new EmptyAmethystError();
             }
 
             builder.Register(Function);
