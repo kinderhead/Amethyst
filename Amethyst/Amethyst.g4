@@ -94,7 +94,7 @@ multiplicativeExpression
     ;
 
 unaryExpression
-    : (And)* postfixExpression
+    : postfixExpression
     ;
 
 postfixExpression
@@ -151,7 +151,7 @@ expressionList
 type
     : id
     | type LSquareBrak RSquareBrak
-    | type Star
+    | type And
     ;
 
 id

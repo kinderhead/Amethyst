@@ -1,0 +1,9 @@
+namespace amethyst:core/ref;
+
+inline void set(macro nbt& ref, macro nbt val) {
+    @/data modify $(ref) set value $(val)
+}
+
+inline void set-ref(macro nbt& ref, macro nbt& val) {
+    @/data modify $(ref) set from $(val)
+}

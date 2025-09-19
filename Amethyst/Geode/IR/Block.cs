@@ -6,9 +6,10 @@ using Datapack.Net.Utils;
 
 namespace Amethyst.Geode.IR
 {
-    public class Block(string name, NamespacedID funcID) : IInstructionArg
+    public class Block(string name, NamespacedID funcID, FunctionContext ctx) : IInstructionArg
     {
         public string Name => name;
+        public readonly FunctionContext Ctx = ctx;
 
         public readonly List<Instruction> Instructions = [];
         public readonly List<Block> Previous = [];
@@ -20,7 +21,11 @@ namespace Amethyst.Geode.IR
 
         public ValueRef Add(Instruction insn)
         {
-            if (Instructions.Count == 0 || Instructions.Last() is not ReturnInsn) Instructions.Add(insn);
+            if (Instructions.Count == 0 || Instructions.Last() is not ReturnInsn)
+            {
+                insn.ProcessArgs(Ctx);
+                Instructions.Add(insn);
+            }
             return insn.ReturnValue;
         }
 

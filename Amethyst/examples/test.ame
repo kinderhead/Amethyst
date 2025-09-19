@@ -2,13 +2,11 @@ namespace example;
 
 #load
 void main() {
-    // string x = "wooo";
-    
-    // say(&x);
+    int x = 10;
+    int& ref = x;
 
-    test("10");
+    ref = -4;
+
+    print(x);
 }
 
-void test(macro string womp) {
-    @/say $(womp)
-}

@@ -1,6 +1,5 @@
 ﻿using Amethyst.Geode;
 using Amethyst.Geode.IR;
-using Amethyst.Geode.IR.Instructions;
 
 namespace Amethyst.AST.Expressions
 {
@@ -16,9 +15,7 @@ namespace Amethyst.AST.Expressions
 			var val = Expression.Execute(ctx);
 			var dest = Dest.Execute(ctx);
 
-			val = ctx.ImplicitCast(val, dest.Type);
-
-			ctx.Add(new StoreInsn(dest, val));
+			dest.Type.AssignmentOverload(dest, val, ctx);
 
 			return val;
 		}

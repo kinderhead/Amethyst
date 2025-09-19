@@ -4,7 +4,7 @@ using Datapack.Net.Function.Commands;
 
 namespace Amethyst.Geode.Values
 {
-    public abstract class DataTargetValue : LValue, IValueWithProperties<DataTargetValue>
+    public abstract class DataTargetValue : DataLValue, IValueWithProperties<DataTargetValue>
     {
         public abstract IDataTarget Target { get; }
 

@@ -25,7 +25,13 @@ namespace Amethyst.Geode
 
     public abstract class LValue : Value
     {
-        public void Store(Value val, RenderContext ctx)
+        public abstract void Store(Value val, RenderContext ctx);
+        public abstract void ListAdd(Value val, RenderContext ctx);
+    }
+
+    public abstract class DataLValue : LValue
+    {
+        public override void Store(Value val, RenderContext ctx)
         {
             if (val is LiteralValue literal) Store(literal, ctx);
             else if (val is ScoreValue score) Store(score, ctx);
@@ -33,6 +39,16 @@ namespace Amethyst.Geode
             else if (val is ConditionalValue cond) Store(cond, ctx);
             else if (val is MacroValue macro) Store(macro, ctx);
             else if (val is PropertyValue prop) Store(prop, ctx);
+            else throw new NotImplementedException();
+        }
+
+        public override void ListAdd(Value val, RenderContext ctx)
+        {
+            if (val is LiteralValue literal) ListAdd(literal, ctx);
+            else if (val is ScoreValue score) ListAdd(score, ctx);
+            else if (val is DataTargetValue storage) ListAdd(storage, ctx);
+            else if (val is ConditionalValue cond) ListAdd(cond, ctx);
+            else if (val is MacroValue macro) ListAdd(macro, ctx);
             else throw new NotImplementedException();
         }
 
@@ -52,16 +68,6 @@ namespace Amethyst.Geode
             var tmp = ctx.Builder.TempStorage(Type);
             prop.Get(tmp, ctx);
             Store(tmp, ctx);
-        }
-
-        public void ListAdd(Value val, RenderContext ctx)
-        {
-            if (val is LiteralValue literal) ListAdd(literal, ctx);
-            else if (val is ScoreValue score) ListAdd(score, ctx);
-            else if (val is DataTargetValue storage) ListAdd(storage, ctx);
-            else if (val is ConditionalValue cond) ListAdd(cond, ctx);
-            else if (val is MacroValue macro) ListAdd(macro, ctx);
-            else throw new NotImplementedException();
         }
 
         public abstract void ListAdd(LiteralValue literal, RenderContext ctx);

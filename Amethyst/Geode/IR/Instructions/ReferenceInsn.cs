@@ -1,8 +1,6 @@
 ﻿using Amethyst.Geode.Types;
+using Amethyst.Geode.Values;
 using Datapack.Net.Data;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Amethyst.Geode.IR.Instructions
 {
@@ -10,7 +8,7 @@ namespace Amethyst.Geode.IR.Instructions
 	{
 		public override string Name => "ref";
 		public override NBTType?[] ArgTypes => [null];
-		public override TypeSpecifier ReturnType => new PointerTypeSpecifier(Arg<ValueRef>(0).Type);
+		public override TypeSpecifier ReturnType => new ReferenceTypeSpecifier(Arg<ValueRef>(0).Type);
 
 		public override void Render(RenderContext ctx)
 		{
@@ -19,7 +17,9 @@ namespace Amethyst.Geode.IR.Instructions
 
 		protected override Value? ComputeReturnValue(FunctionContext ctx)
 		{
-			throw new NotImplementedException();
+			if (Arg<ValueRef>(0).Expect() is DataTargetValue data) return ReferenceTypeSpecifier.From(data);
+
+			return null;
 		}
 	}
 }

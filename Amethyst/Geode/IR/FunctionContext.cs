@@ -50,10 +50,10 @@ namespace Amethyst.Geode.IR
 
             PushScope();
 
-            blocks.Add(new("entry", Decl.ID));
+            blocks.Add(new("entry", Decl.ID, this));
             CurrentBlock = blocks.Last();
 
-            ExitBlock = new("exit", GetNewInternalID());
+            ExitBlock = new("exit", GetNewInternalID(), this);
 
             foreach (var i in Decl.FuncType.Parameters)
             {
@@ -153,6 +153,7 @@ namespace Amethyst.Geode.IR
             else if (type is AnyTypeSpecifier) return val.SetType(type);
             else if (val.Type is AnyTypeSpecifier) return val.SetType(type); // This hopefully shouldn't cause problems with reusing values
             else if (val.Type.Implements(type)) return val.SetType(type);
+            else if (type is ReferenceTypeSpecifier r && val.Type.Implements(r.Inner)) return Add(new ReferenceInsn(val)).SetType(type);
             else if (val.Value is LiteralValue literal && type is PrimitiveTypeSpecifier)
             {
                 if (literal.Value.NumberType is NBTNumberType && type.EffectiveNumberType is NBTNumberType destType)
@@ -170,6 +171,11 @@ namespace Amethyst.Geode.IR
             else if (type.EffectiveType == NBTType.Int) return Add(new LoadInsn(val, type));
 
             throw new InvalidTypeError(val.Type.ToString(), type.ToString());
+        }
+
+        public ValueRef Call(NamespacedID id, params IEnumerable<ValueRef> args)
+        {
+            return Add(new CallInsn(GetGlobal(id) ?? throw new UndefinedSymbolError(id.ToString()), args));
         }
 
         public void Finish()
@@ -204,8 +210,8 @@ namespace Amethyst.Geode.IR
             label = GetNewLabelName(label);
 
             var startingBlock = CurrentBlock;
-            var trueBlock = new Block($"{label}.true", GetNewInternalID());
-            var endBlock = new Block($"{label}.end", GetNewInternalID());
+            var trueBlock = new Block($"{label}.true", GetNewInternalID(), this);
+            var endBlock = new Block($"{label}.end", GetNewInternalID(), this);
 
             blocks.Add(trueBlock);
             blocks.Add(endBlock);
@@ -229,9 +235,9 @@ namespace Amethyst.Geode.IR
             label = GetNewLabelName(label);
 
             var startingBlock = CurrentBlock;
-            var trueBlock = new Block($"{label}.true", GetNewInternalID());
-            var falseBlock = new Block($"{label}.false", GetNewInternalID());
-            var endBlock = new Block($"{label}.end", GetNewInternalID());
+            var trueBlock = new Block($"{label}.true", GetNewInternalID(), this);
+            var falseBlock = new Block($"{label}.false", GetNewInternalID(), this);
+            var endBlock = new Block($"{label}.end", GetNewInternalID(), this);
 
             blocks.Add(trueBlock);
             blocks.Add(falseBlock);

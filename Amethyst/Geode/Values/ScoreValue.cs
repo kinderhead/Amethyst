@@ -5,7 +5,7 @@ using Datapack.Net.Function.Commands;
 
 namespace Amethyst.Geode.Values
 {
-	public class ScoreValue(IEntityTarget target, Score score) : LValue
+    public class ScoreValue(IEntityTarget target, Score score) : DataLValue
     {
         public readonly IEntityTarget Target = target;
         public readonly Score Score = score;

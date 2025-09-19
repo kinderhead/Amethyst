@@ -26,6 +26,14 @@ namespace Amethyst.Geode.IR
         {
             Arguments = [.. args];
             ReturnValue = new(ReturnType);
+        }
+
+        public void ProcessArgs(FunctionContext ctx)
+        {
+            for (int i = 0; i < Arguments.Length; i++)
+            {
+                if (Arguments[i] is ValueRef arg) Arguments[i] = arg.Type.ProcessArg(arg, ctx);
+            }
 
             CheckArguments();
         }

@@ -1,4 +1,6 @@
-﻿using Amethyst.Geode.Types;
+﻿using Amethyst.Geode.IR;
+using Amethyst.Geode.IR.Instructions;
+using Amethyst.Geode.Types;
 using Amethyst.Geode.Values;
 using Datapack.Net.Data;
 
@@ -38,6 +40,8 @@ namespace Amethyst.Geode
 			else return BaseClass.Implements(other);
 		}
 
+		public virtual ValueRef ProcessArg(ValueRef src, FunctionContext ctx) => src;
+
 		public virtual bool ConstraintSatisfiedBy(TypeSpecifier other)
 		{
 			return other.GetType() == GetType()
@@ -63,6 +67,11 @@ namespace Amethyst.Geode
 			{
 				first.ApplyGeneric(second, typeMap);
 			}
+		}
+
+		public virtual void AssignmentOverload(ValueRef dest, ValueRef val, FunctionContext ctx)
+		{
+			ctx.Add(new StoreInsn(dest, ctx.ImplicitCast(val, this)));
 		}
 
 		public override int GetHashCode() => ToString().GetHashCode();

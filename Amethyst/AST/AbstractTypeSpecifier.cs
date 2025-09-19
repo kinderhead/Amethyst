@@ -12,19 +12,19 @@ namespace Amethyst.AST
 
 		public TypeSpecifier Resolve(Compiler ctx, bool allowAuto = false)
 		{
-            TypeSpecifier? ret = null;
-            if (!ctx.WrapError(Location, () => ret = _Resolve(ctx, allowAuto))) throw new EmptyAmethystError();
-            return ret!;
-        }
+			TypeSpecifier? ret = null;
+			if (!ctx.WrapError(Location, () => ret = _Resolve(ctx, allowAuto))) throw new EmptyAmethystError();
+			return ret!;
+		}
 
-        protected abstract TypeSpecifier _Resolve(Compiler ctx, bool allowAuto = false);
+		protected abstract TypeSpecifier _Resolve(Compiler ctx, bool allowAuto = false);
 	}
 
 	public class SimpleAbstractTypeSpecifier(LocationRange loc, string type) : AbstractTypeSpecifier(loc)
 	{
 		public readonly string Type = type;
 
-        protected override TypeSpecifier _Resolve(Compiler ctx, bool allowAuto = false)
+		protected override TypeSpecifier _Resolve(Compiler ctx, bool allowAuto = false)
 		{
 			switch (Type)
 			{
@@ -65,17 +65,17 @@ namespace Amethyst.AST
 	{
 		public readonly AbstractTypeSpecifier Inner = inner;
 
-        protected override TypeSpecifier _Resolve(Compiler ctx, bool allowAuto = false) => new ListTypeSpecifier(Inner.Resolve(ctx, allowAuto));
+		protected override TypeSpecifier _Resolve(Compiler ctx, bool allowAuto = false) => new ListTypeSpecifier(Inner.Resolve(ctx, allowAuto));
 	}
 
-    public class AbstractPointerTypeSpecifier(LocationRange loc, AbstractTypeSpecifier inner) : AbstractTypeSpecifier(loc)
-    {
-        public readonly AbstractTypeSpecifier Inner = inner;
+	public class AbstractReferenceTypeSpecifier(LocationRange loc, AbstractTypeSpecifier inner) : AbstractTypeSpecifier(loc)
+	{
+		public readonly AbstractTypeSpecifier Inner = inner;
 
-        protected override TypeSpecifier _Resolve(Compiler ctx, bool allowAuto = false) => new PointerTypeSpecifier(Inner.Resolve(ctx, allowAuto));
-    }
+		protected override TypeSpecifier _Resolve(Compiler ctx, bool allowAuto = false) => new ReferenceTypeSpecifier(Inner.Resolve(ctx, allowAuto));
+	}
 
-    public class AbstractInterfaceTypeSpecifier(LocationRange loc, string name, Dictionary<string, AbstractObjectProperty> props) : AbstractTypeSpecifier(loc), IRootChild
+	public class AbstractInterfaceTypeSpecifier(LocationRange loc, string name, Dictionary<string, AbstractObjectProperty> props) : AbstractTypeSpecifier(loc), IRootChild
 	{
 		public readonly string Name = name;
 		public readonly Dictionary<string, AbstractObjectProperty> Properties = props;
@@ -85,7 +85,7 @@ namespace Amethyst.AST
 			throw new NotImplementedException();
 		}
 
-        protected override TypeSpecifier _Resolve(Compiler ctx, bool allowAuto = false) => new InterfaceType(new(Properties.Select(i => new KeyValuePair<string, ObjectProperty>(i.Key, new ObjectProperty(i.Value.Type.Resolve(ctx), i.Value.Name)))));
+		protected override TypeSpecifier _Resolve(Compiler ctx, bool allowAuto = false) => new InterfaceType(new(Properties.Select(i => new KeyValuePair<string, ObjectProperty>(i.Key, new ObjectProperty(i.Value.Type.Resolve(ctx), i.Value.Name)))));
 	}
 
 	public readonly record struct AbstractObjectProperty(AbstractTypeSpecifier Type, string Name);
