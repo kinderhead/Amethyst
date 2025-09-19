@@ -19,7 +19,7 @@ namespace Amethyst.Geode.IR.Instructions
 			foreach (var i in Arguments)
 			{
 				if (i is not ValueRef vref || vref.Value is not Value val) throw new InvalidOperationException($"Invalid print argument of type {i.GetType().Name}");
-				val.Render(msg);
+				val.Render(msg, ctx);
 				//msg.Text(" ");
 			}
 

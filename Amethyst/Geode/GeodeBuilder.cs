@@ -128,6 +128,7 @@ namespace Amethyst.Geode
             return score;
         }
 
+        public StorageValue TempStorage(TypeSpecifier type) => new(RuntimeID, RandomString, type);
         public StorageValue TempStorage(int num, TypeSpecifier type) => new(RuntimeID, $"tmp{num}", type);
 
         public void Register(MCFunction func) => Datapack.Functions.Add(func);

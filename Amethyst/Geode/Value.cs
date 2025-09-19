@@ -13,7 +13,7 @@ namespace Amethyst.Geode
 
         public abstract ScoreValue AsScore(RenderContext ctx);
         public abstract Execute If(Execute cmd, RenderContext ctx, int tmp = 0);
-        public abstract FormattedText Render(FormattedText text);
+        public abstract FormattedText Render(FormattedText text, RenderContext ctx);
 
         public override string ToString() => "";
         public abstract override bool Equals(object? obj);
@@ -32,6 +32,7 @@ namespace Amethyst.Geode
             else if (val is DataTargetValue storage) Store(storage, ctx);
             else if (val is ConditionalValue cond) Store(cond, ctx);
             else if (val is MacroValue macro) Store(macro, ctx);
+            else if (val is PropertyValue prop) Store(prop, ctx);
             else throw new NotImplementedException();
         }
 
@@ -39,10 +40,18 @@ namespace Amethyst.Geode
         public abstract void Store(ScoreValue score, RenderContext ctx);
         public abstract void Store(DataTargetValue nbt, RenderContext ctx);
         public virtual void Store(MacroValue macro, RenderContext ctx) => Store(new LiteralValue(new NBTRawString(macro.GetMacro())), ctx);
+
         public virtual void Store(ConditionalValue cond, RenderContext ctx)
         {
             Store(new LiteralValue(false), ctx);
             ctx.Add(cond.If(new(), ctx).Run(ctx.WithFaux(i => Store(new LiteralValue(true), i)).Single()));
+        }
+
+        public virtual void Store(PropertyValue prop, RenderContext ctx)
+        {
+            var tmp = ctx.Builder.TempStorage(Type);
+            prop.Get(tmp, ctx);
+            Store(tmp, ctx);
         }
 
         public void ListAdd(Value val, RenderContext ctx)

@@ -15,6 +15,6 @@ namespace Amethyst.Geode.Values
         public override bool Equals(object? obj) => obj is LiteralValue l && l.Value == Value;
         public override string ToString() => Value.ToString();
         public override int GetHashCode() => Value.GetHashCode();
-        public override FormattedText Render(FormattedText text) => Value is NBTString str ? text.Text(str.Value) : text.Text(Value.ToString());
+        public override FormattedText Render(FormattedText text, RenderContext ctx) => Value is NBTString str ? text.Text(str.Value) : text.Text(Value.ToString());
     }
 }

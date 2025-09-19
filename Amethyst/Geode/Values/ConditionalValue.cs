@@ -14,8 +14,8 @@ namespace Amethyst.Geode.Values
         public override Execute If(Execute cmd, RenderContext ctx, int tmp = 0) => Apply(cmd);
         public override int GetHashCode() => Apply.GetHashCode();
 
-        public override FormattedText Render(FormattedText text)
-        {
+        public override FormattedText Render(FormattedText text, RenderContext ctx)
+		{
             throw new NotImplementedException("Cannot print conditionals at the moment. Assign to a variable for now");
         }
     }

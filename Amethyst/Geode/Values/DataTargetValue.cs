@@ -30,6 +30,7 @@ namespace Amethyst.Geode.Values
         public override void Store(ScoreValue score, RenderContext ctx) => ctx.Add(new Execute().Store(Target, Type.EffectiveNumberType ?? NBTNumberType.Int, 1).Run(new Scoreboard.Players.Get(score.Target, score.Score)));
         public override void Store(LiteralValue literal, RenderContext ctx) => ctx.Add(new DataCommand.Modify(Target).Set().Value(literal.ToString()));
         public override void Store(DataTargetValue nbt, RenderContext ctx) => ctx.Add(new DataCommand.Modify(Target).Set().From(nbt.Target));
+        public override void Store(PropertyValue prop, RenderContext ctx) => prop.Get(this, ctx);
 
         public override void ListAdd(LiteralValue literal, RenderContext ctx) => ctx.Add(new DataCommand.Modify(Target).Append().Value(literal.ToString()));
         public override void ListAdd(DataTargetValue nbt, RenderContext ctx) => ctx.Add(new DataCommand.Modify(Target).Append().From(nbt.Target));
