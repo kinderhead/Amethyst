@@ -2,18 +2,13 @@ namespace example;
 
 #load
 void main() {
-    int x = 5;
-    
-    if (x == 5) {
-        print(true);
-    } else {
-        print(false);
-    }
+    nbt x;
+    x.y = "Hi";
+    func(x);
+    print(x);
+}
 
-    if (x != 5) {
-        print(false);
-    } else {
-        print(true);
-    }
+void func(nbt& ref) {
+    ref.womp = 9;
 }
 

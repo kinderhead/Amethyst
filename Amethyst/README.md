@@ -129,6 +129,54 @@ print(list[2]);
 
 Note: there is currently no bounds check. Eventually it will be included in debug builds and optionally in release mode builds.
 
+### References
+
+References are a way to modify the same object from multiple places. They work similarly to how the do in C++. They are defined using `&`, so an example would be `int&`. 
+
+```cs
+int x = 7;
+int& ptr = x;
+```
+
+Any further assigns to a reference instead affect the value it points to, so this effectively makes them constant:
+
+```cs
+ptr = 2; // x is now 2
+```
+
+Note: referencing stack variables causes some overhead, so it is recommended to avoid using references unless passing them as arguments into functions like so:
+
+```cs
+void main() {
+    string x = "Hi";
+    func(x);
+    print(x); // Bye
+}
+
+void func(string& ptr) {
+    ptr = "Bye";
+}
+```
+
+It goes without saying that referencing a constant value will throw a compile-time error.
+
+Passing references into inline commands does not dereference them and instead uses the underlying pointer:
+
+```cs
+void func(string& ptr) {
+    // [Server] storage amethyst:runtime stack[1].frame0.x
+    @/say $(ptr)
+}
+```
+
+References are stored internally as `Datapack.Net.Function.IDataTarget`s, so they work nicely with any commands that use `IDataTarget` (`/execute store`, `/data`, etc). This allows for references to point to entities and blocks instead of just storage. For example, this property is used in `amethyst:core/ref/set` like so:
+
+```cs
+inline void set(macro nbt& ref, macro nbt val) {
+    @/data modify $(ref) set value $(val)
+}
+```
+
 ### Inline commands
 
 Commands can be directly inlined into functions like so:

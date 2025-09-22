@@ -5,15 +5,15 @@ using Datapack.Net.Data;
 
 namespace Amethyst.Geode.Types
 {
-	public class ReferenceTypeSpecifier(TypeSpecifier inner) : TypeSpecifier
-	{
-		public readonly TypeSpecifier Inner = inner;
-		public override IEnumerable<TypeSpecifier> Subtypes => [Inner]; // Shouldn't need to unecessarily include the base subtypes here
-		public override bool Operable => false;
-		public override LiteralValue DefaultValue => new("");
-		public override string ToString() => $"{Inner}&";
-		public override NBTType EffectiveType => NBTType.String;
-		public override string BasePath => "amethyst";
+    public class ReferenceTypeSpecifier(TypeSpecifier inner) : TypeSpecifier
+    {
+        public readonly TypeSpecifier Inner = inner;
+        public override IEnumerable<TypeSpecifier> Subtypes => [Inner]; // Shouldn't need to unecessarily include the base subtypes here
+        public override bool Operable => false;
+        public override LiteralValue DefaultValue => new("");
+        public override string ToString() => $"{Inner}&";
+        public override NBTType EffectiveType => NBTType.String;
+        public override string BasePath => "amethyst";
 
         public override ValueRef ProcessArg(ValueRef src, FunctionContext ctx) => From(src);
 
@@ -22,8 +22,10 @@ namespace Amethyst.Geode.Types
             ctx.Add(new StoreInsn(dest, ctx.ImplicitCast(val, Inner)));
         }
 
+        public override TypeSpecifier? Property(string name) => Inner.Property(name);
+
         protected override bool AreEqual(TypeSpecifier obj) => obj is ReferenceTypeSpecifier p && p.Inner == Inner;
-		public override object Clone() => new ReferenceTypeSpecifier((TypeSpecifier)Inner.Clone());
+        public override object Clone() => new ReferenceTypeSpecifier((TypeSpecifier)Inner.Clone());
 
         public static LiteralValue From(DataTargetValue val) => new(val.Target.GetTarget(), new ReferenceTypeSpecifier(val.Type));
         public static ValueRef From(ValueRef src)

@@ -17,7 +17,7 @@ namespace Amethyst.Geode.Types
 		public override TypeSpecifier? Property(string name) => Type == NBTType.Compound ? new AnyTypeSpecifier() : base.Property(name);
 
 		protected override bool AreEqual(TypeSpecifier obj) => obj is PrimitiveTypeSpecifier p && p.Type == Type;
-		public override string ToString() => Enum.GetName(Type)?.ToLower() ?? throw new InvalidOperationException();
+		public override string ToString() => Type == NBTType.Compound ? "nbt" : Enum.GetName(Type)?.ToLower() ?? throw new InvalidOperationException();
 		public override object Clone() => new PrimitiveTypeSpecifier(Type);
 
 		public override LiteralValue DefaultValue => Type switch
@@ -31,7 +31,7 @@ namespace Amethyst.Geode.Types
 			NBTType.Double => new(new NBTDouble(0)),
 			NBTType.String => new(new NBTString("")),
 			NBTType.List => new(new NBTList()),
-            NBTType.Compound => new(new NBTCompound()),
+			NBTType.Compound => new(new NBTCompound()),
 			_ => throw new NotImplementedException()
 		};
 

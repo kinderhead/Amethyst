@@ -1,4 +1,5 @@
 using Amethyst.Errors;
+using Amethyst.Geode.Types;
 using Amethyst.Geode.Values;
 using Datapack.Net.Data;
 
@@ -8,11 +9,12 @@ namespace Amethyst.Geode.IR.Instructions
     {
         public override string Name => "prop";
         public override NBTType?[] ArgTypes => [null, NBTType.String];
-        public override TypeSpecifier ReturnType => destType;
+        public TypeSpecifier ActualReturnType => destType;
+        public override TypeSpecifier ReturnType => new ReferenceTypeSpecifier(ActualReturnType);
 
         public override void Render(RenderContext ctx)
         {
-            throw new NotImplementedException();
+            ctx.Call("amethyst:core/ref/property", Arg<ValueRef>(0).Expect<ReferenceValue>().Pointer, Arg<ValueRef>(1), ReferenceTypeSpecifier.From(ReturnValue.Expect<DataTargetValue>()));
         }
 
         protected override Value? ComputeReturnValue(FunctionContext ctx)
@@ -24,7 +26,7 @@ namespace Amethyst.Geode.IR.Instructions
             {
                 if (l.Value is not NBTString name) throw new InvalidTypeError(prop.Type.ToString(), "string");
                 Remove();
-                return nbt.Property(name, ReturnType);
+                return ReferenceTypeSpecifier.From(nbt.Property(name, ActualReturnType));
             }
 
             return null;

@@ -19,6 +19,10 @@ inline void set(macro nbt& ref, macro nbt val) {
 }
 
 inline void set-ref(macro nbt& ref, macro nbt& val) {
-    @/data modify storage test:test test set from storage amethyst:runtime stack
     @/data modify $(ref) set from $(val)
+}
+
+// Properties cannot have spaces so this is fine
+inline void property(macro nbt& ref, macro string prop, macro nbt& dest) {
+    @/data modify $(dest) set value "$(ref).$(prop)"
 }

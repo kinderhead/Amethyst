@@ -153,7 +153,11 @@ namespace Amethyst.Geode.IR
             else if (type is AnyTypeSpecifier) return val.SetType(type);
             else if (val.Type is AnyTypeSpecifier) return val.SetType(type); // This hopefully shouldn't cause problems with reusing values
             else if (val.Type.Implements(type)) return val.SetType(type);
-            else if (type is ReferenceTypeSpecifier r && val.Type.Implements(r.Inner)) return Add(new ReferenceInsn(val)).SetType(type);
+            else if (type is ReferenceTypeSpecifier r && val.Type.Implements(r.Inner))
+            {
+                if (val.IsLiteral) throw new ReferenceError(val.Name);
+                return Add(new ReferenceInsn(val)).SetType(type);
+            }
             else if (val.Type is ReferenceTypeSpecifier r2 && r2.Inner.Implements(type)) return ReferenceTypeSpecifier.From(val).SetType(type);
             else if (val.Value is LiteralValue literal && type is PrimitiveTypeSpecifier)
             {
