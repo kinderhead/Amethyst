@@ -1,5 +1,19 @@
 namespace amethyst:core/ref;
 
+string get-stack-ref(string name) {
+    // TODO: list length
+    int x;
+    @/execute store result storage amethyst:runtime stack[-1].frame0.x int 1 run data get storage amethyst:runtime stack
+
+    x = x - 2;
+
+    // TODO: string concatenation
+    string ref;
+    @/data modify storage stack[-1].frame0.ref from value "stack[$(x)].$(name)"
+    
+    return ref;
+}
+
 inline void set(macro nbt& ref, macro nbt val) {
     @/data modify $(ref) set value $(val)
 }

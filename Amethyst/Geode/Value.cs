@@ -49,6 +49,7 @@ namespace Amethyst.Geode
             else if (val is DataTargetValue storage) ListAdd(storage, ctx);
             else if (val is ConditionalValue cond) ListAdd(cond, ctx);
             else if (val is MacroValue macro) ListAdd(macro, ctx);
+            else if (val is PropertyValue prop) ListAdd(prop, ctx);
             else throw new NotImplementedException();
         }
 
@@ -74,7 +75,7 @@ namespace Amethyst.Geode
 
         public virtual void ListAdd(ScoreValue score, RenderContext ctx)
         {
-            var tmp = ctx.Builder.TempStorage(0, PrimitiveTypeSpecifier.Compound);
+            var tmp = ctx.Builder.TempStorage(PrimitiveTypeSpecifier.Compound);
             tmp.Store(score, ctx);
             ListAdd(tmp, ctx);
         }
@@ -83,11 +84,18 @@ namespace Amethyst.Geode
 
         public virtual void ListAdd(ConditionalValue cond, RenderContext ctx)
         {
-            var tmp = ctx.Builder.TempStorage(0, PrimitiveTypeSpecifier.Compound);
+            var tmp = ctx.Builder.TempStorage(PrimitiveTypeSpecifier.Compound);
             tmp.Store(cond, ctx);
             ListAdd(tmp, ctx);
         }
 
         public virtual void ListAdd(MacroValue macro, RenderContext ctx) => ListAdd(new LiteralValue(new NBTRawString(macro.GetMacro())), ctx);
+
+        public virtual void ListAdd(PropertyValue prop, RenderContext ctx)
+        {
+            var tmp = ctx.Builder.TempStorage(Type);
+            prop.Get(tmp, ctx);
+            ListAdd(tmp, ctx);
+        }
     }
 }

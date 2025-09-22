@@ -3,10 +3,12 @@ namespace example;
 #load
 void main() {
     int x = 10;
-    int& ref = x;
 
-    ref = -4;
-
+    print(x);
+    test(x);
     print(x);
 }
 
+void test(macro int& x) {
+    x = 3;
+}

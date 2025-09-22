@@ -25,7 +25,7 @@ void assert(bool condition) {
 
 void complete() {
     if (currentTestFailed) {
-        print("Test \"", currentTest, "\" failed");
+        print("--> Test \"", currentTest, "\" failed");
     } else {
         print("Test \"", currentTest, "\" passed");
         successfulTests = successfulTests + 1;

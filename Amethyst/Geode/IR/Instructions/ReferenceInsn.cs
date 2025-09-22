@@ -12,12 +12,17 @@ namespace Amethyst.Geode.IR.Instructions
 
 		public override void Render(RenderContext ctx)
 		{
-			throw new NotImplementedException();
-		}
+            var val = Arg<ValueRef>(0).Expect<StackValue>();
+			ctx.Call("amethyst:core/ref/get-stack-ref", new LiteralValue(val.Location));
+            ReturnValue.Expect<LValue>().Store(FunctionContext.GetFunctionReturnValue(ReturnType, -1), ctx);
+        }
 
 		protected override Value? ComputeReturnValue(FunctionContext ctx)
 		{
-			if (Arg<ValueRef>(0).Expect() is DataTargetValue data) return ReferenceTypeSpecifier.From(data);
+			var val = Arg<ValueRef>(0).Expect();
+
+			if (val is StackValue) return null;
+            else if (val is DataTargetValue data) return ReferenceTypeSpecifier.From(data);
 
 			return null;
 		}

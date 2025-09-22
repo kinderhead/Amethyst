@@ -24,9 +24,7 @@ namespace Amethyst.Geode.Values
             {
                 var processedArgs = new Dictionary<string, ValueRef>();
                 var macros = new Dictionary<string, ValueRef>();
-                var macroStorageLocation = new StorageValue(GeodeBuilder.RuntimeID, "stack[-1].macros", PrimitiveTypeSpecifier.Compound);
-
-                var alreadyResetMacros = false;
+                var macroStorageLocation = new StackValue(-1, $"macros{macroCounter++}", PrimitiveTypeSpecifier.Compound);
 
                 foreach (var (param, val) in FuncType.Parameters.Zip(args))
                 {
@@ -41,12 +39,6 @@ namespace Amethyst.Geode.Values
                             }
                             else
                             {
-                                if (!alreadyResetMacros)
-                                {
-                                    macroStorageLocation.Store(new LiteralValue(new NBTCompound()), ctx);
-                                    alreadyResetMacros = true;
-                                }
-
                                 ctx.Call("amethyst:core/macro/guard", false, ReferenceTypeSpecifier.From(macroStorageLocation.Property(param.Name, param.Type)), new LiteralValue(param.Type.MacroGuardStart), val, new LiteralValue(param.Type.MacroGuardEnd));
                                 macros.Add(param.Name, new VoidValue());
                             }
@@ -56,10 +48,15 @@ namespace Amethyst.Geode.Values
                     else processedArgs.Add(param.Name, val);
                 }
 
-                if (processedArgs.Count != 0) ctx.StoreCompound(new StorageValue(GeodeBuilder.RuntimeID, "stack[-1].args", PrimitiveTypeSpecifier.Compound), processedArgs, setEmpty: false);
+                if (processedArgs.Count != 0)
+                {
+                    if (macroCounter > 1) throw new NotImplementedException("Hyper-nested function calls with regular args are not supported right now");
+                    ctx.StoreCompound(new StackValue(-1, "args", PrimitiveTypeSpecifier.Compound), processedArgs, setEmpty: false);
+                }
 
-                // Minecraft throws an error if there are mismatched macro args, so we always reset it
-                if (macros.Count != 0) processedMacros = ctx.StoreCompoundOrReturnConstant(macroStorageLocation, macros, !alreadyResetMacros);
+                if (macros.Count != 0) processedMacros = ctx.StoreCompoundOrReturnConstant(macroStorageLocation, macros, setEmpty: false);
+
+                macroCounter--;
             }
 
             if (processedMacros is StorageValue s) ctx.Add(new FunctionCommand(ID, s.Storage, s.Path));
@@ -68,5 +65,8 @@ namespace Amethyst.Geode.Values
         }
 
         public virtual FunctionValue CloneWithType(FunctionTypeSpecifier type) => new(ID, type);
+
+        // Could just use a random string, but this makes it look nicer
+        private static int macroCounter = 0;
     }
 }

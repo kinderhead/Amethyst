@@ -29,8 +29,9 @@ namespace Amethyst.Geode.Types
 			NBTType.Long => new(new NBTLong(0)),
 			NBTType.Float => new(new NBTFloat(0)),
 			NBTType.Double => new(new NBTDouble(0)),
+			NBTType.String => new(new NBTString("")),
 			NBTType.List => new(new NBTList()),
-			NBTType.Compound => new(new NBTCompound()),
+            NBTType.Compound => new(new NBTCompound()),
 			_ => throw new NotImplementedException()
 		};
 

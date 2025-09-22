@@ -19,7 +19,7 @@ namespace Amethyst.AST.Statements
 			var dest = ctx.RegisterLocal(Name, type);
 			var val = Expression is null ? type.DefaultValue : Expression.Execute(ctx);
 
-			ctx.Add(new StoreInsn(dest, ctx.ImplicitCast(val, type)));
+			ctx.Add(new StoreInsn(dest, ctx.ImplicitCast(val, type), false));
 		}
 	}
 }

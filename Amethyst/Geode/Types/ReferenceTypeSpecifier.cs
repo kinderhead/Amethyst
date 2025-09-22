@@ -15,13 +15,23 @@ namespace Amethyst.Geode.Types
 		public override NBTType EffectiveType => NBTType.String;
 		public override string BasePath => "amethyst";
 
-		protected override bool AreEqual(TypeSpecifier obj) => obj is ReferenceTypeSpecifier p && p.Inner == Inner;
-		public static LiteralValue From(DataTargetValue val) => new(val.Target.GetTarget(), new ReferenceTypeSpecifier(val.Type));
+        public override ValueRef ProcessArg(ValueRef src, FunctionContext ctx) => From(src);
+
+        public override void AssignmentOverload(ValueRef dest, ValueRef val, FunctionContext ctx)
+        {
+            ctx.Add(new StoreInsn(dest, ctx.ImplicitCast(val, Inner)));
+        }
+
+        protected override bool AreEqual(TypeSpecifier obj) => obj is ReferenceTypeSpecifier p && p.Inner == Inner;
 		public override object Clone() => new ReferenceTypeSpecifier((TypeSpecifier)Inner.Clone());
 
-		public override void AssignmentOverload(ValueRef dest, ValueRef val, FunctionContext ctx)
-		{
-			ctx.Add(new StoreRefInsn(dest, ctx.ImplicitCast(val, Inner)));
-		}
-	}
+        public static LiteralValue From(DataTargetValue val) => new(val.Target.GetTarget(), new ReferenceTypeSpecifier(val.Type));
+        public static ValueRef From(ValueRef src)
+        {
+            var ptr = new ValueRef(new ReferenceValue(src));
+            ptr.Dependencies.Add(src);
+            return ptr;
+        }
+
+    }
 }

@@ -45,7 +45,7 @@ namespace Amethyst.Geode.IR
             Compiler = compiler;
             Decl = decl;
             Tags = tags;
-            IsMacroFunction = Decl.FuncType.Parameters.Any(i => i.Modifiers.HasFlag(AST.ParameterModifiers.Macro));
+            IsMacroFunction = Decl.FuncType.Parameters.Any(i => i.Modifiers.HasFlag(ParameterModifiers.Macro));
             HasTagPriority = hasTagPriority;
 
             PushScope();
@@ -63,8 +63,8 @@ namespace Amethyst.Geode.IR
                 }
                 else
                 {
-                    // Maybe make it so that if the stack isn't used by the function, then use [-1] and don't push new frame
-                    RegisterLocal(i.Name, $"stack[-2].args.{i.Name}", i.Type);
+                    // Maybe make it so that if the stack isn't used by the function, then use -1 and don't push new frame
+                    RegisterLocal(i.Name, new StackValue(-2, $"args.{i.Name}", i.Type));
                 }
             }
         }
@@ -117,7 +117,7 @@ namespace Amethyst.Geode.IR
             throw new PropertyError(val.Type.ToString(), name);
         }
 
-        public Variable RegisterLocal(string name, TypeSpecifier type) => RegisterLocal(name, $"stack[-1].frame{activeScopes.Count - 1}.{name}", type);
+        public Variable RegisterLocal(string name, TypeSpecifier type) => RegisterLocal(name, $"frame{activeScopes.Count - 1}.{name}", type);
 
         public Variable RegisterLocal(string name, string loc, TypeSpecifier type)
         {
@@ -128,7 +128,7 @@ namespace Amethyst.Geode.IR
 
         public void RegisterLocal(string name, Value val) => activeScopes.Peek().Locals[name] = val;
 
-        public StorageValue Temp(TypeSpecifier type) => new(GeodeBuilder.RuntimeID, $"stack[-1].tmp{tmpStackVars++}", type);
+        public StackValue Temp(TypeSpecifier type) => new(-1, $"tmp{tmpStackVars++}", type);
 
         public ValueRef Add(Instruction insn, string? customName = null)
         {
@@ -154,6 +154,7 @@ namespace Amethyst.Geode.IR
             else if (val.Type is AnyTypeSpecifier) return val.SetType(type); // This hopefully shouldn't cause problems with reusing values
             else if (val.Type.Implements(type)) return val.SetType(type);
             else if (type is ReferenceTypeSpecifier r && val.Type.Implements(r.Inner)) return Add(new ReferenceInsn(val)).SetType(type);
+            else if (val.Type is ReferenceTypeSpecifier r2 && r2.Inner.Implements(type)) return ReferenceTypeSpecifier.From(val).SetType(type);
             else if (val.Value is LiteralValue literal && type is PrimitiveTypeSpecifier)
             {
                 if (literal.Value.NumberType is NBTNumberType && type.EffectiveNumberType is NBTNumberType destType)
@@ -283,7 +284,7 @@ namespace Amethyst.Geode.IR
 
             foreach (var i in registersInUse)
             {
-                new StorageValue(GeodeBuilder.RuntimeID, $"stack[-1].reg_{i}", PrimitiveTypeSpecifier.Int).Store(builder.Reg(i), firstBlockRenderer);
+                new StackValue(-1, $"reg_{i}", PrimitiveTypeSpecifier.Int).Store(builder.Reg(i), firstBlockRenderer);
             }
 
             foreach (var i in blocks)
@@ -295,7 +296,7 @@ namespace Amethyst.Geode.IR
 
             foreach (var i in registersInUse)
             {
-                builder.Reg(i).Store(new StorageValue(GeodeBuilder.RuntimeID, $"stack[-1].reg_{i}", PrimitiveTypeSpecifier.Int), firstBlockRenderer);
+                builder.Reg(i).Store(new StackValue(-1, $"reg_{i}", PrimitiveTypeSpecifier.Int), firstBlockRenderer);
             }
 
             if (UsesStack) firstBlockRenderer.Add(new DataCommand.Remove(GeodeBuilder.RuntimeID, "stack[-1]"));
@@ -344,9 +345,9 @@ namespace Amethyst.Geode.IR
 
         public NamespacedID GetNewInternalID() => new(Decl.ID.Namespace, $"zz_internal/{GeodeBuilder.RandomString}");
 
-        public StorageValue GetIsFunctionReturningValue() => new(GeodeBuilder.RuntimeID, $"stack[-1].returning", PrimitiveTypeSpecifier.Bool);
-        public StorageValue GetFunctionReturnValue() => GetFunctionReturnValue(Decl.FuncType.ReturnType, UsesStack ? -2 : -1);
-        public static StorageValue GetFunctionReturnValue(TypeSpecifier type, int depth = -2) => new(GeodeBuilder.RuntimeID, $"stack[{depth}].ret", type);
+        public StackValue GetIsFunctionReturningValue() => new(-1, "returning", PrimitiveTypeSpecifier.Bool);
+        public StackValue GetFunctionReturnValue() => GetFunctionReturnValue(Decl.FuncType.ReturnType, UsesStack ? -2 : -1);
+        public static StackValue GetFunctionReturnValue(TypeSpecifier type, int depth = -2) => new(depth, "ret", type);
 
         private class Scope
         {

@@ -20,7 +20,8 @@ namespace Amethyst.Geode.IR
 
         public bool MarkedForRemoval { get; private set; } = false;
 
-        public virtual bool IsReturn { get; } = false;
+        public virtual bool IsReturn => false;
+        public virtual bool ShouldProcessArgs => true;
 
         public Instruction(IEnumerable<IInstructionArg> args)
         {
@@ -30,9 +31,12 @@ namespace Amethyst.Geode.IR
 
         public void ProcessArgs(FunctionContext ctx)
         {
-            for (int i = 0; i < Arguments.Length; i++)
-            {
-                if (Arguments[i] is ValueRef arg) Arguments[i] = arg.Type.ProcessArg(arg, ctx);
+			if (ShouldProcessArgs)
+			{
+                for (int i = 0; i < Arguments.Length; i++)
+                {
+                    if (Arguments[i] is ValueRef arg) Arguments[i] = arg.Type.ProcessArg(arg, ctx);
+                }
             }
 
             CheckArguments();

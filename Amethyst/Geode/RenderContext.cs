@@ -34,11 +34,12 @@ namespace Amethyst.Geode
             foreach (var (key, val) in dict.Select(i => (i.Key, i.Value.Expect())))
             {
                 if (val is VoidValue) forceUseStorage = true;
+                else if (val is MacroValue m && m.Type.EffectiveType == Datapack.Net.Data.NBTType.String) nbt[key] = new Datapack.Net.Data.NBTString(m.GetMacro());
                 else if (val is ILiteralValue l) nbt[key] = l.Value;
                 else runtime[key] = val;
             }
 
-            if (!forceUseStorage || nbt.Count == dict.Count) return new LiteralValue(nbt);
+            if (!forceUseStorage && nbt.Count == dict.Count) return new LiteralValue(nbt);
 
             if (setEmpty || nbt.Count != 0) dest.Store(new LiteralValue(nbt), this);
 

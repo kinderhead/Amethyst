@@ -1,0 +1,35 @@
+namespace test;
+
+#test
+void test_int_ref() {
+    start("int ref");
+    
+    int x = 10;
+    int& ref = x;
+
+    ref = -4;
+
+    assert(x == -4);
+    assert(ref == -4);
+
+    complete();
+}
+
+#test
+void test_int_2_ref() {
+    start("int 2 ref");
+    
+    int x = 10;
+    int y = -3;
+    int& ref1 = x;
+    int& ref2 = y;
+
+    ref1 = ref2;
+
+    assert(x == -3);
+    assert(y == -3);
+    assert(ref1 == -3);
+    assert(ref2 == -3);
+
+    complete();
+}
