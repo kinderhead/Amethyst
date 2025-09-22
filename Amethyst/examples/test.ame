@@ -2,13 +2,8 @@ namespace example;
 
 #load
 void main() {
-    nbt x;
-    x.y = "Hi";
-    func(x);
-    print(x);
-}
-
-void func(nbt& ref) {
-    ref.womp = 9;
+    int[] arr;
+    arr.add(10);
+    print(arr);
 }
 

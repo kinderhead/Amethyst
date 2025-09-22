@@ -55,8 +55,10 @@ namespace Amethyst.Geode.Values
 			else if (val is DataTargetValue data) ctx.Call("amethyst:core/ref/set-ref", Pointer, ReferenceTypeSpecifier.From(data));
 			else
 			{
+				if (Pointer.Value is ILiteralValue ptr && ptr.Value is NBTString target) new RawDataTargetValue(target.Value, Type).Store(val, ctx);
+
 				// Stupid minecraft doesn't have a good way to escape strings automatically (so far)
-				if (val is LiteralValue l && l.Value is NBTString str) ctx.Call("amethyst:core/ref/set", Pointer, new LiteralValue($"\"{NBTString.Escape(str.Value)}\""));
+				else if (val is LiteralValue l && l.Value is NBTString str) ctx.Call("amethyst:core/ref/set", Pointer, new LiteralValue($"\"{NBTString.Escape(str.Value)}\""));
 				else ctx.Call("amethyst:core/ref/set", Pointer, val);
 			}
 		}

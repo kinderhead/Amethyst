@@ -108,9 +108,9 @@ namespace Amethyst.Geode.IR
         {
             if (GetGlobal(new(val.Type.BasePath, name)) is FunctionValue func && func.FuncType.Parameters.Length >= 1)
             {
-                func = func.CloneWithType(func.FuncType.ApplyGenericWithParams([val.Type]));
+                func = func.CloneWithType(func.FuncType.ApplyGenericWithParams([new ReferenceTypeSpecifier(val.Type)]));
                 var firstArgType = func.FuncType.Parameters[0].Type;
-                if (val.Type.Implements(firstArgType)) return new MethodValue(func, ImplicitCast(val, firstArgType));
+                if (firstArgType is ReferenceTypeSpecifier r && val.Type.Implements(r.Inner)) return new MethodValue(func, ImplicitCast(val, firstArgType));
             }
             else if (val.Type.Property(name) is TypeSpecifier t) return Add(new PropertyInsn(val, new LiteralValue(name), t));
 
