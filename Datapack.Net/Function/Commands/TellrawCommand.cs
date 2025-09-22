@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Datapack.Net.Function.Commands
+﻿namespace Datapack.Net.Function.Commands
 {
     public class TellrawCommand(IEntityTarget targets, FormattedText msg, bool macro = false) : Command(msg.Macro || macro)
     {
@@ -13,7 +7,7 @@ namespace Datapack.Net.Function.Commands
 
         protected override string PreBuild()
         {
-            return $"tellraw {Targets.Get()} {Message}";
+            return $"tellraw {Targets.Get()} {Message.Optimize()}";
         }
     }
 }

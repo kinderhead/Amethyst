@@ -9,7 +9,7 @@ string get-stack-ref(string name) {
 
     // TODO: string concatenation
     string ref;
-    @/data modify storage stack[-1].frame0.ref from value "stack[$(x)].$(name)"
+    @/data modify storage amethyst:runtime stack[-1].frame0.ref set value "storage amethyst:runtime stack[$(x)].$(name)"
     
     return ref;
 }
@@ -19,5 +19,6 @@ inline void set(macro nbt& ref, macro nbt val) {
 }
 
 inline void set-ref(macro nbt& ref, macro nbt& val) {
+    @/data modify storage test:test test set from storage amethyst:runtime stack
     @/data modify $(ref) set from $(val)
 }

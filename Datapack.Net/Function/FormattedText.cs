@@ -1,9 +1,4 @@
 ﻿using Newtonsoft.Json.Linq;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Datapack.Net.Function
 {
@@ -14,12 +9,26 @@ namespace Datapack.Net.Function
         public bool Macro = false;
         public int Count => Obj.Count;
 
+        private readonly Stack<Modifiers> ModifierStack = [];
+
+        public FormattedText PushModifiers(Modifiers mod)
+        {
+            ModifierStack.Push(mod);
+            return this;
+        }
+
+        public FormattedText PopModifiers()
+        {
+            ModifierStack.Pop();
+            return this;
+        }
+
         public FormattedText Text(string str, Modifiers? modifiers = null)
         {
+            modifiers ??= ModifierStack.Count != 0 ? ModifierStack.Peek() : null;
             if (modifiers is null) Obj.Add(str);
             else
             {
-                modifiers ??= new();
                 Obj.Add(modifiers.Value.Process(new JObject(new JProperty("text", str)), this));
             }
 
@@ -28,21 +37,21 @@ namespace Datapack.Net.Function
 
         public FormattedText Score(IEntityTarget target, Score score, Modifiers? modifiers = null)
         {
-            modifiers ??= new();
+            modifiers ??= ModifierStack.Count != 0 ? ModifierStack.Peek() : new();
             Obj.Add(modifiers.Value.Process(new JObject(new JProperty("score", new JObject(new JProperty("name", target.RequireOne().Get()), new JProperty("objective", score.Name)))), this));
             return this;
         }
 
         public FormattedText Storage(Storage target, string path, Modifiers? modifiers = null)
         {
-            modifiers ??= new();
+            modifiers ??= ModifierStack.Count != 0 ? ModifierStack.Peek() : new();
             Obj.Add(modifiers.Value.Process(new JObject(new JProperty("nbt", path), new JProperty("storage", target.ToString())), this));
             return this;
         }
 
         public FormattedText Entity(IEntityTarget target, string sep = ", ", Modifiers? modifiers = null)
         {
-            modifiers ??= new();
+            modifiers ??= ModifierStack.Count != 0 ? ModifierStack.Peek() : new();
             Obj.Add(modifiers.Value.Process(new JObject(new JProperty("selector", target.Get()), new JProperty("separator", sep)), this));
             return this;
         }
@@ -72,15 +81,26 @@ namespace Datapack.Net.Function
         {
             public string Color = "";
             public FormattedText? HoverText;
+            public string? SuggestCommand;
+
+            public bool? Underlined;
 
             public readonly JObject Process(JObject obj, FormattedText self)
             {
                 if (Color != "") obj["color"] = Color;
+                if (Underlined is not null) obj["underlined"] = Underlined;
+
                 if (HoverText is not null)
                 {
                     if (HoverText.HasHoverOrClickEvents) throw new ArgumentException("Formatted text has hover or click events in invalid places");
                     self.HasHoverOrClickEvents = true;
-                    obj["hover_event"] = new JObject(new JProperty("action", "show_text"), new JProperty("value", HoverText.Obj));
+                    obj["hover_event"] = new JObject { { "action", "show_text" }, { "value", HoverText.Obj } };
+                }
+
+                if (SuggestCommand is not null)
+                {
+                    self.HasHoverOrClickEvents = true;
+                    obj["click_event"] = new JObject { { "action", "suggest_command" }, { "command", SuggestCommand } };
                 }
                 return obj;
             }

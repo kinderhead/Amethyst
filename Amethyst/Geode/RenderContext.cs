@@ -9,6 +9,8 @@ namespace Amethyst.Geode
 {
     public record class RenderContext(MCFunction MCFunction, Block Block, GeodeBuilder Builder, FunctionContext Func)
     {
+        public ScoreValue SuccessScore => Builder.Score("amethyst_success");
+
         public virtual void Add(params IEnumerable<Command> cmds)
         {
             if (Func.IsMacroFunction) MCFunction.Add(cmds.Select(i =>
@@ -70,6 +72,56 @@ namespace Amethyst.Geode
             var ctx = new FauxRenderContext(MCFunction, Block, Builder, Func);
             func(ctx);
             return ctx.Commands;
+        }
+
+        public void PossibleErrorChecker(Command cmd, string msg, params ValueRef[] extras)
+        {
+            PossibleErrorChecker(cmd, text => text.Text($": {msg} "), extras);
+        }
+
+        public void PossibleErrorChecker(Command cmd, Action<FormattedText> msg, params ValueRef[] extras)
+        {
+            if (Builder.Options.Debug)
+            {
+                var success = SuccessScore;
+                Add(new Execute().Store(success.Target, success.Score, false).Run(cmd));
+
+                var text = new FormattedText()
+                        .PushModifiers(new FormattedText.Modifiers { Color = "red" })
+                        .Text("Error at ")
+                        .Text(Func.LocationStack.Peek().ToString(), new FormattedText.Modifiers { Color = "#9A5CC6" });
+
+                msg(text);
+
+                if (extras.Length > 0)
+                {
+                    text.PushModifiers(new FormattedText.Modifiers { Color = "dark_aqua" });
+
+                    foreach (var i in extras)
+                    {
+                        i.Expect().Render(text, this);
+                        text.Text(", ", new FormattedText.Modifiers { Color = "red" });
+                    }
+
+                    text.RemoveLast();
+                }
+
+                Add(new Execute().If.Score(success.Target, success.Score, 0).Run(new TellrawCommand(
+                    new TargetSelector(TargetType.a),
+                    text
+                )));
+
+                if (Block != Func.FirstBlock)
+                {
+                    Add(new Execute().If.Score(success.Target, success.Score, 0).Run(WithFaux(ctx =>
+                    {
+                        Func.GetIsFunctionReturningValue().Store(success, ctx);
+                    }).Single()));
+                }
+
+                Add(new Execute().If.Score(success.Target, success.Score, 0).Run(new ReturnCommand(0))); // Purposeful not fail, maybe check it
+            }
+            else Add(cmd);
         }
     }
 

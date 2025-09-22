@@ -2,6 +2,7 @@ using Amethyst.AST;
 using Amethyst.Errors;
 using Amethyst.Geode.Types;
 using Datapack.Net.Data;
+using Datapack.Net.Function;
 using Datapack.Net.Function.Commands;
 using Datapack.Net.Utils;
 
@@ -59,9 +60,21 @@ namespace Amethyst.Geode.Values
                 macroCounter--;
             }
 
-            if (processedMacros is StorageValue s) ctx.Add(new FunctionCommand(ID, s.Storage, s.Path));
-            else if (processedMacros is LiteralValue l) ctx.Add(new FunctionCommand(ID, (NBTCompound)l.Value));
-            else ctx.Add(new FunctionCommand(ID));
+            if (processedMacros is StorageValue s) ctx.PossibleErrorChecker(new FunctionCommand(ID, s.Storage, s.Path),
+                text => text
+                    .Text($": Failed to run function ")
+                    .Text(ID.ToString(), new FormattedText.Modifiers { Color = "red", SuggestCommand = $"/function {ID}", Underlined = true })
+                    .Text($" with macro arguments: "),
+                s
+            );
+            else if (processedMacros is LiteralValue l) ctx.PossibleErrorChecker(new FunctionCommand(ID, (NBTCompound)l.Value),
+                text => text
+                    .Text($": Failed to run function ")
+                    .Text(ID.ToString(), new FormattedText.Modifiers { Color = "red", SuggestCommand = $"/function {ID} {l.Value}", Underlined = true })
+                    .Text($" with macro arguments: "),
+                l
+            );
+            else ctx.PossibleErrorChecker(new FunctionCommand(ID), $"Failed to run function \"{ID}\"");
         }
 
         public virtual FunctionValue CloneWithType(FunctionTypeSpecifier type) => new(ID, type);

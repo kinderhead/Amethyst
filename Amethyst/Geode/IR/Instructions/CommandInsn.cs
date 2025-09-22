@@ -14,7 +14,8 @@ namespace Amethyst.Geode.IR.Instructions
 
         public override void Render(RenderContext ctx)
         {
-            ctx.Add(new RawCommand(Command, true)); // Not worrying about turning on macros manually bc I don't care
+            //ctx.PossibleErrorChecker(new RawCommand(Command), text => text.Text(": Inline command failed: ").Text(Command, new FormattedText.Modifiers { Color = "red", Underlined = true, SuggestCommand = $"/{Command}" }));
+            ctx.Add(new RawCommand(Command));
         }
 
         public override string Dump(Func<IInstructionArg, string> valueMap) => $"/{Command}";

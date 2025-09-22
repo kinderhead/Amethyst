@@ -10,6 +10,9 @@ namespace Amethyst
 		[Option('f', "pack-format", HelpText = "Datapack format.", Default = 71)]
 		public int PackFormat { get; set; }
 
+		[Option('d', "debug", HelpText = "Enable debug checks", Default = false)]
+		public bool Debug { get; set; }
+
 		// [Option('n', "no-constant-scores", HelpText = "Don't generate global number constant scores to use when applicable.")]
 		// public bool NoConstantScores { get; set; }
 

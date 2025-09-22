@@ -1,15 +1,15 @@
-﻿using Amethyst.AST.Expressions;
+﻿using System.Text;
+using Amethyst.AST.Expressions;
 using Amethyst.Geode;
 using Amethyst.Geode.IR;
 using Amethyst.Geode.IR.Instructions;
 using Amethyst.Geode.Types;
-using System.Text;
 
 namespace Amethyst.AST.Statements
 {
 	public class CommandStatement(LocationRange loc, IEnumerable<CommandFragment> cmd) : Statement(loc)
 	{
-		public readonly CommandFragment[] Fragments = [..cmd];
+		public readonly CommandFragment[] Fragments = [.. cmd];
 		public override IEnumerable<Statement> SubStatements => [];
 
 		public override void Compile(FunctionContext ctx)
@@ -21,20 +21,22 @@ namespace Amethyst.AST.Statements
 			{
 				i.Resolve(ctx);
 				cmd.Append(i.Render(ref arg));
-            }
+			}
 
 			if (arg == 0) ctx.Add(new CommandInsn(cmd.ToString()));
 			else
 			{
 				var (cmdCtx, func) = ctx.Compiler.AnonymousFunction(new(FunctionModifiers.None, new VoidTypeSpecifier(), Fragments.Where(i => i is CommandExprFragment).Cast<CommandExprFragment>().Select(i => new Parameter(ParameterModifiers.Macro, i.Value.Type, $"arg{i.ArgIndex}"))));
-				
+
+				cmdCtx.LocationStack.Push(Location);
 				cmdCtx.Add(new CommandInsn(cmd.ToString()));
 				cmdCtx.Add(new ReturnInsn());
 				cmdCtx.Finish();
+				cmdCtx.LocationStack.Pop();
 
-                ctx.Add(new CallInsn(func, Fragments.Where(i => i is CommandExprFragment).Cast<CommandExprFragment>().Select(i => i.Value)));
-            }
-        }
+				ctx.Add(new CallInsn(func, Fragments.Where(i => i is CommandExprFragment).Cast<CommandExprFragment>().Select(i => i.Value)));
+			}
+		}
 	}
 
 	public abstract class CommandFragment
@@ -57,11 +59,11 @@ namespace Amethyst.AST.Statements
 		public ValueRef Value { get => field ?? throw new InvalidOperationException(); private set; }
 		public int ArgIndex { get; private set; } = -1;
 
-        public override string Render(ref int arg) => Value.IsLiteral && Value.Value is Value v ? v.ToString() : $"$(arg{ArgIndex = arg++})";
+		public override string Render(ref int arg) => Value.IsLiteral && Value.Value is Value v ? v.ToString() : $"$(arg{ArgIndex = arg++})";
 
 		public override void Resolve(FunctionContext ctx)
 		{
 			Value = Expression.Execute(ctx);
-        }
+		}
 	}
 }

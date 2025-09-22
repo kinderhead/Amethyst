@@ -33,3 +33,25 @@ void test_int_2_ref() {
 
     complete();
 }
+
+#test 
+void test_int_arg_ref() {
+    start("int arg ref");
+
+    int x = 75;
+
+    assert(x == 75);
+    _modify(x);
+    assert(x == -9);
+
+    complete();
+}
+
+void _modify(int& ref) {
+    int _dummy = 9;
+
+    assert(ref == 75);
+    ref = -9;
+    assert(ref == -9);
+}
+
