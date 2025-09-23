@@ -1,5 +1,4 @@
 ﻿using Amethyst.Geode.IR;
-using Amethyst.Geode.IR.Instructions;
 using Amethyst.Geode.Values;
 using Datapack.Net.Data;
 
@@ -15,11 +14,12 @@ namespace Amethyst.Geode.Types
         public override NBTType EffectiveType => NBTType.String;
         public override string BasePath => "amethyst";
 
-        public override ValueRef ProcessArg(ValueRef src, FunctionContext ctx) => From(src);
+        // public override ValueRef ProcessArg(ValueRef src, FunctionContext ctx) => From(src);
 
         public override void AssignmentOverload(ValueRef dest, ValueRef val, FunctionContext ctx)
         {
-            ctx.Add(new StoreInsn(dest, ctx.ImplicitCast(val, Inner)));
+            ctx.Call("amethyst:core/ref/set", dest, val);
+            // ctx.Add(new StoreInsn(dest, ctx.ImplicitCast(val, Inner)));
         }
 
         public override TypeSpecifier? Property(string name) => Inner.Property(name);

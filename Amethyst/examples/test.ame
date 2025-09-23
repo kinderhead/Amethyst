@@ -2,8 +2,11 @@ namespace example;
 
 #load
 void main() {
-    int[] arr;
-    arr.add(10);
-    print(arr);
+    int x = 6;
+    int& ret = x;
+    
+    ref = 9;
+
+    print(x, ref);
 }
 

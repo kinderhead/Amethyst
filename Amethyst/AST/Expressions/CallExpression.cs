@@ -23,11 +23,7 @@ namespace Amethyst.AST.Expressions
 		{
 			var func = Function.Execute(ctx);
 			if (func.Value is Intrinsic i) return i.Execute(ctx, Args);
-			else if (func.Value is FunctionValue f)
-			{
-				if (f.FuncType.Parameters.Length != Args.Count) throw new MismatchedArgumentCountError(f.FuncType.Parameters.Length, Args.Count);
-				return ctx.Add(new CallInsn(func, Args.Zip(f.FuncType.Parameters).Select(i => ctx.ImplicitCast(i.First.Execute(ctx), i.Second.Type))));
-			}
+			else if (func.Value is FunctionValue f) return ctx.Call(f, [.. Args.Select(i => i.Execute(ctx))]);
 			else throw new NotImplementedException();
 		}
 	}

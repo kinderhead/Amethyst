@@ -178,9 +178,12 @@ namespace Amethyst.Geode.IR
             throw new InvalidTypeError(val.Type.ToString(), type.ToString());
         }
 
-        public ValueRef Call(NamespacedID id, params IEnumerable<ValueRef> args)
+        public ValueRef Call(NamespacedID id, params ValueRef[] args) => Call(GetGlobal(id) as FunctionValue ?? throw new UndefinedSymbolError(id.ToString()), args);
+
+        public ValueRef Call(FunctionValue f, params ValueRef[] args)
         {
-            return Add(new CallInsn(GetGlobal(id) ?? throw new UndefinedSymbolError(id.ToString()), args));
+            if (f.FuncType.Parameters.Length != args.Length) throw new MismatchedArgumentCountError(f.FuncType.Parameters.Length, args.Length);
+            return Add(new CallInsn(f, args.Zip(f.FuncType.Parameters).Select(i => ImplicitCast(i.First, i.Second.Type))));
         }
 
         public void Finish()
