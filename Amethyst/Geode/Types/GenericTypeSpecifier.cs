@@ -23,10 +23,9 @@ namespace Amethyst.Geode.Types
 		public override bool ConstraintSatisfiedBy(TypeSpecifier other) => other.Implements(Constraint);
 		public override bool Implements(TypeSpecifier other)
 		{
-			if (this == other) return true;
-			else if (Constraint == other) return true;
-			else return BaseClass.Implements(other);
-		}
+			if (Constraint == other) return true;
+			else return base.Implements(other);
+        }
 
 		public void Set(TypeSpecifier type)
 		{

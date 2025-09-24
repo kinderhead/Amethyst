@@ -1,4 +1,6 @@
-﻿using Amethyst.Geode.IR;
+﻿using Amethyst.Errors;
+using Amethyst.Geode.IR;
+using Amethyst.Geode.IR.Instructions;
 using Amethyst.Geode.Values;
 using Datapack.Net.Data;
 
@@ -13,6 +15,7 @@ namespace Amethyst.Geode.Types
         public override string ToString() => $"{Inner}&";
         public override NBTType EffectiveType => NBTType.String;
         public override string BasePath => "amethyst";
+		public override TypeSpecifier BaseClass => this;
 
         // public override ValueRef ProcessArg(ValueRef src, FunctionContext ctx) => From(src);
 
@@ -20,6 +23,17 @@ namespace Amethyst.Geode.Types
         {
             ctx.Call("amethyst:core/ref/set", dest, val);
             // ctx.Add(new StoreInsn(dest, ctx.ImplicitCast(val, Inner)));
+        }
+
+		public override ValueRef? CastOverload(ValueRef val, FunctionContext ctx)
+		{
+			if (val.Type.Implements(Inner))
+			{
+                if (val.IsLiteral) throw new ReferenceError(val.Name);
+                return ctx.Add(new ReferenceInsn(val));
+            }
+
+            return null;
         }
 
         public override TypeSpecifier? Property(string name) => Inner.Property(name);

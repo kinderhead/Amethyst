@@ -3,7 +3,7 @@ namespace example;
 #load
 void main() {
     int x = 6;
-    int& ret = x;
+    int& ref = x;
     
     ref = 9;
 

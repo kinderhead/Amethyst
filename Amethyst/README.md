@@ -274,9 +274,9 @@ Here is the inheritance chain for types:
     * `minecraft:byte_array` (not implemented yet)
     * `minecraft:int_array` (not implemented yet)
     * `minecraft:long_array` (not implemented yet)
-    * `amethyst:list<T>`
-  * `amethyst:pointer<T>`
+    * `amethyst:list<T>` (currently defined as `T[]`)
   * All user-defined types
+* `amethyst:ref<T>` (currently defined as `T&`)
 
 ## Planned features
 

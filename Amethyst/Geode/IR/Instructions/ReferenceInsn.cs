@@ -17,14 +17,6 @@ namespace Amethyst.Geode.IR.Instructions
             ReturnValue.Expect<LValue>().Store(FunctionContext.GetFunctionReturnValue(ReturnType, -1), ctx);
         }
 
-		protected override Value? ComputeReturnValue(FunctionContext ctx)
-		{
-			var val = Arg<ValueRef>(0).Expect();
-
-			if (val is StackValue) return null;
-            else if (val is DataTargetValue data) return ReferenceTypeSpecifier.From(data);
-
-			return null;
-		}
+		protected override Value? ComputeReturnValue(FunctionContext ctx) => null;
 	}
 }

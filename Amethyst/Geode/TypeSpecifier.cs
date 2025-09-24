@@ -36,8 +36,9 @@ namespace Amethyst.Geode
 		public virtual bool Implements(TypeSpecifier other)
 		{
 			if (this == other) return true;
-			else if (this == BaseClass) return false;
-			else return BaseClass.Implements(other);
+			else if (other.GetType() == GetType() && Subtypes.Count() == other.Subtypes.Count() && Subtypes.Zip(other.Subtypes).All(i => i.First.Implements(i.Second))) return true;
+            else if (this == BaseClass) return false;
+            else return BaseClass.Implements(other);
 		}
 
 		public virtual ValueRef ProcessArg(ValueRef src, FunctionContext ctx) => src;
@@ -73,6 +74,8 @@ namespace Amethyst.Geode
 		{
 			ctx.Add(new StoreInsn(dest, ctx.ImplicitCast(val, this)));
 		}
+
+		public virtual ValueRef? CastOverload(ValueRef val, FunctionContext ctx) => null;
 
 		public override int GetHashCode() => ToString().GetHashCode();
 
