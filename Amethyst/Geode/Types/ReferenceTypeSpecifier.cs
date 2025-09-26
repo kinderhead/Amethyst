@@ -15,20 +15,18 @@ namespace Amethyst.Geode.Types
         public override string ToString() => $"{Inner}&";
         public override NBTType EffectiveType => NBTType.String;
         public override string BasePath => "amethyst";
-		public override TypeSpecifier BaseClass => this;
-
-        // public override ValueRef ProcessArg(ValueRef src, FunctionContext ctx) => From(src);
+        public override TypeSpecifier BaseClass => this;
 
         public override void AssignmentOverload(ValueRef dest, ValueRef val, FunctionContext ctx)
         {
-            ctx.Call("amethyst:core/ref/set", dest, val);
-            // ctx.Add(new StoreInsn(dest, ctx.ImplicitCast(val, Inner)));
+            if (val.Type is ReferenceTypeSpecifier) ctx.Call("amethyst:core/ref/set-ref", dest, ctx.ImplicitCast(val, this));
+            else ctx.Call("amethyst:core/ref/set", dest, ctx.ImplicitCast(val, Inner));
         }
 
-		public override ValueRef? CastOverload(ValueRef val, FunctionContext ctx)
-		{
-			if (val.Type.Implements(Inner))
-			{
+        public override ValueRef? CastOverload(ValueRef val, FunctionContext ctx)
+        {
+            if (val.Type.Implements(Inner))
+            {
                 if (val.IsLiteral) throw new ReferenceError(val.Name);
                 return ctx.Add(new ReferenceInsn(val));
             }
@@ -42,12 +40,12 @@ namespace Amethyst.Geode.Types
         public override object Clone() => new ReferenceTypeSpecifier((TypeSpecifier)Inner.Clone());
 
         public static LiteralValue From(DataTargetValue val) => new(val.Target.GetTarget(), new ReferenceTypeSpecifier(val.Type));
-        public static ValueRef From(ValueRef src)
+        public static ValueRef From(ValueRef src, FunctionContext ctx)
         {
-            var ptr = new ValueRef(new ReferenceValue(src));
-            ptr.Dependencies.Add(src);
-            return ptr;
+            return ctx.Add(new DereferenceInsn(src));
+            // var ptr = new ValueRef(new ReferenceValue(src));
+            // ptr.Dependencies.Add(src);
+            // return ptr;
         }
-
     }
 }
