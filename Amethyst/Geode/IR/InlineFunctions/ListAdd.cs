@@ -4,6 +4,7 @@ using Datapack.Net.Utils;
 
 namespace Amethyst.Geode.IR.InlineFunctions
 {
+    [Obsolete("Use ListAddInsn instead")]
     public class ListAdd(NamespacedID id, FunctionTypeSpecifier type) : FunctionValue(id, type)
     {
         public ListAdd() : this("amethyst:add", new FunctionTypeSpecifier(AST.FunctionModifiers.None, new VoidTypeSpecifier(), [

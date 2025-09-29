@@ -26,7 +26,7 @@ namespace Amethyst.AST.Statements
 			if (arg == 0) ctx.Add(new CommandInsn(cmd.ToString()));
 			else
 			{
-				var (cmdCtx, func) = ctx.Compiler.AnonymousFunction(new(FunctionModifiers.None, new VoidTypeSpecifier(), Fragments.Where(i => i is CommandExprFragment).Cast<CommandExprFragment>().Select(i => new Parameter(ParameterModifiers.Macro, i.Value.Type, $"arg{i.ArgIndex}"))));
+				var (cmdCtx, func) = ctx.Compiler.AnonymousFunction(new(FunctionModifiers.None, new VoidTypeSpecifier(), Fragments.Where(i => i is CommandExprFragment).Cast<CommandExprFragment>().Select(i => new Parameter(ParameterModifiers.Macro, PrimitiveTypeSpecifier.Compound, $"arg{i.ArgIndex}"))));
 
 				cmdCtx.LocationStack.Push(Location);
 				cmdCtx.Add(new CommandInsn(cmd.ToString()));
@@ -34,7 +34,7 @@ namespace Amethyst.AST.Statements
 				cmdCtx.Finish();
 				cmdCtx.LocationStack.Pop();
 
-				ctx.Add(new CallInsn(func, Fragments.Where(i => i is CommandExprFragment).Cast<CommandExprFragment>().Select(i => i.Value)));
+				ctx.Add(new CallInsn(func, Fragments.Where(i => i is CommandExprFragment).Cast<CommandExprFragment>().Select(i => ctx.ImplicitCast(i.Value, PrimitiveTypeSpecifier.Compound))));
 			}
 		}
 	}

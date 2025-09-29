@@ -4,7 +4,6 @@ using Amethyst.AST.Intrinsics;
 using Amethyst.Errors;
 using Amethyst.Geode;
 using Amethyst.Geode.IR;
-using Amethyst.Geode.IR.InlineFunctions;
 using Amethyst.Geode.IR.Instructions;
 using Amethyst.Geode.Types;
 using Amethyst.Geode.Values;
@@ -129,28 +128,28 @@ namespace Amethyst
 			return true;
 		}
 
-        public bool WrapError(LocationRange loc, FunctionContext ctx, Action cb)
-        {
+		public bool WrapError(LocationRange loc, FunctionContext ctx, Action cb)
+		{
 			ctx.LocationStack.Push(loc);
 
-            try
-            {
-                cb();
-            }
-            catch (AmethystError e)
-            {
-                e.Display(this, loc);
-                return false;
-            }
+			try
+			{
+				cb();
+			}
+			catch (AmethystError e)
+			{
+				e.Display(this, loc);
+				return false;
+			}
 			finally
 			{
 				ctx.LocationStack.Pop();
 			}
 
-            return true;
-        }
+			return true;
+		}
 
-        public void AddSymbol(GlobalSymbol sym)
+		public void AddSymbol(GlobalSymbol sym)
 		{
 			if (Symbols.TryGetValue(sym.ID, out var old)) throw new RedefinedSymbolError(sym.ID.ToString(), old.Location);
 			else Symbols[sym.ID] = sym;
@@ -168,12 +167,13 @@ namespace Amethyst
 		{
 			Register(new Print());
 			Register(new CountOf());
+			Register(new ListAdd());
 
 			AddSymbol(new("builtin:true", LocationRange.None, new LiteralValue(true)));
 			AddSymbol(new("builtin:false", LocationRange.None, new LiteralValue(false)));
 
-			var listAdd = new ListAdd();
-			AddSymbol(new(listAdd.ID, LocationRange.None, listAdd));
+			//var listAdd = new ListAdd();
+			//AddSymbol(new(listAdd.ID, LocationRange.None, listAdd));
 		}
 
 		protected FunctionContext GetGlobalInitFunc() => new(this, new(new("amethyst", "zz_internal/" + GeodeBuilder.RandomString), FunctionTypeSpecifier.VoidFunc), ["minecraft:load"], hasTagPriority: true);

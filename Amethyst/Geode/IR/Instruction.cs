@@ -31,8 +31,8 @@ namespace Amethyst.Geode.IR
 
         public void ProcessArgs(FunctionContext ctx)
         {
-			if (ShouldProcessArgs)
-			{
+            if (ShouldProcessArgs)
+            {
                 for (int i = 0; i < Arguments.Length; i++)
                 {
                     if (Arguments[i] is ValueRef arg) Arguments[i] = arg.Type.ProcessArg(arg, ctx);
@@ -74,7 +74,7 @@ namespace Amethyst.Geode.IR
                 return;
             }
 
-            if (ReturnType is not AnyTypeSpecifier && ret.Type != ReturnType) throw new InvalidOperationException($"Instruction returned {ret.Type}, but expected {ReturnType}");
+            if (ReturnType is not AnyTypeSpecifier && ret.Type != ReturnType) throw new InvalidTypeError(ret.Type.ToString(), ReturnType.ToString());
 
             ReturnValue.SetValue(ret);
             if (ret.IsLiteral) Remove();

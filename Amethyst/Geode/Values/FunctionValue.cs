@@ -1,5 +1,6 @@
 using Amethyst.AST;
 using Amethyst.Errors;
+using Amethyst.Geode.IR;
 using Amethyst.Geode.Types;
 using Datapack.Net.Data;
 using Datapack.Net.Function;
@@ -8,7 +9,7 @@ using Datapack.Net.Utils;
 
 namespace Amethyst.Geode.Values
 {
-    public class FunctionValue(NamespacedID id, FunctionTypeSpecifier type) : LiteralValue(new NBTString(id.ToString()))
+    public class FunctionValue(NamespacedID id, FunctionTypeSpecifier type) : LiteralValue(new NBTString(id.ToString())), IFunctionLike
     {
         public readonly NamespacedID ID = id;
         public override TypeSpecifier Type => type;
@@ -31,8 +32,8 @@ namespace Amethyst.Geode.Values
                 {
                     if (param.Modifiers.HasFlag(ParameterModifiers.Macro))
                     {
-                        if (val.Value is MacroValue m && m.Type == PrimitiveTypeSpecifier.String) throw new InvalidTypeError("macro string", "string");
-                        else if (applyGuard && param.Type.MacroGuardStart != "" && param.Type.MacroGuardEnd != "")
+                        // if (val.Value is MacroValue m && m.Type == PrimitiveTypeSpecifier.String) throw new InvalidTypeError("macro string", "string");
+                        if (applyGuard && param.Type.MacroGuardStart != "" && param.Type.MacroGuardEnd != "")
                         {
                             if (val.Value is ILiteralValue l)
                             {
@@ -43,6 +44,12 @@ namespace Amethyst.Geode.Values
                                 ctx.Call("amethyst:core/macro/guard", false, ReferenceTypeSpecifier.From(macroStorageLocation.Property(param.Name, param.Type)), new LiteralValue(param.Type.MacroGuardStart), val, new LiteralValue(param.Type.MacroGuardEnd));
                                 macros.Add(param.Name, new VoidValue());
                             }
+                        }
+                        else if (param.Type == PrimitiveTypeSpecifier.String)
+                        {
+                            // Exclude macros
+                            if (val.Value is not LiteralValue l) throw new MacroStringError();
+                            else macros.Add(param.Name, new LiteralValue(l.Value.ToString())); // Escape string
                         }
                         else macros.Add(param.Name, val);
                     }
@@ -77,7 +84,9 @@ namespace Amethyst.Geode.Values
             else ctx.PossibleErrorChecker(new FunctionCommand(ID), $"Failed to run function \"{ID}\"");
         }
 
-        public virtual FunctionValue CloneWithType(FunctionTypeSpecifier type) => new(ID, type);
+        public virtual IFunctionLike CloneWithType(FunctionTypeSpecifier type) => new FunctionValue(ID, type);
+
+        public ValueRef AsMethod(ValueRef self, FunctionContext ctx) => new MethodValue(this, ctx.ImplicitCast(self, FuncType.Parameters[0].Type));
 
         // Could just use a random string, but this makes it look nicer
         private static int macroCounter = 0;

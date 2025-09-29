@@ -172,7 +172,7 @@ void func(string& ptr) {
 References are stored internally as `Datapack.Net.Function.IDataTarget`s, so they work nicely with any commands that use `IDataTarget` (`/execute store`, `/data`, etc). This allows for references to point to entities and blocks instead of just storage. For example, this property is used in `amethyst:core/ref/set` like so:
 
 ```cs
-inline void set(macro nbt& ref, macro nbt val) {
+inline void set(macro nbt& ref, macro string val) {
     @/data modify $(ref) set value $(val)
 }
 ```
@@ -203,7 +203,7 @@ void func(macro int arg, string non_macro_arg) { ... }
 
 As you can see, macro arguments can be mixed with regular arguments.
 
-**WARNING**: macro strings will strip quotes, so spaces will cause syntax errors. Try to avoid using macro strings unless this is the desired effect.
+**WARNING**: only string literals can be passed into macro string arguments. This is because Minecraft strips quotes from strings when processing them for macros. If this behavior is intended, then use `macro nbt` instead.
 
 ### Global Variables
 

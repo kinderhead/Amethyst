@@ -25,6 +25,8 @@ namespace Amethyst.Errors
 			//AnsiConsole.MarkupLine("[red]│[/]   " + new string(' ', loc.Start.Column - 1) + $"[red]{new string('~', lastCol - loc.Start.Column + 1)}[/]");
 			//AnsiConsole.MarkupLine($"[red]{(last ? "└─" : "│ ")}  {GetType().Name}:[/] [yellow]{RawMessage.EscapeMarkup()}[/]{(last ? "\n\n" : "")}");
 		}
+
+		public override string ToString() => Message;
 	}
 
 
@@ -41,7 +43,7 @@ namespace Amethyst.Errors
 			msg.AddContent($"[green]{RawMessage2} {Location2.Start}[/]");
 			msg.AddCode(handler, Location2, last);
 
-            return msg;
+			return msg;
 
 			//AnsiConsole.MarkupLine($"[red]│\n│[/]   [green]{RawMessage2} {Location2.Start}[/]\n[red]│[/]");
 			//AnsiConsole.MarkupLine("[red]│[/]   [turquoise2]" + lines[Location2.Start.Line - 1] + "[/]");

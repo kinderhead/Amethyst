@@ -1,7 +1,6 @@
 ﻿using Amethyst.Errors;
 using Amethyst.Geode;
 using Amethyst.Geode.IR;
-using Amethyst.Geode.IR.Instructions;
 using Amethyst.Geode.Types;
 using Amethyst.Geode.Values;
 
@@ -22,7 +21,7 @@ namespace Amethyst.AST.Expressions
 		protected override ValueRef _Execute(FunctionContext ctx)
 		{
 			var func = Function.Execute(ctx);
-			if (func.Value is Intrinsic i) return i.Execute(ctx, Args);
+			if (func.Value is Intrinsic i) return i.Execute(ctx, [.. Args.Select(i => i.Execute(ctx))]);
 			else if (func.Value is FunctionValue f) return ctx.Call(f, [.. Args.Select(i => i.Execute(ctx))]);
 			else throw new NotImplementedException();
 		}

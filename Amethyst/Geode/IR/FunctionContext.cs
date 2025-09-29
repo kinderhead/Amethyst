@@ -106,11 +106,12 @@ namespace Amethyst.Geode.IR
 
         public ValueRef GetProperty(ValueRef val, string name)
         {
-            if (GetGlobal(new(val.Type.BasePath, name)) is FunctionValue func && func.FuncType.Parameters.Length >= 1)
+            var effectiveMethodType = val.Type is ReferenceTypeSpecifier r1 ? r1.Inner : val.Type;
+            if (GetGlobal(new(effectiveMethodType.BasePath, name)) is IFunctionLike func && func.FuncType.Parameters.Length >= 1)
             {
-                func = func.CloneWithType(func.FuncType.ApplyGenericWithParams([new ReferenceTypeSpecifier(val.Type)]));
+                func = func.CloneWithType(func.FuncType.ApplyGenericWithParams([new ReferenceTypeSpecifier(effectiveMethodType)]));
                 var firstArgType = func.FuncType.Parameters[0].Type;
-                if (firstArgType is ReferenceTypeSpecifier r && val.Type.Implements(r.Inner)) return new MethodValue(func, ImplicitCast(val, firstArgType));
+                if (firstArgType is ReferenceTypeSpecifier r2 && effectiveMethodType.Implements(r2.Inner)) return func.AsMethod(val, this);
             }
             else if (val.Type.Property(name) is TypeSpecifier t) return Add(new PropertyInsn(val, new LiteralValue(name), t));
 

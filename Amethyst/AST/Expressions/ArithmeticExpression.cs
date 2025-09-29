@@ -16,9 +16,8 @@ namespace Amethyst.AST.Expressions
 
 		protected override ValueRef _Execute(FunctionContext ctx)
 		{
-			// The casts shouldn't be needed because the LoadInsn returns an int, but just to be safe (and also for when I get the types to actually be set correctly after a cast)
-			var left = ctx.ImplicitCast(ctx.Add(new LoadInsn(Left.Execute(ctx))), PrimitiveTypeSpecifier.Int);
-			var right = ctx.ImplicitCast(ctx.Add(new LoadInsn(Right.Execute(ctx))), PrimitiveTypeSpecifier.Int);
+			var left = ctx.ImplicitCast(Left.Execute(ctx), PrimitiveTypeSpecifier.Int);
+			var right = ctx.ImplicitCast(Right.Execute(ctx), PrimitiveTypeSpecifier.Int);
 
 			return Op switch
 			{
