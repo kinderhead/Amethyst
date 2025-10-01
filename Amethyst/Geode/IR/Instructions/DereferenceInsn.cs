@@ -15,7 +15,7 @@ namespace Amethyst.Geode.IR.Instructions
         {
             var ret = ReturnValue.Expect();
             if (ret is ScoreValue score) ctx.Call("amethyst:core/ref/set-score", new LiteralValue($"{score.Target.Get()} {score.Score.Name}"), Arg<ValueRef>(0).Expect());
-            else ctx.Call("amethyst:core/ref/set-ref", ret, Arg<ValueRef>(0).Expect());
+            else ctx.Call("amethyst:core/ref/set-ref", WeakReferenceTypeSpecifier.From((DataTargetValue)ret), Arg<ValueRef>(0).Expect());
         }
 
         protected override Value? ComputeReturnValue(FunctionContext ctx)

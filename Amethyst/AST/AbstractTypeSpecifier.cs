@@ -65,14 +65,21 @@ namespace Amethyst.AST
 	{
 		public readonly AbstractTypeSpecifier Inner = inner;
 
-		protected override TypeSpecifier _Resolve(Compiler ctx, bool allowAuto = false) => new ListTypeSpecifier(Inner.Resolve(ctx, allowAuto));
+		protected override TypeSpecifier _Resolve(Compiler ctx, bool allowAuto = false) => new ListTypeSpecifier(Inner.Resolve(ctx));
 	}
 
 	public class AbstractReferenceTypeSpecifier(LocationRange loc, AbstractTypeSpecifier inner) : AbstractTypeSpecifier(loc)
 	{
 		public readonly AbstractTypeSpecifier Inner = inner;
 
-		protected override TypeSpecifier _Resolve(Compiler ctx, bool allowAuto = false) => new ReferenceTypeSpecifier(Inner.Resolve(ctx, allowAuto));
+		protected override TypeSpecifier _Resolve(Compiler ctx, bool allowAuto = false) => new ReferenceTypeSpecifier(Inner.Resolve(ctx));
+	}
+
+	public class AbstractWeakReferenceTypeSpecifier(LocationRange loc, AbstractTypeSpecifier inner) : AbstractTypeSpecifier(loc)
+	{
+		public readonly AbstractTypeSpecifier Inner = inner;
+
+		protected override TypeSpecifier _Resolve(Compiler ctx, bool allowAuto = false) => new WeakReferenceTypeSpecifier(Inner.Resolve(ctx));
 	}
 
 	public class AbstractInterfaceTypeSpecifier(LocationRange loc, string name, Dictionary<string, AbstractObjectProperty> props) : AbstractTypeSpecifier(loc), IRootChild

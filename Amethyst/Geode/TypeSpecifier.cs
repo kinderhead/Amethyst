@@ -30,15 +30,21 @@ namespace Amethyst.Geode
 		public override bool Equals(object? obj)
 		{
 			if (obj is not TypeSpecifier other) return false;
-			else return GetEquatableType().AreEqual(other.GetEquatableType());
+			else
+			{
+				var a = GetEquatableType();
+				var b = other.GetEquatableType();
+				if (a.GetType() != b.GetType()) return false; // Handle inheritance
+				else return a.EqualsImpl(b);
+			}
 		}
 
 		public virtual bool Implements(TypeSpecifier other)
 		{
 			if (this == other) return true;
 			else if (other.GetType() == GetType() && Subtypes.Count() == other.Subtypes.Count() && Subtypes.Zip(other.Subtypes).All(i => i.First.Implements(i.Second))) return true;
-            else if (this == BaseClass) return false;
-            else return BaseClass.Implements(other);
+			else if (this == BaseClass) return false;
+			else return BaseClass.Implements(other);
 		}
 
 		public virtual ValueRef ProcessArg(ValueRef src, FunctionContext ctx) => src;
@@ -80,7 +86,7 @@ namespace Amethyst.Geode
 		public override int GetHashCode() => ToString().GetHashCode();
 
 		public abstract override string ToString();
-		protected abstract bool AreEqual(TypeSpecifier obj);
+		protected abstract bool EqualsImpl(TypeSpecifier obj);
 		public virtual TypeSpecifier GetEquatableType() => this;
 		public abstract object Clone();
 

@@ -2,17 +2,14 @@ namespace example;
 
 #load
 void main() {
-    string x;
-    string y = "womp womp";
-    string& ref = x;
-    ref = y;
-
-    // int[] arr;
-    // arr.add(10);
-    // test(arr[0]);
+    func1(10);
 }
 
-void test(int& x) {
-    int dummy;
+void func1(int x) {
+    func2(x);
+}
+
+void func2(int& x) {
     print(x);
 }
+

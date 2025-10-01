@@ -26,7 +26,7 @@ namespace Amethyst.Geode.Types
 			return (FunctionTypeSpecifier)ApplyGeneric(other);
 		}
 
-		protected override bool AreEqual(TypeSpecifier obj) => obj is FunctionTypeSpecifier f
+		protected override bool EqualsImpl(TypeSpecifier obj) => obj is FunctionTypeSpecifier f
 			&& f.Modifiers == Modifiers
 			&& f.ReturnType == ReturnType
 			&& Parameters.Length == f.Parameters.Length

@@ -7,7 +7,7 @@ namespace Amethyst.Geode.Types
 		public override bool Operable => false;
 		public override LiteralValue DefaultValue => new(0, this);
 
-		protected override bool AreEqual(TypeSpecifier obj) => obj is VoidTypeSpecifier;
+		protected override bool EqualsImpl(TypeSpecifier obj) => obj is VoidTypeSpecifier;
 		public override string ToString() => "void";
 		public override object Clone() => new VoidTypeSpecifier();
 	}

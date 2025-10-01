@@ -152,6 +152,7 @@ type
     : id
     | type LSquareBrak RSquareBrak
     | type And
+    | type WeakRef
     ;
 
 id
@@ -196,6 +197,7 @@ And: '&';
 AndAnd: '&&';
 OrOr: '||';
 Dot: '.';
+WeakRef: '^';
 
 RawIdentifier: ([a-z] | [A-Z] | '_' ) ([a-z] | [A-Z] | [0-9] | '_' | '-' | '/')*;
 //Identifier: ([a-z] | [A-Z] | [0-9] | '_' | '-')* ':' ([a-z] | [A-Z] | [0-9] | '_' | '-' | '/')*;

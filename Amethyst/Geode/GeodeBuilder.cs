@@ -18,8 +18,8 @@ namespace Amethyst.Geode
 
         public readonly List<Command> UserInitCommands = [];
 
-        private readonly HashSet<Score> registeredScores = [];
-        private readonly Dictionary<int, ScoreValue> constants = [];
+        private readonly SortedSet<Score> registeredScores = [];
+        private readonly SortedDictionary<int, ScoreValue> constants = [];
         private readonly List<MCFunction> functionsToRemove = [];
 
         public GeodeBuilder(Options opts)
@@ -30,9 +30,14 @@ namespace Amethyst.Geode
 
         public void AddFunctions(params IEnumerable<FunctionContext> funcs) => Functions.AddRange(funcs);
 
+        private bool failed = false;
         public bool Compile()
         {
+            failed = false;
+
             ApplyPass<ResolvePass>();
+
+            if (failed) return false;
 
             if (Options.DumpIR)
             {
@@ -41,13 +46,13 @@ namespace Amethyst.Geode
 
             AllocateRegisters();
 
+            if (failed) return false;
+
             if (Options.DumpIR)
             {
                 DumpIR();
                 return true;
             }
-
-            bool failed = false;
 
             foreach (var i in Functions)
             {
@@ -87,7 +92,14 @@ namespace Amethyst.Geode
         {
             foreach (var i in Functions)
             {
-                pass.Apply(i);
+                try
+                {
+                    pass.Apply(i);
+                }
+                catch (EmptyAmethystError)
+                {
+                    failed = true;
+                }
             }
 
             return pass;

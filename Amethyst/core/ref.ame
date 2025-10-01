@@ -1,11 +1,11 @@
 namespace amethyst:core/ref;
 
-string get-stack-ref(string name) {
+string get-stack-ref(string name, int offset) {
     // TODO: list length
     int x;
     @/execute store result storage amethyst:runtime stack[-1].frame0.x int 1 run data get storage amethyst:runtime stack
 
-    x = x - 2;
+    x = x + offset - 1;
 
     // TODO: string concatenation
     string ref;
@@ -14,22 +14,22 @@ string get-stack-ref(string name) {
     return ref;
 }
 
-inline void set(macro nbt& ref, macro string val) {
+inline void set(macro nbt^ ref, macro string val) {
     @/data modify $(ref) set value $(val)
 }
 
-inline void set-ref(macro nbt& ref, macro nbt& val) {
+inline void set-ref(macro nbt^ ref, macro nbt^ val) {
     @/data modify $(ref) set from $(val)
 }
 
-inline void set-score(macro nbt dest, macro nbt& ref) {
+inline void set-score(macro nbt dest, macro nbt^ ref) {
     @/execute store result score $(dest) run data get $(ref)
 }
 
-inline void property(macro nbt& dest, macro nbt& ref, macro nbt prop) {
+inline void property(macro nbt^ dest, macro nbt^ ref, macro nbt prop) {
     @/data modify $(dest) set value "$(ref).$(prop)"
 }
 
-inline void index(macro nbt& dest, macro nbt& ref, macro int index) {
+inline void index(macro nbt^ dest, macro nbt^ ref, macro int index) {
     @/data modify $(dest) set value "$(ref)[$(index)]"
 }

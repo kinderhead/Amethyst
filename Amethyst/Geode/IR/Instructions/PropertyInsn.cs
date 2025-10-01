@@ -10,15 +10,15 @@ namespace Amethyst.Geode.IR.Instructions
         public override string Name => "prop";
         public override NBTType?[] ArgTypes => [null, NBTType.String];
         public TypeSpecifier ActualReturnType => destType;
-        public override TypeSpecifier ReturnType => new ReferenceTypeSpecifier(ActualReturnType);
+        public override TypeSpecifier ReturnType => new WeakReferenceTypeSpecifier(ActualReturnType);
 
         public override void Render(RenderContext ctx)
         {
             var val = Arg<ValueRef>(0).Expect();
 
-            if (val.Type is not ReferenceTypeSpecifier && val is DataTargetValue nbt) val = ReferenceTypeSpecifier.From(nbt);
+            if (val.Type is not ReferenceTypeSpecifier && val is DataTargetValue nbt) val = WeakReferenceTypeSpecifier.From(nbt);
 
-            ctx.Call("amethyst:core/ref/property", ReferenceTypeSpecifier.From(ReturnValue.Expect<DataTargetValue>()), val, Arg<ValueRef>(1));
+            ctx.Call("amethyst:core/ref/property", WeakReferenceTypeSpecifier.From(ReturnValue.Expect<DataTargetValue>()), val, Arg<ValueRef>(1));
         }
 
         protected override Value? ComputeReturnValue(FunctionContext ctx)
@@ -30,7 +30,7 @@ namespace Amethyst.Geode.IR.Instructions
             {
                 if (l.Value is not NBTString name) throw new InvalidTypeError(prop.Type.ToString(), "string");
                 Remove();
-                return ReferenceTypeSpecifier.From(nbt.Property(name, ActualReturnType));
+                return WeakReferenceTypeSpecifier.From(nbt.Property(name, ActualReturnType));
             }
 
             return null;

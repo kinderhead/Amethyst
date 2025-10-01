@@ -41,7 +41,7 @@ namespace Amethyst.Geode.Values
                             }
                             else
                             {
-                                ctx.Call("amethyst:core/macro/guard", false, ReferenceTypeSpecifier.From(macroStorageLocation.Property(param.Name, param.Type)), new LiteralValue(param.Type.MacroGuardStart), val, new LiteralValue(param.Type.MacroGuardEnd));
+                                ctx.Call("amethyst:core/macro/guard", false, WeakReferenceTypeSpecifier.From(macroStorageLocation.Property(param.Name, param.Type)), new LiteralValue(param.Type.MacroGuardStart), val, new LiteralValue(param.Type.MacroGuardEnd));
                                 macros.Add(param.Name, new VoidValue());
                             }
                         }

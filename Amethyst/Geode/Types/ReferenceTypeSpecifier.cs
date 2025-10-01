@@ -30,22 +30,20 @@ namespace Amethyst.Geode.Types
                 if (val.IsLiteral) throw new ReferenceError(val.Name);
                 return ctx.Add(new ReferenceInsn(val));
             }
+            else if (val.Type is WeakReferenceTypeSpecifier weak && weak.Inner.Implements(Inner))
+            {
+                return ctx.Add(new ResolveWeakRefInsn(val));
+            }
 
             return null;
         }
 
         public override TypeSpecifier? Property(string name) => Inner.Property(name);
 
-        protected override bool AreEqual(TypeSpecifier obj) => obj is ReferenceTypeSpecifier p && p.Inner == Inner;
+        protected override bool EqualsImpl(TypeSpecifier obj) => obj is ReferenceTypeSpecifier p && p.Inner == Inner;
         public override object Clone() => new ReferenceTypeSpecifier((TypeSpecifier)Inner.Clone());
 
+        public virtual ValueRef Deref(ValueRef src, FunctionContext ctx) => ctx.Add(new DereferenceInsn(src));
         public static LiteralValue From(DataTargetValue val) => new(val.Target.GetTarget(), new ReferenceTypeSpecifier(val.Type));
-        public static ValueRef Deref(ValueRef src, FunctionContext ctx)
-        {
-            return ctx.Add(new DereferenceInsn(src));
-            // var ptr = new ValueRef(new ReferenceValue(src));
-            // ptr.Dependencies.Add(src);
-            // return ptr;
-        }
     }
 }

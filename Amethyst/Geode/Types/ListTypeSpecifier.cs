@@ -16,7 +16,7 @@ namespace Amethyst.Geode.Types
 		public override LiteralValue DefaultValue => new(new NBTList(), this);
 
 		// public override bool IsAssignableTo(TypeSpecifier other) => other.EffectiveType == NBTType.List || base.IsAssignableTo(other);
-		protected override bool AreEqual(TypeSpecifier obj) => obj is ListTypeSpecifier arr && arr.Inner == Inner;
+		protected override bool EqualsImpl(TypeSpecifier obj) => obj is ListTypeSpecifier arr && arr.Inner == Inner;
 		public override string ToString() => $"{Inner}[]";
 		public override object Clone() => new ListTypeSpecifier((TypeSpecifier)Inner.Clone());
 	}

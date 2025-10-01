@@ -11,26 +11,26 @@ namespace Amethyst.Geode.IR.Instructions
 		public override NBTType?[] ArgTypes => [null, NBTType.Int];
 
 		public readonly TypeSpecifier ActualReturnType = dest.Type.Subtypes.Any() ? dest.Type.Subtypes.First() : throw new InvalidTypeError(dest.Type.ToString(), "list");
-        public override TypeSpecifier ReturnType => new ReferenceTypeSpecifier(ActualReturnType);
+		public override TypeSpecifier ReturnType => new WeakReferenceTypeSpecifier(ActualReturnType);
 
 		public override void Render(RenderContext ctx)
 		{
 			var val = Arg<ValueRef>(0).Expect();
 
-			if (val.Type is not ReferenceTypeSpecifier && val is DataTargetValue nbt) val = ReferenceTypeSpecifier.From(nbt);
+			if (val.Type is not ReferenceTypeSpecifier && val is DataTargetValue nbt) val = WeakReferenceTypeSpecifier.From(nbt);
 
-            ctx.Call("amethyst:core/ref/index", ReferenceTypeSpecifier.From(ReturnValue.Expect<DataTargetValue>()), val, Arg<ValueRef>(1));
-        }
+			ctx.Call("amethyst:core/ref/index", WeakReferenceTypeSpecifier.From(ReturnValue.Expect<DataTargetValue>()), val, Arg<ValueRef>(1));
+		}
 
 		protected override Value? ComputeReturnValue(FunctionContext ctx)
 		{
-            var val = Arg<ValueRef>(0);
+			var val = Arg<ValueRef>(0);
 
-            if (val.Type is not ReferenceTypeSpecifier && val.Value is DataTargetValue list && index.Value is LiteralValue i)
+			if (val.Type is not ReferenceTypeSpecifier && val.Value is DataTargetValue list && index.Value is LiteralValue i)
 			{
 				if (i.Value is not NBTInt ind) throw new InvalidTypeError(index.Type.ToString(), "int");
 				Remove();
-				return ReferenceTypeSpecifier.From(list.Index(ind.Value, ActualReturnType));
+				return WeakReferenceTypeSpecifier.From(list.Index(ind.Value, ActualReturnType));
 			}
 
 			return null;

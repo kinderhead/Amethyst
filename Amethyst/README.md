@@ -138,7 +138,7 @@ int x = 7;
 int& ptr = x;
 ```
 
-Any further assigns to a reference instead affect the value it points to, so this effectively makes them constant:
+Any further assignments to a reference instead affect the value it points to, so this effectively makes them constant:
 
 ```cs
 ptr = 2; // x is now 2
@@ -169,10 +169,42 @@ void func(string& ptr) {
 }
 ```
 
+#### Weak References
+
+Weak references work the same as normal references except it is not guaranteed that they will still be valid if passed into functions. This is because stack variables are addressed by the compiler internally using `stack[-1]...`. As such, accessing a variable depends on the current stack frame. Regular references resolve this `-1` into the correct index, but this operation is redundant in cases where the reference is not passed into a function.
+
+List indexing and property accessors use weak references by default:
+
+```cs
+arr[5] // weak reference
+obj.prop // weak reference
+```
+
+Weak references can be explicitly used via the `^` type operator:
+
+```cs
+int^ weak_ref = x;
+```
+
+A common use-case for weak references are simple macro functions. Most functions in `amethyst:core/ref` do this.
+
+It is currently not possible to convert a weak reference to a normal reference unless the weak reference is constant. This causes some quirks with non-constant list indexing. For example:
+
+```cs
+string[] arr = ...
+
+func(arr[0]); // Valid
+func(arr[x]); // Error: conversion from string^ to string& is not valid here
+
+void func(string& str) ...
+```
+
+A solution will be provided at some point.
+
 References are stored internally as `Datapack.Net.Function.IDataTarget`s, so they work nicely with any commands that use `IDataTarget` (`/execute store`, `/data`, etc). This allows for references to point to entities and blocks instead of just storage. For example, this property is used in `amethyst:core/ref/set` like so:
 
 ```cs
-inline void set(macro nbt& ref, macro string val) {
+inline void set(macro nbt^ ref, macro string val) {
     @/data modify $(ref) set value $(val)
 }
 ```
@@ -274,9 +306,10 @@ Here is the inheritance chain for types:
     * `minecraft:byte_array` (not implemented yet)
     * `minecraft:int_array` (not implemented yet)
     * `minecraft:long_array` (not implemented yet)
-    * `amethyst:list<T>` (currently defined as `T[]`)
+    * `amethyst:list<T>` (defined as `T[]`)
   * All user-defined types
-* `amethyst:ref<T>` (currently defined as `T&`)
+* `amethyst:ref<T>` (defined as `T&`)
+* `amethyst:weak_ref<T>` (defined as `T^`)
 
 ## Planned features
 

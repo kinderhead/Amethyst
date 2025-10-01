@@ -133,6 +133,7 @@ namespace Amethyst.AST
 			if (context.id() is AmethystParser.IdContext id) return new SimpleAbstractTypeSpecifier(Loc(context), Visit(id));
 			else if (context.LSquareBrak() is not null) return new AbstractListTypeSpecifier(Loc(context), Visit(context.type()));
 			else if (context.And() is not null) return new AbstractReferenceTypeSpecifier(Loc(context), Visit(context.type()));
+			else if (context.WeakRef() is not null) return new AbstractWeakReferenceTypeSpecifier(Loc(context), Visit(context.type()));
 			else throw new NotImplementedException();
 		}
 

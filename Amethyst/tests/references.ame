@@ -34,6 +34,40 @@ void test_int_2_ref() {
     complete();
 }
 
+#test
+void test_int_weak_ref() {
+    start("int weak ref");
+    
+    int x = 10;
+    int^ ref = x;
+
+    ref = -4;
+
+    assert(x == -4);
+    assert(ref == -4);
+
+    complete();
+}
+
+#test
+void test_int_2_weak_ref() {
+    start("int 2 weak ref");
+    
+    int x = 10;
+    int y = -3;
+    int^ ref1 = x;
+    int^ ref2 = y;
+
+    ref1 = ref2;
+
+    assert(x == -3);
+    assert(y == -3);
+    assert(ref1 == -3);
+    assert(ref2 == -3);
+
+    complete();
+}
+
 #test 
 void test_int_arg_ref() {
     start("int arg ref");
@@ -53,5 +87,21 @@ void _modify(int& ref) {
     assert(ref == 75);
     ref = -9;
     assert(ref == -9);
+}
+
+#test 
+void test_int_arr_ref() {
+    start("int arr ref");
+
+    int[] arr;
+    arr.add(10);
+
+    int[]& ref = arr;
+    assert(ref[0] == 10);
+
+    int x = 0;
+    assert(ref[x] == 10);
+
+    complete();
 }
 

@@ -42,7 +42,7 @@ namespace Amethyst.Geode.Types
 			base.ApplyGeneric(other, typeMap);
 		}
 
-		protected override bool AreEqual(TypeSpecifier obj) => obj is GenericTypeSpecifier other && other.Name == Name && other.Constraint == Constraint;
+		protected override bool EqualsImpl(TypeSpecifier obj) => obj is GenericTypeSpecifier other && other.Name == Name && other.Constraint == Constraint;
 		public override TypeSpecifier GetEquatableType() => Resolved ? Constraint.GetEquatableType() : this;
 		public override int GetHashCode() => HashCode.Combine(Name, Constraint);
 		public override object Clone() => new GenericTypeSpecifier(Name, Constraint, Resolved);

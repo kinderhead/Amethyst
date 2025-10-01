@@ -15,7 +15,7 @@ namespace Amethyst.Geode.IR.Instructions
             var dest = Arg<ValueRef>(0).Expect();
             var src = Arg<ValueRef>(1).Expect();
 
-            if (src is DataTargetValue nbt) ctx.Call("amethyst:core/ref/set-ref", dest, ReferenceTypeSpecifier.From(nbt));
+            if (src is DataTargetValue nbt) ctx.Call("amethyst:core/ref/set-ref", dest, WeakReferenceTypeSpecifier.From(nbt));
             else ctx.Call("amethyst:core/ref/set", dest, src);
         }
 

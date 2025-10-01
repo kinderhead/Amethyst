@@ -9,7 +9,7 @@ namespace Amethyst.Geode.Types
 		public override LiteralValue DefaultValue => throw new InvalidTypeError("var");
 
 		public override string ToString() => "var";
-		protected override bool AreEqual(TypeSpecifier obj) => obj is VarTypeSpecifier;
+		protected override bool EqualsImpl(TypeSpecifier obj) => obj is VarTypeSpecifier;
 		public override object Clone() => new VarTypeSpecifier();
 	}
 }

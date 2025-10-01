@@ -1,3 +1,5 @@
+using Amethyst.Errors;
+
 namespace Amethyst.Geode.IR
 {
     public abstract class Pass
@@ -47,7 +49,10 @@ namespace Amethyst.Geode.IR
             {
                 foreach (var i in Reversed ? b.Instructions.AsEnumerable().Reverse() : b.Instructions)
                 {
-                    OnInsn(ctx, b, i);
+                    if (!ctx.Compiler.WrapError(i.Location, () =>
+                    {
+                        OnInsn(ctx, b, i);
+                    })) throw new EmptyAmethystError();
                 }
             }
 

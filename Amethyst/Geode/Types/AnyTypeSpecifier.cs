@@ -9,7 +9,7 @@ namespace Amethyst.Geode.Types
 		public override LiteralValue DefaultValue => new(new NBTCompound());
 		public override NBTType EffectiveType => NBTType.Compound;
 		public override string ToString() => "any";
-		protected override bool AreEqual(TypeSpecifier obj) => obj is AnyTypeSpecifier;
+		protected override bool EqualsImpl(TypeSpecifier obj) => obj is AnyTypeSpecifier;
 		public override object Clone() => new AnyTypeSpecifier();
 	}
 }
