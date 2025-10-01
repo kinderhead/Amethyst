@@ -20,7 +20,7 @@ namespace Amethyst.Geode.Types
         public override void AssignmentOverload(ValueRef dest, ValueRef val, FunctionContext ctx)
         {
             if (val.Type is ReferenceTypeSpecifier) ctx.Call("amethyst:core/ref/set-ref", dest, ctx.ImplicitCast(val, this));
-            else ctx.Call("amethyst:core/ref/set", dest, ctx.ImplicitCast(val, Inner));
+            else ctx.Add(new StoreRefInsn(dest, ctx.ImplicitCast(val, Inner)));
         }
 
         public override ValueRef? CastOverload(ValueRef val, FunctionContext ctx)

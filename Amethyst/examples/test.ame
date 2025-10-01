@@ -2,9 +2,14 @@ namespace example;
 
 #load
 void main() {
-    int[] arr;
-    arr.add(10);
-    test(arr[0]);
+    string x;
+    string y = "womp womp";
+    string& ref = x;
+    ref = y;
+
+    // int[] arr;
+    // arr.add(10);
+    // test(arr[0]);
 }
 
 void test(int& x) {
