@@ -34,23 +34,7 @@ namespace Amethyst.Geode.Values
 
         public override void ListAdd(LiteralValue literal, RenderContext ctx) => ctx.Add(new DataCommand.Modify(Target).Append().Value(literal.ToString()));
         public override void ListAdd(DataTargetValue nbt, RenderContext ctx) => ctx.Add(new DataCommand.Modify(Target).Append().From(nbt.Target));
-    }
 
-    public class RawDataTargetValue(string target, TypeSpecifier type) : DataTargetValue
-    {
-        public readonly string RawTarget = target;
-        public override IDataTarget Target => new RawDataTarget(RawTarget);
-
-        public override TypeSpecifier Type => type;
-
-        public override bool Equals(object? obj) => obj is RawDataTargetValue r && r.RawTarget == RawTarget;
-        public override int GetHashCode() => RawTarget.GetHashCode() * 17;
-        public override DataTargetValue Index(int index, TypeSpecifier type) => new RawDataTargetValue($"{RawTarget}[{index}]", type);
-        public override DataTargetValue Property(string member, TypeSpecifier type) => new RawDataTargetValue($"{RawTarget}.{member}", type);
-
-        public override FormattedText Render(FormattedText text, RenderContext ctx)
-        {
-            throw new NotImplementedException();
-        }
+		public override FormattedText Render(FormattedText text, RenderContext ctx) => text.NBT(Target);
     }
 }

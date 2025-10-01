@@ -2,7 +2,12 @@ namespace example;
 
 #load
 void main() {
-    nbt x;
-    x.a = 10;
-    print(x.a + 2);
+    int[] arr;
+    arr.add(10);
+    test(arr[0]);
+}
+
+void test(int& x) {
+    int dummy;
+    print(x);
 }

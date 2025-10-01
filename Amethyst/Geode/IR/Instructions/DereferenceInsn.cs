@@ -18,6 +18,15 @@ namespace Amethyst.Geode.IR.Instructions
             else ctx.Call("amethyst:core/ref/set-ref", ret, Arg<ValueRef>(0).Expect());
         }
 
-        protected override Value? ComputeReturnValue(FunctionContext ctx) => null;
+        protected override Value? ComputeReturnValue(FunctionContext ctx)
+        {
+            if (Arg<ValueRef>(0).Expect() is LiteralValue l && l.Value is NBTString str)
+            {
+                Remove();
+                if (str.Value.Contains("stack[-1].")) return new StackValue(-1, str.Value.Split("stack[-1].")[1], ReturnType);
+                else return new RawDataTargetValue(str.Value, ReturnType);
+            }
+            return null;
+        }
     }
 }

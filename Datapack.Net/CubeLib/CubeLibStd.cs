@@ -154,7 +154,7 @@ namespace Datapack.Net.CubeLib
         private void _PointerPrint()
         {
             //AddCommand(new TellrawCommand(new TargetSelector(TargetType.a), new FormattedText().Text("$(value)"), true));
-            AddCommand(new TellrawCommand(new TargetSelector(TargetType.a), new FormattedText().Storage(new StorageMacro("$(storage)"), "$(path).$(pointer)$(ext)"), true));
+            AddCommand(new TellrawCommand(new TargetSelector(TargetType.a), new FormattedText().NBT(new StorageTarget(new StorageMacro("$(storage)"), "$(path).$(pointer)$(ext)")), true));
         }
 
         /// <summary>

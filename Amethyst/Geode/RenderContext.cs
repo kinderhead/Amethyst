@@ -84,6 +84,7 @@ namespace Amethyst.Geode
             if (Builder.Options.Debug)
             {
                 var success = SuccessScore;
+                success.Store(new LiteralValue(1), this);
                 Add(new Execute().Store(success.Target, success.Score, false).Run(cmd));
 
                 var text = new FormattedText()

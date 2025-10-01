@@ -26,7 +26,10 @@ inline void set-score(macro nbt dest, macro nbt& ref) {
     @/execute store result score $(dest) run data get $(ref)
 }
 
-// Properties cannot have spaces so this is fine
-inline void property(macro nbt& ref, macro nbt prop, macro nbt& dest) {
+inline void property(macro nbt& dest, macro nbt& ref, macro nbt prop) {
     @/data modify $(dest) set value "$(ref).$(prop)"
+}
+
+inline void index(macro nbt& dest, macro nbt& ref, macro int index) {
+    @/data modify $(dest) set value "$(ref)[$(index)]"
 }

@@ -15,8 +15,6 @@ namespace Amethyst.Geode.Values
         public override DataTargetValue Property(string member, TypeSpecifier type) => new StorageValue(Storage, $"{Path}.{member}", type);
         public override DataTargetValue Index(int index, TypeSpecifier type) => new StorageValue(Storage, $"{Path}[{index}]", type);
 
-        public override FormattedText Render(FormattedText text, RenderContext ctx) => text.Storage(Storage, Path);
-
         public override bool Equals(object? obj) => obj is StorageValue s && s.Storage == Storage && s.Path == Path;
         
         public override string ToString() => $"{Storage}.{Path}";

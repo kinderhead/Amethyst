@@ -42,10 +42,10 @@ namespace Datapack.Net.Function
             return this;
         }
 
-        public FormattedText Storage(Storage target, string path, Modifiers? modifiers = null)
+        public FormattedText NBT(IDataTarget target, Modifiers? modifiers = null)
         {
             modifiers ??= ModifierStack.Count != 0 ? ModifierStack.Peek() : new();
-            Obj.Add(modifiers.Value.Process(new JObject(new JProperty("nbt", path), new JProperty("storage", target.ToString())), this));
+            Obj.Add(modifiers.Value.Process(new JObject(new JProperty("nbt", target.Path), new JProperty(target.Type, target.Source)), this));
             return this;
         }
 

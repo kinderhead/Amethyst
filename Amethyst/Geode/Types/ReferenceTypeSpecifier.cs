@@ -40,7 +40,7 @@ namespace Amethyst.Geode.Types
         public override object Clone() => new ReferenceTypeSpecifier((TypeSpecifier)Inner.Clone());
 
         public static LiteralValue From(DataTargetValue val) => new(val.Target.GetTarget(), new ReferenceTypeSpecifier(val.Type));
-        public static ValueRef From(ValueRef src, FunctionContext ctx)
+        public static ValueRef Deref(ValueRef src, FunctionContext ctx)
         {
             return ctx.Add(new DereferenceInsn(src));
             // var ptr = new ValueRef(new ReferenceValue(src));

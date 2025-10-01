@@ -1,4 +1,5 @@
 ﻿using Amethyst.Errors;
+using Amethyst.Geode.Types;
 using Amethyst.Geode.Values;
 using Datapack.Net.Data;
 
@@ -8,20 +9,28 @@ namespace Amethyst.Geode.IR.Instructions
 	{
 		public override string Name => "index";
 		public override NBTType?[] ArgTypes => [null, NBTType.Int];
-		public override TypeSpecifier ReturnType => dest.Type.Subtypes.Any() ? dest.Type.Subtypes.First() : throw new InvalidTypeError(dest.Type.ToString(), "list");
+
+		public readonly TypeSpecifier ActualReturnType = dest.Type.Subtypes.Any() ? dest.Type.Subtypes.First() : throw new InvalidTypeError(dest.Type.ToString(), "list");
+        public override TypeSpecifier ReturnType => new ReferenceTypeSpecifier(ActualReturnType);
 
 		public override void Render(RenderContext ctx)
 		{
-			throw new NotImplementedException();
-		}
+			var val = Arg<ValueRef>(0).Expect();
+
+			if (val.Type is not ReferenceTypeSpecifier && val is DataTargetValue nbt) val = ReferenceTypeSpecifier.From(nbt);
+
+            ctx.Call("amethyst:core/ref/index", ReferenceTypeSpecifier.From(ReturnValue.Expect<DataTargetValue>()), val, Arg<ValueRef>(1));
+        }
 
 		protected override Value? ComputeReturnValue(FunctionContext ctx)
 		{
-			if (index.Value is LiteralValue i)
+            var val = Arg<ValueRef>(0);
+
+            if (val.Type is not ReferenceTypeSpecifier && val.Value is DataTargetValue list && index.Value is LiteralValue i)
 			{
-				if (i.Value is not NBTInt val) throw new InvalidTypeError(index.Type.ToString(), "int");
+				if (i.Value is not NBTInt ind) throw new InvalidTypeError(index.Type.ToString(), "int");
 				Remove();
-				return Arg<ValueRef>(0).Expect<DataTargetValue>().Index(val.Value, ReturnType);
+				return ReferenceTypeSpecifier.From(list.Index(ind.Value, ActualReturnType));
 			}
 
 			return null;

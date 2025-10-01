@@ -11,7 +11,7 @@ namespace Amethyst.AST.Intrinsics
 
 		public override ValueRef Execute(FunctionContext ctx, params ValueRef[] args)
 		{
-			return ctx.Add(new PrintInsn(args));
+			return ctx.Add(new PrintInsn(args.Select(i => i.Type is ReferenceTypeSpecifier r ? ctx.ImplicitCast(i, r.Inner) : i)));
 		}
 	}
 }

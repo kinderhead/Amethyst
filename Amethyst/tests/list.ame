@@ -17,3 +17,26 @@ void test_int_list_add() {
     
     complete();
 }
+
+#test
+void test_int_list_index() {
+    start("int list index");
+
+    int[] x;
+    int y = 6;
+
+    x.add(10);
+    x.add(y);
+    x.add(y * 2);
+
+    int i = 0;
+    assert(x[i] == 10);
+
+    i = i + 1;
+    assert(x[i] == 6);
+
+    i = i + 1;
+    assert(x[i] == 12);
+    
+    complete();
+}

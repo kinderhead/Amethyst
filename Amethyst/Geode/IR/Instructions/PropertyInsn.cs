@@ -14,7 +14,11 @@ namespace Amethyst.Geode.IR.Instructions
 
         public override void Render(RenderContext ctx)
         {
-            ctx.Call("amethyst:core/ref/property", Arg<ValueRef>(0).Expect(), Arg<ValueRef>(1), ReferenceTypeSpecifier.From(ReturnValue.Expect<DataTargetValue>()));
+            var val = Arg<ValueRef>(0).Expect();
+
+            if (val.Type is not ReferenceTypeSpecifier && val is DataTargetValue nbt) val = ReferenceTypeSpecifier.From(nbt);
+
+            ctx.Call("amethyst:core/ref/property", ReferenceTypeSpecifier.From(ReturnValue.Expect<DataTargetValue>()), val, Arg<ValueRef>(1));
         }
 
         protected override Value? ComputeReturnValue(FunctionContext ctx)

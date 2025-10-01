@@ -25,10 +25,10 @@ namespace Amethyst.AST.Expressions
 
 		protected override ValueRef _Execute(FunctionContext ctx)
 		{
-			var left = ctx.ImplicitCast(Left.Execute(ctx), PrimitiveTypeSpecifier.Int);
-			var right = ctx.ImplicitCast(Right.Execute(ctx), PrimitiveTypeSpecifier.Int);
+            var left = ctx.Add(new LoadInsn(ctx.ImplicitCast(Left.Execute(ctx), PrimitiveTypeSpecifier.Int)));
+            var right = ctx.Add(new LoadInsn(ctx.ImplicitCast(Right.Execute(ctx), PrimitiveTypeSpecifier.Int)));
 
-			return Op switch
+            return Op switch
 			{
 				ComparisonOperator.Eq => ctx.Add(new EqInsn(left, right)),
 				ComparisonOperator.Neq => ctx.Add(new NeqInsn(left, right)),

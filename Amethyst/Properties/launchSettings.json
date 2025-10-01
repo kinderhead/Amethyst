@@ -10,7 +10,7 @@
     },
     "Test Suite": {
       "commandName": "Project",
-      "commandLineArgs": "tests/*.ame -o output.zip"
+      "commandLineArgs": "tests/*.ame -d -o output.zip"
     }
   }
 }
