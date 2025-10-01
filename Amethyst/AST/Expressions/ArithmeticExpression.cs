@@ -12,14 +12,14 @@ namespace Amethyst.AST.Expressions
 		public readonly ScoreOperation Op = op;
 		public readonly Expression Right = right;
 
-		public override TypeSpecifier ComputeType(FunctionContext ctx) => PrimitiveTypeSpecifier.Int;
+		// public override TypeSpecifier ComputeType(FunctionContext ctx) => PrimitiveTypeSpecifier.Int;
 
 		protected override ValueRef _Execute(FunctionContext ctx)
 		{
 			var left = ctx.Add(new LoadInsn(ctx.ImplicitCast(Left.Execute(ctx), PrimitiveTypeSpecifier.Int)));
 			var right = ctx.Add(new LoadInsn(ctx.ImplicitCast(Right.Execute(ctx), PrimitiveTypeSpecifier.Int)));
 
-            return Op switch
+			return Op switch
 			{
 				ScoreOperation.Add => ctx.Add(new AddInsn(left, right)),
 				ScoreOperation.Sub => ctx.Add(new SubInsn(left, right)),

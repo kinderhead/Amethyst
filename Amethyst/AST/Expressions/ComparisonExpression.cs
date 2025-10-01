@@ -21,14 +21,14 @@ namespace Amethyst.AST.Expressions
 		public readonly ComparisonOperator Op = op;
 		public readonly Expression Right = right;
 
-		public override TypeSpecifier ComputeType(FunctionContext ctx) => PrimitiveTypeSpecifier.Bool;
+		// public override TypeSpecifier ComputeType(FunctionContext ctx) => PrimitiveTypeSpecifier.Bool;
 
 		protected override ValueRef _Execute(FunctionContext ctx)
 		{
-            var left = ctx.Add(new LoadInsn(ctx.ImplicitCast(Left.Execute(ctx), PrimitiveTypeSpecifier.Int)));
-            var right = ctx.Add(new LoadInsn(ctx.ImplicitCast(Right.Execute(ctx), PrimitiveTypeSpecifier.Int)));
+			var left = ctx.Add(new LoadInsn(ctx.ImplicitCast(Left.Execute(ctx), PrimitiveTypeSpecifier.Int)));
+			var right = ctx.Add(new LoadInsn(ctx.ImplicitCast(Right.Execute(ctx), PrimitiveTypeSpecifier.Int)));
 
-            return Op switch
+			return Op switch
 			{
 				ComparisonOperator.Eq => ctx.Add(new EqInsn(left, right)),
 				ComparisonOperator.Neq => ctx.Add(new NeqInsn(left, right)),

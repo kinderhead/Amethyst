@@ -2,14 +2,7 @@ namespace example;
 
 #load
 void main() {
-    func1(10);
-}
+    int[] x = [1,2,3,4,5,6,7];
 
-void func1(int x) {
-    func2(x);
-}
-
-void func2(int& x) {
     print(x);
 }
-

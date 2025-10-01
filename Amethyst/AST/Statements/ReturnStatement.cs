@@ -14,9 +14,10 @@ namespace Amethyst.AST.Statements
 		public override void Compile(FunctionContext ctx)
 		{
 			var retType = ctx.Decl.FuncType.ReturnType;
-			if (Expression is not null && retType is VoidTypeSpecifier) throw new InvalidTypeError(Expression.ComputeType(ctx).ToString(), "void");
+			var val = Expression?.Execute(ctx);
 
-			if (Expression is not null) ctx.Add(new ReturnInsn(Expression.Execute(ctx)));
+			if (val is not null && retType is VoidTypeSpecifier) throw new InvalidTypeError(val.Type.ToString(), "void");
+			else if (val is not null) ctx.Add(new ReturnInsn(val));
 			else ctx.Add(new ReturnInsn());
 		}
 	}

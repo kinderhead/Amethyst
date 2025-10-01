@@ -1,6 +1,5 @@
 using Amethyst.Geode;
 using Amethyst.Geode.IR;
-using Amethyst.Geode.Types;
 
 namespace Amethyst.AST.Expressions
 {
@@ -8,7 +7,7 @@ namespace Amethyst.AST.Expressions
     {
         public readonly Dictionary<string, Expression> Values = new(values);
 
-        public override TypeSpecifier ComputeType(FunctionContext ctx) => PrimitiveTypeSpecifier.Compound;
+        // public override TypeSpecifier ComputeType(FunctionContext ctx) => PrimitiveTypeSpecifier.Compound;
 
         protected override ValueRef _Execute(FunctionContext ctx)
         {

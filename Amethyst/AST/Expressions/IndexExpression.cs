@@ -1,4 +1,3 @@
-using Amethyst.Errors;
 using Amethyst.Geode;
 using Amethyst.Geode.IR;
 using Amethyst.Geode.IR.Instructions;
@@ -11,12 +10,12 @@ namespace Amethyst.AST.Expressions
         public readonly Expression List = list;
         public readonly Expression Index = index;
 
-        public override TypeSpecifier ComputeType(FunctionContext ctx)
-        {
-            var type = List.ComputeType(ctx);
-            if (!type.IsList || !type.Subtypes.Any()) throw new InvalidTypeError(type.ToString());
-            return type.Subtypes.First();
-        }
+        // public override TypeSpecifier ComputeType(FunctionContext ctx)
+        // {
+        //     var type = List.ComputeType(ctx);
+        //     if (!type.IsList || !type.Subtypes.Any()) throw new InvalidTypeError(type.ToString());
+        //     return type.Subtypes.First();
+        // }
 
         protected override ValueRef _Execute(FunctionContext ctx)
         {

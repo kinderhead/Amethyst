@@ -1,4 +1,3 @@
-using Amethyst.Errors;
 using Amethyst.Geode;
 using Amethyst.Geode.IR;
 
@@ -9,7 +8,7 @@ namespace Amethyst.AST.Expressions
         public readonly Expression Expression = expression;
         public readonly string Property = prop;
 
-        public override TypeSpecifier ComputeType(FunctionContext ctx) => Expression.ComputeType(ctx).Property(Property) ?? throw new PropertyError(Expression.ComputeType(ctx).ToString(), Property);
+        // public override TypeSpecifier ComputeType(FunctionContext ctx) => Expression.ComputeType(ctx).Property(Property) ?? throw new PropertyError(Expression.ComputeType(ctx).ToString(), Property);
 
         protected override ValueRef _Execute(FunctionContext ctx)
         {

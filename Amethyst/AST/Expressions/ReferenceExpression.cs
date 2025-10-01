@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Amethyst.Geode;
+﻿using Amethyst.Geode;
 using Amethyst.Geode.IR;
 using Amethyst.Geode.IR.Instructions;
-using Amethyst.Geode.Types;
 
 namespace Amethyst.AST.Expressions
 {
@@ -12,7 +8,7 @@ namespace Amethyst.AST.Expressions
 	{
 		public readonly Expression Inner = inner;
 
-		public override TypeSpecifier ComputeType(FunctionContext ctx) => new ReferenceTypeSpecifier(Inner.ComputeType(ctx));
+		// public override TypeSpecifier ComputeType(FunctionContext ctx) => new ReferenceTypeSpecifier(Inner.ComputeType(ctx));
 		protected override ValueRef _Execute(FunctionContext ctx) => ctx.Add(new ReferenceInsn(Inner.Execute(ctx)));
 	}
 }

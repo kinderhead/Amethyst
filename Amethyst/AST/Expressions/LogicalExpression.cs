@@ -1,6 +1,6 @@
 ﻿using Amethyst.Geode;
 using Amethyst.Geode.IR;
-using Amethyst.Geode.Types;
+
 using static Datapack.Net.Data._1_20_4.Blocks;
 
 namespace Amethyst.AST.Expressions
@@ -17,7 +17,7 @@ namespace Amethyst.AST.Expressions
 		public readonly LogicalOperation Op = op;
 		public readonly Expression Right = right;
 
-		public override TypeSpecifier ComputeType(FunctionContext ctx) => PrimitiveTypeSpecifier.Bool;
+		// public override TypeSpecifier ComputeType(FunctionContext ctx) => PrimitiveTypeSpecifier.Bool;
 
 		protected override ValueRef _Execute(FunctionContext ctx)
 		{
