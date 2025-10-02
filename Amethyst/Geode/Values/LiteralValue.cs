@@ -5,7 +5,7 @@ using Datapack.Net.Function.Commands;
 
 namespace Amethyst.Geode.Values
 {
-	public class LiteralValue(NBTValue val, TypeSpecifier? type = null) : Value, ILiteralValue
+	public class LiteralValue(NBTValue val, TypeSpecifier? type = null) : Value, IConstantValue
     {
         public NBTValue Value { get; } = val;
         public override TypeSpecifier Type => type ?? new PrimitiveTypeSpecifier(Value.Type);

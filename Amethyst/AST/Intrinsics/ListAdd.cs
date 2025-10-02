@@ -7,7 +7,7 @@ namespace Amethyst.AST.Intrinsics
 {
     public class ListAdd(FunctionTypeSpecifier? type = null) : Intrinsic("amethyst:add", type ?? new(FunctionModifiers.None, new VoidTypeSpecifier(), [
             new(ParameterModifiers.None, new ReferenceTypeSpecifier(new ListTypeSpecifier(new GenericTypeSpecifier("T"))), "this"),
-            new(ParameterModifiers.None, new GenericTypeSpecifier("T"), "value")
+            new(ParameterModifiers.None, new GenericTypeSpecifier("T"), "val")
         ]))
     {
         public override IFunctionLike CloneWithType(FunctionTypeSpecifier type) => new ListAdd(type);

@@ -8,8 +8,10 @@ using Amethyst.Geode.IR.Instructions;
 using Amethyst.Geode.Types;
 using Amethyst.Geode.Values;
 using Antlr4.Runtime;
+using CommandLine.Text;
 using Datapack.Net.Utils;
 using GlobExpressions;
+using System.Reflection;
 
 namespace Amethyst
 {
@@ -35,8 +37,30 @@ namespace Amethyst
 
 		public Compiler(string[] args)
 		{
-			var res = CommandLine.Parser.Default.ParseArguments<Options>(args);
-			if (res.Errors.Any()) Environment.Exit(1);
+			var res = new CommandLine.Parser(config =>
+			{
+				config.HelpWriter = null;
+            }).ParseArguments<Options>(args);
+
+			if (res.Errors.Any())
+			{
+				var helpText = HelpText.AutoBuild(res, h =>
+				{
+					h.AdditionalNewLineAfterOption = false;
+					h.Heading = $"Amethyst Compiler {Assembly.GetExecutingAssembly().GetName().Version}";
+
+					h.Copyright = @"
+Usage:
+amethyst [files...] -o <output>";
+
+					return HelpText.DefaultParsingErrorsHandler(res, h);
+				}, e => e);
+
+				Console.Error.Write(helpText);
+
+                Environment.Exit(1);
+			}
+
 			Options = res.Value;
 			Options.Output ??= Path.GetFileName(Options.Inputs.First()) + ".zip";
 			IR = new(Options);

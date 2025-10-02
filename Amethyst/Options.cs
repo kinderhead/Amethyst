@@ -10,7 +10,7 @@ namespace Amethyst
 		[Option('f', "pack-format", HelpText = "Datapack format.", Default = 71)]
 		public int PackFormat { get; set; }
 
-		[Option('d', "debug", HelpText = "Enable debug checks", Default = false)]
+		[Option('d', "debug", HelpText = "Enable debug checks.", Default = false)]
 		public bool Debug { get; set; }
 
 		// [Option('n', "no-constant-scores", HelpText = "Don't generate global number constant scores to use when applicable.")]
@@ -19,7 +19,8 @@ namespace Amethyst
 		[Option("dump-ir", HelpText = "Dump Geode IR and don't compile to datapack.")]
 		public bool DumpIR { get; set; }
 
-		[Value(0, MetaName = "input files", HelpText = "Files to compile.", Required = true)]
+
+        [Value(0, MetaName = "input files", HelpText = "Files to compile.", Required = true)]
 		public IEnumerable<string> Inputs { get; set; }
 	}
 }

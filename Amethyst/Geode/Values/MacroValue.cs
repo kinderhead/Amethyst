@@ -4,7 +4,7 @@ using Datapack.Net.Function.Commands;
 
 namespace Amethyst.Geode.Values
 {
-    public class MacroValue(string name, TypeSpecifier type) : Value, ILiteralValue
+    public class MacroValue(string name, TypeSpecifier type) : Value, IConstantValue
     {
         public readonly string Name = name;
         public override TypeSpecifier Type => type;

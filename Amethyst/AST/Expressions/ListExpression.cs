@@ -1,5 +1,6 @@
 using Amethyst.Geode;
 using Amethyst.Geode.IR;
+using Amethyst.Geode.IR.Instructions;
 using Amethyst.Geode.Types;
 using Amethyst.Geode.Values;
 using Datapack.Net.Data;
@@ -39,13 +40,13 @@ namespace Amethyst.AST.Expressions
             {
                 var val = i.Execute(ctx);
 
-                if (type is null) type = val.Type;
-                else if (val.Type != type) type = PrimitiveTypeSpecifier.List;
+                if (type is null) type = new ListTypeSpecifier(val.Type);
+                else if (new ListTypeSpecifier(val.Type) != type) type = PrimitiveTypeSpecifier.List;
 
                 vals.Add(val);
             }
 
-            throw new NotImplementedException();
+            return ctx.Add(new ListInsn(type!, vals));
         }
     }
 }

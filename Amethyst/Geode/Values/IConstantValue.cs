@@ -2,7 +2,7 @@ using Datapack.Net.Data;
 
 namespace Amethyst.Geode.Values
 {
-    public interface ILiteralValue
+    public interface IConstantValue
     {
         public NBTValue Value { get; }
     }

@@ -1,13 +1,14 @@
 using Amethyst.Errors;
 using Amethyst.Geode.IR;
 using Amethyst.Geode.Values;
+using Datapack.Net.Data;
 using Datapack.Net.Function;
 using Datapack.Net.Function.Commands;
 using Datapack.Net.Utils;
 
 namespace Amethyst.Geode
 {
-    public record class RenderContext(MCFunction MCFunction, Block Block, GeodeBuilder Builder, FunctionContext Func)
+    public record class RenderContext(MCFunction MCFunction, IR.Block Block, GeodeBuilder Builder, FunctionContext Func)
     {
         public ScoreValue SuccessScore => Builder.Score("amethyst_success");
 
@@ -29,21 +30,20 @@ namespace Amethyst.Geode
 
         public Value StoreCompoundOrReturnConstant(DataTargetValue dest, Dictionary<string, ValueRef> dict, bool setEmpty = true)
         {
-            var nbt = new Datapack.Net.Data.NBTCompound();
+            var nbt = new NBTCompound();
             var runtime = new Dictionary<string, Value>();
             var forceUseStorage = false;
 
             foreach (var (key, val) in dict.Select(i => (i.Key, i.Value.Expect())))
             {
                 if (val is VoidValue) forceUseStorage = true;
-                else if (val is MacroValue m && m.Type.EffectiveType == Datapack.Net.Data.NBTType.String) nbt[key] = new Datapack.Net.Data.NBTString(m.GetMacro());
-                else if (val is ILiteralValue l) nbt[key] = l.Value;
+                else if (val is MacroValue m && m.Type.EffectiveType == NBTType.String) nbt[key] = new NBTString(m.GetMacro());
+                else if (val is IConstantValue l) nbt[key] = l.Value;
                 else runtime[key] = val;
             }
 
             if (!forceUseStorage && nbt.Count == dict.Count) return new LiteralValue(nbt);
-
-            if (setEmpty || nbt.Count != 0) dest.Store(new LiteralValue(nbt), this);
+            else if (setEmpty || nbt.Count != 0) dest.Store(new LiteralValue(nbt), this);
 
             foreach (var (key, value) in runtime)
             {
@@ -51,6 +51,40 @@ namespace Amethyst.Geode
             }
 
             return dest;
+        }
+
+        public void StoreList(DataTargetValue dest, List<ValueRef> list, bool setEmpty = true)
+        {
+            var ret = StoreListOrReturnConstant(dest, list, setEmpty);
+            if (ret is LiteralValue l) dest.Store(l, this);
+        }
+
+        public Value StoreListOrReturnConstant(DataTargetValue dest, List<ValueRef> list, bool setEmpty = true)
+        {
+            var nbt = new NBTList();
+            var runtime = new List<Value>();
+            var isStillConstant = true;
+
+            foreach (var i in list.Select(i => i.Expect()))
+            {
+                if (isStillConstant && i is MacroValue m && m.Type.EffectiveType == NBTType.String) nbt.Add(new NBTString(m.GetMacro()));
+                else if (isStillConstant && i is IConstantValue l) nbt.Add(l.Value);
+                else
+                {
+                    isStillConstant = false;
+                    runtime.Add(i);
+                }
+            }
+
+            if (nbt.Count == list.Count) return new LiteralValue(nbt);
+            else if (setEmpty || nbt.Count != 0) dest.Store(new LiteralValue(nbt), this);
+
+			foreach (var item in runtime)
+			{
+				dest.ListAdd(item, this);
+            }
+
+			return dest;
         }
 
         public Command CallSubFunction(MCFunction func)
@@ -126,7 +160,7 @@ namespace Amethyst.Geode
         }
     }
 
-    public record class FauxRenderContext(MCFunction MCFunction, Block Block, GeodeBuilder Builder, FunctionContext Func) : RenderContext(MCFunction, Block, Builder, Func)
+    public record class FauxRenderContext(MCFunction MCFunction, IR.Block Block, GeodeBuilder Builder, FunctionContext Func) : RenderContext(MCFunction, Block, Builder, Func)
     {
         public readonly List<Command> Commands = [];
         public override void Add(params IEnumerable<Command> cmds) => Commands.AddRange(cmds);

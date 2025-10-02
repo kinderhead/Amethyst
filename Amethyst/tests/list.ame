@@ -40,3 +40,18 @@ void test_int_list_index() {
     
     complete();
 }
+
+#test
+void test_int_list_literal() {
+    start("int list literal");
+
+    int y = 6;
+    int[] x = [10, y, y * 2, 7];
+
+    assert(x[0] == 10);
+    assert(x[1] == 6);
+    assert(x[2] == 12);
+    assert(x[3] == 7);
+    
+    complete();
+}

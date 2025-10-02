@@ -35,7 +35,7 @@ namespace Amethyst.Geode.Values
                         // if (val.Value is MacroValue m && m.Type == PrimitiveTypeSpecifier.String) throw new InvalidTypeError("macro string", "string");
                         if (applyGuard && param.Type.MacroGuardStart != "" && param.Type.MacroGuardEnd != "")
                         {
-                            if (val.Value is ILiteralValue l)
+                            if (val.Value is IConstantValue l)
                             {
                                 macros.Add(param.Name, new LiteralValue($"{param.Type.MacroGuardStart}{(l.Value is NBTString str ? str.Value : l.Value.ToString())}{param.Type.MacroGuardEnd}"));
                             }

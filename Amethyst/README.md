@@ -10,6 +10,23 @@
 
 There's been many different attempts at making a high-level programming language for Minecraft Datapacks over the years, but one flaw I've seen in all of them is that they let the limitations of commands dictate what's possible. All of that changed when Minecraft added macro functions, greatly increasing the flexibility of datapacks. The goal of Amethyst is to leverage macro functions and other features to allow users to make datapacks as easily as they would write any other program.
 
+- [Amethyst](#amethyst)
+  - [Usage](#usage)
+  - [CLI Options](#cli-options)
+  - [Language Features](#language-features)
+    - [Namespaces](#namespaces)
+    - [Math](#math)
+    - [Objects](#objects)
+    - [Lists](#lists)
+    - [References](#references)
+      - [Weak References](#weak-references)
+    - [Inline Commands](#inline-commands)
+    - [Macro Functions](#macro-functions)
+    - [Global Variables](#global-variables)
+    - [Intrinsics](#intrinsics)
+    - [Extension Methods](#extension-methods)
+  - [Planned Features](#planned-features)
+
 ## Usage
 
 Nightly builds can be accessed through Github Actions or here:
@@ -37,7 +54,34 @@ namespace example;
 #load
 void main() {
     print("Hello World");
+
+    int x = 7;
+    print("Value: ", x * 9);
+
+    @/say $(x == 7)
+
+    int array = [x];
+    array.add(-9);
+    print(array);
 }
+```
+
+## CLI Options
+
+```
+$ amethyst --help
+Amethyst Compiler 0.1.0.0
+
+Usage:
+amethyst [files...] -o <output>
+
+  -o, --output            Zipped datapack, defaults to first input file's name.
+  -f, --pack-format       (Default: 71) Datapack format.
+  -d, --debug             (Default: false) Enable debug checks.
+  --dump-ir               Dump Geode IR and don't compile to datapack.
+  --help                  Display this help screen.
+  --version               Display version information.
+  input files (pos. 0)    Required. Files to compile.
 ```
 
 ## Language Features
@@ -113,12 +157,10 @@ print(x);
 
 ### Lists
 
-Lists are currently WIP. Indexing with a variable and base `minecraft:list` methods are not available at the moment.
-
-Anyway, lists work mostly as expected:
+Lists store an ordered collection of values. For now, only typed lists (using `T[]`) are supported.
 
 ```cs
-int[] list;
+int[] list = [-7];
 
 list.add(10);
 list.add(5);
@@ -126,6 +168,9 @@ list.add(x * y);
 
 print(list[2]);
 ```
+
+List methods:
+* `T[].add(T val)`: Add a value to the end of the list.
 
 Note: there is currently no bounds check. Eventually it will be included in debug builds and optionally in release mode builds.
 
@@ -209,7 +254,7 @@ inline void set(macro nbt^ ref, macro string val) {
 }
 ```
 
-### Inline commands
+### Inline Commands
 
 Commands can be directly inlined into functions like so:
 
@@ -225,7 +270,7 @@ You can also inline expressions into commands:
 
 Inline expressions are applied as macros.
 
-### Macro functions
+### Macro Functions
 
 Function arguments can be optionally defined as macro arguments as follows:
 
@@ -264,8 +309,11 @@ Be careful, uninitialized global variables will always persist, even if you reus
 
 Amethyst exposes some special Geode IR instructions as inline functions:
 
- * `print(args...)`: `/tellraw`s all players. Arguments are concatenated with no separators.
- * `count_of(constant string id)`: gets the number of functions that have a specified tag. Only accepts constant strings.
+* `builtin:print(args...)`: `/tellraw`s all players. Arguments are concatenated with no separators.
+* `builtin:count_of(constant string id)`: gets the number of functions that have a specified tag. Only accepts constant strings.
+* `amethyst:add<T>(T[]& this, T val)`: adds a value to a list. Available as a method on `T[]`.
+  
+Note: all symbols in the `builtin` namespace are considered global and can be accessed without `builtin` anywhere.
 
 ### Extension Methods
 
@@ -311,7 +359,7 @@ Here is the inheritance chain for types:
 * `amethyst:ref<T>` (defined as `T&`)
 * `amethyst:weak_ref<T>` (defined as `T^`)
 
-## Planned features
+## Planned Features
 
  * Objects
  * Generics
