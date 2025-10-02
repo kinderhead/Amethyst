@@ -11,24 +11,6 @@ namespace Amethyst.AST.Expressions
     {
         public readonly List<Expression> Expressions = exprs;
 
-        // public override TypeSpecifier ComputeType(FunctionContext ctx)
-        // {
-        //     if (Expressions.Count == 0) return PrimitiveTypeSpecifier.List;
-
-        //     var type = Expressions[0].ComputeType(ctx);
-
-        //     foreach (var i in Expressions)
-        //     {
-        //         if (i.ComputeType(ctx) != type)
-        //         {
-        //             type = PrimitiveTypeSpecifier.List;
-        //             break;
-        //         }
-        //     }
-
-        //     return type;
-        // }
-
         protected override ValueRef _Execute(FunctionContext ctx)
         {
             if (Expressions.Count == 0) return new LiteralValue(new NBTList());

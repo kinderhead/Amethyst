@@ -8,8 +8,6 @@ namespace Amethyst.AST.Expressions
 		public readonly Expression Dest = dest;
 		public readonly Expression Expression = expr;
 
-		// public override TypeSpecifier ComputeType(FunctionContext ctx) => Dest.ComputeType(ctx);
-
 		protected override ValueRef _Execute(FunctionContext ctx)
 		{
 			var val = Expression.Execute(ctx);

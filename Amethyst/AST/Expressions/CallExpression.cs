@@ -9,13 +9,6 @@ namespace Amethyst.AST.Expressions
 		public readonly Expression Function = func;
 		public readonly List<Expression> Args = args;
 
-		// public override TypeSpecifier ComputeType(FunctionContext ctx)
-		// {
-		// 	var funcType = Function.ComputeType(ctx);
-		// 	if (funcType is FunctionTypeSpecifier f) return f.ReturnType;
-		// 	throw new CallError();
-		// }
-
 		protected override ValueRef _Execute(FunctionContext ctx)
 		{
 			var func = Function.Execute(ctx);

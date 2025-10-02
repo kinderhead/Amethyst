@@ -17,8 +17,6 @@ namespace Amethyst.AST.Expressions
 		public readonly LogicalOperation Op = op;
 		public readonly Expression Right = right;
 
-		// public override TypeSpecifier ComputeType(FunctionContext ctx) => PrimitiveTypeSpecifier.Bool;
-
 		protected override ValueRef _Execute(FunctionContext ctx)
 		{
 			throw new NotImplementedException();

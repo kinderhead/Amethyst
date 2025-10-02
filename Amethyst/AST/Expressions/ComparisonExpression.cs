@@ -21,8 +21,6 @@ namespace Amethyst.AST.Expressions
 		public readonly ComparisonOperator Op = op;
 		public readonly Expression Right = right;
 
-		// public override TypeSpecifier ComputeType(FunctionContext ctx) => PrimitiveTypeSpecifier.Bool;
-
 		protected override ValueRef _Execute(FunctionContext ctx)
 		{
 			var left = ctx.Add(new LoadInsn(ctx.ImplicitCast(Left.Execute(ctx), PrimitiveTypeSpecifier.Int)));
