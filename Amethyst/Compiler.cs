@@ -47,7 +47,9 @@ namespace Amethyst
 				var helpText = HelpText.AutoBuild(res, h =>
 				{
 					h.AdditionalNewLineAfterOption = false;
-					h.Heading = $"Amethyst Compiler {Assembly.GetExecutingAssembly().GetName().Version}";
+
+					var version = Assembly.GetExecutingAssembly().GetName().Version ?? new Version(0, 0, 0);
+                    h.Heading = $"Amethyst Compiler {version.Major}.{version.Minor}.{version.Build}";
 
 					h.Copyright = @"
 Usage:

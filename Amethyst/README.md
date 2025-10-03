@@ -28,6 +28,8 @@
 
 There's been many different attempts at making a high-level programming language for Minecraft Datapacks over the years, but one flaw I've seen in all of them is that they let the limitations of commands dictate what's possible. All of that changed when Minecraft added macro functions, greatly increasing the flexibility of datapacks. The goal of Amethyst is to leverage macro functions and other features to allow users to make datapacks as easily as they would write any other program.
 
+Tested on Minecraft 1.21.9, theoretically works on Minecraft 1.20.5+.
+
 ## Usage
 
 Nightly builds can be accessed through Github Actions or here:
@@ -71,7 +73,7 @@ void main() {
 
 ```
 $ amethyst --help
-Amethyst Compiler 0.1.0.0
+Amethyst Compiler 0.1.0
 
 Usage:
 amethyst [files...] -o <output>
