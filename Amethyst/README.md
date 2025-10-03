@@ -12,6 +12,7 @@
     - [Math](#math)
     - [Objects](#objects)
     - [Lists](#lists)
+    - [Control Flow](#control-flow)
     - [Inline Commands](#inline-commands)
     - [References](#references)
       - [Weak References](#weak-references)
@@ -184,6 +185,24 @@ List methods:
 * `.size()`: Get the size of the list.
 
 Note: there is currently no bounds check. Eventually it will be included in debug builds and optionally in release mode builds.
+
+### Control Flow
+
+Amethyst supports the traditional C-style `if` and `for` loops:
+
+```cs
+if (x == 4) {
+    print("true");
+} else {
+    print("false");
+}
+
+for (int i = 0; i < 10; ++i) {
+    print("Loop ", i + 1);
+}
+```
+
+Due to the recursive nature of Minecraft commands, infinite loops cannot exist. Therefore there is no `while` loop and the last two expressions in `for` loops are required. To achieve an infinite loop, your logic needs to be broken up across multiple ticks.
 
 ### Inline Commands
 
@@ -377,6 +396,7 @@ Here is the inheritance chain for types:
  * Generics
  * Inline functions
  * Entity manipulation
+ * Async programming and tick scheduling
  * Automatic data generation for compile-time block states, entity data, and more
  * Error handling and exceptions
  * Optimizations

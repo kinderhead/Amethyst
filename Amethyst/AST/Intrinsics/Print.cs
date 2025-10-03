@@ -2,6 +2,7 @@
 using Amethyst.Geode.IR;
 using Amethyst.Geode.IR.Instructions;
 using Amethyst.Geode.Types;
+using Amethyst.Geode.Values;
 
 namespace Amethyst.AST.Intrinsics
 {
@@ -11,7 +12,13 @@ namespace Amethyst.AST.Intrinsics
 
 		public override ValueRef Execute(FunctionContext ctx, params ValueRef[] args)
 		{
-			return ctx.Add(new PrintInsn(args.Select(i => i.Type is ReferenceTypeSpecifier ? ctx.Add(new DereferenceInsn(i)) : i)));
+			for (int i = 0; i < args.Length; i++)
+			{
+				if (args[i].Type is ReferenceTypeSpecifier) args[i] = ctx.Add(new DereferenceInsn(args[i]));
+				else if (args[i].Value is ConditionalValue) args[i] = ctx.Add(new LoadInsn(args[i]));
+            }
+
+			return ctx.Add(new PrintInsn(args));
 		}
 	}
 }

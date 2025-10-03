@@ -30,7 +30,7 @@ namespace Amethyst.Geode.IR
 
         private void Walk(FunctionContext ctx, Block b)
         {
-            ProcessBlock(ctx, b);
+            if (!ProcessBlock(ctx, b)) return;
 
             foreach (var i in Reversed ? b.Previous : b.Next)
             {
@@ -38,9 +38,9 @@ namespace Amethyst.Geode.IR
             }
         }
 
-        private void ProcessBlock(FunctionContext ctx, Block b)
+        private bool ProcessBlock(FunctionContext ctx, Block b)
         {
-            if (!toVisit.Contains(b)) return;
+            if (!toVisit.Contains(b)) return false;
             toVisit.Remove(b);
 
             OnBlock(ctx, b);
@@ -58,6 +58,8 @@ namespace Amethyst.Geode.IR
 
             // TODO: Make a collection for insn to be removed instead
             b.Instructions.RemoveAll(x => x.MarkedForRemoval);
+
+            return true;
         }
 
         protected void RevisitBlock(Block b, bool visitPredecessors = false)

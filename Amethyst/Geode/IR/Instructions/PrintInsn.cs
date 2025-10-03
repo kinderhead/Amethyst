@@ -6,7 +6,7 @@ using Datapack.Net.Function.Commands;
 
 namespace Amethyst.Geode.IR.Instructions
 {
-	public class PrintInsn(IEnumerable<IInstructionArg> args) : Instruction(args)
+	public class PrintInsn(IEnumerable<ValueRef> args) : Instruction(args)
 	{
 		public override string Name => "print";
 		public override NBTType?[] ArgTypes => [];

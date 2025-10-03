@@ -87,6 +87,7 @@ namespace Amethyst.AST
 		public override Node VisitInitAssignmentStatement([NotNull] AmethystParser.InitAssignmentStatementContext context) => new InitAssignmentNode(Loc(context), Visit(context.type()), Visit(context.id()), context.expression() is null ? null : Visit(context.expression()));
 		public override Node VisitExpressionStatement([NotNull] AmethystParser.ExpressionStatementContext context) => new ExpressionStatement(Loc(context), Visit(context.expression()));
 		public override Node VisitIfStatement([NotNull] AmethystParser.IfStatementContext context) => context.statement().Length != 0 ? new IfStatement(Loc(context), Visit(context.expression()), Visit(context.statement().First()), context.statement().Length == 2 ? Visit(context.statement().Last()) : null) : new ExpressionStatement(Loc(context), new LiteralExpression(Loc(context), new NBTString("uh")));
+		public override Node VisitForStatement([NotNull] AmethystParser.ForStatementContext context) => new ForStatement(Loc(context), context.initAssignmentStatement() is not null ? (Statement?)Visit(context.initAssignmentStatement()) : null, Visit(context.cond), Visit(context.it), Visit(context.statement()));
 		public override Node VisitReturnStatement([NotNull] AmethystParser.ReturnStatementContext context) => new ReturnStatement(Loc(context), context.expression() is null ? null : Visit(context.expression()));
 
 		public override Node VisitCommandStatement([NotNull] AmethystParser.CommandStatementContext context)

@@ -10,7 +10,6 @@ namespace Amethyst.AST.Statements
 	public class CommandStatement(LocationRange loc, IEnumerable<CommandFragment> cmd) : Statement(loc)
 	{
 		public readonly CommandFragment[] Fragments = [.. cmd];
-		public override IEnumerable<Statement> SubStatements => [];
 
 		public override void Compile(FunctionContext ctx)
 		{

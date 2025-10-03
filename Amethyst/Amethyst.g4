@@ -43,6 +43,7 @@ statement
     | commandStatement
     | block
     | ifStatement
+    | forStatement
     ;
 
 initAssignmentStatement
@@ -59,6 +60,10 @@ commandStatement
 
 ifStatement
     : If LParen expression RParen statement (Else statement)?
+    ;
+
+forStatement
+    : For LParen initAssignmentStatement? Semi cond=expression Semi it=expression RParen statement
     ;
 
 returnStatement
@@ -168,6 +173,7 @@ id
 Namespace: 'namespace';
 If: 'if';
 Else: 'else';
+For: 'for';
 Return: 'return';
 
 Interface: 'interface';

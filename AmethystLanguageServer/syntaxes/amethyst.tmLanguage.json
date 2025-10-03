@@ -57,7 +57,7 @@
 				},
 				{
 					"name": "keyword.control.amethyst",
-					"match": "\\b(if|else|return)\\b"
+					"match": "\\b(if|else|for|in|return)\\b"
 				},
 				{
 					"name": "storage.modifier.amethyst",

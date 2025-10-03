@@ -5,21 +5,20 @@ namespace Amethyst.AST.Statements
 {
 	public class BlockNode(LocationRange loc) : Statement(loc)
 	{
-		private readonly List<Statement> statements = [];
-		public override IEnumerable<Statement> SubStatements => statements;
+		public readonly List<Statement> Statements = [];
 
 		public override void Compile(FunctionContext ctx)
 		{
 			if (!CompileWithErrorChecking(ctx)) throw new EmptyAmethystError();
 		}
 
-		public void Add(Statement stmt) => statements.Add(stmt);
+		public void Add(Statement stmt) => Statements.Add(stmt);
 
 		public bool CompileWithErrorChecking(FunctionContext ctx)
 		{
 			var success = true;
 
-			foreach (var i in SubStatements)
+			foreach (var i in Statements)
 			{
 				if (!ctx.Compiler.WrapError(i.Location, ctx, () => i.Compile(ctx))) success = false;
 			}

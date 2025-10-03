@@ -277,6 +277,33 @@ namespace Amethyst.Geode.IR
             return (trueBlock, falseBlock);
         }
 
+        public Block Loop(Func<ValueRef> cond, string label, Action loop)
+        {
+            label = GetNewLabelName(label);
+
+            var startingBlock = CurrentBlock;
+            var loopBlock = new Block($"{label}.loop", GetNewInternalID(), this);
+            var endBlock = new Block($"{label}.end", GetNewInternalID(), this);
+
+            blocks.Add(loopBlock);
+            blocks.Add(endBlock);
+
+            startingBlock.Link(loopBlock);
+            startingBlock.Link(endBlock);
+            loopBlock.Link(loopBlock);
+            loopBlock.Link(endBlock);
+
+            Add(new BranchInsn(cond(), loopBlock, endBlock));
+
+            CurrentBlock = loopBlock;
+            loop();
+            Add(new BranchInsn(cond(), loopBlock, endBlock));
+
+            CurrentBlock = endBlock;
+
+            return loopBlock;
+        }
+
         public void AllocateRegisters(GeodeBuilder builder, LifetimeGraph graph)
         {
             var colors = graph.CalculateDSatur();

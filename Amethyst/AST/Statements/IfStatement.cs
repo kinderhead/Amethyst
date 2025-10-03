@@ -9,7 +9,6 @@ namespace Amethyst.AST.Statements
 		public readonly Expression Expression = expr;
 		public readonly Statement Statement = stmt;
 		public readonly Statement? Else = elseStmt;
-		public override IEnumerable<Statement> SubStatements => Else is null ? [Statement] : [Statement, Else];
 
 		public override void Compile(FunctionContext ctx)
 		{
