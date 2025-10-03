@@ -12,9 +12,9 @@
     - [Math](#math)
     - [Objects](#objects)
     - [Lists](#lists)
+    - [Inline Commands](#inline-commands)
     - [References](#references)
       - [Weak References](#weak-references)
-    - [Inline Commands](#inline-commands)
     - [Macro Functions](#macro-functions)
     - [Global Variables](#global-variables)
     - [Intrinsics](#intrinsics)
@@ -121,6 +121,7 @@ The namespace and path of a function determines where to search for other functi
 
 ```cs
 namespace example;
+
 void func() {
     other-func(); // Yes, you can have dashes in function names
 }
@@ -159,7 +160,7 @@ There is no current plan to implement post-increment/decrement operators. This m
 Typeless NBT compounds can be created using the `nbt` type:
 
 ```cs
-nbt x;
+nbt x = { thing1: 7, thing2: 6s };
 x.property = "Hi";
 print(x);
 ```
@@ -184,9 +185,25 @@ List methods:
 
 Note: there is currently no bounds check. Eventually it will be included in debug builds and optionally in release mode builds.
 
+### Inline Commands
+
+Commands can be directly inlined into functions like so:
+
+```cs
+@/say hi
+```
+
+You can also inline expressions into commands:
+
+```cs
+@/say $(x + y)
+```
+
+Inline expressions are applied as macros.
+
 ### References
 
-References are a way to modify the same object from multiple places. They work similarly to how the do in C++. They are defined using `&`, so an example would be `int&`. 
+References are a way to modify the same object from multiple places. They work similarly to how they do in C++. References types are defined by adding `&` to the end of a type, so some examples would be `int&` and `string[]&`.
 
 ```cs
 int x = 7;
@@ -246,12 +263,12 @@ A common use-case for weak references are simple macro functions. Most functions
 It is currently not possible to convert a weak reference to a normal reference unless the weak reference is constant. This causes some quirks with non-constant list indexing. For example:
 
 ```cs
-string[] arr = ...
+string[] arr = ["one", "two"];
 
 func(arr[0]); // Valid
 func(arr[x]); // Error: conversion from string^ to string& is not valid here
 
-void func(string& str) ...
+void func(string& str) { }
 ```
 
 A solution will be provided at some point.
@@ -264,22 +281,6 @@ inline void set(macro nbt^ ref, macro string val) {
 }
 ```
 
-### Inline Commands
-
-Commands can be directly inlined into functions like so:
-
-```cs
-@/say hi
-```
-
-You can also inline expressions into commands:
-
-```cs
-@/say $(x + y)
-```
-
-Inline expressions are applied as macros.
-
 ### Macro Functions
 
 Function arguments can be optionally defined as macro arguments as follows:
@@ -290,13 +291,13 @@ void func(macro int arg, string non_macro_arg) { ... }
 
 As you can see, macro arguments can be mixed with regular arguments.
 
-**WARNING**: only string literals can be passed into macro string arguments. This is because Minecraft strips quotes from strings when processing them for macros. If this behavior is intended, then use `macro nbt` instead.
+**WARNING**: only string literals can be passed into macro string arguments. This is because Minecraft strips quotes from strings and un-escapes them, and there is no good way to re-escape the strings later. Use `macro nbt` if this behavior is intended.
 
 ### Global Variables
 
 Variables can be declared outside of functions. They follow the same namespace rules as functions. Amethyst internally puts them into NBT storage under the same namespace and path. For example, a global variable `example:x` is can be retrieved in-game with `/data get storage example:globals x`.
 
-If a global variable does not has an initializer, then it will not be reset upon reload. For example:
+If a global variable does not has an initializer, it will not be reset upon reload. For example:
 
 ```cs
 int keep;
@@ -304,9 +305,8 @@ int reset = 0;
 
 #load
 void main() {
-    // The ++ operator has not been implemented yet
-    keep = keep + 1;
-    reset = reset + 1;
+    ++keep;
+    ++reset;
 
     print(keep); // Increments by 1 each reload
     print(reset); // Will always print 1
