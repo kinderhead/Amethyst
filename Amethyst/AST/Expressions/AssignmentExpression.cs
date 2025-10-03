@@ -1,5 +1,4 @@
-﻿using Amethyst.Errors;
-using Amethyst.Geode;
+﻿using Amethyst.Geode;
 using Amethyst.Geode.IR;
 using Amethyst.Geode.IR.Instructions;
 using Amethyst.Geode.Types;
@@ -26,24 +25,19 @@ namespace Amethyst.AST.Expressions
 			var dest = Dest.Execute(ctx, null);
 			var val = Expression.Execute(ctx, dest.Type.AssignmentOverloadType, false);
 
-			if (Type != AssignmentType.Normal && val.Type != PrimitiveTypeSpecifier.Int)
-			{
-				throw new InvalidTypeError(val.Type.ToString(), "int");
-			}
-
 			switch (Type)
 			{
 				case AssignmentType.Addition:
-					val = ctx.Add(new AddInsn(dest, val));
+					val = ctx.Add(new AddInsn(ctx.ImplicitCast(dest, PrimitiveTypeSpecifier.Int), val));
 					break;
 				case AssignmentType.Subtraction:
-					val = ctx.Add(new SubInsn(dest, val));
+					val = ctx.Add(new SubInsn(ctx.ImplicitCast(dest, PrimitiveTypeSpecifier.Int), val));
 					break;
 				case AssignmentType.Multiplication:
-					val = ctx.Add(new MulInsn(dest, val));
+					val = ctx.Add(new MulInsn(ctx.ImplicitCast(dest, PrimitiveTypeSpecifier.Int), val));
 					break;
 				case AssignmentType.Division:
-					val = ctx.Add(new DivInsn(dest, val));
+					val = ctx.Add(new DivInsn(ctx.ImplicitCast(dest, PrimitiveTypeSpecifier.Int), val));
 					break;
 				default:
 					break;

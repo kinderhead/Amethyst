@@ -2,14 +2,21 @@ namespace example;
 
 struct vec {
     int x;
+    int y;
+    int z;
 
     void test() {
         print(this.x);
+        this.x += 10;
     }
 }
 
 #load
 void main() {
-    vec v = { x: 9 };
+    vec v = { x: 9, y: 100, z: -8 };
+
     v.test();
+
+    @/tp @p $(v.x) $(v.y) $(v.z)
 }
+
