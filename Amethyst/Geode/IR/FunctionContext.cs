@@ -106,16 +106,24 @@ namespace Amethyst.Geode.IR
 
         public ValueRef GetProperty(ValueRef val, string name)
         {
-            var effectiveMethodType = val.Type is ReferenceTypeSpecifier r1 ? r1.Inner : val.Type;
-            if (GetGlobal(new(effectiveMethodType.BasePath, name)) is IFunctionLike func && func.FuncType.Parameters.Length >= 1)
+            if (GetMethodOrNull(val, name) is ValueRef method) return method;
+            else if (val.Type.Property(name) is TypeSpecifier t) return Add(new PropertyInsn(val, new LiteralValue(name), t));
+
+            throw new PropertyError(val.Type.ToString(), name);
+        }
+
+        public ValueRef? GetMethodOrNull(ValueRef val, string name, TypeSpecifier? effectiveMethodType = null)
+        {
+            effectiveMethodType ??= val.Type is ReferenceTypeSpecifier r1 ? r1.Inner : val.Type;
+            if (GetGlobal($"{effectiveMethodType.ID}/{name}") is IFunctionLike func && func.FuncType.Parameters.Length >= 1)
             {
                 func = func.CloneWithType(func.FuncType.ApplyGenericWithParams([new ReferenceTypeSpecifier(effectiveMethodType)]));
                 var firstArgType = func.FuncType.Parameters[0].Type;
                 if (firstArgType is ReferenceTypeSpecifier r2 && effectiveMethodType.Implements(r2.Inner)) return func.AsMethod(val, this);
             }
-            else if (val.Type.Property(name) is TypeSpecifier t) return Add(new PropertyInsn(val, new LiteralValue(name), t));
-
-            throw new PropertyError(val.Type.ToString(), name);
+            
+            if (effectiveMethodType.BaseClass != effectiveMethodType) return GetMethodOrNull(val, name, effectiveMethodType.BaseClass);
+            else return null;
         }
 
         public Variable RegisterLocal(string name, TypeSpecifier type) => RegisterLocal(name, $"frame{activeScopes.Count - 1}.{name}", type);

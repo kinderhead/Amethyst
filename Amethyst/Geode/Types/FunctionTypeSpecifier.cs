@@ -1,6 +1,7 @@
 ﻿using Amethyst.AST;
 using Amethyst.Errors;
 using Amethyst.Geode.Values;
+using Datapack.Net.Utils;
 
 namespace Amethyst.Geode.Types
 {
@@ -11,8 +12,10 @@ namespace Amethyst.Geode.Types
 		public readonly Parameter[] Parameters = [.. paramters];
 		public override bool Operable => false;
 		public override IEnumerable<TypeSpecifier> Subtypes => [ReturnType, .. Parameters.Select(i => i.Type)];
+        public override NamespacedID ID => "amethyst:func";
+		public override TypeSpecifier BaseClass => this;
 
-		public FunctionTypeSpecifier ApplyGenericWithParams(TypeSpecifier[] args)
+        public FunctionTypeSpecifier ApplyGenericWithParams(TypeSpecifier[] args)
 		{
 			var newArgs = new Parameter[Parameters.Length];
 

@@ -2,12 +2,14 @@ using Amethyst.Errors;
 using Amethyst.Geode.IR;
 using Amethyst.Geode.IR.Instructions;
 using Amethyst.Geode.Values;
+using Datapack.Net.Utils;
 
 namespace Amethyst.Geode.Types
 {
     public class WeakReferenceTypeSpecifier(TypeSpecifier inner) : ReferenceTypeSpecifier(inner)
     {
         public override string ToString() => $"{Inner}^";
+		public override NamespacedID ID => "amethyst:weak_ref";
 
         public override ValueRef? CastOverload(ValueRef val, FunctionContext ctx)
         {

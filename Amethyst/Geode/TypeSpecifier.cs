@@ -3,6 +3,7 @@ using Amethyst.Geode.IR.Instructions;
 using Amethyst.Geode.Types;
 using Amethyst.Geode.Values;
 using Datapack.Net.Data;
+using Datapack.Net.Utils;
 
 namespace Amethyst.Geode
 {
@@ -10,9 +11,10 @@ namespace Amethyst.Geode
 	{
 		public abstract bool Operable { get; }
 		public abstract LiteralValue DefaultValue { get; }
-		public virtual bool IsList => false;
+		public abstract NamespacedID ID { get; }
+
+        public virtual bool IsList => false;
 		public virtual IEnumerable<TypeSpecifier> Subtypes => [];
-		public virtual string BasePath => "minecraft";
 		public virtual TypeSpecifier BaseClass => PrimitiveTypeSpecifier.Compound;
 
 		// TODO: Make this not throw an error

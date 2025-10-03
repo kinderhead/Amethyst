@@ -1,3 +1,4 @@
+using Amethyst.Errors;
 using Amethyst.Geode.IR;
 using Amethyst.Geode.Values;
 using Datapack.Net.Data;
@@ -33,13 +34,13 @@ namespace Amethyst.Geode
         {
             if (Value is null || Value.Type.EffectiveType != type)
             {
-                throw new InvalidOperationException($"Expected value of type \"{Enum.GetName(type)}\", but got \"{(Value is not null ? Enum.GetName(Value.Type.EffectiveType) : "null")}\"");
+                throw new InvalidTypeError((Value is not null ? Enum.GetName(Value.Type.EffectiveType)?.ToLower() : "<error>") ?? "<error>", Enum.GetName(type)?.ToLower() ?? "<error>");
             }
 
             return Value;
         }
 
-        public T Expect<T>() where T : Value => (T?)Value ?? throw new InvalidOperationException($"Expected {typeof(T).Name}, but got {Value?.GetType().Name}");
+        public T Expect<T>() where T : Value => Value as T ?? throw new InvalidTypeError(Value?.GetType().Name.ToLower() ?? "<error>", typeof(T).Name.ToLower());
         public Value Expect() => Expect<Value>();
 
         public void SetValue(Value val)

@@ -70,7 +70,7 @@ expression
     ;
 
 assignmentExpression
-    : logicalExpression (Eq expression)?
+    : logicalExpression ((Eq | PlusEq | MinusEq | StarEq | SlashEq) expression)?
     ;
 
 logicalExpression
@@ -90,11 +90,15 @@ additiveExpression
     ;
 
 multiplicativeExpression
-    : unaryExpression ((Star | Slash) unaryExpression)*
+    : castExpression ((Star | Slash) castExpression)*
+    ;
+
+castExpression
+    : unaryExpression
     ;
 
 unaryExpression
-    : postfixExpression
+    : (PlusPlus | MinusMinus | Not | Minus)* postfixExpression
     ;
 
 postfixExpression
@@ -186,6 +190,11 @@ Plus: '+';
 Minus: '-';
 Star: '*';
 Slash: '/';
+Not: '!';
+PlusEq: '+=';
+MinusEq: '-=';
+StarEq: '*=';
+SlashEq: '/=';
 Hash: '#';
 EqEq: '==';
 Neq: '!=';
@@ -196,6 +205,8 @@ Lte: '<=';
 And: '&';
 AndAnd: '&&';
 OrOr: '||';
+PlusPlus: '++';
+MinusMinus: '--';
 Dot: '.';
 WeakRef: '^';
 

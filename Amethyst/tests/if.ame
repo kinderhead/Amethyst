@@ -20,3 +20,24 @@ void test_if() {
 
     complete();
 }
+
+#test
+void test_if_not() {
+    start("if not");
+
+    int x = 5;
+    
+    if (!(x == 5)) {
+        assert(false);
+    } else {
+        assert(true);
+    }
+
+    if (!(x != 5)) {
+        assert(true);
+    } else {
+        assert(false);
+    }
+
+    complete();
+}

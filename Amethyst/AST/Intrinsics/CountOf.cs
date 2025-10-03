@@ -14,7 +14,7 @@ namespace Amethyst.AST.Intrinsics
 
         public override ValueRef Execute(FunctionContext ctx, params ValueRef[] args)
         {
-            if (args.Count() != 1) throw new MismatchedArgumentCountError(1, args.Count());
+			if (args.Length != 1) throw new MismatchedArgumentCountError(1, args.Length);
             var arg = args.First();
             if (arg.Expect<LiteralValue>().Value is not NBTString id) throw new InvalidTypeError(arg.Type.ToString(), "constant string");
             return ctx.Add(new CountOfInsn(id.Value));

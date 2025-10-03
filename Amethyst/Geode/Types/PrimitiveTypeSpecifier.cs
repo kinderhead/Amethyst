@@ -1,5 +1,6 @@
 ﻿using Amethyst.Geode.Values;
 using Datapack.Net.Data;
+using Datapack.Net.Utils;
 
 namespace Amethyst.Geode.Types
 {
@@ -9,6 +10,7 @@ namespace Amethyst.Geode.Types
 		public override bool IsList => Type == NBTType.List || Type == NBTType.IntArray || Type == NBTType.LongArray || Type == NBTType.ByteArray;
 		public readonly NBTType Type = type;
 		public override NBTType EffectiveType => Type;
+		public override NamespacedID ID => $"minecraft:{this}";
 
 		//public override string MacroGuardStart => Type == NBTType.String ? "\"" : "";
 		//public override string MacroGuardEnd => Type == NBTType.String ? "\"" : "";

@@ -2,8 +2,10 @@ namespace example;
 
 #load
 void main() {
-    int[] arr = [1,2,3,6,5,4];
-    nbt obj = { a: 3, b: "yay", womp:arr };
+    int[] arr = [1,5,2,7,3,7,3];
+    int[]^ ref = arr;
 
-    print(obj);
+    ref.add(10);
+    
+    print(ref.size());
 }

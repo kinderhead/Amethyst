@@ -192,6 +192,7 @@ amethyst [files...] -o <output>";
 			Register(new Print());
 			Register(new CountOf());
 			Register(new ListAdd());
+			Register(new ListSize());
 
 			AddSymbol(new("builtin:true", LocationRange.None, new LiteralValue(true)));
 			AddSymbol(new("builtin:false", LocationRange.None, new LiteralValue(false)));

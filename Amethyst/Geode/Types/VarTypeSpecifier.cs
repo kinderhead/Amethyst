@@ -1,5 +1,6 @@
 ﻿using Amethyst.Errors;
 using Amethyst.Geode.Values;
+using Datapack.Net.Utils;
 
 namespace Amethyst.Geode.Types
 {
@@ -7,6 +8,8 @@ namespace Amethyst.Geode.Types
 	{
 		public override bool Operable => false;
 		public override LiteralValue DefaultValue => throw new InvalidTypeError("var");
+
+		public override NamespacedID ID => "amethyst:var";
 
 		public override string ToString() => "var";
 		protected override bool EqualsImpl(TypeSpecifier obj) => obj is VarTypeSpecifier;

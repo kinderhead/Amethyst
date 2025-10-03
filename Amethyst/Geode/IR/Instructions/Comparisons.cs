@@ -15,11 +15,8 @@ namespace Amethyst.Geode.IR.Instructions
 		{
 			var left = Arg<ValueRef>(0).Expect().AsScore(ctx);
 			var right = Arg<ValueRef>(1).Expect().AsScore(ctx);
-			//var ret = ReturnValue.Expect<ScoreValue>();
-
-			//ret.Store(new LiteralValue(0), ctx);
-			//ctx.Add(new Execute().If.Score(left.Target, left.Score, Op, right.Target, right.Score).Run(new Scoreboard.Players.Set(ret.Target, ret.Score, 1)));
-			ReturnValue.SetValue(new ConditionalValue(cmd => (Invert ? cmd.Unless : cmd.If).Score(left.Target, left.Score, Op, right.Target, right.Score)));
+			
+			ReturnValue.SetValue(new ConditionalValue((cmd, flip) => (Invert != flip ? cmd.Unless : cmd.If).Score(left.Target, left.Score, Op, right.Target, right.Score), ReturnValue.Expect<ConditionalValue>().Flip));
 		}
 
 		protected override Value? ComputeReturnValue(FunctionContext ctx)
@@ -29,7 +26,7 @@ namespace Amethyst.Geode.IR.Instructions
 
 			var ret = base.ComputeReturnValue(ctx);
 			if (ret is not null) return ret;
-			return new ConditionalValue(cmd => cmd);
+			return new ConditionalValue((cmd, flip) => throw new InvalidOperationException());
 		}
 	}
 

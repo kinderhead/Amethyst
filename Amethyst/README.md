@@ -145,6 +145,15 @@ All the normal operators work as expected (except `%` for now).
 
 Note: Minecraft handles integer division slightly differently than some other languages do.
 
+Amethyst also provides the following unary operators:
+
+* `++x`
+* `--x`
+* `!x`
+* `-x`
+
+There is no current plan to implement post-increment/decrement operators. This may be revisited in the future.
+
 ### Objects
 
 Typeless NBT compounds can be created using the `nbt` type:
@@ -170,7 +179,8 @@ print(list[2]);
 ```
 
 List methods:
-* `T[].add(T val)`: Add a value to the end of the list.
+* `.add(T val)`: Add a value to the end of the list.
+* `.size()`: Get the size of the list.
 
 Note: there is currently no bounds check. Eventually it will be included in debug builds and optionally in release mode builds.
 
@@ -312,6 +322,7 @@ Amethyst exposes some special Geode IR instructions as inline functions:
 * `builtin:print(args...)`: `/tellraw`s all players. Arguments are concatenated with no separators.
 * `builtin:count_of(constant string id)`: gets the number of functions that have a specified tag. Only accepts constant strings.
 * `amethyst:add<T>(T[]& this, T val)`: adds a value to a list. Available as a method on `T[]`.
+* `amethyst:size<T>(T[]& this)`: gets the length of a list. Available as a method on `T[]`.
   
 Note: all symbols in the `builtin` namespace are considered global and can be accessed without `builtin` anywhere.
 
@@ -319,8 +330,8 @@ Note: all symbols in the `builtin` namespace are considered global and can be ac
 
 Methods can be added to any type at any time. When searching for a method to call, Amethyst will see if any functions exist that satisfy the following conditions:
 
-* The first argument is the target type or is a base class of the target type.
-* The function is in the same namespace and path as the type.
+* The first argument is a reference to the target type or to a base class of the target type.
+* The function is in the same namespace and path as the type, including the name of the type.
 
 For example, this adds an extension method to all objects:
 
@@ -333,9 +344,9 @@ void test() {
     y.say();
 }
 
-namespace minecraft;
+namespace minecraft:nbt;
 
-void say(nbt this) {
+void say(nbt& this) {
     print(this);
 }
 ```
@@ -358,6 +369,7 @@ Here is the inheritance chain for types:
   * All user-defined types
 * `amethyst:ref<T>` (defined as `T&`)
 * `amethyst:weak_ref<T>` (defined as `T^`)
+* `amethyst:func` (no definition yet)
 
 ## Planned Features
 

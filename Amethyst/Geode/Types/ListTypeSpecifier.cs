@@ -1,5 +1,6 @@
 ﻿using Amethyst.Geode.Values;
 using Datapack.Net.Data;
+using Datapack.Net.Utils;
 
 namespace Amethyst.Geode.Types
 {
@@ -11,7 +12,7 @@ namespace Amethyst.Geode.Types
 		public override IEnumerable<TypeSpecifier> Subtypes => [Inner];
 		public override bool IsList => true;
 		public override TypeSpecifier BaseClass => PrimitiveTypeSpecifier.List;
-		public override string BasePath => "amethyst";
+		public override NamespacedID ID => "amethyst:list";
 
 		public override LiteralValue DefaultValue => new(new NBTList(), this);
 

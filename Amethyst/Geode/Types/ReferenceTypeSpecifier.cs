@@ -3,6 +3,7 @@ using Amethyst.Geode.IR;
 using Amethyst.Geode.IR.Instructions;
 using Amethyst.Geode.Values;
 using Datapack.Net.Data;
+using Datapack.Net.Utils;
 
 namespace Amethyst.Geode.Types
 {
@@ -14,8 +15,8 @@ namespace Amethyst.Geode.Types
         public override LiteralValue DefaultValue => new("");
         public override string ToString() => $"{Inner}&";
         public override NBTType EffectiveType => NBTType.String;
-        public override string BasePath => "amethyst";
         public override TypeSpecifier BaseClass => this;
+		public override NamespacedID ID => "amethyst:ref";
 
         public override void AssignmentOverload(ValueRef dest, ValueRef val, FunctionContext ctx)
         {

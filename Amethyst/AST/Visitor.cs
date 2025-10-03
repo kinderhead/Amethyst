@@ -142,7 +142,17 @@ namespace Amethyst.AST
 		public override Node VisitAssignmentExpression([NotNull] AmethystParser.AssignmentExpressionContext context)
 		{
 			if (context.expression() is null) return Visit(context.logicalExpression());
-			else return new AssignmentExpression(Loc(context), (Expression)Visit(context.logicalExpression()), Visit(context.expression()));
+			else
+			{
+				var type = AssignmentType.Normal;
+
+				if (context.PlusEq() is not null) type = AssignmentType.Addition;
+				else if (context.MinusEq() is not null) type = AssignmentType.Subtraction;
+				else if (context.StarEq() is not null) type = AssignmentType.Multiplication;
+				else if (context.SlashEq() is not null) type = AssignmentType.Division;
+
+                return new AssignmentExpression(Loc(context), (Expression)Visit(context.logicalExpression()), type, Visit(context.expression()));
+			}
 		}
 
 		public override Node VisitLogicalExpression([NotNull] AmethystParser.LogicalExpressionContext context)
@@ -206,14 +216,22 @@ namespace Amethyst.AST
 			return node;
 		}
 
+		public override Node VisitCastExpression([NotNull] AmethystParser.CastExpressionContext context)
+		{
+			return Visit(context.unaryExpression());
+		}
+
 		public override Node VisitUnaryExpression([NotNull] AmethystParser.UnaryExpressionContext context)
 		{
 			var node = (Expression)Visit(context.children.Last());
-			// for (int i = context.children.Count - 2; i >= 0; i--)
-			// {
-			// 	if (context.children[i].GetText() == "&") node = new ReferenceExpression(Loc(context), node);
-			// 	// No check for other cases because parser errors might hit it and we don't want to stop the error checker
-			// }
+			for (int i = context.children.Count - 2; i >= 0; i--)
+			{
+				if (context.children[i].GetText() == "++") node = new UnaryExpression(Loc(context), UnaryOperation.Increment, node);
+				else if (context.children[i].GetText() == "--") node = new UnaryExpression(Loc(context), UnaryOperation.Decrement, node);
+				else if (context.children[i].GetText() == "!") node = new UnaryExpression(Loc(context), UnaryOperation.Not, node);
+				else if (context.children[i].GetText() == "-") node = new UnaryExpression(Loc(context), UnaryOperation.Negate, node);
+                // No check for other cases because parser errors might hit it and we don't want to stop the error checker
+            }
 			return node;
 		}
 

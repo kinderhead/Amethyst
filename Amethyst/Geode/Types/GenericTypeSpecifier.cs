@@ -1,5 +1,6 @@
 ﻿using Amethyst.Geode.Values;
 using Datapack.Net.Data;
+using Datapack.Net.Utils;
 
 namespace Amethyst.Geode.Types
 {
@@ -12,7 +13,7 @@ namespace Amethyst.Geode.Types
 		public override bool Operable => Constraint.Operable;
 		public override LiteralValue DefaultValue => Constraint.DefaultValue;
 		public override bool IsList => Constraint.IsList;
-		public override string BasePath => Constraint.BasePath;
+		public override NamespacedID ID => Constraint.ID;
 		public override TypeSpecifier BaseClass => Constraint;
 		public override NBTType EffectiveType => Constraint.EffectiveType;
 		public override IEnumerable<TypeSpecifier> Subtypes => Constraint.Subtypes;

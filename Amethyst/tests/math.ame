@@ -62,3 +62,57 @@ void test_big_math() {
     
     complete();
 }
+
+#test
+void test_assign_math() {
+    start("int assign math");
+
+    int x = 5;
+
+    x += 10;
+    assert(x == 15);
+
+    x -= 12;
+    assert(x == 3);
+
+    x *= -6;
+    assert(x == -18);
+
+    x /= 2;
+    assert(x == -9);
+    
+    complete();
+}
+
+#test
+void test_inc() {
+    start("int increment");
+
+    int x = 5;
+    assert(++x == 6);
+    
+    complete();
+}
+
+#test
+void test_dec() {
+    start("int decrement");
+
+    int x = -5;
+    assert(--x == -6);
+    
+    complete();
+}
+
+#test
+void test_negate() {
+    start("int negate");
+
+    int x = 5;
+    assert(-x == -5);
+
+    x = -9;
+    assert(-x == 9);
+    
+    complete();
+}

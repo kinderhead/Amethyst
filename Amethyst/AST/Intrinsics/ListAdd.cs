@@ -5,7 +5,7 @@ using Amethyst.Geode.Types;
 
 namespace Amethyst.AST.Intrinsics
 {
-    public class ListAdd(FunctionTypeSpecifier? type = null) : Intrinsic("amethyst:add", type ?? new(FunctionModifiers.None, new VoidTypeSpecifier(), [
+    public class ListAdd(FunctionTypeSpecifier? type = null) : Intrinsic("amethyst:list/add", type ?? new(FunctionModifiers.None, new VoidTypeSpecifier(), [
             new(ParameterModifiers.None, new ReferenceTypeSpecifier(new ListTypeSpecifier(new GenericTypeSpecifier("T"))), "this"),
             new(ParameterModifiers.None, new GenericTypeSpecifier("T"), "val")
         ]))
@@ -17,8 +17,8 @@ namespace Amethyst.AST.Intrinsics
             var list = args[0];
             var val = args[1];
 
-            if (list.Type is ListTypeSpecifier l) return ctx.Add(new ListAddInsn(list, ctx.ImplicitCast(val, l.Inner)));
-            else throw new NotImplementedException();
+            var type = list.Type is ListTypeSpecifier l ? l.Inner : ((ListTypeSpecifier)((ReferenceTypeSpecifier)list.Type).Inner).Inner;
+            return ctx.Add(new ListAddInsn(list, ctx.ImplicitCast(val, type)));
         }
     }
 }

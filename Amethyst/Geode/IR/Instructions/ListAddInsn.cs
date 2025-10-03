@@ -12,8 +12,10 @@ namespace Amethyst.Geode.IR.Instructions
 
         public override void Render(RenderContext ctx)
         {
-            var list = Arg<ValueRef>(0).Expect<LValue>();
-            list.ListAdd(Arg<ValueRef>(1).Expect(), ctx);
+            var list = Arg<ValueRef>(0).Expect();
+
+            if (list.Type is ListTypeSpecifier && list is LValue l) l.ListAdd(Arg<ValueRef>(1).Expect(), ctx);
+            else throw new NotImplementedException();
         }
 
         protected override Value? ComputeReturnValue(FunctionContext ctx) => new VoidValue();

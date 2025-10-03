@@ -3,6 +3,7 @@ using Amethyst.Geode;
 using Amethyst.Geode.IR;
 using Amethyst.Geode.Types;
 using Datapack.Net.Data;
+using Datapack.Net.Utils;
 
 namespace Amethyst.AST
 {
@@ -82,9 +83,9 @@ namespace Amethyst.AST
 		protected override TypeSpecifier _Resolve(Compiler ctx, bool allowAuto = false) => new WeakReferenceTypeSpecifier(Inner.Resolve(ctx));
 	}
 
-	public class AbstractInterfaceTypeSpecifier(LocationRange loc, string name, Dictionary<string, AbstractObjectProperty> props) : AbstractTypeSpecifier(loc), IRootChild
+	public class AbstractInterfaceTypeSpecifier(LocationRange loc, string id, Dictionary<string, AbstractObjectProperty> props) : AbstractTypeSpecifier(loc), IRootChild
 	{
-		public readonly string Name = name;
+		public readonly NamespacedID ID = id;
 		public readonly Dictionary<string, AbstractObjectProperty> Properties = props;
 
 		public void Process(Compiler ctx)
@@ -92,7 +93,7 @@ namespace Amethyst.AST
 			throw new NotImplementedException();
 		}
 
-		protected override TypeSpecifier _Resolve(Compiler ctx, bool allowAuto = false) => new InterfaceType(new(Properties.Select(i => new KeyValuePair<string, ObjectProperty>(i.Key, new ObjectProperty(i.Value.Type.Resolve(ctx), i.Value.Name)))));
+		protected override TypeSpecifier _Resolve(Compiler ctx, bool allowAuto = false) => new InterfaceType(ID, new(Properties.Select(i => new KeyValuePair<string, ObjectProperty>(i.Key, new ObjectProperty(i.Value.Type.Resolve(ctx), i.Value.Name)))));
 	}
 
 	public readonly record struct AbstractObjectProperty(AbstractTypeSpecifier Type, string Name);
