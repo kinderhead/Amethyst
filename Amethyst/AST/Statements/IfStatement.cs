@@ -1,6 +1,5 @@
 ﻿using Amethyst.AST.Expressions;
 using Amethyst.Geode.IR;
-using Amethyst.Geode.IR.Instructions;
 
 namespace Amethyst.AST.Statements
 {
@@ -14,8 +13,14 @@ namespace Amethyst.AST.Statements
 		{
 			var cond = Expression.Execute(ctx, null);
 
-			if (Else is not null) ctx.Branch(cond, "if", () => Statement.Compile(ctx), () => Else.Compile(ctx));
-			else ctx.Branch(cond, "if", () => Statement.Compile(ctx));
+			if (Else is not null)
+			{
+				_ = ctx.Branch(cond, "if", () => Statement.Compile(ctx), () => Else.Compile(ctx));
+			}
+			else
+			{
+				_ = ctx.Branch(cond, "if", () => Statement.Compile(ctx));
+			}
 		}
 	}
 }

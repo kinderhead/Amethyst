@@ -15,10 +15,14 @@ namespace Amethyst.AST.Statements
 		{
 			var type = Type.Resolve(ctx, Expression is not null);
 			var val = Expression is null ? type.DefaultValue : Expression.Execute(ctx, type);
-			if (type is VarTypeSpecifier && Expression is not null) type = val.Type;
+			if (type is VarTypeSpecifier && Expression is not null)
+			{
+				type = val.Type;
+			}
+
 			var dest = ctx.RegisterLocal(Name, type);
 
-			ctx.Add(new StoreInsn(dest, val, false));
+			_ = ctx.Add(new StoreInsn(dest, val, false));
 		}
 	}
 }

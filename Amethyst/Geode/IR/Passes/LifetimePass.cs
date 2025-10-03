@@ -1,232 +1,272 @@
 namespace Amethyst.Geode.IR.Passes
 {
-    public class InOutPass : Pass
-    {
-        public readonly Dictionary<Block, HashSet<ValueRef>> Ins = [];
-        public readonly Dictionary<Block, HashSet<ValueRef>> Outs = [];
+	public class InOutPass : Pass
+	{
+		public readonly Dictionary<Block, HashSet<ValueRef>> Ins = [];
+		public readonly Dictionary<Block, HashSet<ValueRef>> Outs = [];
 
-        //protected override bool Reversed => true;
-        protected override bool SkipInsns => true;
+		//protected override bool Reversed => true;
+		protected override bool SkipInsns => true;
 
-        protected override void OnBlock(FunctionContext ctx, Block block)
-        {
-            Outs[block] = [.. block.Next.SelectMany(i => {
-                if (Ins.TryGetValue(i, out var ins)) return ins;
-                return [];
-            })];
+		protected override void OnBlock(FunctionContext ctx, Block block)
+		{
+			Outs[block] = [.. block.Next.SelectMany(i => {
+				if (Ins.TryGetValue(i, out var ins)) { return ins; } return [];
+			})];
 
-            HashSet<ValueRef> ins = [.. Outs[block]];
+			HashSet<ValueRef> ins = [.. Outs[block]];
 
-            foreach (var i in block.Instructions)
-            {
-                foreach (var arg in i.Arguments)
-                {
-                    if (arg is ValueRef v && v.NeedsScoreReg) ins.Add(v);
-                    foreach (var dep in arg.Dependencies)
-                    {
-                        if (dep is ValueRef d && d.NeedsScoreReg) ins.Add(d);
-                    }
-                }
-            }
+			foreach (var i in block.Instructions)
+			{
+				foreach (var arg in i.Arguments)
+				{
+					if (arg is ValueRef v && v.NeedsScoreReg)
+					{
+						_ = ins.Add(v);
+					}
 
-            // Maybe somehow put this in the other loop
-            foreach (var i in block.Instructions)
-            {
-                ins.Remove(i.ReturnValue);
-            }
+					foreach (var dep in arg.Dependencies)
+					{
+						if (dep is ValueRef d && d.NeedsScoreReg)
+						{
+							_ = ins.Add(d);
+						}
+					}
+				}
+			}
 
-            if (!Ins.TryGetValue(block, out var existingIns)) existingIns = Ins[block] = [];
+			// Maybe somehow put this in the other loop
+			foreach (var i in block.Instructions)
+			{
+				_ = ins.Remove(i.ReturnValue);
+			}
 
-            if (!ins.SetEquals(existingIns))
-            {
-                Ins[block] = ins;
+			if (!Ins.TryGetValue(block, out var existingIns))
+			{
+				existingIns = Ins[block] = [];
+			}
 
-                foreach (var pre in block.Previous)
-                {
-                    RevisitBlock(pre);
-                }
-            }
-        }
-    }
+			if (!ins.SetEquals(existingIns))
+			{
+				Ins[block] = ins;
 
-    public class LifetimePass(InOutPass inout) : Pass
-    {
-        public readonly Dictionary<FunctionContext, LifetimeGraph> Graphs = [];
-        public readonly InOutPass InOut = inout;
+				foreach (var pre in block.Previous)
+				{
+					RevisitBlock(pre);
+				}
+			}
+		}
+	}
 
-        protected override bool SkipInsns => true;
+	public class LifetimePass(InOutPass inout) : Pass
+	{
+		public readonly Dictionary<FunctionContext, LifetimeGraph> Graphs = [];
+		public readonly InOutPass InOut = inout;
 
-        protected override void OnFunction(FunctionContext ctx)
-        {
-            Graphs[ctx] = new();
-        }
+		protected override bool SkipInsns => true;
 
-        protected override void OnBlock(FunctionContext ctx, Block block)
-        {
-            HashSet<ValueRef> alive = [.. InOut.Outs[block]];
+		protected override void OnFunction(FunctionContext ctx) => Graphs[ctx] = new();
 
-            void markAlive(IInstructionArg arg)
-            {
-                if (arg is ValueRef v && v.NeedsScoreReg)
-                {
-                    alive.Add(v);
-                    Graphs[ctx].Connect(v, alive);
-                }
-            }
+		protected override void OnBlock(FunctionContext ctx, Block block)
+		{
+			HashSet<ValueRef> alive = [.. InOut.Outs[block]];
 
-            foreach (var insn in block.Instructions.AsEnumerable().Reverse())
-            {
-                alive.Remove(insn.ReturnValue);
+			void markAlive(IInstructionArg arg)
+			{
+				if (arg is ValueRef v && v.NeedsScoreReg)
+				{
+					_ = alive.Add(v);
+					Graphs[ctx].Connect(v, alive);
+				}
+			}
 
-                foreach (var arg in insn.Arguments)
-                {
-                    markAlive(arg);
-                    foreach (var dep in arg.Dependencies)
-                    {
-                        markAlive(dep);
-                    }
-                }
+			foreach (var insn in block.Instructions.AsEnumerable().Reverse())
+			{
+				_ = alive.Remove(insn.ReturnValue);
 
-                insn.ConfigureLifetime((val1, val2) =>
-                {
-                    if (Graphs[ctx].DoConnect(val1, val2)) return false;
-                    Graphs[ctx].Link(val1, val2);
-                    return true;
-                },
-                (val1, val2) =>
-                {
-                    Graphs[ctx].Connect(val1, val2);
-                });
-            }
-        }
-    }
+				foreach (var arg in insn.Arguments)
+				{
+					markAlive(arg);
+					foreach (var dep in arg.Dependencies)
+					{
+						markAlive(dep);
+					}
+				}
 
-    public class LifetimeGraph
-    {
-        public readonly Dictionary<ValueRef, LifetimeGraphNode> Graph = [];
+				insn.ConfigureLifetime((val1, val2) =>
+				{
+					if (Graphs[ctx].DoConnect(val1, val2))
+					{
+						return false;
+					}
 
-        public LifetimeGraphNode Connect(ValueRef val)
-        {
-            if (!Graph.TryGetValue(val, out var valNode)) valNode = Graph[val] = new(val);
-            return valNode;
-        }
+					Graphs[ctx].Link(val1, val2);
+					return true;
+				},
+				(val1, val2) =>
+				{
+					Graphs[ctx].Connect(val1, val2);
+				});
+			}
+		}
+	}
 
-        public void Connect(ValueRef val, params IEnumerable<ValueRef> vals) => Connect(val).Connect(vals.Select(Connect));
-        public bool DoConnect(ValueRef val1, ValueRef val2) => Graph.TryGetValue(val1, out var val1Node) && Graph.TryGetValue(val2, out var val2Node) && val1Node.Edges.Contains(val2Node);
-        public void Link(ValueRef val1, ValueRef val2)
-        {
-            if (Graph.TryGetValue(val1, out var val1Node) && Graph.TryGetValue(val2, out var val2Node)) val1Node.Link(val2Node);
-        }
+	public class LifetimeGraph
+	{
+		public readonly Dictionary<ValueRef, LifetimeGraphNode> Graph = [];
 
-        // Probably could find a better algorithm
-        public Dictionary<ValueRef, int> CalculateDSatur()
-        {
-            List<LifetimeGraphNode> nodes = new(Graph.Values.Count);
+		public LifetimeGraphNode Connect(ValueRef val)
+		{
+			if (!Graph.TryGetValue(val, out var valNode))
+			{
+				valNode = Graph[val] = new(val);
+			}
 
-            foreach (var i in Graph.Values)
-            {
-                i.ResetDegree();
-                nodes.Add(i);
-            }
+			return valNode;
+		}
 
-            nodes.Sort();
+		public void Connect(ValueRef val, params IEnumerable<ValueRef> vals) => Connect(val).Connect(vals.Select(Connect));
+		public bool DoConnect(ValueRef val1, ValueRef val2) => Graph.TryGetValue(val1, out var val1Node) && Graph.TryGetValue(val2, out var val2Node) && val1Node.Edges.Contains(val2Node);
+		public void Link(ValueRef val1, ValueRef val2)
+		{
+			if (Graph.TryGetValue(val1, out var val1Node) && Graph.TryGetValue(val2, out var val2Node))
+			{
+				val1Node.Link(val2Node);
+			}
+		}
 
-            while (nodes.Count > 0)
-            {
-                var colors = new bool[Graph.Count]; // Apparently this is cheaper than Array.Clear for reasonable sizes
+		// Probably could find a better algorithm
+		public Dictionary<ValueRef, int> CalculateDSatur()
+		{
+			List<LifetimeGraphNode> nodes = new(Graph.Values.Count);
 
-                var node = nodes[0];
-                nodes.RemoveAt(0);
+			foreach (var i in Graph.Values)
+			{
+				i.ResetDegree();
+				nodes.Add(i);
+			}
 
-                foreach (var i in node.Edges)
-                {
-                    if (i.Color >= 0) colors[i.Color] = true;
-                }
+			nodes.Sort();
 
-                node.SetColor(Array.IndexOf(colors, false));
+			while (nodes.Count > 0)
+			{
+				var colors = new bool[Graph.Count]; // Apparently this is cheaper than Array.Clear for reasonable sizes
 
-                foreach (var i in node.Links)
-                {
-                    if (i.Color < 0)
-                    {
-                        nodes.Remove(i);
-                        i.SetColor(node.Color);
-                    }
-                }
+				var node = nodes[0];
+				nodes.RemoveAt(0);
 
-                nodes.Sort();
-            }
+				foreach (var i in node.Edges)
+				{
+					if (i.Color >= 0)
+					{
+						colors[i.Color] = true;
+					}
+				}
 
-            return new(Graph.Select(i => new KeyValuePair<ValueRef, int>(i.Key, i.Value.Color)));
-        }
-    }
+				node.SetColor(Array.IndexOf(colors, false));
 
-    public class LifetimeGraphNode(ValueRef val) : IComparable<LifetimeGraphNode>
-    {
-        public readonly ValueRef Value = val;
+				foreach (var i in node.Links)
+				{
+					if (i.Color < 0)
+					{
+						_ = nodes.Remove(i);
+						i.SetColor(node.Color);
+					}
+				}
 
-        private readonly HashSet<LifetimeGraphNode> edges = [];
-        public IReadOnlyCollection<LifetimeGraphNode> Edges => edges;
+				nodes.Sort();
+			}
 
-        private readonly HashSet<LifetimeGraphNode> links = [];
-        public IReadOnlyCollection<LifetimeGraphNode> Links => links;
+			return new(Graph.Select(i => new KeyValuePair<ValueRef, int>(i.Key, i.Value.Color)));
+		}
+	}
 
-        public int Degree { get; private set; }
-        public int Saturation { get; private set; }
-        public int Color { get; private set; } = -1;
+	public class LifetimeGraphNode(ValueRef val) : IComparable<LifetimeGraphNode>
+	{
+		public readonly ValueRef Value = val;
 
-        public int CompareTo(LifetimeGraphNode? other)
-        {
-            if (other is null) return -1;
-            else if (Saturation != other.Saturation) return other.Saturation - Saturation;
-            else if (Degree != other.Degree) return other.Degree - Degree;
-            else return GetHashCode() - other.GetHashCode(); // idk
-        }
+		private readonly HashSet<LifetimeGraphNode> edges = [];
+		public IReadOnlyCollection<LifetimeGraphNode> Edges => edges;
 
-        public void Link(LifetimeGraphNode other)
-        {
-            if (other == this) return;
-            links.Add(other);
-            other.links.Add(this);
-        }
+		private readonly HashSet<LifetimeGraphNode> links = [];
+		public IReadOnlyCollection<LifetimeGraphNode> Links => links;
 
-        public void Connect(LifetimeGraphNode other)
-        {
-            if (other == this) return;
-            edges.Add(other);
-            other.edges.Add(this);
-        }
+		public int Degree { get; private set; }
+		public int Saturation { get; private set; }
+		public int Color { get; private set; } = -1;
 
-        public void Connect(IEnumerable<LifetimeGraphNode> others)
-        {
-            foreach (var i in others)
-            {
-                Connect(i);
-            }
-        }
+		public int CompareTo(LifetimeGraphNode? other)
+		{
+			if (other is null)
+			{
+				return -1;
+			}
+			else if (Saturation != other.Saturation)
+			{
+				return other.Saturation - Saturation;
+			}
+			else if (Degree != other.Degree)
+			{
+				return other.Degree - Degree;
+			}
+			else
+			{
+				return GetHashCode() - other.GetHashCode(); // idk
+			}
+		}
 
-        public void ResetDegree() => Degree = Edges.Count;
+		public void Link(LifetimeGraphNode other)
+		{
+			if (other == this)
+			{
+				return;
+			}
 
-        public void SetColor(int value)
-        {
-            if (Color < 0 && value >= 0)
-            {
-                foreach (var i in edges)
-                {
-                    i.Saturation++;
-                    i.Degree--;
-                }
-            }
-            else if (Color >= 0 && value < 0)
-            {
-                foreach (var i in edges)
-                {
-                    i.Saturation--;
-                    i.Degree++;
-                }
-            }
+			_ = links.Add(other);
+			_ = other.links.Add(this);
+		}
 
-            Color = value;
-        }
-    }
+		public void Connect(LifetimeGraphNode other)
+		{
+			if (other == this)
+			{
+				return;
+			}
+
+			_ = edges.Add(other);
+			_ = other.edges.Add(this);
+		}
+
+		public void Connect(IEnumerable<LifetimeGraphNode> others)
+		{
+			foreach (var i in others)
+			{
+				Connect(i);
+			}
+		}
+
+		public void ResetDegree() => Degree = Edges.Count;
+
+		public void SetColor(int value)
+		{
+			if (Color < 0 && value >= 0)
+			{
+				foreach (var i in edges)
+				{
+					i.Saturation++;
+					i.Degree--;
+				}
+			}
+			else if (Color >= 0 && value < 0)
+			{
+				foreach (var i in edges)
+				{
+					i.Saturation--;
+					i.Degree++;
+				}
+			}
+
+			Color = value;
+		}
+	}
 }

@@ -5,58 +5,55 @@ using Datapack.Net.Data;
 
 namespace Amethyst.Geode
 {
-    public class ValueRef : IInstructionArg
-    {
-        public Value? Value { get; private set; }
-        public TypeSpecifier Type { get; private set; }
+	public class ValueRef : IInstructionArg
+	{
+		public Value? Value { get; private set; }
+		public TypeSpecifier Type { get; private set; }
 
-        public bool IsLiteral => Value is not null && Value.IsLiteral;
-        public bool NeedsScoreReg => Value is null && Type.ShouldStoreInScore;
-        public bool NeedsStackVar => Value is null && !Type.ShouldStoreInScore;
+		public bool IsLiteral => Value is not null && Value.IsLiteral;
+		public bool NeedsScoreReg => Value is null && Type.ShouldStoreInScore;
+		public bool NeedsStackVar => Value is null && !Type.ShouldStoreInScore;
 
-        private string? customName;
-        public string Name => customName is null ? Value is not null ? $"{(Value.IsLiteral || Value is DataTargetValue ? "" : "%")}{Value}" : "" : customName;
+		public string Name { get => field is null ? Value is not null ? $"{(Value.IsLiteral || Value is DataTargetValue ? "" : "%")}{Value}" : "" : field; set; }
 
-        public HashSet<ValueRef> Dependencies { get; } = [];
+		public HashSet<ValueRef> Dependencies { get; } = [];
 
-        public ValueRef(Value val)
-        {
-            Value = val;
-            Type = val.Type;
-        }
+		public ValueRef(Value val)
+		{
+			Value = val;
+			Type = val.Type;
+		}
 
-        public ValueRef(TypeSpecifier type)
-        {
-            Type = type;
-        }
+		public ValueRef(TypeSpecifier type)
+		{
+			Type = type;
+		}
 
-        public Value Expect(NBTType type)
-        {
-            if (Value is null || Value.Type.EffectiveType != type)
-            {
-                throw new InvalidTypeError((Value is not null ? Enum.GetName(Value.Type.EffectiveType)?.ToLower() : "<error>") ?? "<error>", Enum.GetName(type)?.ToLower() ?? "<error>");
-            }
+		public Value Expect(NBTType type)
+		{
+			if (Value is null || Value.Type.EffectiveType != type)
+			{
+				throw new InvalidTypeError((Value is not null ? Enum.GetName(Value.Type.EffectiveType)?.ToLower() : "<error>") ?? "<error>", Enum.GetName(type)?.ToLower() ?? "<error>");
+			}
 
-            return Value;
-        }
+			return Value;
+		}
 
-        public T Expect<T>() where T : Value => Value as T ?? throw new InvalidTypeError(Value?.GetType().Name.ToLower() ?? "<error>", typeof(T).Name.ToLower());
-        public Value Expect() => Expect<Value>();
+		public T Expect<T>() where T : Value => Value as T ?? throw new InvalidTypeError(Value?.GetType().Name.ToLower() ?? "<error>", typeof(T).Name.ToLower());
+		public Value Expect() => Expect<Value>();
 
-        public void SetValue(Value val)
-        {
-            Value = val;
-            Type = val.Type;
-        }
+		public void SetValue(Value val)
+		{
+			Value = val;
+			Type = val.Type;
+		}
 
-        public ValueRef SetType(TypeSpecifier type)
-        {
-            Type = type;
-            return this;
-        }
+		public ValueRef SetType(TypeSpecifier type)
+		{
+			Type = type;
+			return this;
+		}
 
-        public void SetCustomName(string? name) => customName = name;
-
-        public static implicit operator ValueRef(Value val) => new(val);
-    }
+		public static implicit operator ValueRef(Value val) => new(val);
+	}
 }

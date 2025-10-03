@@ -15,7 +15,11 @@ namespace Amethyst.AST
 		public TypeSpecifier Resolve(Compiler ctx, string baseNamespace, bool allowAuto = false)
 		{
 			TypeSpecifier? ret = null;
-			if (!ctx.WrapError(Location, () => ret = ResolveImpl(ctx, baseNamespace, allowAuto))) throw new EmptyAmethystError();
+			if (!ctx.WrapError(Location, () => ret = ResolveImpl(ctx, baseNamespace, allowAuto)))
+			{
+				throw new EmptyAmethystError();
+			}
+
 			return ret!;
 		}
 
@@ -33,8 +37,15 @@ namespace Amethyst.AST
 				case "void":
 					return new VoidTypeSpecifier();
 				case "var":
-					if (allowAuto) return new VarTypeSpecifier();
-					else throw new InvalidTypeError(Type);
+					if (allowAuto)
+					{
+						return new VarTypeSpecifier();
+					}
+					else
+					{
+						throw new InvalidTypeError(Type);
+					}
+
 				case "bool":
 					return new PrimitiveTypeSpecifier(NBTType.Boolean);
 				case "byte":
@@ -57,7 +68,11 @@ namespace Amethyst.AST
 					return new PrimitiveTypeSpecifier(NBTType.Compound);
 				default:
 					var type = Type.Contains(':') ? Type : $"{baseNamespace}:{Type}";
-					if (ctx.Types.TryGetValue(type, out var ret)) return ret.Type;
+					if (ctx.Types.TryGetValue(type, out var ret))
+					{
+						return ret.Type;
+					}
+
 					break;
 			}
 
@@ -92,10 +107,7 @@ namespace Amethyst.AST
 		public readonly Dictionary<string, AbstractTypeSpecifier> Properties = props;
 		public readonly Dictionary<string, Expression> DefaultValues = defaults;
 
-        public void Process(Compiler ctx)
-		{
-			ctx.AddType(new(ID, Location, Resolve(ctx, ID.ContainingFolder()), this));
-		}
+		public void Process(Compiler ctx) => ctx.AddType(new(ID, Location, Resolve(ctx, ID.ContainingFolder()), this));
 
 		protected override TypeSpecifier ResolveImpl(Compiler ctx, string baseNamespace, bool allowAuto = false) => new StructTypeSpecifier(ID, new(Properties.Select(i => new KeyValuePair<string, TypeSpecifier>(i.Key, i.Value.Resolve(ctx, baseNamespace)))));
 	}

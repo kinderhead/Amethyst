@@ -1,151 +1,172 @@
-﻿using System.IO.Compression;
-using Datapack.Net.Function;
+﻿using Datapack.Net.Function;
 using Datapack.Net.Function.Commands;
 using Datapack.Net.Pack;
 using Newtonsoft.Json.Linq;
-
+using System.IO.Compression;
 using static Datapack.Net.Function.Commands.Execute.Subcommand;
 
 namespace Datapack.Net
 {
-    public class DP
-    {
-        protected readonly List<ResourceType> types = [];
+	public class DP
+	{
+		protected readonly List<ResourceType> types = [];
 
-        private FileStream? fileStream;
-        private ZipArchive? zipFile;
+		private FileStream? fileStream;
+		private ZipArchive? zipFile;
 
-        public readonly string Description;
-        public readonly int PackFormat;
-        public readonly string FilePath;
+		public readonly string Description;
+		public readonly int PackFormat;
+		public readonly string FilePath;
 
-        public DP(string description, string filepath, int packFormat = 26)
-        {
-            types.Add(new Advancements());
-            types.Add(new ItemModifiers());
-            types.Add(new LootTables());
-            types.Add(new Predicates());
-            types.Add(new Recipes());
-            types.Add(new Structures());
-            types.Add(new ChatType());
-            types.Add(new DamageType());
-            types.Add(new Tags());
-            types.Add(new DimensionResource());
-            types.Add(new DimensionType());
-            types.Add(new Functions());
+		public DP(string description, string filepath, int packFormat = 26)
+		{
+			types.Add(new Advancements());
+			types.Add(new ItemModifiers());
+			types.Add(new LootTables());
+			types.Add(new Predicates());
+			types.Add(new Recipes());
+			types.Add(new Structures());
+			types.Add(new ChatType());
+			types.Add(new DamageType());
+			types.Add(new Tags());
+			types.Add(new DimensionResource());
+			types.Add(new DimensionType());
+			types.Add(new Functions());
 
-            Description = description;
-            PackFormat = packFormat;
-            FilePath = filepath;
-        }
+			Description = description;
+			PackFormat = packFormat;
+			FilePath = filepath;
+		}
 
-        public void Build()
-        {
-            using (fileStream = new FileStream(FilePath, FileMode.Create))
-            {
-                using (zipFile = new ZipArchive(fileStream, ZipArchiveMode.Create))
-                {
-                    foreach (var type in types)
-                    {
-                        type.Build(this);
-                    }
+		public void Build()
+		{
+			using (fileStream = new FileStream(FilePath, FileMode.Create))
+			{
+				using (zipFile = new ZipArchive(fileStream, ZipArchiveMode.Create))
+				{
+					foreach (var type in types)
+					{
+						type.Build(this);
+					}
 
-                    WriteFile("pack.mcmeta", new JObject(
-                        new JProperty("pack", new JObject(
-                            new JProperty("description", Description),
-                            new JProperty("pack_format", PackFormat)
-                        ))
-                    ).ToString());
-                }
-            }
-        }
+					WriteFile("pack.mcmeta", new JObject(
+						new JProperty("pack", new JObject(
+							new JProperty("description", Description),
+							new JProperty("pack_format", PackFormat)
+						))
+					).ToString());
+				}
+			}
+		}
 
-        public Functions Functions { get => GetResource<Functions>(); }
-        public Tags Tags { get => GetResource<Tags>(); }
+		public Functions Functions => GetResource<Functions>();
+		public Tags Tags => GetResource<Tags>();
 
-        public T GetResource<T>() where T : ResourceType
-        {
-            var type = types.Find(i => i is T);
-            if (type != null) return (T)type;
-            throw new FileNotFoundException("Resource was not found");
-        }
+		public T GetResource<T>() where T : ResourceType
+		{
+			var type = types.Find(i => i is T);
+			if (type != null)
+			{
+				return (T)type;
+			}
 
-        public void Optimize()
-        {
-            while (EmptyFunctions());
-        }
+			throw new FileNotFoundException("Resource was not found");
+		}
 
-        private bool EmptyFunctions()
-        {
-            var toRemove = new List<MCFunction>();
+		public void Optimize()
+		{
+			while (EmptyFunctions())
+			{
+				;
+			}
+		}
 
-            foreach (var i in GetResource<Functions>().Resources.Cast<MCFunction>())
-            {
-                if (i.Length == 0) toRemove.Add(i);
-            }
+		private bool EmptyFunctions()
+		{
+			var toRemove = new List<MCFunction>();
 
-            foreach (var i in toRemove)
-            {
-                GetResource<Functions>().Resources.Remove(i);
-                Console.WriteLine($"Removing empty function: {i.ID}");
-            }
+			foreach (var i in GetResource<Functions>().Resources.Cast<MCFunction>())
+			{
+				if (i.Length == 0)
+				{
+					toRemove.Add(i);
+				}
+			}
 
-            foreach (var i in GetResource<Functions>().Resources.Cast<MCFunction>())
-            {
-                for (int e = 0; e < i.Length; e++)
-                {
-                    var remove = false;
-                    if (i.Commands[e] is FunctionCommand cmd && toRemove.Select(i => i.ID).Contains(cmd.Function)) remove = true;
-                    else if (i.Commands[e] is ReturnCommand ret && ret.Cmd is FunctionCommand retfunc && toRemove.Select(i => i.ID).Contains(retfunc.Function))
-                    {
-                        i.Commands[e] = new ReturnCommand();
-                    }
-                    else if (i.Commands[e] is Execute ex && ex.Get<Run>().Command is FunctionCommand exfunc && toRemove.Select(i => i.ID).Contains(exfunc.Function)) remove = true;
+			foreach (var i in toRemove)
+			{
+				_ = GetResource<Functions>().Resources.Remove(i);
+				Console.WriteLine($"Removing empty function: {i.ID}");
+			}
 
-                    if (remove)
-                    {
-                        i.Commands.RemoveAt(e);
-                        e--;
-                    }
-                }
-            }
+			foreach (var i in GetResource<Functions>().Resources.Cast<MCFunction>())
+			{
+				for (var e = 0; e < i.Length; e++)
+				{
+					var remove = false;
+					if (i.Commands[e] is FunctionCommand cmd && toRemove.Select(i => i.ID).Contains(cmd.Function))
+					{
+						remove = true;
+					}
+					else if (i.Commands[e] is ReturnCommand ret && ret.Cmd is FunctionCommand retfunc && toRemove.Select(i => i.ID).Contains(retfunc.Function))
+					{
+						i.Commands[e] = new ReturnCommand();
+					}
+					else if (i.Commands[e] is Execute ex && ex.Get<Run>().Command is FunctionCommand exfunc && toRemove.Select(i => i.ID).Contains(exfunc.Function))
+					{
+						remove = true;
+					}
 
-            foreach (var i in GetResource<Tags>().Resources.Cast<Tag>())
-            {
-                for (int e = 0; e < i.Values.Count; e++)
-                {
-                    if (toRemove.FindIndex((a) => a.ID == i.Values[e]) != -1)
-                    {
-                        i.Values.RemoveAt(e);
-                        e--;
-                    }
-                }
-            }
+					if (remove)
+					{
+						i.Commands.RemoveAt(e);
+						e--;
+					}
+				}
+			}
 
-            return toRemove.Count != 0;
-        }
+			foreach (var i in GetResource<Tags>().Resources.Cast<Tag>())
+			{
+				for (var e = 0; e < i.Values.Count; e++)
+				{
+					if (toRemove.FindIndex((a) => a.ID == i.Values[e]) != -1)
+					{
+						i.Values.RemoveAt(e);
+						e--;
+					}
+				}
+			}
 
-        private readonly List<string> FilesWriten = [];
-        internal void WriteFile(string path, string content)
-        {
+			return toRemove.Count != 0;
+		}
+
+		private readonly List<string> FilesWriten = [];
+		internal void WriteFile(string path, string content)
+		{
 #if DEBUG
-            if (path.EndsWith(".mcfunction")) Console.WriteLine($"Writing to file \"{path}\":\n{content}\n");
+			if (path.EndsWith(".mcfunction"))
+			{
+				Console.WriteLine($"Writing to file \"{path}\":\n{content}\n");
+			}
 #endif
 
-            if (zipFile != null)
-            {
-                if (FilesWriten.Contains(path)) throw new Exception($"Datapack has duplicate file: {path}");
+			if (zipFile != null)
+			{
+				if (FilesWriten.Contains(path))
+				{
+					throw new Exception($"Datapack has duplicate file: {path}");
+				}
 
-                var entry = zipFile.CreateEntry(path);
+				var entry = zipFile.CreateEntry(path);
 
-                using var stream = new StreamWriter(entry.Open());
-                stream.Write(content);
-                FilesWriten.Add(path);
-            }
-            else
-            {
-                throw new FileNotFoundException("Not generating datapack yet");
-            }
-        }
-    }
+				using var stream = new StreamWriter(entry.Open());
+				stream.Write(content);
+				FilesWriten.Add(path);
+			}
+			else
+			{
+				throw new FileNotFoundException("Not generating datapack yet");
+			}
+		}
+	}
 }

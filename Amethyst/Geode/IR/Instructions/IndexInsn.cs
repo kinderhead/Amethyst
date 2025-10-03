@@ -17,7 +17,10 @@ namespace Amethyst.Geode.IR.Instructions
 		{
 			var val = Arg<ValueRef>(0).Expect();
 
-			if (val.Type is not ReferenceTypeSpecifier && val is DataTargetValue nbt) val = WeakReferenceTypeSpecifier.From(nbt);
+			if (val.Type is not ReferenceTypeSpecifier && val is DataTargetValue nbt)
+			{
+				val = WeakReferenceTypeSpecifier.From(nbt);
+			}
 
 			ctx.Call("amethyst:core/ref/index", WeakReferenceTypeSpecifier.From(ReturnValue.Expect<DataTargetValue>()), val, Arg<ValueRef>(1));
 		}
@@ -28,7 +31,11 @@ namespace Amethyst.Geode.IR.Instructions
 
 			if (val.Type is not ReferenceTypeSpecifier && val.Value is DataTargetValue list && index.Value is LiteralValue i)
 			{
-				if (i.Value is not NBTInt ind) throw new InvalidTypeError(index.Type.ToString(), "int");
+				if (i.Value is not NBTInt ind)
+				{
+					throw new InvalidTypeError(index.Type.ToString(), "int");
+				}
+
 				Remove();
 				return WeakReferenceTypeSpecifier.From(list.Index(ind.Value, ActualReturnType));
 			}

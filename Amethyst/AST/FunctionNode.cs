@@ -34,27 +34,36 @@ namespace Amethyst.AST
 
 			var funcType = GetFunctionType(compiler);
 
-			if (ID.Path.Any(char.IsUpper)) throw new InvalidNameError(ID.ToString());
+			if (ID.Path.Any(char.IsUpper))
+			{
+				throw new InvalidNameError(ID.ToString());
+			}
 
 			ctx = new FunctionContext(compiler, (FunctionValue)compiler.Symbols[ID].Value, Tags);
 
 			if (Body.Statements.Count == 0 || Body.Statements.Last() is not ReturnStatement)
 			{
-				if (funcType.ReturnType is VoidTypeSpecifier) Body.Add(new ReturnStatement(Location, null));
-				else throw new MissingReturnError();
+				if (funcType.ReturnType is VoidTypeSpecifier)
+				{
+					Body.Add(new ReturnStatement(Location, null));
+				}
+				else
+				{
+					throw new MissingReturnError();
+				}
 			}
 
-			if (!Body.CompileWithErrorChecking(ctx)) return false;
+			if (!Body.CompileWithErrorChecking(ctx))
+			{
+				return false;
+			}
 
 			ctx.Finish();
 
 			return true;
 		}
 
-		public void Process(Compiler ctx)
-		{
-			ctx.AddSymbol(new(ID, Location, new FunctionValue(ID, GetFunctionType(ctx)), this));
-		}
+		public void Process(Compiler ctx) => ctx.AddSymbol(new(ID, Location, new FunctionValue(ID, GetFunctionType(ctx)), this));
 	}
 
 	[Flags]

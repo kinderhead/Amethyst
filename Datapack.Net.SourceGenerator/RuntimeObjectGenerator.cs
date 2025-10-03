@@ -1,136 +1,153 @@
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using SourceGeneratorsKit;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 
 namespace Datapack.Net.SourceGenerator
 {
-    [Generator]
-    public class RuntimeObjectGenerator : IIncrementalGenerator
-    {
-        public void Initialize(IncrementalGeneratorInitializationContext context)
-        {
-            var projects = context.SyntaxProvider.ForAttributeWithMetadataName<RuntimeObject?>("Datapack.Net.CubeLib.RuntimeObjectAttribute",
-                static (s, _) => true,
-                static (ctx, _) =>
-                {
-                    //if (!Debugger.IsAttached)
-                    //{
-                    //    Debugger.Launch();
-                    //}
+	[Generator]
+	public class RuntimeObjectGenerator : IIncrementalGenerator
+	{
+		public void Initialize(IncrementalGeneratorInitializationContext context)
+		{
+			var projects = context.SyntaxProvider.ForAttributeWithMetadataName<RuntimeObject?>("Datapack.Net.CubeLib.RuntimeObjectAttribute",
+				static (s, _) => true,
+				static (ctx, _) =>
+				{
+					//if (!Debugger.IsAttached)
+					//{
+					//    Debugger.Launch();
+					//}
 
-                    var cls = (ClassDeclarationSyntax)ctx.TargetNode;
+					var cls = (ClassDeclarationSyntax)ctx.TargetNode;
 
-                    foreach (var i in cls.AttributeLists)
-                    {
-                        foreach (var e in i.Attributes)
-                        {
-                            if (ctx.SemanticModel.GetSymbolInfo(e).Symbol is not IMethodSymbol attribute) continue;
-                            if (attribute.ContainingType.ToDisplayString() == "Datapack.Net.CubeLib.RuntimeObjectAttribute")
-                            {
-                                if (ctx.SemanticModel.GetDeclaredSymbol(cls) is not INamedTypeSymbol clsSymbol) return null;
+					foreach (var i in cls.AttributeLists)
+					{
+						foreach (var e in i.Attributes)
+						{
+							if (ctx.SemanticModel.GetSymbolInfo(e).Symbol is not IMethodSymbol attribute)
+							{
+								continue;
+							}
 
-                                List<MCFunction> funcs = [];
-                                List<RuntimeObjectProperty> props = [];
+							if (attribute.ContainingType.ToDisplayString() == "Datapack.Net.CubeLib.RuntimeObjectAttribute")
+							{
+								if (ctx.SemanticModel.GetDeclaredSymbol(cls) is not INamedTypeSymbol clsSymbol)
+								{
+									return null;
+								}
 
-                                foreach (var sym in clsSymbol.GetMembers())
-                                {
-                                    if (sym is IMethodSymbol method && method.GetAttributes().Where(i => i.AttributeClass.ToDisplayString().Contains("Datapack.Net.CubeLib.DeclareMC")).Count() != 0 && sym.IsStatic)
-                                    {
-                                        funcs.Add(Utils.GetMCFunction(method));
-                                    }
+								List<MCFunction> funcs = [];
+								List<RuntimeObjectProperty> props = [];
 
-                                    else if (sym is INamedTypeSymbol propCls && propCls.Name.Contains("Props"))
-                                    {
-                                        foreach (var propSym in propCls.GetMembers())
-                                        {
-                                            if (propSym is IPropertySymbol prop && prop.HasAttribute("Datapack.Net.CubeLib.RuntimePropertyAttribute"))
-                                            {
-                                                var internalName = prop.FindAttribute("Datapack.Net.CubeLib.RuntimePropertyAttribute").ConstructorArguments.FirstOrDefault().Value.ToString();
-                                                props.Add(new(prop.Name, internalName, prop.Type.ToDisplayString(), prop.Type.AllInterfaces.Where(i => i.ToDisplayString().Contains("Datapack.Net.CubeLib.IRuntimeProperty")).Count() != 0));
-                                            }
-                                        }
-                                    }
-                                }
+								foreach (var sym in clsSymbol.GetMembers())
+								{
+									if (sym is IMethodSymbol method && method.GetAttributes().Where(i => i.AttributeClass.ToDisplayString().Contains("Datapack.Net.CubeLib.DeclareMC")).Count() != 0 && sym.IsStatic)
+									{
+										funcs.Add(Utils.GetMCFunction(method));
+									}
 
-                                var name = new StringBuilder(clsSymbol.Name);
-                                if (clsSymbol.TypeParameters.Length > 0)
-                                {
-                                    name.Append("<");
-                                    foreach (var t in clsSymbol.TypeParameters)
-                                    {
-                                        name.Append($"{t.Name}, ");
-                                    }
-                                    name.Length -= 2;
-                                    name.Append(">");
-                                }
+									else if (sym is INamedTypeSymbol propCls && propCls.Name.Contains("Props"))
+									{
+										foreach (var propSym in propCls.GetMembers())
+										{
+											if (propSym is IPropertySymbol prop && prop.HasAttribute("Datapack.Net.CubeLib.RuntimePropertyAttribute"))
+											{
+												var internalName = prop.FindAttribute("Datapack.Net.CubeLib.RuntimePropertyAttribute").ConstructorArguments.FirstOrDefault().Value.ToString();
+												props.Add(new(prop.Name, internalName, prop.Type.ToDisplayString(), prop.Type.AllInterfaces.Where(i => i.ToDisplayString().Contains("Datapack.Net.CubeLib.IRuntimeProperty")).Count() != 0));
+											}
+										}
+									}
+								}
 
-                                return new RuntimeObject(name.ToString(), clsSymbol.ContainingNamespace.ToDisplayString(), !(e.ArgumentList.Arguments.Count == 2 && e.ArgumentList.Arguments[1].Expression.ToString() == "false"), funcs, props);
-                            }
-                        }
-                    }
-                    return null;
-                }
-            ).Where(static m => m is not null);
+								var name = new StringBuilder(clsSymbol.Name);
+								if (clsSymbol.TypeParameters.Length > 0)
+								{
+									_ = name.Append("<");
+									foreach (var t in clsSymbol.TypeParameters)
+									{
+										_ = name.Append($"{t.Name}, ");
+									}
 
-            context.RegisterSourceOutput(projects, static (spc, source) => Execute(source, spc));
-        }
+									name.Length -= 2;
+									_ = name.Append(">");
+								}
 
-        private static void Execute(RuntimeObject? _obj, SourceProductionContext context)
-        {
-            if (_obj is not { } obj) return;
+								return new RuntimeObject(name.ToString(), clsSymbol.ContainingNamespace.ToDisplayString(), !(e.ArgumentList.Arguments.Count == 2 && e.ArgumentList.Arguments[1].Expression.ToString() == "false"), funcs, props);
+							}
+						}
+					}
 
-            var things = new StringBuilder();
+					return null;
+				}
+			).Where(static m => m is not null);
 
-            foreach (var i in obj.Properties)
-            {
-                var type = i.IsObj ? i.Type : Utils.ProcessRuntimePropertyType(i.Type);
-                var postfix = i.IsObj ? "Obj" : "Prop";
+			context.RegisterSourceOutput(projects, static (spc, source) => Execute(source, spc));
+		}
 
-                things.AppendLine($"        /// <inheritdoc cref=\"{obj.Namespace}.{obj.Name}.Props.{i.Name}\"/>");
-                things.AppendLine($"        public {type} {i.Name} {{ get => new(this.Get{postfix}<{i.Type}>(\"{i.InternalName}\"){(i.IsObj ? ".Pointer" : "")}); set => this.SetProp(\"{i.InternalName}\", value); }}");
-            }
+		private static void Execute(RuntimeObject? _obj, SourceProductionContext context)
+		{
+			if (_obj is not { } obj)
+			{
+				return;
+			}
 
-            foreach (var i in obj.Methods)
-            {
-                things.AppendLine(Utils.GenerateWrapper(i, true));
-            }
+			var things = new StringBuilder();
 
-            if (things.Length > 0) things.Append("\n");
+			foreach (var i in obj.Properties)
+			{
+				var type = i.IsObj ? i.Type : Utils.ProcessRuntimePropertyType(i.Type);
+				var postfix = i.IsObj ? "Obj" : "Prop";
 
-            things.Append("        public override (string, Type)[] AllProperties => [");
+				_ = things.AppendLine($"        /// <inheritdoc cref=\"{obj.Namespace}.{obj.Name}.Props.{i.Name}\"/>");
+				_ = things.AppendLine($"        public {type} {i.Name} {{ get => new(this.Get{postfix}<{i.Type}>(\"{i.InternalName}\"){(i.IsObj ? ".Pointer" : "")}); set => this.SetProp(\"{i.InternalName}\", value); }}");
+			}
 
-            if (obj.Properties.Length > 0)
-            {
-                foreach (var i in obj.Properties)
-                {
-                    things.Append($"(\"{i.InternalName}\", typeof({i.Type})), ");
-                }
-                things.Length -= 2;
-            }
+			foreach (var i in obj.Methods)
+			{
+				_ = things.AppendLine(Utils.GenerateWrapper(i, true));
+			}
 
-            things.Append("];");
+			if (things.Length > 0)
+			{
+				_ = things.Append("\n");
+			}
 
-            if (obj.ImplementCleanup)
-            {
-                things.Append($"\n\n        [global::Datapack.Net.CubeLib.DeclareMC(\"deinit\")]\n        private static void _FreePointers({obj.Name} self)\n        {{\n");
+			_ = things.Append("        public override (string, Type)[] AllProperties => [");
 
-                if (obj.Properties.Length > 0)
-                {
-                    foreach (var i in obj.Properties)
-                    {
-                        if (i.IsObj) things.Append($"            global::Datapack.Net.CubeLib.Project.ActiveProject.If(self.{i.Name}.Pointer.Exists(), ((global::Datapack.Net.CubeLib.Builtins.RuntimePointer<{i.Type}>)self.{i.Name}.Pointer).RemoveOneReference);\n");
-                    }
-                }
+			if (obj.Properties.Length > 0)
+			{
+				foreach (var i in obj.Properties)
+				{
+					_ = things.Append($"(\"{i.InternalName}\", typeof({i.Type})), ");
+				}
 
-                things.Append("        }");
-            }
+				things.Length -= 2;
+			}
 
-            string source = $@"/// <auto-generated/>
+			_ = things.Append("];");
+
+			if (obj.ImplementCleanup)
+			{
+				_ = things.Append($"\n\n        [global::Datapack.Net.CubeLib.DeclareMC(\"deinit\")]\n        private static void _FreePointers({obj.Name} self)\n        {{\n");
+
+				if (obj.Properties.Length > 0)
+				{
+					foreach (var i in obj.Properties)
+					{
+						if (i.IsObj)
+						{
+							_ = things.Append($"            global::Datapack.Net.CubeLib.Project.ActiveProject.If(self.{i.Name}.Pointer.Exists(), ((global::Datapack.Net.CubeLib.Builtins.RuntimePointer<{i.Type}>)self.{i.Name}.Pointer).RemoveOneReference);\n");
+						}
+					}
+				}
+
+				_ = things.Append("        }");
+			}
+
+			var source = $@"/// <auto-generated/>
 namespace {obj.Namespace}
 {{
     public partial class {obj.Name}
@@ -138,7 +155,7 @@ namespace {obj.Namespace}
 {things}
     }}
 }}";
-            context.AddSource($"{obj.Name.Split('<')[0]}.g.cs", source);
-        }
-    }
+			context.AddSource($"{obj.Name.Split('<')[0]}.g.cs", source);
+		}
+	}
 }

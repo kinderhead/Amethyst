@@ -13,7 +13,7 @@ namespace Amethyst.Geode
 		public abstract LiteralValue DefaultValue { get; }
 		public abstract NamespacedID ID { get; }
 
-        public virtual bool IsList => false;
+		public virtual bool IsList => false;
 		public virtual IEnumerable<TypeSpecifier> Subtypes => [];
 		public virtual TypeSpecifier BaseClass => PrimitiveTypeSpecifier.Compound;
 
@@ -26,49 +26,76 @@ namespace Amethyst.Geode
 		public virtual TypeSpecifier? DefaultPropertyType => null;
 		public virtual Dictionary<string, TypeSpecifier> Properties => [];
 
-        public TypeSpecifier? Property(string name)
+		public TypeSpecifier? Property(string name)
 		{
-			if (Properties.TryGetValue(name, out var type)) return type;
-			else return DefaultPropertyType;
-        }
+			if (Properties.TryGetValue(name, out var type))
+			{
+				return type;
+			}
+			else
+			{
+				return DefaultPropertyType;
+			}
+		}
 
 		public virtual LiteralValue? DefaultPropertyValue(string name) => Property(name)?.DefaultValue;
 
-        public virtual string MacroGuardStart => "";
+		public virtual string MacroGuardStart => "";
 		public virtual string MacroGuardEnd => "";
 
 		public override bool Equals(object? obj)
 		{
-			if (obj is not TypeSpecifier other) return false;
+			if (obj is not TypeSpecifier other)
+			{
+				return false;
+			}
 			else
 			{
 				var a = GetEquatableType();
 				var b = other.GetEquatableType();
-				if (a.GetType() != b.GetType()) return false; // Handle inheritance
-				else return a.EqualsImpl(b);
+				if (a.GetType() != b.GetType())
+				{
+					return false; // Handle inheritance
+				}
+				else
+				{
+					return a.EqualsImpl(b);
+				}
 			}
 		}
 
 		public virtual bool Implements(TypeSpecifier other)
 		{
-			if (this == other) return true;
-			else if (other.GetType() == GetType() && Subtypes.Count() == other.Subtypes.Count() && Subtypes.Zip(other.Subtypes).All(i => i.First.Implements(i.Second))) return true;
-			else if (this == BaseClass) return false;
-			else return BaseClass.Implements(other);
+			if (this == other)
+			{
+				return true;
+			}
+			else if (other.GetType() == GetType() && Subtypes.Count() == other.Subtypes.Count() && Subtypes.Zip(other.Subtypes).All(i => i.First.Implements(i.Second)))
+			{
+				return true;
+			}
+			else if (this == BaseClass)
+			{
+				return false;
+			}
+			else
+			{
+				return BaseClass.Implements(other);
+			}
 		}
 
 		public virtual ValueRef ProcessArg(ValueRef src, FunctionContext ctx) => src;
 
-		public virtual bool ConstraintSatisfiedBy(TypeSpecifier other)
-		{
-			return other.GetType() == GetType()
+		public virtual bool ConstraintSatisfiedBy(TypeSpecifier other) => other.GetType() == GetType()
 				&& Subtypes.Count() == other.Subtypes.Count()
 				&& Subtypes.Zip(other.Subtypes).All(i => i.First.ConstraintSatisfiedBy(i.Second));
-		}
 
 		public TypeSpecifier ApplyGeneric(TypeSpecifier other)
 		{
-			if (!ConstraintSatisfiedBy(other)) return this;
+			if (!ConstraintSatisfiedBy(other))
+			{
+				return this;
+			}
 
 			var type = (TypeSpecifier)Clone();
 			var typeMap = new Dictionary<string, TypeSpecifier>();
@@ -88,10 +115,7 @@ namespace Amethyst.Geode
 
 		public virtual TypeSpecifier AssignmentOverloadType => this;
 
-		public virtual void AssignmentOverload(ValueRef dest, ValueRef val, FunctionContext ctx)
-		{
-			ctx.Add(new StoreInsn(dest, ctx.ImplicitCast(val, this)));
-		}
+		public virtual void AssignmentOverload(ValueRef dest, ValueRef val, FunctionContext ctx) => ctx.Add(new StoreInsn(dest, ctx.ImplicitCast(val, this)));
 
 		public virtual ValueRef? CastOverload(ValueRef val, FunctionContext ctx) => null;
 

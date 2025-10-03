@@ -5,14 +5,11 @@ using Amethyst.Geode.Types;
 
 namespace Amethyst.AST.Expressions
 {
-    public class IndexExpression(LocationRange loc, Expression list, Expression index) : Expression(loc)
-    {
-        public readonly Expression List = list;
-        public readonly Expression Index = index;
+	public class IndexExpression(LocationRange loc, Expression list, Expression index) : Expression(loc)
+	{
+		public readonly Expression List = list;
+		public readonly Expression Index = index;
 
-        protected override ValueRef ExecuteImpl(FunctionContext ctx, TypeSpecifier? expected)
-		{
-            return ctx.Add(new IndexInsn(List.Execute(ctx, null), Index.Execute(ctx, PrimitiveTypeSpecifier.Int)));
-        }
-    }
+		protected override ValueRef ExecuteImpl(FunctionContext ctx, TypeSpecifier? expected) => ctx.Add(new IndexInsn(List.Execute(ctx, null), Index.Execute(ctx, PrimitiveTypeSpecifier.Int)));
+	}
 }

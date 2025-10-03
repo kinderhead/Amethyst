@@ -1,6 +1,4 @@
-﻿using Amethyst.Geode.Types;
-using Datapack.Net.Data;
-using Datapack.Net.Function;
+﻿using Datapack.Net.Function;
 using Datapack.Net.Function.Commands;
 
 namespace Amethyst.Geode.Values
@@ -9,10 +7,7 @@ namespace Amethyst.Geode.Values
 	{
 		public override TypeSpecifier Type => type;
 
-		public override ScoreValue AsScore(RenderContext ctx)
-		{
-			throw new NotImplementedException();
-		}
+		public override ScoreValue AsScore(RenderContext ctx) => throw new NotImplementedException();
 
 		public override Execute If(Execute cmd, RenderContext ctx, int tmp = 0)
 		{

@@ -15,17 +15,28 @@ namespace Amethyst.Geode.IR.Instructions
 		{
 			var left = Arg<ValueRef>(0).Expect().AsScore(ctx);
 			var right = Arg<ValueRef>(1).Expect().AsScore(ctx);
-			
+
 			ReturnValue.SetValue(new ConditionalValue((cmd, flip) => (Invert != flip ? cmd.Unless : cmd.If).Score(left.Target, left.Score, Op, right.Target, right.Score), ReturnValue.Expect<ConditionalValue>().Flip));
 		}
 
 		protected override Value? ComputeReturnValue(FunctionContext ctx)
 		{
-			if (Arguments[0] is ValueRef arg1) ReturnValue.Dependencies.Add(arg1);
-			if (Arguments[1] is ValueRef arg2) ReturnValue.Dependencies.Add(arg2);
+			if (Arguments[0] is ValueRef arg1)
+			{
+				_ = ReturnValue.Dependencies.Add(arg1);
+			}
+
+			if (Arguments[1] is ValueRef arg2)
+			{
+				_ = ReturnValue.Dependencies.Add(arg2);
+			}
 
 			var ret = base.ComputeReturnValue(ctx);
-			if (ret is not null) return ret;
+			if (ret is not null)
+			{
+				return ret;
+			}
+
 			return new ConditionalValue((cmd, flip) => throw new InvalidOperationException());
 		}
 	}

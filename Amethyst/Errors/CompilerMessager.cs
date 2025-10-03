@@ -1,12 +1,5 @@
 ﻿using Amethyst.AST;
 using Spectre.Console;
-using Spectre.Console.Rendering;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection.PortableExecutable;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Amethyst.Errors
 {
@@ -39,35 +32,43 @@ namespace Amethyst.Errors
 
 		public CompilerMessager AddCode(IFileHandler handler, LocationRange loc, bool final = false)
 		{
-			AddContent("");
+			_ = AddContent("");
 
 			if (!handler.Files.TryGetValue(loc.Start.File, out var file))
 			{
-				AddContent("[turquoise2]<builtin>[/]");
-				AddContent("");
+				_ = AddContent("[turquoise2]<builtin>[/]");
+				_ = AddContent("");
 				return this;
 			}
 
 			// Evil tabs
 			string[] lines = [.. file.Split('\n').Skip(loc.Start.Line - 1).Take(Math.Min(loc.End.Line - loc.Start.Line + 1, MAX_CODE_LINES)).Select(i => i.Replace('\t', ' '))];
 
-			int indentToSkip = lines.Select(i => i.TakeWhile(c => c == ' ').Count()).Min();
+			var indentToSkip = lines.Select(i => i.TakeWhile(c => c == ' ').Count()).Min();
 
 			foreach (var (idex, i) in lines.Index())
 			{
 				// Prevent double finals
-				if (final && idex > 0 && idex == lines.Length - 1) Final();
-				AddContent($"[turquoise2]{i[indentToSkip..].EscapeMarkup()}[/]");
+				if (final && idex > 0 && idex == lines.Length - 1)
+				{
+					_ = Final();
+				}
+
+				_ = AddContent($"[turquoise2]{i[indentToSkip..].EscapeMarkup()}[/]");
 			}
 
 			if (lines.Length == 1)
 			{
-				if (final) Final();
-				AddContent($"{new string(' ', loc.Start.Column - 1 - indentToSkip)}{new string('~', loc.End.Column - loc.Start.Column + 1)}");
+				if (final)
+				{
+					_ = Final();
+				}
+
+				_ = AddContent($"{new string(' ', loc.Start.Column - 1 - indentToSkip)}{new string('~', loc.End.Column - loc.Start.Column + 1)}");
 			}
 			else if (!final)
 			{
-				AddContent("");
+				_ = AddContent("");
 			}
 
 			return this;

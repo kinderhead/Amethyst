@@ -1,8 +1,5 @@
 ﻿using Amethyst.AST.Expressions;
 using Amethyst.Geode.IR;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Amethyst.AST.Statements
 {
@@ -13,13 +10,14 @@ namespace Amethyst.AST.Statements
 		public readonly Expression Iterator = iterator;
 		public readonly Statement Body = body;
 
-        public override void Compile(FunctionContext ctx)
+		public override void Compile(FunctionContext ctx)
 		{
 			Initializer?.Compile(ctx);
-			ctx.Loop(() => Condition.Execute(ctx, null), "for", () => {
+			_ = ctx.Loop(() => Condition.Execute(ctx, null), "for", () =>
+			{
 				Body.Compile(ctx);
-				Iterator.Execute(ctx, null);
-            });
-        }
+				_ = Iterator.Execute(ctx, null);
+			});
+		}
 	}
 }

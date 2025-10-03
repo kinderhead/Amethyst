@@ -12,17 +12,23 @@ namespace Amethyst.Geode.Types
 		public readonly Parameter[] Parameters = [.. paramters];
 		public override bool Operable => false;
 		public override IEnumerable<TypeSpecifier> Subtypes => [ReturnType, .. Parameters.Select(i => i.Type)];
-        public override NamespacedID ID => "amethyst:func";
+		public override NamespacedID ID => "amethyst:func";
 		public override TypeSpecifier BaseClass => this;
 
-        public FunctionTypeSpecifier ApplyGenericWithParams(TypeSpecifier[] args)
+		public FunctionTypeSpecifier ApplyGenericWithParams(TypeSpecifier[] args)
 		{
 			var newArgs = new Parameter[Parameters.Length];
 
-			for (int i = 0; i < Parameters.Length; i++)
+			for (var i = 0; i < Parameters.Length; i++)
 			{
-				if (args.Length > i) newArgs[i] = new(Parameters[i].Modifiers, Parameters[i].Type.ApplyGeneric(args[i]), Parameters[i].Name);
-				else newArgs[i] = Parameters[i];
+				if (args.Length > i)
+				{
+					newArgs[i] = new(Parameters[i].Modifiers, Parameters[i].Type.ApplyGeneric(args[i]), Parameters[i].Name);
+				}
+				else
+				{
+					newArgs[i] = Parameters[i];
+				}
 			}
 
 			var other = new FunctionTypeSpecifier(Modifiers, ReturnType, newArgs);

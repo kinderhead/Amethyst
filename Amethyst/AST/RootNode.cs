@@ -17,7 +17,10 @@ namespace Amethyst.AST
 				if (!Ctx.WrapError(i.Location, () =>
 				{
 					i.Process(Ctx);
-				})) success = false;
+				}))
+				{
+					success = false;
+				}
 			}
 
 			return success;
@@ -30,8 +33,14 @@ namespace Amethyst.AST
 
 			foreach (var i in Functions)
 			{
-				if (!i.Compile(Ctx, out var ctx) || ctx is null) success = false;
-				else funcs.Add(ctx);
+				if (!i.Compile(Ctx, out var ctx) || ctx is null)
+				{
+					success = false;
+				}
+				else
+				{
+					funcs.Add(ctx);
+				}
 			}
 
 			return success;
@@ -40,8 +49,8 @@ namespace Amethyst.AST
 
 	public interface IRootChild
 	{
-		public LocationRange Location { get; }
+		LocationRange Location { get; }
 
-		public void Process(Compiler ctx);
+		void Process(Compiler ctx);
 	}
 }

@@ -12,9 +12,6 @@ namespace Amethyst.AST.Statements
 	{
 		public readonly Expression Expression = expr;
 
-		public override void Compile(FunctionContext ctx)
-		{
-			Expression.Execute(ctx, null);
-		}
+		public override void Compile(FunctionContext ctx) => Expression.Execute(ctx, null);
 	}
 }

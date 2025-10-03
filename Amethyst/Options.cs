@@ -19,8 +19,7 @@ namespace Amethyst
 		[Option("dump-ir", HelpText = "Dump Geode IR and don't compile to datapack.")]
 		public bool DumpIR { get; set; }
 
-
-        [Value(0, MetaName = "input files", HelpText = "Files to compile.", Required = true)]
+		[Value(0, MetaName = "input files", HelpText = "Files to compile.", Required = true)]
 		public required IEnumerable<string> Inputs { get; set; }
 	}
 }

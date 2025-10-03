@@ -12,11 +12,17 @@ namespace Amethyst.AST.Intrinsics
 
 		public override ValueRef Execute(FunctionContext ctx, params ValueRef[] args)
 		{
-			for (int i = 0; i < args.Length; i++)
+			for (var i = 0; i < args.Length; i++)
 			{
-				if (args[i].Type is ReferenceTypeSpecifier) args[i] = ctx.Add(new DereferenceInsn(args[i]));
-				else if (args[i].Value is ConditionalValue) args[i] = ctx.Add(new LoadInsn(args[i]));
-            }
+				if (args[i].Type is ReferenceTypeSpecifier)
+				{
+					args[i] = ctx.Add(new DereferenceInsn(args[i]));
+				}
+				else if (args[i].Value is ConditionalValue)
+				{
+					args[i] = ctx.Add(new LoadInsn(args[i]));
+				}
+			}
 
 			return ctx.Add(new PrintInsn(args));
 		}

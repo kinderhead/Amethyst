@@ -1,67 +1,71 @@
 ﻿using Datapack.Net.Function;
 using Datapack.Net.Function.Commands;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Datapack.Net.CubeLib
 {
-    public class EntityComparison(Entity entity, TargetSelector comparison) : Conditional
-    {
-        public readonly Entity Entity = entity;
-        public readonly TargetSelector Comparison = comparison;
+	public class EntityComparison(Entity entity, TargetSelector comparison) : Conditional
+	{
+		public readonly Entity Entity = entity;
+		public readonly TargetSelector Comparison = comparison;
 
-        public override Execute Process(Execute cmd, int tmp = 0)
-        {
-            Execute.Conditional branch = If ? cmd.If : cmd.Unless;
+		public override Execute Process(Execute cmd, int tmp = 0)
+		{
+			var branch = If ? cmd.If : cmd.Unless;
 
-            if (Entity.IsCurrentTarget()) branch.Entity(Comparison);
-            else
-            {
-                var cur = Project.ActiveProject.EntityRef(TargetSelector.Self);
-                Entity.As(cmd);
-                branch.Entity(Comparison);
-                cur.As(cmd);
-            }
+			if (Entity.IsCurrentTarget())
+			{
+				_ = branch.Entity(Comparison);
+			}
+			else
+			{
+				var cur = Project.ActiveProject.EntityRef(TargetSelector.Self);
+				_ = Entity.As(cmd);
+				_ = branch.Entity(Comparison);
+				_ = cur.As(cmd);
+			}
 
-            return cmd;
-        }
-    }
+			return cmd;
+		}
+	}
 
-    public class RawEntityComparison(IEntityTarget entity) : Conditional
-    {
-        public readonly IEntityTarget Entity = entity;
+	public class RawEntityComparison(IEntityTarget entity) : Conditional
+	{
+		public readonly IEntityTarget Entity = entity;
 
-        public override Execute Process(Execute cmd, int tmp = 0)
-        {
-            Execute.Conditional branch = If ? cmd.If : cmd.Unless;
+		public override Execute Process(Execute cmd, int tmp = 0)
+		{
+			var branch = If ? cmd.If : cmd.Unless;
 
-            branch.Entity(Entity);
+			_ = branch.Entity(Entity);
 
-            return cmd;
-        }
-    }
+			return cmd;
+		}
+	}
 
-    public class EntityExists(Entity entity) : Conditional
-    {
-        public readonly Entity Entity = entity;
+	public class EntityExists(Entity entity) : Conditional
+	{
+		public readonly Entity Entity = entity;
 
-        public override Execute Process(Execute cmd, int tmp = 0)
-        {
-            var test = Project.ActiveProject.Temp(tmp, 0, "cond");
-            Project.ActiveProject.AddCommand(Entity.As(new Execute()).Run(new Scoreboard.Players.Set(test.Target, test.Score, 1)));
+		public override Execute Process(Execute cmd, int tmp = 0)
+		{
+			var test = Project.ActiveProject.Temp(tmp, 0, "cond");
+			Project.ActiveProject.AddCommand(Entity.As(new Execute()).Run(new Scoreboard.Players.Set(test.Target, test.Score, 1)));
 
-            if (If) (test == 1).Process(cmd);
-            else (test != 1).Process(cmd);
+			if (If)
+			{
+				_ = (test == 1).Process(cmd);
+			}
+			else
+			{
+				_ = (test != 1).Process(cmd);
+			}
 
-            return cmd;
-        }
-    }
+			return cmd;
+		}
+	}
 
-    public static class EntityTargetUtils
-    {
-        public static RawEntityComparison Exists(this IEntityTarget entity) => new(entity);
-    }
+	public static class EntityTargetUtils
+	{
+		public static RawEntityComparison Exists(this IEntityTarget entity) => new(entity);
+	}
 }

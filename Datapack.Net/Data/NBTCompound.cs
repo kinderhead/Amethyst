@@ -1,115 +1,80 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace Datapack.Net.Data
 {
-    public class NBTCompound : NBTValue, IDictionary<string, NBTValue>, INegatable<NBTCompound>
-    {
+	public class NBTCompound : NBTValue, IDictionary<string, NBTValue>, INegatable<NBTCompound>
+	{
 		public override NBTType Type => NBTType.Compound;
 		public Dictionary<string, NBTValue> Values = [];
-        public NBTValue this[string key] { get => Values[key]; set => Values[key] = value; }
-        public ICollection<string> Keys => Values.Keys;
-        public int Count => Values.Count;
-        public bool IsReadOnly => false;
+		public NBTValue this[string key] { get => Values[key]; set => Values[key] = value; }
+		public ICollection<string> Keys => Values.Keys;
+		public int Count => Values.Count;
+		public bool IsReadOnly => false;
 
-        public NBTCompound()
-        {
-        }
+		public NBTCompound()
+		{
+		}
 
-        public NBTCompound(IEnumerable<KeyValuePair<string, NBTValue>> values)
-        {
-            foreach (var i in values)
-            {
-                Values.Add(i.Key, i.Value);
-            }
-        }
+		public NBTCompound(IEnumerable<KeyValuePair<string, NBTValue>> values)
+		{
+			foreach (var i in values)
+			{
+				Values.Add(i.Key, i.Value);
+			}
+		}
 
 		public override NBTValue Cast(NBTNumberType type) => throw new InvalidOperationException();
 
 		ICollection<NBTValue> IDictionary<string, NBTValue>.Values => Values.Values;
 
-        public void Add(string key, NBTValue value)
-        {
-            Values.Add(key, value);
-        }
+		public void Add(string key, NBTValue value) => Values.Add(key, value);
 
-        public void Add(KeyValuePair<string, NBTValue> item)
-        {
-            Values.Add(item.Key, item.Value);
-        }
+		public void Add(KeyValuePair<string, NBTValue> item) => Values.Add(item.Key, item.Value);
 
-        public override void Build(StringBuilder sb)
-        {
-            sb.Append('{');
-            foreach (var i in Values)
-            {
-                sb.Append('"');
-                sb.Append(NBTString.Escape(i.Key));
-                sb.Append('"');
-                sb.Append(':');
-                i.Value.Build(sb);
-                sb.Append(',');
-            }
-            if (Values.Count > 0) sb.Length--;
-            sb.Append('}');
-        }
+		public override void Build(StringBuilder sb)
+		{
+			_ = sb.Append('{');
+			foreach (var i in Values)
+			{
+				_ = sb.Append('"');
+				_ = sb.Append(NBTString.Escape(i.Key));
+				_ = sb.Append('"');
+				_ = sb.Append(':');
+				i.Value.Build(sb);
+				_ = sb.Append(',');
+			}
 
-        public void Clear()
-        {
-            Values.Clear();
-        }
+			if (Values.Count > 0)
+			{
+				sb.Length--;
+			}
 
-        public bool Contains(KeyValuePair<string, NBTValue> item)
-        {
-            return Values.Contains(item);
-        }
+			_ = sb.Append('}');
+		}
 
-        public bool ContainsKey(string key)
-        {
-            return Values.ContainsKey(key);
-        }
+		public void Clear() => Values.Clear();
 
-        public void CopyTo(KeyValuePair<string, NBTValue>[] array, int arrayIndex)
-        {
-            throw new NotImplementedException();
-        }
+		public bool Contains(KeyValuePair<string, NBTValue> item) => Values.Contains(item);
 
-        public IEnumerator<KeyValuePair<string, NBTValue>> GetEnumerator()
-        {
-            return Values.GetEnumerator();
-        }
+		public bool ContainsKey(string key) => Values.ContainsKey(key);
 
-        public Negatable<NBTCompound> Negate()
-        {
-            return new(this, true);
-        }
+		public void CopyTo(KeyValuePair<string, NBTValue>[] array, int arrayIndex) => throw new NotImplementedException();
 
-        public bool Remove(string key)
-        {
-            return Values.Remove(key);
-        }
+		public IEnumerator<KeyValuePair<string, NBTValue>> GetEnumerator() => Values.GetEnumerator();
 
-        public bool Remove(KeyValuePair<string, NBTValue> item)
-        {
-            return Values.Remove(item.Key);
-        }
+		public Negatable<NBTCompound> Negate() => new(this, true);
 
-        public bool TryGetValue(string key, [MaybeNullWhen(false)] out NBTValue value)
-        {
-            return Values.TryGetValue(key, out value);
-        }
+		public bool Remove(string key) => Values.Remove(key);
 
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return Values.GetEnumerator();
-        }
+		public bool Remove(KeyValuePair<string, NBTValue> item) => Values.Remove(item.Key);
 
-        public static Negatable<NBTCompound> operator !(NBTCompound nbt) => nbt.Negate();
-        public static implicit operator Negatable<NBTCompound>(NBTCompound nbt) => new(nbt);
-    }
+		public bool TryGetValue(string key, [MaybeNullWhen(false)] out NBTValue value) => Values.TryGetValue(key, out value);
+
+		IEnumerator IEnumerable.GetEnumerator() => Values.GetEnumerator();
+
+		public static Negatable<NBTCompound> operator !(NBTCompound nbt) => nbt.Negate();
+		public static implicit operator Negatable<NBTCompound>(NBTCompound nbt) => new(nbt);
+	}
 }

@@ -14,18 +14,21 @@ namespace Amethyst.Errors
 			//Console.WriteLine(StackTrace);
 
 			var msg = new CompilerMessager(Color.Red);
-			msg.Header($"Error at {loc.Start}");
-			msg.AddCode(handler, loc);
+			_ = msg.Header($"Error at {loc.Start}");
+			_ = msg.AddCode(handler, loc);
 
-			if (last) msg.Final();
-			msg.AddContent($"{GetType().Name}: [yellow]{RawMessage.EscapeMarkup()}[/]");
+			if (last)
+			{
+				_ = msg.Final();
+			}
+
+			_ = msg.AddContent($"{GetType().Name}: [yellow]{RawMessage.EscapeMarkup()}[/]");
 
 			return msg;
 		}
 
 		public override string ToString() => Message;
 	}
-
 
 	public class DoubleAmethystError(string msg1, LocationRange loc2, string msg2) : AmethystError(msg1)
 	{
@@ -36,9 +39,9 @@ namespace Amethyst.Errors
 		{
 			var msg = base.Display(handler, loc, false);
 
-			msg.AddContent("");
-			msg.AddContent($"[green]{RawMessage2} {Location2.Start}[/]");
-			msg.AddCode(handler, Location2, last);
+			_ = msg.AddContent("");
+			_ = msg.AddContent($"[green]{RawMessage2} {Location2.Start}[/]");
+			_ = msg.AddCode(handler, Location2, last);
 
 			return msg;
 		}
@@ -46,9 +49,6 @@ namespace Amethyst.Errors
 
 	public class EmptyAmethystError() : AmethystError("")
 	{
-		public override CompilerMessager Display(IFileHandler handler, LocationRange loc, bool lastNewlines = true)
-		{
-			return new(Color.Red);
-		}
+		public override CompilerMessager Display(IFileHandler handler, LocationRange loc, bool lastNewlines = true) => new(Color.Red);
 	}
 }

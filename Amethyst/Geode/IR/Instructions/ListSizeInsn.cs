@@ -1,9 +1,6 @@
 ﻿using Amethyst.Geode.Types;
 using Amethyst.Geode.Values;
 using Datapack.Net.Data;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Amethyst.Geode.IR.Instructions
 {
@@ -18,14 +15,24 @@ namespace Amethyst.Geode.IR.Instructions
 			var arg = Arg<ValueRef>(0).Expect();
 			var ret = ReturnValue.Expect<ScoreValue>(); // Make sure the return value is a score so that /data get is called
 
-            if (arg.Type is ReferenceTypeSpecifier) ctx.Call("amethyst:core/ref/set-score", new LiteralValue($"{ret.Target.Get()} {ret.Score.Name}"), arg);
-			else ret.Store(arg, ctx);
-        }
+			if (arg.Type is ReferenceTypeSpecifier)
+			{
+				ctx.Call("amethyst:core/ref/set-score", new LiteralValue($"{ret.Target.Get()} {ret.Score.Name}"), arg);
+			}
+			else
+			{
+				ret.Store(arg, ctx);
+			}
+		}
 
 		protected override Value? ComputeReturnValue(FunctionContext ctx)
 		{
-			if (Arg<ValueRef>(0).Expect() is IConstantValue c && c.Value is NBTList l) return new LiteralValue(l.Count);
+			if (Arg<ValueRef>(0).Expect() is IConstantValue c && c.Value is NBTList l)
+			{
+				return new LiteralValue(l.Count);
+			}
+
 			return null;
-        }
+		}
 	}
 }

@@ -15,7 +15,11 @@ namespace Amethyst.Geode.IR.Instructions
 			var val = Arg<ValueRef>(0).Expect();
 			var ret = ReturnValue.Expect<ScoreValue>();
 
-			if (val is ScoreValue score && score == ret) return;
+			if (val is ScoreValue score && score == ret)
+			{
+				return;
+			}
+
 			ret.Store(val, ctx);
 		}
 
@@ -27,7 +31,11 @@ namespace Amethyst.Geode.IR.Instructions
 				Remove();
 				return score;
 			}
-			else if (val.Value is LiteralValue literal) return literal;
+			else if (val.Value is LiteralValue literal)
+			{
+				return literal;
+			}
+
 			return null;
 		}
 	}

@@ -3,11 +3,11 @@ using Amethyst.Geode.Types;
 
 namespace Amethyst.Geode
 {
-    public interface IFunctionLike
-    {
-        public FunctionTypeSpecifier FuncType { get; }
+	public interface IFunctionLike
+	{
+		FunctionTypeSpecifier FuncType { get; }
 
-        public IFunctionLike CloneWithType(FunctionTypeSpecifier type);
-        public ValueRef AsMethod(ValueRef self, FunctionContext ctx);
-    }
+		IFunctionLike CloneWithType(FunctionTypeSpecifier type);
+		ValueRef AsMethod(ValueRef self, FunctionContext ctx);
+	}
 }

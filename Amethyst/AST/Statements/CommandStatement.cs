@@ -1,9 +1,9 @@
-﻿using System.Text;
-using Amethyst.AST.Expressions;
+﻿using Amethyst.AST.Expressions;
 using Amethyst.Geode;
 using Amethyst.Geode.IR;
 using Amethyst.Geode.IR.Instructions;
 using Amethyst.Geode.Types;
+using System.Text;
 
 namespace Amethyst.AST.Statements
 {
@@ -14,26 +14,29 @@ namespace Amethyst.AST.Statements
 		public override void Compile(FunctionContext ctx)
 		{
 			var cmd = new StringBuilder();
-			int arg = 0;
+			var arg = 0;
 
 			foreach (var i in Fragments)
 			{
 				i.Resolve(ctx);
-				cmd.Append(i.Render(ref arg));
+				_ = cmd.Append(i.Render(ref arg));
 			}
 
-			if (arg == 0) ctx.Add(new CommandInsn(cmd.ToString()));
+			if (arg == 0)
+			{
+				_ = ctx.Add(new CommandInsn(cmd.ToString()));
+			}
 			else
 			{
 				var (cmdCtx, func) = ctx.Compiler.AnonymousFunction(new(FunctionModifiers.None, new VoidTypeSpecifier(), Fragments.Where(i => i is CommandExprFragment).Cast<CommandExprFragment>().Select(i => new Parameter(ParameterModifiers.Macro, PrimitiveTypeSpecifier.Compound, $"arg{i.ArgIndex}"))));
 
 				cmdCtx.LocationStack.Push(Location);
-				cmdCtx.Add(new CommandInsn(cmd.ToString()));
-				cmdCtx.Add(new ReturnInsn());
+				_ = cmdCtx.Add(new CommandInsn(cmd.ToString()));
+				_ = cmdCtx.Add(new ReturnInsn());
 				cmdCtx.Finish();
-				cmdCtx.LocationStack.Pop();
+				_ = cmdCtx.LocationStack.Pop();
 
-				ctx.Add(new CallInsn(func, Fragments.Where(i => i is CommandExprFragment).Cast<CommandExprFragment>().Select(i => ctx.ImplicitCast(i.Value, PrimitiveTypeSpecifier.Compound))));
+				_ = ctx.Add(new CallInsn(func, Fragments.Where(i => i is CommandExprFragment).Cast<CommandExprFragment>().Select(i => ctx.ImplicitCast(i.Value, PrimitiveTypeSpecifier.Compound))));
 			}
 		}
 	}
@@ -60,9 +63,6 @@ namespace Amethyst.AST.Statements
 
 		public override string Render(ref int arg) => Value.IsLiteral && Value.Value is Value v ? v.ToString() : $"$(arg{ArgIndex = arg++})";
 
-		public override void Resolve(FunctionContext ctx)
-		{
-			Value = Expression.Execute(ctx, null);
-		}
+		public override void Resolve(FunctionContext ctx) => Value = Expression.Execute(ctx, null);
 	}
 }

@@ -1,151 +1,188 @@
-using System;
-using System.Reflection;
 using Datapack.Net.CubeLib.Builtins;
 using Datapack.Net.CubeLib.Utils;
 using Datapack.Net.Data;
-using Datapack.Net.Function;
+using System.Reflection;
 
 namespace Datapack.Net.CubeLib
 {
-    public interface IBaseRuntimeObject : IRuntimeArgument, IPointerable
-    {
-        public bool Freed { get; }
+	public interface IBaseRuntimeObject : IRuntimeArgument, IPointerable
+	{
+		bool Freed { get; }
 
-        public RuntimeProperty<NBTInt> ReferenceCount { get; set; }
+		RuntimeProperty<NBTInt> ReferenceCount { get; set; }
 
-        public void IfNull(Action func);
-        public bool HasMethod(string name);
-        public Delegate GetMethod(string name);
+		void IfNull(Action func);
+		bool HasMethod(string name);
+		Delegate GetMethod(string name);
 
-        public void FreeObj();
+		void FreeObj();
 
-        public void Destruct();
+		void Destruct();
 
-        public IPointer GetPointer();
+		IPointer GetPointer();
 
-        public static abstract T Create<T>(IPointer<T> pointer) where T : IPointerable;
+		static abstract T Create<T>(IPointer<T> pointer) where T : IPointerable;
 
-        public static IRuntimeArgument Create(ScoreRef arg, Type self) => (IRuntimeArgument?)Activator.CreateInstance(self, [typeof(HeapPointer<>).MakeGenericType(self).GetMethod("Create")?.Invoke(null, [arg])]) ?? throw new ArgumentException("Error dynamically creating a RuntimeObject");
-        public static IRuntimeArgument CreateWithRTP(ScoreRef loc, Type self) => (IRuntimeArgument?)Activator.CreateInstance(self, [Create(loc, typeof(RuntimePointer<>).MakeGenericType(self))]) ?? throw new ArgumentException("Error dynamically creating a RuntimeObject");
-    }
+		static IRuntimeArgument Create(ScoreRef arg, Type self) => (IRuntimeArgument?)Activator.CreateInstance(self, [typeof(HeapPointer<>).MakeGenericType(self).GetMethod("Create")?.Invoke(null, [arg])]) ?? throw new ArgumentException("Error dynamically creating a RuntimeObject");
+		static IRuntimeArgument CreateWithRTP(ScoreRef loc, Type self) => (IRuntimeArgument?)Activator.CreateInstance(self, [Create(loc, typeof(RuntimePointer<>).MakeGenericType(self))]) ?? throw new ArgumentException("Error dynamically creating a RuntimeObject");
+	}
 
-    public abstract class RuntimeObject<TProject, TSelf> : IBaseRuntimeObject, IRuntimeProperty<TSelf> where TProject : Project where TSelf : RuntimeObject<TProject, TSelf>
-    {
-        public IPointer<TSelf> Pointer { get; }
-        public IPointer GetPointer() => Pointer;
+	public abstract class RuntimeObject<TProject, TSelf> : IBaseRuntimeObject, IRuntimeProperty<TSelf> where TProject : Project where TSelf : RuntimeObject<TProject, TSelf>
+	{
+		public IPointer<TSelf> Pointer { get; }
+		public IPointer GetPointer() => Pointer;
 
-        public TSelf PropValue { get => (TSelf)this; }
+		public TSelf PropValue => (TSelf)this;
 
-        public bool Freed { get; protected set; }
+		public bool Freed { get; protected set; }
 
-        public RuntimeProperty<NBTInt> ReferenceCount
-        {
-            get
-            {
-                if (!Project.Settings.ReferenceChecking) throw new Exception("Reference checking disabled");
-                return new(GetProp<NBTInt>("__ref"));
-            }
-            set
-            {
-                if (!Project.Settings.ReferenceChecking) throw new Exception("Reference checking disabled");
-                SetProp("__ref", value);
-            }
-        }
+		public RuntimeProperty<NBTInt> ReferenceCount
+		{
+			get
+			{
+				if (!Project.Settings.ReferenceChecking)
+				{
+					throw new Exception("Reference checking disabled");
+				}
 
-        public RuntimeObject(IPointer<TSelf> loc)
-        {
-            Pointer = loc;
-        }
+				return new(GetProp<NBTInt>("__ref"));
+			}
+			set
+			{
+				if (!Project.Settings.ReferenceChecking)
+				{
+					throw new Exception("Reference checking disabled");
+				}
 
-        public RuntimeObject() { }
+				SetProp("__ref", value);
+			}
+		}
 
-        public virtual (string, Type)[] AllProperties { get; }
+		public RuntimeObject(IPointer<TSelf> loc)
+		{
+			Pointer = loc;
+		}
 
-        protected IPointer<T> GetProp<T>(string path, bool dot = true) where T : IPointerable => Pointer.Get<T>(path, dot);
-        protected T GetObj<T>(string path, bool dot = true) where T : IBaseRuntimeObject => T.Create(RuntimePointer<T>.Create(Pointer.Get<RuntimePointer<T>>(path, dot)));
+		public RuntimeObject() { }
 
-        protected void SetProp(string path, NBTValue val) => Pointer.Get<NBTValue>(path).Set(val);
-        protected void SetProp<T>(string path, IPointer<T> pointer) where T : IPointerable
-        {
-            if (typeof(T).IsAssignableTo(typeof(IBaseRuntimeObject)))
-            {
-                var place = GetProp<T>(path).Get<NBTString>("obj");
-                if (Project.Settings.ReferenceChecking) ((IBaseRuntimeObject)pointer.Self).ReferenceCount.Pointer.With(i => i.Add(1));
-                Project.ActiveProject.Std.StorePointer([.. place.StandardMacros([], "1"), .. pointer.StandardMacros([], "2")]);
-            }
-            else pointer.Copy(GetProp<T>(path));
-        }
+		public virtual (string, Type)[] AllProperties { get; }
 
-        protected void SetProp<T>(string path, IRuntimeProperty<T> prop) where T : IPointerable
-        {
-            if (prop.Pointer is not null) SetProp(path, prop.Pointer);
-            else if (NBTValue.IsNBTType<T>()) SetProp(path, NBTValue.ToNBT(prop.PropValue ?? throw new ArgumentException("RuntimeProperty was not created properly")) ?? throw new Exception("How did we get here?"));
-            else throw new ArgumentException("RuntimeProperty was not created properly");
-        }
+		protected IPointer<T> GetProp<T>(string path, bool dot = true) where T : IPointerable => Pointer.Get<T>(path, dot);
+		protected T GetObj<T>(string path, bool dot = true) where T : IBaseRuntimeObject => T.Create(RuntimePointer<T>.Create(Pointer.Get<RuntimePointer<T>>(path, dot)));
 
-        public virtual void FreeObj()
-        {
-            Pointer.Free();
-            Freed = true;
-        }
+		protected void SetProp(string path, NBTValue val) => Pointer.Get<NBTValue>(path).Set(val);
+		protected void SetProp<T>(string path, IPointer<T> pointer) where T : IPointerable
+		{
+			if (typeof(T).IsAssignableTo(typeof(IBaseRuntimeObject)))
+			{
+				var place = GetProp<T>(path).Get<NBTString>("obj");
+				if (Project.Settings.ReferenceChecking)
+				{
+					((IBaseRuntimeObject)pointer.Self).ReferenceCount.Pointer.With(i => i.Add(1));
+				}
 
-        public void CopyObj(IPointer<TSelf> dest) => Pointer.Copy(dest);
-        public void MoveObj(IPointer<TSelf> dest) => Pointer.Move(dest);
-        public void MoveObj(TSelf dest) => Pointer.Move(dest.Pointer);
+				Project.ActiveProject.Std.StorePointer([.. place.StandardMacros([], "1"), .. pointer.StandardMacros([], "2")]);
+			}
+			else
+			{
+				pointer.Copy(GetProp<T>(path));
+			}
+		}
 
-        public void IfNull(Action func)
-        {
-            if (Pointer is HeapPointer<TSelf> hp) State.If(hp.Exists(), func);
-            else throw new NotImplementedException();
-        }
+		protected void SetProp<T>(string path, IRuntimeProperty<T> prop) where T : IPointerable
+		{
+			if (prop.Pointer is not null)
+			{
+				SetProp(path, prop.Pointer);
+			}
+			else if (NBTValue.IsNBTType<T>())
+			{
+				SetProp(path, NBTValue.ToNBT(prop.PropValue ?? throw new ArgumentException("RuntimeProperty was not created properly")) ?? throw new Exception("How did we get here?"));
+			}
+			else
+			{
+				throw new ArgumentException("RuntimeProperty was not created properly");
+			}
+		}
 
-        public ScoreRef GetAsArg() => Pointer.GetAsArg();
+		public virtual void FreeObj()
+		{
+			Pointer.Free();
+			Freed = true;
+		}
 
-        public bool HasMethod(string name)
-        {
-            foreach (var i in GetType().GetMethods(BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Public))
-            {
-                if (i.GetCustomAttribute<DeclareMCAttribute>()?.Path == name) return true;
-            }
+		public void CopyObj(IPointer<TSelf> dest) => Pointer.Copy(dest);
+		public void MoveObj(IPointer<TSelf> dest) => Pointer.Move(dest);
+		public void MoveObj(TSelf dest) => Pointer.Move(dest.Pointer);
 
-            return false;
-        }
+		public void IfNull(Action func)
+		{
+			if (Pointer is HeapPointer<TSelf> hp)
+			{
+				_ = State.If(hp.Exists(), func);
+			}
+			else
+			{
+				throw new NotImplementedException();
+			}
+		}
 
-        public Delegate GetMethod(string name)
-        {
-            foreach (var i in GetType().GetMethods(BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Public))
-            {
-                if (i.GetCustomAttribute<DeclareMCAttribute>()?.Path == name) return DelegateUtils.Create(i, null);
-            }
+		public ScoreRef GetAsArg() => Pointer.GetAsArg();
 
-            throw new Exception($"Cannot get method {name} from object");
-        }
+		public bool HasMethod(string name)
+		{
+			foreach (var i in GetType().GetMethods(BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Public))
+			{
+				if (i.GetCustomAttribute<DeclareMCAttribute>()?.Path == name)
+				{
+					return true;
+				}
+			}
 
-        public virtual void Destruct()
-        {
-            if (!Project.Settings.ReferenceChecking) throw new Exception("Reference checking disabled");
-            if (HasMethod("deinit")) Project.ActiveProject.AddCommand(Project.ActiveProject.Lambda(() => Project.ActiveProject.CallArg(GetMethod("deinit"), [this])));
-        }
+			return false;
+		}
 
-        private static TProject? _state = null;
-        public static TProject State
-        {
-            get
-            {
-                _state ??= Project.Create<TProject>(Project.ActiveProject.Datapack);
-                return _state;
-            }
-        }
+		public Delegate GetMethod(string name)
+		{
+			foreach (var i in GetType().GetMethods(BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Public))
+			{
+				if (i.GetCustomAttribute<DeclareMCAttribute>()?.Path == name)
+				{
+					return DelegateUtils.Create(i, null);
+				}
+			}
 
-        public static T Create<T>(IPointer<T> pointer) where T : IPointerable
-        {
-            return (T?)Activator.CreateInstance(typeof(TSelf), [pointer]) ?? throw new ArgumentException("Failed to create runtime object");
-        }
+			throw new Exception($"Cannot get method {name} from object");
+		}
 
-        public static IRuntimeArgument Create(ScoreRef arg) => Create((IPointer<TSelf>)HeapPointer<TSelf>.Create(arg));
+		public virtual void Destruct()
+		{
+			if (!Project.Settings.ReferenceChecking)
+			{
+				throw new Exception("Reference checking disabled");
+			}
 
-        public static implicit operator RuntimeObject<TProject, TSelf>(HeapPointer<TSelf> pointer) => (RuntimeObject<TProject, TSelf>)Create<TSelf>(pointer);
+			if (HasMethod("deinit"))
+			{
+				Project.ActiveProject.AddCommand(Project.ActiveProject.Lambda(() => Project.ActiveProject.CallArg(GetMethod("deinit"), [this])));
+			}
+		}
 
-        public virtual IPointer ToPointer() => Pointer;
-    }
+		public static TProject State
+		{
+			get
+			{
+				field ??= Project.Create<TProject>(Project.ActiveProject.Datapack);
+				return field;
+			}
+		} = null;
+
+		public static T Create<T>(IPointer<T> pointer) where T : IPointerable => (T?)Activator.CreateInstance(typeof(TSelf), [pointer]) ?? throw new ArgumentException("Failed to create runtime object");
+
+		public static IRuntimeArgument Create(ScoreRef arg) => Create((IPointer<TSelf>)HeapPointer<TSelf>.Create(arg));
+
+		public static implicit operator RuntimeObject<TProject, TSelf>(HeapPointer<TSelf> pointer) => Create<TSelf>(pointer);
+
+		public virtual IPointer ToPointer() => Pointer;
+	}
 }

@@ -16,15 +16,21 @@ namespace Amethyst.AST
 			var stopToken = ctx.Stop;
 
 			// Might have to fix if there are multiline tokens, but I don't think there are any
-			int endColumn = stopToken is not null ? stopToken.Column + stopToken.StopIndex - stopToken.StartIndex + 1 : 0;
+			var endColumn = stopToken is not null ? stopToken.Column + stopToken.StopIndex - stopToken.StartIndex + 1 : 0;
 			var end = new Location(path, stopToken?.Line ?? 0, endColumn);
 			return new LocationRange(Location.From(path, ctx.Start), end);
 		}
 
 		public override string ToString()
 		{
-			if (Start.Line == End.Line) return $"{Start.File}: {Start.Line}:{Start.Column}-{End.Column}";
-			else return $"{Start.File}: {Start.Line}:{Start.Column}-{End.Line}:{End.Column}";
+			if (Start.Line == End.Line)
+			{
+				return $"{Start.File}: {Start.Line}:{Start.Column}-{End.Column}";
+			}
+			else
+			{
+				return $"{Start.File}: {Start.Line}:{Start.Column}-{End.Line}:{End.Column}";
+			}
 		}
 
 		public static LocationRange None => new(new("", 0, 0), new("", 0, 0));
@@ -32,6 +38,6 @@ namespace Amethyst.AST
 
 	public interface ILocatable
 	{
-		public LocationRange Location { get; }
+		LocationRange Location { get; }
 	}
 }

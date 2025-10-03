@@ -9,7 +9,10 @@ namespace Amethyst.AST.Statements
 
 		public override void Compile(FunctionContext ctx)
 		{
-			if (!CompileWithErrorChecking(ctx)) throw new EmptyAmethystError();
+			if (!CompileWithErrorChecking(ctx))
+			{
+				throw new EmptyAmethystError();
+			}
 		}
 
 		public void Add(Statement stmt) => Statements.Add(stmt);
@@ -20,7 +23,10 @@ namespace Amethyst.AST.Statements
 
 			foreach (var i in Statements)
 			{
-				if (!ctx.Compiler.WrapError(i.Location, ctx, () => i.Compile(ctx))) success = false;
+				if (!ctx.Compiler.WrapError(i.Location, ctx, () => i.Compile(ctx)))
+				{
+					success = false;
+				}
 			}
 
 			return success;

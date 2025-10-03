@@ -34,11 +34,18 @@ namespace Amethyst.Geode.Types
 		{
 			if (!Resolved)
 			{
-				if (typeMap.TryGetValue(Name, out var type)) other = type;
+				if (typeMap.TryGetValue(Name, out var type))
+				{
+					other = type;
+				}
+
 				Set(other);
 				typeMap[Name] = other;
 			}
-			else if (other != typeMap[Name]) throw new NotImplementedException(); // Maybe remove this
+			else if (other != typeMap[Name])
+			{
+				throw new NotImplementedException(); // Maybe remove this
+			}
 
 			base.ApplyGeneric(other, typeMap);
 		}

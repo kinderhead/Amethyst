@@ -24,7 +24,7 @@ namespace Amethyst
 		public readonly Dictionary<NamespacedID, GlobalSymbol> Symbols = [];
 		public readonly Dictionary<NamespacedID, GlobalTypeSymbol> Types = [];
 
-        public readonly FunctionContext GlobalInitFunc;
+		public readonly FunctionContext GlobalInitFunc;
 
 		public Dictionary<string, string> Files { get; } = [];
 
@@ -42,7 +42,7 @@ namespace Amethyst
 			var res = new CommandLine.Parser(config =>
 			{
 				config.HelpWriter = null;
-            }).ParseArguments<Options>(args);
+			}).ParseArguments<Options>(args);
 
 			if (res.Errors.Any())
 			{
@@ -51,7 +51,7 @@ namespace Amethyst
 					h.AdditionalNewLineAfterOption = false;
 
 					var version = Assembly.GetExecutingAssembly().GetName().Version ?? new Version(0, 0, 0);
-                    h.Heading = $"Amethyst Compiler {version.Major}.{version.Minor}.{version.Build}";
+					h.Heading = $"Amethyst Compiler {version.Major}.{version.Minor}.{version.Build}";
 
 					h.Copyright = @"
 Usage:
@@ -62,7 +62,7 @@ amethyst [files...] -o <output>";
 
 				Console.Error.Write(helpText);
 
-                Environment.Exit(1);
+				Environment.Exit(1);
 			}
 
 			Options = res.Value;
@@ -78,31 +78,49 @@ amethyst [files...] -o <output>";
 			var errored = false;
 			foreach (var i in new List<string>([.. Options.Inputs.SelectMany(i => Glob.Files(".", i)), .. Glob.Files(Path.Join(AppContext.BaseDirectory, "core"), "**/*.ame").Select(i => Path.Join(AppContext.BaseDirectory, "core", i))]))
 			{
-				if (!ParseFile(i)) errored = true;
+				if (!ParseFile(i))
+				{
+					errored = true;
+				}
 			}
 
-			if (errored) return false;
+			if (errored)
+			{
+				return false;
+			}
 
 			// Do class decls before
 			foreach (var i in Roots)
 			{
-				if (!i.Value.BuildSymbols()) errored = true;
+				if (!i.Value.BuildSymbols())
+				{
+					errored = true;
+				}
 			}
 
 			foreach (var i in Roots)
 			{
-				if (!i.Value.CompileFunctions(out var funcs)) errored = true;
-				else IR.AddFunctions(funcs);
+				if (!i.Value.CompileFunctions(out var funcs))
+				{
+					errored = true;
+				}
+				else
+				{
+					IR.AddFunctions(funcs);
+				}
 			}
 
 			if (GlobalInitFunc.FirstBlock.Instructions.Count != 0)
 			{
-				GlobalInitFunc.Add(new ReturnInsn());
+				_ = GlobalInitFunc.Add(new ReturnInsn());
 				GlobalInitFunc.Finish();
 				IR.AddFunctions(GlobalInitFunc);
 			}
 
-			if (errored) return false;
+			if (errored)
+			{
+				return false;
+			}
 
 			return IR.Compile();
 		}
@@ -127,16 +145,25 @@ amethyst [files...] -o <output>";
 			try
 			{
 				var root = parser.root();
-				if (error.Errored) return false;
+				if (error.Errored)
+				{
+					return false;
+				}
 
 				Roots[filename] = (RootNode)visitor.Visit(root);
 			}
 			catch
 			{
-				if (!error.Errored) throw;
+				if (!error.Errored)
+				{
+					throw;
+				}
 			}
 
-			if (error.Errored) return false;
+			if (error.Errored)
+			{
+				return false;
+			}
 
 			return true;
 		}
@@ -149,7 +176,7 @@ amethyst [files...] -o <output>";
 			}
 			catch (AmethystError e)
 			{
-				e.Display(this, loc);
+				_ = e.Display(this, loc);
 				return false;
 			}
 
@@ -166,12 +193,12 @@ amethyst [files...] -o <output>";
 			}
 			catch (AmethystError e)
 			{
-				e.Display(this, loc);
+				_ = e.Display(this, loc);
 				return false;
 			}
 			finally
 			{
-				ctx.LocationStack.Pop();
+				_ = ctx.LocationStack.Pop();
 			}
 
 			return true;
@@ -179,17 +206,29 @@ amethyst [files...] -o <output>";
 
 		public void AddSymbol(GlobalSymbol sym)
 		{
-			if (Symbols.TryGetValue(sym.ID, out var old)) throw new RedefinedSymbolError(sym.ID.ToString(), old.Location);
-			else Symbols[sym.ID] = sym;
+			if (Symbols.TryGetValue(sym.ID, out var old))
+			{
+				throw new RedefinedSymbolError(sym.ID.ToString(), old.Location);
+			}
+			else
+			{
+				Symbols[sym.ID] = sym;
+			}
 		}
 
-        public void AddType(GlobalTypeSymbol sym)
-        {
-            if (Types.TryGetValue(sym.ID, out var old)) throw new RedefinedSymbolError(sym.ID.ToString(), old.Location);
-            else Types[sym.ID] = sym;
-        }
+		public void AddType(GlobalTypeSymbol sym)
+		{
+			if (Types.TryGetValue(sym.ID, out var old))
+			{
+				throw new RedefinedSymbolError(sym.ID.ToString(), old.Location);
+			}
+			else
+			{
+				Types[sym.ID] = sym;
+			}
+		}
 
-        public (FunctionContext ctx, FunctionValue func) AnonymousFunction(FunctionTypeSpecifier type)
+		public (FunctionContext ctx, FunctionValue func) AnonymousFunction(FunctionTypeSpecifier type)
 		{
 			var func = new FunctionValue(new("amethyst", "zz_internal/" + GeodeBuilder.RandomString), type);
 			var ctx = new FunctionContext(this, func, []);
@@ -221,6 +260,6 @@ amethyst [files...] -o <output>";
 
 	public interface IFileHandler
 	{
-		public Dictionary<string, string> Files { get; }
+		Dictionary<string, string> Files { get; }
 	}
 }

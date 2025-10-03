@@ -12,9 +12,18 @@ namespace Amethyst.AST.Expressions
 		protected override ValueRef ExecuteImpl(FunctionContext ctx, TypeSpecifier? expected)
 		{
 			var func = Function.Execute(ctx, null);
-			if (func.Value is Intrinsic i) return i.Execute(ctx, [.. Args.Select(i => i.Execute(ctx, null))]);
-			else if (func.Value is FunctionValue f) return ctx.Call(f, [.. Args.Zip(f.FuncType.Parameters).Select(i => i.First.Execute(ctx, i.Second.Type))]);
-			else throw new NotImplementedException();
+			if (func.Value is Intrinsic i)
+			{
+				return i.Execute(ctx, [.. Args.Select(i => i.Execute(ctx, null))]);
+			}
+			else if (func.Value is FunctionValue f)
+			{
+				return ctx.Call(f, [.. Args.Zip(f.FuncType.Parameters).Select(i => i.First.Execute(ctx, i.Second.Type))]);
+			}
+			else
+			{
+				throw new NotImplementedException();
+			}
 		}
 	}
 }

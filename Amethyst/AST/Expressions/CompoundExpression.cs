@@ -3,32 +3,38 @@ using Amethyst.Geode;
 using Amethyst.Geode.IR;
 using Amethyst.Geode.IR.Instructions;
 using Amethyst.Geode.Types;
-using Datapack.Net.Data;
 
 namespace Amethyst.AST.Expressions
 {
-    public class CompoundExpression(LocationRange loc, IEnumerable<KeyValuePair<string, Expression>> values) : Expression(loc)
-    {
-        public readonly Dictionary<string, Expression> Values = new(values);
+	public class CompoundExpression(LocationRange loc, IEnumerable<KeyValuePair<string, Expression>> values) : Expression(loc)
+	{
+		public readonly Dictionary<string, Expression> Values = new(values);
 
-        protected override ValueRef ExecuteImpl(FunctionContext ctx, TypeSpecifier? expected)
+		protected override ValueRef ExecuteImpl(FunctionContext ctx, TypeSpecifier? expected)
 		{
-            var type = expected ?? PrimitiveTypeSpecifier.Compound;
+			var type = expected ?? PrimitiveTypeSpecifier.Compound;
 
-            SortedDictionary<string, ValueRef> vals = [];
+			SortedDictionary<string, ValueRef> vals = [];
 
 			foreach (var (k, v) in Values)
 			{
-                if (type.Property(k) is not TypeSpecifier t) throw new PropertyError(type.ToString(), k);
-                vals[k] = v.Execute(ctx, t);
-            }
+				if (type.Property(k) is not TypeSpecifier t)
+				{
+					throw new PropertyError(type.ToString(), k);
+				}
+
+				vals[k] = v.Execute(ctx, t);
+			}
 
 			foreach (var (k, _) in type.Properties)
 			{
-                if (!vals.ContainsKey(k) && type.DefaultPropertyValue(k) is Value v) vals[k] = v;
+				if (!vals.ContainsKey(k) && type.DefaultPropertyValue(k) is Value v)
+				{
+					vals[k] = v;
+				}
 			}
 
 			return ctx.Add(new CompoundInsn(vals, type));
-        }
-    }
+		}
+	}
 }
