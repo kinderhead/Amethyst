@@ -8,6 +8,6 @@ namespace Amethyst.AST.Expressions
 	{
 		public readonly Expression Inner = inner;
 
-		protected override ValueRef _Execute(FunctionContext ctx, TypeSpecifier? expected) => ctx.Add(new ReferenceInsn(Inner.Execute(ctx, null)));
+		protected override ValueRef ExecuteImpl(FunctionContext ctx, TypeSpecifier? expected) => ctx.Add(new ReferenceInsn(Inner.Execute(ctx, null)));
 	}
 }

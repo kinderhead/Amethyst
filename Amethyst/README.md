@@ -177,9 +177,10 @@ Typed NBT compounds are defined using `struct`s like so:
 struct vec {
     int x;
     int y;
+    int z;
 }
 
-vec obj = { x: 10, y: -10 };
+vec obj = { x: 10, y: -10 }; // obj.z == 0
 ```
 
 Properties are set to their default values if not explicitly set. Additionally, `struct`s follow the same namespace rules that functions and global variables do.

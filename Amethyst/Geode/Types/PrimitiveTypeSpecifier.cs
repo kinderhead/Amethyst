@@ -7,7 +7,7 @@ namespace Amethyst.Geode.Types
 	public class PrimitiveTypeSpecifier(NBTType type) : TypeSpecifier
 	{
 		public override bool Operable => NBTValue.IsOperableType(Type);
-		public override bool IsList => Type == NBTType.List || Type == NBTType.IntArray || Type == NBTType.LongArray || Type == NBTType.ByteArray;
+		public override bool IsList => Type is NBTType.List or NBTType.IntArray or NBTType.LongArray or NBTType.ByteArray;
 		public readonly NBTType Type = type;
 		public override NBTType EffectiveType => Type;
 		public override NamespacedID ID => $"minecraft:{this}";

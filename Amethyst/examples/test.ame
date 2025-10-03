@@ -1,13 +1,14 @@
 namespace example;
 
 struct vec {
-    int x;
-    int y;
+    int[] arr;
 }
 
 #load
 void main() {
-    vec v = { x: 7 };
+    vec v;
+
+    v.arr.add(7);
 
     print(v);
 }

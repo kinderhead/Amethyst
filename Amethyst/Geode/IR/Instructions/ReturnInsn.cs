@@ -22,7 +22,8 @@ namespace Amethyst.Geode.IR.Instructions
             if (val is not null && val.Type != ctx.Func.Decl.FuncType.ReturnType) throw new InvalidTypeError(val.Type.ToString(), ctx.Func.Decl.FuncType.ReturnType.ToString());
             if (val is null && ctx.Func.Decl.FuncType.ReturnType is not VoidTypeSpecifier) throw new InvalidTypeError("void", ctx.Func.Decl.FuncType.ReturnType.ToString());
 
-            if (ctx.Block != ctx.Func.FirstBlock) ctx.Func.GetIsFunctionReturningValue().Store(new LiteralValue(true), ctx);
+            if (ctx.Block != ctx.Func.FirstBlock)
+				FunctionContext.GetIsFunctionReturningValue().Store(new LiteralValue(true), ctx);
             if (val is not null) ctx.Func.GetFunctionReturnValue().Store(val, ctx);
         }
 

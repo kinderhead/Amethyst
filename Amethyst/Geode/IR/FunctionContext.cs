@@ -385,7 +385,7 @@ namespace Amethyst.Geode.IR
 
         public NamespacedID GetNewInternalID() => new(Decl.ID.Namespace, $"zz_internal/{GeodeBuilder.RandomString}");
 
-        public StackValue GetIsFunctionReturningValue() => new(-1, "returning", PrimitiveTypeSpecifier.Bool);
+        public static StackValue GetIsFunctionReturningValue() => new(-1, "returning", PrimitiveTypeSpecifier.Bool);
         public StackValue GetFunctionReturnValue() => GetFunctionReturnValue(Decl.FuncType.ReturnType, UsesStack ? -2 : -1);
         public static StackValue GetFunctionReturnValue(TypeSpecifier type, int depth = -2) => new(depth, "ret", type);
 

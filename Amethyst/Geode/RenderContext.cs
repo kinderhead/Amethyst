@@ -150,7 +150,7 @@ namespace Amethyst.Geode
                 {
                     Add(new Execute().If.Score(success.Target, success.Score, 0).Run(WithFaux(ctx =>
                     {
-                        Func.GetIsFunctionReturningValue().Store(success, ctx);
+						FunctionContext.GetIsFunctionReturningValue().Store(success, ctx);
                     }).Single()));
                 }
 

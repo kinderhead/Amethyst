@@ -31,7 +31,7 @@ struct
     ;
 
 declaration
-    : type RawIdentifier Semi+
+    : type RawIdentifier (Eq expression)? Semi+
     ;
 
 statement

@@ -21,7 +21,7 @@ namespace Amethyst.AST.Expressions
 		public readonly AssignmentType Type = type;
         public readonly Expression Expression = expr;
 
-		protected override ValueRef _Execute(FunctionContext ctx, TypeSpecifier? expected)
+		protected override ValueRef ExecuteImpl(FunctionContext ctx, TypeSpecifier? expected)
 		{
             var dest = Dest.Execute(ctx, null);
             var val = Expression.Execute(ctx, dest.Type.AssignmentOverloadType, false);

@@ -70,14 +70,14 @@ namespace Datapack.Net.Function.Commands
         public class Modify(IDataTarget target, bool macro = false) : DataCommand(macro)
 		{
             public readonly IDataTarget Target = target;
-            public IDataTarget Source;
+            public IDataTarget? Source;
 
             public int? Start;
             public int? End;
             public string? Val;
 
-            public string Type;
-            public string Modifier;
+            public string? Type;
+            public string? Modifier;
 
             public Modify(Position target, string targetPath, bool macro = false) : this(new BlockDataTarget(target, targetPath), macro) { }
             public Modify(IEntityTarget target, string targetPath, bool macro = false) : this(new EntityDataTarget(target, targetPath), macro) { }
@@ -196,7 +196,7 @@ namespace Datapack.Net.Function.Commands
         public class Remove(IDataTarget target, bool macro = false) : DataCommand(macro)
 		{
             public readonly IDataTarget Target = target;
-            public readonly string TargetPath;
+            public readonly string? TargetPath;
 
             public Remove(Position target, string targetPath, bool macro = false) : this(new BlockDataTarget(target, targetPath), macro) { }
             public Remove(IEntityTarget target, string targetPath, bool macro = false) : this(new EntityDataTarget(target, targetPath), macro) { }

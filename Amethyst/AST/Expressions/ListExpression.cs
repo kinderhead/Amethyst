@@ -11,7 +11,7 @@ namespace Amethyst.AST.Expressions
     {
         public readonly List<Expression> Expressions = exprs;
 
-        protected override ValueRef _Execute(FunctionContext ctx, TypeSpecifier? expected)
+        protected override ValueRef ExecuteImpl(FunctionContext ctx, TypeSpecifier? expected)
 		{
             if (Expressions.Count == 0) return new LiteralValue(new NBTList());
 

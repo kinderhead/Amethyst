@@ -24,7 +24,7 @@ namespace Amethyst.AST
 
 			foreach (var i in context.children)
 			{
-				if (i.GetText() == "<EOF>" || i.GetText() == ";") continue;
+				if (i.GetText() is "<EOF>" or ";") continue;
 				else if (i is AmethystParser.NamespaceContext ns) currentNamespace = Visit(ns.id());
 				else if (i is AmethystParser.FunctionContext func) root.Functions.Add((FunctionNode)Visit(func));
 				else if (i is AmethystParser.InitAssignmentStatementContext init) root.Children.Add(new GlobalVariableNode(Loc(init), Visit(init.type()), IdentifierToID(Visit(init.id())), init.expression() is null ? null : Visit(init.expression())));
@@ -47,7 +47,7 @@ namespace Amethyst.AST
 			{
 				var text = Visit(i.id());
 				if (text.Contains(':')) return new NamespacedID(text);
-				else if (text == "load" || text == "tick") return new NamespacedID("minecraft", text);
+				else if (text is "load" or "tick") return new NamespacedID("minecraft", text);
 				else return new NamespacedID(currentNamespace, text);
 			})], mod, Visit(context.type()),
 				IdentifierToID(Visit(context.name)),
@@ -81,7 +81,16 @@ namespace Amethyst.AST
 
 		public override Node VisitStruct([NotNull] AmethystParser.StructContext context)
 		{
-			return new AbstractStructTypeSpecifier(Loc(context), IdentifierToID(Visit(context.id())), new(context.declaration().Select(i => new KeyValuePair<string, AbstractTypeSpecifier>(i.RawIdentifier().GetText(), Visit(i.type())))));
+			var props = new Dictionary<string, AbstractTypeSpecifier>();
+			var defaults = new Dictionary<string, Expression>();
+
+			foreach (var i in context.declaration())
+			{
+				props[i.RawIdentifier().GetText()] = Visit(i.type());
+				if (i.expression() is not null) defaults[i.RawIdentifier().GetText()] = Visit(i.expression());
+            }
+
+			return new AbstractStructTypeSpecifier(Loc(context), IdentifierToID(Visit(context.id())), props, defaults);
 		}
 
 		public override Node VisitInitAssignmentStatement([NotNull] AmethystParser.InitAssignmentStatementContext context) => new InitAssignmentNode(Loc(context), Visit(context.type()), Visit(context.id()), context.expression() is null ? null : Visit(context.expression()));
@@ -272,7 +281,7 @@ namespace Amethyst.AST
 		public Statement Visit(AmethystParser.StatementContext context) => (Statement)Visit((IParseTree)context);
 		public Expression Visit(AmethystParser.ExpressionContext context) => (Expression)Visit((IParseTree)context);
 		public List<Expression> Visit(AmethystParser.ExpressionListContext context) => [.. context.expression().Select(Visit)];
-		public string Visit(AmethystParser.IdContext context) => context.GetText();
+		public static string Visit(AmethystParser.IdContext context) => context.GetText();
 
 		public LocationRange Loc(ParserRuleContext ctx) => LocOffset(LocationRange.From(Filename, ctx));
 
@@ -285,7 +294,7 @@ namespace Amethyst.AST
 			else return new(currentNamespace, name);
 		}
 
-		public NBTValue ParseNumber(string raw)
+		public static NBTValue ParseNumber(string raw)
 		{
 			switch (char.ToLower(raw.Last()))
 			{

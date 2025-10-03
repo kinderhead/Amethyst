@@ -17,7 +17,7 @@ namespace Amethyst.Geode.IR.Instructions
             var ifTrue = Arg<Block>(1);
             var ifFalse = Arg<Block>(2);
 
-            var returning = ctx.Func.GetIsFunctionReturningValue();
+            var returning = FunctionContext.GetIsFunctionReturningValue();
 
             ctx.Add(cond.If(new(), ctx).Run(ctx.CallSubFunction(ifTrue.Function)));
             ctx.Add(new Execute().Unless.Data(returning.Storage, returning.Path).Run(ctx.CallSubFunction(ifFalse.Function)));

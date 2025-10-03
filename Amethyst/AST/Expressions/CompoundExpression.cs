@@ -11,7 +11,7 @@ namespace Amethyst.AST.Expressions
     {
         public readonly Dictionary<string, Expression> Values = new(values);
 
-        protected override ValueRef _Execute(FunctionContext ctx, TypeSpecifier? expected)
+        protected override ValueRef ExecuteImpl(FunctionContext ctx, TypeSpecifier? expected)
 		{
             var type = expected ?? PrimitiveTypeSpecifier.Compound;
 

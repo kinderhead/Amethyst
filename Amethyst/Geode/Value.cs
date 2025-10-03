@@ -66,7 +66,7 @@ namespace Amethyst.Geode
 
         public virtual void Store(PropertyValue prop, RenderContext ctx)
         {
-            var tmp = ctx.Builder.TempStorage(Type);
+            var tmp = GeodeBuilder.TempStorage(Type);
             prop.Get(tmp, ctx);
             Store(tmp, ctx);
         }
@@ -75,7 +75,7 @@ namespace Amethyst.Geode
 
         public virtual void ListAdd(ScoreValue score, RenderContext ctx)
         {
-            var tmp = ctx.Builder.TempStorage(PrimitiveTypeSpecifier.Compound);
+            var tmp = GeodeBuilder.TempStorage(PrimitiveTypeSpecifier.Compound);
             tmp.Store(score, ctx);
             ListAdd(tmp, ctx);
         }
@@ -84,7 +84,7 @@ namespace Amethyst.Geode
 
         public virtual void ListAdd(ConditionalValue cond, RenderContext ctx)
         {
-            var tmp = ctx.Builder.TempStorage(PrimitiveTypeSpecifier.Compound);
+            var tmp = GeodeBuilder.TempStorage(PrimitiveTypeSpecifier.Compound);
             tmp.Store(cond, ctx);
             ListAdd(tmp, ctx);
         }
@@ -93,7 +93,7 @@ namespace Amethyst.Geode
 
         public virtual void ListAdd(PropertyValue prop, RenderContext ctx)
         {
-            var tmp = ctx.Builder.TempStorage(Type);
+            var tmp = GeodeBuilder.TempStorage(Type);
             prop.Get(tmp, ctx);
             ListAdd(tmp, ctx);
         }

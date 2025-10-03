@@ -5,7 +5,7 @@ namespace Amethyst
 	public class Options
 	{
 		[Option('o', "output", HelpText = "Zipped datapack, defaults to first input file's name.")]
-		public string Output { get; set; }
+		public required string Output { get; set; }
 
 		[Option('f', "pack-format", HelpText = "Datapack format.", Default = 71)]
 		public int PackFormat { get; set; }
@@ -21,6 +21,6 @@ namespace Amethyst
 
 
         [Value(0, MetaName = "input files", HelpText = "Files to compile.", Required = true)]
-		public IEnumerable<string> Inputs { get; set; }
+		public required IEnumerable<string> Inputs { get; set; }
 	}
 }

@@ -140,7 +140,7 @@ namespace Amethyst.Geode
             return score;
         }
 
-        public StorageValue TempStorage(TypeSpecifier type) => new(RuntimeID, $"tmp.{RandomString}", type);
+        public static StorageValue TempStorage(TypeSpecifier type) => new(RuntimeID, $"tmp.{RandomString}", type);
 
         public void Register(MCFunction func) => Datapack.Functions.Add(func);
         public void Register(Score score) => registeredScores.Add(score);

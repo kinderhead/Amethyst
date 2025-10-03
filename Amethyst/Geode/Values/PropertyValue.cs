@@ -25,7 +25,7 @@ namespace Amethyst.Geode.Values
 
 		public override FormattedText Render(FormattedText text, RenderContext ctx)
 		{
-			var tmp = ctx.Builder.TempStorage(Type);
+			var tmp = GeodeBuilder.TempStorage(Type);
 			Get(tmp, ctx);
 			return tmp.Render(text, ctx);
 		}

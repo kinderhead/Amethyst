@@ -12,7 +12,7 @@ namespace Amethyst.AST.Expressions
 		public readonly ScoreOperation Op = op;
 		public readonly Expression Right = right;
 
-		protected override ValueRef _Execute(FunctionContext ctx, TypeSpecifier? expected)
+		protected override ValueRef ExecuteImpl(FunctionContext ctx, TypeSpecifier? expected)
 		{
 			var left = ctx.Add(new LoadInsn(Left.Execute(ctx, PrimitiveTypeSpecifier.Int)));
 			var right = ctx.Add(new LoadInsn(Right.Execute(ctx, PrimitiveTypeSpecifier.Int)));
