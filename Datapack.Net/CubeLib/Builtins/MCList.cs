@@ -92,8 +92,10 @@ namespace Datapack.Net.CubeLib.Builtins
         }
 
         [DeclareMC("init")]
-        private static void _Init(MCList<T> self)
-        {
+#pragma warning disable IDE1006
+		private static void _Init(MCList<T> self)
+#pragma warning restore IDE1006
+		{
             self.List = new NBTList();
         }
     }
