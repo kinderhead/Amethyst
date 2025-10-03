@@ -191,7 +191,25 @@ struct vec {
 vec obj = { x: 10, y: -10 }; // obj.z == 0
 ```
 
-Properties are set to their default values if not explicitly set. Additionally, `struct`s follow the same namespace rules that functions and global variables do.
+Properties are set to their default values if not explicitly set. Additionally, structs follow the same namespace rules that functions and global variables do.
+
+Structs can have also have methods:
+
+```cs
+struct vec {
+    int x;
+    int y;
+    int z;
+
+    int sum() {
+        return this.x + this.y + this.z;
+    }
+}
+
+print(obj.sum());
+```
+
+Struct methods are processed internally as [Extension Methods](#extension-methods), where the first parameter is `macro T& this`. Create an extension method outside of the struct to customize the `this` parameter (eg. removing `macro`).
 
 ### Lists
 

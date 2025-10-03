@@ -16,11 +16,19 @@ namespace Amethyst.Geode.IR.Instructions
 		{
 			var msg = new FormattedText();
 
+			var tmp = 0;
 			foreach (var i in Arguments)
 			{
 				if (i is not ValueRef vref || vref.Value is not Value val)
 				{
 					throw new InvalidOperationException($"Invalid print argument of type {i.GetType().Name}");
+				}
+
+				if (val is RawDataTargetValue macro && macro.RawTarget.Contains("$("))
+				{
+					var tmpStk = new StackValue(-1, $"render{tmp++}", val.Type);
+					tmpStk.Store(macro, ctx);
+					val = tmpStk;
 				}
 
 				val.Render(msg, ctx);

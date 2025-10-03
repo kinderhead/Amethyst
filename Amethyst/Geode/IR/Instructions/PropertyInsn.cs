@@ -29,7 +29,7 @@ namespace Amethyst.Geode.IR.Instructions
 			var val = Arg<ValueRef>(0);
 			var prop = Arg<ValueRef>(1);
 
-			if (val.Type is not ReferenceTypeSpecifier && val.Value is DataTargetValue nbt && prop.Value is LiteralValue l)
+			if (prop.Value is LiteralValue l)
 			{
 				if (l.Value is not NBTString name)
 				{
@@ -37,7 +37,15 @@ namespace Amethyst.Geode.IR.Instructions
 				}
 
 				Remove();
-				return WeakReferenceTypeSpecifier.From(nbt.Property(name, ActualReturnType));
+
+				if (val.Type is not ReferenceTypeSpecifier && val.Value is DataTargetValue nbt)
+				{
+					return WeakReferenceTypeSpecifier.From(nbt.Property(name, ActualReturnType));
+				}
+				else if (val.Type is ReferenceTypeSpecifier && val.Value is IConstantValue v)
+				{
+					return new LiteralValue(new NBTString($"{v.Value}.{name.Value}"), new WeakReferenceTypeSpecifier(ActualReturnType));
+				}
 			}
 
 			return null;

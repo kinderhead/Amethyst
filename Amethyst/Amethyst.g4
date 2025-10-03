@@ -27,7 +27,7 @@ block
     ;
 
 struct
-    : Struct id LBrak declaration* RBrak
+    : Struct id LBrak (declaration | function)* RBrak
     ;
 
 declaration

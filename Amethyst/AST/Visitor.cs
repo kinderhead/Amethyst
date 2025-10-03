@@ -34,7 +34,7 @@ namespace Amethyst.AST
 				}
 				else if (i is AmethystParser.FunctionContext func)
 				{
-					root.Functions.Add((FunctionNode)Visit(func));
+					root.Children.Add((FunctionNode)Visit(func));
 				}
 				else if (i is AmethystParser.InitAssignmentStatementContext init)
 				{
@@ -105,7 +105,14 @@ namespace Amethyst.AST
 				props[i.RawIdentifier().GetText()] = Visit(i.type());
 			}
 
-			return new AbstractStructTypeSpecifier(Loc(context), IdentifierToID(Visit(context.id())), props);
+			var id = IdentifierToID(Visit(context.id()));
+
+			var oldNs = currentNamespace;
+			currentNamespace = id.ToString();
+			List<FunctionNode> methods = [.. context.function().Select(i => (FunctionNode)Visit(i))];
+			currentNamespace = oldNs;
+
+			return new AbstractStructTypeSpecifier(Loc(context), id, props, methods);
 		}
 
 		public override Node VisitInitAssignmentStatement([NotNull] AmethystParser.InitAssignmentStatementContext context) => new InitAssignmentNode(Loc(context), Visit(context.type()), Visit(context.id()), context.expression() is null ? null : Visit(context.expression()));

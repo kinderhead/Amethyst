@@ -11,7 +11,7 @@ namespace Amethyst.AST.Statements
 		public readonly NamespacedID Name = name;
 		public readonly Expression? Expression = expr;
 
-		public void Process(Compiler ctx)
+		public void Process(Compiler ctx, RootNode root)
 		{
 			var val = new StorageValue(new NamespacedID(Name.Namespace, "globals"), Name.Path, Type.Resolve(ctx, Name.ContainingFolder()));
 			ctx.AddSymbol(new(Name, Location, val));

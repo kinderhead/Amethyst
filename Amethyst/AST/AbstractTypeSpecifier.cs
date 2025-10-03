@@ -103,12 +103,22 @@ namespace Amethyst.AST
 		protected override TypeSpecifier ResolveImpl(Compiler ctx, string baseNamespace, bool allowAuto = false) => new WeakReferenceTypeSpecifier(Inner.Resolve(ctx, baseNamespace));
 	}
 
-	public class AbstractStructTypeSpecifier(LocationRange loc, NamespacedID id, Dictionary<string, AbstractTypeSpecifier> props) : AbstractTypeSpecifier(loc), IRootChild
+	public class AbstractStructTypeSpecifier(LocationRange loc, NamespacedID id, Dictionary<string, AbstractTypeSpecifier> props, List<FunctionNode> methods) : AbstractTypeSpecifier(loc), IRootChild
 	{
 		public readonly NamespacedID ID = id;
 		public readonly Dictionary<string, AbstractTypeSpecifier> Properties = props;
+		public readonly List<FunctionNode> Methods = methods;
 
-		public void Process(Compiler ctx) => ctx.AddType(new(ID, Location, Resolve(ctx, ID.ContainingFolder()), this));
+		public void Process(Compiler ctx, RootNode root)
+		{
+			ctx.AddType(new(ID, Location, Resolve(ctx, ID.ContainingFolder()), this));
+
+			foreach (var i in Methods)
+			{
+				i.Parameters.Insert(0, new AbstractParameter(ParameterModifiers.Macro, new AbstractReferenceTypeSpecifier(Location, new SimpleAbstractTypeSpecifier(Location, ID.ToString())), "this"));
+				i.Process(ctx, root);
+			}
+		}
 
 		protected override TypeSpecifier ResolveImpl(Compiler ctx, string baseNamespace, bool allowAuto = false) => new StructTypeSpecifier(ID, new(Properties.Select(i => new KeyValuePair<string, TypeSpecifier>(i.Key, i.Value.Resolve(ctx, baseNamespace)))));
 	}

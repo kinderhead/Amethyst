@@ -1,20 +1,15 @@
 namespace example;
 
 struct vec {
-    int[] arr;
-}
+    int x;
 
-int x = 7;
+    void test() {
+        print(this.x);
+    }
+}
 
 #load
 void main() {
-    vec v;
-    v.arr.add(7);
+    vec v = { x: 9 };
     v.test();
-}
-
-namespace example:vec;
-
-void test(vec& this) {
-    print(this.arr, x);
 }

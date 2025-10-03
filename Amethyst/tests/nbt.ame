@@ -4,6 +4,10 @@ struct vec {
     int x;
     int y;
     int z;
+
+    int sum() {
+        return this.x + this.y + this.z;
+    }
 }
 
 #test
@@ -27,6 +31,7 @@ void test_static() {
     assert(obj.x == 100);
     assert(obj.y == 7);
     assert(obj.z == 0);
+    assert(obj.sum() == 107);
 
     complete();
 }

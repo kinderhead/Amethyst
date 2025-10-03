@@ -6,18 +6,18 @@ namespace Amethyst.AST
 	public class RootNode(LocationRange loc, Compiler ctx) : Node(loc)
 	{
 		public readonly Compiler Ctx = ctx;
-		public readonly List<FunctionNode> Functions = [];
 		public readonly List<IRootChild> Children = [];
+		public readonly List<FunctionNode> Functions = [];
 
 		public bool BuildSymbols()
 		{
 			var success = true;
 
-			foreach (var i in Children.Concat(Functions))
+			foreach (var i in Children)
 			{
 				if (!Ctx.WrapError(i.Location, () =>
 				{
-					i.Process(Ctx);
+					i.Process(Ctx, this);
 				}))
 				{
 					success = false;
@@ -59,6 +59,6 @@ namespace Amethyst.AST
 	{
 		LocationRange Location { get; }
 
-		void Process(Compiler ctx);
+		void Process(Compiler ctx, RootNode root);
 	}
 }

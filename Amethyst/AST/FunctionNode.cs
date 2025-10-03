@@ -63,7 +63,11 @@ namespace Amethyst.AST
 			return true;
 		}
 
-		public void Process(Compiler ctx) => ctx.AddSymbol(new(ID, Location, new FunctionValue(ID, GetFunctionType(ctx)), this));
+		public void Process(Compiler ctx, RootNode root)
+		{
+			ctx.AddSymbol(new(ID, Location, new FunctionValue(ID, GetFunctionType(ctx)), this));
+			root.Functions.Add(this);
+		}
 	}
 
 	[Flags]
