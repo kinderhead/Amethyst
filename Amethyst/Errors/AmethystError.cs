@@ -11,7 +11,7 @@ namespace Amethyst.Errors
 
 		public virtual CompilerMessager Display(IFileHandler handler, LocationRange loc, bool last = true)
 		{
-			// Console.WriteLine(StackTrace);
+			//Console.WriteLine(StackTrace);
 
 			var msg = new CompilerMessager(Color.Red);
 			msg.Header($"Error at {loc.Start}");
@@ -21,11 +21,6 @@ namespace Amethyst.Errors
 			msg.AddContent($"{GetType().Name}: [yellow]{RawMessage.EscapeMarkup()}[/]");
 
 			return msg;
-
-			//AnsiConsole.MarkupLine($"[red]Error at {loc.Start}\n│[/]");
-			//AnsiConsole.MarkupLine("[red]│[/]   [turquoise2]" + lines[loc.Start.Line - 1].EscapeMarkup() + "[/]");
-			//AnsiConsole.MarkupLine("[red]│[/]   " + new string(' ', loc.Start.Column - 1) + $"[red]{new string('~', lastCol - loc.Start.Column + 1)}[/]");
-			//AnsiConsole.MarkupLine($"[red]{(last ? "└─" : "│ ")}  {GetType().Name}:[/] [yellow]{RawMessage.EscapeMarkup()}[/]{(last ? "\n\n" : "")}");
 		}
 
 		public override string ToString() => Message;
@@ -46,10 +41,6 @@ namespace Amethyst.Errors
 			msg.AddCode(handler, Location2, last);
 
 			return msg;
-
-			//AnsiConsole.MarkupLine($"[red]│\n│[/]   [green]{RawMessage2} {Location2.Start}[/]\n[red]│[/]");
-			//AnsiConsole.MarkupLine("[red]│[/]   [turquoise2]" + lines[Location2.Start.Line - 1] + "[/]");
-			//AnsiConsole.MarkupLine("[red]└─[/]  " + new string(' ', Location2.Start.Column - 1) + $"[violet]{new string('~', lastCol - Location2.Start.Column + 1)}[/]{(last ? "\n\n" : "")}");
 		}
 	}
 

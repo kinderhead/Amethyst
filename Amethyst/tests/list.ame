@@ -57,3 +57,23 @@ void test_int_list_literal() {
     
     complete();
 }
+
+#test
+void test_int_list_ref() {
+    start("int list ref");
+
+    int[][] arr;
+    arr.add([1,2,5]);
+    arr[0].add(7);
+
+    int i = 0;
+    arr[i].add(-90);
+
+    assert(arr[0][0] == 1);
+    assert(arr[0][1] == 2);
+    assert(arr[0][2] == 5);
+    assert(arr[0][3] == 7);
+    assert(arr[0][4] == -90);
+    
+    complete();
+}

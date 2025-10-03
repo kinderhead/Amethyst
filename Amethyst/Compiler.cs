@@ -196,6 +196,7 @@ amethyst [files...] -o <output>";
 
 			AddSymbol(new("builtin:true", LocationRange.None, new LiteralValue(true)));
 			AddSymbol(new("builtin:false", LocationRange.None, new LiteralValue(false)));
+			AddSymbol(new("amethyst:stack", LocationRange.None, new StorageValue(GeodeBuilder.RuntimeID, "stack", new ListTypeSpecifier(PrimitiveTypeSpecifier.Compound))));
 
 			//var listAdd = new ListAdd();
 			//AddSymbol(new(listAdd.ID, LocationRange.None, listAdd));

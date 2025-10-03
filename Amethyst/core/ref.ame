@@ -1,15 +1,11 @@
 namespace amethyst:core/ref;
 
 string get-stack-ref(string name, int offset) {
-    // TODO: list length
-    int x;
-    @/execute store result storage amethyst:runtime stack[-1].frame0.x int 1 run data get storage amethyst:runtime stack
-
-    x = x + offset - 1;
+    offset += amethyst:stack.size() - 1;
 
     // TODO: string concatenation
     string ref;
-    @/data modify storage amethyst:runtime stack[-1].frame0.ref set value "storage amethyst:runtime stack[$(x)].$(name)"
+    @/data modify storage amethyst:runtime stack[-1].frame0.ref set value "storage amethyst:runtime stack[$(offset)].$(name)"
     
     return ref;
 }
@@ -20,6 +16,14 @@ inline void set(macro nbt^ ref, macro string val) {
 
 inline void set-ref(macro nbt^ ref, macro nbt^ val) {
     @/data modify $(ref) set from $(val)
+}
+
+inline void append(macro nbt^ ref, macro string val) {
+    @/data modify $(ref) append value $(val)
+}
+
+inline void append-ref(macro nbt^ ref, macro nbt^ val) {
+    @/data modify $(ref) append from $(val)
 }
 
 inline void set-score(macro nbt dest, macro nbt^ ref) {

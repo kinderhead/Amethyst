@@ -92,8 +92,9 @@ namespace Amethyst.Geode.IR
                 if (i.Locals.TryGetValue(name, out var variable)) return variable;
             }
 
-            if (GetGlobal(new(Decl.ID.ContainingFolder(), name)) is Value v) return v;
-            if (GetGlobal(new("builtin", name)) is Value v2) return v2;
+            if (name.Contains(':') && GetGlobal(new NamespacedID(name)) is Value v) return v;
+            else if (GetGlobal(new(Decl.ID.ContainingFolder(), name)) is Value v2) return v2;
+            else if (GetGlobal(new("builtin", name)) is Value v3) return v3;
 
             return null;
         }

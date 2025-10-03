@@ -2,7 +2,10 @@ namespace example;
 
 #load
 void main() {
-    nbt x = { thing1: 7, thing2: 6s };
+    string[] arr;
+    string[]& ref = arr;
     
-    print(x);
+    ref.add("womp womp");
+
+    print(arr);
 }
