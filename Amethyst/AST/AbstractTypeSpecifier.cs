@@ -1,5 +1,4 @@
-﻿using Amethyst.AST.Expressions;
-using Amethyst.Errors;
+﻿using Amethyst.Errors;
 using Amethyst.Geode;
 using Amethyst.Geode.IR;
 using Amethyst.Geode.Types;
@@ -67,10 +66,13 @@ namespace Amethyst.AST
 				case "nbt":
 					return new PrimitiveTypeSpecifier(NBTType.Compound);
 				default:
-					var type = Type.Contains(':') ? Type : $"{baseNamespace}:{Type}";
-					if (ctx.Types.TryGetValue(type, out var ret))
+					if (Type.Contains(':') && ctx.Types.TryGetValue(Type, out var ret))
 					{
 						return ret.Type;
+					}
+					else if (GeodeBuilder.NamespaceWalk(baseNamespace, Type, ctx.Types) is GlobalTypeSymbol sym)
+					{
+						return sym.Type;
 					}
 
 					break;
@@ -101,11 +103,10 @@ namespace Amethyst.AST
 		protected override TypeSpecifier ResolveImpl(Compiler ctx, string baseNamespace, bool allowAuto = false) => new WeakReferenceTypeSpecifier(Inner.Resolve(ctx, baseNamespace));
 	}
 
-	public class AbstractStructTypeSpecifier(LocationRange loc, NamespacedID id, Dictionary<string, AbstractTypeSpecifier> props, Dictionary<string, Expression> defaults) : AbstractTypeSpecifier(loc), IRootChild
+	public class AbstractStructTypeSpecifier(LocationRange loc, NamespacedID id, Dictionary<string, AbstractTypeSpecifier> props) : AbstractTypeSpecifier(loc), IRootChild
 	{
 		public readonly NamespacedID ID = id;
 		public readonly Dictionary<string, AbstractTypeSpecifier> Properties = props;
-		public readonly Dictionary<string, Expression> DefaultValues = defaults;
 
 		public void Process(Compiler ctx) => ctx.AddType(new(ID, Location, Resolve(ctx, ID.ContainingFolder()), this));
 

@@ -99,18 +99,13 @@ namespace Amethyst.AST
 		public override Node VisitStruct([NotNull] AmethystParser.StructContext context)
 		{
 			var props = new Dictionary<string, AbstractTypeSpecifier>();
-			var defaults = new Dictionary<string, Expression>();
 
 			foreach (var i in context.declaration())
 			{
 				props[i.RawIdentifier().GetText()] = Visit(i.type());
-				if (i.expression() is not null)
-				{
-					defaults[i.RawIdentifier().GetText()] = Visit(i.expression());
-				}
 			}
 
-			return new AbstractStructTypeSpecifier(Loc(context), IdentifierToID(Visit(context.id())), props, defaults);
+			return new AbstractStructTypeSpecifier(Loc(context), IdentifierToID(Visit(context.id())), props);
 		}
 
 		public override Node VisitInitAssignmentStatement([NotNull] AmethystParser.InitAssignmentStatementContext context) => new InitAssignmentNode(Loc(context), Visit(context.type()), Visit(context.id()), context.expression() is null ? null : Visit(context.expression()));

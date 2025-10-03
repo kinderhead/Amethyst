@@ -4,11 +4,17 @@ struct vec {
     int[] arr;
 }
 
+int x = 7;
+
 #load
 void main() {
     vec v;
-
     v.arr.add(7);
+    v.test();
+}
 
-    print(v);
+namespace example:vec;
+
+void test(vec& this) {
+    print(this.arr, x);
 }

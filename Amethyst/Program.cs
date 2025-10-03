@@ -1,4 +1,6 @@
-﻿namespace Amethyst
+﻿using Spectre.Console;
+
+namespace Amethyst
 {
 	internal class Program
 	{
@@ -7,6 +9,8 @@
 #if DEBUG
 			Console.Clear(); // Thanks Visual Studio for being sad
 #endif
+			AnsiConsole.MarkupLine("[yellow]Amethyst is currently in development. Report issues to [aqua][underline]https://github.com/kinderhead/Datapack.Net/issues[/][/].[/]\n");
+
 			if (!new Compiler(args).Compile())
 			{
 				Environment.Exit(1);

@@ -1,4 +1,5 @@
-﻿using Amethyst.Geode.IR;
+﻿using Amethyst.Errors;
+using Amethyst.Geode.IR;
 
 namespace Amethyst.AST
 {
@@ -33,13 +34,20 @@ namespace Amethyst.AST
 
 			foreach (var i in Functions)
 			{
-				if (!i.Compile(Ctx, out var ctx) || ctx is null)
+				try
+				{
+					if (!i.Compile(Ctx, out var ctx) || ctx is null)
+					{
+						success = false;
+					}
+					else
+					{
+						funcs.Add(ctx);
+					}
+				}
+				catch (AmethystError)
 				{
 					success = false;
-				}
-				else
-				{
-					funcs.Add(ctx);
 				}
 			}
 

@@ -205,6 +205,26 @@ namespace Amethyst.Geode
 		public static readonly IEntityTarget RuntimeEntity = new NamedTarget("amethyst");
 		public static readonly string[] RuntimeStorageUsed = ["stack", "tmp"];
 
+		public static T? NamespaceWalk<T>(string baseNamespace, string name, Dictionary<NamespacedID, T> syms)
+		{
+			if (syms.TryGetValue(new(baseNamespace, name), out var v))
+			{
+				return v;
+			}
+			else if (baseNamespace.Contains('/'))
+			{
+				return NamespaceWalk(baseNamespace[..baseNamespace.LastIndexOf('/')], name, syms);
+			}
+			else if (baseNamespace.Contains(':'))
+			{
+				return NamespaceWalk(baseNamespace[..baseNamespace.LastIndexOf(':')], name, syms);
+			}
+			else
+			{
+				return default;
+			}
+		}
+
 		private static DP GetDP(Options opts) => new("Project generated with Amethyst", opts.Output, opts.PackFormat);
 	}
 }

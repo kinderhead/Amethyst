@@ -96,7 +96,7 @@ namespace Amethyst.Geode.IR
 			{
 				return v;
 			}
-			else if (GetGlobal(new(Decl.ID.ContainingFolder(), name)) is Value v2)
+			else if (GetGlobalWalk(Decl.ID.ContainingFolder(), name) is Value v2)
 			{
 				return v2;
 			}
@@ -117,6 +117,8 @@ namespace Amethyst.Geode.IR
 
 			return null;
 		}
+
+		public Value? GetGlobalWalk(string baseNamespace, string name) => GeodeBuilder.NamespaceWalk(baseNamespace, name, Compiler.Symbols)?.Value;
 
 		public ValueRef GetProperty(ValueRef val, string name)
 		{

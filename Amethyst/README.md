@@ -4,6 +4,12 @@
 
 # Amethyst
 
+*Yet another programming language targetting Minecraft datapacks? We have enough already.*
+
+-- Someone (probably)
+
+<hr>
+
 - [Amethyst](#amethyst)
   - [Usage](#usage)
   - [CLI Options](#cli-options)
@@ -22,10 +28,6 @@
     - [Intrinsics](#intrinsics)
     - [Extension Methods](#extension-methods)
   - [Planned Features](#planned-features)
-
-*Yet another programming language targetting Minecraft datapacks? We have enough already.*
-
--- Someone (probably)
 
 There's been many different attempts at making a high-level programming language for Minecraft Datapacks over the years, but one flaw I've seen in all of them is that they let the limitations of commands dictate what's possible. All of that changed when Minecraft added macro functions, greatly increasing the flexibility of datapacks. The goal of Amethyst is to leverage macro functions and other features to allow users to make datapacks as easily as they would write any other program.
 
@@ -92,7 +94,7 @@ amethyst [files...] -o <output>
 
 ### Namespaces
 
-The `namespace` statement denotes the default namespace that all symbols can use if they don't have a namespace explicitly defined. For example:
+The `namespace` statement denotes the default namespace that all symbols use if they don't have a namespace explicitly defined. For example:
 
 ```cs
 namespace example;
@@ -132,6 +134,12 @@ void func() {
 
 void other-func() {
     print("yay");
+}
+
+namespace example:sub;
+
+void test() {
+    func(); // Can use example:func implicitly
 }
 
 namespace main;
