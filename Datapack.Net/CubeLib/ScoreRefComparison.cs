@@ -18,7 +18,7 @@ namespace Datapack.Net.CubeLib
 			var a = LeftScore ?? Project.ActiveProject.Constant(Left);
 			var b = RightScore ?? Project.ActiveProject.Constant(Right);
 
-			_ = branch.Score(a.Target, a.Score, Op, b.Target, b.Score);
+			branch.Score(a.Target, a.Score, Op, b.Target, b.Score);
 
 			return cmd;
 		}
@@ -32,7 +32,7 @@ namespace Datapack.Net.CubeLib
 		public override Execute Process(Execute cmd, int tmp = 0)
 		{
 			var branch = If ? cmd.If : cmd.Unless;
-			_ = branch.Score(Score.Target, Score.Score, Range);
+			branch.Score(Score.Target, Score.Score, Range);
 			return cmd;
 		}
 	}

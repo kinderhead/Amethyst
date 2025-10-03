@@ -19,24 +19,24 @@ namespace Amethyst.AST.Statements
 			foreach (var i in Fragments)
 			{
 				i.Resolve(ctx);
-				_ = cmd.Append(i.Render(ref arg));
+				cmd.Append(i.Render(ref arg));
 			}
 
 			if (arg == 0)
 			{
-				_ = ctx.Add(new CommandInsn(cmd.ToString()));
+				ctx.Add(new CommandInsn(cmd.ToString()));
 			}
 			else
 			{
 				var (cmdCtx, func) = ctx.Compiler.AnonymousFunction(new(FunctionModifiers.None, new VoidTypeSpecifier(), Fragments.Where(i => i is CommandExprFragment).Cast<CommandExprFragment>().Select(i => new Parameter(ParameterModifiers.Macro, PrimitiveTypeSpecifier.Compound, $"arg{i.ArgIndex}"))));
 
 				cmdCtx.LocationStack.Push(Location);
-				_ = cmdCtx.Add(new CommandInsn(cmd.ToString()));
-				_ = cmdCtx.Add(new ReturnInsn());
+				cmdCtx.Add(new CommandInsn(cmd.ToString()));
+				cmdCtx.Add(new ReturnInsn());
 				cmdCtx.Finish();
-				_ = cmdCtx.LocationStack.Pop();
+				cmdCtx.LocationStack.Pop();
 
-				_ = ctx.Add(new CallInsn(func, Fragments.Where(i => i is CommandExprFragment).Cast<CommandExprFragment>().Select(i => ctx.ImplicitCast(i.Value, PrimitiveTypeSpecifier.Compound))));
+				ctx.Add(new CallInsn(func, Fragments.Where(i => i is CommandExprFragment).Cast<CommandExprFragment>().Select(i => ctx.ImplicitCast(i.Value, PrimitiveTypeSpecifier.Compound))));
 			}
 		}
 	}

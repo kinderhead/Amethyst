@@ -22,14 +22,14 @@ namespace Amethyst.Geode.IR.Passes
 				{
 					if (arg is ValueRef v && v.NeedsScoreReg)
 					{
-						_ = ins.Add(v);
+						ins.Add(v);
 					}
 
 					foreach (var dep in arg.Dependencies)
 					{
 						if (dep is ValueRef d && d.NeedsScoreReg)
 						{
-							_ = ins.Add(d);
+							ins.Add(d);
 						}
 					}
 				}
@@ -38,7 +38,7 @@ namespace Amethyst.Geode.IR.Passes
 			// Maybe somehow put this in the other loop
 			foreach (var i in block.Instructions)
 			{
-				_ = ins.Remove(i.ReturnValue);
+				ins.Remove(i.ReturnValue);
 			}
 
 			if (!Ins.TryGetValue(block, out var existingIns))
@@ -75,14 +75,14 @@ namespace Amethyst.Geode.IR.Passes
 			{
 				if (arg is ValueRef v && v.NeedsScoreReg)
 				{
-					_ = alive.Add(v);
+					alive.Add(v);
 					Graphs[ctx].Connect(v, alive);
 				}
 			}
 
 			foreach (var insn in block.Instructions.AsEnumerable().Reverse())
 			{
-				_ = alive.Remove(insn.ReturnValue);
+				alive.Remove(insn.ReturnValue);
 
 				foreach (var arg in insn.Arguments)
 				{
@@ -169,7 +169,7 @@ namespace Amethyst.Geode.IR.Passes
 				{
 					if (i.Color < 0)
 					{
-						_ = nodes.Remove(i);
+						nodes.Remove(i);
 						i.SetColor(node.Color);
 					}
 				}
@@ -222,8 +222,8 @@ namespace Amethyst.Geode.IR.Passes
 				return;
 			}
 
-			_ = links.Add(other);
-			_ = other.links.Add(this);
+			links.Add(other);
+			other.links.Add(this);
 		}
 
 		public void Connect(LifetimeGraphNode other)
@@ -233,8 +233,8 @@ namespace Amethyst.Geode.IR.Passes
 				return;
 			}
 
-			_ = edges.Add(other);
-			_ = other.edges.Add(this);
+			edges.Add(other);
+			other.edges.Add(this);
 		}
 
 		public void Connect(IEnumerable<LifetimeGraphNode> others)

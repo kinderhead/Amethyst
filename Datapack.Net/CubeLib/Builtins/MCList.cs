@@ -14,7 +14,7 @@ namespace Datapack.Net.CubeLib.Builtins
 		public void Add(T value)
 		{
 			Project.ActiveProject.Std.PointerAppend(List.Pointer.StandardMacros([new("value", new NBTCompound())]), true);
-			_ = value.GetPointer().ToRTP(this[-1].GetPointer().ToRTP<T>());
+			value.GetPointer().ToRTP(this[-1].GetPointer().ToRTP<T>());
 			if (Project.Settings.ReferenceChecking)
 			{
 				value.ReferenceCount.Pointer.With(i => i.Add(1));

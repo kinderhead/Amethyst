@@ -23,12 +23,12 @@ namespace Amethyst.Geode.IR.Instructions
 					throw new InvalidOperationException($"Invalid print argument of type {i.GetType().Name}");
 				}
 
-				_ = val.Render(msg, ctx);
+				val.Render(msg, ctx);
 				//msg.Text(" ");
 			}
 
 			//if (Arguments.Length > 0) msg.RemoveLast();
-			_ = msg.Optimize();
+			msg.Optimize();
 
 			// TODO: Make the target configurable
 			ctx.Add(new TellrawCommand(new TargetSelector(TargetType.a), msg));

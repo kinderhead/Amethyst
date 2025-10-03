@@ -16,7 +16,7 @@ namespace Amethyst.Geode.IR.Instructions
 			{
 				if (IsCommunitive && Arguments[1] is ValueRef v1)
 				{
-					_ = tryLink(ReturnValue, v1);
+					tryLink(ReturnValue, v1);
 					Arguments[1] = Arguments[0];
 					Arguments[0] = v1;
 				}

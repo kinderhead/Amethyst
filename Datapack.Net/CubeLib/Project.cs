@@ -113,13 +113,13 @@ namespace Datapack.Net.CubeLib
 
 			Std = AddDependency<CubeLibStd>();
 
-			_ = AddFunction(Main);
+			AddFunction(Main);
 
 			foreach (var i in GetType().GetMethods(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance))
 			{
 				if (i.GetCustomAttribute<DeclareMCAttribute>() is DeclareMCAttribute attr && attr.Path != "_main")
 				{
-					_ = AddFunction(DelegateUtils.Create(i, this));
+					AddFunction(DelegateUtils.Create(i, this));
 				}
 			}
 
@@ -139,12 +139,12 @@ namespace Datapack.Net.CubeLib
 			Heap = new(GlobalStorage, "heap");
 			AddStaticObject(Heap);
 
-			_ = Scores.Add(EntityIDScore);
+			Scores.Add(EntityIDScore);
 
 			if (Settings.ErrorChecking)
 			{
 				var score = new Score("_cl_err", "dummy");
-				_ = Scores.Add(score);
+				Scores.Add(score);
 				ErrorScore = new(score, GlobalScoreEntity);
 			}
 
@@ -181,7 +181,7 @@ namespace Datapack.Net.CubeLib
 				var args = DeclareMCAttribute.Args(i.Key);
 				if (args.Length == 0)
 				{
-					_ = i.Key.DynamicInvoke();
+					i.Key.DynamicInvoke();
 				}
 				else
 				{
@@ -203,7 +203,7 @@ namespace Datapack.Net.CubeLib
 						}
 					}
 
-					_ = i.Key.DynamicInvoke([.. funcArgs]);
+					i.Key.DynamicInvoke([.. funcArgs]);
 				}
 
 				RegistersInUse.Reverse();
@@ -497,24 +497,24 @@ namespace Datapack.Net.CubeLib
 			{
 				if (i is string str)
 				{
-					_ = text.Text(str);
+					text.Text(str);
 				}
 				else if (i is ScoreRef score)
 				{
-					_ = text.Score(score);
+					text.Score(score);
 				}
 				else if (i is ScoreRefOperation op)
 				{
 					var x = Local();
 					op.Process(x);
-					_ = text.Score(x);
+					text.Score(x);
 				}
 				else
 				{
 					throw new ArgumentException($"Invalid print object {i}. Try using Print<T> for objects on the heap");
 				}
 
-				_ = text.Text(" ");
+				text.Text(" ");
 			}
 
 			text.RemoveLast();
@@ -598,7 +598,7 @@ namespace Datapack.Net.CubeLib
 				CurrentTargetCleanup = cleanup;
 				CleanupPtrs = [];
 
-				_ = func.DynamicInvoke();
+				func.DynamicInvoke();
 
 				WithCleanup(() =>
 				{
@@ -669,20 +669,20 @@ namespace Datapack.Net.CubeLib
 
 					foreach (var i in ex.GetAll<Execute.Conditional.Subcommand>())
 					{
-						_ = tmpExe.Add((Execute.Subcommand)i.Clone());
+						tmpExe.Add((Execute.Subcommand)i.Clone());
 					}
 
-					_ = tmpExe.Store(tmp);
-					_ = tmpExe.Run(Constant(1).Get());
+					tmpExe.Store(tmp);
+					tmpExe.Run(Constant(1).Get());
 					AddCommand(tmpExe);
 
 					other.RemoveAll<Execute.Conditional.Subcommand>();
-					_ = other.If.Score(tmp, 1);
+					other.If.Score(tmp, 1);
 					ex.RemoveAll<Execute.Conditional.Subcommand>();
-					_ = ex.If.Score(tmp, 1);
+					ex.If.Score(tmp, 1);
 				}
 
-				_ = other.Run(new FunctionCommand(CurrentTargetCleanup));
+				other.Run(new FunctionCommand(CurrentTargetCleanup));
 				AddCommand(other);
 			}
 			else if (Settings.ErrorChecking)
@@ -694,7 +694,7 @@ namespace Datapack.Net.CubeLib
 						CurrentTarget.Add(new Scoreboard.Players.Set(ErrorScore.Target, ErrorScore.Score, 1));
 					}
 
-					_ = exe.Store(ErrorScore, false);
+					exe.Store(ErrorScore, false);
 				}
 				else
 				{
@@ -751,7 +751,7 @@ namespace Datapack.Net.CubeLib
 			{
 				if (i.IsStatic && i.GetCustomAttribute<DeclareMCAttribute>() is DeclareMCAttribute m && (Settings.ReferenceChecking || m.Path != "deinit"))
 				{
-					_ = ProcessRuntimeObjectMethod(i, attr);
+					ProcessRuntimeObjectMethod(i, attr);
 				}
 			}
 		}
@@ -799,8 +799,8 @@ namespace Datapack.Net.CubeLib
 		public ScoreRef GetRegister(int index)
 		{
 			var score = new Score($"_cl_reg_{index}", "dummy");
-			_ = Registers.Add(score);
-			_ = Scores.Add(score);
+			Registers.Add(score);
+			Scores.Add(score);
 
 			return new ScoreRef(score, GlobalScoreEntity);
 		}
@@ -832,8 +832,8 @@ namespace Datapack.Net.CubeLib
 		public ScoreRef GetGlobal(int index)
 		{
 			var score = new Score($"_cl_{Namespace}_var_{index}", "dummy");
-			_ = Globals.Add(score);
-			_ = Scores.Add(score);
+			Globals.Add(score);
+			Scores.Add(score);
 
 			return new(score, GlobalScoreEntity, global: true);
 		}
@@ -841,7 +841,7 @@ namespace Datapack.Net.CubeLib
 		public ScoreRef GetGlobal(string name)
 		{
 			var score = new Score($"_cl_{Namespace}_var_{name}", "dummy");
-			_ = Scores.Add(score);
+			Scores.Add(score);
 
 			return new(score, GlobalScoreEntity, global: true);
 		}
@@ -859,7 +859,7 @@ namespace Datapack.Net.CubeLib
 		public ScoreRef NewUnique()
 		{
 			var score = new Score($"_cl_{Namespace}_unique_{UniqueVars++}", "dummy");
-			_ = Scores.Add(score);
+			Scores.Add(score);
 			return new(score, GlobalScoreEntity, global: true);
 		}
 
@@ -873,7 +873,7 @@ namespace Datapack.Net.CubeLib
 			var score = new Score("_cl_const", "dummy");
 			var c = new ScoreRef(score, new NamedTarget($"#_cl_{val}".Replace('-', '_')), global: true);
 
-			_ = Scores.Add(score);
+			Scores.Add(score);
 			Constants[val] = c;
 
 			return c;
@@ -945,7 +945,7 @@ namespace Datapack.Net.CubeLib
 		public T AllocObjIfNull<T>(ScoreRef loc, bool rtp = true) where T : IBaseRuntimeObject
 		{
 			var obj = AttachObj<T>(loc, rtp);
-			_ = If(!obj.GetPointer().GetHeapPointer().Exists(), () => AllocObj<T>(loc, rtp, false));
+			If(!obj.GetPointer().GetHeapPointer().Exists(), () => AllocObj<T>(loc, rtp, false));
 			return obj;
 		}
 
@@ -980,7 +980,7 @@ namespace Datapack.Net.CubeLib
 		public HeapPointer<T> AllocIfNull<T>(ScoreRef loc, T defaultValue) where T : NBTValue
 		{
 			var ptr = Attach<T>(loc);
-			_ = If(!ptr.Exists(), () => Alloc(loc, defaultValue));
+			If(!ptr.Exists(), () => Alloc(loc, defaultValue));
 			return ptr;
 		}
 
@@ -1021,7 +1021,7 @@ namespace Datapack.Net.CubeLib
 				var self = EntityRef(TargetSelector.Self);
 				func(self);
 			})));
-			_ = Entity.AsStack.Pop();
+			Entity.AsStack.Pop();
 		}
 
 		public Entity Summon(EntityType type) => Summon(type, Position.Current);
@@ -1036,7 +1036,7 @@ namespace Datapack.Net.CubeLib
 		public T Summon<T>(ScoreRef loc, Position pos) where T : EntityWrapper
 		{
 			var entity = (T?)Activator.CreateInstance(typeof(T), [loc]) ?? throw new ArgumentException("Failed to create entity");
-			_ = Summon(loc, entity.Type, pos);
+			Summon(loc, entity.Type, pos);
 			return entity;
 		}
 
@@ -1046,7 +1046,7 @@ namespace Datapack.Net.CubeLib
 		public Entity SummonIfDead(ScoreRef loc, EntityType type, Position pos)
 		{
 			var e = new Entity(loc);
-			_ = If(!e.Exists(), () => Summon(loc, type, pos));
+			If(!e.Exists(), () => Summon(loc, type, pos));
 			return e;
 		}
 
@@ -1056,7 +1056,7 @@ namespace Datapack.Net.CubeLib
 		public T SummonIfDead<T>(ScoreRef loc, Position pos) where T : EntityWrapper
 		{
 			var entity = (T?)Activator.CreateInstance(typeof(T), [loc]) ?? throw new ArgumentException("Failed to create entity");
-			_ = SummonIfDead(loc, entity.Type, pos);
+			SummonIfDead(loc, entity.Type, pos);
 			return entity;
 		}
 
@@ -1105,7 +1105,7 @@ namespace Datapack.Net.CubeLib
 
 				for (var i = 0; i < values.Length; i++)
 				{
-					_ = builder.Append($"$({i})");
+					builder.Append($"$({i})");
 				}
 
 				func.Add(new DataCommand.Modify(new StorageMacro("$(storage)"), "$(path).$(pointer)$(ext)", true).Set().Value(builder.ToString()));

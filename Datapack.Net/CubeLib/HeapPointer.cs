@@ -82,7 +82,7 @@ namespace Datapack.Net.CubeLib
 		public override RuntimePointer<R> ToRTP<R>()
 		{
 			var ptr = Project.ActiveProject.AllocObj<RuntimePointer<R>>(Project.ActiveProject.Local(), false, false);
-			_ = ToRTP(ptr);
+			ToRTP(ptr);
 
 			// Average infinite recursion fix
 			Project.ActiveProject.WithCleanup(() =>

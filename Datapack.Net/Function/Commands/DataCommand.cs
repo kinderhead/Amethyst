@@ -186,15 +186,15 @@ namespace Datapack.Net.Function.Commands
 			{
 				var builder = new StringBuilder($"data modify ");
 
-				_ = builder.Append($"{Target.GetTarget()} {Type} {Modifier} ");
+				builder.Append($"{Target.GetTarget()} {Type} {Modifier} ");
 
 				if (Val != null)
 				{
-					_ = builder.Append(Val);
+					builder.Append(Val);
 					return builder.ToString();
 				}
 
-				_ = builder.Append($"{Source?.GetTarget() ?? ""} {Start?.ToString() ?? ""} {End?.ToString() ?? ""}");
+				builder.Append($"{Source?.GetTarget() ?? ""} {Start?.ToString() ?? ""} {End?.ToString() ?? ""}");
 
 				return builder.ToString();
 			}

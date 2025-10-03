@@ -23,7 +23,7 @@ namespace Datapack.Net.CubeLib
 			}
 			else if (LeftBranch is not null)
 			{
-				_ = LeftBranch.Resolve(dest, tmp);
+				LeftBranch.Resolve(dest, tmp);
 			}
 			else
 			{

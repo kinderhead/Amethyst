@@ -47,7 +47,7 @@ namespace Datapack.Net.Function
 			StringBuilder sb = new();
 			foreach (var i in Commands)
 			{
-				_ = sb.AppendLine(i.Build());
+				sb.AppendLine(i.Build());
 				if (i is ReturnCommand)
 				{
 					break;

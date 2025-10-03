@@ -16,8 +16,8 @@ namespace Datapack.Net.Data
 
 		public override void Build(StringBuilder sb)
 		{
-			_ = sb.Append(Value);
-			_ = sb.Append(Postfix);
+			sb.Append(Value);
+			sb.Append(Postfix);
 		}
 
 		public override NBTValue Cast(NBTNumberType type) => type switch

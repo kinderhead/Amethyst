@@ -42,10 +42,10 @@ namespace Amethyst.Geode.IR
 		{
 			var builder = new StringBuilder();
 
-			_ = builder.AppendLine($"{Name}:");
+			builder.AppendLine($"{Name}:");
 			foreach (var i in Instructions)
 			{
-				_ = builder.AppendLine($"    {i.Dump(valueMap)}");
+				builder.AppendLine($"    {i.Dump(valueMap)}");
 			}
 
 			return builder.ToString();

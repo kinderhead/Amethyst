@@ -35,7 +35,7 @@ namespace Amethyst.Geode
 		{
 			failed = false;
 
-			_ = ApplyPass<ResolvePass>();
+			ApplyPass<ResolvePass>();
 
 			if (failed)
 			{

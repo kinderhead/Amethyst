@@ -54,15 +54,15 @@ namespace Datapack.Net.CubeLib
 
 				func();
 
-				_ = AsStack.Pop();
+				AsStack.Pop();
 				if (at)
 				{
-					_ = AtStack.Pop();
+					AtStack.Pop();
 				}
 			}));
 			if (at)
 			{
-				_ = cmd.At(TargetSelector.Self);
+				cmd.At(TargetSelector.Self);
 			}
 
 			proj.AddCommand(cmd);

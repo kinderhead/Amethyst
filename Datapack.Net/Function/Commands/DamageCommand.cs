@@ -45,11 +45,11 @@ namespace Datapack.Net.Function.Commands
 			}
 			else if (Position is not null)
 			{
-				_ = cmd.Append($" at {Position}");
+				cmd.Append($" at {Position}");
 			}
 			else if (By is not null)
 			{
-				_ = cmd.Append($" by {By.Get()}{(Cause is null ? "" : $" from {Cause.Get()}")}");
+				cmd.Append($" by {By.Get()}{(Cause is null ? "" : $" from {Cause.Get()}")}");
 			}
 
 			return cmd.ToString();

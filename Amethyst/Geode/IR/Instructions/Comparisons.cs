@@ -23,12 +23,12 @@ namespace Amethyst.Geode.IR.Instructions
 		{
 			if (Arguments[0] is ValueRef arg1)
 			{
-				_ = ReturnValue.Dependencies.Add(arg1);
+				ReturnValue.Dependencies.Add(arg1);
 			}
 
 			if (Arguments[1] is ValueRef arg2)
 			{
-				_ = ReturnValue.Dependencies.Add(arg2);
+				ReturnValue.Dependencies.Add(arg2);
 			}
 
 			var ret = base.ComputeReturnValue(ctx);

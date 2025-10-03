@@ -144,7 +144,7 @@ namespace Datapack.Net.Tests
 		public void TestType3()
 		{
 			var sel = new TargetSelector(TargetType.e, type: [!Entities.Player, Entities.Husk]);
-			_ = Assert.Throws<ArgumentException>(() => sel.Get());
+			Assert.Throws<ArgumentException>(() => sel.Get());
 		}
 
 		[Test]

@@ -33,7 +33,7 @@ namespace Amethyst.AST.Expressions
 					}
 
 					var inc = ctx.Add(new AddInsn(val, new LiteralValue(1)));
-					_ = ctx.Add(new StoreInsn(val, inc));
+					ctx.Add(new StoreInsn(val, inc));
 					return val;
 				case UnaryOperation.Decrement:
 					if (val.Type != PrimitiveTypeSpecifier.Int)
@@ -42,7 +42,7 @@ namespace Amethyst.AST.Expressions
 					}
 
 					var dec = ctx.Add(new SubInsn(val, new LiteralValue(1)));
-					_ = ctx.Add(new StoreInsn(val, dec));
+					ctx.Add(new StoreInsn(val, dec));
 					return val;
 				case UnaryOperation.Not:
 					return ctx.Add(new NotInsn(val));

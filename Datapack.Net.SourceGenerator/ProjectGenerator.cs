@@ -72,7 +72,7 @@ namespace Datapack.Net.SourceGenerator
 
 			foreach (var i in project.Functions)
 			{
-				_ = funcs.AppendLine(Utils.GenerateWrapper(i));
+				funcs.AppendLine(Utils.GenerateWrapper(i));
 			}
 
 			if (funcs.Length > 0)

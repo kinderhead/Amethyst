@@ -21,11 +21,11 @@ namespace Amethyst.AST.Statements
 			}
 			else if (val is not null)
 			{
-				_ = ctx.Add(new ReturnInsn(val));
+				ctx.Add(new ReturnInsn(val));
 			}
 			else
 			{
-				_ = ctx.Add(new ReturnInsn());
+				ctx.Add(new ReturnInsn());
 			}
 		}
 	}

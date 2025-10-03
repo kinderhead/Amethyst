@@ -119,7 +119,7 @@ namespace Datapack.Net.CubeLib
 		{
 			if (Pointer is HeapPointer<TSelf> hp)
 			{
-				_ = State.If(hp.Exists(), func);
+				State.If(hp.Exists(), func);
 			}
 			else
 			{

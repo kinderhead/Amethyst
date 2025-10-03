@@ -112,7 +112,7 @@ amethyst [files...] -o <output>";
 
 			if (GlobalInitFunc.FirstBlock.Instructions.Count != 0)
 			{
-				_ = GlobalInitFunc.Add(new ReturnInsn());
+				GlobalInitFunc.Add(new ReturnInsn());
 				GlobalInitFunc.Finish();
 				IR.AddFunctions(GlobalInitFunc);
 			}
@@ -176,7 +176,7 @@ amethyst [files...] -o <output>";
 			}
 			catch (AmethystError e)
 			{
-				_ = e.Display(this, loc);
+				e.Display(this, loc);
 				return false;
 			}
 
@@ -193,12 +193,12 @@ amethyst [files...] -o <output>";
 			}
 			catch (AmethystError e)
 			{
-				_ = e.Display(this, loc);
+				e.Display(this, loc);
 				return false;
 			}
 			finally
 			{
-				_ = ctx.LocationStack.Pop();
+				ctx.LocationStack.Pop();
 			}
 
 			return true;

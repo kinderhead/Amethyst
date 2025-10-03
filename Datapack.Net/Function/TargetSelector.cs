@@ -167,10 +167,10 @@ namespace Datapack.Net.Function
 			StringBuilder sb = new();
 			foreach (var i in dict)
 			{
-				_ = sb.Append(i.Key.ToString());
-				_ = sb.Append('=');
-				_ = sb.Append(i.Value.ToString());
-				_ = sb.Append(',');
+				sb.Append(i.Key.ToString());
+				sb.Append('=');
+				sb.Append(i.Value.ToString());
+				sb.Append(',');
 			}
 
 			if (sb.Length > 0)

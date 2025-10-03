@@ -32,7 +32,7 @@ namespace Amethyst.Geode.IR
 
 				while (toVisit.Count != 0)
 				{
-					_ = ProcessBlock(ctx, toVisit.First());
+					ProcessBlock(ctx, toVisit.First());
 				}
 			}
 		}
@@ -57,7 +57,7 @@ namespace Amethyst.Geode.IR
 				return false;
 			}
 
-			_ = toVisit.Remove(b);
+			toVisit.Remove(b);
 
 			OnBlock(ctx, b);
 
@@ -76,19 +76,19 @@ namespace Amethyst.Geode.IR
 			}
 
 			// TODO: Make a collection for insn to be removed instead
-			_ = b.Instructions.RemoveAll(x => x.MarkedForRemoval);
+			b.Instructions.RemoveAll(x => x.MarkedForRemoval);
 
 			return true;
 		}
 
 		protected void RevisitBlock(Block b, bool visitPredecessors = false)
 		{
-			_ = toVisit.Add(b);
+			toVisit.Add(b);
 			if (visitPredecessors)
 			{
 				foreach (var i in b.Previous)
 				{
-					_ = toVisit.Add(i);
+					toVisit.Add(i);
 				}
 			}
 		}

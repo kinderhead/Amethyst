@@ -179,12 +179,12 @@ namespace Amethyst.Geode
 
 				if (extras.Length > 0)
 				{
-					_ = text.PushModifiers(new FormattedText.Modifiers { Color = "dark_aqua" });
+					text.PushModifiers(new FormattedText.Modifiers { Color = "dark_aqua" });
 
 					foreach (var i in extras)
 					{
-						_ = i.Expect().Render(text, this);
-						_ = text.Text(", ", new FormattedText.Modifiers { Color = "red" });
+						i.Expect().Render(text, this);
+						text.Text(", ", new FormattedText.Modifiers { Color = "red" });
 					}
 
 					text.RemoveLast();

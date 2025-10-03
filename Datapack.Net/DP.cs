@@ -95,7 +95,7 @@ namespace Datapack.Net
 
 			foreach (var i in toRemove)
 			{
-				_ = GetResource<Functions>().Resources.Remove(i);
+				GetResource<Functions>().Resources.Remove(i);
 				Console.WriteLine($"Removing empty function: {i.ID}");
 			}
 

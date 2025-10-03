@@ -105,14 +105,14 @@ namespace Amethyst.Geode.IR
 
 			if (ReturnType is not VoidTypeSpecifier)
 			{
-				_ = builder.Append($"{valueMap(ReturnValue)} = ");
+				builder.Append($"{valueMap(ReturnValue)} = ");
 			}
 
-			_ = builder.Append($"{Name} ");
+			builder.Append($"{Name} ");
 
 			foreach (var i in Arguments)
 			{
-				_ = builder.Append($"{valueMap(i)}, ");
+				builder.Append($"{valueMap(i)}, ");
 			}
 
 			if (Arguments.Length > 0)

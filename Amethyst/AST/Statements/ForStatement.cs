@@ -13,10 +13,10 @@ namespace Amethyst.AST.Statements
 		public override void Compile(FunctionContext ctx)
 		{
 			Initializer?.Compile(ctx);
-			_ = ctx.Loop(() => Condition.Execute(ctx, null), "for", () =>
+			ctx.Loop(() => Condition.Execute(ctx, null), "for", () =>
 			{
 				Body.Compile(ctx);
-				_ = Iterator.Execute(ctx, null);
+				Iterator.Execute(ctx, null);
 			});
 		}
 	}

@@ -32,12 +32,12 @@ namespace Amethyst.Errors
 
 		public CompilerMessager AddCode(IFileHandler handler, LocationRange loc, bool final = false)
 		{
-			_ = AddContent("");
+			AddContent("");
 
 			if (!handler.Files.TryGetValue(loc.Start.File, out var file))
 			{
-				_ = AddContent("[turquoise2]<builtin>[/]");
-				_ = AddContent("");
+				AddContent("[turquoise2]<builtin>[/]");
+				AddContent("");
 				return this;
 			}
 
@@ -51,24 +51,24 @@ namespace Amethyst.Errors
 				// Prevent double finals
 				if (final && idex > 0 && idex == lines.Length - 1)
 				{
-					_ = Final();
+					Final();
 				}
 
-				_ = AddContent($"[turquoise2]{i[indentToSkip..].EscapeMarkup()}[/]");
+				AddContent($"[turquoise2]{i[indentToSkip..].EscapeMarkup()}[/]");
 			}
 
 			if (lines.Length == 1)
 			{
 				if (final)
 				{
-					_ = Final();
+					Final();
 				}
 
-				_ = AddContent($"{new string(' ', loc.Start.Column - 1 - indentToSkip)}{new string('~', loc.End.Column - loc.Start.Column + 1)}");
+				AddContent($"{new string(' ', loc.Start.Column - 1 - indentToSkip)}{new string('~', loc.End.Column - loc.Start.Column + 1)}");
 			}
 			else if (!final)
 			{
-				_ = AddContent("");
+				AddContent("");
 			}
 
 			return this;

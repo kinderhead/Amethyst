@@ -13,7 +13,7 @@ namespace Datapack.Net.CubeLib
 			var tempVar = Project.ActiveProject.Temp(tmp, "cmp");
 			Project.ActiveProject.Std.PointerExists([new("pointer", "a"), .. Pointer.StandardMacros()], tempVar);
 
-			_ = branch.Score(tempVar.Target, tempVar.Score, 1);
+			branch.Score(tempVar.Target, tempVar.Score, 1);
 
 			return cmd;
 		}

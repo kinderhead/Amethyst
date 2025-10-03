@@ -28,9 +28,9 @@ namespace Amethyst.AST
 
 				var loc = Visitor.LocOffset(new Location(Path, line, charPositionInLine + 1));
 				var term = new CompilerMessager(Color.Red);
-				_ = term.Header($"Error at {loc}");
-				_ = term.AddCode(this, new(loc, new(loc.File, loc.Line, loc.Column + length - 1)));
-				_ = term.Final().AddContent($"Syntax error: [turquoise2]{msg.EscapeMarkup()}[/]");
+				term.Header($"Error at {loc}");
+				term.AddCode(this, new(loc, new(loc.File, loc.Line, loc.Column + length - 1)));
+				term.Final().AddContent($"Syntax error: [turquoise2]{msg.EscapeMarkup()}[/]");
 
 				Console.Out.Flush(); // Weird
 			}

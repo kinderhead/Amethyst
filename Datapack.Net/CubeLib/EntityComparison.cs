@@ -14,14 +14,14 @@ namespace Datapack.Net.CubeLib
 
 			if (Entity.IsCurrentTarget())
 			{
-				_ = branch.Entity(Comparison);
+				branch.Entity(Comparison);
 			}
 			else
 			{
 				var cur = Project.ActiveProject.EntityRef(TargetSelector.Self);
-				_ = Entity.As(cmd);
-				_ = branch.Entity(Comparison);
-				_ = cur.As(cmd);
+				Entity.As(cmd);
+				branch.Entity(Comparison);
+				cur.As(cmd);
 			}
 
 			return cmd;
@@ -36,7 +36,7 @@ namespace Datapack.Net.CubeLib
 		{
 			var branch = If ? cmd.If : cmd.Unless;
 
-			_ = branch.Entity(Entity);
+			branch.Entity(Entity);
 
 			return cmd;
 		}
@@ -53,11 +53,11 @@ namespace Datapack.Net.CubeLib
 
 			if (If)
 			{
-				_ = (test == 1).Process(cmd);
+				(test == 1).Process(cmd);
 			}
 			else
 			{
-				_ = (test != 1).Process(cmd);
+				(test != 1).Process(cmd);
 			}
 
 			return cmd;

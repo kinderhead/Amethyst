@@ -22,12 +22,12 @@ namespace Datapack.Net.Data
 
 		public override void Build(StringBuilder sb)
 		{
-			_ = sb.Append('[');
-			_ = sb.Append(Prefix);
+			sb.Append('[');
+			sb.Append(Prefix);
 			foreach (var i in Values)
 			{
 				i.Build(sb);
-				_ = sb.Append(',');
+				sb.Append(',');
 			}
 
 			if (Values.Count > 0)
@@ -35,7 +35,7 @@ namespace Datapack.Net.Data
 				sb.Length--;
 			}
 
-			_ = sb.Append(']');
+			sb.Append(']');
 		}
 
 		public void Clear() => Values.Clear();

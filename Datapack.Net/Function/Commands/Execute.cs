@@ -34,8 +34,8 @@ namespace Datapack.Net.Function.Commands
 					continue;
 				}
 
-				_ = sb.Append(i.ToString());
-				_ = sb.Append(' ');
+				sb.Append(i.ToString());
+				sb.Append(' ');
 			}
 
 			if (run is not null)
@@ -45,7 +45,7 @@ namespace Datapack.Net.Function.Commands
 					return run.Command.Build();
 				}
 
-				_ = sb.Append(run.ToString());
+				sb.Append(run.ToString());
 			}
 
 			return sb.ToString().TrimEnd();

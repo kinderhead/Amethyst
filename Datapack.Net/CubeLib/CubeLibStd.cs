@@ -219,7 +219,7 @@ namespace Datapack.Net.CubeLib
 		private void _GetEntityID()
 		{
 			var self = new ScoreRef(EntityIDScore, TargetSelector.Self);
-			_ = If(!self.Exists(), () => Std.UniqueEntityID(self));
+			If(!self.Exists(), () => Std.UniqueEntityID(self));
 			Return(self);
 		}
 

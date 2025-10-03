@@ -308,11 +308,11 @@ namespace Amethyst.Geode.IR
 			startingBlock.Link(endBlock);
 			trueBlock.Link(endBlock);
 
-			_ = Add(new BranchInsn(cond, trueBlock, endBlock));
+			Add(new BranchInsn(cond, trueBlock, endBlock));
 
 			CurrentBlock = trueBlock;
 			ifTrue();
-			_ = Add(new JumpInsn(endBlock));
+			Add(new JumpInsn(endBlock));
 			CurrentBlock = endBlock;
 
 			return trueBlock;
@@ -336,15 +336,15 @@ namespace Amethyst.Geode.IR
 			trueBlock.Link(endBlock);
 			falseBlock.Link(endBlock);
 
-			_ = Add(new BranchInsn(cond, trueBlock, falseBlock));
+			Add(new BranchInsn(cond, trueBlock, falseBlock));
 
 			CurrentBlock = trueBlock;
 			ifTrue();
-			_ = Add(new JumpInsn(endBlock));
+			Add(new JumpInsn(endBlock));
 
 			CurrentBlock = falseBlock;
 			ifFalse();
-			_ = Add(new JumpInsn(endBlock));
+			Add(new JumpInsn(endBlock));
 
 			CurrentBlock = endBlock;
 
@@ -367,11 +367,11 @@ namespace Amethyst.Geode.IR
 			loopBlock.Link(loopBlock);
 			loopBlock.Link(endBlock);
 
-			_ = Add(new BranchInsn(cond(), loopBlock, endBlock));
+			Add(new BranchInsn(cond(), loopBlock, endBlock));
 
 			CurrentBlock = loopBlock;
 			loop();
-			_ = Add(new BranchInsn(cond(), loopBlock, endBlock));
+			Add(new BranchInsn(cond(), loopBlock, endBlock));
 
 			CurrentBlock = endBlock;
 
@@ -385,7 +385,7 @@ namespace Amethyst.Geode.IR
 			{
 				if (kv.Key.NeedsScoreReg)
 				{
-					_ = registersInUse.Add(kv.Value);
+					registersInUse.Add(kv.Value);
 					kv.Key.SetValue(builder.Reg(kv.Value));
 				}
 			}
@@ -440,7 +440,7 @@ namespace Amethyst.Geode.IR
 		{
 			var builder = new StringBuilder();
 
-			_ = builder.AppendLine(((FunctionTypeSpecifier)Decl.Type).ToString(Decl.ID.ToString()) + " {");
+			builder.AppendLine(((FunctionTypeSpecifier)Decl.Type).ToString(Decl.ID.ToString()) + " {");
 
 			var valCounter = 0;
 			Dictionary<IInstructionArg, int> valueMap = [];
@@ -452,7 +452,7 @@ namespace Amethyst.Geode.IR
 					continue;
 				}
 
-				_ = builder.AppendLine(i.Dump(val =>
+				builder.AppendLine(i.Dump(val =>
 				{
 					if (val.Name != "")
 					{
@@ -470,7 +470,7 @@ namespace Amethyst.Geode.IR
 			}
 
 			builder.Length--;
-			_ = builder.Append("}\n");
+			builder.Append("}\n");
 
 			return builder.ToString();
 		}

@@ -62,13 +62,13 @@ namespace Datapack.Net.CubeLib
 		{
 			foreach (var i in PreModifiers)
 			{
-				_ = i.Process(cmd);
+				i.Process(cmd);
 			}
 
-			_ = Base.Process(cmd, tmp);
+			Base.Process(cmd, tmp);
 			foreach (var i in PostModifiers)
 			{
-				_ = i.Process(cmd);
+				i.Process(cmd);
 			}
 
 			return cmd;

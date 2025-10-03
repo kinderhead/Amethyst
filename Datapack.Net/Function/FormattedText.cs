@@ -19,7 +19,7 @@ namespace Datapack.Net.Function
 
 		public FormattedText PopModifiers()
 		{
-			_ = ModifierStack.Pop();
+			ModifierStack.Pop();
 			return this;
 		}
 

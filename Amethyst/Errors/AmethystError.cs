@@ -14,15 +14,15 @@ namespace Amethyst.Errors
 			//Console.WriteLine(StackTrace);
 
 			var msg = new CompilerMessager(Color.Red);
-			_ = msg.Header($"Error at {loc.Start}");
-			_ = msg.AddCode(handler, loc);
+			msg.Header($"Error at {loc.Start}");
+			msg.AddCode(handler, loc);
 
 			if (last)
 			{
-				_ = msg.Final();
+				msg.Final();
 			}
 
-			_ = msg.AddContent($"{GetType().Name}: [yellow]{RawMessage.EscapeMarkup()}[/]");
+			msg.AddContent($"{GetType().Name}: [yellow]{RawMessage.EscapeMarkup()}[/]");
 
 			return msg;
 		}
@@ -39,9 +39,9 @@ namespace Amethyst.Errors
 		{
 			var msg = base.Display(handler, loc, false);
 
-			_ = msg.AddContent("");
-			_ = msg.AddContent($"[green]{RawMessage2} {Location2.Start}[/]");
-			_ = msg.AddCode(handler, Location2, last);
+			msg.AddContent("");
+			msg.AddContent($"[green]{RawMessage2} {Location2.Start}[/]");
+			msg.AddCode(handler, Location2, last);
 
 			return msg;
 		}

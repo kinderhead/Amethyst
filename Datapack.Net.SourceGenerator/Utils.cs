@@ -12,8 +12,8 @@ namespace Datapack.Net.SourceGenerator
 			var builder = new StringBuilder();
 			var state = "global::Datapack.Net.CubeLib.Project.ActiveProject.";
 
-			_ = builder.Append($"        /// <inheritdoc cref=\"{func.FullyQualifiedName}\"/>\n");
-			_ = builder.Append($"        public void {func.Name.Substring(1)}(");
+			builder.Append($"        /// <inheritdoc cref=\"{func.FullyQualifiedName}\"/>\n");
+			builder.Append($"        public void {func.Name.Substring(1)}(");
 
 			List<string> args = [];
 
@@ -43,8 +43,8 @@ namespace Datapack.Net.SourceGenerator
 
 			foreach (var i in args)
 			{
-				_ = builder.Append(i);
-				_ = builder.Append(", ");
+				builder.Append(i);
+				builder.Append(", ");
 			}
 
 			if (args.Count > 0)
@@ -52,61 +52,61 @@ namespace Datapack.Net.SourceGenerator
 				builder.Length -= 2;
 			}
 
-			_ = builder.Append(") => ");
+			builder.Append(") => ");
 
 			var postfix = func.ReturnType != "void" ? "Ret" : "";
 
 			if (func.Arguments.Length > 0 || self)
 			{
-				_ = builder.Append($"{state}CallArg{postfix}({func.Name}, ");
+				builder.Append($"{state}CallArg{postfix}({func.Name}, ");
 				if (func.ReturnType != "void")
 				{
-					_ = builder.Append("ret.GetAsArg(), ");
+					builder.Append("ret.GetAsArg(), ");
 				}
 
-				_ = builder.Append("[");
+				builder.Append("[");
 				for (var i = 0; i < func.Arguments.Length; i++)
 				{
 					if (i == 0 && self)
 					{
-						_ = builder.Append("this, ");
+						builder.Append("this, ");
 					}
 					else
 					{
 						var arg = func.Arguments[i];
-						_ = builder.Append($"{arg.Item2}, ");
+						builder.Append($"{arg.Item2}, ");
 					}
 				}
 
 				builder.Length -= 2;
-				_ = builder.Append("]");
+				builder.Append("]");
 				if (func.Macro)
 				{
-					_ = builder.Append(", macros");
+					builder.Append(", macros");
 				}
 			}
 			else
 			{
-				_ = builder.Append($"{state}Call{postfix}({func.Name}");
+				builder.Append($"{state}Call{postfix}({func.Name}");
 				if (func.ReturnType != "void")
 				{
-					_ = builder.Append(", ret.GetAsArg()");
+					builder.Append(", ret.GetAsArg()");
 				}
 
 				if (func.Macro)
 				{
-					_ = builder.Append(", macros");
+					builder.Append(", macros");
 				}
 			}
 
-			_ = builder.Append(", macro");
+			builder.Append(", macro");
 
 			if (func.Macro)
 			{
-				_ = builder.Append(", tmp");
+				builder.Append(", tmp");
 			}
 
-			_ = builder.Append($");\n        public Datapack.Net.Function.MCFunction {func.Name.Substring(1)}_Function() => {state}FindFunction({func.Name}) ?? throw new Exception(\"Project not built yet\");");
+			builder.Append($");\n        public Datapack.Net.Function.MCFunction {func.Name.Substring(1)}_Function() => {state}FindFunction({func.Name}) ?? throw new Exception(\"Project not built yet\");");
 
 			return builder.ToString();
 		}

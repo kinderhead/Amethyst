@@ -15,11 +15,11 @@ namespace Amethyst.AST.Statements
 
 			if (Else is not null)
 			{
-				_ = ctx.Branch(cond, "if", () => Statement.Compile(ctx), () => Else.Compile(ctx));
+				ctx.Branch(cond, "if", () => Statement.Compile(ctx), () => Else.Compile(ctx));
 			}
 			else
 			{
-				_ = ctx.Branch(cond, "if", () => Statement.Compile(ctx));
+				ctx.Branch(cond, "if", () => Statement.Compile(ctx));
 			}
 		}
 	}

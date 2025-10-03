@@ -35,15 +35,15 @@ namespace Datapack.Net.Data
 
 		public override void Build(StringBuilder sb)
 		{
-			_ = sb.Append('{');
+			sb.Append('{');
 			foreach (var i in Values)
 			{
-				_ = sb.Append('"');
-				_ = sb.Append(NBTString.Escape(i.Key));
-				_ = sb.Append('"');
-				_ = sb.Append(':');
+				sb.Append('"');
+				sb.Append(NBTString.Escape(i.Key));
+				sb.Append('"');
+				sb.Append(':');
 				i.Value.Build(sb);
-				_ = sb.Append(',');
+				sb.Append(',');
 			}
 
 			if (Values.Count > 0)
@@ -51,7 +51,7 @@ namespace Datapack.Net.Data
 				sb.Length--;
 			}
 
-			_ = sb.Append('}');
+			sb.Append('}');
 		}
 
 		public void Clear() => Values.Clear();

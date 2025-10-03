@@ -24,11 +24,11 @@ namespace Amethyst.Geode.Types
 		{
 			if (val.Type is ReferenceTypeSpecifier)
 			{
-				_ = ctx.Call("amethyst:core/ref/set-ref", dest, ctx.ImplicitCast(val, this));
+				ctx.Call("amethyst:core/ref/set-ref", dest, ctx.ImplicitCast(val, this));
 			}
 			else
 			{
-				_ = ctx.Add(new StoreRefInsn(dest, ctx.ImplicitCast(val, Inner)));
+				ctx.Add(new StoreRefInsn(dest, ctx.ImplicitCast(val, Inner)));
 			}
 		}
 
