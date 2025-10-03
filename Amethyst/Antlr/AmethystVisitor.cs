@@ -69,11 +69,11 @@ public interface IAmethystVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <return>The visitor result.</return>
 	Result VisitBlock([NotNull] AmethystParser.BlockContext context);
 	/// <summary>
-	/// Visit a parse tree produced by <see cref="AmethystParser.interface"/>.
+	/// Visit a parse tree produced by <see cref="AmethystParser.struct"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
-	Result VisitInterface([NotNull] AmethystParser.InterfaceContext context);
+	Result VisitStruct([NotNull] AmethystParser.StructContext context);
 	/// <summary>
 	/// Visit a parse tree produced by <see cref="AmethystParser.declaration"/>.
 	/// </summary>

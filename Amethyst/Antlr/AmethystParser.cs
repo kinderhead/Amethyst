@@ -37,7 +37,7 @@ public partial class AmethystParser : Parser {
 	protected static DFA[] decisionToDFA;
 	protected static PredictionContextCache sharedContextCache = new PredictionContextCache();
 	public const int
-		Namespace=1, If=2, Else=3, For=4, Return=5, Interface=6, Macro=7, NoStack=8, 
+		Namespace=1, If=2, Else=3, For=4, Return=5, Struct=6, Macro=7, NoStack=8, 
 		Inline=9, Semi=10, Colon=11, Comma=12, LParen=13, RParen=14, LSquareBrak=15, 
 		RSquareBrak=16, LBrak=17, RBrak=18, Eq=19, Plus=20, Minus=21, Star=22, 
 		Slash=23, Not=24, PlusEq=25, MinusEq=26, StarEq=27, SlashEq=28, Hash=29, 
@@ -46,7 +46,7 @@ public partial class AmethystParser : Parser {
 		Command=45, Integer=46, Whitespace=47, Comment=48, LineComment=49;
 	public const int
 		RULE_root = 0, RULE_namespace = 1, RULE_function = 2, RULE_functionTag = 3, 
-		RULE_functionModifier = 4, RULE_block = 5, RULE_interface = 6, RULE_declaration = 7, 
+		RULE_functionModifier = 4, RULE_block = 5, RULE_struct = 6, RULE_declaration = 7, 
 		RULE_statement = 8, RULE_initAssignmentStatement = 9, RULE_expressionStatement = 10, 
 		RULE_commandStatement = 11, RULE_ifStatement = 12, RULE_forStatement = 13, 
 		RULE_returnStatement = 14, RULE_expression = 15, RULE_assignmentExpression = 16, 
@@ -59,7 +59,7 @@ public partial class AmethystParser : Parser {
 		RULE_type = 35, RULE_id = 36;
 	public static readonly string[] ruleNames = {
 		"root", "namespace", "function", "functionTag", "functionModifier", "block", 
-		"interface", "declaration", "statement", "initAssignmentStatement", "expressionStatement", 
+		"struct", "declaration", "statement", "initAssignmentStatement", "expressionStatement", 
 		"commandStatement", "ifStatement", "forStatement", "returnStatement", 
 		"expression", "assignmentExpression", "logicalExpression", "equalityExpression", 
 		"relationalExpression", "additiveExpression", "multiplicativeExpression", 
@@ -70,15 +70,15 @@ public partial class AmethystParser : Parser {
 	};
 
 	private static readonly string[] _LiteralNames = {
-		null, "'namespace'", "'if'", "'else'", "'for'", "'return'", "'interface'", 
+		null, "'namespace'", "'if'", "'else'", "'for'", "'return'", "'struct'", 
 		"'macro'", "'nostack'", "'inline'", "';'", "':'", "','", "'('", "')'", 
 		"'['", "']'", "'{'", "'}'", "'='", "'+'", "'-'", "'*'", "'/'", "'!'", 
 		"'+='", "'-='", "'*='", "'/='", "'#'", "'=='", "'!='", "'>'", "'>='", 
 		"'<'", "'<='", "'&'", "'&&'", "'||'", "'++'", "'--'", "'.'", "'^'"
 	};
 	private static readonly string[] _SymbolicNames = {
-		null, "Namespace", "If", "Else", "For", "Return", "Interface", "Macro", 
-		"NoStack", "Inline", "Semi", "Colon", "Comma", "LParen", "RParen", "LSquareBrak", 
+		null, "Namespace", "If", "Else", "For", "Return", "Struct", "Macro", "NoStack", 
+		"Inline", "Semi", "Colon", "Comma", "LParen", "RParen", "LSquareBrak", 
 		"RSquareBrak", "LBrak", "RBrak", "Eq", "Plus", "Minus", "Star", "Slash", 
 		"Not", "PlusEq", "MinusEq", "StarEq", "SlashEq", "Hash", "EqEq", "Neq", 
 		"Gt", "Gte", "Lt", "Lte", "And", "AndAnd", "OrOr", "PlusPlus", "MinusMinus", 
@@ -131,11 +131,11 @@ public partial class AmethystParser : Parser {
 		[System.Diagnostics.DebuggerNonUserCode] public FunctionContext function(int i) {
 			return GetRuleContext<FunctionContext>(i);
 		}
-		[System.Diagnostics.DebuggerNonUserCode] public InterfaceContext[] @interface() {
-			return GetRuleContexts<InterfaceContext>();
+		[System.Diagnostics.DebuggerNonUserCode] public StructContext[] @struct() {
+			return GetRuleContexts<StructContext>();
 		}
-		[System.Diagnostics.DebuggerNonUserCode] public InterfaceContext @interface(int i) {
-			return GetRuleContext<InterfaceContext>(i);
+		[System.Diagnostics.DebuggerNonUserCode] public StructContext @struct(int i) {
+			return GetRuleContext<StructContext>(i);
 		}
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode[] Semi() { return GetTokens(AmethystParser.Semi); }
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode Semi(int i) {
@@ -191,7 +191,7 @@ public partial class AmethystParser : Parser {
 				case 3:
 					{
 					State = 76;
-					@interface();
+					@struct();
 					}
 					break;
 				case 4:
@@ -521,8 +521,8 @@ public partial class AmethystParser : Parser {
 		return _localctx;
 	}
 
-	public partial class InterfaceContext : ParserRuleContext {
-		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode Interface() { return GetToken(AmethystParser.Interface, 0); }
+	public partial class StructContext : ParserRuleContext {
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode Struct() { return GetToken(AmethystParser.Struct, 0); }
 		[System.Diagnostics.DebuggerNonUserCode] public IdContext id() {
 			return GetRuleContext<IdContext>(0);
 		}
@@ -534,29 +534,29 @@ public partial class AmethystParser : Parser {
 		[System.Diagnostics.DebuggerNonUserCode] public DeclarationContext declaration(int i) {
 			return GetRuleContext<DeclarationContext>(i);
 		}
-		public InterfaceContext(ParserRuleContext parent, int invokingState)
+		public StructContext(ParserRuleContext parent, int invokingState)
 			: base(parent, invokingState)
 		{
 		}
-		public override int RuleIndex { get { return RULE_interface; } }
+		public override int RuleIndex { get { return RULE_struct; } }
 		[System.Diagnostics.DebuggerNonUserCode]
 		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
 			IAmethystVisitor<TResult> typedVisitor = visitor as IAmethystVisitor<TResult>;
-			if (typedVisitor != null) return typedVisitor.VisitInterface(this);
+			if (typedVisitor != null) return typedVisitor.VisitStruct(this);
 			else return visitor.VisitChildren(this);
 		}
 	}
 
 	[RuleVersion(0)]
-	public InterfaceContext @interface() {
-		InterfaceContext _localctx = new InterfaceContext(Context, State);
-		EnterRule(_localctx, 12, RULE_interface);
+	public StructContext @struct() {
+		StructContext _localctx = new StructContext(Context, State);
+		EnterRule(_localctx, 12, RULE_struct);
 		int _la;
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
 			State = 123;
-			Match(Interface);
+			Match(Struct);
 			State = 124;
 			id();
 			State = 125;

@@ -18,6 +18,8 @@ namespace Amethyst.Geode.Types
         public override TypeSpecifier BaseClass => this;
 		public override NamespacedID ID => "amethyst:ref";
 
+		public override TypeSpecifier AssignmentOverloadType => Inner;
+
         public override void AssignmentOverload(ValueRef dest, ValueRef val, FunctionContext ctx)
         {
             if (val.Type is ReferenceTypeSpecifier) ctx.Call("amethyst:core/ref/set-ref", dest, ctx.ImplicitCast(val, this));
@@ -39,7 +41,8 @@ namespace Amethyst.Geode.Types
             return null;
         }
 
-        public override TypeSpecifier? Property(string name) => Inner.Property(name);
+		public override TypeSpecifier? DefaultPropertyType => Inner.DefaultPropertyType;
+		public override Dictionary<string, TypeSpecifier> Properties => Inner.Properties;
 
         protected override bool EqualsImpl(TypeSpecifier obj) => obj is ReferenceTypeSpecifier p && p.Inner == Inner;
         public override object Clone() => new ReferenceTypeSpecifier((TypeSpecifier)Inner.Clone());

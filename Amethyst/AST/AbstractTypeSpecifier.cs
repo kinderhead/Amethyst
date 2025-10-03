@@ -9,23 +9,23 @@ namespace Amethyst.AST
 {
 	public abstract class AbstractTypeSpecifier(LocationRange loc) : Node(loc)
 	{
-		public TypeSpecifier Resolve(FunctionContext ctx, bool allowAuto = false) => Resolve(ctx.Compiler, allowAuto);
+		public TypeSpecifier Resolve(FunctionContext ctx, bool allowAuto = false) => Resolve(ctx.Compiler, ctx.Decl.ID.ContainingFolder(), allowAuto);
 
-		public TypeSpecifier Resolve(Compiler ctx, bool allowAuto = false)
+		public TypeSpecifier Resolve(Compiler ctx, string baseNamespace, bool allowAuto = false)
 		{
 			TypeSpecifier? ret = null;
-			if (!ctx.WrapError(Location, () => ret = _Resolve(ctx, allowAuto))) throw new EmptyAmethystError();
+			if (!ctx.WrapError(Location, () => ret = _Resolve(ctx, baseNamespace, allowAuto))) throw new EmptyAmethystError();
 			return ret!;
 		}
 
-		protected abstract TypeSpecifier _Resolve(Compiler ctx, bool allowAuto = false);
+		protected abstract TypeSpecifier _Resolve(Compiler ctx, string baseNamespace, bool allowAuto = false);
 	}
 
 	public class SimpleAbstractTypeSpecifier(LocationRange loc, string type) : AbstractTypeSpecifier(loc)
 	{
 		public readonly string Type = type;
 
-		protected override TypeSpecifier _Resolve(Compiler ctx, bool allowAuto = false)
+		protected override TypeSpecifier _Resolve(Compiler ctx, string baseNamespace, bool allowAuto = false)
 		{
 			switch (Type)
 			{
@@ -55,6 +55,8 @@ namespace Amethyst.AST
 				case "nbt":
 					return new PrimitiveTypeSpecifier(NBTType.Compound);
 				default:
+					var type = Type.Contains(':') ? Type : $"{baseNamespace}:{Type}";
+					if (ctx.Types.TryGetValue(type, out var ret)) return ret.Type;
 					break;
 			}
 
@@ -66,35 +68,33 @@ namespace Amethyst.AST
 	{
 		public readonly AbstractTypeSpecifier Inner = inner;
 
-		protected override TypeSpecifier _Resolve(Compiler ctx, bool allowAuto = false) => new ListTypeSpecifier(Inner.Resolve(ctx));
+		protected override TypeSpecifier _Resolve(Compiler ctx, string baseNamespace, bool allowAuto = false) => new ListTypeSpecifier(Inner.Resolve(ctx, baseNamespace));
 	}
 
 	public class AbstractReferenceTypeSpecifier(LocationRange loc, AbstractTypeSpecifier inner) : AbstractTypeSpecifier(loc)
 	{
 		public readonly AbstractTypeSpecifier Inner = inner;
 
-		protected override TypeSpecifier _Resolve(Compiler ctx, bool allowAuto = false) => new ReferenceTypeSpecifier(Inner.Resolve(ctx));
+		protected override TypeSpecifier _Resolve(Compiler ctx, string baseNamespace, bool allowAuto = false) => new ReferenceTypeSpecifier(Inner.Resolve(ctx, baseNamespace));
 	}
 
 	public class AbstractWeakReferenceTypeSpecifier(LocationRange loc, AbstractTypeSpecifier inner) : AbstractTypeSpecifier(loc)
 	{
 		public readonly AbstractTypeSpecifier Inner = inner;
 
-		protected override TypeSpecifier _Resolve(Compiler ctx, bool allowAuto = false) => new WeakReferenceTypeSpecifier(Inner.Resolve(ctx));
+		protected override TypeSpecifier _Resolve(Compiler ctx, string baseNamespace, bool allowAuto = false) => new WeakReferenceTypeSpecifier(Inner.Resolve(ctx, baseNamespace));
 	}
 
-	public class AbstractInterfaceTypeSpecifier(LocationRange loc, string id, Dictionary<string, AbstractObjectProperty> props) : AbstractTypeSpecifier(loc), IRootChild
+	public class AbstractStructTypeSpecifier(LocationRange loc, NamespacedID id, Dictionary<string, AbstractTypeSpecifier> props) : AbstractTypeSpecifier(loc), IRootChild
 	{
 		public readonly NamespacedID ID = id;
-		public readonly Dictionary<string, AbstractObjectProperty> Properties = props;
+		public readonly Dictionary<string, AbstractTypeSpecifier> Properties = props;
 
 		public void Process(Compiler ctx)
 		{
-			throw new NotImplementedException();
+			ctx.AddType(new(ID, Location, Resolve(ctx, ID.ContainingFolder()), this));
 		}
 
-		protected override TypeSpecifier _Resolve(Compiler ctx, bool allowAuto = false) => new InterfaceType(ID, new(Properties.Select(i => new KeyValuePair<string, ObjectProperty>(i.Key, new ObjectProperty(i.Value.Type.Resolve(ctx), i.Value.Name)))));
+		protected override TypeSpecifier _Resolve(Compiler ctx, string baseNamespace, bool allowAuto = false) => new StructTypeSpecifier(ID, new(Properties.Select(i => new KeyValuePair<string, TypeSpecifier>(i.Key, i.Value.Resolve(ctx, baseNamespace)))));
 	}
-
-	public readonly record struct AbstractObjectProperty(AbstractTypeSpecifier Type, string Name);
 }

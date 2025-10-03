@@ -62,7 +62,7 @@ namespace Amethyst.AST.Statements
 
 		public override void Resolve(FunctionContext ctx)
 		{
-			Value = Expression.Execute(ctx);
+			Value = Expression.Execute(ctx, null);
 		}
 	}
 }

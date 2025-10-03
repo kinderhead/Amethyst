@@ -12,11 +12,7 @@ namespace Amethyst.Geode.Types
 		public override NBTType EffectiveType => Type;
 		public override NamespacedID ID => $"minecraft:{this}";
 
-		//public override string MacroGuardStart => Type == NBTType.String ? "\"" : "";
-		//public override string MacroGuardEnd => Type == NBTType.String ? "\"" : "";
-
-		//public override bool IsAssignableTo(TypeSpecifier other) => (other.IsList && Type == NBTType.List) || base.IsAssignableTo(other);
-		public override TypeSpecifier? Property(string name) => Type == NBTType.Compound ? new AnyTypeSpecifier() : base.Property(name);
+		public override TypeSpecifier? DefaultPropertyType => Type == NBTType.Compound ? Compound : null;
 
 		protected override bool EqualsImpl(TypeSpecifier obj) => obj is PrimitiveTypeSpecifier p && p.Type == Type;
 		public override string ToString() => Type == NBTType.Compound ? "nbt" : Enum.GetName(Type)?.ToLower() ?? throw new InvalidOperationException();

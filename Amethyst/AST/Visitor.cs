@@ -28,7 +28,7 @@ namespace Amethyst.AST
 				else if (i is AmethystParser.NamespaceContext ns) currentNamespace = Visit(ns.id());
 				else if (i is AmethystParser.FunctionContext func) root.Functions.Add((FunctionNode)Visit(func));
 				else if (i is AmethystParser.InitAssignmentStatementContext init) root.Children.Add(new GlobalVariableNode(Loc(init), Visit(init.type()), IdentifierToID(Visit(init.id())), init.expression() is null ? null : Visit(init.expression())));
-				else if (i is AmethystParser.InterfaceContext type) root.Children.Add((IRootChild)Visit(type));
+				else if (i is AmethystParser.StructContext type) root.Children.Add((IRootChild)Visit(type));
 			}
 
 			return root;
@@ -79,10 +79,10 @@ namespace Amethyst.AST
 			return block;
 		}
 
-		// public override Node VisitInterface([NotNull] AmethystParser.InterfaceContext context)
-		// {
-
-		// }
+		public override Node VisitStruct([NotNull] AmethystParser.StructContext context)
+		{
+			return new AbstractStructTypeSpecifier(Loc(context), IdentifierToID(Visit(context.id())), new(context.declaration().Select(i => new KeyValuePair<string, AbstractTypeSpecifier>(i.RawIdentifier().GetText(), Visit(i.type())))));
+		}
 
 		public override Node VisitInitAssignmentStatement([NotNull] AmethystParser.InitAssignmentStatementContext context) => new InitAssignmentNode(Loc(context), Visit(context.type()), Visit(context.id()), context.expression() is null ? null : Visit(context.expression()));
 		public override Node VisitExpressionStatement([NotNull] AmethystParser.ExpressionStatementContext context) => new ExpressionStatement(Loc(context), Visit(context.expression()));

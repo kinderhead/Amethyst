@@ -8,9 +8,9 @@ namespace Amethyst.AST.Expressions
         public readonly Expression Expression = expression;
         public readonly string Property = prop;
 
-        protected override ValueRef _Execute(FunctionContext ctx)
-        {
-            return ctx.GetProperty(Expression.Execute(ctx), Property);
+        protected override ValueRef _Execute(FunctionContext ctx, TypeSpecifier? expected)
+		{
+            return ctx.GetProperty(Expression.Execute(ctx, null), Property);
         }
     }
 }

@@ -8,11 +8,11 @@ using System.Text;
 namespace Amethyst.Geode.IR.Instructions
 {
 	// SortedDictionary so that the order is consistent and also it makes it look nice :)
-	public class CompoundInsn(SortedDictionary<string, ValueRef> vals) : Instruction(vals.Values)
+	public class CompoundInsn(SortedDictionary<string, ValueRef> vals, TypeSpecifier? type = null) : Instruction(vals.Values)
 	{
 		public override string Name => "nbt";
 		public override NBTType?[] ArgTypes => [.. Enumerable.Repeat<NBTType?>(null, Arguments.Length)];
-		public override TypeSpecifier ReturnType => PrimitiveTypeSpecifier.Compound;
+		public override TypeSpecifier ReturnType => type ?? PrimitiveTypeSpecifier.Compound;
 
 		public readonly string[] Keys = [.. vals.Keys];
 

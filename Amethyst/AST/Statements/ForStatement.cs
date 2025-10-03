@@ -16,9 +16,9 @@ namespace Amethyst.AST.Statements
         public override void Compile(FunctionContext ctx)
 		{
 			Initializer?.Compile(ctx);
-			ctx.Loop(() => Condition.Execute(ctx), "for", () => {
+			ctx.Loop(() => Condition.Execute(ctx, null), "for", () => {
 				Body.Compile(ctx);
-				Iterator.Execute(ctx);
+				Iterator.Execute(ctx, null);
             });
         }
 	}

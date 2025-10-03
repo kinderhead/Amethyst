@@ -14,11 +14,11 @@ namespace Amethyst.AST.Statements
 		public override void Compile(FunctionContext ctx)
 		{
 			var type = Type.Resolve(ctx, Expression is not null);
-			var val = Expression is null ? type.DefaultValue : Expression.Execute(ctx);
+			var val = Expression is null ? type.DefaultValue : Expression.Execute(ctx, type);
 			if (type is VarTypeSpecifier && Expression is not null) type = val.Type;
 			var dest = ctx.RegisterLocal(Name, type);
 
-			ctx.Add(new StoreInsn(dest, ctx.ImplicitCast(val, type), false));
+			ctx.Add(new StoreInsn(dest, val, false));
 		}
 	}
 }

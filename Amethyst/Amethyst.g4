@@ -3,7 +3,7 @@ grammar Amethyst;
 // Parser
 
 root
-    : (namespace | function | interface | (initAssignmentStatement Semi) | Semi)* EOF
+    : (namespace | function | struct | (initAssignmentStatement Semi) | Semi)* EOF
     ;
 
 namespace
@@ -26,8 +26,8 @@ block
     : LBrak statement* RBrak
     ;
 
-interface
-    : Interface id LBrak declaration* RBrak
+struct
+    : Struct id LBrak declaration* RBrak
     ;
 
 declaration
@@ -176,7 +176,7 @@ Else: 'else';
 For: 'for';
 Return: 'return';
 
-Interface: 'interface';
+Struct: 'struct';
 
 Macro: 'macro';
 NoStack: 'nostack';

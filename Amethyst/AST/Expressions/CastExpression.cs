@@ -8,7 +8,7 @@ namespace Amethyst.AST.Expressions
 		public readonly TypeSpecifier Type = type;
 		public readonly Expression Expression = expr;
 
-		protected override ValueRef _Execute(FunctionContext ctx)
+		protected override ValueRef _Execute(FunctionContext ctx, TypeSpecifier? expected)
 		{
 			throw new NotImplementedException();
 		}

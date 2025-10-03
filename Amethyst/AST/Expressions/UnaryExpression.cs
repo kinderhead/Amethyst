@@ -23,9 +23,9 @@ namespace Amethyst.AST.Expressions
 		public readonly UnaryOperation Op = op;
 		public readonly Expression Value = val;
 
-        protected override ValueRef _Execute(FunctionContext ctx)
+        protected override ValueRef _Execute(FunctionContext ctx, TypeSpecifier? expected)
 		{
-			var val = Value.Execute(ctx);
+			var val = Value.Execute(ctx, null);
 
 			switch (Op)
 			{

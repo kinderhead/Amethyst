@@ -1,6 +1,8 @@
-﻿using Amethyst.Geode;
+﻿using Amethyst.Errors;
+using Amethyst.Geode;
 using Amethyst.Geode.IR;
 using Amethyst.Geode.IR.Instructions;
+using Amethyst.Geode.Types;
 
 namespace Amethyst.AST.Expressions
 {
@@ -19,10 +21,12 @@ namespace Amethyst.AST.Expressions
 		public readonly AssignmentType Type = type;
         public readonly Expression Expression = expr;
 
-		protected override ValueRef _Execute(FunctionContext ctx)
+		protected override ValueRef _Execute(FunctionContext ctx, TypeSpecifier? expected)
 		{
-			var val = Expression.Execute(ctx);
-			var dest = Dest.Execute(ctx);
+            var dest = Dest.Execute(ctx, null);
+            var val = Expression.Execute(ctx, dest.Type.AssignmentOverloadType, false);
+
+			if (Type != AssignmentType.Normal && val.Type != PrimitiveTypeSpecifier.Int) throw new InvalidTypeError(val.Type.ToString(), "int");
 
 			switch (Type)
 			{

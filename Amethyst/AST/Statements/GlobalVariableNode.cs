@@ -14,12 +14,12 @@ namespace Amethyst.AST.Statements
 
         public void Process(Compiler ctx)
         {
-            var val = new StorageValue(new NamespacedID(Name.Namespace, "globals"), Name.Path, Type.Resolve(ctx));
+            var val = new StorageValue(new NamespacedID(Name.Namespace, "globals"), Name.Path, Type.Resolve(ctx, Name.ContainingFolder()));
             ctx.AddSymbol(new(Name, Location, val));
 
             if (Expression is not null)
             {
-                ctx.GlobalInitFunc.Add(new StoreInsn(val, ctx.GlobalInitFunc.ImplicitCast(Expression.Execute(ctx.GlobalInitFunc), val.Type)));
+                ctx.GlobalInitFunc.Add(new StoreInsn(val, Expression.Execute(ctx.GlobalInitFunc, val.Type)));
             }
         }
     }

@@ -23,10 +23,18 @@ namespace Amethyst.Geode
 
 		public NBTNumberType? EffectiveNumberType => Enum.IsDefined((NBTNumberType)EffectiveType) ? (NBTNumberType)EffectiveType : null;
 
-		//public virtual bool IsAssignableTo(TypeSpecifier other) => this == other;
-		public virtual TypeSpecifier? Property(string name) => null;
+		public virtual TypeSpecifier? DefaultPropertyType => null;
+		public virtual Dictionary<string, TypeSpecifier> Properties => [];
 
-		public virtual string MacroGuardStart => "";
+        public TypeSpecifier? Property(string name)
+		{
+			if (Properties.TryGetValue(name, out var type)) return type;
+			else return DefaultPropertyType;
+        }
+
+		public virtual LiteralValue? DefaultPropertyValue(string name) => Property(name)?.DefaultValue;
+
+        public virtual string MacroGuardStart => "";
 		public virtual string MacroGuardEnd => "";
 
 		public override bool Equals(object? obj)
@@ -77,6 +85,8 @@ namespace Amethyst.Geode
 				first.ApplyGeneric(second, typeMap);
 			}
 		}
+
+		public virtual TypeSpecifier AssignmentOverloadType => this;
 
 		public virtual void AssignmentOverload(ValueRef dest, ValueRef val, FunctionContext ctx)
 		{

@@ -21,10 +21,10 @@ namespace Amethyst.AST.Expressions
 		public readonly ComparisonOperator Op = op;
 		public readonly Expression Right = right;
 
-		protected override ValueRef _Execute(FunctionContext ctx)
+		protected override ValueRef _Execute(FunctionContext ctx, TypeSpecifier? expected)
 		{
-			var left = ctx.Add(new LoadInsn(ctx.ImplicitCast(Left.Execute(ctx), PrimitiveTypeSpecifier.Int)));
-			var right = ctx.Add(new LoadInsn(ctx.ImplicitCast(Right.Execute(ctx), PrimitiveTypeSpecifier.Int)));
+			var left = ctx.Add(new LoadInsn(Left.Execute(ctx, PrimitiveTypeSpecifier.Int)));
+			var right = ctx.Add(new LoadInsn(Right.Execute(ctx, PrimitiveTypeSpecifier.Int)));
 
 			return Op switch
 			{

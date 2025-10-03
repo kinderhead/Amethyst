@@ -1,5 +1,11 @@
 namespace test;
 
+struct vec {
+    int x;
+    int y;
+    int z;
+}
+
 #test
 void test_nbt() {
     start("nbt");
@@ -7,6 +13,20 @@ void test_nbt() {
     nbt obj;
     obj.x = 100;
     assert(obj.x == 100);
+
+    complete();
+}
+
+#test
+void test_static() {
+    start("nbt static");
+    
+    vec obj = { x: 100 };
+    obj.y = 7;
+
+    assert(obj.x == 100);
+    assert(obj.y == 7);
+    assert(obj.z == 0);
 
     complete();
 }

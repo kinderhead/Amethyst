@@ -14,7 +14,7 @@ namespace Amethyst.AST.Statements
 
 		public override void Compile(FunctionContext ctx)
 		{
-			Expression.Execute(ctx);
+			Expression.Execute(ctx, null);
 		}
 	}
 }

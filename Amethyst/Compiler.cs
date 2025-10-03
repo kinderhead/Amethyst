@@ -20,9 +20,11 @@ namespace Amethyst
 		public readonly Options Options;
 		public readonly GeodeBuilder IR;
 		public readonly Dictionary<string, RootNode> Roots = [];
-		public readonly Dictionary<NamespacedID, GlobalSymbol> Symbols = [];
 
-		public readonly FunctionContext GlobalInitFunc;
+		public readonly Dictionary<NamespacedID, GlobalSymbol> Symbols = [];
+		public readonly Dictionary<NamespacedID, GlobalTypeSymbol> Types = [];
+
+        public readonly FunctionContext GlobalInitFunc;
 
 		public Dictionary<string, string> Files { get; } = [];
 
@@ -181,7 +183,13 @@ amethyst [files...] -o <output>";
 			else Symbols[sym.ID] = sym;
 		}
 
-		public (FunctionContext ctx, FunctionValue func) AnonymousFunction(FunctionTypeSpecifier type)
+        public void AddType(GlobalTypeSymbol sym)
+        {
+            if (Types.TryGetValue(sym.ID, out var old)) throw new RedefinedSymbolError(sym.ID.ToString(), old.Location);
+            else Types[sym.ID] = sym;
+        }
+
+        public (FunctionContext ctx, FunctionValue func) AnonymousFunction(FunctionTypeSpecifier type)
 		{
 			var func = new FunctionValue(new("amethyst", "zz_internal/" + GeodeBuilder.RandomString), type);
 			var ctx = new FunctionContext(this, func, []);

@@ -26,7 +26,7 @@ namespace Amethyst.AST
 		public readonly BlockNode Body = body;
 
 		private FunctionTypeSpecifier? funcType = null;
-		public FunctionTypeSpecifier GetFunctionType(Compiler ctx) => funcType ??= new(Modifiers, ReturnType.Resolve(ctx), Parameters.Select(i => new Parameter(i.Modifiers, i.Type.Resolve(ctx), i.Name)));
+		public FunctionTypeSpecifier GetFunctionType(Compiler ctx) => funcType ??= new(Modifiers, ReturnType.Resolve(ctx, ID.ContainingFolder()), Parameters.Select(i => new Parameter(i.Modifiers, i.Type.Resolve(ctx, ID.ContainingFolder()), i.Name)));
 
 		public bool Compile(Compiler compiler, out FunctionContext? ctx)
 		{

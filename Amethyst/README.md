@@ -11,6 +11,7 @@
     - [Namespaces](#namespaces)
     - [Math](#math)
     - [Objects](#objects)
+      - [Structs](#structs)
     - [Lists](#lists)
     - [Control Flow](#control-flow)
     - [Inline Commands](#inline-commands)
@@ -28,7 +29,7 @@
 
 There's been many different attempts at making a high-level programming language for Minecraft Datapacks over the years, but one flaw I've seen in all of them is that they let the limitations of commands dictate what's possible. All of that changed when Minecraft added macro functions, greatly increasing the flexibility of datapacks. The goal of Amethyst is to leverage macro functions and other features to allow users to make datapacks as easily as they would write any other program.
 
-Tested on Minecraft 1.21.9, theoretically works on Minecraft 1.20.5+.
+Tested on Minecraft 1.21.9, theoretically works on Minecraft 1.20.5+. No, it will not be ported to earlier versions without macro functions.
 
 ## Usage
 
@@ -167,6 +168,21 @@ nbt x = { thing1: 7, thing2: 6s };
 x.property = "Hi";
 print(x);
 ```
+
+#### Structs
+
+Typed NBT compounds are defined using `struct`s like so:
+
+```cs
+struct vec {
+    int x;
+    int y;
+}
+
+vec obj = { x: 10, y: -10 };
+```
+
+Properties are set to their default values if not explicitly set. Additionally, `struct`s follow the same namespace rules that functions and global variables do.
 
 ### Lists
 

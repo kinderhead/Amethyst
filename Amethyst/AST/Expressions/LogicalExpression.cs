@@ -1,8 +1,6 @@
 ﻿using Amethyst.Geode;
 using Amethyst.Geode.IR;
 
-using static Datapack.Net.Data._1_20_4.Blocks;
-
 namespace Amethyst.AST.Expressions
 {
 	public enum LogicalOperation
@@ -17,7 +15,7 @@ namespace Amethyst.AST.Expressions
 		public readonly LogicalOperation Op = op;
 		public readonly Expression Right = right;
 
-		protected override ValueRef _Execute(FunctionContext ctx)
+		protected override ValueRef _Execute(FunctionContext ctx, TypeSpecifier? expected)
 		{
 			throw new NotImplementedException();
 		}
