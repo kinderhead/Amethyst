@@ -165,7 +165,7 @@ Amethyst also provides the following unary operators:
 * `!x`
 * `-x`
 
-There is no current plan to implement post-increment/decrement operators. This may be revisited in the future.
+There is currently no plan to implement post-increment/decrement operators. This may be revisited in the future.
 
 ### Objects
 
@@ -415,7 +415,7 @@ void say(nbt& this) {
 }
 ```
 
-Here is the inheritance chain for types:
+Here are the inheritance chains for most types:
 
 * `minecraft:nbt`
   * `minecraft:bool`
@@ -437,14 +437,14 @@ Here is the inheritance chain for types:
 
 ## Planned Features
 
- * Objects
- * Generics
- * Inline functions
- * Entity manipulation
- * Async programming and tick scheduling
- * Automatic data generation for compile-time block states, entity data, and more
- * Error handling and exceptions
- * Optimizations
- * VSCode language server
-   * Currently just static syntax highlighting
- * And more
+* Struct inheritance
+* Generics
+* Inline functions
+* Entity and world manipulation
+* Async programming and tick scheduling
+* Automatic data generation for compile-time block states, entity data, and more
+* Error handling and exceptions
+* Optimizations
+* Visual Studio Code language server (autocomplete)
+* Debugger mod
+* And more
