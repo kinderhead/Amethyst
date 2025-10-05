@@ -10,6 +10,22 @@ struct vec {
     }
 }
 
+struct vec2 {
+    int x;
+    int y;
+    int z;
+
+    vec2(int x, int y, int z) {
+        this.x = x;
+        this.y = y;
+        this.z = z;
+    }
+
+    int sum() {
+        return this.x + this.y + this.z;
+    }
+}
+
 #test
 void test_nbt() {
     start("nbt");
@@ -32,6 +48,20 @@ void test_static() {
     assert(obj.y == 7);
     assert(obj.z == 0);
     assert(obj.sum() == 107);
+
+    complete();
+}
+
+#test
+void test_constructor() {
+    start("nbt constructor");
+    
+    vec2 obj = vec2(3, 6, 4);
+
+    assert(obj.x == 3);
+    assert(obj.y == 6);
+    assert(obj.z == 4);
+    assert(obj.sum() == 13);
 
     complete();
 }

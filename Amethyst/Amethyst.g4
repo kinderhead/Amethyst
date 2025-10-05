@@ -27,11 +27,15 @@ block
     ;
 
 struct
-    : Struct id LBrak (declaration | function)* RBrak
+    : Struct id LBrak (declaration | method)* RBrak
     ;
 
 declaration
     : type RawIdentifier (Eq expression)? Semi+
+    ;
+
+method
+    : functionModifier* type? RawIdentifier paramList block
     ;
 
 statement

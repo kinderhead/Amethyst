@@ -96,7 +96,7 @@ namespace Amethyst.Geode.IR
 			{
 				return v;
 			}
-			else if (GetGlobalWalk(Decl.ID.ContainingFolder(), name) is Value v2)
+			else if (GetGlobalWalk(Decl.ID.GetContainingFolder(), name) is Value v2)
 			{
 				return v2;
 			}
@@ -155,6 +155,16 @@ namespace Amethyst.Geode.IR
 			{
 				return null;
 			}
+		}
+
+		public Value? GetConstructorOrNull(TypeSpecifier type)
+		{
+			if (GetGlobal(type.ID) is Value v && v.Type is FunctionTypeSpecifier funcType && funcType.ReturnType == type)
+			{
+				return v;
+			}
+
+			return null;
 		}
 
 		public Variable RegisterLocal(string name, TypeSpecifier type) => RegisterLocal(name, $"frame{activeScopes.Count - 1}.{name}", type);

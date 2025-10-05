@@ -6,7 +6,6 @@ namespace Amethyst.Geode.Types
 {
 	public class VarTypeSpecifier : TypeSpecifier
 	{
-		public override bool Operable => false;
 		public override LiteralValue DefaultValue => throw new InvalidTypeError("var");
 
 		public override NamespacedID ID => "amethyst:var";

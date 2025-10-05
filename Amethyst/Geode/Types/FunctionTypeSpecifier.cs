@@ -10,7 +10,6 @@ namespace Amethyst.Geode.Types
 		public readonly FunctionModifiers Modifiers = modifiers;
 		public readonly TypeSpecifier ReturnType = returnType;
 		public readonly Parameter[] Parameters = [.. paramters];
-		public override bool Operable => false;
 		public override IEnumerable<TypeSpecifier> Subtypes => [ReturnType, .. Parameters.Select(i => i.Type)];
 		public override NamespacedID ID => "amethyst:func";
 		public override TypeSpecifier BaseClass => this;

@@ -81,6 +81,12 @@ public interface IAmethystVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <return>The visitor result.</return>
 	Result VisitDeclaration([NotNull] AmethystParser.DeclarationContext context);
 	/// <summary>
+	/// Visit a parse tree produced by <see cref="AmethystParser.method"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitMethod([NotNull] AmethystParser.MethodContext context);
+	/// <summary>
 	/// Visit a parse tree produced by <see cref="AmethystParser.statement"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>

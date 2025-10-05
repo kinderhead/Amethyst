@@ -5,7 +5,6 @@ namespace Amethyst.Geode.Types
 {
 	public class VoidTypeSpecifier : TypeSpecifier
 	{
-		public override bool Operable => false;
 		public override LiteralValue DefaultValue => new(0, this);
 
 		public override NamespacedID ID => "amethyst:void";

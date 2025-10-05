@@ -14,6 +14,11 @@ namespace Amethyst.AST.Expressions
 		{
 			var type = expected ?? PrimitiveTypeSpecifier.Compound;
 
+			if (ctx.GetConstructorOrNull(type) is not null)
+			{
+				throw new MissingConstructorError(type.ToString());
+			}
+
 			SortedDictionary<string, ValueRef> vals = [];
 
 			foreach (var (k, v) in Values)

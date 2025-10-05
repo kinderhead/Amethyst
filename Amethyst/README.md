@@ -17,7 +17,9 @@
     - [Namespaces](#namespaces)
     - [Math](#math)
     - [Objects](#objects)
-      - [Structs](#structs)
+    - [Structs](#structs)
+      - [Methods](#methods)
+      - [Constructors](#constructors)
     - [Lists](#lists)
     - [Control Flow](#control-flow)
     - [Inline Commands](#inline-commands)
@@ -177,7 +179,7 @@ x.property = "Hi";
 print(x);
 ```
 
-#### Structs
+### Structs
 
 Typed NBT compounds are defined using `struct`s like so:
 
@@ -192,6 +194,8 @@ vec obj = { x: 10, y: -10 }; // obj.z == 0
 ```
 
 Properties are set to their default values if not explicitly set. Additionally, structs follow the same namespace rules that functions and global variables do.
+
+#### Methods
 
 Structs can have also have methods:
 
@@ -210,6 +214,41 @@ print(obj.sum());
 ```
 
 Struct methods are processed internally as [Extension Methods](#extension-methods), where the first parameter is `macro T& this`. Create an extension method outside of the struct to customize the `this` parameter (eg. removing `macro`).
+
+#### Constructors
+
+Structs can also have constructors:
+
+```cs
+struct vec {
+    int x;
+    int y;
+    int z;
+
+    vec(int x, int y, int z) {
+        this.x = x;
+        this.y = y;
+        this.z = z;
+    }
+}
+
+vec obj = vec(1, 2, 3); // or var obj = vec(1, 2, 3);
+```
+
+Constructors are processed into functions of the form `type type(...)` where `type` is the name of a type. The object itself is created as a local variable called `this` in the constructor and automatically returned at the end. As such, it is possible to return from a constructor explicitly if need be. Objects with a constructor must have a non-compound initializer:
+
+```cs
+vec obj; // Error
+vec obj = { x: 1, y: 2, z: 3 }; // Error
+vec obj = vec(1, 2, 3); // Valid
+```
+
+Just like with methods, it is possible to retroactively create a constructor outside of the struct definition, and even make constructors for non-struct types. Amethyst considers that a type has a constructor if a function is found with the following conditions:
+
+* It has the same name as the type, including namespace. Unlike methods, the function is not under a special subpath in the namespace.
+* The function returns the type.
+
+However, Amethyst adds a special variable initializer for `this` in constructors defined in structs that bypasses the MissingConstructorError, so it may not be possible in all scenarios to create a constructor for any type.
 
 ### Lists
 

@@ -10,7 +10,6 @@ namespace Amethyst.Geode.Types
 		public TypeSpecifier Constraint { get; private set; } = constraint ?? PrimitiveTypeSpecifier.Compound;
 		public bool Resolved { get; private set; } = resolved;
 
-		public override bool Operable => Constraint.Operable;
 		public override LiteralValue DefaultValue => Constraint.DefaultValue;
 		public override bool IsList => Constraint.IsList;
 		public override NamespacedID ID => Constraint.ID;

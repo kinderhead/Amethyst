@@ -8,7 +8,7 @@ namespace Amethyst.Geode.Types
 	{
 		public override Dictionary<string, TypeSpecifier> Properties => props;
 
-		public override bool Operable => false;
+		public override NBTType EffectiveType => NBTType.Compound;
 		public override LiteralValue DefaultValue => new(new NBTCompound(Properties.Select(i => new KeyValuePair<string, NBTValue>(i.Key, DefaultPropertyValue(i.Key)?.Value ?? i.Value.DefaultValue.Value))), this);
 		public override IEnumerable<TypeSpecifier> Subtypes => Properties.Select(i => i.Value);
 

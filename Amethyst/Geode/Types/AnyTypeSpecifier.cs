@@ -6,7 +6,6 @@ namespace Amethyst.Geode.Types
 {
 	public class AnyTypeSpecifier : TypeSpecifier
 	{
-		public override bool Operable => false;
 		public override LiteralValue DefaultValue => new(new NBTCompound());
 		public override NBTType EffectiveType => NBTType.Compound;
 		public override NamespacedID ID => "amethyst:any";

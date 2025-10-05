@@ -7,7 +7,6 @@ namespace Amethyst.Geode.Types
 	public class ListTypeSpecifier(TypeSpecifier inner) : TypeSpecifier
 	{
 		public readonly TypeSpecifier Inner = inner;
-		public override bool Operable => false;
 		public override NBTType EffectiveType => NBTType.List;
 		public override IEnumerable<TypeSpecifier> Subtypes => [Inner];
 		public override bool IsList => true;

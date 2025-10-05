@@ -13,7 +13,7 @@ namespace Amethyst.AST.Statements
 
 		public void Process(Compiler ctx, RootNode root)
 		{
-			var val = new StorageValue(new NamespacedID(Name.Namespace, "globals"), Name.Path, Type.Resolve(ctx, Name.ContainingFolder()));
+			var val = new StorageValue(new NamespacedID(Name.Namespace, "globals"), Name.Path, Type.Resolve(ctx, Name.GetContainingFolder()));
 			ctx.AddSymbol(new(Name, Location, val));
 
 			if (Expression is not null)

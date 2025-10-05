@@ -67,17 +67,22 @@ namespace Amethyst.AST
 			return new FunctionNode(Loc(context), [.. context.functionTag().Select(i =>
 			{
 				var text = Visit(i.id());
-				if (text.Contains(':')) { return new NamespacedID(text); } else if (text is "load" or "tick") { return new NamespacedID("minecraft", text); } else { return new NamespacedID(currentNamespace, text); } })], mod, Visit(context.type()),
+				if (text.Contains(':'))
+				{
+					return new NamespacedID(text);
+				}
+				else if (text is "load" or "tick")
+				{
+					return new NamespacedID("minecraft", text);
+				}
+				else
+				{
+					return new NamespacedID(currentNamespace, text);
+				}
+			})],
+				mod, Visit(context.type()),
 				IdentifierToID(Visit(context.name)),
-				[.. context.paramList().paramPair().Select(i => {
-					var mod = ParameterModifiers.None;
-
-					foreach (var e in i.paramModifier())
-					{
-						if (e.GetText() == "macro") { mod |= ParameterModifiers.Macro; } }
-
-					return new AbstractParameter(mod, Visit(i.type()), Visit(i.id()));
-				})],
+				Visit(context.paramList()),
 				Visit(context.block())
 			);
 		}
@@ -109,10 +114,33 @@ namespace Amethyst.AST
 
 			var oldNs = currentNamespace;
 			currentNamespace = id.ToString();
-			List<FunctionNode> methods = [.. context.function().Select(i => (FunctionNode)Visit(i))];
+			List<FunctionNode> methods = [.. context.method().Select(i => (FunctionNode)Visit(i))];
 			currentNamespace = oldNs;
 
 			return new AbstractStructTypeSpecifier(Loc(context), id, props, methods);
+		}
+
+		public override Node VisitMethod([NotNull] AmethystParser.MethodContext context)
+		{
+			var mod = FunctionModifiers.None;
+			foreach (var i in context.functionModifier())
+			{
+				if (i.GetText() == "nostack")
+				{
+					mod |= FunctionModifiers.NoStack;
+				}
+				else if (i.GetText() == "inline")
+				{
+					mod |= FunctionModifiers.Inline;
+				}
+			}
+
+			return new FunctionNode(Loc(context), [],
+				mod, context.type() is null ? new SimpleAbstractTypeSpecifier(Loc(context), "void") : Visit(context.type()),
+				IdentifierToID(context.RawIdentifier().GetText()),
+				Visit(context.paramList()),
+				Visit(context.block())
+			);
 		}
 
 		public override Node VisitInitAssignmentStatement([NotNull] AmethystParser.InitAssignmentStatementContext context) => new InitAssignmentNode(Loc(context), Visit(context.type()), Visit(context.id()), context.expression() is null ? null : Visit(context.expression()));
@@ -384,6 +412,19 @@ namespace Amethyst.AST
 		public Statement Visit(AmethystParser.StatementContext context) => (Statement)Visit((IParseTree)context);
 		public Expression Visit(AmethystParser.ExpressionContext context) => (Expression)Visit((IParseTree)context);
 		public List<Expression> Visit(AmethystParser.ExpressionListContext context) => [.. context.expression().Select(Visit)];
+
+		public List<AbstractParameter> Visit(AmethystParser.ParamListContext context) => [..context.paramPair().Select(i => {
+			var mod = ParameterModifiers.None;
+
+			foreach (var e in i.paramModifier())
+			{
+				if (e.GetText() == "macro")
+				{ mod |= ParameterModifiers.Macro; }
+			}
+
+			return new AbstractParameter(mod, Visit(i.type()), Visit(i.id()));
+		})];
+
 		public static string Visit(AmethystParser.IdContext context) => context.GetText();
 
 		public LocationRange Loc(ParserRuleContext ctx) => LocOffset(LocationRange.From(Filename, ctx));

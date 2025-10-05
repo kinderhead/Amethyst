@@ -5,6 +5,12 @@ struct vec {
     int y;
     int z;
 
+    vec(int x, int y, int z) {
+        this.x = x;
+        this.y = y;
+        this.z = z;
+    }
+
     void test() {
         print(this.x);
         this.x += 10;
@@ -13,12 +19,8 @@ struct vec {
 
 #load
 void main() {
-    for (int i = 0; i < 10; ++i) {
-        if (i >= 5) {
-            print(-i);
-        } else {
-            print(i);
-        }
-    }
+    vec v = vec(1, 2, 3);
+    v.test();
+    print(v);
 }
 

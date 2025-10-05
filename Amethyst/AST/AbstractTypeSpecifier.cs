@@ -1,4 +1,6 @@
-﻿using Amethyst.Errors;
+﻿using Amethyst.AST.Expressions;
+using Amethyst.AST.Statements;
+using Amethyst.Errors;
 using Amethyst.Geode;
 using Amethyst.Geode.IR;
 using Amethyst.Geode.Types;
@@ -9,7 +11,7 @@ namespace Amethyst.AST
 {
 	public abstract class AbstractTypeSpecifier(LocationRange loc) : Node(loc)
 	{
-		public TypeSpecifier Resolve(FunctionContext ctx, bool allowAuto = false) => Resolve(ctx.Compiler, ctx.Decl.ID.ContainingFolder(), allowAuto);
+		public TypeSpecifier Resolve(FunctionContext ctx, bool allowAuto = false) => Resolve(ctx.Compiler, ctx.Decl.ID.GetContainingFolder(), allowAuto);
 
 		public TypeSpecifier Resolve(Compiler ctx, string baseNamespace, bool allowAuto = false)
 		{
@@ -111,12 +113,23 @@ namespace Amethyst.AST
 
 		public void Process(Compiler ctx, RootNode root)
 		{
-			ctx.AddType(new(ID, Location, Resolve(ctx, ID.ContainingFolder()), this));
+			ctx.AddType(new(ID, Location, Resolve(ctx, ID.GetContainingFolder()), this));
 
 			foreach (var i in Methods)
 			{
-				i.Parameters.Insert(0, new AbstractParameter(ParameterModifiers.Macro, new AbstractReferenceTypeSpecifier(Location, new SimpleAbstractTypeSpecifier(Location, ID.ToString())), "this"));
-				i.Process(ctx, root);
+				if (i.ID.GetFile() == ID.GetFile())
+				{
+					var self = new SimpleAbstractTypeSpecifier(i.Location, ID.ToString());
+					var constructor = new FunctionNode(i.Location, i.Tags, i.Modifiers, self, ID, i.Parameters, i.Body);
+					constructor.Body.Prepend(new InitAssignmentNode(i.Location, self, "this", null, false));
+					constructor.Body.Add(new ReturnStatement(i.Location, new VariableExpression(i.Location, "this")));
+					constructor.Process(ctx, root);
+				}
+				else
+				{
+					i.Parameters.Insert(0, new AbstractParameter(ParameterModifiers.Macro, new AbstractReferenceTypeSpecifier(Location, new SimpleAbstractTypeSpecifier(Location, ID.ToString())), "this"));
+					i.Process(ctx, root);
+				}
 			}
 		}
 

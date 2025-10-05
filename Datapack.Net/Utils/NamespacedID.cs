@@ -44,7 +44,7 @@ namespace Datapack.Net.Utils
 		[GeneratedRegex(@"/+")]
 		private static partial Regex DuplicateSlashRegex();
 
-		public string ContainingFolder()
+		public string GetContainingFolder()
 		{
 			if (Path.Contains('/'))
 			{
@@ -55,6 +55,8 @@ namespace Datapack.Net.Utils
 				return Namespace;
 			}
 		}
+
+		public string GetFile() => Path.Split('/')[^1];
 	}
 
 	public class NamespacedIDSerializer : JsonConverter<NamespacedID>

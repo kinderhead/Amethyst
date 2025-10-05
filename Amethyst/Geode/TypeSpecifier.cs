@@ -9,7 +9,6 @@ namespace Amethyst.Geode
 {
 	public abstract class TypeSpecifier : ICloneable
 	{
-		public abstract bool Operable { get; }
 		public abstract LiteralValue DefaultValue { get; }
 		public abstract NamespacedID ID { get; }
 

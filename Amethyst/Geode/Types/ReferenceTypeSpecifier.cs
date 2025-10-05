@@ -11,7 +11,6 @@ namespace Amethyst.Geode.Types
 	{
 		public readonly TypeSpecifier Inner = inner;
 		public override IEnumerable<TypeSpecifier> Subtypes => [Inner]; // Shouldn't need to unecessarily include the base subtypes here
-		public override bool Operable => false;
 		public override LiteralValue DefaultValue => new("");
 		public override string ToString() => $"{Inner}&";
 		public override NBTType EffectiveType => NBTType.String;

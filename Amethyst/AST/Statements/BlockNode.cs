@@ -15,6 +15,7 @@ namespace Amethyst.AST.Statements
 			}
 		}
 
+		public void Prepend(Statement stmt) => Statements.Insert(0, stmt);
 		public void Add(Statement stmt) => Statements.Add(stmt);
 
 		public bool CompileWithErrorChecking(FunctionContext ctx)
