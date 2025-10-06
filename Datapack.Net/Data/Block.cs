@@ -1,9 +1,11 @@
 ﻿using Datapack.Net.Function;
 using Datapack.Net.Utils;
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 
 namespace Datapack.Net.Data
 {
+	[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicFields)]
 	public class Block(NamespacedID id)
 	{
 		public readonly NamespacedID ID = id;

@@ -105,6 +105,7 @@ multiplicativeExpression
 
 castExpression
     : unaryExpression
+    | LParen type RParen castExpression
     ;
 
 unaryExpression

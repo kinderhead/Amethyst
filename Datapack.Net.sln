@@ -7,8 +7,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Datapack.Net", "Datapack.Ne
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Datapack.Net.Tests", "Datapack.Net.Tests\Datapack.Net.Tests.csproj", "{E49587D5-6F7C-465C-BE81-765451056DA0}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TNTCannon", "TNTCannon\TNTCannon.csproj", "{9B020922-BC2B-4CAD-9A34-C42A6D527421}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{818B7775-9337-42F7-BF89-115EC58D701B}"
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig

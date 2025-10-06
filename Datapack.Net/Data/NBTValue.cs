@@ -1,9 +1,8 @@
-﻿using Datapack.Net.CubeLib;
-using System.Text;
+﻿using System.Text;
 
 namespace Datapack.Net.Data
 {
-	public abstract class NBTValue : IPointerable
+	public abstract class NBTValue
 	{
 		public abstract NBTType Type { get; }
 		public abstract void Build(StringBuilder sb);
