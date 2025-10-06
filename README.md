@@ -37,6 +37,8 @@ Tested on Minecraft 1.21.9, theoretically works on Minecraft 1.20.5+. No, it wil
 
 ## Usage
 
+The latest releases are found [here](https://github.com/kinderhead/Amethyst/releases).
+
 Nightly builds can be accessed through Github Actions or here:
 
 | OS | Builds |
