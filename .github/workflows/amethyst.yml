@@ -56,15 +56,23 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
-      - name: Download Artifacts
-        uses: actions/download-artifact@v4
-        with:
-          path: ./releases
+      - name: Download Windows x64
+        run: curl -o ./releases/amethyst-windows.zip https://nightly.link/kinderhead/Amethyst/workflows/amethyst/master/amethyst-windows.zip
+      - name: Download Windows 11 Arm
+        run: curl -o ./releases/amethyst-windows-arm.zip https://nightly.link/kinderhead/Amethyst/workflows/amethyst/master/amethyst-windows-arm.zip
+      - name: Download Linux x86-64
+        run: curl -o ./releases/amethyst-linux.zip https://nightly.link/kinderhead/Amethyst/workflows/amethyst/master/amethyst-linux.zip
+      - name: Download Linux Arm
+        run: curl -o ./releases/amethyst-linux-arm.zip https://nightly.link/kinderhead/Amethyst/workflows/amethyst/master/amethyst-linux-arm.zip
+      - name: Download Apple Silicon
+        run: curl -o ./releases/amethyst-mac.zip https://nightly.link/kinderhead/Amethyst/workflows/amethyst/master/amethyst-mac.zip
+      - name: Download Apple Intel
+        run: curl -o ./releases/amethyst-mac-intel.zip https://nightly.link/kinderhead/Amethyst/workflows/amethyst/master/amethyst-mac-intel.zip
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
           body_path: CHANGELOG.md
-          files: ./releases/**/*
+          files: ./releases/*
           tag_name: ${{ github.ref_name }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
