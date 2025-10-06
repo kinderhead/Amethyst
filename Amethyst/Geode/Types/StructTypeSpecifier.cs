@@ -15,7 +15,7 @@ namespace Amethyst.Geode.Types
 
 		public override NamespacedID ID => id;
 
-		protected override bool EqualsImpl(TypeSpecifier obj) => obj is StructTypeSpecifier other && Properties.Count == other.Properties.Count && Properties.All(kv => other.Properties.TryGetValue(kv.Key, out var prop) && prop.Equals(kv.Value));
+		protected override bool EqualsImpl(TypeSpecifier obj) => obj is StructTypeSpecifier other && other.ID == ID;// && Properties.Count == other.Properties.Count && Properties.All(kv => other.Properties.TryGetValue(kv.Key, out var prop) && prop.Equals(kv.Value));
 		public override string ToString() => ID.ToString();
 
 		public override object Clone() => new StructTypeSpecifier(ID, BaseClass, new(props.Select(i => new KeyValuePair<string, TypeSpecifier>(i.Key, (TypeSpecifier)i.Value.Clone()))));

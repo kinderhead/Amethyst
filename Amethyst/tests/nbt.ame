@@ -26,6 +26,10 @@ struct vec2 {
     }
 }
 
+struct subvec implements vec2 {
+    subvec(int x, int y, int z) : vec2(x * 2, y * 2, z * 2) { }
+}
+
 #test
 void test_nbt() {
     start("nbt");
@@ -62,6 +66,20 @@ void test_constructor() {
     assert(obj.y == 6);
     assert(obj.z == 4);
     assert(obj.sum() == 13);
+
+    complete();
+}
+
+#test
+void test_inheritance() {
+    start("nbt inheritance");
+    
+    subvec obj = subvec(1, 2, 3);
+
+    assert(obj.x == 2);
+    assert(obj.y == 4);
+    assert(obj.z == 6);
+    assert(obj.sum() == 12);
 
     complete();
 }

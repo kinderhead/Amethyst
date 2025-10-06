@@ -5,11 +5,11 @@ struct vec {
     int y;
     int z;
 
-    // vec(int x, int y, int z) {
-    //     this.x = x;
-    //     this.y = y;
-    //     this.z = z;
-    // }
+    vec(int x, int y, int z) {
+        this.x = x;
+        this.y = y;
+        this.z = z;
+    }
 
     void test() {
         print(this.x);
@@ -18,14 +18,23 @@ struct vec {
 }
 
 struct vec2 implements vec {
+    vec2(int x, int y, int z) : vec(x * 2, y * 2, z * 2) { }
+
     void other() {
         print(this);
     }
 }
 
+struct test implements string {
+    test() : "Wow" {}
+
+    void method(int x) {
+        print(this, x);
+    }
+}
+
 #load
 void main() {
-    vec2 v = { x: 1, y: 2, z: 3 };
-    v.test();
-    v.other();
+    test hmm = test();
+    hmm.method(7);
 }

@@ -1,6 +1,4 @@
-﻿using Amethyst.AST.Expressions;
-using Amethyst.AST.Statements;
-using Amethyst.Errors;
+﻿using Amethyst.Errors;
 using Amethyst.Geode;
 using Amethyst.Geode.IR;
 using Amethyst.Geode.Types;
@@ -68,9 +66,12 @@ namespace Amethyst.AST
 				case "nbt":
 					return new PrimitiveTypeSpecifier(NBTType.Compound);
 				default:
-					if (Type.Contains(':') && ctx.IR.Types.TryGetValue(Type, out var ret))
+					if (Type.Contains(':'))
 					{
-						return ret.Type;
+						if (ctx.IR.Types.TryGetValue(Type, out var ret))
+						{
+							return ret.Type;
+						}
 					}
 					else if (GeodeBuilder.NamespaceWalk(baseNamespace, Type, ctx.IR.Types) is GlobalTypeSymbol sym)
 					{
@@ -105,46 +106,44 @@ namespace Amethyst.AST
 		protected override TypeSpecifier ResolveImpl(Compiler ctx, string baseNamespace, bool allowAuto = false) => new WeakReferenceTypeSpecifier(Inner.Resolve(ctx, baseNamespace));
 	}
 
-	public class AbstractStructTypeSpecifier(LocationRange loc, NamespacedID id, AbstractTypeSpecifier? baseClass, Dictionary<string, AbstractTypeSpecifier> props, List<FunctionNode> methods) : AbstractTypeSpecifier(loc), IRootChild
+	public class AbstractStructTypeSpecifier(LocationRange loc, NamespacedID id, AbstractTypeSpecifier? baseClass, Dictionary<string, AbstractTypeSpecifier> props, List<MethodNode> methods) : AbstractTypeSpecifier(loc), IRootChild
 	{
 		public readonly NamespacedID ID = id;
 		public readonly Dictionary<string, AbstractTypeSpecifier> Properties = props;
-		public readonly List<FunctionNode> Methods = methods;
+		public readonly List<MethodNode> Methods = methods;
 		public readonly AbstractTypeSpecifier? BaseClass = baseClass;
-
-		private bool hasConstructor = false;
 
 		public void Process(Compiler ctx, RootNode root)
 		{
-			ctx.IR.AddType(new(ID, Location, Resolve(ctx, ID.GetContainingFolder()), this));
+			var selfType = Resolve(ctx, ID.GetContainingFolder());
+			ctx.IR.AddType(new(ID, Location, selfType, this));
+
+			bool hasConstructor = false;
 
 			foreach (var i in Methods)
 			{
-				if (i.ID.GetFile() == ID.GetFile())
+				if (i is ConstructorNode)
 				{
-					var self = new SimpleAbstractTypeSpecifier(i.Location, ID.ToString());
-					var constructor = new FunctionNode(i.Location, i.Tags, i.Modifiers, self, ID, i.Parameters, i.Body);
-					constructor.Body.Prepend(new InitAssignmentNode(i.Location, self, "this", null, false));
-					constructor.Body.Add(new ReturnStatement(i.Location, new VariableExpression(i.Location, "this")));
-					constructor.Process(ctx, root);
 					hasConstructor = true;
 				}
-				else
-				{
-					i.Parameters.Insert(0, new AbstractParameter(ParameterModifiers.Macro, new AbstractReferenceTypeSpecifier(Location, new SimpleAbstractTypeSpecifier(Location, ID.ToString())), "this"));
-					i.Process(ctx, root);
-				}
+
+				i.Process(ctx, root);
+			}
+
+			if (ctx.IR.GetConstructorOrNull(selfType.BaseClass) is not null && !hasConstructor)
+			{
+				throw new MissingConstructorError(selfType.BaseClass.ToString());
+			}
+
+			if (Properties.Count != 0 && selfType.EffectiveType != NBTType.Compound)
+			{
+				throw new PropertyError(selfType.ToString());
 			}
 		}
 
 		protected override TypeSpecifier ResolveImpl(Compiler ctx, string baseNamespace, bool allowAuto = false)
 		{
 			var baseClass = BaseClass?.Resolve(ctx, baseNamespace) ?? PrimitiveTypeSpecifier.Compound;
-
-			if (ctx.IR.GetConstructorOrNull(baseClass) is not null && !hasConstructor)
-			{
-				throw new MissingConstructorError(baseClass.ToString());
-			}
 
 			return new StructTypeSpecifier(ID, baseClass, new(Properties.Select(i => new KeyValuePair<string, TypeSpecifier>(i.Key, i.Value.Resolve(ctx, baseNamespace)))));
 		}

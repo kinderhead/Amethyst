@@ -1,1 +1,1 @@
-* First release
+* Struct inheritance

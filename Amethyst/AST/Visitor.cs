@@ -114,7 +114,7 @@ namespace Amethyst.AST
 
 			var oldNs = currentNamespace;
 			currentNamespace = id.ToString();
-			List<FunctionNode> methods = [.. context.method().Select(i => (FunctionNode)Visit(i))];
+			List<MethodNode> methods = [.. context.method().Select(i => (MethodNode)Visit(i))];
 			currentNamespace = oldNs;
 
 			return new AbstractStructTypeSpecifier(Loc(context), id, context.type() is null ? null : Visit(context.type()), props, methods);
@@ -135,12 +135,18 @@ namespace Amethyst.AST
 				}
 			}
 
-			return new FunctionNode(Loc(context), [],
-				mod, context.type() is null ? new SimpleAbstractTypeSpecifier(Loc(context), "void") : Visit(context.type()),
-				IdentifierToID(context.RawIdentifier().GetText()),
-				Visit(context.paramList()),
-				Visit(context.block())
-			);
+			var id = IdentifierToID(context.RawIdentifier().GetText());
+			var args = Visit(context.paramList());
+			var block = Visit(context.block());
+
+			if (context.type() is not null)
+			{
+				return new MethodNode(Loc(context), [], mod, Visit(context.type()), id, args, block);
+			}
+			else
+			{
+				return new ConstructorNode(Loc(context), [], mod, id, args, context.expression() is null ? null : Visit(context.expression()), block);
+			}
 		}
 
 		public override Node VisitInitAssignmentStatement([NotNull] AmethystParser.InitAssignmentStatementContext context) => new InitAssignmentNode(Loc(context), Visit(context.type()), Visit(context.id()), context.expression() is null ? null : Visit(context.expression()));
@@ -185,6 +191,10 @@ namespace Amethyst.AST
 				if (error.Errored)
 				{
 					throw new Exception(); // Do this later
+
+
+
+
 				}
 			}
 
@@ -338,6 +348,10 @@ namespace Amethyst.AST
 					node = new UnaryExpression(Loc(context), UnaryOperation.Negate, node);
 				}
 				// No check for other cases because parser errors might hit it and we don't want to stop the error checker
+
+
+
+
 			}
 
 			return node;

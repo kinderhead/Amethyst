@@ -35,7 +35,8 @@ declaration
     ;
 
 method
-    : functionModifier* type? RawIdentifier paramList block
+    : functionModifier* type RawIdentifier paramList block
+    | functionModifier* RawIdentifier paramList (Colon expression)? block
     ;
 
 statement

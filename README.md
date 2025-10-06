@@ -20,6 +20,7 @@
     - [Structs](#structs)
       - [Methods](#methods)
       - [Constructors](#constructors)
+      - [Inheritance](#inheritance)
     - [Lists](#lists)
     - [Control Flow](#control-flow)
     - [Inline Commands](#inline-commands)
@@ -252,6 +253,26 @@ Just like with methods, it is possible to retroactively create a constructor out
 
 However, Amethyst adds a special variable initializer for `this` in constructors defined in structs that bypasses the MissingConstructorError, so it may not be possible in all scenarios to create a constructor for any type.
 
+#### Inheritance
+
+Structs can inherit methods and properties from other types, even non-nbt compound ones. If the base type has a constructor, it is required to implement a new constructor.
+
+```cs
+struct double_vec implements vec {
+    double_vec(int x, int y, int z) : vec(x * 2, y * 2, z * 2) { }
+}
+```
+
+The expression after the colon can be anything as long as it can be assigned to `this`.
+
+```cs
+struct test implements string {
+    test() : "Wow" { }
+}
+```
+
+Non-nbt compound types obviosly cannot have properties. As of right now, there is no mechanism for virtual or abstract methods.
+
 ### Lists
 
 Lists store an ordered collection of values. For now, only typed lists (using `T[]`) are supported.
@@ -478,7 +499,6 @@ Here are the inheritance chains for most types:
 
 ## Planned Features
 
-* Struct inheritance
 * Generics
 * Inline functions
 * Entity and world manipulation

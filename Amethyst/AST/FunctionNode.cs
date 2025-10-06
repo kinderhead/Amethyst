@@ -63,7 +63,7 @@ namespace Amethyst.AST
 			return true;
 		}
 
-		public void Process(Compiler ctx, RootNode root)
+		public virtual void Process(Compiler ctx, RootNode root)
 		{
 			ctx.IR.AddSymbol(new(ID, Location, new FunctionValue(ID, GetFunctionType(ctx)), this));
 			root.Functions.Add(this);

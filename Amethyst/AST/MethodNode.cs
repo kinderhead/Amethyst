@@ -1,0 +1,31 @@
+using Amethyst.AST.Expressions;
+using Amethyst.AST.Statements;
+using Datapack.Net.Utils;
+
+namespace Amethyst.AST
+{
+    public class MethodNode(LocationRange loc, List<NamespacedID> tags, FunctionModifiers modifiers, AbstractTypeSpecifier ret, NamespacedID id, List<AbstractParameter> parameters, BlockNode body) : FunctionNode(loc, tags, modifiers, ret, id, parameters, body)
+    {
+        public override void Process(Compiler ctx, RootNode root)
+        {
+            Parameters.Insert(0, new AbstractParameter(ParameterModifiers.Macro, new AbstractReferenceTypeSpecifier(Location, new SimpleAbstractTypeSpecifier(Location, string.Join('/', ID.ToString().Split('/')[..^1]))), "this"));
+            base.Process(ctx, root);
+        }
+    }
+
+    public class ConstructorNode(LocationRange loc, List<NamespacedID> tags, FunctionModifiers modifiers, NamespacedID id, List<AbstractParameter> parameters, Expression? baseCall, BlockNode body) : MethodNode(loc, tags, modifiers, new SimpleAbstractTypeSpecifier(loc, id.ToString()), id, parameters, body)
+    {
+        public readonly Expression? BaseCall = baseCall;
+
+        public override void Process(Compiler ctx, RootNode root)
+        {
+            var selfId = new NamespacedID(string.Join('/', ID.ToString().Split('/')[..^1]));
+            var self = new SimpleAbstractTypeSpecifier(Location, selfId.ToString());
+            var constructor = new FunctionNode(Location, Tags, Modifiers, self, selfId, Parameters, Body);
+
+            constructor.Body.Prepend(new InitAssignmentNode(Location, self, "this", BaseCall is null ? null : new CastExpression(Location, self, BaseCall), false));
+            constructor.Body.Add(new ReturnStatement(Location, new VariableExpression(Location, "this")));
+            constructor.Process(ctx, root);
+        }
+    }
+}
