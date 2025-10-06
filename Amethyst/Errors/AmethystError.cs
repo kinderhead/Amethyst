@@ -11,7 +11,7 @@ namespace Amethyst.Errors
 
 		public virtual CompilerMessager Display(IFileHandler handler, LocationRange loc, bool last = true)
 		{
-			//Console.WriteLine(StackTrace);
+			// Console.WriteLine(StackTrace);
 
 			var msg = new CompilerMessager(Color.Red);
 			msg.Header($"Error at {loc.Start}");

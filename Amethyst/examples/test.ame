@@ -2,6 +2,11 @@ namespace example;
 
 #load
 void main() {
-    string x = "womp";
-    print((int)x);
+    bool f = false;
+
+    if (f == 0) {
+        print("yay");
+    } else {
+        print("nay");
+    }
 }

@@ -36,6 +36,7 @@ namespace Amethyst.Geode.IR
 
 		// Could just be the max register used, but who knows if one goes poof somewhere
 
+
 		private readonly HashSet<int> registersInUse = [];
 		private int tmpStackVars = 0;
 
@@ -65,6 +66,7 @@ namespace Amethyst.Geode.IR
 				else
 				{
 					// Maybe make it so that if the stack isn't used by the function, then use -1 and don't push new frame
+
 
 					RegisterLocal(i.Name, new StackValue(-2, $"args.{i.Name}", i.Type));
 				}
@@ -208,8 +210,7 @@ namespace Amethyst.Geode.IR
 			}
 			else if (val.Type is AnyTypeSpecifier)
 			{
-				return val.SetType(type); // This hopefully shouldn't cause problems with reusing values
-
+				return val.SetType(type);
 			}
 			else if (val.Type.Implements(type))
 			{
@@ -268,6 +269,7 @@ namespace Amethyst.Geode.IR
 		{
 			//FirstBlock.InsertAtBeginning(AllLocals.Select(i => new DeclareInsn(i)));
 
+
 			if (CurrentBlock.Instructions.Count == 0 || !CurrentBlock.Instructions.Last().IsReturn)
 			{
 				throw new InvalidOperationException("Last block in function must have a return instruction");
@@ -288,6 +290,7 @@ namespace Amethyst.Geode.IR
 			labelCounters[label] = count + 1;
 			return $"{label}{count}";
 		}
+
 
 
 		/// <summary>

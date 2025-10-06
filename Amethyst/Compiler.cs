@@ -214,6 +214,7 @@ amethyst [files...] -o <output>";
 			Register(new CountOf());
 			Register(new ListAdd());
 			Register(new ListSize());
+			Register(new StringLength());
 
 			IR.AddSymbol(new("builtin:true", LocationRange.None, new LiteralValue(true)));
 			IR.AddSymbol(new("builtin:false", LocationRange.None, new LiteralValue(false)));

@@ -18,6 +18,7 @@
     - [Variables](#variables)
       - [Casting](#casting)
     - [Math](#math)
+    - [Strings](#strings)
     - [Objects](#objects)
     - [Structs](#structs)
       - [Methods](#methods)
@@ -197,6 +198,20 @@ Amethyst also provides the following unary operators:
 * `-x`
 
 There is currently no plan to implement post-increment/decrement operators. This may be revisited in the future.
+
+### Strings
+
+Strings in Amethyst are implemented using NBT strings.
+
+Usage:
+
+```cs
+string str = "Hello World";
+```
+
+String methods:
+
+* `.length()`: String length. Compiles internally as `(int)str`.
 
 ### Objects
 
@@ -473,8 +488,7 @@ Amethyst exposes some special Geode IR instructions as inline functions:
 
 * `builtin:print(args...)`: `/tellraw`s all players. Arguments are concatenated with no separators.
 * `builtin:count_of(constant string id)`: gets the number of functions that have a specified tag. Only accepts constant strings.
-* `amethyst:add<T>(T[]& this, T val)`: adds a value to a list. Available as a method on `T[]`.
-* `amethyst:size<T>(T[]& this)`: gets the length of a list. Available as a method on `T[]`.
+* Various types in the `minecraft` namespace have intrinsic methods.
   
 Note: all symbols in the `builtin` namespace are considered global and can be accessed without `builtin` anywhere.
 
@@ -506,10 +520,10 @@ void say(nbt& this) {
 Here are the inheritance chains for most types:
 
 * `minecraft:nbt`
-  * `minecraft:bool`
-  * `minecraft:byte`
-  * `minecraft:short`
   * `minecraft:int`
+    * `minecraft:byte`
+      * `minecraft:bool`
+    * `minecraft:short`
   * `minecraft:long`
   * `minecraft:float`
   * `minecraft:double`

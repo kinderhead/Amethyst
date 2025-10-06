@@ -1,0 +1,11 @@
+namespace test;
+
+#test
+void test_string_length() {
+    start("string length");
+    
+    string x = "womp womp";
+    assert(x.length() == 9);
+
+    complete();
+}

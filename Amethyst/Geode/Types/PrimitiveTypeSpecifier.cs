@@ -13,10 +13,6 @@ namespace Amethyst.Geode.Types
 
 		public override TypeSpecifier? DefaultPropertyType => Type == NBTType.Compound ? Compound : null;
 
-		protected override bool EqualsImpl(TypeSpecifier obj) => obj is PrimitiveTypeSpecifier p && p.Type == Type;
-		public override string ToString() => Type == NBTType.Compound ? "nbt" : Enum.GetName(Type)?.ToLower() ?? throw new InvalidOperationException();
-		public override object Clone() => new PrimitiveTypeSpecifier(Type);
-
 		public override LiteralValue DefaultValue => Type switch
 		{
 			NBTType.Boolean => new(false),
@@ -32,8 +28,22 @@ namespace Amethyst.Geode.Types
 			_ => throw new NotImplementedException()
 		};
 
+		public override TypeSpecifier BaseClass => Type switch
+		{
+			NBTType.Boolean => Byte,
+			NBTType.Byte => Int,
+			NBTType.Short => Int,
+			_ => Compound
+		};
+
+
+		protected override bool EqualsImpl(TypeSpecifier obj) => obj is PrimitiveTypeSpecifier p && p.Type == Type;
+		public override string ToString() => Type == NBTType.Compound ? "nbt" : Enum.GetName(Type)?.ToLower() ?? throw new InvalidOperationException();
+		public override object Clone() => new PrimitiveTypeSpecifier(Type);
+
 		public static PrimitiveTypeSpecifier Int => new(NBTType.Int);
 		public static PrimitiveTypeSpecifier Bool => new(NBTType.Boolean);
+		public static PrimitiveTypeSpecifier Byte => new(NBTType.Byte);
 		public static PrimitiveTypeSpecifier String => new(NBTType.String);
 		public static PrimitiveTypeSpecifier Compound => new(NBTType.Compound);
 		public static PrimitiveTypeSpecifier List => new(NBTType.List);
