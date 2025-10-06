@@ -15,6 +15,8 @@
   - [CLI Options](#cli-options)
   - [Language Features](#language-features)
     - [Namespaces](#namespaces)
+    - [Variables](#variables)
+      - [Casting](#casting)
     - [Math](#math)
     - [Objects](#objects)
     - [Structs](#structs)
@@ -156,6 +158,30 @@ void main() {
 ```
 
 Note: Minecraft does not allow capital letters in function names, so Amethyst throws an error when encountering them.
+
+### Variables
+
+Variables are declared like so:
+
+```cs
+int x = 7;
+string y;
+```
+
+The variable is set to a default value if there is no initializer. Objects with a constructor must have an initializer.
+
+The `var` keyword can be used to inference the type of the variable using the initializer.
+
+#### Casting
+
+Values can attempt to be casted to other types. There are two main types of casting: implicit and explicit. Implicit casting, as the name suggests, is done automatically where applicable. Explicit casting happens when using the cast expression:
+
+```cs
+string str = "Hi";
+int x = (int)str;
+```
+
+Explicit casting is mainly used for casting down an inheritance tree. However some types have special explicit casting rules. For instance, casting anything to an int will effectively use `/execute store`. So for most values, it will call `/data get` and store that into a score.
 
 ### Math
 

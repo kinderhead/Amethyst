@@ -1,1 +1,1 @@
-* 
+* Explicit casting

@@ -69,7 +69,7 @@ namespace Amethyst.Geode
 			{
 				return true;
 			}
-			else if (other.GetType() == GetType() && Subtypes.Count() == other.Subtypes.Count() && Subtypes.Zip(other.Subtypes).All(i => i.First.Implements(i.Second)))
+			else if (other.GetType() == GetType() && other.EffectiveType == EffectiveType && Subtypes.Count() == other.Subtypes.Count() && Subtypes.Zip(other.Subtypes).All(i => i.First.Implements(i.Second)))
 			{
 				return true;
 			}
