@@ -1,3 +1,5 @@
+This branch is where Cubelib will reside
+
 ![Amethyst](https://minecraft.wiki/images/Amethyst_Shard_JE2_BE1.png?56555)
 
 ![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/kinderhead/Amethyst/amethyst.yml)
