@@ -108,17 +108,8 @@ namespace Amethyst.Geode.IR
 			return null;
 		}
 
-		public Value? GetGlobal(NamespacedID id)
-		{
-			if (Compiler.Symbols.TryGetValue(id, out var sym))
-			{
-				return sym.Value;
-			}
-
-			return null;
-		}
-
-		public Value? GetGlobalWalk(string baseNamespace, string name) => GeodeBuilder.NamespaceWalk(baseNamespace, name, Compiler.Symbols)?.Value;
+		public Value? GetGlobal(NamespacedID id) => Compiler.IR.GetGlobal(id);
+		public Value? GetGlobalWalk(string baseNamespace, string name) => Compiler.IR.GetGlobalWalk(baseNamespace, name);
 
 		public ValueRef GetProperty(ValueRef val, string name)
 		{
@@ -157,15 +148,7 @@ namespace Amethyst.Geode.IR
 			}
 		}
 
-		public Value? GetConstructorOrNull(TypeSpecifier type)
-		{
-			if (GetGlobal(type.ID) is Value v && v.Type is FunctionTypeSpecifier funcType && funcType.ReturnType == type)
-			{
-				return v;
-			}
-
-			return null;
-		}
+		public Value? GetConstructorOrNull(TypeSpecifier type) => Compiler.IR.GetConstructorOrNull(type);
 
 		public Variable RegisterLocal(string name, TypeSpecifier type) => RegisterLocal(name, $"frame{activeScopes.Count - 1}.{name}", type);
 

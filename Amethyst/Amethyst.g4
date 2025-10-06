@@ -27,7 +27,7 @@ block
     ;
 
 struct
-    : Struct id LBrak (declaration | method)* RBrak
+    : Struct id (Implements type)? LBrak (declaration | method)* RBrak
     ;
 
 declaration
@@ -181,6 +181,7 @@ For: 'for';
 Return: 'return';
 
 Struct: 'struct';
+Implements: 'implements';
 
 Macro: 'macro';
 NoStack: 'nostack';

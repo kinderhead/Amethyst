@@ -1,6 +1,7 @@
 using Amethyst.Errors;
 using Amethyst.Geode.IR;
 using Amethyst.Geode.IR.Passes;
+using Amethyst.Geode.Types;
 using Amethyst.Geode.Values;
 using Datapack.Net;
 using Datapack.Net.Function;
@@ -13,6 +14,9 @@ namespace Amethyst.Geode
 	{
 		public readonly Options Options;
 		public readonly DP Datapack;
+
+		public readonly Dictionary<NamespacedID, GlobalSymbol> Symbols = [];
+		public readonly Dictionary<NamespacedID, GlobalTypeSymbol> Types = [];
 
 		public readonly List<FunctionContext> Functions = [];
 
@@ -154,6 +158,52 @@ namespace Amethyst.Geode
 		}
 
 		public static StorageValue TempStorage(TypeSpecifier type) => new(RuntimeID, $"tmp.{RandomString}", type);
+
+		public void AddSymbol(GlobalSymbol sym)
+		{
+			if (Symbols.TryGetValue(sym.ID, out var old))
+			{
+				throw new RedefinedSymbolError(sym.ID.ToString(), old.Location);
+			}
+			else
+			{
+				Symbols[sym.ID] = sym;
+			}
+		}
+
+		public void AddType(GlobalTypeSymbol sym)
+		{
+			if (Types.TryGetValue(sym.ID, out var old))
+			{
+				throw new RedefinedSymbolError(sym.ID.ToString(), old.Location);
+			}
+			else
+			{
+				Types[sym.ID] = sym;
+			}
+		}
+
+		public Value? GetGlobal(NamespacedID id)
+		{
+			if (Symbols.TryGetValue(id, out var sym))
+			{
+				return sym.Value;
+			}
+
+			return null;
+		}
+
+		public Value? GetGlobalWalk(string baseNamespace, string name) => NamespaceWalk(baseNamespace, name, Symbols)?.Value;
+
+		public Value? GetConstructorOrNull(TypeSpecifier type)
+		{
+			if (GetGlobal(type.ID) is Value v && v.Type is FunctionTypeSpecifier funcType && funcType.ReturnType == type)
+			{
+				return v;
+			}
+
+			return null;
+		}
 
 		public void Register(MCFunction func) => Datapack.Functions.Add(func);
 		public void Register(Score score) => registeredScores.Add(score);

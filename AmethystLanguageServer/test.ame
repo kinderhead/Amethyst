@@ -1,17 +1,28 @@
 namespace test;
 
+struct vec2 implements vec {
+    vec2() {
+        
+    }
+
+    void other() {
+        print(this);
+    }
+}
+
 #load #tick #test:tag
-nostack void path/test(macro int arg)
+void path/test(macro int arg)
 {
     int x = 6;
     int[] arr = [1, 2, 3];
     var a = 123.34d;
-    print("lmao", x, arg, arr[0]); // test
+    vec2 x;
+    print("gaming", x, arg, arr[0]); // test
     
     @/say function:test @e $(hmm)
     
     if (test)
     {
 
-    }   
+    }
 }

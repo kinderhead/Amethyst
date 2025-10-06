@@ -39,7 +39,7 @@ namespace Amethyst.AST
 				throw new InvalidNameError(ID.ToString());
 			}
 
-			ctx = new FunctionContext(compiler, (FunctionValue)compiler.Symbols[ID].Value, Tags);
+			ctx = new FunctionContext(compiler, (FunctionValue)compiler.IR.Symbols[ID].Value, Tags);
 
 			if (Body.Statements.Count == 0 || Body.Statements.Last() is not ReturnStatement)
 			{
@@ -65,7 +65,7 @@ namespace Amethyst.AST
 
 		public void Process(Compiler ctx, RootNode root)
 		{
-			ctx.AddSymbol(new(ID, Location, new FunctionValue(ID, GetFunctionType(ctx)), this));
+			ctx.IR.AddSymbol(new(ID, Location, new FunctionValue(ID, GetFunctionType(ctx)), this));
 			root.Functions.Add(this);
 		}
 	}

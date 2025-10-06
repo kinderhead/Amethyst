@@ -9,7 +9,6 @@ using Amethyst.Geode.Types;
 using Amethyst.Geode.Values;
 using Antlr4.Runtime;
 using CommandLine.Text;
-using Datapack.Net.Utils;
 using GlobExpressions;
 using System.Reflection;
 
@@ -20,9 +19,6 @@ namespace Amethyst
 		public readonly Options Options;
 		public readonly GeodeBuilder IR;
 		public readonly Dictionary<string, RootNode> Roots = [];
-
-		public readonly Dictionary<NamespacedID, GlobalSymbol> Symbols = [];
-		public readonly Dictionary<NamespacedID, GlobalTypeSymbol> Types = [];
 
 		public readonly FunctionContext GlobalInitFunc;
 
@@ -204,30 +200,6 @@ amethyst [files...] -o <output>";
 			return true;
 		}
 
-		public void AddSymbol(GlobalSymbol sym)
-		{
-			if (Symbols.TryGetValue(sym.ID, out var old))
-			{
-				throw new RedefinedSymbolError(sym.ID.ToString(), old.Location);
-			}
-			else
-			{
-				Symbols[sym.ID] = sym;
-			}
-		}
-
-		public void AddType(GlobalTypeSymbol sym)
-		{
-			if (Types.TryGetValue(sym.ID, out var old))
-			{
-				throw new RedefinedSymbolError(sym.ID.ToString(), old.Location);
-			}
-			else
-			{
-				Types[sym.ID] = sym;
-			}
-		}
-
 		public (FunctionContext ctx, FunctionValue func) AnonymousFunction(FunctionTypeSpecifier type)
 		{
 			var func = new FunctionValue(new("amethyst", "zz_internal/" + GeodeBuilder.RandomString), type);
@@ -243,19 +215,14 @@ amethyst [files...] -o <output>";
 			Register(new ListAdd());
 			Register(new ListSize());
 
-			AddSymbol(new("builtin:true", LocationRange.None, new LiteralValue(true)));
-			AddSymbol(new("builtin:false", LocationRange.None, new LiteralValue(false)));
-			AddSymbol(new("amethyst:stack", LocationRange.None, new StorageValue(GeodeBuilder.RuntimeID, "stack", new ListTypeSpecifier(PrimitiveTypeSpecifier.Compound))));
-
-			//var listAdd = new ListAdd();
-			//AddSymbol(new(listAdd.ID, LocationRange.None, listAdd));
+			IR.AddSymbol(new("builtin:true", LocationRange.None, new LiteralValue(true)));
+			IR.AddSymbol(new("builtin:false", LocationRange.None, new LiteralValue(false)));
+			IR.AddSymbol(new("amethyst:stack", LocationRange.None, new StorageValue(GeodeBuilder.RuntimeID, "stack", new ListTypeSpecifier(PrimitiveTypeSpecifier.Compound))));
 		}
 
 		protected FunctionContext GetGlobalInitFunc() => new(this, new(new("amethyst", "zz_internal/" + GeodeBuilder.RandomString), FunctionTypeSpecifier.VoidFunc), ["minecraft:load"], hasTagPriority: true);
 
-		public void Register(Intrinsic func) => Symbols[func.ID] = new(func.ID, LocationRange.None, func);
-
-		//public static readonly Score ReturnScore = new("returned", "dummy");
+		public void Register(Intrinsic func) => IR.Symbols[func.ID] = new(func.ID, LocationRange.None, func);
 	}
 
 	public interface IFileHandler

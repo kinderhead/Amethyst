@@ -68,11 +68,11 @@ namespace Amethyst.AST
 				case "nbt":
 					return new PrimitiveTypeSpecifier(NBTType.Compound);
 				default:
-					if (Type.Contains(':') && ctx.Types.TryGetValue(Type, out var ret))
+					if (Type.Contains(':') && ctx.IR.Types.TryGetValue(Type, out var ret))
 					{
 						return ret.Type;
 					}
-					else if (GeodeBuilder.NamespaceWalk(baseNamespace, Type, ctx.Types) is GlobalTypeSymbol sym)
+					else if (GeodeBuilder.NamespaceWalk(baseNamespace, Type, ctx.IR.Types) is GlobalTypeSymbol sym)
 					{
 						return sym.Type;
 					}
@@ -105,15 +105,18 @@ namespace Amethyst.AST
 		protected override TypeSpecifier ResolveImpl(Compiler ctx, string baseNamespace, bool allowAuto = false) => new WeakReferenceTypeSpecifier(Inner.Resolve(ctx, baseNamespace));
 	}
 
-	public class AbstractStructTypeSpecifier(LocationRange loc, NamespacedID id, Dictionary<string, AbstractTypeSpecifier> props, List<FunctionNode> methods) : AbstractTypeSpecifier(loc), IRootChild
+	public class AbstractStructTypeSpecifier(LocationRange loc, NamespacedID id, AbstractTypeSpecifier? baseClass, Dictionary<string, AbstractTypeSpecifier> props, List<FunctionNode> methods) : AbstractTypeSpecifier(loc), IRootChild
 	{
 		public readonly NamespacedID ID = id;
 		public readonly Dictionary<string, AbstractTypeSpecifier> Properties = props;
 		public readonly List<FunctionNode> Methods = methods;
+		public readonly AbstractTypeSpecifier? BaseClass = baseClass;
+
+		private bool hasConstructor = false;
 
 		public void Process(Compiler ctx, RootNode root)
 		{
-			ctx.AddType(new(ID, Location, Resolve(ctx, ID.GetContainingFolder()), this));
+			ctx.IR.AddType(new(ID, Location, Resolve(ctx, ID.GetContainingFolder()), this));
 
 			foreach (var i in Methods)
 			{
@@ -124,6 +127,7 @@ namespace Amethyst.AST
 					constructor.Body.Prepend(new InitAssignmentNode(i.Location, self, "this", null, false));
 					constructor.Body.Add(new ReturnStatement(i.Location, new VariableExpression(i.Location, "this")));
 					constructor.Process(ctx, root);
+					hasConstructor = true;
 				}
 				else
 				{
@@ -133,6 +137,16 @@ namespace Amethyst.AST
 			}
 		}
 
-		protected override TypeSpecifier ResolveImpl(Compiler ctx, string baseNamespace, bool allowAuto = false) => new StructTypeSpecifier(ID, new(Properties.Select(i => new KeyValuePair<string, TypeSpecifier>(i.Key, i.Value.Resolve(ctx, baseNamespace)))));
+		protected override TypeSpecifier ResolveImpl(Compiler ctx, string baseNamespace, bool allowAuto = false)
+		{
+			var baseClass = BaseClass?.Resolve(ctx, baseNamespace) ?? PrimitiveTypeSpecifier.Compound;
+
+			if (ctx.IR.GetConstructorOrNull(baseClass) is not null && !hasConstructor)
+			{
+				throw new MissingConstructorError(baseClass.ToString());
+			}
+
+			return new StructTypeSpecifier(ID, baseClass, new(Properties.Select(i => new KeyValuePair<string, TypeSpecifier>(i.Key, i.Value.Resolve(ctx, baseNamespace)))));
+		}
 	}
 }
