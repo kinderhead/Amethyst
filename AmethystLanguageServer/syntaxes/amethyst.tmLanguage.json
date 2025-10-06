@@ -64,7 +64,7 @@
 				},
 				{
 					"name": "storage.modifier.amethyst",
-					"match": "\\b(macro|nostack|this|true|false|var|void|bool|byte|int|short|long|float|double|nbt|list)\\b"
+					"match": "\\b(macro|nostack|inline|this|true|false|var|void|bool|byte|int|short|long|float|double|nbt|list|string)\\b"
 				}
 			]
 		},

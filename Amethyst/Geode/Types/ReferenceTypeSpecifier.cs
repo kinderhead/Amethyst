@@ -40,6 +40,11 @@ namespace Amethyst.Geode.Types
 					throw new ReferenceError(val.Name);
 				}
 
+				if (val.Value is Variable v)
+				{
+					return v.ToReference(ctx);
+				}
+
 				return ctx.Add(new ReferenceInsn(val));
 			}
 			else if (val.Type is WeakReferenceTypeSpecifier weak && weak.Inner.Implements(Inner))

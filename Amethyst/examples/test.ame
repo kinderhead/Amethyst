@@ -25,16 +25,9 @@ struct vec2 implements vec {
     }
 }
 
-struct test implements string {
-    test() : "Wow" {}
-
-    void method(int x) {
-        print(this, x);
-    }
-}
-
 #load
 void main() {
-    test hmm = test();
-    hmm.method(7);
+    var obj = vec2(1, 2, 3);
+    obj.test();
+    obj.other();
 }
