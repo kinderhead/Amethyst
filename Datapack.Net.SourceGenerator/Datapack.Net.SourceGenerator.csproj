@@ -29,10 +29,10 @@
 		<GetTargetPathDependsOn>$(GetTargetPathDependsOn);GetDependencyTargetPaths</GetTargetPathDependsOn>
 		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
 		<Title>Datapack.Net.SourceGenerator</Title>
-		<Version>0.1.1</Version>
+		<Version>0.1.2</Version>
 		<Authors>kinderhead</Authors>
 		<Description>Code analyzers and generators for Datapack.Net</Description>
-		<PackageProjectUrl>https://github.com/kinderhead/Datapack.Net</PackageProjectUrl>
+		<PackageProjectUrl>https://github.com/kinderhead/Amethyst/Datapack.Net.SourceGenerator</PackageProjectUrl>
 		<RepositoryUrl>https://github.com/kinderhead/Datapack.Net</RepositoryUrl>
 		<PackageTags>minecraft,datapack</PackageTags>
 		<PackageLicenseFile>LICENSE</PackageLicenseFile>
