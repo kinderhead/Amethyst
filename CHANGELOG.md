@@ -1,2 +1,1 @@
-* Struct inheritance
-* Optimized redundant `amethyst:core/ref/get-stack-ref` calls
+* Testing the automated release system
