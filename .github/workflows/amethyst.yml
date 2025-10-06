@@ -1,6 +1,8 @@
 name: Amethyst Publish
 
-on: create
+on:
+  push:
+  create:
 
 jobs:
   build:
