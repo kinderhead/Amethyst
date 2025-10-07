@@ -1,5 +1,6 @@
-﻿using Amethyst.Errors;
-using Amethyst.Geode.IR;
+﻿using Geode;
+using Geode.Errors;
+using Geode.IR;
 
 namespace Amethyst.AST.Statements
 {
@@ -11,7 +12,7 @@ namespace Amethyst.AST.Statements
 		{
 			if (!CompileWithErrorChecking(ctx))
 			{
-				throw new EmptyAmethystError();
+				throw new EmptyGeodeError();
 			}
 		}
 

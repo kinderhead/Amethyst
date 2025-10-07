@@ -1,7 +1,8 @@
 using Amethyst.AST.Expressions;
-using Amethyst.Geode.IR.Instructions;
-using Amethyst.Geode.Values;
 using Datapack.Net.Utils;
+using Geode;
+using Geode.IR.Instructions;
+using Geode.Values;
 
 namespace Amethyst.AST.Statements
 {

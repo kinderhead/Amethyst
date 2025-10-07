@@ -22,15 +22,22 @@
 		<StripSymbols>true</StripSymbols>
     </PropertyGroup>
 
+    <ItemGroup>
+      <Compile Remove="GeodeAddons\**" />
+      <EmbeddedResource Remove="GeodeAddons\**" />
+      <None Remove="GeodeAddons\**" />
+    </ItemGroup>
+
   <ItemGroup>
     <PackageReference Include="Antlr4.Runtime.Standard" Version="4.13.1" />
     <PackageReference Include="CommandLineParser" Version="2.9.1" />
     <PackageReference Include="Glob" Version="1.1.9" />
-    <PackageReference Include="Spectre.Console" Version="0.50.0" />
+    <PackageReference Include="Spectre.Console" Version="0.51.1" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Datapack.Net\Datapack.Net.csproj" />
+    <ProjectReference Include="..\Geode\Geode.csproj" />
   </ItemGroup>
 
   <ItemGroup>

@@ -1,4 +1,6 @@
-﻿namespace Amethyst.AST
+﻿using Geode;
+
+namespace Amethyst.AST
 {
 	public abstract class Node(LocationRange loc) : ILocatable
 	{

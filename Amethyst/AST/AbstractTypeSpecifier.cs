@@ -1,22 +1,24 @@
 ﻿using Amethyst.Errors;
-using Amethyst.Geode;
-using Amethyst.Geode.IR;
-using Amethyst.Geode.Types;
+using Amethyst.IR.Types;
 using Datapack.Net.Data;
 using Datapack.Net.Utils;
+using Geode;
+using Geode.Errors;
+using Geode.IR;
+using Geode.Types;
 
 namespace Amethyst.AST
 {
 	public abstract class AbstractTypeSpecifier(LocationRange loc) : Node(loc)
 	{
-		public TypeSpecifier Resolve(FunctionContext ctx, bool allowAuto = false) => Resolve(ctx.Compiler, ctx.Decl.ID.GetContainingFolder(), allowAuto);
+		public TypeSpecifier Resolve(FunctionContext ctx, bool allowAuto = false) => Resolve((Compiler)ctx.Compiler, ctx.Decl.ID.GetContainingFolder(), allowAuto);
 
 		public TypeSpecifier Resolve(Compiler ctx, string baseNamespace, bool allowAuto = false)
 		{
 			TypeSpecifier? ret = null;
 			if (!ctx.WrapError(Location, () => ret = ResolveImpl(ctx, baseNamespace, allowAuto)))
 			{
-				throw new EmptyAmethystError();
+				throw new EmptyGeodeError();
 			}
 
 			return ret!;
@@ -116,9 +118,9 @@ namespace Amethyst.AST
 		public void Process(Compiler ctx, RootNode root)
 		{
 			var selfType = Resolve(ctx, ID.GetContainingFolder());
-			ctx.IR.AddType(new(ID, Location, selfType, this));
+			ctx.IR.AddType(new(ID, Location, selfType));
 
-			bool hasConstructor = false;
+			var hasConstructor = false;
 
 			foreach (var i in Methods)
 			{

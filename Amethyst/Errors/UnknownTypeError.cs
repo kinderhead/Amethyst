@@ -1,6 +1,8 @@
-﻿namespace Amethyst.Errors
+﻿using Geode.Errors;
+
+namespace Amethyst.Errors
 {
-	public class UnknownTypeError(string type) : AmethystError($"type \"{type}\" is not declared")
+	public class UnknownTypeError(string type) : GeodeError($"type \"{type}\" is not declared")
 	{
 	}
 }

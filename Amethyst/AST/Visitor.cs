@@ -1,5 +1,4 @@
-﻿using System.Text.RegularExpressions;
-using Amethyst.Antlr;
+﻿using Amethyst.Antlr;
 using Amethyst.AST.Expressions;
 using Amethyst.AST.Statements;
 using Antlr4.Runtime;
@@ -8,6 +7,9 @@ using Antlr4.Runtime.Tree;
 using Datapack.Net.Data;
 using Datapack.Net.Function.Commands;
 using Datapack.Net.Utils;
+using Geode;
+using Geode.Types;
+using System.Text.RegularExpressions;
 
 namespace Amethyst.AST
 {
@@ -192,9 +194,6 @@ namespace Amethyst.AST
 				{
 					throw new Exception(); // Do this later
 
-
-
-
 				}
 			}
 
@@ -330,7 +329,7 @@ namespace Amethyst.AST
 			{
 				return new CastExpression(Loc(context), Visit(context.type()), (Expression)Visit(context.castExpression()));
 			}
-			
+
 			return Visit(context.unaryExpression());
 		}
 
@@ -356,9 +355,6 @@ namespace Amethyst.AST
 					node = new UnaryExpression(Loc(context), UnaryOperation.Negate, node);
 				}
 				// No check for other cases because parser errors might hit it and we don't want to stop the error checker
-
-
-
 
 			}
 
@@ -449,7 +445,7 @@ namespace Amethyst.AST
 
 		public static string Visit(AmethystParser.IdContext context) => context.GetText();
 
-		public LocationRange Loc(ParserRuleContext ctx) => LocOffset(LocationRange.From(Filename, ctx));
+		public LocationRange Loc(ParserRuleContext ctx) => LocOffset(LocationUtils.From(Filename, ctx));
 
 		public virtual Location LocOffset(Location loc) => loc;
 		public virtual LocationRange LocOffset(LocationRange loc) => new(LocOffset(loc.Start), LocOffset(loc.End));

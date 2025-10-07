@@ -1,5 +1,5 @@
-﻿using Amethyst.Geode;
-using Amethyst.Geode.IR;
+﻿using Geode;
+using Geode.IR;
 
 namespace Amethyst.AST.Expressions
 {

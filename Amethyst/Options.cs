@@ -1,8 +1,9 @@
 ﻿using CommandLine;
+using Geode;
 
 namespace Amethyst
 {
-	public class Options
+	public class Options : IOptions
 	{
 		[Option('o', "output", HelpText = "Zipped datapack, defaults to first input file's name.")]
 		public required string Output { get; set; }

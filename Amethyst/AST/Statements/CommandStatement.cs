@@ -1,8 +1,8 @@
 ﻿using Amethyst.AST.Expressions;
-using Amethyst.Geode;
-using Amethyst.Geode.IR;
-using Amethyst.Geode.IR.Instructions;
-using Amethyst.Geode.Types;
+using Geode;
+using Geode.IR;
+using Geode.IR.Instructions;
+using Geode.Types;
 using System.Text;
 
 namespace Amethyst.AST.Statements
@@ -28,7 +28,7 @@ namespace Amethyst.AST.Statements
 			}
 			else
 			{
-				var (cmdCtx, func) = ctx.Compiler.AnonymousFunction(new(FunctionModifiers.None, new VoidTypeSpecifier(), Fragments.Where(i => i is CommandExprFragment).Cast<CommandExprFragment>().Select(i => new Parameter(ParameterModifiers.Macro, PrimitiveTypeSpecifier.Compound, $"arg{i.ArgIndex}"))));
+				var (cmdCtx, func) = ctx.Compiler.IR.AnonymousFunction(new(FunctionModifiers.None, new VoidTypeSpecifier(), Fragments.Where(i => i is CommandExprFragment).Cast<CommandExprFragment>().Select(i => new Parameter(ParameterModifiers.Macro, PrimitiveTypeSpecifier.Compound, $"arg{i.ArgIndex}"))));
 
 				cmdCtx.LocationStack.Push(Location);
 				cmdCtx.Add(new CommandInsn(cmd.ToString()));

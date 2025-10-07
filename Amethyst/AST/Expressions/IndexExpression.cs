@@ -1,7 +1,7 @@
-using Amethyst.Geode;
-using Amethyst.Geode.IR;
-using Amethyst.Geode.IR.Instructions;
-using Amethyst.Geode.Types;
+using Amethyst.IR.Instructions;
+using Geode;
+using Geode.IR;
+using Geode.Types;
 
 namespace Amethyst.AST.Expressions
 {

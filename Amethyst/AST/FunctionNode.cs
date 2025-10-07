@@ -1,21 +1,13 @@
 ﻿using Amethyst.AST.Statements;
 using Amethyst.Errors;
-using Amethyst.Geode;
-using Amethyst.Geode.IR;
-using Amethyst.Geode.Types;
-using Amethyst.Geode.Values;
 using Datapack.Net.Utils;
+using Geode;
+using Geode.IR;
+using Geode.Types;
+using Geode.Values;
 
 namespace Amethyst.AST
 {
-	[Flags]
-	public enum FunctionModifiers
-	{
-		None = 0,
-		NoStack = 1,
-		Inline = 2
-	}
-
 	public class FunctionNode(LocationRange loc, List<NamespacedID> tags, FunctionModifiers modifiers, AbstractTypeSpecifier ret, NamespacedID id, List<AbstractParameter> parameters, BlockNode body) : Node(loc), IRootChild
 	{
 		public readonly List<NamespacedID> Tags = tags;
@@ -65,18 +57,10 @@ namespace Amethyst.AST
 
 		public virtual void Process(Compiler ctx, RootNode root)
 		{
-			ctx.IR.AddSymbol(new(ID, Location, new FunctionValue(ID, GetFunctionType(ctx)), this));
+			ctx.IR.AddSymbol(new(ID, Location, new FunctionValue(ID, GetFunctionType(ctx))));
 			root.Functions.Add(this);
 		}
 	}
 
-	[Flags]
-	public enum ParameterModifiers
-	{
-		None = 0,
-		Macro = 1
-	}
-
 	public readonly record struct AbstractParameter(ParameterModifiers Modifiers, AbstractTypeSpecifier Type, string Name);
-	public readonly record struct Parameter(ParameterModifiers Modifiers, TypeSpecifier Type, string Name);
 }

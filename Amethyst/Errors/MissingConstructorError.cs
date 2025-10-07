@@ -1,6 +1,8 @@
-﻿namespace Amethyst.Errors
+﻿using Geode.Errors;
+
+namespace Amethyst.Errors
 {
-	public class MissingConstructorError(string type) : AmethystError($"Missing constructor call for type \"{type}\"")
+	public class MissingConstructorError(string type) : GeodeError($"Missing constructor call for type \"{type}\"")
 	{
 	}
 }

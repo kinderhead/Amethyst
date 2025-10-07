@@ -1,33 +1,32 @@
 ﻿using Amethyst.Antlr;
 using Amethyst.AST;
 using Amethyst.AST.Intrinsics;
-using Amethyst.Errors;
-using Amethyst.Geode;
-using Amethyst.Geode.IR;
-using Amethyst.Geode.IR.Instructions;
-using Amethyst.Geode.Types;
-using Amethyst.Geode.Values;
 using Antlr4.Runtime;
 using CommandLine.Text;
+using Geode;
+using Geode.Errors;
+using Geode.IR;
+using Geode.IR.Instructions;
+using Geode.Types;
+using Geode.Values;
 using GlobExpressions;
 using System.Reflection;
 
 namespace Amethyst
 {
-	public class Compiler : IFileHandler
+	public class Compiler : ICompiler, IFileHandler
 	{
 		public readonly Options Options;
-		public readonly GeodeBuilder IR;
 		public readonly Dictionary<string, RootNode> Roots = [];
-
 		public readonly FunctionContext GlobalInitFunc;
 
 		public Dictionary<string, string> Files { get; } = [];
+		public GeodeBuilder IR { get; }
 
 		public Compiler(Options opts)
 		{
 			Options = opts;
-			IR = new(Options);
+			IR = new(Options, this);
 
 			GlobalInitFunc = GetGlobalInitFunc();
 			RegisterGlobals();
@@ -63,7 +62,7 @@ amethyst [files...] -o <output>";
 
 			Options = res.Value;
 			Options.Output ??= Path.GetFileName(Options.Inputs.First()) + ".zip";
-			IR = new(Options);
+			IR = new(Options, this);
 
 			GlobalInitFunc = GetGlobalInitFunc();
 			RegisterGlobals();
@@ -170,7 +169,7 @@ amethyst [files...] -o <output>";
 			{
 				cb();
 			}
-			catch (AmethystError e)
+			catch (GeodeError e)
 			{
 				e.Display(this, loc);
 				return false;
@@ -187,7 +186,7 @@ amethyst [files...] -o <output>";
 			{
 				cb();
 			}
-			catch (AmethystError e)
+			catch (GeodeError e)
 			{
 				e.Display(this, loc);
 				return false;
@@ -198,14 +197,6 @@ amethyst [files...] -o <output>";
 			}
 
 			return true;
-		}
-
-		public (FunctionContext ctx, FunctionValue func) AnonymousFunction(FunctionTypeSpecifier type)
-		{
-			var func = new FunctionValue(new("amethyst", "zz_internal/" + GeodeBuilder.RandomString), type);
-			var ctx = new FunctionContext(this, func, []);
-			IR.AddFunctions(ctx);
-			return (ctx, func);
 		}
 
 		protected virtual void RegisterGlobals()
@@ -224,10 +215,5 @@ amethyst [files...] -o <output>";
 		protected FunctionContext GetGlobalInitFunc() => new(this, new(new("amethyst", "zz_internal/" + GeodeBuilder.RandomString), FunctionTypeSpecifier.VoidFunc), ["minecraft:load"], hasTagPriority: true);
 
 		public void Register(Intrinsic func) => IR.Symbols[func.ID] = new(func.ID, LocationRange.None, func);
-	}
-
-	public interface IFileHandler
-	{
-		Dictionary<string, string> Files { get; }
 	}
 }

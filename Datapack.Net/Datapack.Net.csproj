@@ -12,10 +12,6 @@
       <Pack>True</Pack>
       <PackagePath>\</PackagePath>
     </None>
-    <None Include="..\README.md">
-      <Pack>True</Pack>
-      <PackagePath>\</PackagePath>
-    </None>
   </ItemGroup>
 
   <ItemGroup>
@@ -26,6 +22,13 @@
     <ProjectReference Include="..\Datapack.Net.SourceGenerator\Datapack.Net.SourceGenerator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="README.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+  </ItemGroup>
+
 	<PropertyGroup>
 		<EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
 		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
@@ -33,11 +36,11 @@
 		<Authors>kinderhead</Authors>
 		<Description>A library for generating Minecraft Datapacks</Description>
 		<Copyright>MIT</Copyright>
-		<PackageProjectUrl>https://github.com/kinderhead/Datapack.Net</PackageProjectUrl>
+		<PackageProjectUrl>https://github.com/kinderhead/Amethyst/Datapack.Net</PackageProjectUrl>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
-		<RepositoryUrl>https://github.com/kinderhead/Datapack.Net</RepositoryUrl>
+		<RepositoryUrl>https://github.com/kinderhead/Amethyst/Datapack.Net</RepositoryUrl>
 		<PackageTags>minecraft,datapack</PackageTags>
-		<Version>0.3.1</Version>
+		<Version>0.3.2</Version>
 		<PackageLicenseFile>LICENSE</PackageLicenseFile>
 	</PropertyGroup>
 

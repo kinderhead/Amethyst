@@ -1,10 +1,10 @@
-using Amethyst.Errors;
-using Amethyst.Geode;
-using Amethyst.Geode.IR;
-using Amethyst.Geode.IR.Instructions.Utils;
-using Amethyst.Geode.Types;
-using Amethyst.Geode.Values;
 using Datapack.Net.Data;
+using Geode;
+using Geode.Errors;
+using Geode.IR;
+using Geode.IR.Instructions.Utils;
+using Geode.Types;
+using Geode.Values;
 
 namespace Amethyst.AST.Intrinsics
 {

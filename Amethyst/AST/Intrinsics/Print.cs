@@ -1,8 +1,10 @@
-﻿using Amethyst.Geode;
-using Amethyst.Geode.IR;
-using Amethyst.Geode.IR.Instructions;
-using Amethyst.Geode.Types;
-using Amethyst.Geode.Values;
+﻿using Amethyst.IR.Instructions;
+using Amethyst.IR.Types;
+using Geode;
+using Geode.IR;
+using Geode.IR.Instructions;
+using Geode.Types;
+using Geode.Values;
 
 namespace Amethyst.AST.Intrinsics
 {

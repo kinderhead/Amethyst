@@ -1,8 +1,8 @@
-﻿using Amethyst.Errors;
-using Amethyst.Geode;
-using Amethyst.Geode.IR;
-using Amethyst.Geode.Values;
-using Datapack.Net.Data;
+﻿using Datapack.Net.Data;
+using Geode;
+using Geode.Errors;
+using Geode.IR;
+using Geode.Values;
 
 namespace Amethyst.AST.Expressions
 {
@@ -13,7 +13,7 @@ namespace Amethyst.AST.Expressions
 			ValueRef? ret = null;
 			if (!ctx.Compiler.WrapError(Location, ctx, () => ret = ExecuteImpl(ctx, expected)))
 			{
-				throw new EmptyAmethystError();
+				throw new EmptyGeodeError();
 			}
 
 			if (expected is not null && autoCast)

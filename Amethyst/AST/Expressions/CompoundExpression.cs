@@ -1,8 +1,9 @@
 using Amethyst.Errors;
-using Amethyst.Geode;
-using Amethyst.Geode.IR;
-using Amethyst.Geode.IR.Instructions;
-using Amethyst.Geode.Types;
+using Geode;
+using Geode.Errors;
+using Geode.IR;
+using Geode.IR.Instructions;
+using Geode.Types;
 
 namespace Amethyst.AST.Expressions
 {

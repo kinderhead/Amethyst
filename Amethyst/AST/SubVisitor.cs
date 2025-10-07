@@ -1,4 +1,6 @@
-﻿namespace Amethyst.AST
+﻿using Geode;
+
+namespace Amethyst.AST
 {
 	public class SubVisitor(Visitor parent, Location offset) : Visitor(parent.Filename, parent.Compiler)
 	{

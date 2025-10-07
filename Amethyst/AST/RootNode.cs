@@ -1,5 +1,6 @@
-﻿using Amethyst.Errors;
-using Amethyst.Geode.IR;
+﻿using Geode;
+using Geode.Errors;
+using Geode.IR;
 
 namespace Amethyst.AST
 {
@@ -45,7 +46,7 @@ namespace Amethyst.AST
 						funcs.Add(ctx);
 					}
 				}
-				catch (AmethystError)
+				catch (GeodeError)
 				{
 					success = false;
 				}

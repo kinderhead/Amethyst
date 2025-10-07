@@ -1,5 +1,6 @@
-﻿using Amethyst.Errors;
-using Antlr4.Runtime;
+﻿using Antlr4.Runtime;
+using Geode;
+using Geode.Errors;
 using Spectre.Console;
 
 namespace Amethyst.AST
@@ -21,11 +22,6 @@ namespace Amethyst.AST
 
 			try
 			{
-				//AnsiConsole.MarkupLine($"[red]Error at {Path} line {line}:[/]");
-				//AnsiConsole.MarkupLine("[red]" + Lines[line - 1].EscapeMarkup() + "[/]");
-				//AnsiConsole.MarkupLine(new string(' ', charPositionInLine) + "[yellow]^[/]");
-				//AnsiConsole.MarkupLine($"[red]Syntax error:[/] [turquoise2]{msg.EscapeMarkup()}[/]\n\n");
-
 				var loc = Visitor.LocOffset(new Location(Path, line, charPositionInLine + 1));
 				var term = new CompilerMessager(Color.Red);
 				term.Header($"Error at {loc}");

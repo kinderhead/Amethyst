@@ -1,6 +1,8 @@
+using Geode.Errors;
+
 namespace Amethyst.Errors
 {
-	public class ModifierError(string msg) : AmethystError(msg)
+	public class ModifierError(string msg) : GeodeError(msg)
 	{
 	}
 }
