@@ -84,13 +84,13 @@ void main() {
 
 ```
 $ amethyst --help
-Amethyst Compiler 0.1.0
+Amethyst Compiler <too lazy to update the README for each new version>
 
 Usage:
 amethyst [files...] -o <output>
 
   -o, --output            Zipped datapack, defaults to first input file's name.
-  -f, --pack-format       (Default: 71) Datapack format.
+  -f, --pack-format       (Default: 88.0) Datapack format.
   -d, --debug             (Default: false) Enable debug checks.
   --dump-ir               Dump Geode IR and don't compile to datapack.
   --help                  Display this help screen.

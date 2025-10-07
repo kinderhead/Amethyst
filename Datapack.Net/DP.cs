@@ -15,10 +15,10 @@ namespace Datapack.Net
 		private ZipArchive? zipFile;
 
 		public readonly string Description;
-		public readonly int PackFormat;
+		public readonly string PackFormat;
 		public readonly string FilePath;
 
-		public DP(string description, string filepath, int packFormat = 26)
+		public DP(string description, string filepath, string packFormat = "88.0")
 		{
 			types.Add(new Advancements());
 			types.Add(new ItemModifiers());

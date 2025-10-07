@@ -11,7 +11,7 @@ namespace Geode
 {
 	public record class RenderContext(MCFunction MCFunction, IR.Block Block, GeodeBuilder Builder, FunctionContext Func)
 	{
-		public ScoreValue SuccessScore => Builder.Score("amethyst_success");
+		public ScoreValue SuccessScore => Builder.Score("geode_success");
 
 		public virtual void Add(params IEnumerable<Command> cmds)
 		{

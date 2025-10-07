@@ -8,8 +8,8 @@ namespace Amethyst
 		[Option('o', "output", HelpText = "Zipped datapack, defaults to first input file's name.")]
 		public required string Output { get; set; }
 
-		[Option('f', "pack-format", HelpText = "Datapack format.", Default = 71)]
-		public int PackFormat { get; set; }
+		[Option('f', "pack-format", HelpText = "Datapack format.", Default = "88.0")]
+		public string PackFormat { get; set; }
 
 		[Option('d', "debug", HelpText = "Enable debug checks.", Default = false)]
 		public bool Debug { get; set; }

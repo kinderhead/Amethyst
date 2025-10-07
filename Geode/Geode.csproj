@@ -7,7 +7,7 @@
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <Title>Geode</Title>
     <Authors>kinderhead</Authors>
-    <Description>An intermediate representation platform for creating Minecraft datapacks with high level programming languages.</Description>
+    <Description>An intermediate representation platform for creating Minecraft datapacks with high-level programming languages.</Description>
     <Copyright>MIT</Copyright>
     <PackageProjectUrl>https://github.com/kinderhead/Amethyst/Geode</PackageProjectUrl>
     <PackageReadmeFile>README.md</PackageReadmeFile>
