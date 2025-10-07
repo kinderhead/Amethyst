@@ -31,7 +31,7 @@ namespace Amethyst.Geode.IR.Instructions
 				Remove();
 				return score;
 			}
-			else if (val.Value is LiteralValue literal)
+			else if (val.Value is LiteralValue literal && val.Type is PrimitiveTypeSpecifier)
 			{
 				return literal;
 			}

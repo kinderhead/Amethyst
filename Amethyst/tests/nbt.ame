@@ -36,7 +36,7 @@ void test_nbt() {
     
     nbt obj;
     obj.x = 100;
-    assert(obj.x == 100);
+    assert((int)obj.x == 100);
 
     complete();
 }
@@ -89,7 +89,7 @@ void test_nbt_literal() {
     start("nbt literal");
     
     nbt obj = { x: 100 };
-    assert(obj.x == 100);
+    assert((int)obj.x == 100);
 
     complete();
 }

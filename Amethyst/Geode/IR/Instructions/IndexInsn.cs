@@ -10,7 +10,24 @@ namespace Amethyst.Geode.IR.Instructions
 		public override string Name => "index";
 		public override NBTType?[] ArgTypes => [null, NBTType.Int];
 
-		public readonly TypeSpecifier ActualReturnType = dest.Type.Subtypes.Any() ? dest.Type.Subtypes.First() : throw new InvalidTypeError(dest.Type.ToString(), "list");
+		public TypeSpecifier ActualReturnType
+		{
+			get
+			{
+				var type = Arg<ValueRef>(0).Type;
+
+				if (type is ReferenceTypeSpecifier r && r.Inner is ListTypeSpecifier rl)
+				{
+					return rl.Inner;
+				}
+				else if (type is ListTypeSpecifier l)
+				{
+					return l.Inner;
+				}
+
+				throw new InvalidTypeError(dest.Type.ToString(), "list");
+			}
+		}
 		public override TypeSpecifier ReturnType => new WeakReferenceTypeSpecifier(ActualReturnType);
 
 		public override void Render(RenderContext ctx)
