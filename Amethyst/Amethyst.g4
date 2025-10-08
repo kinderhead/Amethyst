@@ -19,7 +19,7 @@ functionTag
     ;
 
 functionModifier
-    : NoStack | Inline
+    : Inline
     ;
 
 block
@@ -35,7 +35,7 @@ declaration
     ;
 
 method
-    : functionModifier* type RawIdentifier paramList block
+    : (functionModifier | Virtual)* type RawIdentifier paramList block
     | functionModifier* RawIdentifier paramList (Colon expression)? block
     ;
 
@@ -186,8 +186,8 @@ Struct: 'struct';
 Implements: 'implements';
 
 Macro: 'macro';
-NoStack: 'nostack';
 Inline: 'inline';
+Virtual: 'virtual';
 
 Semi: ';';
 Colon: ':';

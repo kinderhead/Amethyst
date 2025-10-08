@@ -15,8 +15,8 @@ namespace Geode.Types
 	public enum FunctionModifiers
 	{
 		None = 0,
-		NoStack = 1,
-		Inline = 2
+		Inline = 1,
+		Virtual = 2
 	}
 
 	public readonly record struct Parameter(ParameterModifiers Modifiers, TypeSpecifier Type, string Name);

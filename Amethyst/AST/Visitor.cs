@@ -56,9 +56,9 @@ namespace Amethyst.AST
 			var mod = FunctionModifiers.None;
 			foreach (var i in context.functionModifier())
 			{
-				if (i.GetText() == "nostack")
+				if (i.GetText() == "virtual")
 				{
-					mod |= FunctionModifiers.NoStack;
+					mod |= FunctionModifiers.Virtual;
 				}
 				else if (i.GetText() == "inline")
 				{
@@ -127,9 +127,9 @@ namespace Amethyst.AST
 			var mod = FunctionModifiers.None;
 			foreach (var i in context.functionModifier())
 			{
-				if (i.GetText() == "nostack")
+				if (i.GetText() == "virtual")
 				{
-					mod |= FunctionModifiers.NoStack;
+					mod |= FunctionModifiers.Virtual;
 				}
 				else if (i.GetText() == "inline")
 				{
@@ -193,6 +193,7 @@ namespace Amethyst.AST
 				if (error.Errored)
 				{
 					throw new Exception(); // Do this later
+
 
 				}
 			}
@@ -355,6 +356,7 @@ namespace Amethyst.AST
 					node = new UnaryExpression(Loc(context), UnaryOperation.Negate, node);
 				}
 				// No check for other cases because parser errors might hit it and we don't want to stop the error checker
+
 
 			}
 

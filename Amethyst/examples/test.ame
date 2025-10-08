@@ -1,12 +1,22 @@
 namespace example;
 
-#load
-void main() {
-    var x = test;
-    print(x);
-    x(5);
+struct test {
+    int x;
+
+    virtual void func() {
+        print(this.x);
+    }
 }
 
-void test(macro int x) {
-    print(x);
+// struct test2 implements test {
+//     virtual void func() {
+//         print(this.x + 2);
+//     }
+// }
+
+#load
+void main() {
+    test obj = { x: 7 };
+    obj.func();
 }
+
