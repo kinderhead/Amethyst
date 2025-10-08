@@ -9,8 +9,7 @@ namespace Geode.IR.Instructions
 		public override string Name => "call";
 		public override NBTType?[] ArgTypes => [null, .. FuncType.Parameters.Select(i => i.Type is VarTypeSpecifier ? (NBTType?)null : i.Type.EffectiveType)];
 		public override TypeSpecifier ReturnType => FuncType.ReturnType;
-		public FunctionTypeSpecifier FuncType => Arg<ValueRef>(0).Expect<FunctionValue>().FuncType;
-		public override bool ShouldProcessArgs => false;
+		public FunctionTypeSpecifier FuncType => (FunctionTypeSpecifier)Arg<ValueRef>(0).Type;
 
 		public override void Render(RenderContext ctx)
 		{

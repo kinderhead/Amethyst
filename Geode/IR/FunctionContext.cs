@@ -34,6 +34,8 @@ namespace Geode.IR
 
 		// Could just be the max register used, but who knows if one goes poof somewhere
 
+
+
 		private readonly HashSet<int> registersInUse = [];
 		private int tmpStackVars = 0;
 
@@ -44,7 +46,7 @@ namespace Geode.IR
 			Compiler = compiler;
 			Decl = decl;
 			Tags = tags;
-			IsMacroFunction = Decl.FuncType.Parameters.Any(i => i.Modifiers.HasFlag(ParameterModifiers.Macro));
+			IsMacroFunction = Decl.FuncType.IsMacroFunction;
 			HasTagPriority = hasTagPriority;
 
 			PushScope();
@@ -63,6 +65,8 @@ namespace Geode.IR
 				else
 				{
 					// Maybe make it so that if the stack isn't used by the function, then use -1 and don't push new frame
+
+
 
 					RegisterLocal(i.Name, new StackValue(-2, $"args.{i.Name}", i.Type));
 				}
@@ -220,18 +224,21 @@ namespace Geode.IR
 
 		public ValueRef Call(FunctionValue f, params ValueRef[] args)
 		{
-			if (f.FuncType.Parameters.Length != args.Length)
+			return Add(new CallInsn(f, PrepArgs(f.FuncType, args)));
+		}
+
+		public IEnumerable<ValueRef> PrepArgs(FunctionTypeSpecifier type, params ValueRef[] args)
+		{
+			if (type.Parameters.Length != args.Length)
 			{
-				throw new MismatchedArgumentCountError(f.FuncType.Parameters.Length, args.Length);
+				throw new MismatchedArgumentCountError(type.Parameters.Length, args.Length);
 			}
 
-			return Add(new CallInsn(f, args.Zip(f.FuncType.Parameters).Select(i => ImplicitCast(i.First, i.Second.Type))));
+			return args.Zip(type.Parameters).Select(i => ImplicitCast(i.First, i.Second.Type));
 		}
 
 		public void Finish()
 		{
-			//FirstBlock.InsertAtBeginning(AllLocals.Select(i => new DeclareInsn(i)));
-
 			if (CurrentBlock.Instructions.Count == 0 || !CurrentBlock.Instructions.Last().IsReturn)
 			{
 				throw new InvalidOperationException("Last block in function must have a return instruction");
@@ -253,8 +260,10 @@ namespace Geode.IR
 			return $"{label}{count}";
 		}
 
+
+
 		/// <summary>
-		/// Branch current block without an else statement
+		/// Branch current block without an else statement.
 		/// </summary>
 		/// <param name="cond">Condition</param>
 		/// <param name="label">Label name</param>

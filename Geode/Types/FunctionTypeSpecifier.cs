@@ -1,4 +1,5 @@
-﻿using Datapack.Net.Utils;
+﻿using Datapack.Net.Data;
+using Datapack.Net.Utils;
 using Geode.Values;
 
 namespace Geode.Types
@@ -20,14 +21,18 @@ namespace Geode.Types
 
 	public readonly record struct Parameter(ParameterModifiers Modifiers, TypeSpecifier Type, string Name);
 
-	public class FunctionTypeSpecifier(FunctionModifiers modifiers, TypeSpecifier returnType, IEnumerable<Parameter> paramters) : TypeSpecifier
+	public class FunctionTypeSpecifier(FunctionModifiers modifiers, TypeSpecifier returnType, IEnumerable<Parameter> parameters) : TypeSpecifier
 	{
 		public readonly FunctionModifiers Modifiers = modifiers;
 		public readonly TypeSpecifier ReturnType = returnType;
-		public readonly Parameter[] Parameters = [.. paramters];
+		public readonly Parameter[] Parameters = [.. parameters];
+		public readonly bool IsMacroFunction = parameters.Any(i => i.Modifiers.HasFlag(ParameterModifiers.Macro));
+
 		public override IEnumerable<TypeSpecifier> Subtypes => [ReturnType, .. Parameters.Select(i => i.Type)];
 		public override NamespacedID ID => "amethyst:func";
 		public override TypeSpecifier BaseClass => this;
+		public override NBTType EffectiveType => NBTType.String;
+
 
 		public FunctionTypeSpecifier ApplyGenericWithParams(TypeSpecifier[] args)
 		{

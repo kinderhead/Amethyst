@@ -1,0 +1,9 @@
+namespace amethyst:core/func;
+
+inline void call(macro nbt func) {
+    @/function $(func)
+}
+
+inline void call-macro(macro nbt func) {
+    @/function $(func) with storage amethyst:runtime stack[-1].macros
+}

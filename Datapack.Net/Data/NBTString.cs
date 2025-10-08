@@ -27,11 +27,8 @@ namespace Datapack.Net.Data
 		public static implicit operator string(NBTString val) => val.Value;
 	}
 
-	public class NBTRawString(string val) : NBTValue
+	public class NBTRawString(string val) : NBTString(val)
 	{
-		public override NBTType Type => NBTType.String;
-		public readonly string Value = val;
-
 		public override NBTValue Cast(NBTNumberType type) => throw new InvalidOperationException();
 
 		public override void Build(StringBuilder sb) => sb.Append(Value);

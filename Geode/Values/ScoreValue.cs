@@ -12,7 +12,7 @@ namespace Geode.Values
 		public override string ToString() => $"@{Target.Get()}.{Score}";
 
 		public override void Store(ScoreValue score, RenderContext ctx) => ctx.Add(new Scoreboard.Players.Operation(Target, Score, ScoreOperation.Assign, score.Target, score.Score));
-		public override void Store(LiteralValue literal, RenderContext ctx) => ctx.Add(new Scoreboard.Players.Set(Target, Score, literal.ToString()));
+		public override void Store(LiteralValue literal, RenderContext ctx) => ctx.Add(new Scoreboard.Players.Set(Target, Score, literal.Value.ToString()));
 		public override void Store(DataTargetValue nbt, RenderContext ctx) => ctx.Add(new Execute().Store(Target, Score).Run(new DataCommand.Get(nbt.Target)));
 
 		public override ScoreValue AsScore(RenderContext ctx) => this;

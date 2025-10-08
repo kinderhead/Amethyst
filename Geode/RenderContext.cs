@@ -142,17 +142,15 @@ namespace Geode
 			}
 		}
 
-		public void Call(NamespacedID id, bool applyGuard, params ValueRef[] args)
+		public void Call(NamespacedID id, params ValueRef[] args)
 		{
 			if (Func.GetGlobal(id) is not FunctionValue func)
 			{
 				throw new UndefinedSymbolError(id.ToString());
 			}
 
-			func.Call(this, args, applyGuard);
+			func.Call(this, args);
 		}
-
-		public void Call(NamespacedID id, params ValueRef[] args) => Call(id, true, args);
 
 		public List<Command> WithFaux(Action<FauxRenderContext> func)
 		{

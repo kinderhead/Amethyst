@@ -11,13 +11,12 @@ namespace Geode
 	{
 		public abstract LiteralValue DefaultValue { get; }
 		public abstract NamespacedID ID { get; }
+		public abstract NBTType EffectiveType { get; }
 
 		public virtual bool IsList => false;
 		public virtual IEnumerable<TypeSpecifier> Subtypes => [];
 		public virtual TypeSpecifier BaseClass => PrimitiveTypeSpecifier.Compound;
 
-		// TODO: Make this not throw an error
-		public virtual NBTType EffectiveType => throw new InvalidOperationException(ToString());
 		public bool ShouldStoreInScore => EffectiveType is NBTType.Int or NBTType.Boolean;
 
 		public NBTNumberType? EffectiveNumberType => Enum.IsDefined((NBTNumberType)EffectiveType) ? (NBTNumberType)EffectiveType : null;
@@ -79,8 +78,6 @@ namespace Geode
 				return BaseClass.Implements(other);
 			}
 		}
-
-		public virtual ValueRef ProcessArg(ValueRef src, FunctionContext ctx) => src;
 
 		public virtual bool ConstraintSatisfiedBy(TypeSpecifier other) => other.GetType() == GetType()
 				&& Subtypes.Count() == other.Subtypes.Count()

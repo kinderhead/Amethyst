@@ -2,18 +2,11 @@ namespace example;
 
 #load
 void main() {
-    int[][] arr;
-    arr.add([1,2,5]);
-    arr[0].add(7);
+    var x = test;
+    print(x);
+    x(5);
+}
 
-    int i = 0;
-    arr[i].add(-90);
-
-    if (arr[0][0] == 1) {
-        print("yay");
-    } else {
-        print("nay");
-    }
-
-    print(arr);
+void test(macro int x) {
+    print(x);
 }

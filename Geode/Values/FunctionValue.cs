@@ -15,22 +15,56 @@ namespace Geode.Values
 		public override string ToString() => ID.ToString();
 		public FunctionTypeSpecifier FuncType => (FunctionTypeSpecifier)Type;
 
-		public virtual void Call(RenderContext ctx, ValueRef[] args, bool applyGuard = true)
+		public virtual void Call(RenderContext ctx, ValueRef[] args)
+		{
+			var processedMacros = SetArgsAndGetMacros(ctx, FuncType, args);
+
+			if (processedMacros is StorageValue s)
+			{
+				ctx.PossibleErrorChecker(new FunctionCommand(ID, s.Storage, s.Path),
+					text => text
+						.Text($": Failed to run function ")
+						.Text(ID.ToString(), new FormattedText.Modifiers { Color = "red", SuggestCommand = $"/function {ID}", Underlined = true })
+						.Text($" with macro arguments: "),
+					s
+				);
+			}
+			else if (processedMacros is LiteralValue l)
+			{
+				ctx.PossibleErrorChecker(new FunctionCommand(ID, (NBTCompound)l.Value),
+					text => text
+						.Text($": Failed to run function ")
+						.Text(ID.ToString(), new FormattedText.Modifiers { Color = "red", SuggestCommand = $"/function {ID} {l.Value}", Underlined = true })
+						.Text($" with macro arguments: "),
+					l
+				);
+			}
+			else
+			{
+				ctx.PossibleErrorChecker(new FunctionCommand(ID), $"Failed to run function \"{ID}\"");
+			}
+		}
+
+		public virtual IFunctionLike CloneWithType(FunctionTypeSpecifier type) => new FunctionValue(ID, type);
+
+		public ValueRef AsMethod(ValueRef self, FunctionContext ctx) => new MethodValue(this, ctx.ImplicitCast(self, FuncType.Parameters[0].Type));
+
+		public static Value? SetArgsAndGetMacros(RenderContext ctx, FunctionTypeSpecifier funcType, ValueRef[] args)
 		{
 			Value? processedMacros = null;
 
-			if (args.Length != FuncType.Parameters.Length)
+			if (args.Length != funcType.Parameters.Length)
 			{
-				throw new MismatchedArgumentCountError(FuncType.Parameters.Length, args.Length);
+				throw new MismatchedArgumentCountError(funcType.Parameters.Length, args.Length);
 			}
 
 			if (args.Length != 0)
 			{
 				var processedArgs = new Dictionary<string, ValueRef>();
 				var macros = new Dictionary<string, ValueRef>();
-				var macroStorageLocation = new StackValue(-1, $"macros{macroCounter++}", PrimitiveTypeSpecifier.Compound);
+				var macroStorageLocation = new StackValue(-1, $"macros", PrimitiveTypeSpecifier.Compound);
 
-				foreach (var (param, val) in FuncType.Parameters.Zip(args))
+				foreach (var (param, val) in funcType.Parameters.Zip(args))
 				{
 					if (param.Modifiers.HasFlag(ParameterModifiers.Macro))
 					{
@@ -43,7 +77,8 @@ namespace Geode.Values
 							}
 							else
 							{
-								macros.Add(param.Name, new LiteralValue(l.Value.ToString())); // Escape string
+								// Escape string
+								macros.Add(param.Name, new LiteralValue(l.Value.ToString()));
 							}
 						}
 						else
@@ -59,11 +94,6 @@ namespace Geode.Values
 
 				if (processedArgs.Count != 0)
 				{
-					if (macroCounter > 1)
-					{
-						throw new NotImplementedException("Hyper-nested function calls with regular args are not supported right now");
-					}
-
 					ctx.StoreCompound(new StackValue(-1, "args", PrimitiveTypeSpecifier.Compound), processedArgs, setEmpty: false);
 				}
 
@@ -71,41 +101,9 @@ namespace Geode.Values
 				{
 					processedMacros = ctx.StoreCompoundOrReturnConstant(macroStorageLocation, macros, setEmpty: false);
 				}
-
-				macroCounter--;
 			}
 
-			if (processedMacros is StorageValue s)
-			{
-				ctx.PossibleErrorChecker(new FunctionCommand(ID, s.Storage, s.Path),
-				text => text
-					.Text($": Failed to run function ")
-					.Text(ID.ToString(), new FormattedText.Modifiers { Color = "red", SuggestCommand = $"/function {ID}", Underlined = true })
-					.Text($" with macro arguments: "),
-				s
-			);
-			}
-			else if (processedMacros is LiteralValue l)
-			{
-				ctx.PossibleErrorChecker(new FunctionCommand(ID, (NBTCompound)l.Value),
-				text => text
-					.Text($": Failed to run function ")
-					.Text(ID.ToString(), new FormattedText.Modifiers { Color = "red", SuggestCommand = $"/function {ID} {l.Value}", Underlined = true })
-					.Text($" with macro arguments: "),
-				l
-			);
-			}
-			else
-			{
-				ctx.PossibleErrorChecker(new FunctionCommand(ID), $"Failed to run function \"{ID}\"");
-			}
+			return processedMacros;
 		}
-
-		public virtual IFunctionLike CloneWithType(FunctionTypeSpecifier type) => new FunctionValue(ID, type);
-
-		public ValueRef AsMethod(ValueRef self, FunctionContext ctx) => new MethodValue(this, ctx.ImplicitCast(self, FuncType.Parameters[0].Type));
-
-		// Could just use a random string, but this makes it look nicer
-		private static int macroCounter = 0;
 	}
 }

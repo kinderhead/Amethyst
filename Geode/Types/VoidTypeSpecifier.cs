@@ -1,4 +1,5 @@
-﻿using Datapack.Net.Utils;
+﻿using Datapack.Net.Data;
+using Datapack.Net.Utils;
 using Geode.Values;
 
 namespace Geode.Types
@@ -6,6 +7,7 @@ namespace Geode.Types
 	public class VoidTypeSpecifier : TypeSpecifier
 	{
 		public override LiteralValue DefaultValue => new(0, this);
+		public override NBTType EffectiveType => NBTType.Int;
 
 		public override NamespacedID ID => "amethyst:void";
 

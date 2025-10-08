@@ -13,13 +13,13 @@ namespace Amethyst.IR
 		{
 			public ValueRef GetProperty(ValueRef val, string name)
 			{
-				if (ctx.GetMethodOrNull(val, name) is ValueRef method)
-				{
-					return method;
-				}
-				else if (val.Type.Property(name) is TypeSpecifier t)
+				if (val.Type.Property(name) is TypeSpecifier t)
 				{
 					return ctx.Add(new PropertyInsn(val, new LiteralValue(name), t));
+				}
+				else if (ctx.GetMethodOrNull(val, name) is ValueRef method)
+				{
+					return method;
 				}
 
 				throw new PropertyError(val.Type.ToString(), name);

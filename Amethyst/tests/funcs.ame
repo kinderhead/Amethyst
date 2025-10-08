@@ -1,0 +1,22 @@
+namespace test;
+
+#test
+void test_dyn_call() {
+    start("dyn call");
+
+    var f1 = dyn_func1;
+    var f2 = dyn_func2;
+
+    assert(f1(6) == 8);
+    assert(f2(6) == 4);
+
+    complete();
+}
+
+int dyn_func1(int x) {
+    return x + 2;
+}
+
+int dyn_func2(macro int x) {
+    return x - 2;
+}

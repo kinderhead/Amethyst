@@ -19,6 +19,20 @@ namespace Geode.IR.Instructions
 
 			var returning = FunctionContext.GetIsFunctionReturningValue();
 
+			if (cond is LiteralValue l)
+			{
+				if (l.Value.ToString() is "0" or "[]" or "{}" or "" or "\"\"" or "''")
+				{
+					ctx.Add(ctx.CallSubFunction(ifFalse.Function));
+				}
+				else
+				{
+					ctx.Add(ctx.CallSubFunction(ifTrue.Function));
+				}
+
+				return;
+			}
+
 			ctx.Add(cond.If(new(), ctx).Run(ctx.CallSubFunction(ifTrue.Function)));
 			ctx.Add(new Execute().Unless.Data(returning.Storage, returning.Path).Run(ctx.CallSubFunction(ifFalse.Function)));
 		}

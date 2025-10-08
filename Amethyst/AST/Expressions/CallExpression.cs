@@ -1,5 +1,9 @@
-﻿using Geode;
+﻿using Amethyst.IR.Instructions;
+using Geode;
+using Geode.Errors;
 using Geode.IR;
+using Geode.IR.Instructions;
+using Geode.Types;
 using Geode.Values;
 
 namespace Amethyst.AST.Expressions
@@ -16,13 +20,22 @@ namespace Amethyst.AST.Expressions
 			{
 				return i.Execute(ctx, [.. Args.Select(i => i.Execute(ctx, null))]);
 			}
-			else if (func.Value is FunctionValue f)
+
+			if (func.Type is not FunctionTypeSpecifier type)
 			{
-				return ctx.Call(f, [.. Args.Zip(f.FuncType.Parameters).Select(i => i.First.Execute(ctx, i.Second.Type))]);
+				throw new InvalidTypeError(func.Type.ToString(), "function");
+			}
+
+			ValueRef[] args = [.. Args.Zip(type.Parameters).Select(i => i.First.Execute(ctx, i.Second.Type))];
+
+			if (func.Value is FunctionValue f)
+			{
+				return ctx.Call(f, args);
 			}
 			else
 			{
-				throw new NotImplementedException();
+				ctx.Add(new PushFuncArgsInsn(type, ctx.PrepArgs(type, args)));
+				return ctx.Add(new DynCallInsn(func));
 			}
 		}
 	}

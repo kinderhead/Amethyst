@@ -20,27 +20,11 @@ namespace Geode.IR
 		public bool MarkedForRemoval { get; private set; } = false;
 
 		public virtual bool IsReturn => false;
-		public virtual bool ShouldProcessArgs => true;
 
 		public Instruction(IEnumerable<IInstructionArg> args)
 		{
 			Arguments = [.. args];
 			ReturnValue = new(ReturnType);
-		}
-
-		public void ProcessArgs(FunctionContext ctx)
-		{
-			if (ShouldProcessArgs)
-			{
-				for (var i = 0; i < Arguments.Length; i++)
-				{
-					if (Arguments[i] is ValueRef arg)
-					{
-						Arguments[i] = arg.Type.ProcessArg(arg, ctx);
-					}
-				}
-			}
-
 			CheckArguments();
 		}
 
@@ -55,11 +39,13 @@ namespace Geode.IR
 			foreach (var arg in Arguments)
 			{
 				// Merge if statements
+
 				if (ArgTypes[i] is not null && arg is ValueRef v && ArgTypes[i] != v.Type.EffectiveType)
 				{
 					if (!(ArgTypes[i] == NBTType.Int && (v.NeedsScoreReg || v.Value is ScoreValue)))
 					{
 						throw new InvalidTypeError(v.Type.ToString(), $"{ArgTypes[i]}".ToLower()); // Use string interpolation to handle the null case
+
 					}
 				}
 
@@ -150,6 +136,7 @@ namespace Geode.IR
 		}
 
 		protected void Remove() => MarkedForRemoval = true;
+
 
 		/// <summary>
 		/// Compute return value. Return null to allow Geode to allocate automatically.

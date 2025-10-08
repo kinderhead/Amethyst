@@ -23,7 +23,6 @@ namespace Geode.IR
 		{
 			if (Instructions.Count == 0 || Instructions.Last() is not ReturnInsn)
 			{
-				insn.ProcessArgs(Ctx);
 				Instructions.Add(insn);
 			}
 
