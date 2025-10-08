@@ -1,6 +1,6 @@
 ![Amethyst](https://minecraft.wiki/images/Amethyst_Shard_JE2_BE1.png?56555)
 
-![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/kinderhead/Amethyst/amethyst.yml)
+![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/kinderhead/Amethyst/amethyst.yml) ![Latest Version](https://img.shields.io/github/v/release/kinderhead/Amethyst)
 
 # Amethyst
 
