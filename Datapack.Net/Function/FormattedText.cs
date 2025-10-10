@@ -75,7 +75,8 @@ namespace Datapack.Net.Function
 			return this;
 		}
 
-		public override string ToString() => Obj.ToString(Newtonsoft.Json.Formatting.None);
+		public override string ToString() => ToJson().ToString(Newtonsoft.Json.Formatting.None);
+		public JArray ToJson() => Obj;
 
 		public struct Modifiers()
 		{

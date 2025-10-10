@@ -1,7 +1,6 @@
 ﻿using Datapack.Net.Function;
 using Datapack.Net.Function.Commands;
 using Datapack.Net.Pack;
-using Newtonsoft.Json.Linq;
 using System.IO.Compression;
 using static Datapack.Net.Function.Commands.Execute.Subcommand;
 
@@ -14,11 +13,10 @@ namespace Datapack.Net
 		private FileStream? fileStream;
 		private ZipArchive? zipFile;
 
-		public readonly string Description;
-		public readonly string PackFormat;
 		public readonly string FilePath;
+		public readonly MCMeta Meta;
 
-		public DP(string description, string filepath, string packFormat = "88.0")
+		public DP(string filePath, MCMeta meta)
 		{
 			types.Add(new Advancements());
 			types.Add(new ItemModifiers());
@@ -33,9 +31,8 @@ namespace Datapack.Net
 			types.Add(new DimensionType());
 			types.Add(new Functions());
 
-			Description = description;
-			PackFormat = packFormat;
-			FilePath = filepath;
+			FilePath = filePath;
+			Meta = meta;
 		}
 
 		public void Build()
@@ -49,12 +46,7 @@ namespace Datapack.Net
 						type.Build(this);
 					}
 
-					WriteFile("pack.mcmeta", new JObject(
-						new JProperty("pack", new JObject(
-							new JProperty("description", Description),
-							new JProperty("pack_format", float.Parse(PackFormat))
-						))
-					).ToString());
+					WriteFile("pack.mcmeta", Meta.Build().ToString());
 				}
 			}
 		}

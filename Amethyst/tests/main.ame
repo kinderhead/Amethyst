@@ -11,7 +11,9 @@ void run_tests() {
     @/function #test:test
 
     var total = count_of("test:test");
-    print("Tests passed: ", successfulTests, "/", total);
+
+    // Use say for automation
+    @/say Tests passed: $(successfulTests)/$(total)
 }
 
 void start(string name) {

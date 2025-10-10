@@ -17,7 +17,7 @@ data = ET.parse("Amethyst/Amethyst.csproj").getroot()
 version = "v" + str(data.find("PropertyGroup").find("Version").text)  # type: ignore
 
 print("Searching for builds...")
-runId = str(json.loads(call('gh run list -L 1 -w "Amethyst Publish" --json databaseId'))[0]["databaseId"])
+runId = str(json.loads(call('gh run list -L 1 -w "Amethyst" --json databaseId'))[0]["databaseId"])
 
 print("Waiting for build...")
 call(f"gh run watch {runId}")
@@ -38,6 +38,6 @@ for i in dists:
 
 print(f"Creating release for {version}...")
 call(f"gh release create {version} -F CHANGELOG.md")
-call(f"gh release upload {version} {" ".join(filenames)}")
+call(f"gh release upload {version} {' '.join(filenames)}")
 
 print("Done")

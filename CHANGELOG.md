@@ -1,4 +1,2 @@
-* Allow constants in branches
-* Dynamic function calls
-* Better handling of edgecase struct errors
-* Virtual struct methods
+* Fixed issue that made the compiler not even work (oops)
+* Working on a solution for the new data pack version scheme

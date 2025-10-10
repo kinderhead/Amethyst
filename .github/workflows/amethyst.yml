@@ -1,4 +1,4 @@
-name: Amethyst Publish
+name: Amethyst
 
 on:
   push:
@@ -21,27 +21,35 @@ jobs:
 
     steps:
     - uses: actions/checkout@v5
+
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
       with:
         dotnet-version: 10.0.x
+
+    - name: Setup Python
+      uses: actions/setup-python@v6
+      with:
+        python-version: '3.13'
+
+    - name: Setup Java
+      uses: actions/setup-java@v5
+      with:
+        distribution: 'zulu'
+        java-version: '21'
+
     - name: Restore dependencies
       run: dotnet restore
     - name: Build
       run: dotnet build --no-restore
+    - name: Datapack.Net Test
+      run: dotnet test --no-build --verbosity normal
     - name: Publish
       working-directory: ./Amethyst
       run: dotnet publish --configuration Release --output dist
 
-    - name: Test build unix
-      if: runner.os == 'Linux' || runner.os == 'macOS'
-      working-directory: ./Amethyst/dist
-      run: ./amethyst tests/*.ame -o ../out.zip
-
-    - name: Test build windows
-      if: runner.os == 'Windows'
-      working-directory: ./Amethyst/dist
-      run: .\amethyst.exe tests\*.ame -o ..\out.zip
+    - name: Test
+      run: python -u test_mc.py
 
     - uses: actions/upload-artifact@v4
       with:

@@ -10,6 +10,7 @@ using Geode.IR.Instructions;
 using Geode.Types;
 using Geode.Values;
 using GlobExpressions;
+using Spectre.Console;
 using System.Reflection;
 
 namespace Amethyst
@@ -71,7 +72,61 @@ amethyst [files...] -o <output>";
 		public bool Compile()
 		{
 			var errored = false;
-			foreach (var i in new List<string>([.. Options.Inputs.SelectMany(i => Glob.Files(".", i)), .. Glob.Files(Path.Join(AppContext.BaseDirectory, "core"), "**/*.ame").Select(i => Path.Join(AppContext.BaseDirectory, "core", i))]))
+
+			List<string> inputs = [];
+
+			foreach (var glob in Options.Inputs.Select(i => i.Replace('\\', '/')))
+			{
+				var lastSlash = 0;
+				var firstStar = -1;
+
+				for (var i = 0; i < glob.Length; i++)
+				{
+					if (glob[i] == '/')
+					{
+						lastSlash = i;
+					}
+
+					if (glob[i] == '*')
+					{
+						firstStar = i;
+						break;
+					}
+				}
+
+				if (firstStar == -1)
+				{
+					inputs.Add(glob);
+					continue;
+				}
+
+				IEnumerable<string> globToCheck;
+
+				if (lastSlash == 0)
+				{
+					globToCheck = Glob.Files(Directory.GetCurrentDirectory(), glob);
+				}
+				else
+				{
+					globToCheck = Glob.Files(glob[..lastSlash], glob[(lastSlash + 1)..]);
+				}
+
+				if (!globToCheck.Any())
+				{
+					AnsiConsole.MarkupInterpolated($"[yellow][bold]Warning:[/][/] No files found for glob \"{glob}\"\n");
+				}
+				else
+				{
+					inputs.AddRange(globToCheck.Select(i => Path.Join(glob[..lastSlash], i)));
+				}
+			}
+
+			foreach (var i in inputs)
+			{
+				Console.WriteLine($"Compiling {i}");
+			}
+
+			foreach (var i in new List<string>([.. inputs, .. Glob.Files(Path.Join(AppContext.BaseDirectory, "core"), "**/*.ame").Select(i => Path.Join(AppContext.BaseDirectory, "core", i))]))
 			{
 				if (!ParseFile(i))
 				{

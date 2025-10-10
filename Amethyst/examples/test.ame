@@ -32,7 +32,7 @@ struct test2 implements test {
 #load
 void main() {
     test2 obj = test2(4, 5);
-    obj.real();
+    obj.real();k
     obj.func();
 }
 

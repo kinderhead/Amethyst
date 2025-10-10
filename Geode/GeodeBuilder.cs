@@ -1,6 +1,7 @@
 using Datapack.Net;
 using Datapack.Net.Function;
 using Datapack.Net.Function.Commands;
+using Datapack.Net.Pack;
 using Datapack.Net.Utils;
 using Geode.Errors;
 using Geode.IR;
@@ -285,6 +286,6 @@ namespace Geode
 			}
 		}
 
-		private static DP GetDP(IOptions opts) => new("Project generated with Amethyst", opts.Output, opts.PackFormat);
+		private static DP GetDP(IOptions opts) => new(opts.Output, new MCMeta().SetDescription("A project made with Amethyst"));
 	}
 }
