@@ -13,8 +13,10 @@ def call(cmd: str):
     return ret.stdout
 
 
-data = ET.parse("Amethyst/Amethyst.csproj").getroot()
-version = "v" + str(data.find("PropertyGroup").find("Version").text)  # type: ignore
+call("gh workflow run Release")
 
-call(f"git tag {version}")
-call(f"git push origin {version}")
+# data = ET.parse("Amethyst/Amethyst.csproj").getroot()
+# version = "v" + str(data.find("PropertyGroup").find("Version").text)  # type: ignore
+
+# call(f"git tag {version}")
+# call(f"git push origin {version}")

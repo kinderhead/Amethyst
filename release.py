@@ -21,6 +21,7 @@ runId = str(json.loads(call('gh run list -L 1 -w "Amethyst Publish" --json datab
 
 print("Waiting for build...")
 call(f"gh run watch {runId}")
+call(f"gh run view {runId} --exit-status")
 
 if (os.path.isdir("dist")):
     shutil.rmtree("dist")

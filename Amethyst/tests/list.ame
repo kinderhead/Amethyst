@@ -14,7 +14,7 @@ void test_int_list_add() {
     assert(x[0] == 10);
     assert(x[1] == 6);
     assert(x[2] == 12);
-    asseyrt(x.size() == 3);
+    assert(x.size() == 3);
     
     complete();
 }
