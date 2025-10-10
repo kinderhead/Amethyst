@@ -3,6 +3,10 @@ namespace example;
 struct test {
     int x;
 
+    test(int x) {
+        this.x = x;
+    }
+
     void real() {
         print(this);
     }
@@ -13,14 +17,21 @@ struct test {
 }
 
 struct test2 implements test {
+    int y;
+
+    test2(int x, int y) : test(x) {
+        this.y = y;
+    }
+
     virtual void func() {
-        print(this.x + 2);
+        print(this.x + this.y);
     }
 }
 
+
 #load
 void main() {
-    test2 obj = { x: 7 };
+    test2 obj = test2(4, 5);
     obj.real();
     obj.func();
 }

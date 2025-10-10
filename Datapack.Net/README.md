@@ -2,7 +2,7 @@
 
 ![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/kinderhead/Amethyst/dotnet.yml) ![NuGet Downloads](https://img.shields.io/nuget/dt/Datapack.Net?label=NuGet%20Downloads)
 
-A Minecraft datapack generator and utility library.
+A Minecraft data pack generator and utility library.
 
 Datapack.Net still has a long way to go, so feel free to play around and catch bugs. I might notice when bug reports are made.
 
@@ -25,7 +25,7 @@ Datapack.Net still has a long way to go, so feel free to play around and catch b
       * Tellraw formatting is incomplete
 * NBT writing
   * Reading is not implemented
-* Datapack optimizer
+* Data pack optimizer
   * Currently only removes empty functions and commands that reference them
 * Supports 1.20.4
   * 1.20.5+ support is limited due to the new item components replacing NBT. Most things should still work. This will change in the future
@@ -48,9 +48,9 @@ If cloning locally, you need to build the project and restart your IDE for the s
 
 ## Usage
 
-This is basic datapack creation and building. Scroll down for the more interesting stuff.
+This is basic data pack creation and building. Scroll down for the more interesting stuff.
 
-Creating a datapack:
+Creating a data pack:
 ```cs
 var pack = new DP("The best description", "out.zip");
 ```

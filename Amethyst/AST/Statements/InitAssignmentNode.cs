@@ -7,12 +7,11 @@ using Geode.Types;
 
 namespace Amethyst.AST.Statements
 {
-	public class InitAssignmentNode(LocationRange loc, AbstractTypeSpecifier type, string name, Expression? expr, bool careAboutConstructors = true) : Statement(loc)
+	public class InitAssignmentNode(LocationRange loc, AbstractTypeSpecifier type, string name, Expression? expr) : Statement(loc)
 	{
 		public readonly AbstractTypeSpecifier Type = type;
 		public readonly string Name = name;
 		public readonly Expression? Expression = expr;
-		public readonly bool CareAboutConstructors = careAboutConstructors;
 
 		public override void Compile(FunctionContext ctx)
 		{
@@ -25,7 +24,7 @@ namespace Amethyst.AST.Statements
 			}
 			else if (Expression is null)
 			{
-				if (CareAboutConstructors && ctx.GetConstructorOrNull(type) is not null)
+				if (ctx.GetConstructorOrNull(type) is not null)
 				{
 					throw new MissingConstructorError(type.ToString());
 				}

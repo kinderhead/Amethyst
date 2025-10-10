@@ -18,13 +18,13 @@ namespace Amethyst.IR.Types
 
 		public override NamespacedID ID => id;
 
-		public FunctionTypeSpecifier? HierarchyMethod(string name)
+		public (StructTypeSpecifier Source, FunctionTypeSpecifier Type)? HierarchyMethod(string name)
 		{
 			if (BaseClass is StructTypeSpecifier s)
 			{
 				if (s.Methods.TryGetValue(name, out var type))
 				{
-					return type;
+					return (this, type);
 				}
 
 				return s.HierarchyMethod(name);
@@ -39,13 +39,16 @@ namespace Amethyst.IR.Types
 			{
 				return new(new NamespacedID($"{ID}/{name}").ToString(), method);
 			}
-
-			if (base.DefaultPropertyValue(name) is LiteralValue val)
+			else if (BaseClass is StructTypeSpecifier && BaseClass.DefaultPropertyValue(name) is LiteralValue b) // Handle virtual methods nicely
+			{
+				return b;
+			}
+			else if (base.DefaultPropertyValue(name) is LiteralValue val)
 			{
 				return val;
 			}
 
-			return BaseClass.DefaultPropertyValue(name);
+			return null;
 		}
 
 		// TODO: Recursive generics

@@ -24,6 +24,7 @@
       - [Methods](#methods)
       - [Constructors](#constructors)
       - [Inheritance](#inheritance)
+      - [Virtual Methods](#virtual-methods)
     - [Lists](#lists)
     - [Control Flow](#control-flow)
     - [Inline Commands](#inline-commands)
@@ -35,7 +36,7 @@
     - [Extension Methods](#extension-methods)
   - [Planned Features](#planned-features)
 
-There's been many different attempts at making a high-level programming language for Minecraft Datapacks over the years, but one flaw I've seen in all of them is that they let the limitations of commands dictate what's possible. All of that changed when Minecraft added macro functions, greatly increasing the flexibility of datapacks. The goal of Amethyst is to leverage macro functions and other features to allow users to make datapacks as easily as they would write any other program.
+There's been many different attempts at making a high-level programming language for Minecraft Data packs over the years, but one flaw I've seen in all of them is that they let the limitations of commands dictate what's possible. All of that changed when Minecraft added macro functions, greatly increasing the flexibility of data packs. The goal of Amethyst is to leverage macro functions and other features to allow users to make data packs as easily as they would write any other program.
 
 Tested on Minecraft 1.21.10, theoretically works on Minecraft 1.20.5+. No, it will not be ported to earlier versions without macro functions.
 
@@ -89,10 +90,10 @@ Amethyst Compiler <too lazy to update the README for each new version>
 Usage:
 amethyst [files...] -o <output>
 
-  -o, --output            Zipped datapack, defaults to first input file's name.
-  -f, --pack-format       (Default: 88.0) Datapack format.
+  -o, --output            Zipped data pack, defaults to first input file's name.
+  -f, --pack-format       (Default: 88.0) Data pack format.
   -d, --debug             (Default: false) Enable debug checks.
-  --dump-ir               Dump Geode IR and don't compile to datapack.
+  --dump-ir               Dump Geode IR and don't compile to data pack.
   --help                  Display this help screen.
   --version               Display version information.
   input files (pos. 0)    Required. Files to compile.
@@ -296,7 +297,7 @@ However, Amethyst adds a special variable initializer for `this` in constructors
 
 #### Inheritance
 
-Structs can inherit methods and properties from other types, even non-nbt compound ones. If the base type has a constructor, it is required to implement a new constructor.
+Structs can inherit methods and properties from other types, even non-nbt compound ones. If the base type has a constructor, it is required to implement a new constructor and add an initializer.
 
 ```cs
 struct double_vec implements vec {
@@ -312,7 +313,32 @@ struct test implements string {
 }
 ```
 
-Non-nbt compound types obviosly cannot have properties. As of right now, there is no mechanism for virtual or abstract methods.
+Non-nbt compound types obviosly cannot have properties.
+
+#### Virtual Methods
+
+Structs can have virtual methods that can be overridden by subclasses. Virtual methods are defined using the `virtual` function modifier like so:
+
+```cs
+struct vec {
+    int x;
+    int y;
+
+    virtual int sum() {
+        return this.x + this.y;
+    }
+}
+
+struct subvec implements vec {
+    // Must also declare as virtual.
+    // Signature must be identical to the original method.
+    virtual int sum() {
+        return 7;
+    }
+}
+```
+
+Internally, they are stored as properties in each instance of the object and act like dynamic functions. Abstract methods will be added in the future.
 
 ### Lists
 
@@ -532,16 +558,15 @@ Here are the inheritance chains for most types:
     * `minecraft:int_array` (not implemented yet)
     * `minecraft:long_array` (not implemented yet)
     * `amethyst:list<T>` (defined as `T[]`)
-  * All user-defined types
 * `amethyst:ref<T>` (defined as `T&`)
 * `amethyst:weak_ref<T>` (defined as `T^`)
 * `amethyst:func` (no definition yet)
 
 ## Planned Features
 
-* Generics
 * Inline functions
 * Entity and world manipulation
+* Generics
 * Async programming and tick scheduling
 * Automatic data generation for compile-time block states, entity data, and more
 * Error handling and exceptions

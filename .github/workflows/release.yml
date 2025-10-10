@@ -17,4 +17,4 @@ jobs:
     - name: Upload
       env:
         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      run: python release.py
+      run: python -u release.py

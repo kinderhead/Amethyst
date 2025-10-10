@@ -24,10 +24,18 @@ struct vec2 {
     int sum() {
         return this.x + this.y + this.z;
     }
+
+    virtual int get-x() {
+        return this.x;
+    }
 }
 
 struct subvec implements vec2 {
     subvec(int x, int y, int z) : vec2(x * 2, y * 2, z * 2) { }
+
+    virtual int get-x() {
+        return this.x * 2;
+    }
 }
 
 #test
@@ -66,6 +74,7 @@ void test_constructor() {
     assert(obj.y == 6);
     assert(obj.z == 4);
     assert(obj.sum() == 13);
+    assert(obj.get-x() == 3);
 
     complete();
 }
@@ -80,6 +89,7 @@ void test_inheritance() {
     assert(obj.y == 4);
     assert(obj.z == 6);
     assert(obj.sum() == 12);
+    assert(obj.get-x() == 4);
 
     complete();
 }

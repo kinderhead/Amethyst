@@ -1,6 +1,6 @@
 # Geode
 
-An IR platform for generating Minecraft datapacks with high-level programming languages.
+An IR platform for generating Minecraft data packs with high-level programming languages.
 
 ## Usage
 

@@ -30,43 +30,48 @@ namespace Amethyst.AST
 			var selfType = new StructTypeSpecifier(ID, baseClass, props, methods);
 			ctx.IR.AddType(new(ID, Location, selfType));
 
-			var hasConstructor = false;
+			ConstructorNode? constructor = null;
 
 			foreach (var i in Methods)
 			{
 				i.Process(ctx, root);
 
-				if (i is ConstructorNode)
+				if (i is ConstructorNode c)
 				{
-					hasConstructor = true;
-				}
-				else if (selfType.HierarchyMethod(i.ID.GetFile()) is FunctionTypeSpecifier other)
-				{
-					var otherIsVirtual = other.Modifiers.HasFlag(FunctionModifiers.Virtual);
-					var thisIsVirtual = i.Modifiers.HasFlag(FunctionModifiers.Virtual);
-
-					if (otherIsVirtual && !thisIsVirtual)
-					{
-						throw new MissingVirtualError(i.ID.GetFile());
-					}
-					else if (!otherIsVirtual)
-					{
-						throw new CannotOverrideError(i.ID.GetFile());
-					}
+					constructor = c;
 				}
 				else
 				{
 					var type = i.GetFunctionType(ctx);
 					methods[i.ID.GetFile()] = type;
 
-					if (i.Modifiers.HasFlag(FunctionModifiers.Virtual))
+					var thisIsVirtual = i.Modifiers.HasFlag(FunctionModifiers.Virtual);
+
+					if (selfType.HierarchyMethod(i.ID.GetFile())?.Type is FunctionTypeSpecifier other)
+					{
+						var otherIsVirtual = other.Modifiers.HasFlag(FunctionModifiers.Virtual);
+
+						if (otherIsVirtual && !thisIsVirtual)
+						{
+							throw new MissingVirtualError(i.ID.GetFile());
+						}
+						else if (!otherIsVirtual)
+						{
+							throw new CannotOverrideError(i.ID.GetFile());
+						}
+						else if (other.ReturnType != type.ReturnType || other.Parameters.Length != type.Parameters.Length || !other.Parameters.Skip(1).Zip(type.Parameters.Skip(1)).All(i => i.First == i.Second))
+						{
+							throw new InvalidOverrideSignatureError(i.ID.GetFile());
+						}
+					}
+					else if (thisIsVirtual)
 					{
 						props[i.ID.GetFile()] = type;
 					}
 				}
 			}
 
-			if (ctx.IR.GetConstructorOrNull(selfType.BaseClass) is not null && !hasConstructor)
+			if (ctx.IR.GetConstructorOrNull(selfType.BaseClass) is not null && (constructor is null || constructor.BaseCall is null))
 			{
 				throw new MissingConstructorError(selfType.BaseClass.ToString());
 			}

@@ -25,7 +25,7 @@ namespace Amethyst.AST
 			var self = new SimpleAbstractTypeSpecifier(Location, selfId.ToString());
 			var constructor = new FunctionNode(Location, Tags, Modifiers, self, selfId, Parameters, Body);
 
-			constructor.Body.Prepend(new InitAssignmentNode(Location, self, "this", BaseCall is null ? null : new CastExpression(Location, self, BaseCall), false));
+			constructor.Body.Prepend(new ConstructorInitStatement(Location, self, BaseCall));
 			constructor.Body.Add(new ReturnStatement(Location, new VariableExpression(Location, "this")));
 			constructor.Process(ctx, root);
 		}
