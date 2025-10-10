@@ -119,19 +119,19 @@ namespace Amethyst.AST
 			List<MethodNode> methods = [.. context.method().Select(i => (MethodNode)Visit(i))];
 			currentNamespace = oldNs;
 
-			return new AbstractStructTypeSpecifier(Loc(context), id, context.type() is null ? null : Visit(context.type()), props, methods);
+			return new StructNode(Loc(context), id, context.type() is null ? null : Visit(context.type()), props, methods);
 		}
 
 		public override Node VisitMethod([NotNull] AmethystParser.MethodContext context)
 		{
 			var mod = FunctionModifiers.None;
-			foreach (var i in context.functionModifier())
+			foreach (var i in context.functionModifier().Length == 0 ? context.methodModifier().Select(i => i.GetText()) : context.functionModifier().Select(i => i.GetText()))
 			{
-				if (i.GetText() == "virtual")
+				if (i == "virtual")
 				{
 					mod |= FunctionModifiers.Virtual;
 				}
-				else if (i.GetText() == "inline")
+				else if (i == "inline")
 				{
 					mod |= FunctionModifiers.Inline;
 				}
@@ -193,7 +193,6 @@ namespace Amethyst.AST
 				if (error.Errored)
 				{
 					throw new Exception(); // Do this later
-
 
 				}
 			}
@@ -356,7 +355,6 @@ namespace Amethyst.AST
 					node = new UnaryExpression(Loc(context), UnaryOperation.Negate, node);
 				}
 				// No check for other cases because parser errors might hit it and we don't want to stop the error checker
-
 
 			}
 

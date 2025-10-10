@@ -1,5 +1,4 @@
-﻿using Amethyst.AST.Intrinsics;
-using Datapack.Net.Data;
+﻿using Datapack.Net.Data;
 using Datapack.Net.Utils;
 using Geode;
 using Geode.IR;
@@ -14,8 +13,6 @@ namespace Amethyst.AST
 
 		public override TypeSpecifier Type => FuncType;
 		public FunctionTypeSpecifier FuncType => type ?? new(FunctionModifiers.None, new VoidTypeSpecifier(), []);
-
-		public ValueRef AsMethod(ValueRef self, FunctionContext ctx) => new IntrinsicMethod(this, self);
 
 		public abstract IFunctionLike CloneWithType(FunctionTypeSpecifier type);
 		public abstract ValueRef Execute(FunctionContext ctx, params ValueRef[] args);

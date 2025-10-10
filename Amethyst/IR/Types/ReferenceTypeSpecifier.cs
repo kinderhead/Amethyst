@@ -85,5 +85,15 @@ namespace Amethyst.IR.Types
 
 		public virtual ValueRef Deref(ValueRef src, FunctionContext ctx) => ctx.Add(new DereferenceInsn(src));
 		public static LiteralValue From(DataTargetValue val) => new(val.Target.GetTarget(), new ReferenceTypeSpecifier(val.Type));
+
+		public static ValueRef TryDeref(ValueRef src, FunctionContext ctx)
+		{
+			if (src.Type is ReferenceTypeSpecifier r)
+			{
+				return r.Deref(src, ctx);
+			}
+
+			return src;
+		}
 	}
 }

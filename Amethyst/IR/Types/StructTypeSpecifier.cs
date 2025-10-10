@@ -33,9 +33,33 @@ namespace Amethyst.IR.Types
 			return null;
 		}
 
+		public override LiteralValue? DefaultPropertyValue(string name)
+		{
+			if (Methods.TryGetValue(name, out var method))
+			{
+				return new(new NamespacedID($"{ID}/{name}").ToString(), method);
+			}
+
+			if (base.DefaultPropertyValue(name) is LiteralValue val)
+			{
+				return val;
+			}
+
+			return BaseClass.DefaultPropertyValue(name);
+		}
+
+		// TODO: Recursive generics
+
+		public override bool ConstraintSatisfiedBy(TypeSpecifier other) => other == this;
+
+		protected override void ApplyGeneric(TypeSpecifier other, Dictionary<string, TypeSpecifier> typeMap)
+		{
+
+		}
+
 		protected override bool EqualsImpl(TypeSpecifier obj) => obj is StructTypeSpecifier other && other.ID == ID;// && Properties.Count == other.Properties.Count && Properties.All(kv => other.Properties.TryGetValue(kv.Key, out var prop) && prop.Equals(kv.Value));
 		public override string ToString() => ID.ToString();
 
-		public override object Clone() => new StructTypeSpecifier(ID, BaseClass, new(props.Select(i => new KeyValuePair<string, TypeSpecifier>(i.Key, (TypeSpecifier)i.Value.Clone()))), Methods);
+		public override object Clone() => new StructTypeSpecifier(ID, BaseClass, new(props.Select(i => new KeyValuePair<string, TypeSpecifier>(i.Key, i.Value))), Methods);
 	}
 }

@@ -1,4 +1,3 @@
-using Geode.IR;
 using Geode.Types;
 
 namespace Geode
@@ -8,6 +7,5 @@ namespace Geode
 		FunctionTypeSpecifier FuncType { get; }
 
 		IFunctionLike CloneWithType(FunctionTypeSpecifier type);
-		ValueRef AsMethod(ValueRef self, FunctionContext ctx);
 	}
 }

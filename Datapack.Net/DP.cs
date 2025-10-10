@@ -52,7 +52,7 @@ namespace Datapack.Net
 					WriteFile("pack.mcmeta", new JObject(
 						new JProperty("pack", new JObject(
 							new JProperty("description", Description),
-							new JProperty("pack_format", PackFormat)
+							new JProperty("pack_format", float.Parse(PackFormat))
 						))
 					).ToString());
 				}

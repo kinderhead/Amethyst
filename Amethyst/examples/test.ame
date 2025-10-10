@@ -3,20 +3,25 @@ namespace example;
 struct test {
     int x;
 
+    void real() {
+        print(this);
+    }
+
     virtual void func() {
         print(this.x);
     }
 }
 
-// struct test2 implements test {
-//     virtual void func() {
-//         print(this.x + 2);
-//     }
-// }
+struct test2 implements test {
+    virtual void func() {
+        print(this.x + 2);
+    }
+}
 
 #load
 void main() {
-    test obj = { x: 7 };
+    test2 obj = { x: 7 };
+    obj.real();
     obj.func();
 }
 

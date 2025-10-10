@@ -18,7 +18,15 @@ namespace Amethyst.AST
 		public readonly BlockNode Body = body;
 
 		private FunctionTypeSpecifier? funcType = null;
-		public FunctionTypeSpecifier GetFunctionType(Compiler ctx) => funcType ??= new(Modifiers, ReturnType.Resolve(ctx, ID.GetContainingFolder()), Parameters.Select(i => new Parameter(i.Modifiers, i.Type.Resolve(ctx, ID.GetContainingFolder()), i.Name)));
+		public FunctionTypeSpecifier GetFunctionType(Compiler ctx, bool recompute = false)
+		{
+			if (recompute || funcType is null)
+			{
+				funcType = new(Modifiers, ReturnType.Resolve(ctx, ID.GetContainingFolder()), Parameters.Select(i => new Parameter(i.Modifiers, i.Type.Resolve(ctx, ID.GetContainingFolder()), i.Name)));
+			}
+
+			return funcType;
+		}
 
 		public bool Compile(Compiler compiler, out FunctionContext? ctx)
 		{
@@ -57,7 +65,7 @@ namespace Amethyst.AST
 
 		public virtual void Process(Compiler ctx, RootNode root)
 		{
-			ctx.IR.AddSymbol(new(ID, Location, new FunctionValue(ID, GetFunctionType(ctx))));
+			ctx.IR.AddSymbol(new(ID, Location, new FunctionValue(ID, GetFunctionType(ctx, true))));
 			root.Functions.Add(this);
 		}
 	}

@@ -3,7 +3,6 @@ using Datapack.Net.Function;
 using Datapack.Net.Function.Commands;
 using Datapack.Net.Utils;
 using Geode.Errors;
-using Geode.IR;
 using Geode.Types;
 
 namespace Geode.Values
@@ -46,8 +45,6 @@ namespace Geode.Values
 		}
 
 		public virtual IFunctionLike CloneWithType(FunctionTypeSpecifier type) => new FunctionValue(ID, type);
-
-		public ValueRef AsMethod(ValueRef self, FunctionContext ctx) => new MethodValue(this, ctx.ImplicitCast(self, FuncType.Parameters[0].Type));
 
 		public static Value? SetArgsAndGetMacros(RenderContext ctx, FunctionTypeSpecifier funcType, ValueRef[] args)
 		{

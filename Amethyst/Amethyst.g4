@@ -35,8 +35,12 @@ declaration
     ;
 
 method
-    : (functionModifier | Virtual)* type RawIdentifier paramList block
+    : methodModifier* type RawIdentifier paramList block
     | functionModifier* RawIdentifier paramList (Colon expression)? block
+    ;
+
+methodModifier
+    : functionModifier | Virtual
     ;
 
 statement
