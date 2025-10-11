@@ -14,6 +14,8 @@
   - [Usage](#usage)
   - [CLI Options](#cli-options)
   - [Language Features](#language-features)
+    - [Functions](#functions)
+      - [Macro Functions](#macro-functions)
     - [Namespaces](#namespaces)
     - [Variables](#variables)
       - [Casting](#casting)
@@ -30,7 +32,6 @@
     - [Inline Commands](#inline-commands)
     - [References](#references)
       - [Weak References](#weak-references)
-    - [Macro Functions](#macro-functions)
     - [Global Variables](#global-variables)
     - [Intrinsics](#intrinsics)
     - [Extension Methods](#extension-methods)
@@ -85,13 +86,12 @@ void main() {
 
 ```
 $ amethyst --help
-Amethyst Compiler <too lazy to update the README for each new version>
+Amethyst Compiler
 
 Usage:
 amethyst [files...] -o <output>
 
   -o, --output            Zipped data pack, defaults to first input file's name.
-  -f, --pack-format       (Default: 88.0) Data pack format.
   -d, --debug             (Default: false) Enable debug checks.
   --dump-ir               Dump Geode IR and don't compile to data pack.
   --help                  Display this help screen.
@@ -100,6 +100,34 @@ amethyst [files...] -o <output>
 ```
 
 ## Language Features
+
+### Functions
+
+Most code in Amethyst is defined in functions. Functions have a return type, a name, parameters, and a body. They are defined C-style like so:
+
+```cs
+int func(string arg1, nbt& arg2, int[] arg3) {
+    ...
+}
+```
+
+Functions can be called like so:
+
+```cs
+func("Hello", obj, [1, 2, 3]);
+```
+
+Amethyst compiles functions into .mcfunction files of the same name. The argument calling convention is to place named arguments into a special place in the current stack frame. In most cases, this will be `amethyst:runtime stack[-1].args`. The called function will push a new frame and access arguments using `amethyst:runtime stack[-2].args`. Functions without arguments (or with only macro arguments) can be easily called in-game using `/function`.
+
+#### Macro Functions
+
+Function arguments can be optionally defined as macro arguments as follows:
+
+```cs
+void func(macro int arg, string non_macro_arg) {
+    ...
+}
+```
 
 ### Namespaces
 
@@ -472,14 +500,6 @@ References are stored internally as `Datapack.Net.Function.IDataTarget`s, so the
 inline void set(macro nbt^ ref, macro string val) {
     @/data modify $(ref) set value $(val)
 }
-```
-
-### Macro Functions
-
-Function arguments can be optionally defined as macro arguments as follows:
-
-```cs
-void func(macro int arg, string non_macro_arg) { ... }
 ```
 
 As you can see, macro arguments can be mixed with regular arguments.
