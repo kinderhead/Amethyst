@@ -75,8 +75,17 @@ namespace Geode.IR
 				}
 			}
 
-			// TODO: Make a collection for insn to be removed instead
 			b.Instructions.RemoveAll(x => x.MarkedForRemoval);
+
+			for (var i = 0; i < b.Instructions.Count; i++)
+			{
+				if (b.Instructions[i].ToReplaceWith.Length != 0)
+				{
+					b.Instructions.InsertRange(i + 1, b.Instructions[i].ToReplaceWith);
+					b.Instructions.RemoveAt(i);
+					i--;
+				}
+			}
 
 			return true;
 		}

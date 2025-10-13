@@ -1,38 +1,14 @@
 namespace example;
 
-struct test {
-    int x;
-
-    test(int x) {
-        this.x = x;
-    }
-
-    void real() {
-        print(this);
-    }
-
-    virtual void func() {
-        print(this.x);
-    }
-}
-
-struct test2 implements test {
-    int y;
-
-    test2(int x, int y) : test(x) {
-        this.y = y;
-    }
-
-    virtual void func() {
-        print(this.x + this.y);
-    }
-}
-
-
 #load
 void main() {
-    test2 obj = test2(4, 5);
-    obj.real();k
-    obj.func();
+    int y = 2;
+    print("womp", y);
+    //func();
+    print("unwomp", y);
 }
 
+inline void func() {
+    int x = 5;
+    print("Yay", x + 3);
+}

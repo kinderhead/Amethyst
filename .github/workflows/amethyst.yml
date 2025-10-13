@@ -18,6 +18,7 @@ jobs:
           {os: macos-13, name: "mac-intel"},
           {os: macos-latest, name: "mac"}
         ]
+      fail-fast: false
 
     steps:
     - uses: actions/checkout@v5

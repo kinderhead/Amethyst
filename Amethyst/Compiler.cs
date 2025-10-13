@@ -113,17 +113,12 @@ amethyst [files...] -o <output>";
 
 				if (!globToCheck.Any())
 				{
-					AnsiConsole.MarkupInterpolated($"[yellow][bold]Warning:[/][/] No files found for glob \"{glob}\"\n");
+					AnsiConsole.MarkupInterpolated($"[bold yellow]Warning:[/] No files found for glob \"{glob}\"\n");
 				}
 				else
 				{
 					inputs.AddRange(globToCheck.Select(i => Path.Join(glob[..lastSlash], i)));
 				}
-			}
-
-			foreach (var i in inputs)
-			{
-				Console.WriteLine($"Compiling {i}");
 			}
 
 			foreach (var i in new List<string>([.. inputs, .. Glob.Files(Path.Join(AppContext.BaseDirectory, "core"), "**/*.ame").Select(i => Path.Join(AppContext.BaseDirectory, "core", i))]))

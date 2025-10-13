@@ -66,6 +66,43 @@ namespace Geode.IR
 			builder.Register(Function);
 		}
 
+		public List<Instruction> Copy()
+		{
+			List<Instruction> insns = [];
+			Dictionary<ValueRef, ValueRef> valueMap = [];
+
+			ValueRef map(ValueRef v)
+			{
+				if (valueMap.TryGetValue(v, out var ret))
+				{
+					return ret;
+				}
+
+				var newValue = v.Clone();
+				valueMap[v] = newValue;
+				return newValue;
+			}
+
+			foreach (var i in Instructions)
+			{
+				var newInsn = i.Clone();
+
+				for (var j = 0; j < i.Arguments.Length; j++)
+				{
+					if (i.Arguments[j] is not ValueRef)
+					{
+						throw new NotImplementedException("This block cannot be copied. Try not inlining this function.");
+					}
+
+					newInsn.Arguments[j] = map((ValueRef)i.Arguments[j]);
+				}
+
+				insns.Add(newInsn);
+			}
+
+			return insns;
+		}
+
 		public RenderContext GetRenderCtx(GeodeBuilder builder, FunctionContext ctx) => new(Function, this, builder, ctx);
 	}
 }

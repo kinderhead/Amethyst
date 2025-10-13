@@ -8,7 +8,7 @@ namespace Geode.IR
 {
 	public abstract class Instruction
 	{
-		public readonly IInstructionArg[] Arguments;
+		public IInstructionArg[] Arguments { get; private set; }
 		public readonly ValueRef ReturnValue;
 
 		public LocationRange Location = LocationRange.None;
@@ -18,6 +18,7 @@ namespace Geode.IR
 		public abstract TypeSpecifier ReturnType { get; }
 
 		public bool MarkedForRemoval { get; private set; } = false;
+		public Instruction[] ToReplaceWith { get; private set; } = [];
 
 		public virtual bool IsReturn => false;
 
@@ -108,6 +109,13 @@ namespace Geode.IR
 			return builder.ToString();
 		}
 
+		public virtual Instruction Clone()
+		{
+			var insn = (Instruction)MemberwiseClone();
+			insn.Arguments = [.. Arguments];
+			return insn;
+		}
+
 		protected bool AreArgsLiteral(out LiteralValue[] args)
 		{
 			args = [.. Arguments.Select(a => ((a as ValueRef)?.Value as LiteralValue)!)];
@@ -137,6 +145,7 @@ namespace Geode.IR
 
 		protected void Remove() => MarkedForRemoval = true;
 
+		public void ReplaceWith(params Instruction[] insns) => ToReplaceWith = insns;
 
 		/// <summary>
 		/// Compute return value. Return null to allow Geode to allocate automatically.

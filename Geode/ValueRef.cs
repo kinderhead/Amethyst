@@ -5,7 +5,7 @@ using Geode.Values;
 
 namespace Geode
 {
-	public class ValueRef : IInstructionArg
+	public class ValueRef : IInstructionArg, ICloneable
 	{
 		public Value? Value { get; private set; }
 		public TypeSpecifier Type { get; private set; }
@@ -53,6 +53,9 @@ namespace Geode
 			Type = type;
 			return this;
 		}
+
+		public ValueRef Clone() => Value is null ? new(Type) : new(Value);
+		object ICloneable.Clone() => Clone();
 
 		public static implicit operator ValueRef(Value val) => new(val);
 	}

@@ -8,14 +8,9 @@ namespace Amethyst
 		[Option('o', "output", HelpText = "Zipped datapack, defaults to first input file's name.")]
 		public required string Output { get; set; }
 
-		[Option('f', "pack-format", HelpText = "Datapack format.", Default = "88.0")]
-		public string PackFormat { get; set; }
-
 		[Option('d', "debug", HelpText = "Enable debug checks.", Default = false)]
 		public bool Debug { get; set; }
 
-		// [Option('n', "no-constant-scores", HelpText = "Don't generate global number constant scores to use when applicable.")]
-		// public bool NoConstantScores { get; set; }
 
 		[Option("dump-ir", HelpText = "Dump Geode IR and don't compile to datapack.")]
 		public bool DumpIR { get; set; }
