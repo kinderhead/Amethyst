@@ -16,6 +16,7 @@
   - [Language Features](#language-features)
     - [Functions](#functions)
       - [Macro Functions](#macro-functions)
+      - [Inline Functions](#inline-functions)
     - [Namespaces](#namespaces)
     - [Variables](#variables)
       - [Casting](#casting)
@@ -128,6 +129,16 @@ void func(macro int arg, string non_macro_arg) {
     ...
 }
 ```
+
+#### Inline Functions
+
+Functions can be marked `inline`. Currently, a function can only be inlined if it meets the following conditions:
+
+* It has no parameters.
+* It returns void.
+* It has no conditionals (more than one `Block` in the Geode IR).
+
+All conditions will eventually be removed. If a function marked `inline` does not follow these conditions, then nothing will happen.
 
 ### Namespaces
 

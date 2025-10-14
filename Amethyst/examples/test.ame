@@ -2,10 +2,10 @@ namespace example;
 
 #load
 void main() {
-    int y = 2;
-    print("womp", y);
-    //func();
-    print("unwomp", y);
+    int x = 2;
+    print("womp", x);
+    func();
+    print("unwomp", x);
 }
 
 inline void func() {

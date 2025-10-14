@@ -1,1 +1,1 @@
-* Removed `--pack-format` for now until it can be done properly
+* Simple inline functions

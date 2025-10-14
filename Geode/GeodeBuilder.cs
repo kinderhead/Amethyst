@@ -137,7 +137,10 @@ namespace Geode
 		{
 			foreach (var i in Functions)
 			{
-				Console.WriteLine(i.Dump() + '\n');
+				if (!i.Decl.ID.ToString().StartsWith("amethyst:core"))
+				{
+					Console.WriteLine(i.Dump() + '\n');
+				}
 			}
 		}
 

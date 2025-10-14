@@ -2,6 +2,7 @@ using Datapack.Net.Function;
 using Datapack.Net.Utils;
 using Geode.Errors;
 using Geode.IR.Instructions;
+using Geode.Values;
 using System.Text;
 
 namespace Geode.IR
@@ -66,20 +67,26 @@ namespace Geode.IR
 			builder.Register(Function);
 		}
 
-		public List<Instruction> Copy()
+		public List<Instruction> Copy(string newVariableBaseLoc)
 		{
 			List<Instruction> insns = [];
 			Dictionary<ValueRef, ValueRef> valueMap = [];
 
-			ValueRef map(ValueRef v)
+			ValueRef map(ValueRef val)
 			{
-				if (valueMap.TryGetValue(v, out var ret))
+				if (valueMap.TryGetValue(val, out var ret))
 				{
 					return ret;
 				}
 
-				var newValue = v.Clone();
-				valueMap[v] = newValue;
+				var newValue = val.Clone();
+
+				if (newValue.Value is Variable v)
+				{
+					newValue.SetValue(new Variable(v.Name, newVariableBaseLoc, v.Frame, v.Type));
+				}
+
+				valueMap[val] = newValue;
 				return newValue;
 			}
 
@@ -89,12 +96,13 @@ namespace Geode.IR
 
 				for (var j = 0; j < i.Arguments.Length; j++)
 				{
-					if (i.Arguments[j] is not ValueRef)
+					if (i.Arguments[j] is not ValueRef val)
 					{
 						throw new NotImplementedException("This block cannot be copied. Try not inlining this function.");
 					}
 
-					newInsn.Arguments[j] = map((ValueRef)i.Arguments[j]);
+					newInsn.Arguments[j] = map(val);
+					valueMap[i.ReturnValue] = newInsn.ReturnValue;
 				}
 
 				insns.Add(newInsn);

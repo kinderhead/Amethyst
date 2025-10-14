@@ -8,18 +8,16 @@ namespace Geode.IR.Passes
 	{
 		protected override void OnInsn(FunctionContext ctx, Block block, Instruction insn)
 		{
-			return; // WIP
-
 			if (insn is CallInsn call && call.Arg<ValueRef>(0).Value is FunctionValue func && func.FuncType.Modifiers.HasFlag(FunctionModifiers.Inline))
 			{
 				var other = ctx.Compiler.IR.Functions.Find(i => i.Decl.ID == func.ID);
 
-				if (other is null || other.Blocks.Count != 1)
+				if (other is null || other.Blocks.Count != 1 || other.Decl.FuncType.Parameters.Length > 0 || other.Decl.FuncType.ReturnType is not VoidTypeSpecifier)
 				{
 					return;
 				}
 
-				var newInsns = other.Blocks.First().Copy();
+				var newInsns = other.Blocks.First().Copy("inline_frame");
 
 				for (var i = 0; i < newInsns.Count; i++)
 				{

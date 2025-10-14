@@ -34,8 +34,6 @@ namespace Geode.IR
 
 		// Could just be the max register used, but who knows if one goes poof somewhere
 
-
-
 		private readonly HashSet<int> registersInUse = [];
 		private int tmpStackVars = 0;
 
@@ -65,8 +63,6 @@ namespace Geode.IR
 				else
 				{
 					// Maybe make it so that if the stack isn't used by the function, then use -1 and don't push new frame
-
-
 
 					RegisterLocal(i.Name, new StackValue(-2, $"args.{i.Name}", i.Type));
 				}
@@ -117,11 +113,9 @@ namespace Geode.IR
 
 		public Value? GetConstructorOrNull(TypeSpecifier type) => Compiler.IR.GetConstructorOrNull(type);
 
-		public Variable RegisterLocal(string name, TypeSpecifier type) => RegisterLocal(name, $"frame{activeScopes.Count - 1}.{name}", type);
-
-		public Variable RegisterLocal(string name, string loc, TypeSpecifier type)
+		public Variable RegisterLocal(string name, TypeSpecifier type)
 		{
-			var val = new Variable(name, loc, type);
+			var val = new Variable(name, "frame", activeScopes.Count - 1, type);
 			RegisterLocal(name, val);
 			return val;
 		}
@@ -222,10 +216,7 @@ namespace Geode.IR
 
 		public ValueRef Call(NamespacedID id, params ValueRef[] args) => Call(GetGlobal(id) as FunctionValue ?? throw new UndefinedSymbolError(id.ToString()), args);
 
-		public ValueRef Call(FunctionValue f, params ValueRef[] args)
-		{
-			return Add(new CallInsn(f, PrepArgs(f.FuncType, args)));
-		}
+		public ValueRef Call(FunctionValue f, params ValueRef[] args) => Add(new CallInsn(f, PrepArgs(f.FuncType, args)));
 
 		public IEnumerable<ValueRef> PrepArgs(FunctionTypeSpecifier type, params ValueRef[] args)
 		{
@@ -259,8 +250,6 @@ namespace Geode.IR
 			labelCounters[label] = count + 1;
 			return $"{label}{count}";
 		}
-
-
 
 		/// <summary>
 		/// Branch current block without an else statement.

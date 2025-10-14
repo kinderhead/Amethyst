@@ -13,10 +13,27 @@ void test_dyn_call() {
     complete();
 }
 
+#test
+void test_inline_simple() {
+    start("inline simple");
+
+    int x = 2;
+    assert(x == 2);
+    simple_inline();
+    assert(x == 2);
+
+    complete();
+}
+
 int dyn_func1(int x) {
     return x + 2;
 }
 
 int dyn_func2(macro int x) {
     return x - 2;
+}
+
+inline void simple_inline() {
+    int x = 7;
+    assert(x == 7);
 }
