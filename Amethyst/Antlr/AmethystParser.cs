@@ -43,7 +43,8 @@ public partial class AmethystParser : Parser {
 		Star=23, Slash=24, Not=25, PlusEq=26, MinusEq=27, StarEq=28, SlashEq=29, 
 		Hash=30, EqEq=31, Neq=32, Gt=33, Gte=34, Lt=35, Lte=36, And=37, AndAnd=38, 
 		OrOr=39, PlusPlus=40, MinusMinus=41, Dot=42, WeakRef=43, RawIdentifier=44, 
-		String=45, Command=46, Integer=47, Whitespace=48, Comment=49, LineComment=50;
+		String=45, Command=46, TargetSelectorVariable=47, Number=48, Whitespace=49, 
+		Comment=50, LineComment=51;
 	public const int
 		RULE_root = 0, RULE_namespace = 1, RULE_function = 2, RULE_functionTag = 3, 
 		RULE_functionModifier = 4, RULE_block = 5, RULE_struct = 6, RULE_declaration = 7, 
@@ -83,7 +84,7 @@ public partial class AmethystParser : Parser {
 		"Star", "Slash", "Not", "PlusEq", "MinusEq", "StarEq", "SlashEq", "Hash", 
 		"EqEq", "Neq", "Gt", "Gte", "Lt", "Lte", "And", "AndAnd", "OrOr", "PlusPlus", 
 		"MinusMinus", "Dot", "WeakRef", "RawIdentifier", "String", "Command", 
-		"Integer", "Whitespace", "Comment", "LineComment"
+		"TargetSelectorVariable", "Number", "Whitespace", "Comment", "LineComment"
 	};
 	public static readonly IVocabulary DefaultVocabulary = new Vocabulary(_LiteralNames, _SymbolicNames);
 
@@ -486,7 +487,7 @@ public partial class AmethystParser : Parser {
 			State = 122;
 			ErrorHandler.Sync(this);
 			_la = TokenStream.LA(1);
-			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & 267181363642420L) != 0)) {
+			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & 407918851997748L) != 0)) {
 				{
 				{
 				State = 119;
@@ -1322,7 +1323,7 @@ public partial class AmethystParser : Parser {
 			State = 234;
 			ErrorHandler.Sync(this);
 			_la = TokenStream.LA(1);
-			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & 196812619464704L) != 0)) {
+			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & 337550107820032L) != 0)) {
 				{
 				State = 233;
 				expression();
@@ -2151,7 +2152,7 @@ public partial class AmethystParser : Parser {
 			return GetRuleContext<IdContext>(0);
 		}
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode String() { return GetToken(AmethystParser.String, 0); }
-		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode Integer() { return GetToken(AmethystParser.Integer, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode Number() { return GetToken(AmethystParser.Number, 0); }
 		[System.Diagnostics.DebuggerNonUserCode] public ListLiteralContext listLiteral() {
 			return GetRuleContext<ListLiteralContext>(0);
 		}
@@ -2198,11 +2199,11 @@ public partial class AmethystParser : Parser {
 				Match(String);
 				}
 				break;
-			case Integer:
+			case Number:
 				EnterOuterAlt(_localctx, 3);
 				{
 				State = 317;
-				Match(Integer);
+				Match(Number);
 				}
 				break;
 			case LSquareBrak:
@@ -2284,7 +2285,7 @@ public partial class AmethystParser : Parser {
 			State = 335;
 			ErrorHandler.Sync(this);
 			_la = TokenStream.LA(1);
-			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & 196812619464704L) != 0)) {
+			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & 337550107820032L) != 0)) {
 				{
 				State = 327;
 				expression();
@@ -2662,7 +2663,7 @@ public partial class AmethystParser : Parser {
 			State = 389;
 			ErrorHandler.Sync(this);
 			_la = TokenStream.LA(1);
-			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & 196812619464704L) != 0)) {
+			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & 337550107820032L) != 0)) {
 				{
 				State = 381;
 				expression();
@@ -2878,7 +2879,7 @@ public partial class AmethystParser : Parser {
 	}
 
 	private static int[] _serializedATN = {
-		4,1,50,414,2,0,7,0,2,1,7,1,2,2,7,2,2,3,7,3,2,4,7,4,2,5,7,5,2,6,7,6,2,7,
+		4,1,51,414,2,0,7,0,2,1,7,1,2,2,7,2,2,3,7,3,2,4,7,4,2,5,7,5,2,6,7,6,2,7,
 		7,7,2,8,7,8,2,9,7,9,2,10,7,10,2,11,7,11,2,12,7,12,2,13,7,13,2,14,7,14,
 		2,15,7,15,2,16,7,16,2,17,7,17,2,18,7,18,2,19,7,19,2,20,7,20,2,21,7,21,
 		2,22,7,22,2,23,7,23,2,24,7,24,2,25,7,25,2,26,7,26,2,27,7,27,2,28,7,28,
@@ -2984,7 +2985,7 @@ public partial class AmethystParser : Parser {
 		1,0,0,0,303,301,1,0,0,0,303,302,1,0,0,0,304,307,1,0,0,0,305,303,1,0,0,
 		0,305,306,1,0,0,0,306,53,1,0,0,0,307,305,1,0,0,0,308,309,5,16,0,0,309,
 		310,3,34,17,0,310,311,5,17,0,0,311,55,1,0,0,0,312,313,5,42,0,0,313,314,
-		5,44,0,0,314,57,1,0,0,0,315,325,3,76,38,0,316,325,5,45,0,0,317,325,5,47,
+		5,44,0,0,314,57,1,0,0,0,315,325,3,76,38,0,316,325,5,45,0,0,317,325,5,48,
 		0,0,318,325,3,60,30,0,319,325,3,62,31,0,320,321,5,14,0,0,321,322,3,34,
 		17,0,322,323,5,15,0,0,323,325,1,0,0,0,324,315,1,0,0,0,324,316,1,0,0,0,
 		324,317,1,0,0,0,324,318,1,0,0,0,324,319,1,0,0,0,324,320,1,0,0,0,325,59,

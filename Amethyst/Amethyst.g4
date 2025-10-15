@@ -133,7 +133,7 @@ propertyExpression
 primaryExpression
     : id
     | String
-    | Integer
+    | Number
     | listLiteral
     | compoundLiteral
     | LParen expression RParen
@@ -231,7 +231,8 @@ RawIdentifier: ([a-z] | [A-Z] | '_' ) ([a-z] | [A-Z] | [0-9] | '_' | '-' | '/')*
 //Identifier: ([a-z] | [A-Z] | [0-9] | '_' | '-')* ':' ([a-z] | [A-Z] | [0-9] | '_' | '-' | '/')*;
 String: '"' ( ~[\\"\n\r] | '\\' [\\"] )* '"';
 Command: '@/' ( ~[\n\r] )* ('\r' | '\n');
-Integer: '-'? (([0-9]+ [bsilBSIL]?) | ([0-9] [0-9.]* [fdFD]?));
+TargetSelectorVariable: '@' [praesn];
+Number: '-'? (([0-9]+ [bsilBSIL]?) | ([0-9] [0-9.]* [fdFD]?));
 
 Whitespace: (' '|'\t'|'\n'|'\r')+ -> skip;
 Comment: '/*' .*? '*/' -> skip;
