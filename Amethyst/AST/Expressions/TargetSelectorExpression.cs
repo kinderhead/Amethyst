@@ -1,6 +1,9 @@
+using Amethyst.Errors;
 using Datapack.Net.Function;
 using Geode;
 using Geode.IR;
+using Geode.IR.Instructions;
+using Geode.Types;
 
 namespace Amethyst.AST.Expressions
 {
@@ -11,7 +14,22 @@ namespace Amethyst.AST.Expressions
 
         protected override ValueRef ExecuteImpl(FunctionContext ctx, TypeSpecifier? expected)
         {
-            throw new NotImplementedException();
+            var args = new SortedDictionary<string, ValueRef>();
+
+            foreach (var (k, v) in Arguments)
+            {
+				args[k] = k switch
+                {
+                    "x" or "y" or "z" or "dx" or "dy" or "dz" => v.Execute(ctx, PrimitiveType.Double),
+                    "limit" => v.Execute(ctx, PrimitiveType.Int),
+
+                    // Ignore macro string warning since names can't have quotes anyway
+                    "name" => v.Execute(ctx, PrimitiveType.String).SetType(PrimitiveType.Compound),
+                    _ => throw new TargetSelectorArgumentError(k),
+                };
+			}
+
+            return ctx.Add(new TargetSelectorInsn(Type, args));
         }
     }
 }

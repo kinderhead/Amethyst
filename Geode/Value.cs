@@ -53,10 +53,6 @@ namespace Geode
 			{
 				Store(macro, ctx);
 			}
-			else if (val is PropertyValue prop)
-			{
-				Store(prop, ctx);
-			}
 			else
 			{
 				throw new NotImplementedException();
@@ -85,10 +81,6 @@ namespace Geode
 			{
 				ListAdd(macro, ctx);
 			}
-			else if (val is PropertyValue prop)
-			{
-				ListAdd(prop, ctx);
-			}
 			else
 			{
 				throw new NotImplementedException();
@@ -106,18 +98,11 @@ namespace Geode
 			ctx.Add(cond.If(new(), ctx).Run(ctx.WithFaux(i => Store(new LiteralValue(true), i)).Single()));
 		}
 
-		public virtual void Store(PropertyValue prop, RenderContext ctx)
-		{
-			var tmp = GeodeBuilder.TempStorage(Type);
-			prop.Get(tmp, ctx);
-			Store(tmp, ctx);
-		}
-
 		public abstract void ListAdd(LiteralValue literal, RenderContext ctx);
 
 		public virtual void ListAdd(ScoreValue score, RenderContext ctx)
 		{
-			var tmp = GeodeBuilder.TempStorage(PrimitiveType.Compound);
+			var tmp = ctx.Builder.TempStorage(PrimitiveType.Compound);
 			tmp.Store(score, ctx);
 			ListAdd(tmp, ctx);
 		}
@@ -126,18 +111,11 @@ namespace Geode
 
 		public virtual void ListAdd(ConditionalValue cond, RenderContext ctx)
 		{
-			var tmp = GeodeBuilder.TempStorage(PrimitiveType.Compound);
+			var tmp = ctx.Builder.TempStorage(PrimitiveType.Compound);
 			tmp.Store(cond, ctx);
 			ListAdd(tmp, ctx);
 		}
 
 		public virtual void ListAdd(MacroValue macro, RenderContext ctx) => ListAdd(new LiteralValue(new NBTRawString(macro.GetMacro())), ctx);
-
-		public virtual void ListAdd(PropertyValue prop, RenderContext ctx)
-		{
-			var tmp = GeodeBuilder.TempStorage(Type);
-			prop.Get(tmp, ctx);
-			ListAdd(tmp, ctx);
-		}
 	}
 }

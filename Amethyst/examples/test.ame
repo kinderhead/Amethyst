@@ -2,6 +2,8 @@ namespace example;
 
 #load
 void main() {
-    var x = @e[name="womp"];
+    string name = "womp";
+
+    minecraft:target x = @e[name = name, limit = 1];
 }
 

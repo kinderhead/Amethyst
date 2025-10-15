@@ -31,7 +31,7 @@ namespace Geode.IR.Instructions
 
 			if (ctx.Block != ctx.Func.FirstBlock)
 			{
-				FunctionContext.GetIsFunctionReturningValue().Store(new LiteralValue(true), ctx);
+				ctx.Func.GetIsFunctionReturningValue().Store(new LiteralValue(true), ctx);
 			}
 
 			if (val is not null)

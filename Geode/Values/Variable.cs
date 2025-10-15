@@ -1,6 +1,8 @@
+using Datapack.Net.Function;
+
 namespace Geode.Values
 {
-	public class Variable(string name, string baseLoc, int frame, TypeSpecifier type) : StackValue(-1, $"{baseLoc}{frame}.{name}", type)
+	public class Variable(string name, Storage storage, string baseLoc, int frame, TypeSpecifier type) : StackValue(-1, storage, $"{baseLoc}{frame}.{name}", type)
 	{
 		public readonly string Name = name;
 		public readonly string BaseLocation = baseLoc;

@@ -83,7 +83,7 @@ namespace Geode.IR
 
 				if (newValue.Value is Variable v)
 				{
-					newValue.SetValue(new Variable(v.Name, newVariableBaseLoc, v.Frame, v.Type));
+					newValue.SetValue(new Variable(v.Name, Ctx.Compiler.IR.RuntimeID, newVariableBaseLoc, v.Frame, v.Type));
 				}
 
 				valueMap[val] = newValue;

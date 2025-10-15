@@ -11,17 +11,17 @@ namespace Geode
 {
 	public record class RenderContext(MCFunction MCFunction, IR.Block Block, GeodeBuilder Builder, FunctionContext Func)
 	{
-		public ScoreValue SuccessScore => Builder.Score("geode_success");
+		public ScoreValue SuccessScore => Builder.Score("func_success");
 
 		public virtual void Add(params IEnumerable<Command> cmds)
 		{
 			if (Func.IsMacroFunction)
 			{
 				MCFunction.Add(cmds.Select(i =>
-			{
-				i.Macro = true;
-				return i;
-			}));
+				{
+					i.Macro = true;
+					return i;
+				}));
 			}
 			else
 			{
@@ -198,7 +198,7 @@ namespace Geode
 				{
 					Add(new Execute().If.Score(success.Target, success.Score, 0).Run(WithFaux(ctx =>
 					{
-						FunctionContext.GetIsFunctionReturningValue().Store(success, ctx);
+						Func.GetIsFunctionReturningValue().Store(success, ctx);
 					}).Single()));
 				}
 

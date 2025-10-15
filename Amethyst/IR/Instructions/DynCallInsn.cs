@@ -16,20 +16,20 @@ namespace Amethyst.IR.Instructions
         {
             var func = Arg<ValueRef>(0).Expect();
 
-            new StackValue(-1, "func", func.Type).Store(func, ctx);
+            new StackValue(-1, ctx.Builder.RuntimeID, "func", func.Type).Store(func, ctx);
 
             if (FuncType.IsMacroFunction)
             {
-                ctx.Add(new FunctionCommand("amethyst:core/func/call-macro", GeodeBuilder.RuntimeID, "stack[-1]"));
+                ctx.Add(new FunctionCommand("amethyst:core/func/call-macro", ctx.Builder.RuntimeID, "stack[-1]"));
             }
             else
             {
-                ctx.Add(new FunctionCommand("amethyst:core/func/call", GeodeBuilder.RuntimeID, "stack[-1]"));
+                ctx.Add(new FunctionCommand("amethyst:core/func/call", ctx.Builder.RuntimeID, "stack[-1]"));
             }
 
             if (ReturnValue.Expect() is LValue ret)
             {
-                ret.Store(FunctionContext.GetFunctionReturnValue(ReturnType, -1), ctx);
+                ret.Store(ctx.Func.GetFunctionReturnValue(ReturnType, -1), ctx);
             }
         }
     }

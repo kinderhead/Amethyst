@@ -17,7 +17,7 @@ namespace Amethyst.IR.Instructions
 		{
 			var val = (NBTString)Arg<ValueRef>(0).Expect<LiteralValue>().Value;
 			ctx.Call("amethyst:core/ref/get-stack-ref", new LiteralValue(val.Value.Split("[-1].")[^1]), new LiteralValue(-1));
-			ReturnValue.Expect<LValue>().Store(FunctionContext.GetFunctionReturnValue(ReturnType, -1), ctx);
+			ReturnValue.Expect<LValue>().Store(ctx.Func.GetFunctionReturnValue(ReturnType, -1), ctx);
 		}
 
 		protected override Value? ComputeReturnValue(FunctionContext ctx)

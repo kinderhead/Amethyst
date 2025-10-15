@@ -18,7 +18,7 @@ namespace Geode.IR.Instructions
 
             if (macros is LiteralValue)
             {
-                new StackValue(-1, $"macros", PrimitiveType.Compound).Store(macros, ctx);
+                new StackValue(-1, ctx.Builder.RuntimeID, $"macros", PrimitiveType.Compound).Store(macros, ctx);
             }
         }
 

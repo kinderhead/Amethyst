@@ -5,6 +5,7 @@ using Antlr4.Runtime;
 using Antlr4.Runtime.Misc;
 using Antlr4.Runtime.Tree;
 using Datapack.Net.Data;
+using Datapack.Net.Function;
 using Datapack.Net.Function.Commands;
 using Datapack.Net.Utils;
 using Geode;
@@ -193,7 +194,6 @@ namespace Amethyst.AST
 				if (error.Errored)
 				{
 					throw new Exception(); // Do this later
-
 				}
 			}
 
@@ -355,7 +355,6 @@ namespace Amethyst.AST
 					node = new UnaryExpression(Loc(context), UnaryOperation.Negate, node);
 				}
 				// No check for other cases because parser errors might hit it and we don't want to stop the error checker
-
 			}
 
 			return node;
@@ -398,7 +397,7 @@ namespace Amethyst.AST
 			{
 				return new LiteralExpression(Loc(context), new NBTString(NBTString.Unescape(str.GetText()[1..^1])));
 			}
-			else if (context.Integer() is ITerminalNode i)
+			else if (context.Number() is ITerminalNode i)
 			{
 				return new LiteralExpression(Loc(context), ParseNumber(i.GetText()));
 			}
@@ -413,6 +412,7 @@ namespace Amethyst.AST
 		}
 
 		public override Node VisitListLiteral([NotNull] AmethystParser.ListLiteralContext context) => new ListExpression(Loc(context), [.. context.expression().Select(Visit)]);
+
 		public override Node VisitCompoundLiteral([NotNull] AmethystParser.CompoundLiteralContext context) => new CompoundExpression(Loc(context), context.compoundKeyPair().Select(i =>
 		{
 			if (i.RawIdentifier() is not null)
@@ -424,6 +424,28 @@ namespace Amethyst.AST
 				return new KeyValuePair<string, Expression>(i.RawIdentifier().GetText(), Visit(i.expression()));
 			}
 		}));
+
+		public override Node VisitTargetSelector([NotNull] AmethystParser.TargetSelectorContext context)
+		{
+			var type = context.TargetSelectorVariable().GetText().Last() switch
+			{
+				'p' => TargetType.p,
+				'e' => TargetType.e,
+				'a' => TargetType.a,
+				'n' => TargetType.n,
+				's' => TargetType.s,
+				_ => TargetType.r
+			};
+
+			var args = new Dictionary<string, Expression>();
+
+			foreach (var i in context.targetSelectorArgument())
+			{
+				args[i.RawIdentifier().GetText()] = Visit(i.expression());
+			}
+
+			return new TargetSelectorExpression(Loc(context), type, args);
+		}
 
 		public AbstractTypeSpecifier Visit(AmethystParser.TypeContext context) => (AbstractTypeSpecifier)Visit((IParseTree)context);
 		public BlockNode Visit(AmethystParser.BlockContext context) => (BlockNode)Visit((IParseTree)context);
@@ -437,7 +459,9 @@ namespace Amethyst.AST
 			foreach (var e in i.paramModifier())
 			{
 				if (e.GetText() == "macro")
-				{ mod |= ParameterModifiers.Macro; }
+				{
+					mod |= ParameterModifiers.Macro;
+				}
 			}
 
 			return new AbstractParameter(mod, Visit(i.type()), Visit(i.id()));

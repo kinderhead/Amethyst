@@ -1,12 +1,11 @@
 ﻿using Datapack.Net.Data;
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 
 namespace Datapack.Net.Function
 {
 	// Not struct because this is chonky
-
-
-
+	[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicFields)]
 	public class TargetSelector(TargetType targetType, double? x = null, double? y = null, double? z = null, MCRange<float>? distance = null, double? dx = null, double? dy = null, double? dz = null, Dictionary<Score, MCRange<int>>? scores = null, List<Negatable<EntityTag>>? tag = null, Negatable<Team>? team = null, SortType? sort = null, int? limit = null, MCRange<int>? level = null, Gamemode? gamemode = null, string? name = null, MCRange<float>? x_rotation = null, MCRange<float>? y_rotation = null, EntityTypeSelector? type = null, Negatable<NBTCompound>? nbt = null) : IEntityTarget
 	{
 		public readonly TargetType TargetType = targetType;

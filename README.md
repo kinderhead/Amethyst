@@ -22,13 +22,14 @@
       - [Casting](#casting)
     - [Math](#math)
     - [Strings](#strings)
+    - [Lists](#lists)
     - [Objects](#objects)
     - [Structs](#structs)
       - [Methods](#methods)
       - [Constructors](#constructors)
       - [Inheritance](#inheritance)
       - [Virtual Methods](#virtual-methods)
-    - [Lists](#lists)
+    - [Target Selectors](#target-selectors)
     - [Control Flow](#control-flow)
     - [Inline Commands](#inline-commands)
     - [References](#references)
@@ -198,6 +199,8 @@ void main() {
 }
 ```
 
+All symbols in the `builtin` namespace and common data types in the `minecraft` namespace are available everywhere.
+
 Note: Minecraft does not allow capital letters in function names, so Amethyst throws an error when encountering them.
 
 ### Variables
@@ -252,6 +255,26 @@ string str = "Hello World";
 String methods:
 
 * `.length()`: String length. Compiles internally as `(int)str`.
+
+### Lists
+
+Lists store an ordered collection of values. For now, only typed lists (using `T[]`) are supported.
+
+```cs
+int[] list = [-7];
+
+list.add(10);
+list.add(5);
+list.add(x * y);
+
+print(list[2]);
+```
+
+List methods:
+* `.add(T val)`: Add a value to the end of the list.
+* `.size()`: Get the size of the list.
+
+Note: there is currently no bounds check. Eventually it will be included in debug builds and optionally in release mode builds.
 
 ### Objects
 
@@ -379,25 +402,17 @@ struct subvec implements vec {
 
 Internally, they are stored as properties in each instance of the object and act like dynamic functions. Abstract methods will be added in the future.
 
-### Lists
+### Target Selectors
 
-Lists store an ordered collection of values. For now, only typed lists (using `T[]`) are supported.
+Minecraft target selectors can be created and used using the `minecraft:target` type. `minecraft:target` is stored internally as strings and can be used in macro scenerios. Currently target selectors are WIP and are missing key features. More uses for them will be added over time.
+
+Target selectors can be implicitly created using the same syntax as they do in commands:
 
 ```cs
-int[] list = [-7];
-
-list.add(10);
-list.add(5);
-list.add(x * y);
-
-print(list[2]);
+var target = @e[x=8,dx=9];
 ```
 
-List methods:
-* `.add(T val)`: Add a value to the end of the list.
-* `.size()`: Get the size of the list.
-
-Note: there is currently no bounds check. Eventually it will be included in debug builds and optionally in release mode builds.
+Note: many of the arguments have not been implemented.
 
 ### Control Flow
 
@@ -584,6 +599,8 @@ Here are the inheritance chains for most types:
   * `minecraft:long`
   * `minecraft:float`
   * `minecraft:double`
+  * `minecraft:string`
+    * `minecraft:target`
   * `minecraft:list`
     * `minecraft:byte_array` (not implemented yet)
     * `minecraft:int_array` (not implemented yet)

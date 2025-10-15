@@ -16,7 +16,7 @@ namespace Amethyst.IR.Instructions
 		{
 			var val = Arg<ValueRef>(0).Expect<StackValue>();
 			ctx.Call("amethyst:core/ref/get-stack-ref", new LiteralValue(val.Location), new LiteralValue(val.Offset));
-			ReturnValue.Expect<LValue>().Store(FunctionContext.GetFunctionReturnValue(ReturnType, -1), ctx);
+			ReturnValue.Expect<LValue>().Store(ctx.Func.GetFunctionReturnValue(ReturnType, -1), ctx);
 		}
 
 		protected override Value? ComputeReturnValue(FunctionContext ctx) => null;

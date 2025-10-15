@@ -16,6 +16,11 @@ namespace Geode
 		public readonly IOptions Options;
 		public readonly ICompiler Compiler;
 		public readonly DP Datapack;
+		public readonly Macroizer Macroizer;
+
+		public readonly string Namespace;
+		public readonly NamespacedID RuntimeID;
+		public readonly IEntityTarget RuntimeEntity;
 
 		public readonly Dictionary<NamespacedID, GlobalSymbol> Symbols = [];
 		public readonly Dictionary<NamespacedID, GlobalTypeSymbol> Types = [];
@@ -28,11 +33,16 @@ namespace Geode
 		private readonly SortedDictionary<int, ScoreValue> constants = [];
 		private readonly List<MCFunction> functionsToRemove = [];
 
-		public GeodeBuilder(IOptions opts, ICompiler compiler)
+		public GeodeBuilder(IOptions opts, ICompiler compiler, string baseNamespace)
 		{
+			Namespace = baseNamespace;
+			RuntimeID = new(baseNamespace, "runtime");
+			RuntimeEntity = new NamedTarget(baseNamespace);
+
 			Options = opts;
 			Datapack = GetDP(Options);
 			Compiler = compiler;
+			Macroizer = new(this);
 		}
 
 		public void AddFunctions(params IEnumerable<FunctionContext> funcs) => Functions.AddRange(funcs);
@@ -164,7 +174,7 @@ namespace Geode
 			return score;
 		}
 
-		public static StorageValue TempStorage(TypeSpecifier type) => new(RuntimeID, $"tmp.{RandomString}", type);
+		public StorageValue TempStorage(TypeSpecifier type) => new(RuntimeID, $"tmp.{RandomString}", type);
 
 		public void AddSymbol(GlobalSymbol sym)
 		{
@@ -192,7 +202,7 @@ namespace Geode
 
 		public (FunctionContext ctx, FunctionValue func) AnonymousFunction(FunctionType type)
 		{
-			var func = new FunctionValue(new("amethyst", "zz_internal/" + RandomString), type);
+			var func = new FunctionValue(new("amethyst", InternalPath + "/" + RandomString), type);
 			var ctx = new FunctionContext(Compiler, func, []);
 			AddFunctions(ctx);
 			return (ctx, func);
@@ -227,7 +237,7 @@ namespace Geode
 
 		private MCFunction GetInitFunc()
 		{
-			var func = new MCFunction(new("amethyst", $"zz_internal/{RandomString}"));
+			var func = new MCFunction(new("amethyst", $"{InternalPath}/{RandomString}"));
 
 			func.Add(new DataCommand.Modify(new Storage(new("amethyst", "runtime")), "stack").Set().Value("[{}]"));
 
@@ -248,7 +258,7 @@ namespace Geode
 
 		private MCFunction GetCleanupFunc()
 		{
-			var func = new MCFunction(new("amethyst", $"zz_internal/{RandomString}"));
+			var func = new MCFunction(new("amethyst", $"{InternalPath}/{RandomString}"));
 
 			foreach (var i in RuntimeStorageUsed)
 			{
@@ -263,11 +273,8 @@ namespace Geode
 			return func;
 		}
 
-		//private static readonly Random Random = new(); new ([.. Enumerable.Repeat("abcdefghijklmnopqrstuvwxyz1234567890", 10).Select(s => s[Random.Next(s.Length)])]);
-
+		public const string InternalPath = "zz_internal";
 		public static string RandomString => Guid.NewGuid().ToString();
-		public static readonly NamespacedID RuntimeID = new("amethyst", "runtime");
-		public static readonly IEntityTarget RuntimeEntity = new NamedTarget("amethyst");
 		public static readonly string[] RuntimeStorageUsed = ["stack", "tmp"];
 
 		public static T? NamespaceWalk<T>(string baseNamespace, string name, Dictionary<NamespacedID, T> syms)

@@ -26,7 +26,7 @@ namespace Geode.IR.Instructions
 
 				if (val is RawDataTargetValue macro && macro.RawTarget.Contains("$("))
 				{
-					var tmpStk = new StackValue(-1, $"render{tmp++}", val.Type);
+					var tmpStk = new StackValue(-1, ctx.Builder.RuntimeID, $"render{tmp++}", val.Type);
 					tmpStk.Store(macro, ctx);
 					val = tmpStk;
 				}

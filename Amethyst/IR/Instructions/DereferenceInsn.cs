@@ -33,7 +33,7 @@ namespace Amethyst.IR.Instructions
 				Remove();
 				if (str.Value.Contains("stack[-1]."))
 				{
-					return new StackValue(-1, str.Value.Split("stack[-1].")[1], ReturnType);
+					return new StackValue(-1, ctx.Compiler.IR.RuntimeID, str.Value.Split("stack[-1].")[1], ReturnType);
 				}
 				else
 				{

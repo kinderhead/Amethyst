@@ -1,3 +1,4 @@
+using System.Text;
 using Datapack.Net.Function.Commands;
 using Datapack.Net.Utils;
 using Geode.Errors;
@@ -5,7 +6,6 @@ using Geode.IR.Instructions;
 using Geode.IR.Passes;
 using Geode.Types;
 using Geode.Values;
-using System.Text;
 
 namespace Geode.IR
 {
@@ -33,7 +33,6 @@ namespace Geode.IR
 		private readonly Dictionary<string, int> labelCounters = [];
 
 		// Could just be the max register used, but who knows if one goes poof somewhere
-
 		private readonly HashSet<int> registersInUse = [];
 		private int tmpStackVars = 0;
 
@@ -63,8 +62,7 @@ namespace Geode.IR
 				else
 				{
 					// Maybe make it so that if the stack isn't used by the function, then use -1 and don't push new frame
-
-					RegisterLocal(i.Name, new StackValue(-2, $"args.{i.Name}", i.Type));
+					RegisterLocal(i.Name, new StackValue(-2, compiler.IR.RuntimeID, $"args.{i.Name}", i.Type));
 				}
 			}
 		}
@@ -115,14 +113,14 @@ namespace Geode.IR
 
 		public Variable RegisterLocal(string name, TypeSpecifier type)
 		{
-			var val = new Variable(name, "frame", activeScopes.Count - 1, type);
+			var val = new Variable(name, Compiler.IR.RuntimeID, "frame", activeScopes.Count - 1, type);
 			RegisterLocal(name, val);
 			return val;
 		}
 
 		public void RegisterLocal(string name, Value val) => activeScopes.Peek().Locals[name] = val;
 
-		public StackValue Temp(TypeSpecifier type) => new(-1, $"tmp{tmpStackVars++}", type);
+		public StackValue Temp(TypeSpecifier type) => new(-1, Compiler.IR.RuntimeID, $"tmp{tmpStackVars++}", type);
 
 		public ValueRef Add(Instruction insn, string? customName = null)
 		{
@@ -187,6 +185,10 @@ namespace Geode.IR
 				{
 					return new LiteralValue(literal.Value.Cast(destType));
 				}
+			}
+			else if ((type == PrimitiveType.Double || type == PrimitiveType.Float) && ImplicitCastOrNull(val, PrimitiveType.Int) is ValueRef toFloat)
+			{
+				return toFloat.SetType(type);
 			}
 
 			return null;
@@ -361,12 +363,12 @@ namespace Geode.IR
 			var firstBlockRenderer = FirstBlock.GetRenderCtx(builder, this);
 			if (UsesStack)
 			{
-				firstBlockRenderer.Add(new DataCommand.Modify(GeodeBuilder.RuntimeID, "stack").Append().Value("{}"));
+				firstBlockRenderer.Add(new DataCommand.Modify(builder.RuntimeID, "stack").Append().Value("{}"));
 			}
 
 			foreach (var i in registersInUse)
 			{
-				new StackValue(-1, $"reg_{i}", PrimitiveType.Int).Store(builder.Reg(i), firstBlockRenderer);
+				new StackValue(-1, builder.RuntimeID, $"reg_{i}", PrimitiveType.Int).Store(builder.Reg(i), firstBlockRenderer);
 			}
 
 			foreach (var i in blocks)
@@ -378,12 +380,12 @@ namespace Geode.IR
 
 			foreach (var i in registersInUse)
 			{
-				builder.Reg(i).Store(new StackValue(-1, $"reg_{i}", PrimitiveType.Int), firstBlockRenderer);
+				builder.Reg(i).Store(new StackValue(-1, builder.RuntimeID, $"reg_{i}", PrimitiveType.Int), firstBlockRenderer);
 			}
 
 			if (UsesStack)
 			{
-				firstBlockRenderer.Add(new DataCommand.Remove(GeodeBuilder.RuntimeID, "stack[-1]"));
+				firstBlockRenderer.Add(new DataCommand.Remove(builder.RuntimeID, "stack[-1]"));
 			}
 
 			foreach (var i in Tags)
@@ -440,11 +442,11 @@ namespace Geode.IR
 			return builder.ToString();
 		}
 
-		public NamespacedID GetNewInternalID() => new(Decl.ID.Namespace, $"zz_internal/{GeodeBuilder.RandomString}");
+		public NamespacedID GetNewInternalID() => new(Decl.ID.Namespace, $"{GeodeBuilder.InternalPath}/{GeodeBuilder.RandomString}");
 
-		public static StackValue GetIsFunctionReturningValue() => new(-1, "returning", PrimitiveType.Bool);
+		public StackValue GetIsFunctionReturningValue() => new(-1, Compiler.IR.RuntimeID, "returning", PrimitiveType.Bool);
 		public StackValue GetFunctionReturnValue() => GetFunctionReturnValue(Decl.FuncType.ReturnType, UsesStack ? -2 : -1);
-		public static StackValue GetFunctionReturnValue(TypeSpecifier type, int depth = -2) => new(depth, "ret", type);
+		public StackValue GetFunctionReturnValue(TypeSpecifier type, int depth = -2) => new(depth, Compiler.IR.RuntimeID, "ret", type);
 
 		private class Scope
 		{

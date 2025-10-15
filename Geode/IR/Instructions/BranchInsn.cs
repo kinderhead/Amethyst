@@ -17,7 +17,7 @@ namespace Geode.IR.Instructions
 			var ifTrue = Arg<Block>(1);
 			var ifFalse = Arg<Block>(2);
 
-			var returning = FunctionContext.GetIsFunctionReturningValue();
+			var returning = ctx.Func.GetIsFunctionReturningValue();
 
 			if (cond is LiteralValue l)
 			{

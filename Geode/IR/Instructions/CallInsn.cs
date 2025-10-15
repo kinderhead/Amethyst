@@ -17,7 +17,7 @@ namespace Geode.IR.Instructions
 			func.Call(ctx, [.. Arguments[1..].Cast<ValueRef>()]);
 			if (ReturnValue.Expect() is LValue ret)
 			{
-				ret.Store(FunctionContext.GetFunctionReturnValue(ReturnType, -1), ctx);
+				ret.Store(ctx.Func.GetFunctionReturnValue(ReturnType, -1), ctx);
 			}
 		}
 

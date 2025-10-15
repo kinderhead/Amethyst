@@ -41,6 +41,8 @@ namespace Geode.Types
 		public override object Clone() => new PrimitiveType(Type);
 
 		public static PrimitiveType Int => new(NBTType.Int);
+		public static PrimitiveType Float => new(NBTType.Float);
+		public static PrimitiveType Double => new(NBTType.Double);
 		public static PrimitiveType Bool => new(NBTType.Boolean);
 		public static PrimitiveType Byte => new(NBTType.Byte);
 		public static PrimitiveType String => new(NBTType.String);

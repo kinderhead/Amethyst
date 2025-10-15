@@ -27,7 +27,7 @@ namespace Amethyst
 		public Compiler(Options opts)
 		{
 			Options = opts;
-			IR = new(Options, this);
+			IR = new(Options, this, "amethyst");
 
 			GlobalInitFunc = GetGlobalInitFunc();
 			RegisterGlobals();
@@ -63,7 +63,7 @@ amethyst [files...] -o <output>";
 
 			Options = res.Value;
 			Options.Output ??= Path.GetFileName(Options.Inputs.First()) + ".zip";
-			IR = new(Options, this);
+			IR = new(Options, this, "amethyst");
 
 			GlobalInitFunc = GetGlobalInitFunc();
 			RegisterGlobals();
@@ -257,13 +257,16 @@ amethyst [files...] -o <output>";
 			Register(new ListSize());
 			Register(new StringLength());
 
+			Register(new TargetSelectorType());
+
 			IR.AddSymbol(new("builtin:true", LocationRange.None, new LiteralValue(true)));
 			IR.AddSymbol(new("builtin:false", LocationRange.None, new LiteralValue(false)));
-			IR.AddSymbol(new("amethyst:stack", LocationRange.None, new StorageValue(GeodeBuilder.RuntimeID, "stack", new ListType(PrimitiveType.Compound))));
+			IR.AddSymbol(new("amethyst:stack", LocationRange.None, new StorageValue(IR.RuntimeID, "stack", new ListType(PrimitiveType.Compound))));
 		}
 
-		protected FunctionContext GetGlobalInitFunc() => new(this, new(new("amethyst", "zz_internal/" + GeodeBuilder.RandomString), FunctionType.VoidFunc), ["minecraft:load"], hasTagPriority: true);
+		protected FunctionContext GetGlobalInitFunc() => new(this, new(new("amethyst", GeodeBuilder.InternalPath + "/" + GeodeBuilder.RandomString), FunctionType.VoidFunc), ["minecraft:load"], hasTagPriority: true);
 
 		public void Register(Intrinsic func) => IR.Symbols[func.ID] = new(func.ID, LocationRange.None, func);
+		public void Register(TypeSpecifier type) => IR.Types[type.ID] = new(type.ID, LocationRange.None, type);
 	}
 }
