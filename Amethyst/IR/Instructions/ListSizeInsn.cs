@@ -11,14 +11,14 @@ namespace Amethyst.IR.Instructions
 	{
 		public override string Name => "size";
 		public override NBTType?[] ArgTypes => [null];
-		public override TypeSpecifier ReturnType => PrimitiveTypeSpecifier.Int;
+		public override TypeSpecifier ReturnType => PrimitiveType.Int;
 
 		public override void Render(RenderContext ctx)
 		{
 			var arg = Arg<ValueRef>(0).Expect();
 			var ret = ReturnValue.Expect<ScoreValue>(); // Make sure the return value is a score so that /data get is called
 
-			if (arg.Type is ReferenceTypeSpecifier)
+			if (arg.Type is ReferenceType)
 			{
 				ctx.Call("amethyst:core/ref/set-score", new LiteralValue($"{ret.Target.Get()} {ret.Score.Name}"), arg);
 			}

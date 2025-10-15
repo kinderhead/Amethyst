@@ -8,7 +8,7 @@ namespace Geode.Values
 	{
 		public readonly Func<Execute, bool, Execute> Apply = apply;
 		public bool Flip = flip;
-		public override TypeSpecifier Type => PrimitiveTypeSpecifier.Bool;
+		public override TypeSpecifier Type => PrimitiveType.Bool;
 
 		public override ScoreValue AsScore(RenderContext ctx) => throw new InvalidOperationException("Cannot implicitly convert a conditional to a score");
 		public override bool Equals(object? obj) => obj is ConditionalValue c && c.Apply == Apply; // I don't like this but oh well

@@ -27,11 +27,11 @@ namespace Amethyst.AST.Expressions
 
 				if (type is null)
 				{
-					type = new ListTypeSpecifier(val.Type);
+					type = new ListType(val.Type);
 				}
-				else if (new ListTypeSpecifier(val.Type) != type)
+				else if (new ListType(val.Type) != type)
 				{
-					type = PrimitiveTypeSpecifier.List;
+					type = PrimitiveType.List;
 				}
 
 				vals.Add(val);

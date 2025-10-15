@@ -15,7 +15,7 @@ namespace Amethyst.AST.Statements
 
         public override void Compile(FunctionContext ctx)
         {
-            var thisType = (StructTypeSpecifier)Self.Resolve(ctx);
+            var thisType = (StructType)Self.Resolve(ctx);
 
             var self = ctx.RegisterLocal("this", thisType);
 
@@ -23,7 +23,7 @@ namespace Amethyst.AST.Statements
             var defType = def?.Type;
             ctx.Add(new StoreInsn(self, def is null ? thisType.DefaultValue : ctx.ExplicitCast(def, thisType)));
 
-            if (defType is not null && defType != thisType && defType is StructTypeSpecifier parent)
+            if (defType is not null && defType != thisType && defType is StructType parent)
             {
                 foreach (var (k, v) in thisType.Methods)
                 {

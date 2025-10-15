@@ -16,7 +16,7 @@ namespace Amethyst.AST.Statements
 			var retType = ctx.Decl.FuncType.ReturnType;
 			var val = Expression?.Execute(ctx, retType);
 
-			if (val is not null && retType is VoidTypeSpecifier)
+			if (val is not null && retType is VoidType)
 			{
 				throw new InvalidTypeError(val.Type.ToString(), "void");
 			}

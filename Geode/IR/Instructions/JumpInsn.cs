@@ -8,7 +8,7 @@ namespace Geode.IR.Instructions
 	{
 		public override string Name => "jump";
 		public override NBTType?[] ArgTypes => [null];
-		public override TypeSpecifier ReturnType => new VoidTypeSpecifier();
+		public override TypeSpecifier ReturnType => new VoidType();
 
 		public override void Render(RenderContext ctx)
 		{

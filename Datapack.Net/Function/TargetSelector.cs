@@ -4,6 +4,9 @@ using System.Text;
 namespace Datapack.Net.Function
 {
 	// Not struct because this is chonky
+
+
+
 	public class TargetSelector(TargetType targetType, double? x = null, double? y = null, double? z = null, MCRange<float>? distance = null, double? dx = null, double? dy = null, double? dz = null, Dictionary<Score, MCRange<int>>? scores = null, List<Negatable<EntityTag>>? tag = null, Negatable<Team>? team = null, SortType? sort = null, int? limit = null, MCRange<int>? level = null, Gamemode? gamemode = null, string? name = null, MCRange<float>? x_rotation = null, MCRange<float>? y_rotation = null, EntityTypeSelector? type = null, Negatable<NBTCompound>? nbt = null) : IEntityTarget
 	{
 		public readonly TargetType TargetType = targetType;
@@ -191,7 +194,7 @@ namespace Datapack.Net.Function
 			{
 				return true;
 			}
-			else if (TargetType == TargetType.p || (TargetType == TargetType.r && (Limit == null || Limit == 1)))
+			else if (TargetType == TargetType.p || TargetType == TargetType.n || (TargetType == TargetType.r && (Limit == null || Limit == 1)))
 			{
 				return true;
 			}
@@ -208,7 +211,8 @@ namespace Datapack.Net.Function
 		r,
 		a,
 		e,
-		s
+		s,
+		n
 	}
 
 	public enum SortType

@@ -9,7 +9,7 @@ using Geode.Values;
 
 namespace Amethyst.IR.Types
 {
-	public class ReferenceTypeSpecifier(TypeSpecifier inner) : TypeSpecifier
+	public class ReferenceType(TypeSpecifier inner) : TypeSpecifier
 	{
 		public readonly TypeSpecifier Inner = inner;
 		public override IEnumerable<TypeSpecifier> Subtypes => [Inner]; // Shouldn't need to unecessarily include the base subtypes here
@@ -23,7 +23,7 @@ namespace Amethyst.IR.Types
 
 		public override void AssignmentOverload(ValueRef dest, ValueRef val, FunctionContext ctx)
 		{
-			if (val.Type is ReferenceTypeSpecifier)
+			if (val.Type is ReferenceType)
 			{
 				ctx.Call("amethyst:core/ref/set-ref", dest, ctx.ImplicitCast(val, this));
 			}
@@ -49,7 +49,7 @@ namespace Amethyst.IR.Types
 
 				return ctx.Add(new ReferenceInsn(val));
 			}
-			else if (val.Type is WeakReferenceTypeSpecifier weak && weak.Inner.Implements(Inner))
+			else if (val.Type is WeakReferenceType weak && weak.Inner.Implements(Inner))
 			{
 				return ctx.Add(new ResolveWeakRefInsn(val));
 			}
@@ -80,15 +80,15 @@ namespace Amethyst.IR.Types
 		public override TypeSpecifier? DefaultPropertyType => Inner.DefaultPropertyType;
 		public override Dictionary<string, TypeSpecifier> Properties => Inner.Properties;
 
-		protected override bool EqualsImpl(TypeSpecifier obj) => obj is ReferenceTypeSpecifier p && p.Inner == Inner;
-		public override object Clone() => new ReferenceTypeSpecifier((TypeSpecifier)Inner.Clone());
+		protected override bool EqualsImpl(TypeSpecifier obj) => obj is ReferenceType p && p.Inner == Inner;
+		public override object Clone() => new ReferenceType((TypeSpecifier)Inner.Clone());
 
 		public virtual ValueRef Deref(ValueRef src, FunctionContext ctx) => ctx.Add(new DereferenceInsn(src));
-		public static LiteralValue From(DataTargetValue val) => new(val.Target.GetTarget(), new ReferenceTypeSpecifier(val.Type));
+		public static LiteralValue From(DataTargetValue val) => new(val.Target.GetTarget(), new ReferenceType(val.Type));
 
 		public static ValueRef TryDeref(ValueRef src, FunctionContext ctx)
 		{
-			if (src.Type is ReferenceTypeSpecifier r)
+			if (src.Type is ReferenceType r)
 			{
 				return r.Deref(src, ctx);
 			}

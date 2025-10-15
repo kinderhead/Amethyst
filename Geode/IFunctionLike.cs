@@ -4,8 +4,8 @@ namespace Geode
 {
 	public interface IFunctionLike
 	{
-		FunctionTypeSpecifier FuncType { get; }
+		FunctionType FuncType { get; }
 
-		IFunctionLike CloneWithType(FunctionTypeSpecifier type);
+		IFunctionLike CloneWithType(FunctionType type);
 	}
 }

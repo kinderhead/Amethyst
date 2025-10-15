@@ -7,12 +7,12 @@ using Geode.Types;
 
 namespace Geode.Values
 {
-	public class FunctionValue(NamespacedID id, FunctionTypeSpecifier type) : LiteralValue(new NBTString(id.ToString())), IFunctionLike
+	public class FunctionValue(NamespacedID id, FunctionType type) : LiteralValue(new NBTString(id.ToString())), IFunctionLike
 	{
 		public readonly NamespacedID ID = id;
 		public override TypeSpecifier Type => type;
 		public override string ToString() => ID.ToString();
-		public FunctionTypeSpecifier FuncType => (FunctionTypeSpecifier)Type;
+		public FunctionType FuncType => (FunctionType)Type;
 
 		public virtual void Call(RenderContext ctx, ValueRef[] args)
 		{
@@ -44,9 +44,9 @@ namespace Geode.Values
 			}
 		}
 
-		public virtual IFunctionLike CloneWithType(FunctionTypeSpecifier type) => new FunctionValue(ID, type);
+		public virtual IFunctionLike CloneWithType(FunctionType type) => new FunctionValue(ID, type);
 
-		public static Value? SetArgsAndGetMacros(RenderContext ctx, FunctionTypeSpecifier funcType, ValueRef[] args)
+		public static Value? SetArgsAndGetMacros(RenderContext ctx, FunctionType funcType, ValueRef[] args)
 		{
 			Value? processedMacros = null;
 
@@ -59,13 +59,13 @@ namespace Geode.Values
 			{
 				var processedArgs = new Dictionary<string, ValueRef>();
 				var macros = new Dictionary<string, ValueRef>();
-				var macroStorageLocation = new StackValue(-1, $"macros", PrimitiveTypeSpecifier.Compound);
+				var macroStorageLocation = new StackValue(-1, $"macros", PrimitiveType.Compound);
 
 				foreach (var (param, val) in funcType.Parameters.Zip(args))
 				{
 					if (param.Modifiers.HasFlag(ParameterModifiers.Macro))
 					{
-						if (param.Type == PrimitiveTypeSpecifier.String)
+						if (param.Type == PrimitiveType.String)
 						{
 							// Exclude macros
 							if (val.Value is not LiteralValue l)
@@ -91,7 +91,7 @@ namespace Geode.Values
 
 				if (processedArgs.Count != 0)
 				{
-					ctx.StoreCompound(new StackValue(-1, "args", PrimitiveTypeSpecifier.Compound), processedArgs, setEmpty: false);
+					ctx.StoreCompound(new StackValue(-1, "args", PrimitiveType.Compound), processedArgs, setEmpty: false);
 				}
 
 				if (macros.Count != 0)

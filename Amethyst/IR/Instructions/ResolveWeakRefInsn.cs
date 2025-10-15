@@ -11,7 +11,7 @@ namespace Amethyst.IR.Instructions
 	{
 		public override string Name => "wref";
 		public override NBTType?[] ArgTypes => [NBTType.String];
-		public override TypeSpecifier ReturnType => new ReferenceTypeSpecifier(((WeakReferenceTypeSpecifier)Arg<ValueRef>(0).Type).Inner);
+		public override TypeSpecifier ReturnType => new ReferenceType(((WeakReferenceType)Arg<ValueRef>(0).Type).Inner);
 
 		public override void Render(RenderContext ctx)
 		{

@@ -2,13 +2,6 @@ namespace example;
 
 #load
 void main() {
-    int x = 2;
-    print("womp", x);
-    func();
-    print("unwomp", x);
+    var x = @e[name="womp"];
 }
 
-inline void func() {
-    int x = 5;
-    print("Yay", x + 3);
-}

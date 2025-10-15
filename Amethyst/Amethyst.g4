@@ -136,6 +136,7 @@ primaryExpression
     | Number
     | listLiteral
     | compoundLiteral
+    | targetSelector
     | LParen expression RParen
     ;
 
@@ -149,6 +150,14 @@ compoundLiteral
 
 compoundKeyPair
     : RawIdentifier Colon expression
+    ;
+
+targetSelector
+    : TargetSelectorVariable (LSquareBrak (targetSelectorArgument (Comma targetSelectorArgument)*)? RSquareBrak)?
+    ;
+
+targetSelectorArgument
+    : RawIdentifier Eq expression
     ;
 
 paramList

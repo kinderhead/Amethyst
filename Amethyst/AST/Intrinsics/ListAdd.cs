@@ -6,19 +6,19 @@ using Geode.Types;
 
 namespace Amethyst.AST.Intrinsics
 {
-	public class ListAdd(FunctionTypeSpecifier? type = null) : Intrinsic("amethyst:list/add", type ?? new(FunctionModifiers.None, new VoidTypeSpecifier(), [
-			new(ParameterModifiers.None, new ReferenceTypeSpecifier(new ListTypeSpecifier(new GenericTypeSpecifier("T"))), "this"),
-			new(ParameterModifiers.None, new GenericTypeSpecifier("T"), "val")
+	public class ListAdd(FunctionType? type = null) : Intrinsic("amethyst:list/add", type ?? new(FunctionModifiers.None, new VoidType(), [
+			new(ParameterModifiers.None, new ReferenceType(new ListType(new GenericType("T"))), "this"),
+			new(ParameterModifiers.None, new GenericType("T"), "val")
 		]))
 	{
-		public override IFunctionLike CloneWithType(FunctionTypeSpecifier type) => new ListAdd(type);
+		public override IFunctionLike CloneWithType(FunctionType type) => new ListAdd(type);
 
 		public override ValueRef Execute(FunctionContext ctx, params ValueRef[] args)
 		{
 			var list = args[0];
 			var val = args[1];
 
-			var type = list.Type is ListTypeSpecifier l ? l.Inner : ((ListTypeSpecifier)((ReferenceTypeSpecifier)list.Type).Inner).Inner;
+			var type = list.Type is ListType l ? l.Inner : ((ListType)((ReferenceType)list.Type).Inner).Inner;
 			return ctx.Add(new ListAddInsn(list, ctx.ImplicitCast(val, type)));
 		}
 	}

@@ -10,6 +10,6 @@ namespace Amethyst.AST.Expressions
 		public readonly Expression List = list;
 		public readonly Expression Index = index;
 
-		protected override ValueRef ExecuteImpl(FunctionContext ctx, TypeSpecifier? expected) => ctx.Add(new IndexInsn(List.Execute(ctx, null), Index.Execute(ctx, PrimitiveTypeSpecifier.Int)));
+		protected override ValueRef ExecuteImpl(FunctionContext ctx, TypeSpecifier? expected) => ctx.Add(new IndexInsn(List.Execute(ctx, null), Index.Execute(ctx, PrimitiveType.Int)));
 	}
 }

@@ -11,7 +11,7 @@ namespace Amethyst.IR.Instructions
 		public override string Name => "deref";
 		public override NBTType?[] ArgTypes => [null];
 
-		public override TypeSpecifier ReturnType => ((ReferenceTypeSpecifier)ptr.Type).Inner;
+		public override TypeSpecifier ReturnType => ((ReferenceType)ptr.Type).Inner;
 
 		public override void Render(RenderContext ctx)
 		{
@@ -22,7 +22,7 @@ namespace Amethyst.IR.Instructions
 			}
 			else
 			{
-				ctx.Call("amethyst:core/ref/set-ref", WeakReferenceTypeSpecifier.From((DataTargetValue)ret), Arg<ValueRef>(0).Expect());
+				ctx.Call("amethyst:core/ref/set-ref", WeakReferenceType.From((DataTargetValue)ret), Arg<ValueRef>(0).Expect());
 			}
 		}
 

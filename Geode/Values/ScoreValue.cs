@@ -20,7 +20,7 @@ namespace Geode.Values
 		public override FormattedText Render(FormattedText text, RenderContext ctx) => text.Score(Target, Score);
 		public override bool Equals(object? obj) => obj is ScoreValue s && s.Score == Score && s.Target.Get() == Target.Get();
 
-		public override TypeSpecifier Type => PrimitiveTypeSpecifier.Int;
+		public override TypeSpecifier Type => PrimitiveType.Int;
 
 		public override int GetHashCode() => HashCode.Combine(Target, Score);
 

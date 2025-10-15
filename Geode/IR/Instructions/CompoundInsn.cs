@@ -9,7 +9,7 @@ namespace Geode.IR.Instructions
 	{
 		public override string Name => "nbt";
 		public override NBTType?[] ArgTypes => [.. Enumerable.Repeat<NBTType?>(null, Arguments.Length)];
-		public override TypeSpecifier ReturnType => type ?? PrimitiveTypeSpecifier.Compound;
+		public override TypeSpecifier ReturnType => type ?? PrimitiveType.Compound;
 
 		public readonly string[] Keys = [.. vals.Keys];
 

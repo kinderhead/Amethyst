@@ -190,7 +190,7 @@ namespace Geode
 			}
 		}
 
-		public (FunctionContext ctx, FunctionValue func) AnonymousFunction(FunctionTypeSpecifier type)
+		public (FunctionContext ctx, FunctionValue func) AnonymousFunction(FunctionType type)
 		{
 			var func = new FunctionValue(new("amethyst", "zz_internal/" + RandomString), type);
 			var ctx = new FunctionContext(Compiler, func, []);
@@ -212,7 +212,7 @@ namespace Geode
 
 		public Value? GetConstructorOrNull(TypeSpecifier type)
 		{
-			if (GetGlobal(type.ID) is Value v && v.Type is FunctionTypeSpecifier funcType && funcType.ReturnType == type)
+			if (GetGlobal(type.ID) is Value v && v.Type is FunctionType funcType && funcType.ReturnType == type)
 			{
 				return v;
 			}

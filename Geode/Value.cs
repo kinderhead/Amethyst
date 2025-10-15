@@ -117,7 +117,7 @@ namespace Geode
 
 		public virtual void ListAdd(ScoreValue score, RenderContext ctx)
 		{
-			var tmp = GeodeBuilder.TempStorage(PrimitiveTypeSpecifier.Compound);
+			var tmp = GeodeBuilder.TempStorage(PrimitiveType.Compound);
 			tmp.Store(score, ctx);
 			ListAdd(tmp, ctx);
 		}
@@ -126,7 +126,7 @@ namespace Geode
 
 		public virtual void ListAdd(ConditionalValue cond, RenderContext ctx)
 		{
-			var tmp = GeodeBuilder.TempStorage(PrimitiveTypeSpecifier.Compound);
+			var tmp = GeodeBuilder.TempStorage(PrimitiveType.Compound);
 			tmp.Store(cond, ctx);
 			ListAdd(tmp, ctx);
 		}

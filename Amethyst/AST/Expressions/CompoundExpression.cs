@@ -13,7 +13,7 @@ namespace Amethyst.AST.Expressions
 
 		protected override ValueRef ExecuteImpl(FunctionContext ctx, TypeSpecifier? expected)
 		{
-			var type = expected ?? PrimitiveTypeSpecifier.Compound;
+			var type = expected ?? PrimitiveType.Compound;
 
 			if (ctx.GetConstructorOrNull(type) is not null)
 			{

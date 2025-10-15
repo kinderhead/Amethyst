@@ -70,7 +70,7 @@ namespace Geode.IR
 				return;
 			}
 
-			if (ReturnType is not AnyTypeSpecifier && ret.Type != ReturnType)
+			if (ReturnType is not AnyType && ret.Type != ReturnType)
 			{
 				throw new InvalidTypeError(ret.Type.ToString(), ReturnType.ToString());
 			}
@@ -89,7 +89,7 @@ namespace Geode.IR
 		{
 			var builder = new StringBuilder();
 
-			if (ReturnType is not VoidTypeSpecifier)
+			if (ReturnType is not VoidType)
 			{
 				builder.Append($"{valueMap(ReturnValue)} = ");
 			}

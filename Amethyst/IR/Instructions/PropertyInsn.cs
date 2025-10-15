@@ -12,18 +12,18 @@ namespace Amethyst.IR.Instructions
 		public override string Name => "prop";
 		public override NBTType?[] ArgTypes => [null, NBTType.String];
 		public TypeSpecifier ActualReturnType => destType;
-		public override TypeSpecifier ReturnType => new WeakReferenceTypeSpecifier(ActualReturnType);
+		public override TypeSpecifier ReturnType => new WeakReferenceType(ActualReturnType);
 
 		public override void Render(RenderContext ctx)
 		{
 			var val = Arg<ValueRef>(0).Expect();
 
-			if (val.Type is not ReferenceTypeSpecifier && val is DataTargetValue nbt)
+			if (val.Type is not ReferenceType && val is DataTargetValue nbt)
 			{
-				val = WeakReferenceTypeSpecifier.From(nbt);
+				val = WeakReferenceType.From(nbt);
 			}
 
-			ctx.Call("amethyst:core/ref/property", WeakReferenceTypeSpecifier.From(ReturnValue.Expect<DataTargetValue>()), val, Arg<ValueRef>(1));
+			ctx.Call("amethyst:core/ref/property", WeakReferenceType.From(ReturnValue.Expect<DataTargetValue>()), val, Arg<ValueRef>(1));
 		}
 
 		protected override Value? ComputeReturnValue(FunctionContext ctx)
@@ -40,13 +40,13 @@ namespace Amethyst.IR.Instructions
 
 				Remove();
 
-				if (val.Type is not ReferenceTypeSpecifier && val.Value is DataTargetValue nbt)
+				if (val.Type is not ReferenceType && val.Value is DataTargetValue nbt)
 				{
-					return WeakReferenceTypeSpecifier.From(nbt.Property(name, ActualReturnType));
+					return WeakReferenceType.From(nbt.Property(name, ActualReturnType));
 				}
-				else if (val.Type is ReferenceTypeSpecifier && val.Value is IConstantValue v)
+				else if (val.Type is ReferenceType && val.Value is IConstantValue v)
 				{
-					return new LiteralValue(new NBTString($"{v.Value}.{name.Value}"), new WeakReferenceTypeSpecifier(ActualReturnType));
+					return new LiteralValue(new NBTString($"{v.Value}.{name.Value}"), new WeakReferenceType(ActualReturnType));
 				}
 			}
 

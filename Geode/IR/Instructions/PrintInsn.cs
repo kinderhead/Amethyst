@@ -10,7 +10,7 @@ namespace Geode.IR.Instructions
 	{
 		public override string Name => "print";
 		public override NBTType?[] ArgTypes => [];
-		public override TypeSpecifier ReturnType => new VoidTypeSpecifier();
+		public override TypeSpecifier ReturnType => new VoidType();
 
 		public override void Render(RenderContext ctx)
 		{

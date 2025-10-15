@@ -21,7 +21,7 @@ namespace Geode.Types
 
 	public readonly record struct Parameter(ParameterModifiers Modifiers, TypeSpecifier Type, string Name);
 
-	public class FunctionTypeSpecifier(FunctionModifiers modifiers, TypeSpecifier returnType, IEnumerable<Parameter> parameters) : TypeSpecifier
+	public class FunctionType(FunctionModifiers modifiers, TypeSpecifier returnType, IEnumerable<Parameter> parameters) : TypeSpecifier
 	{
 		public readonly FunctionModifiers Modifiers = modifiers;
 		public readonly TypeSpecifier ReturnType = returnType;
@@ -34,7 +34,7 @@ namespace Geode.Types
 		public override NBTType EffectiveType => NBTType.String;
 
 
-		public FunctionTypeSpecifier ApplyGenericWithParams(TypeSpecifier[] args)
+		public FunctionType ApplyGenericWithParams(TypeSpecifier[] args)
 		{
 			var newArgs = new Parameter[Parameters.Length];
 
@@ -50,11 +50,11 @@ namespace Geode.Types
 				}
 			}
 
-			var other = new FunctionTypeSpecifier(Modifiers, ReturnType, newArgs);
-			return (FunctionTypeSpecifier)ApplyGeneric(other);
+			var other = new FunctionType(Modifiers, ReturnType, newArgs);
+			return (FunctionType)ApplyGeneric(other);
 		}
 
-		protected override bool EqualsImpl(TypeSpecifier obj) => obj is FunctionTypeSpecifier f
+		protected override bool EqualsImpl(TypeSpecifier obj) => obj is FunctionType f
 			&& f.Modifiers == Modifiers
 			&& f.ReturnType == ReturnType
 			&& Parameters.Length == f.Parameters.Length
@@ -64,9 +64,9 @@ namespace Geode.Types
 		public override string ToString() => $"{ReturnType}({string.Join(", ", Parameters.Select(p => $"{p.Type} {p.Name}"))})";
 		public string ToString(string name) => $"{ReturnType} {name}({string.Join(", ", Parameters.Select(p => $"{p.Type} {p.Name}"))})";
 
-		public override object Clone() => new FunctionTypeSpecifier(Modifiers, (TypeSpecifier)ReturnType.Clone(), Parameters.Select(i => new Parameter(i.Modifiers, (TypeSpecifier)i.Type.Clone(), i.Name)));
+		public override object Clone() => new FunctionType(Modifiers, (TypeSpecifier)ReturnType.Clone(), Parameters.Select(i => new Parameter(i.Modifiers, (TypeSpecifier)i.Type.Clone(), i.Name)));
 
-		public static FunctionTypeSpecifier VoidFunc => new(FunctionModifiers.None, new VoidTypeSpecifier(), []);
+		public static FunctionType VoidFunc => new(FunctionModifiers.None, new VoidType(), []);
 
 		public override LiteralValue DefaultValue => new("", this);
 	}

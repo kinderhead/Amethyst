@@ -65,7 +65,11 @@
 				{
 					"name": "storage.modifier.amethyst",
 					"match": "\\b(macro|virtual|inline|this|true|false|var|void|bool|byte|int|short|long|float|double|nbt|list|string)\\b"
-				}
+				},
+        {
+          "name": "support.class.amethyst",
+          "match": "@[praesn]\\b"
+        }
 			]
 		},
     "structs": {

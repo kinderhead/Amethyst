@@ -5,7 +5,7 @@ using Geode.Values;
 
 namespace Geode.Types
 {
-	public class VarTypeSpecifier : TypeSpecifier
+	public class VarType : TypeSpecifier
 	{
 		public override LiteralValue DefaultValue => throw new InvalidTypeError("var");
 		public override NBTType EffectiveType => NBTType.Compound;
@@ -13,7 +13,7 @@ namespace Geode.Types
 		public override NamespacedID ID => "amethyst:var";
 
 		public override string ToString() => "var";
-		protected override bool EqualsImpl(TypeSpecifier obj) => obj is VarTypeSpecifier;
-		public override object Clone() => new VarTypeSpecifier();
+		protected override bool EqualsImpl(TypeSpecifier obj) => obj is VarType;
+		public override object Clone() => new VarType();
 	}
 }

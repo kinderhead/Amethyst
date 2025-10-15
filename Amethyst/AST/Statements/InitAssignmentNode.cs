@@ -18,7 +18,7 @@ namespace Amethyst.AST.Statements
 			var type = Type.Resolve(ctx, Expression is not null);
 			var val = Expression is null ? type.DefaultValue : Expression.Execute(ctx, type);
 
-			if (type is VarTypeSpecifier && Expression is not null)
+			if (type is VarType && Expression is not null)
 			{
 				type = val.Type;
 			}

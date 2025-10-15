@@ -11,7 +11,7 @@ namespace Amethyst.IR.Instructions
 	{
 		public override string Name => "store_ref";
 		public override NBTType?[] ArgTypes => [NBTType.String, null];
-		public override TypeSpecifier ReturnType => new VoidTypeSpecifier();
+		public override TypeSpecifier ReturnType => new VoidType();
 
 		public override void Render(RenderContext ctx)
 		{
@@ -20,11 +20,11 @@ namespace Amethyst.IR.Instructions
 
 			if (dest is IConstantValue c && c.Value is NBTString ptr)
 			{
-				new RawDataTargetValue(ptr.Value, PrimitiveTypeSpecifier.Compound).Store(src, ctx);
+				new RawDataTargetValue(ptr.Value, PrimitiveType.Compound).Store(src, ctx);
 			}
 			else if (src is DataTargetValue nbt)
 			{
-				ctx.Call("amethyst:core/ref/set-ref", dest, WeakReferenceTypeSpecifier.From(nbt));
+				ctx.Call("amethyst:core/ref/set-ref", dest, WeakReferenceType.From(nbt));
 			}
 			else
 			{

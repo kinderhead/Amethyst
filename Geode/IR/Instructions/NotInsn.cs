@@ -9,7 +9,7 @@ namespace Geode.IR.Instructions
 	{
 		public override string Name => "not";
 		public override NBTType?[] ArgTypes => [null];
-		public override TypeSpecifier ReturnType => PrimitiveTypeSpecifier.Bool;
+		public override TypeSpecifier ReturnType => PrimitiveType.Bool;
 
 		public override void Render(RenderContext ctx)
 		{

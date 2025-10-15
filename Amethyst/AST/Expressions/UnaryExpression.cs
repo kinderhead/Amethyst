@@ -27,7 +27,7 @@ namespace Amethyst.AST.Expressions
 			switch (Op)
 			{
 				case UnaryOperation.Increment:
-					if (val.Type != PrimitiveTypeSpecifier.Int)
+					if (val.Type != PrimitiveType.Int)
 					{
 						throw new InvalidTypeError(val.Type.ToString(), "int");
 					}
@@ -36,7 +36,7 @@ namespace Amethyst.AST.Expressions
 					ctx.Add(new StoreInsn(val, inc));
 					return val;
 				case UnaryOperation.Decrement:
-					if (val.Type != PrimitiveTypeSpecifier.Int)
+					if (val.Type != PrimitiveType.Int)
 					{
 						throw new InvalidTypeError(val.Type.ToString(), "int");
 					}
@@ -47,7 +47,7 @@ namespace Amethyst.AST.Expressions
 				case UnaryOperation.Not:
 					return ctx.Add(new NotInsn(val));
 				case UnaryOperation.Negate:
-					return ctx.Add(new MulInsn(ctx.ImplicitCast(val, PrimitiveTypeSpecifier.Int), new LiteralValue(-1)));
+					return ctx.Add(new MulInsn(ctx.ImplicitCast(val, PrimitiveType.Int), new LiteralValue(-1)));
 				default:
 					throw new NotImplementedException();
 			}

@@ -4,10 +4,10 @@ using Geode.Values;
 
 namespace Geode.Types
 {
-	public class GenericTypeSpecifier(string name, TypeSpecifier? constraint = null, bool resolved = false) : TypeSpecifier
+	public class GenericType(string name, TypeSpecifier? constraint = null, bool resolved = false) : TypeSpecifier
 	{
 		public readonly string Name = name;
-		public TypeSpecifier Constraint { get; private set; } = constraint ?? PrimitiveTypeSpecifier.Compound;
+		public TypeSpecifier Constraint { get; private set; } = constraint ?? PrimitiveType.Compound;
 		public bool Resolved { get; private set; } = resolved;
 
 		public override LiteralValue DefaultValue => Constraint.DefaultValue;
@@ -49,9 +49,9 @@ namespace Geode.Types
 			base.ApplyGeneric(other, typeMap);
 		}
 
-		protected override bool EqualsImpl(TypeSpecifier obj) => obj is GenericTypeSpecifier other && other.Name == Name && other.Constraint == Constraint;
+		protected override bool EqualsImpl(TypeSpecifier obj) => obj is GenericType other && other.Name == Name && other.Constraint == Constraint;
 		public override TypeSpecifier GetEquatableType() => Resolved ? Constraint.GetEquatableType() : this;
 		public override int GetHashCode() => HashCode.Combine(Name, Constraint);
-		public override object Clone() => new GenericTypeSpecifier(Name, Constraint, Resolved);
+		public override object Clone() => new GenericType(Name, Constraint, Resolved);
 	}
 }

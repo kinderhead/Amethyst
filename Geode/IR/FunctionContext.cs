@@ -157,15 +157,15 @@ namespace Geode.IR
 			{
 				return val;
 			}
-			else if (type is VarTypeSpecifier)
+			else if (type is VarType)
 			{
 				return val;
 			}
-			else if (type is AnyTypeSpecifier)
+			else if (type is AnyType)
 			{
 				return val.SetType(type);
 			}
-			else if (val.Type is AnyTypeSpecifier)
+			else if (val.Type is AnyType)
 			{
 				return val.SetType(type);
 			}
@@ -181,7 +181,7 @@ namespace Geode.IR
 			{
 				return val.SetType(type);
 			}
-			else if (val.Value is LiteralValue literal && type is PrimitiveTypeSpecifier)
+			else if (val.Value is LiteralValue literal && type is PrimitiveType)
 			{
 				if (literal.Value.NumberType is Datapack.Net.Data.NBTNumberType && type.EffectiveNumberType is Datapack.Net.Data.NBTNumberType destType)
 				{
@@ -218,7 +218,7 @@ namespace Geode.IR
 
 		public ValueRef Call(FunctionValue f, params ValueRef[] args) => Add(new CallInsn(f, PrepArgs(f.FuncType, args)));
 
-		public IEnumerable<ValueRef> PrepArgs(FunctionTypeSpecifier type, params ValueRef[] args)
+		public IEnumerable<ValueRef> PrepArgs(FunctionType type, params ValueRef[] args)
 		{
 			if (type.Parameters.Length != args.Length)
 			{
@@ -366,7 +366,7 @@ namespace Geode.IR
 
 			foreach (var i in registersInUse)
 			{
-				new StackValue(-1, $"reg_{i}", PrimitiveTypeSpecifier.Int).Store(builder.Reg(i), firstBlockRenderer);
+				new StackValue(-1, $"reg_{i}", PrimitiveType.Int).Store(builder.Reg(i), firstBlockRenderer);
 			}
 
 			foreach (var i in blocks)
@@ -378,7 +378,7 @@ namespace Geode.IR
 
 			foreach (var i in registersInUse)
 			{
-				builder.Reg(i).Store(new StackValue(-1, $"reg_{i}", PrimitiveTypeSpecifier.Int), firstBlockRenderer);
+				builder.Reg(i).Store(new StackValue(-1, $"reg_{i}", PrimitiveType.Int), firstBlockRenderer);
 			}
 
 			if (UsesStack)
@@ -405,7 +405,7 @@ namespace Geode.IR
 		{
 			var builder = new StringBuilder();
 
-			builder.AppendLine(((FunctionTypeSpecifier)Decl.Type).ToString(Decl.ID.ToString()) + " {");
+			builder.AppendLine(((FunctionType)Decl.Type).ToString(Decl.ID.ToString()) + " {");
 
 			var valCounter = 0;
 			Dictionary<IInstructionArg, int> valueMap = [];
@@ -442,7 +442,7 @@ namespace Geode.IR
 
 		public NamespacedID GetNewInternalID() => new(Decl.ID.Namespace, $"zz_internal/{GeodeBuilder.RandomString}");
 
-		public static StackValue GetIsFunctionReturningValue() => new(-1, "returning", PrimitiveTypeSpecifier.Bool);
+		public static StackValue GetIsFunctionReturningValue() => new(-1, "returning", PrimitiveType.Bool);
 		public StackValue GetFunctionReturnValue() => GetFunctionReturnValue(Decl.FuncType.ReturnType, UsesStack ? -2 : -1);
 		public static StackValue GetFunctionReturnValue(TypeSpecifier type, int depth = -2) => new(depth, "ret", type);
 

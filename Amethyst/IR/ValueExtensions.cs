@@ -17,7 +17,7 @@ namespace Amethyst.IR
 					return self.Pointer;
 				}
 
-				self.Pointer = ctx.RegisterLocal($"${self.Name}_ref", new ReferenceTypeSpecifier(self.Type));
+				self.Pointer = ctx.RegisterLocal($"${self.Name}_ref", new ReferenceType(self.Type));
 				ctx.Add(new StoreInsn(self.Pointer, ctx.Add(new ReferenceInsn(self))));
 
 				return self.Pointer;

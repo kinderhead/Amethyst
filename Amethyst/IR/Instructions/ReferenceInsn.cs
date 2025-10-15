@@ -10,7 +10,7 @@ namespace Amethyst.IR.Instructions
 	{
 		public override string Name => "ref";
 		public override NBTType?[] ArgTypes => [null];
-		public override TypeSpecifier ReturnType => new ReferenceTypeSpecifier(Arg<ValueRef>(0).Type);
+		public override TypeSpecifier ReturnType => new ReferenceType(Arg<ValueRef>(0).Type);
 
 		public override void Render(RenderContext ctx)
 		{

@@ -259,10 +259,10 @@ amethyst [files...] -o <output>";
 
 			IR.AddSymbol(new("builtin:true", LocationRange.None, new LiteralValue(true)));
 			IR.AddSymbol(new("builtin:false", LocationRange.None, new LiteralValue(false)));
-			IR.AddSymbol(new("amethyst:stack", LocationRange.None, new StorageValue(GeodeBuilder.RuntimeID, "stack", new ListTypeSpecifier(PrimitiveTypeSpecifier.Compound))));
+			IR.AddSymbol(new("amethyst:stack", LocationRange.None, new StorageValue(GeodeBuilder.RuntimeID, "stack", new ListType(PrimitiveType.Compound))));
 		}
 
-		protected FunctionContext GetGlobalInitFunc() => new(this, new(new("amethyst", "zz_internal/" + GeodeBuilder.RandomString), FunctionTypeSpecifier.VoidFunc), ["minecraft:load"], hasTagPriority: true);
+		protected FunctionContext GetGlobalInitFunc() => new(this, new(new("amethyst", "zz_internal/" + GeodeBuilder.RandomString), FunctionType.VoidFunc), ["minecraft:load"], hasTagPriority: true);
 
 		public void Register(Intrinsic func) => IR.Symbols[func.ID] = new(func.ID, LocationRange.None, func);
 	}

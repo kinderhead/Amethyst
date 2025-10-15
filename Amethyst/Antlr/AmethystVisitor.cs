@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-// Generated from c:/Users/Daniel/source/repos/Datapack.Net/Amethyst/Amethyst.g4 by ANTLR 4.13.1
+// Generated from /home/daniel/Documents/CSharp/Datapack.Net/Amethyst/Amethyst.g4 by ANTLR 4.13.1
 
 // Unreachable code detected
 #pragma warning disable 0162
@@ -230,6 +230,18 @@ public interface IAmethystVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
 	Result VisitCompoundKeyPair([NotNull] AmethystParser.CompoundKeyPairContext context);
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="AmethystParser.targetSelector"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitTargetSelector([NotNull] AmethystParser.TargetSelectorContext context);
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="AmethystParser.targetSelectorArgument"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitTargetSelectorArgument([NotNull] AmethystParser.TargetSelectorArgumentContext context);
 	/// <summary>
 	/// Visit a parse tree produced by <see cref="AmethystParser.paramList"/>.
 	/// </summary>

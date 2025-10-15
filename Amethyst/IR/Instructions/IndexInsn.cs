@@ -19,11 +19,11 @@ namespace Amethyst.IR.Instructions
 			{
 				var type = Arg<ValueRef>(0).Type;
 
-				if (type is ReferenceTypeSpecifier r && r.Inner is ListTypeSpecifier rl)
+				if (type is ReferenceType r && r.Inner is ListType rl)
 				{
 					return rl.Inner;
 				}
-				else if (type is ListTypeSpecifier l)
+				else if (type is ListType l)
 				{
 					return l.Inner;
 				}
@@ -31,25 +31,25 @@ namespace Amethyst.IR.Instructions
 				throw new InvalidTypeError(dest.Type.ToString(), "list");
 			}
 		}
-		public override TypeSpecifier ReturnType => new WeakReferenceTypeSpecifier(ActualReturnType);
+		public override TypeSpecifier ReturnType => new WeakReferenceType(ActualReturnType);
 
 		public override void Render(RenderContext ctx)
 		{
 			var val = Arg<ValueRef>(0).Expect();
 
-			if (val.Type is not ReferenceTypeSpecifier && val is DataTargetValue nbt)
+			if (val.Type is not ReferenceType && val is DataTargetValue nbt)
 			{
-				val = WeakReferenceTypeSpecifier.From(nbt);
+				val = WeakReferenceType.From(nbt);
 			}
 
-			ctx.Call("amethyst:core/ref/index", WeakReferenceTypeSpecifier.From(ReturnValue.Expect<DataTargetValue>()), val, Arg<ValueRef>(1));
+			ctx.Call("amethyst:core/ref/index", WeakReferenceType.From(ReturnValue.Expect<DataTargetValue>()), val, Arg<ValueRef>(1));
 		}
 
 		protected override Value? ComputeReturnValue(FunctionContext ctx)
 		{
 			var val = Arg<ValueRef>(0);
 
-			if (val.Type is not ReferenceTypeSpecifier && val.Value is DataTargetValue list && index.Value is LiteralValue i)
+			if (val.Type is not ReferenceType && val.Value is DataTargetValue list && index.Value is LiteralValue i)
 			{
 				if (i.Value is not NBTInt ind)
 				{
@@ -57,7 +57,7 @@ namespace Amethyst.IR.Instructions
 				}
 
 				Remove();
-				return WeakReferenceTypeSpecifier.From(list.Index(ind.Value, ActualReturnType));
+				return WeakReferenceType.From(list.Index(ind.Value, ActualReturnType));
 			}
 
 			return null;

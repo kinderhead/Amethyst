@@ -16,9 +16,9 @@ namespace Amethyst.AST.Expressions
 
 		protected override ValueRef ExecuteImpl(FunctionContext ctx, TypeSpecifier? expected)
 		{
-			var func = ReferenceTypeSpecifier.TryDeref(Function.Execute(ctx, null), ctx);
+			var func = ReferenceType.TryDeref(Function.Execute(ctx, null), ctx);
 
-			if (func.Type is not FunctionTypeSpecifier type)
+			if (func.Type is not FunctionType type)
 			{
 				throw new InvalidTypeError(func.Type.ToString(), "function");
 			}

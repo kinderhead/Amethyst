@@ -35,11 +35,11 @@ namespace Amethyst.AST
 			switch (Type)
 			{
 				case "void":
-					return new VoidTypeSpecifier();
+					return new VoidType();
 				case "var":
 					if (allowAuto)
 					{
-						return new VarTypeSpecifier();
+						return new VarType();
 					}
 					else
 					{
@@ -47,25 +47,25 @@ namespace Amethyst.AST
 					}
 
 				case "bool":
-					return new PrimitiveTypeSpecifier(NBTType.Boolean);
+					return new PrimitiveType(NBTType.Boolean);
 				case "byte":
-					return new PrimitiveTypeSpecifier(NBTType.Byte);
+					return new PrimitiveType(NBTType.Byte);
 				case "short":
-					return new PrimitiveTypeSpecifier(NBTType.Short);
+					return new PrimitiveType(NBTType.Short);
 				case "int":
-					return new PrimitiveTypeSpecifier(NBTType.Int);
+					return new PrimitiveType(NBTType.Int);
 				case "long":
-					return new PrimitiveTypeSpecifier(NBTType.Long);
+					return new PrimitiveType(NBTType.Long);
 				case "float":
-					return new PrimitiveTypeSpecifier(NBTType.Float);
+					return new PrimitiveType(NBTType.Float);
 				case "double":
-					return new PrimitiveTypeSpecifier(NBTType.Double);
+					return new PrimitiveType(NBTType.Double);
 				case "string":
-					return new PrimitiveTypeSpecifier(NBTType.String);
+					return new PrimitiveType(NBTType.String);
 				case "list":
-					return new PrimitiveTypeSpecifier(NBTType.List);
+					return new PrimitiveType(NBTType.List);
 				case "nbt":
-					return new PrimitiveTypeSpecifier(NBTType.Compound);
+					return new PrimitiveType(NBTType.Compound);
 				default:
 					if (Type.Contains(':'))
 					{
@@ -90,20 +90,20 @@ namespace Amethyst.AST
 	{
 		public readonly AbstractTypeSpecifier Inner = inner;
 
-		protected override TypeSpecifier ResolveImpl(Compiler ctx, string baseNamespace, bool allowAuto = false) => new ListTypeSpecifier(Inner.Resolve(ctx, baseNamespace));
+		protected override TypeSpecifier ResolveImpl(Compiler ctx, string baseNamespace, bool allowAuto = false) => new ListType(Inner.Resolve(ctx, baseNamespace));
 	}
 
 	public class AbstractReferenceTypeSpecifier(LocationRange loc, AbstractTypeSpecifier inner) : AbstractTypeSpecifier(loc)
 	{
 		public readonly AbstractTypeSpecifier Inner = inner;
 
-		protected override TypeSpecifier ResolveImpl(Compiler ctx, string baseNamespace, bool allowAuto = false) => new ReferenceTypeSpecifier(Inner.Resolve(ctx, baseNamespace));
+		protected override TypeSpecifier ResolveImpl(Compiler ctx, string baseNamespace, bool allowAuto = false) => new ReferenceType(Inner.Resolve(ctx, baseNamespace));
 	}
 
 	public class AbstractWeakReferenceTypeSpecifier(LocationRange loc, AbstractTypeSpecifier inner) : AbstractTypeSpecifier(loc)
 	{
 		public readonly AbstractTypeSpecifier Inner = inner;
 
-		protected override TypeSpecifier ResolveImpl(Compiler ctx, string baseNamespace, bool allowAuto = false) => new WeakReferenceTypeSpecifier(Inner.Resolve(ctx, baseNamespace));
+		protected override TypeSpecifier ResolveImpl(Compiler ctx, string baseNamespace, bool allowAuto = false) => new WeakReferenceType(Inner.Resolve(ctx, baseNamespace));
 	}
 }

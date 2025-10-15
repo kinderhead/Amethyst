@@ -4,7 +4,7 @@ using Geode.Values;
 
 namespace Geode.Types
 {
-	public class PrimitiveTypeSpecifier(NBTType type) : TypeSpecifier
+	public class PrimitiveType(NBTType type) : TypeSpecifier
 	{
 		public override bool IsList => Type is NBTType.List or NBTType.IntArray or NBTType.LongArray or NBTType.ByteArray;
 		public readonly NBTType Type = type;
@@ -36,15 +36,15 @@ namespace Geode.Types
 			_ => Compound
 		};
 
-		protected override bool EqualsImpl(TypeSpecifier obj) => obj is PrimitiveTypeSpecifier p && p.Type == Type;
+		protected override bool EqualsImpl(TypeSpecifier obj) => obj is PrimitiveType p && p.Type == Type;
 		public override string ToString() => Type == NBTType.Compound ? "nbt" : Enum.GetName(Type)?.ToLower() ?? throw new InvalidOperationException();
-		public override object Clone() => new PrimitiveTypeSpecifier(Type);
+		public override object Clone() => new PrimitiveType(Type);
 
-		public static PrimitiveTypeSpecifier Int => new(NBTType.Int);
-		public static PrimitiveTypeSpecifier Bool => new(NBTType.Boolean);
-		public static PrimitiveTypeSpecifier Byte => new(NBTType.Byte);
-		public static PrimitiveTypeSpecifier String => new(NBTType.String);
-		public static PrimitiveTypeSpecifier Compound => new(NBTType.Compound);
-		public static PrimitiveTypeSpecifier List => new(NBTType.List);
+		public static PrimitiveType Int => new(NBTType.Int);
+		public static PrimitiveType Bool => new(NBTType.Boolean);
+		public static PrimitiveType Byte => new(NBTType.Byte);
+		public static PrimitiveType String => new(NBTType.String);
+		public static PrimitiveType Compound => new(NBTType.Compound);
+		public static PrimitiveType List => new(NBTType.List);
 	}
 }

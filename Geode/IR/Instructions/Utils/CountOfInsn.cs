@@ -8,7 +8,7 @@ namespace Geode.IR.Instructions.Utils
 	{
 		public override string Name => "count_of";
 		public override NBTType?[] ArgTypes => [NBTType.String];
-		public override TypeSpecifier ReturnType => PrimitiveTypeSpecifier.Int;
+		public override TypeSpecifier ReturnType => PrimitiveType.Int;
 
 		public override void Render(RenderContext ctx)
 		{

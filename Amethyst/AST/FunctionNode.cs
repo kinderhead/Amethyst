@@ -17,8 +17,8 @@ namespace Amethyst.AST
 		public readonly List<AbstractParameter> Parameters = parameters;
 		public readonly BlockNode Body = body;
 
-		private FunctionTypeSpecifier? funcType = null;
-		public FunctionTypeSpecifier GetFunctionType(Compiler ctx, bool recompute = false)
+		private FunctionType? funcType = null;
+		public FunctionType GetFunctionType(Compiler ctx, bool recompute = false)
 		{
 			if (recompute || funcType is null)
 			{
@@ -43,7 +43,7 @@ namespace Amethyst.AST
 
 			if (Body.Statements.Count == 0 || Body.Statements.Last() is not ReturnStatement)
 			{
-				if (funcType.ReturnType is VoidTypeSpecifier)
+				if (funcType.ReturnType is VoidType)
 				{
 					Body.Add(new ReturnStatement(Location, null));
 				}

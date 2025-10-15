@@ -4,13 +4,13 @@ using Geode.Values;
 
 namespace Geode.IR.Instructions
 {
-    public class PushFuncArgsInsn(FunctionTypeSpecifier type, IEnumerable<ValueRef> args) : Instruction(args)
+    public class PushFuncArgsInsn(FunctionType type, IEnumerable<ValueRef> args) : Instruction(args)
     {
-        public readonly FunctionTypeSpecifier FuncType = type;
+        public readonly FunctionType FuncType = type;
 
         public override string Name => "push_args";
-        public override NBTType?[] ArgTypes => [.. FuncType.Parameters.Select(i => i.Type is VarTypeSpecifier ? (NBTType?)null : i.Type.EffectiveType)];
-        public override TypeSpecifier ReturnType => new VoidTypeSpecifier();
+        public override NBTType?[] ArgTypes => [.. FuncType.Parameters.Select(i => i.Type is VarType ? (NBTType?)null : i.Type.EffectiveType)];
+        public override TypeSpecifier ReturnType => new VoidType();
 
         public override void Render(RenderContext ctx)
         {
@@ -18,7 +18,7 @@ namespace Geode.IR.Instructions
 
             if (macros is LiteralValue)
             {
-                new StackValue(-1, $"macros", PrimitiveTypeSpecifier.Compound).Store(macros, ctx);
+                new StackValue(-1, $"macros", PrimitiveType.Compound).Store(macros, ctx);
             }
         }
 

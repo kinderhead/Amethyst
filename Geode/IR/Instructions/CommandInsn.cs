@@ -10,7 +10,7 @@ namespace Geode.IR.Instructions
 		public readonly string Command = cmd;
 		public override string Name => "cmd";
 		public override NBTType?[] ArgTypes => [];
-		public override TypeSpecifier ReturnType => new VoidTypeSpecifier();
+		public override TypeSpecifier ReturnType => new VoidType();
 
 		public override void Render(RenderContext ctx) =>
 			//ctx.PossibleErrorChecker(new RawCommand(Command), text => text.Text(": Inline command failed: ").Text(Command, new FormattedText.Modifiers { Color = "red", Underlined = true, SuggestCommand = $"/{Command}" }));

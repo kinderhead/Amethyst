@@ -8,7 +8,7 @@ namespace Geode.IR.Instructions
 	{
 		public override string Name => "load";
 		public override NBTType?[] ArgTypes => [null];
-		public override TypeSpecifier ReturnType => type ?? PrimitiveTypeSpecifier.Int;
+		public override TypeSpecifier ReturnType => type ?? PrimitiveType.Int;
 
 		public override void Render(RenderContext ctx)
 		{
@@ -31,7 +31,7 @@ namespace Geode.IR.Instructions
 				Remove();
 				return score;
 			}
-			else if (val.Value is LiteralValue literal && val.Type is PrimitiveTypeSpecifier)
+			else if (val.Value is LiteralValue literal && val.Type is PrimitiveType)
 			{
 				return literal;
 			}

@@ -7,7 +7,7 @@ using Geode.Values;
 
 namespace Amethyst.IR.Types
 {
-	public class WeakReferenceTypeSpecifier(TypeSpecifier inner) : ReferenceTypeSpecifier(inner)
+	public class WeakReferenceType(TypeSpecifier inner) : ReferenceType(inner)
 	{
 		public override string ToString() => $"{Inner}^";
 		public override NamespacedID ID => "amethyst:weak_ref";
@@ -24,7 +24,7 @@ namespace Amethyst.IR.Types
 				return ctx.Add(new WeakReferenceInsn(val));
 			}
 
-			if (val.Type is ReferenceTypeSpecifier r && r.Inner.Implements(Inner))
+			if (val.Type is ReferenceType r && r.Inner.Implements(Inner))
 			{
 				return val;
 			}
@@ -34,9 +34,9 @@ namespace Amethyst.IR.Types
 			}
 		}
 
-		protected override bool EqualsImpl(TypeSpecifier obj) => obj is WeakReferenceTypeSpecifier p && p.Inner == Inner;
-		public override object Clone() => new WeakReferenceTypeSpecifier((TypeSpecifier)Inner.Clone());
+		protected override bool EqualsImpl(TypeSpecifier obj) => obj is WeakReferenceType p && p.Inner == Inner;
+		public override object Clone() => new WeakReferenceType((TypeSpecifier)Inner.Clone());
 
-		public static new LiteralValue From(DataTargetValue val) => new(val.Target.GetTarget(), new WeakReferenceTypeSpecifier(val.Type));
+		public static new LiteralValue From(DataTargetValue val) => new(val.Target.GetTarget(), new WeakReferenceType(val.Type));
 	}
 }

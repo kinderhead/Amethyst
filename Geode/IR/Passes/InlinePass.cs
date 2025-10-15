@@ -12,7 +12,7 @@ namespace Geode.IR.Passes
 			{
 				var other = ctx.Compiler.IR.Functions.Find(i => i.Decl.ID == func.ID);
 
-				if (other is null || other.Blocks.Count != 1 || other.Decl.FuncType.Parameters.Length > 0 || other.Decl.FuncType.ReturnType is not VoidTypeSpecifier)
+				if (other is null || other.Blocks.Count != 1 || other.Decl.FuncType.Parameters.Length > 0 || other.Decl.FuncType.ReturnType is not VoidType)
 				{
 					return;
 				}
@@ -23,7 +23,7 @@ namespace Geode.IR.Passes
 				{
 					if (newInsns[i] is ReturnInsn ret)
 					{
-						if (ret.ReturnType != new VoidTypeSpecifier())
+						if (ret.ReturnType != new VoidType())
 						{
 							throw new NotImplementedException();
 						}

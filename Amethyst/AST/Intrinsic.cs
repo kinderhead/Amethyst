@@ -7,14 +7,14 @@ using Geode.Values;
 
 namespace Amethyst.AST
 {
-	public abstract class Intrinsic(NamespacedID id, FunctionTypeSpecifier? type) : LiteralValue(new NBTString(id.ToString())), IFunctionLike
+	public abstract class Intrinsic(NamespacedID id, FunctionType? type) : LiteralValue(new NBTString(id.ToString())), IFunctionLike
 	{
 		public NamespacedID ID => id;
 
 		public override TypeSpecifier Type => FuncType;
-		public FunctionTypeSpecifier FuncType => type ?? new(FunctionModifiers.None, new VoidTypeSpecifier(), []);
+		public FunctionType FuncType => type ?? new(FunctionModifiers.None, new VoidType(), []);
 
-		public abstract IFunctionLike CloneWithType(FunctionTypeSpecifier type);
+		public abstract IFunctionLike CloneWithType(FunctionType type);
 		public abstract ValueRef Execute(FunctionContext ctx, params ValueRef[] args);
 	}
 }

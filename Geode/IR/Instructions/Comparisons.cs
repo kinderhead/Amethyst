@@ -7,7 +7,7 @@ namespace Geode.IR.Instructions
 {
 	public abstract class ComparisonInsn(ValueRef left, ValueRef right) : Simple2IntInsn<NBTBool>(left, right)
 	{
-		public override TypeSpecifier ReturnType => PrimitiveTypeSpecifier.Bool;
+		public override TypeSpecifier ReturnType => PrimitiveType.Bool;
 		public abstract Comparison Op { get; }
 		public virtual bool Invert { get; } = false;
 

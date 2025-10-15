@@ -12,7 +12,7 @@ namespace Geode.IR.Instructions
 
 		public override string Name => "ret";
 		public override NBTType?[] ArgTypes => [null];
-		public override TypeSpecifier ReturnType => new VoidTypeSpecifier();
+		public override TypeSpecifier ReturnType => new VoidType();
 		public override bool IsReturn => true;
 
 		public override void Render(RenderContext ctx)
@@ -24,7 +24,7 @@ namespace Geode.IR.Instructions
 				throw new InvalidTypeError(val.Type.ToString(), ctx.Func.Decl.FuncType.ReturnType.ToString());
 			}
 
-			if (val is null && ctx.Func.Decl.FuncType.ReturnType is not VoidTypeSpecifier)
+			if (val is null && ctx.Func.Decl.FuncType.ReturnType is not VoidType)
 			{
 				throw new InvalidTypeError("void", ctx.Func.Decl.FuncType.ReturnType.ToString());
 			}

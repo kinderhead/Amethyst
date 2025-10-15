@@ -17,17 +17,17 @@ namespace Amethyst.AST
 
 		public void Process(Compiler ctx, RootNode root)
 		{
-			var baseClass = BaseClass?.Resolve(ctx, ID.GetContainingFolder()) ?? PrimitiveTypeSpecifier.Compound;
+			var baseClass = BaseClass?.Resolve(ctx, ID.GetContainingFolder()) ?? PrimitiveType.Compound;
 
 			var props = new Dictionary<string, TypeSpecifier>();
-			var methods = new Dictionary<string, FunctionTypeSpecifier>();
+			var methods = new Dictionary<string, FunctionType>();
 
 			foreach (var (k, v) in Properties)
 			{
 				props[k] = v.Resolve(ctx, ID.GetContainingFolder());
 			}
 
-			var selfType = new StructTypeSpecifier(ID, baseClass, props, methods);
+			var selfType = new StructType(ID, baseClass, props, methods);
 			ctx.IR.AddType(new(ID, Location, selfType));
 
 			ConstructorNode? constructor = null;
@@ -47,7 +47,7 @@ namespace Amethyst.AST
 
 					var thisIsVirtual = i.Modifiers.HasFlag(FunctionModifiers.Virtual);
 
-					if (selfType.HierarchyMethod(i.ID.GetFile())?.Type is FunctionTypeSpecifier other)
+					if (selfType.HierarchyMethod(i.ID.GetFile())?.Type is FunctionType other)
 					{
 						var otherIsVirtual = other.Modifiers.HasFlag(FunctionModifiers.Virtual);
 
