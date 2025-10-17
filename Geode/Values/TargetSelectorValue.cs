@@ -15,8 +15,22 @@ namespace Geode.Values
 
 		public override ScoreValue AsScore(RenderContext ctx) => throw new InvalidTypeError(Type.ToString(), "int");
         public override bool Equals(object? obj) => ReferenceEquals(this, obj);
-		public override int GetHashCode() => base.GetHashCode(); // Maybe do proper comparisons
-		public override Execute If(Execute cmd, RenderContext ctx, int tmp = 0) => throw new NotImplementedException();
+        public override int GetHashCode() => base.GetHashCode(); // Maybe do proper comparisons
+
+        public override Execute If(Execute cmd, RenderContext ctx, int tmp = 0)
+        {
+            foreach (var (k, v) in Arguments)
+            {
+                if (v is not IConstantValue)
+                {
+                    // This shouldn't happen, but just in case
+                    throw new TargetSelectorMacroArgumentError(k);
+                }
+            }
+
+            return cmd.If.Entity(new NamedTarget(ToString()));
+        }
+        
         public override FormattedText Render(FormattedText text, RenderContext ctx) => throw new NotImplementedException();
 
 		public override string ToString()

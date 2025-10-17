@@ -30,6 +30,7 @@
       - [Inheritance](#inheritance)
       - [Virtual Methods](#virtual-methods)
     - [Target Selectors](#target-selectors)
+      - [Existence Checks](#existence-checks)
     - [Control Flow](#control-flow)
     - [Inline Commands](#inline-commands)
     - [References](#references)
@@ -409,10 +410,29 @@ Minecraft target selectors can be created and used using the `minecraft:target` 
 Target selectors can be implicitly created using the same syntax as they do in commands:
 
 ```cs
-var target = @e[x=8,dx=9];
+var target = @e[x=8,dx=9,name="Steve"];
 ```
 
+But they can also have dynamic values like so:
+
+```cs
+int my_number = 7;
+var target = @e[x=my_number];
+```
+
+String arguments like `name` and `type` must be quoted strings or else Amethyst will look for a variable with that name.
+
 Note: many of the arguments have not been implemented.
+
+#### Existence Checks
+
+Target selectors can be put in `if` statements which effectively use `execute if entity` to determine if the entity exists:
+
+```cs
+if (@s[type="minecraft:player"]) {
+    @/say I am a player!
+}
+```
 
 ### Control Flow
 

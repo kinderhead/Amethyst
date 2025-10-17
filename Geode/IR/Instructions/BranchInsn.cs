@@ -33,7 +33,15 @@ namespace Geode.IR.Instructions
 				return;
 			}
 
-			ctx.Add(cond.If(new(), ctx).Run(ctx.CallSubFunction(ifTrue.Function)));
+			if (cond.Type is TargetSelectorType)
+            {
+				throw new NotImplementedException();
+            }
+			else
+            {
+				ctx.Add(cond.If(new(), ctx).Run(ctx.CallSubFunction(ifTrue.Function)));
+			}
+			
 			ctx.Add(new Execute().Unless.Data(returning.Storage, returning.Path).Run(ctx.CallSubFunction(ifFalse.Function)));
 		}
 
