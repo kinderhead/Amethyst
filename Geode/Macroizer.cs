@@ -9,22 +9,33 @@ namespace Geode
 		public readonly GeodeBuilder Builder = builder;
 		public readonly Dictionary<string, MCFunction> CachedFunctions = [];
 
-		public void Run(RenderContext ctx, IEnumerable<ValueRef> dependencies, Action<IConstantValue[], RenderContext> func)
+		public void Run(RenderContext ctx, IEnumerable<ValueRef> dependencies, Action<IConstantValue[], RenderContext> func) => Run(ctx, dependencies.Select(i => i.Expect()), func);
+		public void Run(RenderContext ctx, IEnumerable<Value> dependencies, Action<IConstantValue[], RenderContext> func)
 		{
 			var args = new List<IConstantValue>();
-			var toMacro = new Dictionary<string, ValueRef>();
+			var toMacro = new Dictionary<string, Value>();
+
+			IConstantValue apply(Value val)
+			{
+				if (val is IConstantValue c)
+                {
+					return c;
+                }
+
+				var macro = new MacroValue($"arg{toMacro.Count}", val.Type);
+				toMacro.Add(macro.Name, val);
+				return macro;
+			}
 
 			foreach (var i in dependencies)
 			{
-				if (i.Expect() is not IConstantValue c)
+				if (i is IAdvancedMacroValue amv)
 				{
-					var macro = new MacroValue($"arg{toMacro.Count}", i.Type);
-					args.Add(macro);
-					toMacro.Add(macro.Name, i);
+					args.Add(amv.Macroize(apply));
 				}
 				else
 				{
-					args.Add(c);
+					args.Add(apply(i));
 				}
 			}
 
@@ -34,7 +45,12 @@ namespace Geode
 			}
 			else
 			{
-				var faux = ctx.WithFaux(i => func([.. args], i));
+				var faux = ctx.WithFaux(i => func([.. args], i)).Select(i =>
+				{
+					i.Macro = true;
+					return i;
+				});
+				
 				var mcFunc = new MCFunction($"{Builder.Namespace}:{GeodeBuilder.InternalPath}/{GeodeBuilder.RandomString}");
 				mcFunc.Add(faux);
 				var compiled = mcFunc.Build();

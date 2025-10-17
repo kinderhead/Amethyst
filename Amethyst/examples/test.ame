@@ -2,8 +2,10 @@ namespace example;
 
 #load
 void main() {
-    string name = "womp";
-
-    minecraft:target x = @e[name = name, limit = 1];
+    if (@e[name="kinderhead"]) {
+        print("yay");
+    } else {
+        print("nay");
+    }
 }
 

@@ -1,6 +1,6 @@
-using Amethyst.Errors;
 using Datapack.Net.Function;
 using Geode;
+using Geode.Errors;
 using Geode.IR;
 using Geode.IR.Instructions;
 using Geode.Types;
@@ -23,7 +23,7 @@ namespace Amethyst.AST.Expressions
                     "x" or "y" or "z" or "dx" or "dy" or "dz" => v.Execute(ctx, PrimitiveType.Double),
                     "limit" => v.Execute(ctx, PrimitiveType.Int),
 
-                    // Ignore macro string warning since names can't have quotes anyway
+                    // Ignore macro string warning since target selectors aren't always in quotes
                     "name" => v.Execute(ctx, PrimitiveType.String).SetType(PrimitiveType.Compound),
                     _ => throw new TargetSelectorArgumentError(k),
                 };

@@ -20,6 +20,19 @@ namespace Geode.Values
 			return val.If(cmd, ctx, tmp + 1);
 		}
 
+		public override void Store(Value val, RenderContext ctx)
+        {
+			if (val is IDataWritable data)
+			{
+				data.StoreTo(this, ctx);
+			}
+			else
+            {
+				base.Store(val, ctx);
+            }
+		}
+
+
 		public override void Store(ScoreValue score, RenderContext ctx) => ctx.Add(new Execute().Store(Target, Type.EffectiveNumberType ?? NBTNumberType.Int, 1).Run(new Scoreboard.Players.Get(score.Target, score.Score)));
 		public override void Store(LiteralValue literal, RenderContext ctx) => ctx.Add(new DataCommand.Modify(Target).Set().Value(literal.Value.ToString()));
 		public override void Store(DataTargetValue nbt, RenderContext ctx) => ctx.Add(new DataCommand.Modify(Target).Set().From(nbt.Target));
