@@ -134,7 +134,35 @@ namespace Geode
 		{
 			if (Func.IsMacroFunction)
 			{
-				return new FunctionCommand(func, [.. Func.Decl.FuncType.Parameters.Where(i => i.Modifiers.HasFlag(ParameterModifiers.Macro)).Select(i => new KeyValuePair<string, Datapack.Net.Data.NBTValue>(i.Name, $"\"$({i.Name})\""))]);
+				return new FunctionCommand(func, [.. Func.Decl.FuncType.MacroParameters.Select(i =>
+				{
+					if (i.Type == PrimitiveType.String)
+					{
+						throw new MacroStringSubFunctionError();
+					}
+
+					return new KeyValuePair<string, NBTValue>(i.Name, new NBTRawString(i.GetMacro()));
+				})]);
+			}
+			else
+			{
+				return new FunctionCommand(func);
+			}
+		}
+
+		public Command CallSubFunction(MCFunction func, NBTCompound args)
+		{
+			if (args.Count > 0)
+			{
+				foreach (var i in Func.Decl.FuncType.MacroParameters)
+				{
+					if (i.Type == PrimitiveType.String)
+					{
+						throw new MacroStringSubFunctionError();
+					}
+				}
+
+				return new FunctionCommand(func, args);
 			}
 			else
 			{

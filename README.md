@@ -550,7 +550,7 @@ inline void set(macro nbt^ ref, macro string val) {
 
 As you can see, macro arguments can be mixed with regular arguments.
 
-**WARNING**: only string literals can be passed into macro string arguments. This is because Minecraft strips quotes from strings and un-escapes them, and there is no good way to re-escape the strings later. Use `macro nbt` if this behavior is intended.
+**WARNING**: only string literals can be passed into macro string arguments. This is because Minecraft strips quotes from strings and un-escapes them, and there is no good way to re-escape the strings later. Use `macro nbt` if this behavior is intended. Additionally, functions with macro strings cannot have conditional blocks or anything similar where the macros have to be propagated between `.mcfunction`s.
 
 ### Global Variables
 

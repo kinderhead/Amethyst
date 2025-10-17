@@ -29,8 +29,6 @@ namespace Datapack.Net.Data
 
 	public class NBTRawString(string val) : NBTString(val)
 	{
-		public override NBTValue Cast(NBTNumberType type) => throw new InvalidOperationException();
-
 		public override void Build(StringBuilder sb) => sb.Append(Value);
 	}
 }

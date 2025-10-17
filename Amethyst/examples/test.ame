@@ -1,13 +1,8 @@
+// Rolling test file. Feel free to edit when testing forks. Any changes to this file in a PR will likely be accepted.
+
 namespace example;
 
 #load
 void main() {
-    string name = "kinderhead";
-
-    if (@e[name=name]) {
-        print("yay");
-    } else {
-        print("nay");
-    }
+    
 }
-

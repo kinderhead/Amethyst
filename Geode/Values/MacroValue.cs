@@ -19,7 +19,5 @@ namespace Geode.Values
 		public override FormattedText Render(FormattedText text, RenderContext ctx) => text.Text(GetMacro());
 		public override string ToString() => GetMacro();
 		public override int GetHashCode() => HashCode.Combine(Name, Type);
-
-		//public MacroValue Property(string prop, TypeSpecifier type) => new($"0{Name}_{prop}", type); // Macros can't have the "." operator. Be careful to include enough 0s
 	}
 }

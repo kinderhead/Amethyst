@@ -1,4 +1,5 @@
 using Datapack.Net.Data;
+using Datapack.Net.Function;
 using Datapack.Net.Function.Commands;
 using Geode.Types;
 using Geode.Values;
@@ -34,14 +35,18 @@ namespace Geode.IR.Instructions
 			}
 
 			if (cond.Type is TargetSelectorType)
-            {
-				throw new NotImplementedException();
-            }
+			{
+				// Probably a better way to do this
+				ctx.Builder.Macroizer.RunAndPropagateMacros(ctx, [cond, .. ctx.Func.Decl.FuncType.MacroParameters], (args, macros, ctx) =>
+				{
+					ctx.Add(new Execute().If.Entity(new NamedTarget(args[0].Value.Build())).Run(ctx.CallSubFunction(ifTrue.Function, macros)));
+				});
+			}
 			else
-            {
+			{
 				ctx.Add(cond.If(new(), ctx).Run(ctx.CallSubFunction(ifTrue.Function)));
 			}
-			
+
 			ctx.Add(new Execute().Unless.Data(returning.Storage, returning.Path).Run(ctx.CallSubFunction(ifFalse.Function)));
 		}
 

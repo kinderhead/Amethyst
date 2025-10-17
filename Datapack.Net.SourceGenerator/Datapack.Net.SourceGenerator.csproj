@@ -33,7 +33,7 @@
 		<Authors>kinderhead</Authors>
 		<Description>Code analyzers and generators for Datapack.Net</Description>
 		<PackageProjectUrl>https://github.com/kinderhead/Amethyst/Datapack.Net.SourceGenerator</PackageProjectUrl>
-		<RepositoryUrl>https://github.com/kinderhead/Datapack.Net</RepositoryUrl>
+		<RepositoryUrl>https://github.com/kinderhead/Amethyst</RepositoryUrl>
 		<PackageTags>minecraft,datapack</PackageTags>
 		<PackageLicenseFile>LICENSE</PackageLicenseFile>
 	</PropertyGroup>

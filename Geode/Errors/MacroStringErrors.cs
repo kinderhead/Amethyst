@@ -4,4 +4,9 @@ namespace Geode.Errors
 	{
 
 	}
+
+	public class MacroStringSubFunctionError() : GeodeError("Macro strings cannot be passed through to sub functions like conditionals")
+	{
+
+	}
 }

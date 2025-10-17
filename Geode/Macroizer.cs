@@ -1,11 +1,12 @@
-﻿using Datapack.Net.Function;
+﻿using Datapack.Net.Data;
+using Datapack.Net.Function;
 using Geode.Types;
 using Geode.Values;
 
 namespace Geode
 {
 	public class Macroizer(GeodeBuilder builder)
-    {
+	{
 		public readonly GeodeBuilder Builder = builder;
 		public readonly Dictionary<string, MCFunction> CachedFunctions = [];
 
@@ -14,16 +15,28 @@ namespace Geode
 		{
 			var args = new List<IConstantValue>();
 			var toMacro = new Dictionary<string, Value>();
+			var propagatedMacroMap = new Dictionary<string, MacroValue>();
 
 			IConstantValue apply(Value val)
 			{
-				if (val is IConstantValue c)
-                {
+				// Include macros in the dependencies
+				if (val is IConstantValue c and not MacroValue)
+				{
 					return c;
-                }
+				}
 
 				var macro = new MacroValue($"arg{toMacro.Count}", val.Type);
-				toMacro.Add(macro.Name, val);
+
+				if (val is MacroValue m)
+				{
+					propagatedMacroMap[macro.GetMacro()] = m;
+					toMacro.Add(macro.Name, new LiteralValue(new NBTRawString(m.GetMacro()), m.Type));
+				}
+				else
+				{
+					toMacro.Add(macro.Name, val);
+				}
+
 				return macro;
 			}
 
@@ -39,9 +52,9 @@ namespace Geode
 				}
 			}
 
-			if (toMacro.Count == 0)
+			if (toMacro.Count == propagatedMacroMap.Count)
 			{
-				func([.. args], ctx);
+				func([.. args.Select(i => propagatedMacroMap.TryGetValue(i.Value.Build(), out var orig) && ((Value)i).Type == orig.Type ? orig : i)], ctx);
 			}
 			else
 			{
@@ -50,7 +63,7 @@ namespace Geode
 					i.Macro = true;
 					return i;
 				});
-				
+
 				var mcFunc = new MCFunction($"{Builder.Namespace}:{GeodeBuilder.InternalPath}/{GeodeBuilder.RandomString}");
 				mcFunc.Add(faux);
 				var compiled = mcFunc.Build();
@@ -68,5 +81,10 @@ namespace Geode
 				FunctionValue.Call(ctx, mcFunc.ID, new FunctionType(FunctionModifiers.None, new VoidType(), toMacro.Select(i => new Parameter(ParameterModifiers.Macro, i.Value.Type, i.Key))), [.. toMacro.Values]);
 			}
 		}
-    }
+
+		public void RunAndPropagateMacros(RenderContext ctx, IEnumerable<Value> dependencies, Action<IConstantValue[], NBTCompound, RenderContext> func) => Run(ctx, [.. dependencies, .. ctx.Func.Decl.FuncType.MacroParameters], (args, ctx) =>
+																																									 {
+																																										 func([.. args.Take(dependencies.Count())], [.. ctx.Func.Decl.FuncType.MacroParameters.Zip(args.Skip(1)).Select(i => new KeyValuePair<string, NBTValue>(i.First.Name, i.Second.Value))], ctx);
+																																									 });
+	}
 }

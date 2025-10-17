@@ -1,4 +1,3 @@
-using System.Text;
 using Datapack.Net.Function.Commands;
 using Datapack.Net.Utils;
 using Geode.Errors;
@@ -6,6 +5,7 @@ using Geode.IR.Instructions;
 using Geode.IR.Passes;
 using Geode.Types;
 using Geode.Values;
+using System.Text;
 
 namespace Geode.IR
 {

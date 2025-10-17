@@ -26,13 +26,14 @@ namespace Geode.Types
 		public readonly FunctionModifiers Modifiers = modifiers;
 		public readonly TypeSpecifier ReturnType = returnType;
 		public readonly Parameter[] Parameters = [.. parameters];
+
 		public readonly bool IsMacroFunction = parameters.Any(i => i.Modifiers.HasFlag(ParameterModifiers.Macro));
+		public readonly MacroValue[] MacroParameters = [.. parameters.Where(i => i.Modifiers.HasFlag(ParameterModifiers.Macro)).Select(i => new MacroValue(i.Name, i.Type))];
 
 		public override IEnumerable<TypeSpecifier> Subtypes => [ReturnType, .. Parameters.Select(i => i.Type)];
 		public override NamespacedID ID => "amethyst:func";
 		public override TypeSpecifier BaseClass => this;
 		public override NBTType EffectiveType => NBTType.String;
-
 
 		public FunctionType ApplyGenericWithParams(TypeSpecifier[] args)
 		{
