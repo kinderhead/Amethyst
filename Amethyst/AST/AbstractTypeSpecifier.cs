@@ -1,6 +1,5 @@
 ﻿using Amethyst.Errors;
 using Amethyst.IR.Types;
-using Datapack.Net.Data;
 using Geode;
 using Geode.Errors;
 using Geode.IR;
@@ -45,27 +44,6 @@ namespace Amethyst.AST
 					{
 						throw new InvalidTypeError(Type);
 					}
-
-				case "bool":
-					return new PrimitiveType(NBTType.Boolean);
-				case "byte":
-					return new PrimitiveType(NBTType.Byte);
-				case "short":
-					return new PrimitiveType(NBTType.Short);
-				case "int":
-					return new PrimitiveType(NBTType.Int);
-				case "long":
-					return new PrimitiveType(NBTType.Long);
-				case "float":
-					return new PrimitiveType(NBTType.Float);
-				case "double":
-					return new PrimitiveType(NBTType.Double);
-				case "string":
-					return new PrimitiveType(NBTType.String);
-				case "list":
-					return new PrimitiveType(NBTType.List);
-				case "nbt":
-					return new PrimitiveType(NBTType.Compound);
 				default:
 					if (Type.Contains(':'))
 					{
@@ -77,6 +55,14 @@ namespace Amethyst.AST
 					else if (GeodeBuilder.NamespaceWalk(baseNamespace, Type, ctx.IR.Types) is GlobalTypeSymbol sym)
 					{
 						return sym.Type;
+					}
+					else if (ctx.IR.Types.TryGetValue($"minecraft:{Type}", out var mc))
+					{
+						return mc.Type;
+					}
+					else if (ctx.IR.Types.TryGetValue($"builtin:{Type}", out var bt))
+					{
+						return bt.Type;
 					}
 
 					break;

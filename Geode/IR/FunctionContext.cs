@@ -98,9 +98,13 @@ namespace Geode.IR
 			{
 				return v2;
 			}
-			else if (GetGlobal(new("builtin", name)) is Value v3)
+			else if (GetGlobal(new("minecraft", name)) is Value v3)
 			{
 				return v3;
+			}
+			else if (GetGlobal(new("builtin", name)) is Value v4)
+			{
+				return v4;
 			}
 
 			return null;

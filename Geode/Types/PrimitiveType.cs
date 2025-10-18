@@ -37,13 +37,15 @@ namespace Geode.Types
 		};
 
 		protected override bool EqualsImpl(TypeSpecifier obj) => obj is PrimitiveType p && p.Type == Type;
-		public override string ToString() => Type == NBTType.Compound ? "nbt" : Enum.GetName(Type)?.ToLower() ?? throw new InvalidOperationException();
+		public override string ToString() => Type == NBTType.Compound ? "nbt" : Type == NBTType.Boolean ? "bool" : Enum.GetName(Type)?.ToLower() ?? throw new InvalidOperationException();
 		public override object Clone() => new PrimitiveType(Type);
 
 		public static PrimitiveType Int => new(NBTType.Int);
+		public static PrimitiveType Long => new(NBTType.Long);
 		public static PrimitiveType Float => new(NBTType.Float);
 		public static PrimitiveType Double => new(NBTType.Double);
 		public static PrimitiveType Bool => new(NBTType.Boolean);
+		public static PrimitiveType Short => new(NBTType.Short);
 		public static PrimitiveType Byte => new(NBTType.Byte);
 		public static PrimitiveType String => new(NBTType.String);
 		public static PrimitiveType Compound => new(NBTType.Compound);

@@ -3,8 +3,23 @@ namespace test;
 string currentTest = "None";
 bool currentTestFailed = false;
 int successfulTests = 0;
+int ticksSinceStart = 0;
 
 #load
+void init() {
+    @/forceload add -64 -64 64 64
+}
+
+#tick
+void executor() {
+    ++ticksSinceStart;
+
+    // Hopefully resolves issues with entities not working on world load
+    if (ticksSinceStart == 5) {
+        run_tests();
+    }
+}
+
 void run_tests() {
     print("Running tests");
 

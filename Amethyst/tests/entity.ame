@@ -3,11 +3,13 @@ namespace test;
 #test
 void test_entity_exists() {
     start("entity exists");
+
+    @/kill @e[type=wither]
     
     macro_entity_tester(false);
 
     @/summon wither
-    
+
     macro_entity_tester(true);
 
     @/kill @e[type=wither]

@@ -15,6 +15,7 @@
   - [CLI Options](#cli-options)
   - [Language Features](#language-features)
     - [Functions](#functions)
+      - [Tags](#tags)
       - [Macro Functions](#macro-functions)
       - [Inline Functions](#inline-functions)
     - [Namespaces](#namespaces)
@@ -82,6 +83,10 @@ void main() {
     int array = [x];
     array.add(-9);
     print(array);
+
+    if (@s[type="player"]) {
+        print("Called by a player");
+    }
 }
 ```
 
@@ -121,6 +126,20 @@ func("Hello", obj, [1, 2, 3]);
 ```
 
 Amethyst compiles functions into .mcfunction files of the same name. The argument calling convention is to place named arguments into a special place in the current stack frame. In most cases, this will be `amethyst:runtime stack[-1].args`. The called function will push a new frame and access arguments using `amethyst:runtime stack[-2].args`. Functions without arguments (or with only macro arguments) can be easily called in-game using `/function`.
+
+#### Tags
+
+Functions can have any number of tags. They are defined by adding the tag before the function declaration:
+
+```cs
+#example:mytag
+void func() {}
+```
+
+Tags without declaring a namespace instead use the current namespace set with the `namespace` keyword, except for a few default tags:
+
+* `load`: Resolves to `minecraft:load`
+* `tick`: Resolves to `minecraft:tick`
 
 #### Macro Functions
 
@@ -200,7 +219,7 @@ void main() {
 }
 ```
 
-All symbols in the `builtin` namespace and common data types in the `minecraft` namespace are available everywhere.
+All symbols in the `builtin` and base `minecraft` namespace are available everywhere.
 
 Note: Minecraft does not allow capital letters in function names, so Amethyst throws an error when encountering them.
 

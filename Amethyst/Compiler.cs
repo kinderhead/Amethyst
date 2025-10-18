@@ -251,13 +251,24 @@ amethyst [files...] -o <output>";
 
 		protected virtual void RegisterGlobals()
 		{
+			Register(PrimitiveType.Bool);
+			Register(PrimitiveType.Byte);
+			Register(PrimitiveType.Short);
+			Register(PrimitiveType.Int);
+			Register(PrimitiveType.Long);
+			Register(PrimitiveType.Float);
+			Register(PrimitiveType.Double);
+			Register(PrimitiveType.String);
+			Register(PrimitiveType.List);
+			Register(PrimitiveType.Compound);
+
+			Register(new TargetSelectorType());
+
 			Register(new Print());
 			Register(new CountOf());
 			Register(new ListAdd());
 			Register(new ListSize());
 			Register(new StringLength());
-
-			Register(new TargetSelectorType());
 
 			IR.AddSymbol(new("builtin:true", LocationRange.None, new LiteralValue(true)));
 			IR.AddSymbol(new("builtin:false", LocationRange.None, new LiteralValue(false)));
