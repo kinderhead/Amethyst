@@ -23,12 +23,12 @@ def tester(process: subprocess.Popen[bytes]):
             data = line.split("Tests passed: ")[1].split("/")
             if int(data[0]) != int(data[1]):
                 print("Failed")
-                #process.kill()
-                #os._exit(1)
+                process.kill()
+                os._exit(1)
             else:
                 print("Passed")
-                #process.kill()
-                #os._exit(0)
+                process.kill()
+                os._exit(0)
 
         if process.returncode is not None:
             print("Done")
@@ -60,7 +60,7 @@ try:
     thread.daemon = True
     thread.start()
 
-    time.sleep(600)
+    time.sleep(60)
 
     print("Timed out")
     process.kill()
