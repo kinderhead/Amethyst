@@ -443,8 +443,6 @@ String arguments like `name` and `type` must be quoted strings or else Amethyst 
 
 Note: many of the arguments have not been implemented.
 
-
-
 #### Existence Checks
 
 Target selectors can be put in `if` statements which effectively use `execute if entity` to determine if the entity exists:
@@ -454,6 +452,8 @@ if (@s[type="minecraft:player"]) {
     @/say I am a player!
 }
 ```
+
+Target selectors can also be converted to boolean values. The result is `true` if `execute if entity` is successful.
 
 ### Control Flow
 
