@@ -8,7 +8,7 @@ namespace Geode.IR.Instructions
 		public override NBTType?[] ArgTypes => [NBTType.Int, NBTType.Int];
 		public abstract TOut Compute(NBTInt left, NBTInt right);
 
-		protected override Value? ComputeReturnValue(FunctionContext ctx)
+		protected override IValue? ComputeReturnValue(FunctionContext ctx)
 		{
 			if (AreArgsLiteral(out NBTInt left, out NBTInt right))
 			{

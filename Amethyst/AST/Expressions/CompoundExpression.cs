@@ -4,6 +4,7 @@ using Geode.Errors;
 using Geode.IR;
 using Geode.IR.Instructions;
 using Geode.Types;
+using Geode.Values;
 
 namespace Amethyst.AST.Expressions
 {
@@ -34,7 +35,7 @@ namespace Amethyst.AST.Expressions
 
 			foreach (var (k, _) in type.Properties)
 			{
-				if (!vals.ContainsKey(k) && type.DefaultPropertyValue(k) is Value v)
+				if (!vals.ContainsKey(k) && type.DefaultPropertyValue(k) is LiteralValue v)
 				{
 					vals[k] = v;
 				}

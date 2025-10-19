@@ -61,7 +61,7 @@ namespace Amethyst.AST.Statements
 		public ValueRef Value { get => field ?? throw new InvalidOperationException(); private set; }
 		public int ArgIndex { get; private set; } = -1;
 
-		public override string Render(ref int arg) => Value.IsLiteral && Value.Value is Value v ? v.ToString() : $"$(arg{ArgIndex = arg++})";
+		public override string Render(ref int arg) => Value.IsLiteral && Value.Value is IValue v ? v.ToString() ?? "" : $"$(arg{ArgIndex = arg++})";
 
 		public override void Resolve(FunctionContext ctx) => Value = Expression.Execute(ctx, null);
 	}

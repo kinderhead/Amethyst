@@ -26,7 +26,7 @@ namespace Amethyst.IR.Instructions
 			ctx.Call("amethyst:core/ref/property", WeakReferenceType.From(ReturnValue.Expect<DataTargetValue>()), val, Arg<ValueRef>(1));
 		}
 
-		protected override Value? ComputeReturnValue(FunctionContext ctx)
+		protected override IValue? ComputeReturnValue(FunctionContext ctx)
 		{
 			var val = Arg<ValueRef>(0);
 			var prop = Arg<ValueRef>(1);

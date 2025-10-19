@@ -208,7 +208,7 @@ namespace Geode
 			return (ctx, func);
 		}
 
-		public Value? GetGlobal(NamespacedID id)
+		public IValue? GetGlobal(NamespacedID id)
 		{
 			if (Symbols.TryGetValue(id, out var sym))
 			{
@@ -218,11 +218,11 @@ namespace Geode
 			return null;
 		}
 
-		public Value? GetGlobalWalk(string baseNamespace, string name) => NamespaceWalk(baseNamespace, name, Symbols)?.Value;
+		public IValue? GetGlobalWalk(string baseNamespace, string name) => NamespaceWalk(baseNamespace, name, Symbols)?.Value;
 
-		public Value? GetConstructorOrNull(TypeSpecifier type)
+		public IValue? GetConstructorOrNull(TypeSpecifier type)
 		{
-			if (GetGlobal(type.ID) is Value v && v.Type is FunctionType funcType && funcType.ReturnType == type)
+			if (GetGlobal(type.ID) is IValue v && v.Type is FunctionType funcType && funcType.ReturnType == type)
 			{
 				return v;
 			}

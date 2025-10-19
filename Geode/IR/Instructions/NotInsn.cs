@@ -41,7 +41,7 @@ namespace Geode.IR.Instructions
 
 		public override void ConfigureLifetime(Func<ValueRef, ValueRef, bool> tryLink, Action<ValueRef, ValueRef> markOverlap) => markOverlap(Arg<ValueRef>(0), ReturnValue);
 
-		protected override Value? ComputeReturnValue(FunctionContext ctx)
+		protected override IValue? ComputeReturnValue(FunctionContext ctx)
 		{
 			var val = Arg<ValueRef>(0).Value;
 

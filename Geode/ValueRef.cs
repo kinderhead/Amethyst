@@ -5,9 +5,9 @@ using Geode.Values;
 
 namespace Geode
 {
-	public class ValueRef : IInstructionArg, ICloneable
+	public class ValueRef : IInstructionArg, IValueLike, ICloneable
 	{
-		public Value? Value { get; private set; }
+		public IValue? Value { get; private set; }
 		public TypeSpecifier Type { get; private set; }
 
 		public bool IsLiteral => Value is not null && Value.IsLiteral;
@@ -18,7 +18,7 @@ namespace Geode
 
 		public HashSet<ValueRef> Dependencies { get; } = [];
 
-		public ValueRef(Value val)
+		public ValueRef(IValue val)
 		{
 			Value = val;
 			Type = val.Type;
@@ -29,7 +29,7 @@ namespace Geode
 			Type = type;
 		}
 
-		public Value Expect(NBTType type)
+		public IValue Expect(NBTType type)
 		{
 			if (Value is null || Value.Type.EffectiveType != type)
 			{
@@ -39,10 +39,10 @@ namespace Geode
 			return Value;
 		}
 
-		public T Expect<T>() where T : Value => Value as T ?? throw new InvalidTypeError(Value?.GetType().Name.ToLower() ?? "<error>", typeof(T).Name.ToLower());
-		public Value Expect() => Expect<Value>();
+		public T Expect<T>() where T : class, IValue => Value as T ?? throw new InvalidTypeError(Value?.GetType().Name.ToLower() ?? "<error>", typeof(T).Name.ToLower());
+		public IValue Expect() => Expect<IValue>();
 
-		public void SetValue(Value val)
+		public void SetValue(IValue val)
 		{
 			Value = val;
 			Type = val.Type;

@@ -20,7 +20,7 @@ namespace Amethyst.IR.Instructions
 			ReturnValue.Expect<LValue>().Store(ctx.Func.GetFunctionReturnValue(ReturnType, -1), ctx);
 		}
 
-		protected override Value? ComputeReturnValue(FunctionContext ctx)
+		protected override IValue? ComputeReturnValue(FunctionContext ctx)
 		{
 			var val = Arg<ValueRef>(0).Expect();
 			if (val is not LiteralValue l || l.Value is not NBTString ptr)

@@ -36,7 +36,7 @@ namespace Geode.IR
 		private readonly HashSet<int> registersInUse = [];
 		private int tmpStackVars = 0;
 
-		public IEnumerable<Value> AllLocals => totalScopes.SelectMany(i => i.Locals.Values);
+		public IEnumerable<IValue> AllLocals => totalScopes.SelectMany(i => i.Locals.Values);
 
 		public FunctionContext(ICompiler compiler, FunctionValue decl, IEnumerable<NamespacedID> tags, bool hasTagPriority = false)
 		{
@@ -78,9 +78,9 @@ namespace Geode.IR
 
 		public void PopScope() => activeScopes.Pop();
 
-		public Value GetVariable(string name) => GetVariableOrNull(name) ?? throw new UndefinedSymbolError(name);
+		public IValue GetVariable(string name) => GetVariableOrNull(name) ?? throw new UndefinedSymbolError(name);
 
-		public Value? GetVariableOrNull(string name)
+		public IValue? GetVariableOrNull(string name)
 		{
 			foreach (var i in activeScopes.Reverse())
 			{
@@ -90,19 +90,19 @@ namespace Geode.IR
 				}
 			}
 
-			if (name.Contains(':') && GetGlobal(new NamespacedID(name)) is Value v)
+			if (name.Contains(':') && GetGlobal(new NamespacedID(name)) is IValue v)
 			{
 				return v;
 			}
-			else if (GetGlobalWalk(Decl.ID.GetContainingFolder(), name) is Value v2)
+			else if (GetGlobalWalk(Decl.ID.GetContainingFolder(), name) is IValue v2)
 			{
 				return v2;
 			}
-			else if (GetGlobal(new("minecraft", name)) is Value v3)
+			else if (GetGlobal(new("minecraft", name)) is IValue v3)
 			{
 				return v3;
 			}
-			else if (GetGlobal(new("builtin", name)) is Value v4)
+			else if (GetGlobal(new("builtin", name)) is IValue v4)
 			{
 				return v4;
 			}
@@ -110,10 +110,10 @@ namespace Geode.IR
 			return null;
 		}
 
-		public Value? GetGlobal(NamespacedID id) => Compiler.IR.GetGlobal(id);
-		public Value? GetGlobalWalk(string baseNamespace, string name) => Compiler.IR.GetGlobalWalk(baseNamespace, name);
+		public IValue? GetGlobal(NamespacedID id) => Compiler.IR.GetGlobal(id);
+		public IValue? GetGlobalWalk(string baseNamespace, string name) => Compiler.IR.GetGlobalWalk(baseNamespace, name);
 
-		public Value? GetConstructorOrNull(TypeSpecifier type) => Compiler.IR.GetConstructorOrNull(type);
+		public IValue? GetConstructorOrNull(TypeSpecifier type) => Compiler.IR.GetConstructorOrNull(type);
 
 		public Variable RegisterLocal(string name, TypeSpecifier type)
 		{
@@ -122,7 +122,7 @@ namespace Geode.IR
 			return val;
 		}
 
-		public void RegisterLocal(string name, Value val) => activeScopes.Peek().Locals[name] = val;
+		public void RegisterLocal(string name, IValue val) => activeScopes.Peek().Locals[name] = val;
 
 		public StackValue Temp(TypeSpecifier type) => new(-1, Compiler.IR.RuntimeID, $"tmp{tmpStackVars++}", type);
 
@@ -454,7 +454,7 @@ namespace Geode.IR
 
 		private class Scope
 		{
-			public readonly Dictionary<string, Value> Locals = [];
+			public readonly Dictionary<string, IValue> Locals = [];
 		}
 	}
 }

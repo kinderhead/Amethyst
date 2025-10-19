@@ -1,9 +1,7 @@
-using System;
-
 namespace Geode.Values
 {
-    public interface IAdvancedMacroValue
-    {
-        IConstantValue Macroize(Func<Value, IConstantValue> apply);
-    }
+	public interface IAdvancedMacroValue : IValue
+	{
+		IConstantValue Macroize(Func<IValue, IConstantValue> apply);
+	}
 }

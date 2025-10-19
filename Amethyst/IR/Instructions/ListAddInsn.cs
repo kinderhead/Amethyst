@@ -36,6 +36,6 @@ namespace Amethyst.IR.Instructions
 			}
 		}
 
-		protected override Value? ComputeReturnValue(FunctionContext ctx) => new VoidValue();
+		protected override IValue? ComputeReturnValue(FunctionContext ctx) => new VoidValue();
 	}
 }

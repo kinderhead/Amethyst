@@ -19,7 +19,7 @@ namespace Geode.IR.Instructions
 			var tmp = 0;
 			foreach (var i in Arguments)
 			{
-				if (i is not ValueRef vref || vref.Value is not Value val)
+				if (i is not ValueRef vref || vref.Value is not IValue val)
 				{
 					throw new InvalidOperationException($"Invalid print argument of type {i.GetType().Name}");
 				}
@@ -43,6 +43,6 @@ namespace Geode.IR.Instructions
 		}
 
 		public override void CheckArguments() { }
-		protected override Value? ComputeReturnValue(FunctionContext ctx) => new VoidValue();
+		protected override IValue? ComputeReturnValue(FunctionContext ctx) => new VoidValue();
 	}
 }

@@ -19,7 +19,7 @@ namespace Geode.IR.Instructions
 			ReturnValue.SetValue(new ConditionalValue((cmd, flip) => (Invert != flip ? cmd.Unless : cmd.If).Score(left.Target, left.Score, Op, right.Target, right.Score), ReturnValue.Expect<ConditionalValue>().Flip));
 		}
 
-		protected override Value? ComputeReturnValue(FunctionContext ctx)
+		protected override IValue? ComputeReturnValue(FunctionContext ctx)
 		{
 			if (Arguments[0] is ValueRef arg1)
 			{

@@ -11,7 +11,7 @@ namespace Geode.Values
 		public override TypeSpecifier Type => type ?? new PrimitiveType(Value.Type);
 
 		public override ScoreValue AsScore(RenderContext ctx) => Value is NBTInt n ? ctx.Builder.Constant(n) : throw new InvalidOperationException($"\"{Value}\" is not an integer");
-		public override Execute If(Execute cmd, RenderContext ctx, int tmp = 0) => throw new NotImplementedException(); // Ideally this shouldn't happen
+		public override void If(Action<Execute> apply, RenderContext ctx, int tmp = 0) => throw new NotImplementedException(); // Ideally this shouldn't happen
 		public override bool Equals(object? obj) => obj is LiteralValue l && l.Value == Value;
 		public override string ToString() => Value.ToString();
 		public override int GetHashCode() => Value.GetHashCode();

@@ -29,7 +29,7 @@ namespace Geode
 			}
 		}
 
-		public void StoreCompound(DataTargetValue dest, Dictionary<string, ValueRef> dict, bool setEmpty = true)
+		public void StoreCompound(DataTargetValue dest, Dictionary<string, IValueLike> dict, bool setEmpty = true)
 		{
 			var ret = StoreCompoundOrReturnConstant(dest, dict, setEmpty);
 			if (ret is LiteralValue l)
@@ -38,10 +38,10 @@ namespace Geode
 			}
 		}
 
-		public Value StoreCompoundOrReturnConstant(DataTargetValue dest, Dictionary<string, ValueRef> dict, bool setEmpty = true)
+		public IValue StoreCompoundOrReturnConstant(DataTargetValue dest, Dictionary<string, IValueLike> dict, bool setEmpty = true)
 		{
 			var nbt = new NBTCompound();
-			var runtime = new Dictionary<string, Value>();
+			var runtime = new Dictionary<string, IValue>();
 			var forceUseStorage = false;
 
 			foreach (var (key, val) in dict.Select(i => (i.Key, i.Value.Expect())))
@@ -90,10 +90,10 @@ namespace Geode
 			}
 		}
 
-		public Value StoreListOrReturnConstant(DataTargetValue dest, List<ValueRef> list, bool setEmpty = true)
+		public IValue StoreListOrReturnConstant(DataTargetValue dest, List<ValueRef> list, bool setEmpty = true)
 		{
 			var nbt = new NBTList();
-			var runtime = new List<Value>();
+			var runtime = new List<IValue>();
 			var isStillConstant = true;
 
 			foreach (var i in list.Select(i => i.Expect()))
@@ -170,7 +170,7 @@ namespace Geode
 			}
 		}
 
-		public void Call(NamespacedID id, params ValueRef[] args)
+		public void Call(NamespacedID id, params IValueLike[] args)
 		{
 			if (Func.GetGlobal(id) is not FunctionValue func)
 			{

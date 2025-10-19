@@ -37,19 +37,19 @@ namespace Geode.IR.Instructions
 			if (cond.Type is TargetSelectorType)
 			{
 				// Probably a better way to do this
-				ctx.Builder.Macroizer.RunAndPropagateMacros(ctx, [cond, .. ctx.Func.Decl.FuncType.MacroParameters], (args, macros, ctx) =>
+				ctx.Builder.Macroizer.RunAndPropagateMacros(ctx, [cond], (args, macros, ctx) =>
 				{
 					ctx.Add(new Execute().If.Entity(new NamedTarget(args[0].Value.Build())).Run(ctx.CallSubFunction(ifTrue.Function, macros)));
 				});
 			}
 			else
 			{
-				ctx.Add(cond.If(new(), ctx).Run(ctx.CallSubFunction(ifTrue.Function)));
+				cond.If(cmd => cmd.Run(ctx.CallSubFunction(ifTrue.Function)), ctx);
 			}
 
 			ctx.Add(new Execute().Unless.Data(returning.Storage, returning.Path).Run(ctx.CallSubFunction(ifFalse.Function)));
 		}
 
-		protected override Value? ComputeReturnValue(FunctionContext ctx) => new VoidValue();
+		protected override IValue? ComputeReturnValue(FunctionContext ctx) => new VoidValue();
 	}
 }

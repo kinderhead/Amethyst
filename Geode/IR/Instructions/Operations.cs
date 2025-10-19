@@ -34,7 +34,7 @@ namespace Geode.IR.Instructions
 			var right = Arg<ValueRef>(1).Expect(NBTType.Int).AsScore(ctx);
 			var ret = ReturnValue.Expect(NBTType.Int).AsScore(ctx);
 
-			if (left != ret)
+			if (!ret.Equals(left))
 			{
 				ret.Store(left, ctx);
 			}

@@ -11,7 +11,7 @@ namespace Geode.IR.Instructions
 
 		public override void Render(RenderContext ctx) => ctx.StoreList(ReturnValue.Expect<DataTargetValue>(), [.. Arguments.Cast<ValueRef>()]);
 
-		protected override Value? ComputeReturnValue(FunctionContext ctx)
+		protected override IValue? ComputeReturnValue(FunctionContext ctx)
 		{
 			var list = new NBTList();
 

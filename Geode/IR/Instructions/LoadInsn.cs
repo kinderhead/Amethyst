@@ -15,7 +15,7 @@ namespace Geode.IR.Instructions
 			var val = Arg<ValueRef>(0).Expect();
 			var ret = ReturnValue.Expect<ScoreValue>();
 
-			if (val is ScoreValue score && score == ret)
+			if (val.Equals(ret))
 			{
 				return;
 			}
@@ -23,7 +23,7 @@ namespace Geode.IR.Instructions
 			ret.Store(val, ctx);
 		}
 
-		protected override Value? ComputeReturnValue(FunctionContext ctx)
+		protected override IValue? ComputeReturnValue(FunctionContext ctx)
 		{
 			var val = Arg<ValueRef>(0);
 			if (val.Value is ScoreValue score)

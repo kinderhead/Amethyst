@@ -12,6 +12,6 @@ namespace Geode.IR.Instructions
 
 		public override void Render(RenderContext ctx) => Arg<ValueRef>(0).Expect<LValue>().Store(Arg<ValueRef>(1).Expect(), ctx);
 
-		protected override Value? ComputeReturnValue(FunctionContext ctx) => new VoidValue();
+		protected override IValue? ComputeReturnValue(FunctionContext ctx) => new VoidValue();
 	}
 }

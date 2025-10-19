@@ -13,9 +13,9 @@ namespace Geode.IR.Instructions
 
 		public readonly string[] Keys = [.. vals.Keys];
 
-		public override void Render(RenderContext ctx) => ctx.StoreCompound(ReturnValue.Expect<DataTargetValue>(), new(Keys.Zip(Arguments.Cast<ValueRef>()).Select(i => new KeyValuePair<string, ValueRef>(i.First, i.Second))));
+		public override void Render(RenderContext ctx) => ctx.StoreCompound(ReturnValue.Expect<DataTargetValue>(), new(Keys.Zip(Arguments.Cast<ValueRef>()).Select(i => new KeyValuePair<string, IValueLike>(i.First, i.Second))));
 
-		protected override Value? ComputeReturnValue(FunctionContext ctx)
+		protected override IValue? ComputeReturnValue(FunctionContext ctx)
 		{
 			var nbt = new NBTCompound();
 

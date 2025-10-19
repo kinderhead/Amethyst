@@ -14,11 +14,11 @@ namespace Geode.Values
 		public override string ToString() => ID.ToString();
 		public FunctionType FuncType => (FunctionType)Type;
 
-		public virtual void Call(RenderContext ctx, ValueRef[] args) => Call(ctx, ID, FuncType, args);
+		public virtual void Call(RenderContext ctx, IValueLike[] args) => Call(ctx, ID, FuncType, args);
 		public virtual IFunctionLike CloneWithType(FunctionType type) => new FunctionValue(ID, type);
 
-		public static void Call(RenderContext ctx, NamespacedID id, FunctionType funcType, ValueRef[] args)
-        {
+		public static void Call(RenderContext ctx, NamespacedID id, FunctionType funcType, IValueLike[] args)
+		{
 			var processedMacros = SetArgsAndGetMacros(ctx, funcType, args);
 
 			if (processedMacros is StorageValue s)
@@ -47,9 +47,9 @@ namespace Geode.Values
 			}
 		}
 
-		public static Value? SetArgsAndGetMacros(RenderContext ctx, FunctionType funcType, ValueRef[] args)
+		public static IValue? SetArgsAndGetMacros(RenderContext ctx, FunctionType funcType, IValueLike[] args)
 		{
-			Value? processedMacros = null;
+			IValue? processedMacros = null;
 
 			if (args.Length != funcType.Parameters.Length)
 			{
@@ -58,8 +58,8 @@ namespace Geode.Values
 
 			if (args.Length != 0)
 			{
-				var processedArgs = new Dictionary<string, ValueRef>();
-				var macros = new Dictionary<string, ValueRef>();
+				var processedArgs = new Dictionary<string, IValueLike>();
+				var macros = new Dictionary<string, IValueLike>();
 				var macroStorageLocation = new StackValue(-1, ctx.Builder.RuntimeID, $"macros", PrimitiveType.Compound);
 
 				foreach (var (param, val) in funcType.Parameters.Zip(args))
@@ -69,7 +69,7 @@ namespace Geode.Values
 						if (param.Type == PrimitiveType.String)
 						{
 							// Exclude macros
-							if (val.Value is not LiteralValue l)
+							if (val.Expect() is not LiteralValue l)
 							{
 								throw new MacroStringError();
 							}

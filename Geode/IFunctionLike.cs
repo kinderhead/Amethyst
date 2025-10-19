@@ -2,7 +2,7 @@ using Geode.Types;
 
 namespace Geode
 {
-	public interface IFunctionLike
+	public interface IFunctionLike : IValue
 	{
 		FunctionType FuncType { get; }
 

@@ -15,7 +15,7 @@ jobs:
           {os: ubuntu-24.04-arm, name: linux-arm},
           {os: windows-latest, name: windows},
           {os: windows-11-arm, name: windows-arm},
-          {os: macos-13, name: "mac-intel"},
+          {os: macos-15-intel, name: "mac-intel"},
           {os: macos-latest, name: "mac"}
         ]
       fail-fast: false
@@ -45,6 +45,7 @@ jobs:
       run: dotnet build --no-restore
     - name: Datapack.Net Test
       run: dotnet test --no-build --verbosity normal
+      
     - name: Publish
       working-directory: ./Amethyst
       run: dotnet publish --configuration Release --output dist

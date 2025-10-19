@@ -17,6 +17,6 @@ namespace Geode.IR.Instructions.Utils
 			ReturnValue.Expect<LValue>().Store(new LiteralValue(ctx.Builder.Functions.Sum(i => i.Tags.Contains(new(id)) ? 1 : 0)), ctx);
 		}
 
-		protected override Value? ComputeReturnValue(FunctionContext ctx) => null;
+		protected override IValue? ComputeReturnValue(FunctionContext ctx) => null;
 	}
 }

@@ -17,6 +17,6 @@ namespace Geode.IR.Instructions
 			ctx.Add(new RawCommand(Command));
 
 		public override string Dump(Func<IInstructionArg, string> valueMap) => $"/{Command}";
-		protected override Value? ComputeReturnValue(FunctionContext ctx) => new VoidValue();
+		protected override IValue? ComputeReturnValue(FunctionContext ctx) => new VoidValue();
 	}
 }

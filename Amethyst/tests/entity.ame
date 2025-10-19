@@ -11,6 +11,7 @@ void test_entity_exists() {
     @/summon wither
 
     macro_entity_tester(true);
+    assert(@e[type="wither"]);
 
     @/kill @e[type=wither]
 

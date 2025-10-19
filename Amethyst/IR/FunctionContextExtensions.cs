@@ -34,7 +34,7 @@ namespace Amethyst.IR
 					var firstArgType = func.FuncType.Parameters[0].Type;
 					if (firstArgType is ReferenceType r2 && effectiveMethodType.Implements(r2.Inner))
 					{
-						return (Value)func;
+						return new(func);
 					}
 				}
 

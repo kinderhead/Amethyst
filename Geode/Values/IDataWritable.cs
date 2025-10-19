@@ -1,9 +1,7 @@
-using System;
-
 namespace Geode.Values
 {
-    public interface IDataWritable
-    {
-        void StoreTo(DataTargetValue val, RenderContext ctx);
-    }
+	public interface IDataWritable : IValue
+	{
+		void StoreTo(DataTargetValue val, RenderContext ctx);
+	}
 }

@@ -4,7 +4,11 @@ namespace example;
 
 #load
 void main() {
-    print("hi");
-    @/dialog show @a {type:"minecraft:confirmation",title:"Give yourself diamond?",yes:{label:"Yes please","action":{"type":"run_command","command":"give @s diamond"}},no:{label:"Nope"}}
-    print("bye");
+    var f2 = dyn_func2;
+
+    print(dyn_func2(6));
+}
+
+int dyn_func2(macro int x) {
+    return x - 2;
 }

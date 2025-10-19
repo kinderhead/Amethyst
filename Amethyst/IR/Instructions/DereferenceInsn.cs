@@ -18,15 +18,15 @@ namespace Amethyst.IR.Instructions
 			var ret = ReturnValue.Expect();
 			if (ret is ScoreValue score)
 			{
-				ctx.Call("amethyst:core/ref/set-score", new LiteralValue($"{score.Target.Get()} {score.Score.Name}"), Arg<ValueRef>(0).Expect());
+				ctx.Call("amethyst:core/ref/set-score", new LiteralValue($"{score.Target.Get()} {score.Score.Name}"), Arg<ValueRef>(0));
 			}
 			else
 			{
-				ctx.Call("amethyst:core/ref/set-ref", WeakReferenceType.From((DataTargetValue)ret), Arg<ValueRef>(0).Expect());
+				ctx.Call("amethyst:core/ref/set-ref", WeakReferenceType.From((DataTargetValue)ret), Arg<ValueRef>(0));
 			}
 		}
 
-		protected override Value? ComputeReturnValue(FunctionContext ctx)
+		protected override IValue? ComputeReturnValue(FunctionContext ctx)
 		{
 			if (Arg<ValueRef>(0).Expect() is LiteralValue l && l.Value is NBTString str)
 			{

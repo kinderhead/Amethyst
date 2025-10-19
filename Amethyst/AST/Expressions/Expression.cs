@@ -40,6 +40,6 @@ namespace Amethyst.AST.Expressions
 	{
 		public readonly string Name = name;
 
-		protected override ValueRef ExecuteImpl(FunctionContext ctx, TypeSpecifier? expected) => ctx.GetVariable(Name);
+		protected override ValueRef ExecuteImpl(FunctionContext ctx, TypeSpecifier? expected) => new(ctx.GetVariable(Name));
 	}
 }

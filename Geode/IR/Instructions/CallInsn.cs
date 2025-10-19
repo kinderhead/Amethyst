@@ -21,7 +21,7 @@ namespace Geode.IR.Instructions
 			}
 		}
 
-		protected override Value? ComputeReturnValue(FunctionContext ctx)
+		protected override IValue? ComputeReturnValue(FunctionContext ctx)
 		{
 			if (ReturnType is VoidType)
 			{

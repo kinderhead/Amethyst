@@ -6,32 +6,40 @@ using Geode.Values;
 
 namespace Geode
 {
-	public abstract class Value
+	public interface IValueLike
+	{
+		IValue Expect();
+	}
+
+	public interface IValue : IValueLike
+	{
+		TypeSpecifier Type { get; }
+		bool IsLiteral => this is IConstantValue;
+
+		ScoreValue AsScore(RenderContext ctx);
+		void If(Action<Execute> apply, RenderContext ctx, int tmp = 0);
+		FormattedText Render(FormattedText text, RenderContext ctx);
+	}
+
+	public abstract class Value : IValue
 	{
 		public abstract TypeSpecifier Type { get; }
-		public bool IsLiteral => this is IConstantValue;
 
 		public abstract ScoreValue AsScore(RenderContext ctx);
-		public abstract Execute If(Execute cmd, RenderContext ctx, int tmp = 0);
+		public IValue Expect() => this;
+		public abstract void If(Action<Execute> apply, RenderContext ctx, int tmp = 0);
 		public abstract FormattedText Render(FormattedText text, RenderContext ctx);
-
-		public override string ToString() => "";
-		public abstract override bool Equals(object? obj);
-		public override int GetHashCode() => base.GetHashCode();
-
-		public static bool operator ==(Value left, Value right) => left.Equals(right);
-		public static bool operator !=(Value left, Value right) => !left.Equals(right);
 	}
 
 	public abstract class LValue : Value
 	{
-		public abstract void Store(Value val, RenderContext ctx);
-		public abstract void ListAdd(Value val, RenderContext ctx);
+		public abstract void Store(IValue val, RenderContext ctx);
+		public abstract void ListAdd(IValue val, RenderContext ctx);
 	}
 
 	public abstract class DataLValue : LValue
 	{
-		public override void Store(Value val, RenderContext ctx)
+		public override void Store(IValue val, RenderContext ctx)
 		{
 			if (val is LiteralValue literal)
 			{
@@ -59,7 +67,7 @@ namespace Geode
 			}
 		}
 
-		public override void ListAdd(Value val, RenderContext ctx)
+		public override void ListAdd(IValue val, RenderContext ctx)
 		{
 			if (val is LiteralValue literal)
 			{
@@ -95,7 +103,7 @@ namespace Geode
 		public virtual void Store(ConditionalValue cond, RenderContext ctx)
 		{
 			Store(new LiteralValue(false), ctx);
-			ctx.Add(cond.If(new(), ctx).Run(ctx.WithFaux(i => Store(new LiteralValue(true), i)).Single()));
+			cond.If(cmd => cmd.Run(ctx.WithFaux(i => Store(new LiteralValue(true), i)).Single()), ctx);
 		}
 
 		public abstract void ListAdd(LiteralValue literal, RenderContext ctx);

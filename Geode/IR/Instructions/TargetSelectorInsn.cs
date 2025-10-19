@@ -5,30 +5,30 @@ using Geode.Values;
 
 namespace Geode.IR.Instructions
 {
-    // SortedDictionary for the same reason as CompoundInsn
-    public class TargetSelectorInsn(TargetType type, SortedDictionary<string, ValueRef> vals) : Instruction(vals.Values)
-    {
-        public override string Name => "target";
-        public override NBTType?[] ArgTypes => [.. Enumerable.Repeat<NBTType?>(null, Arguments.Length)];
-        public override TypeSpecifier ReturnType => new TargetSelectorType();
+	// SortedDictionary for the same reason as CompoundInsn
+	public class TargetSelectorInsn(TargetType type, SortedDictionary<string, ValueRef> vals) : Instruction(vals.Values)
+	{
+		public override string Name => "target";
+		public override NBTType?[] ArgTypes => [.. Enumerable.Repeat<NBTType?>(null, Arguments.Length)];
+		public override TypeSpecifier ReturnType => new TargetSelectorType();
 
-        public readonly TargetType Type = type;
-        public readonly string[] Keys = [.. vals.Keys];
+		public readonly TargetType Type = type;
+		public readonly string[] Keys = [.. vals.Keys];
 
-        public override void Render(RenderContext ctx) { }
+		public override void Render(RenderContext ctx) { }
 
-        protected override Value? ComputeReturnValue(FunctionContext ctx)
-        {
-            var args = new Dictionary<string, Value>();
+		protected override IValue? ComputeReturnValue(FunctionContext ctx)
+		{
+			var args = new Dictionary<string, IValue>();
 
-            for (int i = 0; i < Arguments.Length; i++)
-            {
-                var val = Arg<ValueRef>(i);
-                ReturnValue.Dependencies.Add(val);
-                args[Keys[i]] = val.Expect();
-            }
+			for (var i = 0; i < Arguments.Length; i++)
+			{
+				var val = Arg<ValueRef>(i);
+				ReturnValue.Dependencies.Add(val);
+				args[Keys[i]] = val.Expect();
+			}
 
-            return new TargetSelectorValue(Type, args);
-        }
-    }
+			return new TargetSelectorValue(Type, args);
+		}
+	}
 }

@@ -14,7 +14,7 @@ namespace Amethyst.IR.Instructions
 
 		public override void Render(RenderContext ctx) => throw new InvalidOperationException();
 
-		protected override Value? ComputeReturnValue(FunctionContext ctx)
+		protected override IValue? ComputeReturnValue(FunctionContext ctx)
 		{
 			var val = Arg<ValueRef>(0).Expect<DataTargetValue>();
 			return WeakReferenceType.From(val);

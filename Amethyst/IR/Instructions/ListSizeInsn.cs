@@ -28,7 +28,7 @@ namespace Amethyst.IR.Instructions
 			}
 		}
 
-		protected override Value? ComputeReturnValue(FunctionContext ctx)
+		protected override IValue? ComputeReturnValue(FunctionContext ctx)
 		{
 			if (Arg<ValueRef>(0).Expect() is IConstantValue c && c.Value is NBTList l)
 			{

@@ -1,5 +1,7 @@
 using Datapack.Net.Data;
 using Datapack.Net.Utils;
+using Geode.IR;
+using Geode.IR.Instructions;
 using Geode.Values;
 
 namespace Geode.Types
@@ -15,14 +17,14 @@ namespace Geode.Types
 		public override string ToString() => ID.ToString();
 		protected override bool EqualsImpl(TypeSpecifier obj) => obj is TargetSelectorType;
 
-		//public override ValueRef? CastFromOverload(ValueRef val, TypeSpecifier to, FunctionContext ctx)
-		//{
-		//	if (to == PrimitiveType.Bool)
-		//	{
-		//		return new LoadInsn(val,)
-		//	}
+		public override ValueRef? CastFromOverload(ValueRef val, TypeSpecifier to, FunctionContext ctx)
+		{
+			if (to == PrimitiveType.Bool)
+			{
+				return ctx.Add(new TargetExistsInsn(val));
+			}
 
-		//	return null;
-		//}
+			return null;
+		}
 	}
 }
