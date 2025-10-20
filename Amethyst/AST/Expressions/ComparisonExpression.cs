@@ -1,25 +1,24 @@
 ﻿using Geode;
+using Geode.Chains;
 using Geode.IR;
 using Geode.IR.Instructions;
 using Geode.Types;
 
 namespace Amethyst.AST.Expressions
 {
-	public enum ComparisonOperator
-	{
-		Eq,
-		Neq,
-		Gt,
-		Gte,
-		Lt,
-		Lte
-	}
-
-	public class ComparisonExpression(LocationRange loc, Expression left, ComparisonOperator op, Expression right) : Expression(loc)
+	public class ComparisonExpression(LocationRange loc, Expression left, ComparisonOperator op, Expression right) : Expression(loc), IExecuteChainExpression
 	{
 		public readonly Expression Left = left;
 		public readonly ComparisonOperator Op = op;
 		public readonly Expression Right = right;
+
+		public void ExecuteChain(ExecuteChain chain, FunctionContext ctx)
+		{
+			var left = ctx.Add(new LoadInsn(Left.Execute(ctx, PrimitiveType.Int)));
+			var right = ctx.Add(new LoadInsn(Right.Execute(ctx, PrimitiveType.Int)));
+
+			chain.Add(new ScoreChain(left, Op, right));
+        }
 
 		protected override ValueRef ExecuteImpl(FunctionContext ctx, TypeSpecifier? expected)
 		{

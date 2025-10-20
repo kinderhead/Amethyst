@@ -264,7 +264,7 @@ namespace Geode.IR
 		/// <param name="label">Label name</param>
 		/// <param name="ifTrue">If true action</param>
 		/// <returns>True block</returns>
-		public Block Branch(ValueRef cond, string label, Action ifTrue)
+		public Block Branch(ExecuteChain cond, string label, Action ifTrue)
 		{
 			label = GetNewLabelName(label);
 
@@ -289,7 +289,7 @@ namespace Geode.IR
 			return trueBlock;
 		}
 
-		public (Block trueBlock, Block falseBlock) Branch(ValueRef cond, string label, Action ifTrue, Action ifFalse)
+		public (Block trueBlock, Block falseBlock) Branch(ExecuteChain cond, string label, Action ifTrue, Action ifFalse)
 		{
 			label = GetNewLabelName(label);
 
@@ -338,15 +338,17 @@ namespace Geode.IR
 			loopBlock.Link(loopBlock);
 			loopBlock.Link(endBlock);
 
-			Add(new BranchInsn(cond(), loopBlock, endBlock));
+			throw new NotImplementedException();
 
-			CurrentBlock = loopBlock;
-			loop();
-			Add(new BranchInsn(cond(), loopBlock, endBlock));
+			// Add(new BranchInsn(cond(), loopBlock, endBlock));
 
-			CurrentBlock = endBlock;
+			// CurrentBlock = loopBlock;
+			// loop();
+			// Add(new BranchInsn(cond(), loopBlock, endBlock));
 
-			return loopBlock;
+			// CurrentBlock = endBlock;
+
+			// return loopBlock;
 		}
 
 		public void AllocateRegisters(GeodeBuilder builder, LifetimeGraph graph)

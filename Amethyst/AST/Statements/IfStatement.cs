@@ -12,15 +12,24 @@ namespace Amethyst.AST.Statements
 
 		public override void Compile(FunctionContext ctx)
 		{
-			var cond = Expression.Execute(ctx, null);
+			var chain = new ExecuteChain();
+
+			if (Expression is IExecuteChainExpression e)
+			{
+				e.ExecuteChain(chain, ctx);
+			}
+			else
+            {
+				throw new NotImplementedException();
+            }
 
 			if (Else is not null)
 			{
-				ctx.Branch(cond, "if", () => Statement.Compile(ctx), () => Else.Compile(ctx));
+				ctx.Branch(chain, "if", () => Statement.Compile(ctx), () => Else.Compile(ctx));
 			}
 			else
 			{
-				ctx.Branch(cond, "if", () => Statement.Compile(ctx));
+				ctx.Branch(chain, "if", () => Statement.Compile(ctx));
 			}
 		}
 	}
