@@ -1,0 +1,21 @@
+// The example program at the beginning of the README, probably updated
+
+namespace example;
+
+#load
+void main() {
+    print("Hello World");
+
+    int x = 7;
+    print("Value: ", x * 9);
+
+    @/say $(x == 7)
+
+    int array = [x];
+    array.add(-9);
+    print(array);
+
+    if (@s[type="player"]) {
+        print("Called by a player");
+    }
+}
