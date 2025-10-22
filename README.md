@@ -466,7 +466,7 @@ as (@e[type="sheep"]) at (@s) {
 }
 ```
 
-Currently, the following subcommands are implemented:
+Currently the following subcommands are implemented:
 
 * `if`
 * `as`
