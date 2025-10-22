@@ -349,7 +349,7 @@ namespace Amethyst.AST
 				}
 				else if (context.children[i].GetText() == "!")
 				{
-					node = new UnaryExpression(Loc(context), UnaryOperation.Not, node);
+					node = new NotExpression(Loc(context), node);
 				}
 				else if (context.children[i].GetText() == "-")
 				{

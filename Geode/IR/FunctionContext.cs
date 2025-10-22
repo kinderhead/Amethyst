@@ -22,7 +22,9 @@ namespace Geode.IR
 		public Block CurrentBlock { get; private set; }
 
 		public bool IsFinished => CurrentBlock == ExitBlock;
-		public bool UsesStack => AllLocals.Any(i => i is StorageValue) || registersInUse.Count != 0 || tmpStackVars != 0;
+
+		// If there's more than one block, then stack[-1].returning is used
+		public bool UsesStack => AllLocals.Any(i => i is StorageValue) || registersInUse.Count != 0 || tmpStackVars != 0 || Blocks.Count > 1;
 		public readonly bool IsMacroFunction;
 		public readonly bool HasTagPriority;
 
@@ -322,7 +324,7 @@ namespace Geode.IR
 			return (trueBlock, falseBlock);
 		}
 
-		public Block Loop(Func<ValueRef> cond, string label, Action loop)
+		public Block Loop(Func<ExecuteChain> cond, string label, Action loop)
 		{
 			label = GetNewLabelName(label);
 
@@ -338,17 +340,15 @@ namespace Geode.IR
 			loopBlock.Link(loopBlock);
 			loopBlock.Link(endBlock);
 
-			throw new NotImplementedException();
+			Add(new BranchInsn(cond(), loopBlock, endBlock));
 
-			// Add(new BranchInsn(cond(), loopBlock, endBlock));
+			CurrentBlock = loopBlock;
+			loop();
+			Add(new BranchInsn(cond(), loopBlock, endBlock));
 
-			// CurrentBlock = loopBlock;
-			// loop();
-			// Add(new BranchInsn(cond(), loopBlock, endBlock));
+			CurrentBlock = endBlock;
 
-			// CurrentBlock = endBlock;
-
-			// return loopBlock;
+			return loopBlock;
 		}
 
 		public void AllocateRegisters(GeodeBuilder builder, LifetimeGraph graph)

@@ -1,5 +1,4 @@
-﻿using Amethyst.AST.Expressions;
-using Geode;
+﻿using Geode;
 using Geode.IR;
 
 namespace Amethyst.AST.Statements
@@ -14,7 +13,12 @@ namespace Amethyst.AST.Statements
 		public override void Compile(FunctionContext ctx)
 		{
 			Initializer?.Compile(ctx);
-			ctx.Loop(() => Condition.Execute(ctx, null), "for", () =>
+			ctx.Loop(() =>
+            {
+				var chain = new ExecuteChain();
+				Condition.ExecuteChain(chain, ctx);
+				return chain;
+			}, "for", () =>
 			{
 				Body.Compile(ctx);
 				Iterator.Execute(ctx, null);

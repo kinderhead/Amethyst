@@ -1,5 +1,4 @@
-﻿using Amethyst.AST.Expressions;
-using Geode;
+﻿using Geode;
 using Geode.IR;
 using Geode.IR.Instructions;
 using Geode.Types;

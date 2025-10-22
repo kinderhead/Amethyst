@@ -7,6 +7,7 @@ void test_entity_exists() {
     @/kill @e[type=wither]
     
     macro_entity_tester(false);
+    assert(!@e[type="wither"]);
 
     @/summon wither
 
@@ -16,12 +17,15 @@ void test_entity_exists() {
     @/kill @e[type=wither]
 
     macro_entity_tester(false);
+    assert(!@e[type="wither"]);
 
     complete();
 }
 
 void macro_entity_tester(macro bool x) {
-    if (@e[type="wither"]) {
+    string type = "wither";
+
+    if (@e[type=type]) {
         assert(x);
     } else {
         assert(!x);

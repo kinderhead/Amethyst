@@ -1,5 +1,6 @@
 using Datapack.Net.Data;
 using Datapack.Net.Utils;
+using Geode.Chains;
 using Geode.IR;
 using Geode.IR.Instructions;
 using Geode.Values;
@@ -26,5 +27,7 @@ namespace Geode.Types
 
 			return null;
 		}
+
+		public override void ExecuteChainOverload(ValueRef val, ExecuteChain chain, FunctionContext ctx, bool invert = false) => chain.Add(new EntityChain(val, invert));
 	}
 }

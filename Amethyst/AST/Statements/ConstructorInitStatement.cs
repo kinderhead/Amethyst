@@ -1,4 +1,3 @@
-using Amethyst.AST.Expressions;
 using Amethyst.IR;
 using Amethyst.IR.Types;
 using Geode;

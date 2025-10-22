@@ -1,11 +1,12 @@
 ﻿using Datapack.Net.Data;
 using Datapack.Net.Function.Commands;
+using Geode.Chains;
 using Geode.Types;
 using Geode.Values;
 
 namespace Geode.IR.Instructions
 {
-	public class NotInsn(ValueRef val) : Instruction([val])
+	public class NotInsn(ExecuteChain val) : Instruction([val])
 	{
 		public override string Name => "not";
 		public override NBTType?[] ArgTypes => [null];
@@ -13,44 +14,26 @@ namespace Geode.IR.Instructions
 
 		public override void Render(RenderContext ctx)
 		{
-			var raw = Arg<ValueRef>(0).Expect();
+			var cond = Arg<ExecuteChain>(0);
+			var ret = ReturnValue.Expect<LValue>();
 
-			if (raw is ConditionalValue c)
-			{
-				c.Flip = !c.Flip;
-				ReturnValue.SetValue(c);
-				return;
-			}
-
-			var ret = ReturnValue.Expect<ScoreValue>();
-			ScoreValue val;
-
-			if (raw is ScoreValue s)
-			{
-				val = s;
-			}
-			else
-			{
-				val = ctx.Builder.Temp(0);
-				val.Store(raw, ctx);
-			}
-
-			ctx.Add(new Execute().Unless.Score(val.Target, val.Score, 0).Run(ctx.WithFaux(ctx => ret.Store(new LiteralValue(0), ctx)).Single()));
-			ctx.Add(new Execute().If.Score(val.Target, val.Score, 0).Run(ctx.WithFaux(ctx => ret.Store(new LiteralValue(1), ctx)).Single()));
+			ret.Store(new LiteralValue(true), ctx);
+			cond.Run(ctx.WithFaux(ctx => ret.Store(new LiteralValue(false), ctx)).Single(), ctx);
 		}
 
-		public override void ConfigureLifetime(Func<ValueRef, ValueRef, bool> tryLink, Action<ValueRef, ValueRef> markOverlap) => markOverlap(Arg<ValueRef>(0), ReturnValue);
+		public override void ConfigureLifetime(Func<ValueRef, ValueRef, bool> tryLink, Action<ValueRef, ValueRef> markOverlap)
+        {
+			foreach (var i in Arg<ExecuteChain>(0).Dependencies)
+			{
+				markOverlap(i, ReturnValue);
+			}
+        }
 
 		protected override IValue? ComputeReturnValue(FunctionContext ctx)
 		{
-			var val = Arg<ValueRef>(0).Value;
+			var chain = Arg<ExecuteChain>(0);
 
-			if (val is ConditionalValue c)
-			{
-				return c;
-			}
-
-			if (val is not LiteralValue l)
+			if (chain.Chain[0] is not ValueChain valChain || valChain.Values[0].Value is not LiteralValue l)
 			{
 				return null;
 			}

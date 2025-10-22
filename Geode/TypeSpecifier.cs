@@ -1,5 +1,6 @@
 ﻿using Datapack.Net.Data;
 using Datapack.Net.Utils;
+using Geode.Chains;
 using Geode.IR;
 using Geode.IR.Instructions;
 using Geode.Types;
@@ -113,6 +114,7 @@ namespace Geode
 		public virtual ValueRef? ExplicitCastFromOverload(ValueRef val, TypeSpecifier to, FunctionContext ctx) => null;
 		public virtual ValueRef? CastFromOverload(ValueRef val, TypeSpecifier to, FunctionContext ctx) => null;
 		public virtual ValueRef? CastToOverload(ValueRef val, FunctionContext ctx) => null;
+		public virtual void ExecuteChainOverload(ValueRef val, ExecuteChain chain, FunctionContext ctx, bool invert = false) => chain.Add(ValueChain.With(val, ctx, invert));
 
 		public override int GetHashCode() => ToString().GetHashCode();
 

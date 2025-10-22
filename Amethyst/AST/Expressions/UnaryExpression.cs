@@ -11,7 +11,6 @@ namespace Amethyst.AST.Expressions
 	{
 		Increment,
 		Decrement,
-		Not,
 		Negate
 	}
 
@@ -44,8 +43,6 @@ namespace Amethyst.AST.Expressions
 					var dec = ctx.Add(new SubInsn(val, new LiteralValue(1)));
 					ctx.Add(new StoreInsn(val, dec));
 					return val;
-				case UnaryOperation.Not:
-					return ctx.Add(new NotInsn(val));
 				case UnaryOperation.Negate:
 					return ctx.Add(new MulInsn(ctx.ImplicitCast(val, PrimitiveType.Int), new LiteralValue(-1)));
 				default:

@@ -1,4 +1,3 @@
-using Amethyst.AST.Expressions;
 using Datapack.Net.Utils;
 using Geode;
 using Geode.IR.Instructions;

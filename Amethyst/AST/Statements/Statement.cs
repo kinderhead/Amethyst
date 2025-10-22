@@ -1,5 +1,4 @@
-﻿using Amethyst.AST.Expressions;
-using Geode;
+﻿using Geode;
 using Geode.IR;
 
 namespace Amethyst.AST.Statements

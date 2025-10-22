@@ -25,7 +25,7 @@ namespace Geode.Chains
             if (Op == ComparisonOperator.Neq)
             {
                 // Could probably do some fancy one-line logic in the constructor
-                invert = !invert;
+                Invert = !Invert;
             }
 		}
 

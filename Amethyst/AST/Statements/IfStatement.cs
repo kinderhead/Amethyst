@@ -1,6 +1,7 @@
-﻿using Amethyst.AST.Expressions;
-using Geode;
+﻿using Geode;
+using Geode.Chains;
 using Geode.IR;
+using Geode.Types;
 
 namespace Amethyst.AST.Statements
 {
@@ -14,14 +15,7 @@ namespace Amethyst.AST.Statements
 		{
 			var chain = new ExecuteChain();
 
-			if (Expression is IExecuteChainExpression e)
-			{
-				e.ExecuteChain(chain, ctx);
-			}
-			else
-            {
-				throw new NotImplementedException();
-            }
+			Expression.ExecuteChain(chain, ctx);
 
 			if (Else is not null)
 			{

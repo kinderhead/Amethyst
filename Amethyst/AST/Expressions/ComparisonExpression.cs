@@ -6,18 +6,18 @@ using Geode.Types;
 
 namespace Amethyst.AST.Expressions
 {
-	public class ComparisonExpression(LocationRange loc, Expression left, ComparisonOperator op, Expression right) : Expression(loc), IExecuteChainExpression
+	public class ComparisonExpression(LocationRange loc, Expression left, ComparisonOperator op, Expression right) : Expression(loc)
 	{
 		public readonly Expression Left = left;
 		public readonly ComparisonOperator Op = op;
 		public readonly Expression Right = right;
 
-		public void ExecuteChain(ExecuteChain chain, FunctionContext ctx)
+		public override void ExecuteChain(ExecuteChain chain, FunctionContext ctx, bool invert = false)
 		{
 			var left = ctx.Add(new LoadInsn(Left.Execute(ctx, PrimitiveType.Int)));
 			var right = ctx.Add(new LoadInsn(Right.Execute(ctx, PrimitiveType.Int)));
 
-			chain.Add(new ScoreChain(left, Op, right));
+			chain.Add(new ScoreChain(left, Op, right, invert));
         }
 
 		protected override ValueRef ExecuteImpl(FunctionContext ctx, TypeSpecifier? expected)
