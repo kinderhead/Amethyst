@@ -51,7 +51,7 @@ statement
     ) Semi+
     | commandStatement
     | block
-    | ifStatement
+    | executeStatement
     | forStatement
     ;
 
@@ -67,8 +67,12 @@ commandStatement
     : Command
     ;
 
-ifStatement
-    : If LParen expression RParen statement (Else statement)?
+executeStatement
+    : executeSubcommand+ statement (Else statement)?
+    ;
+
+executeSubcommand
+    : (If | As | At) LParen expression RParen
     ;
 
 forStatement
@@ -191,6 +195,8 @@ id
 
 Namespace: 'namespace';
 If: 'if';
+As: 'as';
+At: 'at';
 Else: 'else';
 For: 'for';
 Return: 'return';

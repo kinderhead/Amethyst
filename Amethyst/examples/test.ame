@@ -4,6 +4,8 @@ namespace example;
 
 #load
 void main() {
-    bool x = !@e[type="player"];
-    print(x);
+    at (@e) {
+        @/tp kinderhead ~ ~ ~
+        return;
+    }
 }

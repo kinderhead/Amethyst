@@ -33,7 +33,7 @@ namespace Geode.IR.Instructions
 		{
 			var chain = Arg<ExecuteChain>(0);
 
-			if (chain.Chain[0] is not ValueChain valChain || valChain.Values[0].Value is not LiteralValue l)
+			if (chain.Chain[0] is not IfValueChain valChain || valChain.Values[0].Value is not LiteralValue l)
 			{
 				return null;
 			}

@@ -1,4 +1,5 @@
 using Datapack.Net.Function;
+using Datapack.Net.Function.Commands;
 using Datapack.Net.Utils;
 using Geode.Errors;
 using Geode.IR.Instructions;
@@ -17,6 +18,8 @@ namespace Geode.IR
 		public readonly List<Block> Next = [];
 
 		public readonly MCFunction Function = new(funcID, true);
+
+		public bool ForkGuard { get; private set; }
 
 		public HashSet<ValueRef> Dependencies { get; } = [];
 
@@ -53,6 +56,12 @@ namespace Geode.IR
 
 		public void Render(GeodeBuilder builder, FunctionContext ctx)
 		{
+			if (ForkGuard)
+			{
+				var returning = ctx.GetIsFunctionReturningValue();
+				Function.Add(new Execute().If.Data(returning.Storage, returning.Path).Run(new ReturnCommand(0)));
+			}
+			
 			foreach (var i in Instructions)
 			{
 				if (!ctx.Compiler.WrapError(i.Location, ctx, () =>
@@ -110,6 +119,8 @@ namespace Geode.IR
 
 			return insns;
 		}
+
+		public void EnableForkGuard() => ForkGuard = true;
 
 		public RenderContext GetRenderCtx(GeodeBuilder builder, FunctionContext ctx) => new(Function, this, builder, ctx);
 	}

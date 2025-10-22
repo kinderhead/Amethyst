@@ -28,6 +28,6 @@ namespace Geode.Types
 			return null;
 		}
 
-		public override void ExecuteChainOverload(ValueRef val, ExecuteChain chain, FunctionContext ctx, bool invert = false) => chain.Add(new EntityChain(val, invert));
+		public override void ExecuteChainOverload(ValueRef val, ExecuteChain chain, FunctionContext ctx, bool invert = false) => chain.Add(new IfEntityChain(val, invert));
 	}
 }

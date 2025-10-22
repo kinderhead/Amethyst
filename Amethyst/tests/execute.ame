@@ -1,0 +1,87 @@
+namespace test;
+
+#test
+void test_if() {
+    start("if");
+
+    int x = 5;
+    
+    if (x == 5) {
+        assert(true);
+    } else {
+        assert(false);
+    }
+
+    if (x != 5) {
+        assert(false);
+    } else {
+        assert(true);
+    }
+
+    complete();
+}
+
+#test
+void test_if_not() {
+    start("if not");
+
+    int x = 5;
+    
+    if (!(x == 5)) {
+        assert(false);
+    } else {
+        assert(true);
+    }
+
+    if (!(x != 5)) {
+        assert(true);
+    } else {
+        assert(false);
+    }
+
+    complete();
+}
+
+#test
+void test_if_many() {
+    start("if many");
+
+    int x = 8;
+    string type = "wither";
+
+    @/summon wither
+
+    if (x == 8) if (x > 4) if (@e[type=type]) {
+        assert(true);
+    } else {
+        assert(false);
+    }
+
+    @/kill @e[type=wither]
+
+    complete();
+}
+
+#test
+void test_as_return() {
+    start("as return");
+
+    @/summon wither
+    @/summon wither
+
+    assert(as_return_tester() == 3);
+
+    @/kill @e[type=wither]
+
+    complete();
+}
+
+int as_return_tester() {
+    int x = 2;
+
+    as (@e) {
+        return ++x;
+    }
+
+    return 0;
+}

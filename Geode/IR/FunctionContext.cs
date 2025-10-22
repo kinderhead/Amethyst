@@ -274,6 +274,11 @@ namespace Geode.IR
 			var trueBlock = new Block($"{label}.true", GetNewInternalID(), this);
 			var endBlock = new Block($"{label}.end", GetNewInternalID(), this);
 
+			if (cond.Forks)
+			{
+				trueBlock.EnableForkGuard();
+			}
+
 			blocks.Add(trueBlock);
 			blocks.Add(endBlock);
 
@@ -299,6 +304,11 @@ namespace Geode.IR
 			var trueBlock = new Block($"{label}.true", GetNewInternalID(), this);
 			var falseBlock = new Block($"{label}.false", GetNewInternalID(), this);
 			var endBlock = new Block($"{label}.end", GetNewInternalID(), this);
+
+			if (cond.Forks)
+			{
+				trueBlock.EnableForkGuard();
+			}
 
 			blocks.Add(trueBlock);
 			blocks.Add(falseBlock);

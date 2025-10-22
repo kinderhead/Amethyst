@@ -1,4 +1,5 @@
-﻿using Amethyst.Antlr;
+﻿using System.Text.RegularExpressions;
+using Amethyst.Antlr;
 using Amethyst.AST.Expressions;
 using Amethyst.AST.Statements;
 using Antlr4.Runtime;
@@ -11,7 +12,6 @@ using Datapack.Net.Utils;
 using Geode;
 using Geode.Chains;
 using Geode.Types;
-using System.Text.RegularExpressions;
 
 namespace Amethyst.AST
 {
@@ -155,7 +155,28 @@ namespace Amethyst.AST
 
 		public override Node VisitInitAssignmentStatement([NotNull] AmethystParser.InitAssignmentStatementContext context) => new InitAssignmentNode(Loc(context), Visit(context.type()), Visit(context.id()), context.expression() is null ? null : Visit(context.expression()));
 		public override Node VisitExpressionStatement([NotNull] AmethystParser.ExpressionStatementContext context) => new ExpressionStatement(Loc(context), Visit(context.expression()));
-		public override Node VisitIfStatement([NotNull] AmethystParser.IfStatementContext context) => context.statement().Length != 0 ? new IfStatement(Loc(context), Visit(context.expression()), Visit(context.statement().First()), context.statement().Length == 2 ? Visit(context.statement().Last()) : null) : new ExpressionStatement(Loc(context), new LiteralExpression(Loc(context), new NBTString("uh")));
+		public override Node VisitExecuteStatement([NotNull] AmethystParser.ExecuteStatementContext context) => new ExecuteStatement(Loc(context), context.executeSubcommand().Select(i => (ExecuteStatementSubcommand)Visit(i)), Visit(context.statement().First()), context.statement().Length == 2 ? Visit(context.statement().Last()) : null);
+
+		public override Node VisitExecuteSubcommand([NotNull] AmethystParser.ExecuteSubcommandContext context)
+        {
+			if (context.If() is not null)
+			{
+				return new IfSubcommand(Loc(context), Visit(context.expression()));
+			}
+			else if (context.As() is not null)
+			{
+				return new AsSubcommand(Loc(context), Visit(context.expression()));
+			}
+			else if (context.At() is not null)
+			{
+				return new AtSubcommand(Loc(context), Visit(context.expression()));
+			}
+			else
+			{
+				throw new NotImplementedException();
+			}
+        }
+
 		public override Node VisitForStatement([NotNull] AmethystParser.ForStatementContext context) => new ForStatement(Loc(context), context.initAssignmentStatement() is not null ? (Statement?)Visit(context.initAssignmentStatement()) : null, Visit(context.cond), Visit(context.it), Visit(context.statement()));
 		public override Node VisitReturnStatement([NotNull] AmethystParser.ReturnStatementContext context) => new ReturnStatement(Loc(context), context.expression() is null ? null : Visit(context.expression()));
 

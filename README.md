@@ -33,6 +33,7 @@
     - [Target Selectors](#target-selectors)
       - [Existence Checks](#existence-checks)
     - [Control Flow](#control-flow)
+      - [For Loops](#for-loops)
     - [Inline Commands](#inline-commands)
     - [References](#references)
       - [Weak References](#weak-references)
@@ -457,15 +458,54 @@ Target selectors can also be converted to boolean values. The result is `true` i
 
 ### Control Flow
 
-Amethyst supports the traditional C-style `if` and `for` loops:
+Unlike other programming languages, Amethyst doesn't have a true `if` statement. Instead, any number of `/execute` subcommands can be put together to form an `execute` statement.
+
+```cs
+as (@e[type="sheep"]) at (@s) {
+    @/tp @r ~ ~ ~
+}
+```
+
+Currently, the following subcommands are implemented:
+
+* `if`
+* `as`
+* `at`
+
+To create a traditional `if` statement, just use the `if` subcommand like so:
 
 ```cs
 if (x == 4) {
-    print("true");
-} else {
-    print("false");
+    ...
 }
+```
 
+An `else` clause can be added which runs if the `execute` statement terminates:
+
+```cs
+if (@e[type="creeper"]) {
+    print("There is a creeper");
+} else {
+    print("There are no creepers");
+}
+```
+
+If an `execute` statement forks, all `return`s inside will terminate future forks. For example:
+
+```cs
+int x = 0;
+as (@e) {
+    print("I happen once");
+    // Returns 1
+    return ++x;
+}
+```
+
+#### For Loops
+
+Amethyst supports traditional C-style `for` loops:
+
+```cs
 for (int i = 0; i < 10; ++i) {
     print("Loop ", i + 1);
 }

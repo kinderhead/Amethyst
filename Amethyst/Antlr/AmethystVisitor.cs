@@ -117,11 +117,17 @@ public interface IAmethystVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <return>The visitor result.</return>
 	Result VisitCommandStatement([NotNull] AmethystParser.CommandStatementContext context);
 	/// <summary>
-	/// Visit a parse tree produced by <see cref="AmethystParser.ifStatement"/>.
+	/// Visit a parse tree produced by <see cref="AmethystParser.executeStatement"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
-	Result VisitIfStatement([NotNull] AmethystParser.IfStatementContext context);
+	Result VisitExecuteStatement([NotNull] AmethystParser.ExecuteStatementContext context);
+	/// <summary>
+	/// Visit a parse tree produced by <see cref="AmethystParser.executeSubcommand"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitExecuteSubcommand([NotNull] AmethystParser.ExecuteSubcommandContext context);
 	/// <summary>
 	/// Visit a parse tree produced by <see cref="AmethystParser.forStatement"/>.
 	/// </summary>

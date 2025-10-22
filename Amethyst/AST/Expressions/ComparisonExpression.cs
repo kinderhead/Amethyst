@@ -17,7 +17,7 @@ namespace Amethyst.AST.Expressions
 			var left = ctx.Add(new LoadInsn(Left.Execute(ctx, PrimitiveType.Int)));
 			var right = ctx.Add(new LoadInsn(Right.Execute(ctx, PrimitiveType.Int)));
 
-			chain.Add(new ScoreChain(left, Op, right, invert));
+			chain.Add(new IfScoreChain(left, Op, right, invert));
         }
 
 		protected override ValueRef ExecuteImpl(FunctionContext ctx, TypeSpecifier? expected)

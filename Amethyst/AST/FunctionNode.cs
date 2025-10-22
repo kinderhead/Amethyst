@@ -49,7 +49,8 @@ namespace Amethyst.AST
 				}
 				else
 				{
-					throw new MissingReturnError();
+					new MissingReturnError().Display(compiler, Location);
+					return false;
 				}
 			}
 

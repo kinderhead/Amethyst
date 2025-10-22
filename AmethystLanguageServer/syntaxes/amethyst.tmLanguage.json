@@ -60,7 +60,7 @@
 				},
 				{
 					"name": "keyword.control.amethyst",
-					"match": "\\b(if|else|for|in|return)\\b"
+					"match": "\\b(if|as|at|else|for|in|return)\\b"
 				},
 				{
 					"name": "storage.modifier.amethyst",

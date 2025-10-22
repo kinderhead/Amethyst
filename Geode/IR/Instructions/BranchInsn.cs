@@ -18,37 +18,9 @@ namespace Geode.IR.Instructions
 			var ifTrue = Arg<Block>(1);
 			var ifFalse = Arg<Block>(2);
 
-			var returning = ctx.Func.GetIsFunctionReturningValue();
-
-			// if (cond is LiteralValue l)
-			// {
-			// 	if (l.Value.ToString() is "0" or "[]" or "{}" or "" or "\"\"" or "''")
-			// 	{
-			// 		ctx.Add(ctx.CallSubFunction(ifFalse.Function));
-			// 	}
-			// 	else
-			// 	{
-			// 		ctx.Add(ctx.CallSubFunction(ifTrue.Function));
-			// 	}
-
-			// 	return;
-			// }
-
-			// if (cond.Type is TargetSelectorType)
-			// {
-			// 	// Probably a better way to do this
-			// 	ctx.Builder.Macroizer.RunAndPropagateMacros(ctx, [cond], (args, macros, ctx) =>
-			// 	{
-			// 		ctx.Add(new Execute().If.Entity(new NamedTarget(args[0].Value.Build())).Run(ctx.CallSubFunction(ifTrue.Function, macros)));
-			// 	});
-			// }
-			// else
-			// {
-			// 	cond.If(cmd => cmd.Run(ctx.CallSubFunction(ifTrue.Function)), ctx);
-			// }
-
 			cond.RunWithPropagate(macros => ctx.CallSubFunction(ifTrue.Function, macros), ctx);
 
+			var returning = ctx.Func.GetIsFunctionReturningValue();
 			ctx.Add(new Execute().Unless.Data(returning.Storage, returning.Path).Run(ctx.CallSubFunction(ifFalse.Function)));
 		}
 

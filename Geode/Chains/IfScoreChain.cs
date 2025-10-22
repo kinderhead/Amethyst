@@ -1,6 +1,5 @@
 using Datapack.Net.Function.Commands;
 using Geode.IR.Instructions;
-using System;
 
 namespace Geode.Chains
 {
@@ -14,12 +13,12 @@ namespace Geode.Chains
         Lte
     }
 
-    public class ScoreChain : ExecuteChainSubcommand
+    public class IfScoreChain : ExecuteChainConditional
     {
         public readonly ComparisonOperator Op;
 
-		public ScoreChain(ValueRef left, ComparisonOperator op, ValueRef right, bool invert = false) : base([left, right], invert)
-		{
+        public IfScoreChain(ValueRef left, ComparisonOperator op, ValueRef right, bool invert = false) : base([left, right], invert)
+        {
             Op = op;
 
             if (Op == ComparisonOperator.Neq)
@@ -27,11 +26,9 @@ namespace Geode.Chains
                 // Could probably do some fancy one-line logic in the constructor
                 Invert = !Invert;
             }
-		}
-
-		public override bool RequireLiteral => false;
-
-		public override bool? Build(IValue[] processedArgs, RenderContext ctx, Execute.Conditional cmd)
+        }
+        
+		protected override bool? Build(IValue[] processedArgs, RenderContext ctx, Execute.Conditional cmd)
         {
             var left = new ValueRef(processedArgs[0]);
             var right = new ValueRef(processedArgs[1]);

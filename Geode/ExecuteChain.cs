@@ -11,7 +11,9 @@ namespace Geode
     {
         public readonly List<ExecuteChainSubcommand> Chain = [];
 		public string Name => "chain";
-		public HashSet<ValueRef> Dependencies => [.. Chain.SelectMany(i => i.Values)];
+        public HashSet<ValueRef> Dependencies => [.. Chain.SelectMany(i => i.Values)];
+
+        public bool Forks => Chain.Any(i => i.Forks);
 
 		public void Add(ExecuteChainSubcommand cmd) => Chain.Add(cmd);
 
@@ -50,12 +52,12 @@ namespace Geode
             {
                 if (i.RequireLiteral)
                 {
-                    ret = i.Build(args[idex..i.Values.Length], ctx, i.Invert ? cmd.Unless : cmd.If);
+                    ret = i.Build(args[idex..(idex + i.Values.Length)], ctx, cmd);
                     idex += i.Values.Length;
                 }
                 else
                 {
-                    ret = i.Build([.. i.Values.Select(i => i.Expect())], ctx, i.Invert ? cmd.Unless : cmd.If);
+                    ret = i.Build([.. i.Values.Select(i => i.Expect())], ctx, cmd);
                 }
 
                 if (ret is not null)
@@ -78,20 +80,28 @@ namespace Geode
         }
     }
 
-    public abstract class ExecuteChainSubcommand(IEnumerable<ValueRef> vals, bool invert)
+    public abstract class ExecuteChainSubcommand(IEnumerable<ValueRef> vals)
     {
         public ValueRef[] Values = [.. vals];
-        public bool Invert = invert;
 
-        public abstract bool RequireLiteral { get; }
+        public virtual bool RequireLiteral => false;
+        public virtual bool Forks => false;
 
         /// <summary>
         /// Process the execute chain subcommand
         /// </summary>
         /// <param name="processedArgs"><see cref="Values"> processed in accordance with <see cref="RequireLiteral"></param>
         /// <param name="ctx"/>Render context</param>
-        /// <param name="cmd">Execute command conditional</param>
+        /// <param name="cmd">Execute command</param>
         /// <returns>True if the result is always true, false if the result is always false, null otherwise</returns>
-        public abstract bool? Build(IValue[] processedArgs, RenderContext ctx, Execute.Conditional cmd);
+        public abstract bool? Build(IValue[] processedArgs, RenderContext ctx, Execute cmd);
+    }
+
+    public abstract class ExecuteChainConditional(IEnumerable<ValueRef> vals, bool invert) : ExecuteChainSubcommand(vals)
+    {
+        public bool Invert = invert;
+
+		public override bool? Build(IValue[] processedArgs, RenderContext ctx, Execute cmd) => Build(processedArgs, ctx, Invert ? cmd.Unless : cmd.If);
+        protected abstract bool? Build(IValue[] processedArgs, RenderContext ctx, Execute.Conditional cmd);
     }
 }

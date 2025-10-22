@@ -22,7 +22,7 @@ namespace Amethyst.AST.Expressions
 				{
 					"x" or "y" or "z" or "dx" or "dy" or "dz" => v.Execute(ctx, PrimitiveType.Double),
 					"limit" => v.Execute(ctx, PrimitiveType.Int),
-					"name" or "type" => v.Execute(ctx, PrimitiveType.String),
+					"name" or "type" or "tag" or "team" => v.Execute(ctx, PrimitiveType.String),
 					_ => throw new TargetSelectorArgumentError(k),
 				};
 			}
