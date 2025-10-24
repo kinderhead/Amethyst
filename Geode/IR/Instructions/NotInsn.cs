@@ -1,5 +1,4 @@
 ﻿using Datapack.Net.Data;
-using Datapack.Net.Function.Commands;
 using Geode.Chains;
 using Geode.Types;
 using Geode.Values;
@@ -22,12 +21,12 @@ namespace Geode.IR.Instructions
 		}
 
 		public override void ConfigureLifetime(Func<ValueRef, ValueRef, bool> tryLink, Action<ValueRef, ValueRef> markOverlap)
-        {
+		{
 			foreach (var i in Arg<ExecuteChain>(0).Dependencies)
 			{
 				markOverlap(i, ReturnValue);
 			}
-        }
+		}
 
 		protected override IValue? ComputeReturnValue(FunctionContext ctx)
 		{

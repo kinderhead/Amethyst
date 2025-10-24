@@ -61,7 +61,7 @@ namespace Geode.IR
 				var returning = ctx.GetIsFunctionReturningValue();
 				Function.Add(new Execute().If.Data(returning.Storage, returning.Path).Run(new ReturnCommand(0)));
 			}
-			
+
 			foreach (var i in Instructions)
 			{
 				if (!ctx.Compiler.WrapError(i.Location, ctx, () =>

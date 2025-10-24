@@ -14,7 +14,7 @@ namespace Amethyst.AST.Statements
 		{
 			Initializer?.Compile(ctx);
 			ctx.Loop(() =>
-            {
+			{
 				var chain = new ExecuteChain();
 				Condition.ExecuteChain(chain, ctx);
 				return chain;

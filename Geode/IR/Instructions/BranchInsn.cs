@@ -1,5 +1,4 @@
 using Datapack.Net.Data;
-using Datapack.Net.Function;
 using Datapack.Net.Function.Commands;
 using Geode.Types;
 using Geode.Values;

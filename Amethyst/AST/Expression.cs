@@ -25,7 +25,7 @@ namespace Amethyst.AST
 		}
 
 		public virtual void ExecuteChain(ExecuteChain chain, FunctionContext ctx, bool invert = false)
-        {
+		{
 			var val = Execute(ctx, null);
 			val.Type.ExecuteChainOverload(val, chain, ctx, invert);
 		}

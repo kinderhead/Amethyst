@@ -8,16 +8,16 @@ namespace Amethyst.AST.Expressions
 	{
 		public readonly Expression Value = val;
 
-        public override void ExecuteChain(ExecuteChain chain, FunctionContext ctx, bool invert = false)
-        {
-            Value.ExecuteChain(chain, ctx, !invert);
-        }
+		public override void ExecuteChain(ExecuteChain chain, FunctionContext ctx, bool invert = false)
+		{
+			Value.ExecuteChain(chain, ctx, !invert);
+		}
 
-        protected override ValueRef ExecuteImpl(FunctionContext ctx, TypeSpecifier? expected)
-        {
-            var chain = new ExecuteChain();
-            Value.ExecuteChain(chain, ctx);
-            return ctx.Add(new NotInsn(chain));
-        }
+		protected override ValueRef ExecuteImpl(FunctionContext ctx, TypeSpecifier? expected)
+		{
+			var chain = new ExecuteChain();
+			Value.ExecuteChain(chain, ctx);
+			return ctx.Add(new NotInsn(chain));
+		}
 	}
 }

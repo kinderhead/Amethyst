@@ -1,5 +1,4 @@
-﻿using System.Text.RegularExpressions;
-using Amethyst.Antlr;
+﻿using Amethyst.Antlr;
 using Amethyst.AST.Expressions;
 using Amethyst.AST.Statements;
 using Antlr4.Runtime;
@@ -12,6 +11,7 @@ using Datapack.Net.Utils;
 using Geode;
 using Geode.Chains;
 using Geode.Types;
+using System.Text.RegularExpressions;
 
 namespace Amethyst.AST
 {
@@ -158,7 +158,7 @@ namespace Amethyst.AST
 		public override Node VisitExecuteStatement([NotNull] AmethystParser.ExecuteStatementContext context) => new ExecuteStatement(Loc(context), context.executeSubcommand().Select(i => (ExecuteStatementSubcommand)Visit(i)), Visit(context.statement().First()), context.statement().Length == 2 ? Visit(context.statement().Last()) : null);
 
 		public override Node VisitExecuteSubcommand([NotNull] AmethystParser.ExecuteSubcommandContext context)
-        {
+		{
 			if (context.If() is not null)
 			{
 				return new IfSubcommand(Loc(context), Visit(context.expression()));
@@ -175,7 +175,7 @@ namespace Amethyst.AST
 			{
 				throw new NotImplementedException();
 			}
-        }
+		}
 
 		public override Node VisitForStatement([NotNull] AmethystParser.ForStatementContext context) => new ForStatement(Loc(context), context.initAssignmentStatement() is not null ? (Statement?)Visit(context.initAssignmentStatement()) : null, Visit(context.cond), Visit(context.it), Visit(context.statement()));
 		public override Node VisitReturnStatement([NotNull] AmethystParser.ReturnStatementContext context) => new ReturnStatement(Loc(context), context.expression() is null ? null : Visit(context.expression()));

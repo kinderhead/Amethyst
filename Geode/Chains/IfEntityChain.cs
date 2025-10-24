@@ -9,10 +9,10 @@ namespace Geode.Chains
 		public override bool RequireLiteral => true;
 
 		protected override bool? Build(IValue[] processedArgs, RenderContext ctx, Execute.Conditional cmd)
-        {
-            var entity = ((IConstantValue)processedArgs[0]).Value.ToString();
-            cmd.Entity(new NamedTarget(entity));
-            return null;
-        }
+		{
+			var entity = ((IConstantValue)processedArgs[0]).Value.ToString();
+			cmd.Entity(new NamedTarget(entity));
+			return null;
+		}
 	}
 }
