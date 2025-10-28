@@ -37,6 +37,11 @@ namespace Amethyst
 				config.Settings.HelpProviderStyles?.Options?.Header = "default";
 				config.Settings.HelpProviderStyles?.Commands?.Header = "default";
 
+				config.SetExceptionHandler((ex, resolver) =>
+                {
+					AnsiConsole.MarkupLineInterpolated($"[red]{ex.GetType().Name}: {ex.Message}[/]");
+                    return 1;
+                });
 
 				config.AddCommand<BuildCommand>("build")
 					.WithDescription("Amethyst compiler.")

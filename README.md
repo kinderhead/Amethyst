@@ -708,12 +708,15 @@ Amethyst comes with the ability to run data packs from the command line. It inst
 
 Example:
 
-```
+```sh
 amethyst setup --eula --java java --memory 2G --port 25600 --timeout 30
 amethyst run test.zip
+
+# Or
+amethyst build examples/test.ame -o test.zip --run
 ```
 
-Once started with `amethyst run`, the Minecraft server will stay alive for a specified amount of time (default 30 minutes) before automatically shutting down.
+Once started with `amethyst run` or `amethyst build --run`, the Minecraft server will stay alive for a specified amount of time (default 30 minutes) before automatically shutting down.
 
 Running `amethyst daemon` starts the server without the timeout in the current shell. 
 
@@ -723,7 +726,7 @@ Note: multiple data packs cannot be run at the same time.
 
 ### Running
 
-When using `amethyst run`, any `/tellraw` commands will be logged to the console. By default, the command will never end. However it will end if it encounters a message that says "[exit]" which can be sent by calling `amethyst:exit` after your program has completed. For example:
+When using `amethyst run` or `amethyst build --run`, any `/tellraw` commands will be logged to the console. By default, the command will never end. However it will end if it encounters a message that says "[exit]" which can be sent by calling `amethyst:exit` after your program has completed. For example:
 
 ```cs
 #load

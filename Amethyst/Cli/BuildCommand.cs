@@ -1,3 +1,4 @@
+using Amethyst.Daemon;
 using Geode;
 using Spectre.Console;
 using Spectre.Console.Cli;
@@ -22,6 +23,10 @@ namespace Amethyst.Cli
         [Description("Dump Geode IR and don't compile to datapack.")]
         public bool DumpIR { get; set; }
 
+        [CommandOption("--run")]
+        [Description("Run the datapack if built successfully.")]
+        public bool Run { get; set; }
+
         [CommandArgument(0, "<inputs>")]
         [Description("Files to compile.")]
         public required string[] Inputs { get; set; }
@@ -38,6 +43,11 @@ namespace Amethyst.Cli
             if (!new Compiler(settings).Compile())
             {
                 return 1;
+            }
+
+            if (settings.Run)
+            {
+                Server.RunDatapack(new DaemonRunOptions() { Datapack = settings.Output });
             }
 
             return 0;

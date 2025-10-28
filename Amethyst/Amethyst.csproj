@@ -20,6 +20,7 @@
 		<AllowedReferenceRelatedFileExtensions>*.pdb</AllowedReferenceRelatedFileExtensions>
 		<NativeDebugSymbols>False</NativeDebugSymbols>
 		<StripSymbols>true</StripSymbols>
+    <NoWarn>IL3050;IL2104;IL3053;IL3000;IL3002</NoWarn>
     </PropertyGroup>
 
     <ItemGroup>
