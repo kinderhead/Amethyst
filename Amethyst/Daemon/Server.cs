@@ -1,9 +1,10 @@
-using System.Diagnostics;
-using System.Reflection;
 using Amethyst.Cli;
 using Newtonsoft.Json;
 using Spectre.Console;
+using System.Diagnostics;
+using System.Reflection;
 using Tmds.Utils;
+using static Datapack.Net.Data._1_20_4.Blocks;
 
 namespace Amethyst.Daemon
 {
@@ -149,7 +150,7 @@ namespace Amethyst.Daemon
                 }
             }
 
-            using var log = new FileStream(LogLocation, FileMode.Open, FileAccess.Read);
+            using var log = new FileStream(LogLocation, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
             log.Seek(0, SeekOrigin.End);
 
             using var stream = new StreamReader(log);
@@ -208,27 +209,26 @@ namespace Amethyst.Daemon
             {
                 var lastActiveTime = DateTime.Now;
                 bool finished = false;
-                Task? outputTask = null;
 
-                if (watchOutput)
-                {
-                    string? line;
+				// Not doing this on Windows causes a freeze for some reason.
+				string? line;
+				Task outputTask = Task.Run(async () =>
+				{
+					while ((line = await proc.StandardOutput.ReadLineAsync()) is not null)
+					{
+						if (line.Contains(MARKER_TEXT))
+						{
+							lastActiveTime = DateTime.Now;
+						}
 
-                    outputTask = Task.Run(async () =>
-                    {
-                        while ((line = await proc.StandardOutput.ReadLineAsync()) is not null)
-                        {
-                            if (line.Contains(MARKER_TEXT))
-                            {
-                                lastActiveTime = DateTime.Now;
-                            }
+						if (watchOutput)
+						{
+							AnsiConsole.MarkupLine(line.EscapeMarkup());
+						}
+					}
 
-                            AnsiConsole.MarkupLine(line.EscapeMarkup());
-                        }
-
-                        finished = true;
-                    });
-                }
+					finished = true;
+				});
 
                 if (timeout)
                 {
@@ -324,7 +324,7 @@ namespace Amethyst.Daemon
         {
             bool success = true;
 
-            AnsiConsole.Progress().AutoClear(true).Columns
+            AnsiConsole.Progress().Columns
             (
                 new TaskDescriptionColumn { Alignment = Justify.Left },
                 new ProgressBarColumn(),
