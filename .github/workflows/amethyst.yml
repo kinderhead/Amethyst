@@ -60,4 +60,4 @@ jobs:
           Amethyst/dist/
           !**/*.pdb
           !**/*.dbg
-          |**/tests/**/*.ame
+          !**/tests/**/*.ame

@@ -723,7 +723,7 @@ Note: multiple data packs cannot be run at the same time.
 
 ### Running
 
-When using `amethyst run`, any `/tellraw` commands will be logged to the console. By default, the command will never end. However it can end if it encounters a message that says "[exit]" which can be sent by calling `amethyst:exit` after your program has completed. For example:
+When using `amethyst run`, any `/tellraw` commands will be logged to the console. By default, the command will never end. However it will end if it encounters a message that says "[exit]" which can be sent by calling `amethyst:exit` after your program has completed. For example:
 
 ```cs
 #load
