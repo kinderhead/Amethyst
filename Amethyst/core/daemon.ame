@@ -1,0 +1,5 @@
+namespace amethyst;
+
+inline void exit() {
+    print("[exit]");
+}

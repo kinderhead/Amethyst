@@ -27,8 +27,10 @@ void run_tests() {
 
     var total = count_of("test:test");
 
-    // Use say for automation
-    @/say Tests passed: $(successfulTests)/$(total)
+    print("Tests passed: ", successfulTests, "/", total);
+    //@/say Tests passed: $(successfulTests)/$(total)
+
+    amethyst:exit();
 }
 
 void start(string name) {

@@ -40,6 +40,8 @@
     - [Global Variables](#global-variables)
     - [Intrinsics](#intrinsics)
     - [Extension Methods](#extension-methods)
+  - [Daemon Mode](#daemon-mode)
+    - [Running](#running)
   - [Planned Features](#planned-features)
 
 There's been many different attempts at making a high-level programming language for Minecraft Data packs over the years, but one flaw I've seen in all of them is that they let the limitations of commands dictate what's possible. All of that changed when Minecraft added macro functions, greatly increasing the flexibility of data packs. The goal of Amethyst is to leverage macro functions and other features to allow users to make data packs as easily as they would write any other program.
@@ -62,9 +64,8 @@ The latest VSCode extension build can be found [here](https://nightly.link/kinde
 
 Examples:
 ```sh
-amethyst --help
-amethyst example/test.ame -o datapack.zip
-amethyst tests/*.ame -o tests.zip
+amethyst build examples/test.ame -o datapack.zip
+amethyst build tests/*.ame -o tests.zip
 ```
 
 Simple program:
@@ -95,18 +96,28 @@ void main() {
 
 ```
 $ amethyst --help
-Amethyst Compiler
+USAGE:
+    amethyst [OPTIONS] <COMMAND>
 
-Usage:
-amethyst [files...] -o <output>
+EXAMPLES:
+    amethyst build examples/test.ame -o datapack.zip
+    amethyst build tests/*.ame -o tests.zip
+    amethyst setup --eula
+    amethyst run test.zip
+    amethyst daemon
+    amethyst daemon -c "op steve"
 
-  -o, --output            Zipped data pack, defaults to first input file's name.
-  -d, --debug             (Default: false) Enable debug checks.
-  --dump-ir               Dump Geode IR and don't compile to data pack.
-  --help                  Display this help screen.
-  --version               Display version information.
-  input files (pos. 0)    Required. Files to compile.
+OPTIONS:
+    -h, --help    Prints help information
+
+COMMANDS:
+    build <inputs>    Amethyst compiler                                          
+    setup             Amethyst runtime Minecraft server setup                    
+    run <data pack>   Run a data pack                                             
+    daemon            Run the Amethyst runtime Minecraft server without a timeout
 ```
+
+See [Daemon Mode](#daemon-mode) for information about the `setup`, `run`, and `daemon` commands.
 
 ## Language Features
 
@@ -690,6 +701,43 @@ Here are the inheritance chains for most types:
 * `amethyst:ref<T>` (defined as `T&`)
 * `amethyst:weak_ref<T>` (defined as `T^`)
 * `amethyst:func` (no definition yet)
+
+## Daemon Mode
+
+Amethyst comes with the ability to run data packs from the command line. It installs a local Minecraft Fabric server and runs it when requested by `amethyst run`. Java must be installed already and the path can be set with the `--java` flag.
+
+Example:
+
+```
+amethyst setup --eula --java java --memory 2G --port 25600 --timeout 30
+amethyst run test.zip
+```
+
+Once started with `amethyst run`, the Minecraft server will stay alive for a specified amount of time (default 30 minutes) before automatically shutting down.
+
+Running `amethyst daemon` starts the server without the timeout in the current shell. 
+
+The server is installed to the `%AppData%/Local/Amethyst` folder (or equivalent on other operating systems, see .NET's `Environment.SpecialFolder.LocalApplicationData` for more information).
+
+Note: multiple data packs cannot be run at the same time.
+
+### Running
+
+When using `amethyst run`, any `/tellraw` commands will be logged to the console. By default, the command will never end. However it can end if it encounters a message that says "[exit]" which can be sent by calling `amethyst:exit` after your program has completed. For example:
+
+```cs
+#load
+void main() {
+    print("I'm in the console :)");
+    amethyst:exit();
+}
+```
+
+`amethyst:exit` can be put anywhere in case your program uses multiple ticks.
+
+Since no players are on the server by default, no chunks and therefore no entities are loaded either. You can forceload chunks using a program or by calling `amethyst daemon -c "forceload ..."`. The default port used for the server is 25600 but this can be configured using `amethyst setup --eula`. Running `amethyst setup --eula` again will preserve your world, mods, `server.properties`, and more. Only the server jar and the default mods will be reset.
+
+If an issue arises, try deleting the whole server folder and reinstalling.
 
 ## Planned Features
 

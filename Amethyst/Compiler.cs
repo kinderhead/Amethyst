@@ -1,8 +1,8 @@
 ﻿using Amethyst.Antlr;
 using Amethyst.AST;
 using Amethyst.AST.Intrinsics;
+using Amethyst.Cli;
 using Antlr4.Runtime;
-using CommandLine.Text;
 using Geode;
 using Geode.Errors;
 using Geode.IR;
@@ -11,58 +11,21 @@ using Geode.Types;
 using Geode.Values;
 using GlobExpressions;
 using Spectre.Console;
-using System.Reflection;
 
 namespace Amethyst
 {
 	public class Compiler : ICompiler, IFileHandler
 	{
-		public readonly Options Options;
+		public readonly BuildOptions Options;
 		public readonly Dictionary<string, RootNode> Roots = [];
 		public readonly FunctionContext GlobalInitFunc;
 
 		public Dictionary<string, string> Files { get; } = [];
 		public GeodeBuilder IR { get; }
 
-		public Compiler(Options opts)
+		public Compiler(BuildOptions opts)
 		{
 			Options = opts;
-			IR = new(Options, this, "amethyst");
-
-			GlobalInitFunc = GetGlobalInitFunc();
-			RegisterGlobals();
-		}
-
-		public Compiler(string[] args)
-		{
-			var res = new CommandLine.Parser(config =>
-			{
-				config.HelpWriter = null;
-			}).ParseArguments<Options>(args);
-
-			if (res.Errors.Any())
-			{
-				var helpText = HelpText.AutoBuild(res, h =>
-				{
-					h.AdditionalNewLineAfterOption = false;
-
-					var version = Assembly.GetExecutingAssembly().GetName().Version ?? new Version(0, 0, 0);
-					h.Heading = $"Amethyst Compiler {version.Major}.{version.Minor}.{version.Build}";
-
-					h.Copyright = @"
-Usage:
-amethyst [files...] -o <output>";
-
-					return HelpText.DefaultParsingErrorsHandler(res, h);
-				}, e => e);
-
-				Console.Error.Write(helpText);
-
-				Environment.Exit(1);
-			}
-
-			Options = res.Value;
-			Options.Output ??= Path.GetFileName(Options.Inputs.First()) + ".zip";
 			IR = new(Options, this, "amethyst");
 
 			GlobalInitFunc = GetGlobalInitFunc();

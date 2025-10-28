@@ -7,7 +7,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <Authors>kinderhead</Authors>
-    <Version>0.5.0-beta</Version>
+    <Version>0.6.0-beta</Version>
     <PublishTrimmed>True</PublishTrimmed>
     <PublishAot>True</PublishAot>
 	<TrimMode>partial</TrimMode>
@@ -30,9 +30,10 @@
 
   <ItemGroup>
     <PackageReference Include="Antlr4.Runtime.Standard" Version="4.13.1" />
-    <PackageReference Include="CommandLineParser" Version="2.9.1" />
     <PackageReference Include="Glob" Version="1.1.9" />
-    <PackageReference Include="Spectre.Console" Version="0.51.1" />
+    <PackageReference Include="Spectre.Console" Version="0.52.0" />
+    <PackageReference Include="Spectre.Console.Cli" Version="0.52.0" />
+    <PackageReference Include="Tmds.ExecFunction" Version="0.8.0" />
   </ItemGroup>
 
   <ItemGroup>

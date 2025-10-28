@@ -35,25 +35,17 @@ def tester(process: subprocess.Popen[bytes]):
             break
 
 
-os.chdir("MCTestEnv")
+os.chdir("Amethyst")
 
 print("Preparing tests")
-
-os.makedirs("world/datapacks", exist_ok=True)
 
 amethyst = "amethyst"
 if os.name == "nt":
     amethyst += ".exe"
 
-call(f"../Amethyst/dist/{amethyst} ../Amethyst/dist/tests/*.ame -o world/datapacks/out.zip")
-
-# 1.21.10
-if not os.path.exists("server.jar"):
-    print("Downloading Minecraft server")
-    urllib.request.urlretrieve("https://piston-data.mojang.com/v1/objects/95495a7f485eedd84ce928cef5e223b757d2f764/server.jar", "server.jar")
-
-print("Starting Minecraft server")
-process = subprocess.Popen(shlex.split("java -Xmx1024M -Xms1024M -jar server.jar nogui"), stdout=subprocess.PIPE)
+call(f"dist/{amethyst} build tests/*.ame -o test.zip")
+call(f"dist/{amethyst} setup --eula")
+process = subprocess.Popen(shlex.split(f"dist/{amethyst} run test.zip"), stdout=subprocess.PIPE)
 
 try:
     thread = Thread(target=tester, args=[process])

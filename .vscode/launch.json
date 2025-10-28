@@ -7,7 +7,7 @@
             "request": "launch",
             "preLaunchTask": "build",
             "program": "${workspaceFolder}/Amethyst/bin/Debug/net10.0/Amethyst.dll",
-            "args": ["examples/test.ame", "-o", "test.zip"],
+            "args": ["build", "examples/test.ame", "-o", "test.zip"],
             "cwd": "${workspaceFolder}/Amethyst",
             "stopAtEntry": false,
             "console": "integratedTerminal"
@@ -18,7 +18,18 @@
             "request": "launch",
             "preLaunchTask": "build",
             "program": "${workspaceFolder}/Amethyst/bin/Debug/net10.0/Amethyst.dll",
-            "args": ["tests/*.ame", "-d", "-o", "test.zip"],
+            "args": ["build", "tests/*.ame", "-d", "-o", "test.zip"],
+            "cwd": "${workspaceFolder}/Amethyst",
+            "stopAtEntry": false,
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "Amethyst Random",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build",
+            "program": "${workspaceFolder}/Amethyst/bin/Debug/net10.0/Amethyst.dll",
+            "args": ["setup", "--eula"],
             "cwd": "${workspaceFolder}/Amethyst",
             "stopAtEntry": false,
             "console": "integratedTerminal"
