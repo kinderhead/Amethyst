@@ -57,6 +57,16 @@
 			"args": [
 				"--extensionDevelopmentPath=${workspaceFolder}/AmethystLanguageServer"
 			]
-		}
+		},
+        {
+            "name": "Docs Version Incrementer",
+            "program": "${workspaceFolder}/docs/version_incrementer.js",
+            "request": "launch",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "cwd": "${workspaceFolder}/docs",
+            "type": "node"
+        }
     ]
 }
