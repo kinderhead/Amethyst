@@ -54,6 +54,7 @@ jobs:
       uses: nick-fields/retry@v3
       with:
         max_attempts: 3
+        timeout_minutes: 10
         command: python -u test_mc.py
 
     - uses: actions/upload-artifact@v4

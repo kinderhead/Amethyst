@@ -27,8 +27,9 @@
 }
 
 .heroDark {
-  --ifm-hero-background-color: var(--ifm-color-primary-dark);
-  --ifm-hero-text-color: var(--ifm-font-color-base-inverse);
+  background-image: linear-gradient(90deg, var(--ifm-color-primary-darkest) 0%, var(--ifm-color-primary-darker) 50%, var(--ifm-color-primary-darkest) 100%);
+  //--ifm-hero-background-color: var(--ifm-color-primary-dark);
+  --ifm-hero-text-color: var(--ifm-font-color-base);
 }
 
 .headerContainer {
@@ -42,8 +43,8 @@
   height: 160px;
   margin-top: auto;
   margin-bottom: auto;
-  margin-right: -4rem;
-  transform: translate(-7rem, 0);
+  margin-right: -160px;
+  transform: translate(-200px, 0);
 }
 
 .section {
