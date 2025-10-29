@@ -1,14 +1,17 @@
 import { readFileSync } from "fs";
-import { createHighlighter } from "shiki";
+import { createHighlighterCoreSync } from "shiki/core";
+import darkPlus from "@shikijs/themes/dark-plus"
 import { transformerColorizedBrackets } from '@shikijs/colorized-brackets';
-import amethyst from "../../../AmethystLanguageServer/syntaxes/amethyst.tmLanguage.json";
+import amethyst from "@site/amethyst.tmLanguage.json";
+import { createJavaScriptRegexEngine } from "shiki";
 
-export const highlighter = await createHighlighter({
+const highlighter = createHighlighterCoreSync({
     langs: [amethyst],
-    themes: ["dark-plus"],
+    themes: [darkPlus],
+    engine: createJavaScriptRegexEngine()
 });
 
-export interface HighlightCodeProps extends React.HTMLAttributes<HTMLElement> {
+interface HighlightCodeProps extends React.HTMLAttributes<HTMLElement> {
     code: string;
 }
 

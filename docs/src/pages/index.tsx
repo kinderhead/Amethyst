@@ -5,7 +5,7 @@ import Layout from '@theme/Layout';
 import clsx from 'clsx';
 import type { ReactNode } from 'react';
 
-import HighlightCode from '../components/highlight';
+import HighlightCode from '@site/src/components/highlight';
 import styles from './index.module.css';
 
 function HomepageHeader() {
