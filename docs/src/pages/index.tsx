@@ -5,7 +5,7 @@ import Layout from '@theme/Layout';
 import clsx from 'clsx';
 import type { ReactNode } from 'react';
 
-import HighlightCode from '@site/src/components/highlight';
+import Home from '@site/src/components/Home';
 import styles from './index.module.css';
 
 function HomepageHeader() {
@@ -30,23 +30,13 @@ function HomepageHeader() {
     );
 }
 
-export default function Home(): ReactNode {
+export default function Index(): ReactNode {
     const {siteConfig} = useDocusaurusContext();
     return (
         <Layout title={siteConfig.title} description={siteConfig.tagline}>
             <HomepageHeader />
             <main>
-                <div className={styles.main}>
-                    <HighlightCode className={styles.codeBubble} code={`#load
-void main() {
-    var entity = "sheep";
-    var targets = @e[type=entity];
-
-    as (targets) at (@r) {
-        @/say This site is WIP!
-    }
-}`} />
-                </div>
+                <Home/>
             </main>
         </Layout>
     );

@@ -15,10 +15,10 @@ const config: Config = {
     },
 
     // Set the production url of your site here
-    url: 'https://kinderhead.github.io',
+    url: 'https://www.amethyst.dev',
     // Set the /<baseUrl>/ pathname under which your site is served
     // For GitHub pages deployment, it is often '/<projectName>/'
-    baseUrl: '/Amethyst/',
+    baseUrl: '/',
 
     // GitHub pages deployment config.
     // If you aren't using GitHub pages, you don't need these.
@@ -134,11 +134,11 @@ const config: Config = {
             //   ],
             // },
         ],
-        copyright: `Copyright © ${new Date().getFullYear()} kinderhead. Built with Docusaurus.`,
+            copyright: `Copyright © ${new Date().getFullYear()} kinderhead. Built with Docusaurus.`,
         },
         prism: {
-        theme: prismThemes.github,
-        darkTheme: prismThemes.dracula,
+            theme: prismThemes.github,
+            darkTheme: prismThemes.dracula,
         },
     } satisfies Preset.ThemeConfig,
 };
