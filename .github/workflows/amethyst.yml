@@ -51,7 +51,10 @@ jobs:
       run: dotnet publish --configuration Release --output dist
 
     - name: Test
-      run: python -u test_mc.py
+      uses: nick-fields/retry@v3
+      with:
+        max_attempts: 3
+        command: python -u test_mc.py
 
     - uses: actions/upload-artifact@v4
       with:

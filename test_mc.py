@@ -34,27 +34,6 @@ def tester(process: subprocess.Popen[bytes]):
             print("Done")
             break
 
-def run(retry: bool = True):
-    process = subprocess.Popen(shlex.split(f"dist/{amethyst} run test.zip"), stdout=subprocess.PIPE)
-
-    try:
-        thread = Thread(target=tester, args=[process])
-        thread.daemon = True
-        thread.start()
-
-        time.sleep(60)
-
-        print("Timed out")
-        process.kill()
-        
-        if retry:
-            print("Retrying...")
-            run(False)
-        else:
-            exit(1)
-    finally:
-        process.kill()
-
 os.chdir("Amethyst")
 
 print("Preparing tests")
@@ -66,4 +45,18 @@ if os.name == "nt":
 call(f"dist/{amethyst} build tests/*.ame -o test.zip")
 call(f"dist/{amethyst} setup --eula")
 
+process = subprocess.Popen(shlex.split(f"dist/{amethyst} run test.zip"), stdout=subprocess.PIPE)
 
+try:
+    thread = Thread(target=tester, args=[process])
+    thread.daemon = True
+    thread.start()
+
+    time.sleep(60)
+
+    print("Timed out")
+    process.kill()
+
+    exit(1)
+finally:
+    process.kill()
