@@ -24,6 +24,7 @@ const config: Config = {
     // If you aren't using GitHub pages, you don't need these.
     organizationName: 'kinderhead', // Usually your GitHub org/user name.
     projectName: 'Amethyst', // Usually your repo name.
+    trailingSlash: true,
 
     onBrokenLinks: 'throw',
 
