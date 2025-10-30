@@ -6,9 +6,23 @@ namespace example;
 void main() {
     int x = 7;
 
-    if (x) {
+    {
         long x = 1;
     }
 
     amethyst:exit();
+}
+
+void test() {
+    int x = 8;
+    string y = "yay";
+
+    x.say();
+    y.say();
+}
+
+namespace minecraft:nbt;
+
+void say(nbt& this) {
+    print(this);
 }

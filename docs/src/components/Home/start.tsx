@@ -7,7 +7,7 @@ export default function Start() {
         <div style={{ paddingTop: "3rem", paddingBottom: "3rem", display: "flex", alignItems: "center", flexDirection: "column", width: "100%" }}>
             <Heading className={styles.heading} as="h1">Get started</Heading>
             <div>
-                <Link className="button button--primary button--lg" to="/docs/handbook">Handbook</Link>
+                <Link className="button button--primary button--lg" to="/docs/category/handbook">Handbook</Link>
             </div>
         </div>
     );

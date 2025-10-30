@@ -1,0 +1,34 @@
+---
+sidebar_position: 9
+description: Extension method declarations
+---
+
+import Highlight from "@site/src/components/highlight";
+
+# Extension Methods
+
+## Usage
+
+Methods can be added to any type at any time. When searching for a method to call, Amethyst will see if any functions exist that satisfy the following conditions:
+
+* The first argument is a reference to the target type or to a base class of the target type.
+* The function is in the same namespace and path as the type, including the name of the type.
+
+For example, this adds an extension method to all objects:
+
+<Highlight code={`\
+    void foo() {
+        int x = 8;
+        string y = "yay";
+
+        x.say();
+        y.say();
+    }
+
+    namespace minecraft:nbt;
+
+    void say(nbt& this) {
+        // print dereferences pointers automatically
+        print(this);
+    }
+`}/>

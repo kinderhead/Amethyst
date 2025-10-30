@@ -1,0 +1,71 @@
+---
+sidebar_position: 6
+description: Control flow and execute statements
+---
+
+import Highlight from "@site/src/components/highlight";
+
+# Control flow
+
+## Execute Statements
+
+Unlike other programming languages, Amethyst doesn't have a true `if` statement. Instead, any number of `/execute` subcommands can be put together to form an `execute` statement.
+
+<Highlight code={`\
+    as (@e[type="sheep"]) at (@s) {
+        @/tp @r ~ ~ ~
+    }
+`}/>
+
+Currently the following subcommands are implemented:
+
+* `if`
+* `as`
+* `at`
+
+To create a traditional `if` statement, just use the `if` subcommand like so:
+
+<Highlight code={`\
+    if (x == 4) {
+        ...
+    }
+`}/>
+
+An `else` clause can be added which runs if the `execute` statement terminates:
+
+<Highlight code={`\
+    if (@e[type="creeper"]) {
+        print("There is a creeper");
+    } else {
+        print("There are no creepers");
+    }
+`}/>
+
+:::note
+`else` statements currently only work for non-forking `execute` statements. This will change in the future.
+:::
+
+If an `execute` statement forks, all `return`s inside will terminate future forks. For example:
+
+<Highlight code={`\
+    int x = 0;
+    as (@e) {
+        print("I happen once");
+        // Returns 1
+        return ++x;
+    }
+`}/>
+
+## For Loops
+
+Amethyst supports traditional C-style `for` loops:
+
+<Highlight code={`\
+    for (int i = 0; i < 10; ++i) {
+        print("Loop ", i + 1);
+    }
+`}/>
+
+:::warning
+Due to the recursive nature of Minecraft commands, infinite loops cannot exist. Therefore there is no `while` loop and the last two expressions in `for` loops are required. It's still technically possible to create an infinite loop with these limitations, but don't do it. To achieve a proper infinite loop, your logic needs to be broken up across multiple ticks.
+:::

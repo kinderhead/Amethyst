@@ -1,0 +1,27 @@
+---
+sidebar_position: 2
+description: The default inheritance chain
+---
+
+# Inheritance Chain
+
+This list shows the whole type hierarchy for built-in types.
+
+* `minecraft:nbt`
+  * `minecraft:int`
+    * `minecraft:byte`
+      * `minecraft:bool`
+    * `minecraft:short`
+  * `minecraft:long`
+  * `minecraft:float`
+  * `minecraft:double`
+  * `minecraft:string`
+    * `minecraft:target`
+  * `minecraft:list`
+    * `minecraft:byte_array` (not implemented yet)
+    * `minecraft:int_array` (not implemented yet)
+    * `minecraft:long_array` (not implemented yet)
+    * `amethyst:list<T>` (defined as `T[]`)
+* `amethyst:ref<T>` (defined as `T&`)
+* `amethyst:weak_ref<T>` (defined as `T^`)
+* `amethyst:func` (no definition yet)
