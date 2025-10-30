@@ -28,3 +28,24 @@
   --ifm-color-primary-lightest: #ebd1f9;
   --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.3);
 }
+
+.shiki {
+  position: relative;
+  border-radius: var(--ifm-code-border-radius);
+  --amethyst-bg: rgb(40, 42, 54);
+  background-color: var(--amethyst-bg) !important;
+}
+
+.ame-button-group {
+  display: flex;
+  column-gap: 0.2rem;
+  position: absolute;
+  right: calc(var(--ifm-pre-padding) / 2);
+  top: calc(var(--ifm-pre-padding) / 2);
+}
+
+.ame-copy-button-icons {
+  position: relative;
+  width: 1.125rem;
+  height: 1.125rem;
+}

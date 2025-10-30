@@ -14,6 +14,7 @@ namespace Geode.IR
 		public readonly ICompiler Compiler;
 		public readonly FunctionValue Decl;
 		public readonly IEnumerable<NamespacedID> Tags;
+		public readonly LocationRange Location;
 
 		public readonly Stack<LocationRange> LocationStack = [];
 
@@ -38,12 +39,13 @@ namespace Geode.IR
 		private readonly HashSet<int> registersInUse = [];
 		private int tmpStackVars = 0;
 
-		public IEnumerable<IValue> AllLocals => totalScopes.SelectMany(i => i.Locals.Values);
+		public IEnumerable<IValue> AllLocals => totalScopes.SelectMany(i => i.Locals.Values).Select(i => i.Value);
 
-		public FunctionContext(ICompiler compiler, FunctionValue decl, IEnumerable<NamespacedID> tags, bool hasTagPriority = false)
+		public FunctionContext(ICompiler compiler, FunctionValue decl, IEnumerable<NamespacedID> tags, LocationRange loc, bool hasTagPriority = false)
 		{
 			Compiler = compiler;
 			Decl = decl;
+			Location = loc;
 			Tags = tags;
 			IsMacroFunction = Decl.FuncType.IsMacroFunction;
 			HasTagPriority = hasTagPriority;
@@ -59,17 +61,17 @@ namespace Geode.IR
 			{
 				if (i.Modifiers.HasFlag(ParameterModifiers.Macro))
 				{
-					RegisterLocal(i.Name, new MacroValue(i.Name, i.Type));
+					RegisterLocal(i.Name, new MacroValue(i.Name, i.Type), Location);
 				}
 				else
 				{
 					// Maybe make it so that if the stack isn't used by the function, then use -1 and don't push new frame
-					RegisterLocal(i.Name, new StackValue(-2, compiler.IR.RuntimeID, $"args.{i.Name}", i.Type));
+					RegisterLocal(i.Name, new StackValue(-2, compiler.IR.RuntimeID, $"args.{i.Name}", i.Type), Location);
 				}
 			}
 		}
 
-		public FunctionContext(ICompiler compiler, FunctionValue decl) : this(compiler, decl, []) { }
+		public FunctionContext(ICompiler compiler, FunctionValue decl, LocationRange loc) : this(compiler, decl, [], loc) { }
 
 		public void PushScope()
 		{
@@ -88,7 +90,7 @@ namespace Geode.IR
 			{
 				if (i.Locals.TryGetValue(name, out var variable))
 				{
-					return variable;
+					return variable.Value;
 				}
 			}
 
@@ -117,14 +119,22 @@ namespace Geode.IR
 
 		public IValue? GetConstructorOrNull(TypeSpecifier type) => Compiler.IR.GetConstructorOrNull(type);
 
-		public Variable RegisterLocal(string name, TypeSpecifier type)
+		public Variable RegisterLocal(string name, TypeSpecifier type, LocationRange loc)
 		{
 			var val = new Variable(name, Compiler.IR.RuntimeID, "frame", activeScopes.Count - 1, type);
-			RegisterLocal(name, val);
+			RegisterLocal(name, val, loc);
 			return val;
 		}
 
-		public void RegisterLocal(string name, IValue val) => activeScopes.Peek().Locals[name] = val;
+		public void RegisterLocal(string name, IValue val, LocationRange loc) 
+		{
+			if (activeScopes.Peek().Locals.TryGetValue(name, out var orig))
+            {
+                throw new RedefinedSymbolError(name, orig.Location);
+            }
+
+			activeScopes.Peek().Locals[name] = new(name, val, loc);
+		}
 
 		public StackValue Temp(TypeSpecifier type) => new(-1, Compiler.IR.RuntimeID, $"tmp{tmpStackVars++}", type);
 
@@ -290,7 +300,7 @@ namespace Geode.IR
 
 			CurrentBlock = trueBlock;
 			ifTrue();
-			
+
 			if (!cond.Forks) {
 				Add(new JumpInsn(endBlock));
 			}
@@ -475,7 +485,9 @@ namespace Geode.IR
 
 		private class Scope
 		{
-			public readonly Dictionary<string, IValue> Locals = [];
+			public readonly Dictionary<string, LocalSymbol> Locals = [];
 		}
 	}
+
+	public record class LocalSymbol(string Name, IValue Value, LocationRange Location);
 }

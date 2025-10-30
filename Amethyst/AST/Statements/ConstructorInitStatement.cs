@@ -16,7 +16,7 @@ namespace Amethyst.AST.Statements
 		{
 			var thisType = (StructType)Self.Resolve(ctx);
 
-			var self = ctx.RegisterLocal("this", thisType);
+			var self = ctx.RegisterLocal("this", thisType, Location);
 
 			var def = BaseCall?.Execute(ctx, null);
 			var defType = def?.Type;

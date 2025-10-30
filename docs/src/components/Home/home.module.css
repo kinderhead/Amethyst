@@ -2,6 +2,7 @@
     display: flex;
     flex-direction: column;
     margin-top: 4rem;
+    align-items: center;
 }
 
 .codeHolder {
@@ -9,28 +10,47 @@
     flex-direction: row;
     align-items: center;
     justify-content: space-evenly;
+    width: 100%;
 }
 
 .codeBubble pre {
-    border-radius: 1rem;
-    border-width: 2rem;
     border: solid var(--ifm-color-primary-darkest);
-
+    border-width: 2px;
+    --amethyst-bg: #1e1025;
+    border-radius: 1rem;
     font-size: 1.25rem;
 }
 
 .extraCodeBubble pre {
+    border: solid var(--ifm-color-primary-darkest);
+    border-width: 2px;
+    --amethyst-bg: #1e1025;
+    border-radius: 1rem;
+    font-size: 1.1rem;
+}
+
+.terminalBubble {
     border-radius: 1rem;
     border-width: 2rem;
     border: solid var(--ifm-color-primary-darkest);
+    background-color: #101010 !important;
+    
+    padding: 2rem;
 
-    font-size: 1.1rem;
+    font-size: 1.25rem;
 }
 
 .heading {
     text-align: center;
     font-size: 3rem;
     margin-bottom: 3rem;
+    max-width: 60%;
+}
+
+@media screen and (max-width: 1550px) {
+    .extraCodeBubble {
+        display: none;
+    }
 }
 
 @media screen and (max-width: 996px) {
@@ -38,7 +58,13 @@
         font-size: inherit;
     }
 
-    .extraCodeBubble {
-        display: none;
+    .heading {
+        max-width: 80%;
+    }
+}
+
+@media screen and (max-width: 500px) {
+    .codeBubble pre {
+        font-size: 0.75rem;
     }
 }

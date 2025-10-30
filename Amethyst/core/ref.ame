@@ -5,7 +5,7 @@ string get-stack-ref(string name, int offset) {
 
     // TODO: string concatenation
     string ref;
-    @/data modify storage amethyst:runtime stack[-1].frame0.ref set value "storage amethyst:runtime stack[$(offset)].$(name)"
+    @/data modify storage amethyst:runtime stack[-1].frame1.ref set value "storage amethyst:runtime stack[$(offset)].$(name)"
     
     return ref;
 }

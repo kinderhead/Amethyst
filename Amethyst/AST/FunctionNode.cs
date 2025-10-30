@@ -39,7 +39,7 @@ namespace Amethyst.AST
 				throw new InvalidNameError(ID.ToString());
 			}
 
-			ctx = new FunctionContext(compiler, (FunctionValue)compiler.IR.Symbols[ID].Value, Tags);
+			ctx = new FunctionContext(compiler, (FunctionValue)compiler.IR.Symbols[ID].Value, Tags, Location);
 
 			if (Body.Statements.Count == 0 || Body.Statements.Last() is not ReturnStatement)
 			{

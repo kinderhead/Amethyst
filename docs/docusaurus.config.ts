@@ -1,6 +1,6 @@
-import {themes as prismThemes} from 'prism-react-renderer';
-import type {Config} from '@docusaurus/types';
 import type * as Preset from '@docusaurus/preset-classic';
+import type { Config } from '@docusaurus/types';
+import { themes as prismThemes } from 'prism-react-renderer';
 
 // This runs in Node.js - Don't use client-side code here (browser APIs, JSX...)
 
@@ -38,33 +38,38 @@ const config: Config = {
 
     presets: [
         [
-        'classic',
-        {
-            docs: {
-                sidebarPath: './sidebars.ts',
-                editUrl: 'https://github.com/kinderhead/Amethyst/tree/master/docs',
-            },
-            blog: {
-                showReadingTime: true,
-                feedOptions: {
-                    type: ['rss', 'atom'],
-                    xslt: true,
+            'classic',
+            {
+                docs: {
+                    sidebarPath: './sidebars.ts',
+                    editUrl: 'https://github.com/kinderhead/Amethyst/tree/master/docs',
                 },
-                editUrl: 'https://github.com/kinderhead/Amethyst/tree/master/docs',
-                onInlineTags: 'warn',
-                onInlineAuthors: 'warn',
-                onUntruncatedBlogPosts: 'warn',
-            },
-            theme: {
-                customCss: './src/css/custom.css',
-            },
-        } satisfies Preset.Options,
+                blog: {
+                    showReadingTime: true,
+                    feedOptions: {
+                        type: ['rss', 'atom'],
+                        xslt: true,
+                    },
+                    editUrl: 'https://github.com/kinderhead/Amethyst/tree/master/docs',
+                    onInlineTags: 'warn',
+                    onInlineAuthors: 'warn',
+                    onUntruncatedBlogPosts: 'warn',
+                },
+                theme: {
+                    customCss: './src/css/custom.css',
+                },
+                sitemap: {
+                    lastmod: "date",
+                    filename: "sitemap.xml"
+                }
+            } satisfies Preset.Options,
         ],
     ],
 
     themeConfig: {
         colorMode: {
-            defaultMode: "dark"
+            defaultMode: "dark",
+            disableSwitch: true
         },
         navbar: {
         title: 'Amethyst',
@@ -75,9 +80,9 @@ const config: Config = {
         items: [
             {
                 type: 'docSidebar',
-                sidebarId: 'languageFeaturesSidebar',
+                sidebarId: 'handbookSidebar',
                 position: 'left',
-                label: 'Language Features',
+                label: 'Handbook',
             },
             //{to: '/blog', label: 'Blog', position: 'left'},
             {
@@ -140,6 +145,9 @@ const config: Config = {
             theme: prismThemes.github,
             darkTheme: prismThemes.dracula,
         },
+        metadata: [
+            {name: "keywords", content: "amethyst, minecraft, commands, data pack, datapack"}
+        ]
     } satisfies Preset.ThemeConfig,
 };
 

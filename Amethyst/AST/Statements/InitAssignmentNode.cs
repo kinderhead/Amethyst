@@ -29,7 +29,7 @@ namespace Amethyst.AST.Statements
 				}
 			}
 
-			var dest = ctx.RegisterLocal(Name, type);
+			var dest = ctx.RegisterLocal(Name, type, Location);
 
 			ctx.Add(new StoreInsn(dest, val));
 		}

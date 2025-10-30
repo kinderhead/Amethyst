@@ -23,6 +23,7 @@ namespace Amethyst.AST.Statements
 		{
 			var success = true;
 
+			ctx.PushScope();
 			foreach (var i in Statements)
 			{
 				if (!ctx.Compiler.WrapError(i.Location, ctx, () => i.Compile(ctx)))
@@ -30,6 +31,7 @@ namespace Amethyst.AST.Statements
 					success = false;
 				}
 			}
+			ctx.PopScope();
 
 			return success;
 		}

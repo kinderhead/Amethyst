@@ -2,17 +2,13 @@
 
 namespace example;
 
-struct vec {
-    int x;
-}
-
 #load
 void main() {
-    func({ x: 1 });
+    int x = 7;
+
+    if (x) {
+        long x = 1;
+    }
 
     amethyst:exit();
-}
-
-void func(macro vec x) {
-    @/say $(x.x)
 }

@@ -203,7 +203,7 @@ namespace Geode
 		public (FunctionContext ctx, FunctionValue func) AnonymousFunction(FunctionType type)
 		{
 			var func = new FunctionValue(new("amethyst", InternalPath + "/" + RandomString), type);
-			var ctx = new FunctionContext(Compiler, func, []);
+			var ctx = new FunctionContext(Compiler, func, [], LocationRange.None);
 			AddFunctions(ctx);
 			return (ctx, func);
 		}

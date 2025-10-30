@@ -12,6 +12,7 @@ namespace Amethyst.IR.Instructions
 		public override string Name => "size";
 		public override NBTType?[] ArgTypes => [null];
 		public override TypeSpecifier ReturnType => PrimitiveType.Int;
+		public override bool AlwaysUseScore => true;
 
 		public override void Render(RenderContext ctx)
 		{
