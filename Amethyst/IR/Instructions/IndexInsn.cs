@@ -1,4 +1,5 @@
-﻿using Amethyst.IR.Types;
+﻿using Amethyst.Errors;
+using Amethyst.IR.Types;
 using Datapack.Net.Data;
 using Geode;
 using Geode.Errors;
@@ -39,6 +40,11 @@ namespace Amethyst.IR.Instructions
 
 			if (val.Type is not ReferenceType && val is DataTargetValue nbt)
 			{
+				if (val is MacroValue)
+				{
+					throw new MacroPropertyError();
+				}
+
 				val = WeakReferenceType.From(nbt);
 			}
 
@@ -48,6 +54,11 @@ namespace Amethyst.IR.Instructions
 		protected override IValue? ComputeReturnValue(FunctionContext ctx)
 		{
 			var val = Arg<ValueRef>(0);
+
+			if (val.Value is MacroValue && val.Type is not ReferenceType)
+			{
+				throw new MacroPropertyError();
+			}
 
 			if (val.Type is not ReferenceType && val.Value is DataTargetValue list && index.Value is LiteralValue i)
 			{

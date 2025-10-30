@@ -1,3 +1,4 @@
+using Amethyst.Errors;
 using Amethyst.IR.Types;
 using Datapack.Net.Data;
 using Geode;
@@ -20,6 +21,11 @@ namespace Amethyst.IR.Instructions
 
 			if (val.Type is not ReferenceType && val is DataTargetValue nbt)
 			{
+				if (val is MacroValue)
+				{
+					throw new MacroPropertyError();
+				}
+
 				val = WeakReferenceType.From(nbt);
 			}
 
@@ -48,6 +54,14 @@ namespace Amethyst.IR.Instructions
 				{
 					return new LiteralValue(new NBTString($"{v.Value}.{name.Value}"), new WeakReferenceType(ActualReturnType));
 				}
+				else if (val.Value is MacroValue)
+				{
+					throw new MacroPropertyError();
+				}
+				else
+                {
+                    throw new ReferenceError(val.Type.ToString());
+                }
 			}
 
 			return null;

@@ -1,15 +1,44 @@
 .main {
-  display: flex;
-  flex-direction: column;
-  margin-top: 2rem;
+    display: flex;
+    flex-direction: column;
+    margin-top: 4rem;
 }
 
-.codeBubble {
-  margin: auto;
+.codeHolder {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-evenly;
 }
 
 .codeBubble pre {
-  border-radius: 1rem;
-  border-width: 2rem;
-  border: solid var(--ifm-color-primary-darkest);
+    border-radius: 1rem;
+    border-width: 2rem;
+    border: solid var(--ifm-color-primary-darkest);
+
+    font-size: 1.25rem;
+}
+
+.extraCodeBubble pre {
+    border-radius: 1rem;
+    border-width: 2rem;
+    border: solid var(--ifm-color-primary-darkest);
+
+    font-size: 1.1rem;
+}
+
+.heading {
+    text-align: center;
+    font-size: 3rem;
+    margin-bottom: 3rem;
+}
+
+@media screen and (max-width: 996px) {
+    .codeBubble pre {
+        font-size: inherit;
+    }
+
+    .extraCodeBubble {
+        display: none;
+    }
 }

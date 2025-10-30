@@ -21,6 +21,7 @@ namespace Geode.IR
 		public Instruction[] ToReplaceWith { get; private set; } = [];
 
 		public virtual bool IsReturn => false;
+		public virtual bool AlwaysUseScore => false; // Tee hee I love band aid fixes for band aid fixes
 
 		public Instruction(IEnumerable<IInstructionArg> args)
 		{
@@ -58,6 +59,7 @@ namespace Geode.IR
 
 		public void Resolve(FunctionContext ctx)
 		{
+			ReturnValue.ForceScoreReg = AlwaysUseScore;
 			var ret = ComputeReturnValue(ctx);
 
 			if (ret is null)

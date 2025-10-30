@@ -2,9 +2,17 @@
 
 namespace example;
 
+struct vec {
+    int x;
+}
+
 #load
 void main() {
-    print("yay");
-    
+    func({ x: 1 });
+
     amethyst:exit();
+}
+
+void func(macro vec x) {
+    @/say $(x.x)
 }

@@ -501,6 +501,8 @@ if (@e[type="creeper"]) {
 }
 ```
 
+Note: `else` statements currently only work for non-forking `execute` statements. This will change in the future.
+
 If an `execute` statement forks, all `return`s inside will terminate future forks. For example:
 
 ```cs

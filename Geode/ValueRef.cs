@@ -10,9 +10,11 @@ namespace Geode
 		public IValue? Value { get; private set; }
 		public TypeSpecifier Type { get; private set; }
 
+		public bool ForceScoreReg = false;
+
 		public bool IsLiteral => Value is not null && Value.IsLiteral;
-		public bool NeedsScoreReg => Value is null && Type.ShouldStoreInScore;
-		public bool NeedsStackVar => Value is null && !Type.ShouldStoreInScore;
+		public bool NeedsScoreReg => Value is null && (Type.ShouldStoreInScore || ForceScoreReg);
+		public bool NeedsStackVar => Value is null && !(Type.ShouldStoreInScore || ForceScoreReg);
 
 		public string Name { get => field is null ? Value is not null ? $"{(Value.IsLiteral || Value is DataTargetValue ? "" : "%")}{Value}" : "" : field; set; }
 

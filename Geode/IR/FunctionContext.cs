@@ -290,7 +290,11 @@ namespace Geode.IR
 
 			CurrentBlock = trueBlock;
 			ifTrue();
-			Add(new JumpInsn(endBlock));
+			
+			if (!cond.Forks) {
+				Add(new JumpInsn(endBlock));
+			}
+
 			CurrentBlock = endBlock;
 
 			return trueBlock;
@@ -298,6 +302,11 @@ namespace Geode.IR
 
 		public (Block trueBlock, Block falseBlock) Branch(ExecuteChain cond, string label, Action ifTrue, Action ifFalse)
 		{
+			if (cond.Forks)
+            {
+                throw new ForkedElseError();
+            }
+
 			label = GetNewLabelName(label);
 
 			var startingBlock = CurrentBlock;

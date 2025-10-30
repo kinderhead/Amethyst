@@ -22,11 +22,11 @@ namespace Amethyst.AST.Statements
 
 			if (Else is not null)
 			{
-				ctx.Branch(chain, "if", () => Statement.Compile(ctx), () => Else.Compile(ctx));
+				ctx.Branch(chain, "execute", () => Statement.Compile(ctx), () => Else.Compile(ctx));
 			}
 			else
 			{
-				ctx.Branch(chain, "if", () => Statement.Compile(ctx));
+				ctx.Branch(chain, "execute", () => Statement.Compile(ctx));
 			}
 		}
 	}

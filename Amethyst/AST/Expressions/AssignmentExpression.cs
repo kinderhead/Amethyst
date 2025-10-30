@@ -28,16 +28,16 @@ namespace Amethyst.AST.Expressions
 			switch (Type)
 			{
 				case AssignmentType.Addition:
-					val = ctx.Add(new AddInsn(ctx.ImplicitCast(dest, PrimitiveType.Int), val));
+					val = ctx.Add(new AddInsn(ctx.ImplicitCast(dest, PrimitiveType.Int), ctx.Add(new LoadInsn(ctx.ImplicitCast(val, PrimitiveType.Int)))));
 					break;
 				case AssignmentType.Subtraction:
-					val = ctx.Add(new SubInsn(ctx.ImplicitCast(dest, PrimitiveType.Int), val));
+					val = ctx.Add(new SubInsn(ctx.ImplicitCast(dest, PrimitiveType.Int), ctx.Add(new LoadInsn(ctx.ImplicitCast(val, PrimitiveType.Int)))));
 					break;
 				case AssignmentType.Multiplication:
-					val = ctx.Add(new MulInsn(ctx.ImplicitCast(dest, PrimitiveType.Int), val));
+					val = ctx.Add(new MulInsn(ctx.ImplicitCast(dest, PrimitiveType.Int), ctx.Add(new LoadInsn(ctx.ImplicitCast(val, PrimitiveType.Int)))));
 					break;
 				case AssignmentType.Division:
-					val = ctx.Add(new DivInsn(ctx.ImplicitCast(dest, PrimitiveType.Int), val));
+					val = ctx.Add(new DivInsn(ctx.ImplicitCast(dest, PrimitiveType.Int), ctx.Add(new LoadInsn(ctx.ImplicitCast(val, PrimitiveType.Int)))));
 					break;
 				default:
 					break;

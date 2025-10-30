@@ -7,6 +7,8 @@ namespace Geode.IR.Instructions
 	public abstract class OpInsn(ValueRef left, ValueRef right) : Simple2IntInsn<NBTInt>(left, right)
 	{
 		public override TypeSpecifier ReturnType => PrimitiveType.Int;
+		public override bool AlwaysUseScore => true;
+
 		public abstract bool IsCommunitive { get; }
 		public abstract ScoreOperation Op { get; }
 
