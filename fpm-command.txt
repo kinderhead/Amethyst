@@ -1,0 +1,1 @@
+fpm -s dir -t deb --name amethyst --license mit --version 0.6.0-beta --description "Test" --url "https://www.amethyst.dev" --maintainer "kinderhead" dist/amethyst=/usr/bin/amethyst dist/core=/usr/share/amethyst

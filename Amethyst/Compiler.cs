@@ -11,6 +11,7 @@ using Geode.Types;
 using Geode.Values;
 using GlobExpressions;
 using Spectre.Console;
+using System.Runtime.InteropServices;
 
 namespace Amethyst
 {
@@ -84,7 +85,7 @@ namespace Amethyst
 				}
 			}
 
-			foreach (var i in new List<string>([.. inputs, .. Glob.Files(Path.Join(AppContext.BaseDirectory, "core"), "**/*.ame").Select(i => Path.Join(AppContext.BaseDirectory, "core", i))]))
+			foreach (var i in new List<string>([.. inputs, .. GetCoreLib()]))
 			{
 				if (!ParseFile(i))
 				{
@@ -242,5 +243,19 @@ namespace Amethyst
 
 		public void Register(Intrinsic func) => IR.Symbols[func.ID] = new(func.ID, LocationRange.None, func);
 		public void Register(TypeSpecifier type) => IR.Types[type.ID] = new(type.ID, LocationRange.None, type);
+
+		public static IEnumerable<string> GetCoreLib()
+        {
+			var bundledLocation = GetAllAmethystFilesFromDirectory(Path.Join(AppContext.BaseDirectory, "core"));
+
+			if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+            {
+                return [.. bundledLocation, .. GetAllAmethystFilesFromDirectory("/usr/share/amethyst/core")];
+            }
+
+			return bundledLocation;
+		}
+
+		public static IEnumerable<string> GetAllAmethystFilesFromDirectory(string dir) => Glob.Files(dir, "**/*.ame").Select(i => Path.Join(dir, i));
 	}
 }

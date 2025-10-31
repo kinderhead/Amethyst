@@ -1,7 +1,7 @@
 .main {
     display: flex;
     flex-direction: column;
-    margin-top: 4rem;
+    margin-top: 3rem;
     align-items: center;
 }
 
@@ -19,6 +19,7 @@
     --amethyst-bg: #1e1025;
     border-radius: 1rem;
     font-size: 1.25rem;
+    max-width: 95vw;
 }
 
 .extraCodeBubble pre {
@@ -27,6 +28,7 @@
     --amethyst-bg: #1e1025;
     border-radius: 1rem;
     font-size: 1.1rem;
+    max-width: 95vw;
 }
 
 .terminalBubble {
@@ -38,6 +40,8 @@
     padding: 2rem;
 
     font-size: 1.25rem;
+
+    max-width: 95vw;
 }
 
 .heading {
@@ -60,6 +64,11 @@
 
     .heading {
         max-width: 80%;
+        font-size: 2rem;
+    }
+
+    .terminalBubble {
+        font-size: 0.75rem;
     }
 }
 

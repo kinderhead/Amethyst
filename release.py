@@ -32,7 +32,7 @@ filenames = []
 for i in dists:
     print(f"Downloading dist for {i}")
     call(f"gh run download {runId} -n amethyst-{i} -D dist/amethyst-{i}")
-    filenames.append(shutil.make_archive(f"dist/amethyst-{i}", "gztar" if "linux" in i else "zip", f"dist/amethyst-{i}"))
+    filenames.append(shutil.make_archive(f"dist/amethyst-{i}", "zip" if "windows" in i else "gztar", f"dist/amethyst-{i}"))
     shutil.rmtree(f"dist/amethyst-{i}")
 
 

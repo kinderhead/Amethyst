@@ -15,7 +15,7 @@ void move-to(int x, int z) {
                 <HighlightCode className={styles.codeBubble} code={`#load
 void main() {
     var entity = "sheep";
-    var targets = @e[type=entity,limit=10];
+    var targets = @e[type=entity];
     var arr = [1, 2, 3, 4];
 
     if (sum(arr) > 3) as (targets) {
