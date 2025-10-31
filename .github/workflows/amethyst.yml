@@ -96,7 +96,12 @@ jobs:
     strategy:
       matrix:
         arch: [
-          { artifact: "amethyst-linux-pkgs", img: "ubuntu", cmd: "apt-get install -y ./mnt/*.deb" }
+          { artifact: "amethyst-linux-pkgs", img: "ubuntu", cmd: "apt-get install -y ./mnt/*.deb" },
+          { artifact: "amethyst-linux-pkgs", img: "alpine", cmd: "apk add --allow-untrusted --no-cache ./mnt/*.apk" },
+          { artifact: "amethyst-linux-pkgs", img: "archlinux", cmd: "pacman -Uy ./mnt/*.pkg.tar.zst" },
+          { artifact: "amethyst-linux-arm-pkgs", img: "arm64v8/ubuntu", cmd: "apt-get install -y ./mnt/*.deb" },
+          { artifact: "amethyst-linux-arm-pkgs", img: "arm64v8/alpine", cmd: "apk add --allow-untrusted --no-cache ./mnt/*.apk" },
+          { artifact: "amethyst-linux-arm-pkgs", img: "--platform=linux/arm64 archlinux", cmd: "pacman -Uy ./mnt/*.pkg.tar.zst" }
         ]
 
     steps:

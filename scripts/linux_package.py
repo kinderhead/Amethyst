@@ -16,5 +16,5 @@ data = ET.parse("Amethyst/Amethyst.csproj").getroot()
 version = str(data.find("PropertyGroup").find("Version").text)  # type: ignore
 arch = platform.uname().machine
 
-for (pkg, ext) in [("deb", ".deb"), ("pacman", ".pkg.tar.zst"), ("apk", ".apk")]:
-    call(f'fpm -s dir -t {pkg} --name amethyst --license MIT --version {version} --description "A programming language for Minecraft data packs" --url "https://www.amethyst.dev" --maintainer "kinderhead" -a {arch} -p amethyst-{version}-{arch}{ext} Amethyst/dist/amethyst=/usr/bin/amethyst Amethyst/dist/std=/usr/share/amethyst', False)
+for (pkg, ext, icu) in [("deb", ".deb", "libicu-dev"), ("pacman", ".pkg.tar.zst", "icu"), ("apk", ".apk", "icu-data-full")]:
+    call(f'fpm -s dir -t {pkg} --name amethyst --license MIT --version {version} --description "A programming language for Minecraft data packs" --url "https://www.amethyst.dev" --maintainer "kinderhead" -a {arch} -d {icu} -p amethyst-{version}-{arch}{ext} Amethyst/dist/amethyst=/usr/bin/amethyst Amethyst/dist/std=/usr/share/amethyst', False)
