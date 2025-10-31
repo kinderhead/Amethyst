@@ -3,6 +3,11 @@ name: Amethyst
 on:
   push:
     branches: ["master"]
+    paths:
+      - Amethyst/**
+      - Geode/**
+      - Datapack.Net/**
+      - .github/workflows/amethyst.yml
 
 jobs:
   build:
@@ -54,6 +59,7 @@ jobs:
       if: ${{ runner.os == 'Linux' }}
       run: |
             sudo gem install fpm && \
+            sudo apt-get install -y libarchive-tools && \
             python -u linux_package.py
 
     - name: Test
@@ -73,6 +79,7 @@ jobs:
           !**/tests/**/*.ame
     
     - uses: actions/upload-artifact@v4
+      if: ${{ runner.os == 'Linux' }}
       with:
         name: amethyst-linux-pkgs-${{ matrix.type.name }}
         path: |
