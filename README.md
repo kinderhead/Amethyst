@@ -22,9 +22,9 @@ Nightly builds can be accessed through Github Actions or here:
 
 | OS | Builds |
 | -- | ------ |
-| Windows | [64 bit Windows](https://nightly.link/kinderhead/Amethyst/workflows/amethyst/master/amethyst-windows.zip) <br> [Windows 11 Arm](https://nightly.link/kinderhead/Amethyst/workflows/amethyst/master/amethyst-windows-arm.zip)|
+| Windows | [x86-64](https://nightly.link/kinderhead/Amethyst/workflows/amethyst/master/amethyst-windows.zip) <br> [Arm](https://nightly.link/kinderhead/Amethyst/workflows/amethyst/master/amethyst-windows-arm.zip)|
 | Linux | [x86-64](https://nightly.link/kinderhead/Amethyst/workflows/amethyst/master/amethyst-linux.zip) ([.deb, .apk, .pkg.tar](https://nightly.link/kinderhead/Amethyst/workflows/amethyst/master/amethyst-linux-pkgs.zip)) <br> [Arm](https://nightly.link/kinderhead/Amethyst/workflows/amethyst/master/amethyst-linux-arm.zip) ([.deb, .apk, .pkg.tar](https://nightly.link/kinderhead/Amethyst/workflows/amethyst/master/amethyst-linux-arm-pkgs.zip)) |
-| Mac | [Apple Silicon](https://nightly.link/kinderhead/Amethyst/workflows/amethyst/master/amethyst-mac.zip) <br> [Intel](https://nightly.link/kinderhead/Amethyst/workflows/amethyst/master/amethyst-mac-intel.zip) |
+| Mac | [Apple Silicon](https://nightly.link/kinderhead/Amethyst/workflows/amethyst/master/amethyst-mac.zip) |
 
 Packages for `apt`, `pacman`, and `apk` package managers are built and tested for each commit.
 

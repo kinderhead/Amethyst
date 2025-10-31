@@ -20,7 +20,6 @@ jobs:
           {os: ubuntu-24.04-arm, name: linux-arm},
           {os: windows-latest, name: windows},
           {os: windows-11-arm, name: windows-arm},
-          {os: macos-15-intel, name: "mac-intel"},
           {os: macos-latest, name: "mac"}
         ]
       fail-fast: false
