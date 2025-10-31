@@ -13,8 +13,6 @@ def call(cmd: str):
     return ret.stdout
 
 
-os.chdir("..")
-
 data = ET.parse("Amethyst/Amethyst.csproj").getroot()
 version = "v" + str(data.find("PropertyGroup").find("Version").text)  # type: ignore
 

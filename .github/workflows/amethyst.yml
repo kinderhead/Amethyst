@@ -60,16 +60,17 @@ jobs:
       run: |
             sudo gem install fpm && \
             sudo apt-get install -y libarchive-tools && \
-            python -u linux_package.py
+            python -u scripts/linux_package.py
 
     - name: Test
       uses: nick-fields/retry@v3
       with:
         max_attempts: 3
         timeout_minutes: 10
-        command: python -u test_mc.py
+        command: python -u scripts/test_mc.py
 
-    - uses: actions/upload-artifact@v4
+    - name: Upload Build
+      uses: actions/upload-artifact@v4
       with:
         name: amethyst-${{ matrix.type.name }}
         path: |
@@ -78,7 +79,8 @@ jobs:
           !**/*.dbg
           !**/tests/**/*.ame
     
-    - uses: actions/upload-artifact@v4
+    - name: Upload Linux Packages
+      uses: actions/upload-artifact@v4
       if: ${{ runner.os == 'Linux' }}
       with:
         name: amethyst-linux-pkgs-${{ matrix.type.name }}

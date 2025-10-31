@@ -14,8 +14,6 @@ def call(cmd: str, capture_output = True):
         return ret.stdout
 
 
-os.chdir("..")
-
 data = ET.parse("Amethyst/Amethyst.csproj").getroot()
 version = str(data.find("PropertyGroup").find("Version").text)  # type: ignore
 

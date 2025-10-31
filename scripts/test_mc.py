@@ -34,7 +34,7 @@ def tester(process: subprocess.Popen[bytes]):
             print("Done")
             break
 
-os.chdir("../Amethyst")
+os.chdir("Amethyst")
 
 print("Preparing tests")
 
