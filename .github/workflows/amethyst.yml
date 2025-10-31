@@ -88,3 +88,23 @@ jobs:
           *.deb
           *.pkg.tar.zst
           *.apk
+  
+  linux-pkgs:
+    runs-on: ubuntu-latest
+    needs: [build]
+    
+    strategy:
+      matrix:
+        arch: [
+          { artifact: "amethyst-linux-pkgs", img: "ubuntu", cmd: "apt-get install -y ./mnt/*.deb" }
+        ]
+
+    steps:
+      - name: Download artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ matrix.arch.artifact }}
+          path: ./pkgs
+      
+      - name: Run Container
+        run: docker run --rm -v "./pkgs:/mnt" ${{ matrix.arch.img }} /bin/sh -c "${{ matrix.arch.cmd }} && amethyst --help"

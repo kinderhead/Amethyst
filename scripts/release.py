@@ -28,17 +28,18 @@ if (os.path.isdir("dist")):
 os.mkdir("dist")
 
 dists = ["windows", "windows-arm", "linux", "linux-arm", "mac", "mac-intel"]
-filenames = []
 for i in dists:
     print(f"Downloading dist for {i}")
     call(f"gh run download {runId} -n amethyst-{i} -D dist/amethyst-{i}")
-    filenames.append(shutil.make_archive(f"dist/amethyst-{i}", "zip" if "windows" in i else "gztar", f"dist/amethyst-{i}"))
+    shutil.make_archive(f"dist/amethyst-{i}", "zip" if "windows" in i else "gztar", f"dist/amethyst-{i}")
     shutil.rmtree(f"dist/amethyst-{i}")
     
 print("Downloading Linux packages")
+for i in ["arm-pkgs", "pkgs"]:
+    call(f"gh run download {runId} -n amethyst-linux-{i} -D dist")
 
 print(f"Creating release for {version}...")
 call(f"gh release create {version} -F CHANGELOG.md")
-call(f"gh release upload {version} {' '.join(filenames)}")
+call(f"gh release upload {version} dist/*")
 
 print("Done")
