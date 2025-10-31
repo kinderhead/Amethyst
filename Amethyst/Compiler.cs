@@ -246,11 +246,11 @@ namespace Amethyst
 
 		public static IEnumerable<string> GetCoreLib()
         {
-			var bundledLocation = GetAllAmethystFilesFromDirectory(Path.Join(AppContext.BaseDirectory, "core"));
+			var bundledLocation = GetAllAmethystFilesFromDirectory(Path.Join(AppContext.BaseDirectory, "std"));
 
 			if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
             {
-                return [.. bundledLocation, .. GetAllAmethystFilesFromDirectory("/usr/share/amethyst/core")];
+                return [.. bundledLocation, .. GetAllAmethystFilesFromDirectory("/usr/share/amethyst/std")];
             }
 
 			return bundledLocation;

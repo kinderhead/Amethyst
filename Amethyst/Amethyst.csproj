@@ -46,7 +46,7 @@
     <None Update="examples\**">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="core\**">
+    <None Update="std\**">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
 	<None Update="tests\**">

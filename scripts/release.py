@@ -34,7 +34,8 @@ for i in dists:
     call(f"gh run download {runId} -n amethyst-{i} -D dist/amethyst-{i}")
     filenames.append(shutil.make_archive(f"dist/amethyst-{i}", "zip" if "windows" in i else "gztar", f"dist/amethyst-{i}"))
     shutil.rmtree(f"dist/amethyst-{i}")
-
+    
+print("Downloading Linux packages")
 
 print(f"Creating release for {version}...")
 call(f"gh release create {version} -F CHANGELOG.md")
