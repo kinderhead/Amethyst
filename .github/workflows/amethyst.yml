@@ -49,6 +49,12 @@ jobs:
     - name: Publish
       working-directory: ./Amethyst
       run: dotnet publish --configuration Release --output dist
+    
+    - name: Build Linux Packages
+      if: ${{ runner.os == 'Linux' }}
+      run: |
+            sudo gem install fpm && \
+            python -u linux_package.py
 
     - name: Test
       uses: nick-fields/retry@v3
@@ -65,3 +71,11 @@ jobs:
           !**/*.pdb
           !**/*.dbg
           !**/tests/**/*.ame
+    
+    - uses: actions/upload-artifact@v4
+      with:
+        name: amethyst-linux-pkgs-${{ matrix.type.name }}
+        path: |
+          *.deb
+          *.pkg.tar.zst
+          *.apk
