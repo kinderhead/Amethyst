@@ -31,7 +31,7 @@ dists = ["windows", "windows-arm", "linux", "linux-arm", "mac"]
 for i in dists:
     print(f"Downloading dist for {i}")
     call(f"gh run download {runId} -n amethyst-{i} -D dist/amethyst-{i}")
-    shutil.make_archive(f"dist/amethyst-{i}", "zip" if "windows" in i else "gztar", f"dist/amethyst-{i}")
+    shutil.make_archive(f"dist/amethyst-{version}-{i}", "zip" if "windows" in i else "gztar", f"dist/amethyst-{i}")
     shutil.rmtree(f"dist/amethyst-{i}")
     
 print("Downloading Linux packages")
