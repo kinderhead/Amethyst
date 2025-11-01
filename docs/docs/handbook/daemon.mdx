@@ -50,3 +50,7 @@ If an issue arises, try deleting the whole server folder and reinstalling.
 :::tip
 Since no players are on the server by default, no chunks and therefore no entities are loaded either. You can forceload chunks using a program or by calling `amethyst daemon -c "forceload ..."`. The default port used for the server is 25600 but this can be configured using `amethyst setup --eula`. Running `amethyst setup --eula` again will preserve your world, mods, `server.properties`, and more. Only the server jar and the default mods will be reset.
 :::
+
+:::warning
+Currently any errors loading your data pack are ignored and `amethyst run` assumes everything went smoothly. This will change in the future. For now, the server output can be viewed by running `amethyst daemon` in a different terminal. If an instance of the server is already running, then stop it with `amethyst daemon -c "stop"`.
+:::
