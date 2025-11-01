@@ -51,6 +51,11 @@
     max-width: 60%;
 }
 
+.buttonGroup {
+    display: flex;
+    gap: 0.5rem;
+}
+
 @media screen and (max-width: 1550px) {
     .extraCodeBubble {
         display: none;
@@ -69,6 +74,10 @@
 
     .terminalBubble {
         font-size: 0.75rem;
+    }
+
+    .buttonGroup {
+        flex-direction: column;
     }
 }
 
