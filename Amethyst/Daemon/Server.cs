@@ -1,10 +1,10 @@
+using System.Diagnostics;
+using System.Reflection;
+using System.Text.RegularExpressions;
 using Amethyst.Cli;
 using Newtonsoft.Json;
 using Spectre.Console;
-using System.Diagnostics;
-using System.Reflection;
 using Tmds.Utils;
-using static Datapack.Net.Data._1_20_4.Blocks;
 
 namespace Amethyst.Daemon
 {
@@ -163,16 +163,23 @@ namespace Amethyst.Daemon
             {
                 if (stream.ReadLine() is string msg)
                 {
-                    var marker = msg.IndexOf(MARKER_TEXT);
-                    if (marker != -1)
+                    var logMatch = TellrawLoggerLookup.Match(msg);
+                    if (logMatch.Success)
                     {
-                        msg = msg[(marker + MARKER_TEXT.Length)..];
+                        msg = logMatch.Groups[1].Value;
                         if (msg == "[exit]")
                         {
                             break;
                         }
 
                         AnsiConsole.MarkupLine(msg.EscapeMarkup());
+                        continue;
+                    }
+                    
+                    var errorMatch = ErrorLookup.Match(msg);
+                    if (errorMatch.Success)
+                    {
+                        AnsiConsole.MarkupLineInterpolated($"[red]Error: {errorMatch.Groups[1].Value}[/]");
                     }
                 }
             }
@@ -458,5 +465,9 @@ namespace Amethyst.Daemon
         public static readonly string MinecraftServerLocation = Path.Combine(ServerFolder, "server.jar");
         public static readonly string DatapackLocation = Path.Combine(ServerFolder, "world", "datapacks", "datapack");
         public static readonly string LogLocation = Path.Combine(ServerFolder, "logs", "latest.log");
+
+        // The Regex source generator is giving me Intellisense errors (while compiling fine), so I'm doing this for now.
+        public static readonly Regex TellrawLoggerLookup = new(@"(?:\[\d+:\d+:\d+\] \[Server thread/INFO\] \(TellrawLogger\) )([^\n]*)");
+        public static readonly Regex ErrorLookup = new(@"(?:\[\d+:\d+:\d+\] \[Server thread/ERROR\] \(Minecraft\) )([^\n]*)");
     }
 }

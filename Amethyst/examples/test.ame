@@ -4,10 +4,8 @@ namespace example;
 
 #load
 void main() {
-    var x = "cow";
-    if (@e[type="player", type=!x]) {
-        print("yay");
-    }
+    print("Yay");
+    @/e
 
     amethyst:exit();
 }
