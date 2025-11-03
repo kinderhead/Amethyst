@@ -11,6 +11,7 @@ using Datapack.Net.Utils;
 using Geode;
 using Geode.Chains;
 using Geode.Types;
+using Geode.Util;
 using System.Text.RegularExpressions;
 
 namespace Amethyst.AST
@@ -459,11 +460,11 @@ namespace Amethyst.AST
 				_ => TargetType.r
 			};
 
-			var args = new Dictionary<string, Expression>();
+			var args = new MultiDictionary<string, Expression>();
 
 			foreach (var i in context.targetSelectorArgument())
 			{
-				args[i.RawIdentifier().GetText()] = Visit(i.expression());
+				args.Add(i.RawIdentifier().GetText(), Visit(i.expression()));
 			}
 
 			return new TargetSelectorExpression(Loc(context), type, args);

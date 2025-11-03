@@ -4,25 +4,9 @@ namespace example;
 
 #load
 void main() {
-    int x = 7;
-
-    {
-        long x = 1;
+    if (@e[type="player", type="!cow"]) {
+        print("yay");
     }
 
     amethyst:exit();
-}
-
-void test() {
-    int x = 8;
-    string y = "yay";
-
-    x.say();
-    y.say();
-}
-
-namespace minecraft:nbt;
-
-void say(nbt& this) {
-    print(this);
 }

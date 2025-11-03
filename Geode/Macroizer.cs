@@ -77,6 +77,8 @@ namespace Geode
 					Builder.Datapack.Functions.Add(mcFunc);
 				}
 
+				ctx.Func.AddDependency(mcFunc);
+
 				FunctionValue.Call(ctx, mcFunc.ID, new FunctionType(FunctionModifiers.None, new VoidType(), toMacro.Select(i => new Parameter(ParameterModifiers.Macro, i.Value.Type, i.Key))), [.. toMacro.Values.Select(i => new ValueRef(i))]);
 			}
 		}

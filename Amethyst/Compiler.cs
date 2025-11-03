@@ -126,12 +126,23 @@ namespace Amethyst
 				IR.AddFunctions(GlobalInitFunc);
 			}
 
-			if (errored)
+			if (errored || !IR.Compile())
 			{
 				return false;
 			}
 
-			return IR.Compile();
+			if (Options.DumpCommands)
+			{
+				foreach (var i in IR.Functions)
+				{
+					if (i.Decl.ID.Namespace != "amethyst")
+                    {
+                        i.FancyPrintCommands();
+                    }
+				}
+			}
+
+			return true;
 		}
 
 		public bool ParseFile(string filename)

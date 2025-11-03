@@ -23,6 +23,10 @@ namespace Amethyst.Cli
         [Description("Dump Geode IR and don't compile to datapack.")]
         public bool DumpIR { get; set; }
 
+        [CommandOption("-c|--dump-cmd")]
+        [Description("Dump non-std functions.")]
+        public bool DumpCommands { get; set; }
+
         [CommandOption("--run")]
         [Description("Run the datapack if built successfully.")]
         public bool Run { get; set; }

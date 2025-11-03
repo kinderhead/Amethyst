@@ -1,3 +1,5 @@
+using System.Text;
+using Datapack.Net.Function;
 using Datapack.Net.Function.Commands;
 using Datapack.Net.Utils;
 using Geode.Errors;
@@ -5,7 +7,7 @@ using Geode.IR.Instructions;
 using Geode.IR.Passes;
 using Geode.Types;
 using Geode.Values;
-using System.Text;
+using Spectre.Console;
 
 namespace Geode.IR
 {
@@ -30,6 +32,8 @@ namespace Geode.IR
 		public readonly bool HasTagPriority;
 
 		public IReadOnlyCollection<Block> Blocks => blocks;
+		public IReadOnlyCollection<MCFunction> Dependencies => dependencies;
+		private readonly List<MCFunction> dependencies = [];
 		private readonly List<Block> blocks = [];
 		private readonly List<Scope> totalScopes = [];
 		private readonly Stack<Scope> activeScopes = [];
@@ -233,7 +237,6 @@ namespace Geode.IR
 		}
 
 		public ValueRef Call(NamespacedID id, params ValueRef[] args) => Call(GetGlobal(id) as FunctionValue ?? throw new UndefinedSymbolError(id.ToString()), args);
-
 		public ValueRef Call(FunctionValue f, params ValueRef[] args) => Add(new CallInsn(f, PrepArgs(f.FuncType, args)));
 
 		public IEnumerable<ValueRef> PrepArgs(FunctionType type, params ValueRef[] args)
@@ -246,6 +249,8 @@ namespace Geode.IR
 			return args.Zip(type.Parameters).Select(i => ImplicitCast(i.First, i.Second.Type));
 		}
 
+		public void AddDependency(MCFunction func) => dependencies.Add(func);
+
 		public void Finish()
 		{
 			if (CurrentBlock.Instructions.Count == 0 || !CurrentBlock.Instructions.Last().IsReturn)
@@ -255,6 +260,8 @@ namespace Geode.IR
 
 			CurrentBlock.Link(ExitBlock);
 			CurrentBlock = ExitBlock;
+
+			dependencies.AddRange(blocks.Select(i => i.Function));
 		}
 
 		public string GetNewLabelName(string label)
@@ -476,6 +483,11 @@ namespace Geode.IR
 
 			return builder.ToString();
 		}
+
+		public void FancyPrintCommands()
+        {
+            AnsiConsole.MarkupLineInterpolated($"[bold green]{Decl.ID}[/]");
+        }
 
 		public NamespacedID GetNewInternalID() => new(Decl.ID.Namespace, $"{GeodeBuilder.InternalPath}/{GeodeBuilder.RandomString}");
 

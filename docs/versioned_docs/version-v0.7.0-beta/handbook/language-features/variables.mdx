@@ -1,0 +1,116 @@
+---
+sidebar_position: 3
+description: Variable usage
+---
+
+import Highlight from "@site/src/components/highlight";
+
+# Variables
+
+## Syntax
+
+<Highlight code={`\
+    int x = 7;
+    string y;
+    var str = "foo";
+`}/>
+
+The variable is set to a default value if there is no initializer. Objects with a constructor must have an initializer.
+
+The `var` keyword can be used to inference the type of the variable using the initializer.
+
+## Scopes
+
+Variable obey the traditional rules of scoping, so variables can be redefined inside of scopes and can be accessed from descendent scopes.
+
+<Highlight code={`\
+    int x = 7;
+    int y = 3;
+
+    {
+        // Valid, x is now a long in this scope
+        long x = 2;
+        print(y);
+    }
+`}/>
+
+## Casting
+
+Values can attempt to be casted to other types. There are two main types of casting: implicit and explicit. Implicit casting, as the name suggests, is done automatically where applicable. Explicit casting happens when using the cast expression:
+
+<Highlight code={`\
+    string str = "Hi";
+    int x = (int)str;
+`}/>
+
+:::info
+Explicit casting is mainly used for casting down an inheritance tree. However some types have special explicit casting rules. For instance, casting anything to an int will effectively use `/execute store`. So for most values, it will call `/data get` and store that into a score.
+:::
+
+## Math
+
+All the normal operators work as expected (except `%` for now).
+
+Amethyst also provides the following unary operators:
+
+* `++x`
+* `--x`
+* `!x`
+* `-x`
+
+:::note
+Postfix increment and decrement (`x++`) does not exist due to clarity concerns. This may change in the future.
+:::
+
+:::warning
+Minecraft may handle integer division slightly differently than the languages you are used to.
+:::
+
+## Strings
+
+Strings in Amethyst are implemented using NBT strings. Only double quotes are supported for now.
+
+<Highlight code={`\
+    string str = "Hello World";
+`}/>
+
+:::tip
+All Minecraft string escape codes can be used.
+:::
+
+### Methods
+
+* `.length()`: String length. Compiles internally as `(int)str`.
+
+## Lists
+
+Lists store an ordered collection of values. Untyped lists (using `list`) are unsupported currently.
+
+<Highlight code={`\
+    int[] list = [-7];
+
+    list.add(10);
+    list.add(5);
+    list.add(x * y);
+
+    print(list[2]);
+`}/>
+
+### Methods
+
+* `.add(T val)`: Add a value to the end of the list.
+* `.size()`: Get the size of the list.
+
+:::warning
+There are currently no bounds checks. Eventually it will be included in debug builds and optionally in release mode builds.
+:::
+
+## Objects
+
+Typeless NBT compounds can be created using the `nbt` type:
+
+<Highlight code={`\
+    nbt x = { thing1: 7, thing2: 6s };
+    x.property = "Hi";
+    print(x);
+`}/>

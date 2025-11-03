@@ -1,0 +1,14 @@
+---
+sidebar_position: 1
+description: Installing on Linux
+---
+
+# Linux
+
+Amethyst offers packages for Debian and Arch based Linux distros. Currently the only way to install them is by downloading the packages from the [releases](https://github.com/kinderhead/Amethyst/releases) page. Builds for both x64 and Arm are available.
+
+Linux packages place the standard library (the `std` folder) at `/usr/share/amethyst/std`. Amethyst automatically compiles all files within this directory as well as all files in the local `std` folder relative to the executable.
+
+:::warning
+If you install Amethyst through a package, do not run any other version with the portable distribution because the compiler will try to compile both copies of the standard library. Even if the standard libraries are the same, it will cause redefined symbol errors.
+:::

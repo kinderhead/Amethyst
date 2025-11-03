@@ -1,0 +1,35 @@
+---
+sidebar_position: 4
+description: Inline command usage
+---
+
+import Highlight from "@site/src/components/highlight";
+
+# Inline Commands
+
+## Usage
+
+Custom commands can be inlined into any function. No processing will be done on them, so any command can be run. As such, any syntax errors will not by caught by Amethyst and instead will cause an error on load.
+
+<Highlight code={`\
+    @/say Foo
+`}/>
+
+## Macros
+
+Values from your code can be inserted into inline commands as macros using the traditional Minecraft macro syntax: `$(var)`, but they are not limited to just a single variable.
+
+Example:
+
+<Highlight code={`\
+    // Compiled as a separate macro function that gets called with the arguments specified
+    @/tp @s ~ $(y) $(z * foo("bar"))
+`}/>
+
+:::tip
+Supplying an inline command with only macro variables from the function's parameters allows Amethyst to skip the intermediate function and emit more efficient code.
+:::
+
+:::warning
+The same limitations that plague `macro string` arguments also effects inline commands.
+:::
