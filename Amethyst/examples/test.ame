@@ -4,7 +4,8 @@ namespace example;
 
 #load
 void main() {
-    if (@e[type="player", type="!cow"]) {
+    var x = "cow";
+    if (@e[type="player", type=!x]) {
         print("yay");
     }
 

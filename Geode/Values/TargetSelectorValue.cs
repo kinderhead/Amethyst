@@ -31,14 +31,34 @@ namespace Geode.Values
 
 			foreach (var (k, v) in Arguments)
 			{
+				var arg = k;
+				var negated = false;
+
+				if (k.StartsWith('!'))
+                {
+                    arg = k[1..];
+					negated = true;
+                }
+
+				string val;
+
 				// Remove quotes if constant
-				if (k is "type" && v is IConstantValue c && c.Value is NBTString str)
+				if (arg is "type" && v is IConstantValue c && c.Value is NBTString str)
 				{
-					target.Add(k, str.Value);
+					val = str.Value;
 				}
 				else
 				{
-					target.Add(k, v.ToString() ?? "");
+					val = v.ToString() ?? "";
+				}
+
+				if (negated)
+                {
+                    target.Add(arg, '!' + val);
+                }
+				else
+                {
+					target.Add(arg, val);
 				}
 			}
 
@@ -67,7 +87,7 @@ namespace Geode.Values
 
 		public void StoreTo(DataTargetValue val, RenderContext ctx)
 		{
-			foreach (var i in Arguments["name"])
+			foreach (var i in Arguments["name"].Concat(Arguments["!name"]))
 			{
 				if (i is not IConstantValue)
                 {
@@ -75,7 +95,7 @@ namespace Geode.Values
 				}
 			}
 
-			foreach (var i in Arguments["nbt"])
+			foreach (var i in Arguments["nbt"].Concat(Arguments["!nbt"]))
 			{
 				if (i is not IConstantValue)
 				{

@@ -1,3 +1,4 @@
+using Amethyst.Errors;
 using Datapack.Net.Function;
 using Geode;
 using Geode.Errors;
@@ -19,13 +20,31 @@ namespace Amethyst.AST.Expressions
 
 			foreach (var (k, v) in Arguments)
 			{
-				args.Add(new(k, k switch
+				var effectiveName = k;
+				var effectiveValue = v;
+
+				if (v is NotExpression n)
+                {
+                    if (k is "tag" or "team" or "gamemode" or "name" or "type" or "family" or "nbt" or "predicate")
+                    {
+                        effectiveName = '!' + k;
+						effectiveValue = n.Value;
+                    }
+					else
+                    {
+                        throw new CannotNegateArgument(k);
+                    }
+                }
+
+				var val = k switch
 				{
-					"x" or "y" or "z" or "dx" or "dy" or "dz" => v.Execute(ctx, PrimitiveType.Double),
-					"limit" => v.Execute(ctx, PrimitiveType.Int),
-					"name" or "type" or "tag" or "team" => v.Execute(ctx, PrimitiveType.String),
+					"x" or "y" or "z" or "dx" or "dy" or "dz" => effectiveValue.Execute(ctx, PrimitiveType.Double),
+					"limit" => effectiveValue.Execute(ctx, PrimitiveType.Int),
+					"name" or "type" or "tag" or "team" => effectiveValue.Execute(ctx, PrimitiveType.String),
 					_ => throw new TargetSelectorArgumentError(k),
-				}));
+				};
+
+				args.Add(new(effectiveName, val));
 			}
 
 			return ctx.Add(new TargetSelectorInsn(Type, args));

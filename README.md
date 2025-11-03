@@ -65,24 +65,17 @@ void main() {
 ```
 $ amethyst --help
 USAGE:
-    amethyst [OPTIONS] <COMMAND>
-
-EXAMPLES:
-    amethyst build examples/test.ame -o datapack.zip
-    amethyst build tests/*.ame -o tests.zip
-    amethyst setup --eula
-    amethyst run test.zip
-    amethyst daemon
-    amethyst daemon -c "op steve"
+    amethyst [OPTIONS] [COMMAND]
 
 OPTIONS:
-    -h, --help    Prints help information
+    -h, --help       Prints help information    
+    -v, --version    Print the version and close
 
 COMMANDS:
-    build <inputs>    Amethyst compiler                                          
-    setup             Amethyst runtime Minecraft server setup                    
-    run <data pack>   Run a data pack                                             
-    daemon            Run the Amethyst runtime Minecraft server without a timeout
+    build <inputs>     Amethyst compiler                                          
+    setup              Amethyst runtime Minecraft server setup                    
+    run <data pack>    Run a datapack                                             
+    daemon             Run the Amethyst runtime Minecraft server without a timeout
 ```
 
 See the documentation for information about the `setup`, `run`, and `daemon` commands.

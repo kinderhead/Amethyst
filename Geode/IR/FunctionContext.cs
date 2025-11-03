@@ -486,7 +486,13 @@ namespace Geode.IR
 
 		public void FancyPrintCommands()
         {
-            AnsiConsole.MarkupLineInterpolated($"[bold green]{Decl.ID}[/]");
+            AnsiConsole.MarkupLineInterpolated($"[orange1]Compiled functions for[/] [bold green]{Decl.ID}[/]");
+
+			foreach (var i in dependencies)
+			{
+				AnsiConsole.MarkupLineInterpolated($"[aqua]{i.ID}[/]");
+				AnsiConsole.WriteLine(i.Build() + "\n");
+			}
         }
 
 		public NamespacedID GetNewInternalID() => new(Decl.ID.Namespace, $"{GeodeBuilder.InternalPath}/{GeodeBuilder.RandomString}");

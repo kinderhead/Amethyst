@@ -7,6 +7,8 @@ import Highlight from "@site/src/components/highlight";
 
 # Target Selectors
 
+## Usage
+
 Minecraft target selectors can be created and used using the `minecraft:target` type. `minecraft:target` is stored internally as strings and can be used in macro scenerios. Currently target selectors are WIP and are missing key features. More uses for them will be added over time.
 
 Target selectors can be implicitly created using the same syntax as they do in commands:
@@ -28,6 +30,27 @@ String arguments like `name` and `type` must be quoted strings or else Amethyst 
 
 :::note
 Many of the arguments have not been implemented.
+:::
+
+### Negation
+
+Arguments can be negated by putting a `!` after the equal sign. Additionally, multiple arguments of the same name can exist.
+
+<Highlight code={`\
+    // The ! can go inside or outside of quotes
+    var target = @e[type=!"player",type="!item"];
+`}/>
+
+The above is equivalent to:
+
+<Highlight code={`\
+    var foo = "player";
+    var bar = "!item";
+    var target = @e[type=!foo,type=bar];
+`}/>
+
+:::warning
+No checks have been implemented yet for invalid combinations of arguments. Check the Minecraft logs for errors generated on `/reload`. Adding `-c` to your build command dumps the compiled `.mcfunctions` to the console for easy viewing.
 :::
 
 ## Existence Checks

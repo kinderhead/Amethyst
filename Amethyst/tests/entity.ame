@@ -31,3 +31,22 @@ void macro_entity_tester(macro bool x) {
         assert(!x);
     }
 }
+
+#test
+void test_entity_negate() {
+    start("entity negate");
+
+    @/kill @e[type=wither]
+    @/summon wither ~ ~ ~ { CustomName: "womp1" }
+    @/summon wither ~ ~ ~ { CustomName: "womp2" }
+
+    assert(!@e[type="wither",name=!"womp1",name=!"womp2"]);
+
+    @/summon wither
+
+    assert(@e[type="wither",name=!"womp1",name=!"womp2"]);
+
+    @/kill @e[type=wither]
+
+    complete();
+}

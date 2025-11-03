@@ -23,7 +23,7 @@ namespace Amethyst
 			var app = new CommandApp();
 #pragma warning restore IL3050
 
-			//app.SetDefaultCommand<BuildCommand>();
+			app.SetDefaultCommand<DefaultCommand>();
 			app.Configure(config =>
             {
 				config.SetApplicationName("amethyst");
