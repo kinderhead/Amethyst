@@ -4,7 +4,9 @@
     "antlr4.generation": {
         "package": "Amethyst.Antlr",
         "outputDir": "Antlr",
-        "language": "CSharp"
+        "language": "CSharp",
+        "listeners": false,
+        "visitors": true,
     },
     "VSCodeCounter.exclude": [
         "**/.gitignore",
