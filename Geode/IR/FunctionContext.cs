@@ -54,6 +54,8 @@ namespace Geode.IR
 			IsMacroFunction = Decl.FuncType.IsMacroFunction;
 			HasTagPriority = hasTagPriority;
 
+			LocationStack.Push(LocationRange.None);
+
 			PushScope();
 
 			blocks.Add(new("entry", Decl.ID, this));
@@ -98,9 +100,14 @@ namespace Geode.IR
 				}
 			}
 
-			if (name.Contains(':') && GetGlobal(new NamespacedID(name)) is IValue v)
+			if (name.Contains(':'))
 			{
-				return v;
+				if (GetGlobal(new NamespacedID(name)) is IValue v)
+				{
+					return v;
+				}
+
+				return null;
 			}
 			else if (GetGlobalWalk(Decl.ID.GetContainingFolder(), name) is IValue v2)
 			{

@@ -19,6 +19,8 @@
 			}
 		}
 
+		public LocationRange MapFile(IFileHandler handler) => new(new(handler.PathToMap(Start.File), Start.Line, Start.Column), new(handler.PathToMap(End.File), End.Line, End.Column));
+
 		public static LocationRange None => new(new("", 0, 0), new("", 0, 0));
 	}
 

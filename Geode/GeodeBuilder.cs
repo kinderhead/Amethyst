@@ -15,6 +15,7 @@ namespace Geode
 	{
 		public readonly IOptions Options;
 		public readonly ICompiler Compiler;
+		public readonly IFileHandler FileHandler;
 		public readonly DP Datapack;
 		public readonly Macroizer Macroizer;
 
@@ -33,7 +34,7 @@ namespace Geode
 		private readonly SortedDictionary<int, ScoreValue> constants = [];
 		private readonly List<MCFunction> functionsToRemove = [];
 
-		public GeodeBuilder(IOptions opts, ICompiler compiler, string baseNamespace)
+		public GeodeBuilder(IOptions opts, ICompiler compiler, IFileHandler handler, string baseNamespace)
 		{
 			Namespace = baseNamespace;
 			RuntimeID = new(baseNamespace, "runtime");
@@ -42,6 +43,7 @@ namespace Geode
 			Options = opts;
 			Datapack = GetDP(Options);
 			Compiler = compiler;
+			FileHandler = handler;
 			Macroizer = new(this);
 		}
 

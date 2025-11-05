@@ -24,11 +24,6 @@ namespace Datapack.Net.Utils
 
 		public override string ToString() => $"{Namespace}:{Path}";
 
-		public static bool operator ==(NamespacedID left, NamespacedID right) => left.Namespace == right.Namespace && left.Path == right.Path;
-		public static bool operator !=(NamespacedID left, NamespacedID right) => left.Namespace != right.Namespace || left.Path != right.Path;
-
-		public static implicit operator NamespacedID(string id) => new(id);
-
 		public override bool Equals(object? obj)
 		{
 			if (obj is NamespacedID id)
@@ -40,9 +35,6 @@ namespace Datapack.Net.Utils
 		}
 
 		public override int GetHashCode() => Namespace.GetHashCode() * Path.GetHashCode();
-
-		[GeneratedRegex(@"/+")]
-		private static partial Regex DuplicateSlashRegex();
 
 		public string GetContainingFolder()
 		{
@@ -57,6 +49,14 @@ namespace Datapack.Net.Utils
 		}
 
 		public string GetFile() => Path.Split('/')[^1];
+
+		public static bool operator ==(NamespacedID left, NamespacedID right) => left.Namespace == right.Namespace && left.Path == right.Path;
+		public static bool operator !=(NamespacedID left, NamespacedID right) => left.Namespace != right.Namespace || left.Path != right.Path;
+
+		public static implicit operator NamespacedID(string id) => new(id);
+
+		[GeneratedRegex(@"/+")]
+		private static partial Regex DuplicateSlashRegex();
 	}
 
 	public class NamespacedIDSerializer : JsonConverter<NamespacedID>

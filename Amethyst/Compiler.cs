@@ -21,13 +21,15 @@ namespace Amethyst
 		public readonly Dictionary<string, RootNode> Roots = [];
 		public readonly FunctionContext GlobalInitFunc;
 
+		public string CoreLibPath { get; private set; }
+
 		public Dictionary<string, string> Files { get; } = [];
 		public GeodeBuilder IR { get; }
 
 		public Compiler(BuildOptions opts)
 		{
 			Options = opts;
-			IR = new(Options, this, "amethyst");
+			IR = new(Options, this, this, "amethyst");
 
 			GlobalInitFunc = GetGlobalInitFunc();
 			RegisterGlobals();
@@ -165,6 +167,7 @@ namespace Amethyst
 			try
 			{
 				var root = parser.root();
+				
 				if (error.Errored)
 				{
 					return false;
@@ -224,6 +227,27 @@ namespace Amethyst
 			return true;
 		}
 
+		public string PathToMap(string path)
+        {
+			if (path.StartsWith(CoreLibPath))
+            {
+				// Includes a slash probably
+                return $"@std{path[CoreLibPath.Length..]}";
+            }
+
+            return path;
+        }
+
+		public string MapToPath(string mappedPath)
+        {
+            if (mappedPath.StartsWith("@std"))
+            {
+                return Path.Combine(CoreLibPath, mappedPath["@std".Length..]);
+            }
+
+			return mappedPath;
+        }
+
 		protected virtual void RegisterGlobals()
 		{
 			Register(PrimitiveType.Bool);
@@ -255,16 +279,31 @@ namespace Amethyst
 		public void Register(Intrinsic func) => IR.Symbols[func.ID] = new(func.ID, LocationRange.None, func);
 		public void Register(TypeSpecifier type) => IR.Types[type.ID] = new(type.ID, LocationRange.None, type);
 
-		public static IEnumerable<string> GetCoreLib()
+		public IEnumerable<string> GetCoreLib()
         {
-			var bundledLocation = GetAllAmethystFilesFromDirectory(Path.Join(AppContext.BaseDirectory, "std"));
-
-			if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+			if (AttemptCoreLibLoad(Path.Join(AppContext.BaseDirectory, "std"), out var normal))
             {
-                return [.. bundledLocation, .. GetAllAmethystFilesFromDirectory("/usr/share/amethyst/std")];
+                return normal;
+            }
+			else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux) && AttemptCoreLibLoad("/usr/share/amethyst/std", out var linux))
+            {
+                return linux;
             }
 
-			return bundledLocation;
+			throw new FileNotFoundException("The standard library could not be loaded. Try reinstalling Amethyst");
+		}
+
+		private bool AttemptCoreLibLoad(string path, out IEnumerable<string> files)
+        {
+            files = GetAllAmethystFilesFromDirectory(path);
+
+			if (files.Any())
+            {
+                CoreLibPath = path;
+				return true;
+            }
+
+			return false;
 		}
 
 		public static IEnumerable<string> GetAllAmethystFilesFromDirectory(string dir) => Glob.Files(dir, "**/*.ame").Select(i => Path.Join(dir, i));

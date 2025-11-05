@@ -180,6 +180,12 @@ namespace Amethyst.Daemon
                     if (errorMatch.Success)
                     {
                         AnsiConsole.MarkupLineInterpolated($"[red]Error: {errorMatch.Groups[1].Value}[/]");
+                        continue;
+                    }
+
+                    if (msg[0] != '[')
+                    {
+                        AnsiConsole.MarkupLineInterpolated($"[red]{msg}[/]");
                     }
                 }
             }

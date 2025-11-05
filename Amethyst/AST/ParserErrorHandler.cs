@@ -13,6 +13,9 @@ namespace Amethyst.AST
 
 		public Dictionary<string, string> Files => new([new KeyValuePair<string, string>(Path, file)]);
 
+		public string MapToPath(string mappedPath) => mappedPath;
+		public string PathToMap(string path) => path;
+
 		public override void SyntaxError(TextWriter output, IRecognizer recognizer, IToken offendingSymbol, int line, int charPositionInLine, string msg, RecognitionException e) => ThrowError(line, charPositionInLine, offendingSymbol.Text.Length, msg);
 		public void SyntaxError(TextWriter output, IRecognizer recognizer, int offendingSymbol, int line, int charPositionInLine, string msg, RecognitionException e) => ThrowError(line, charPositionInLine, offendingSymbol, msg);
 

@@ -12,9 +12,19 @@ namespace Geode
 	public record class RenderContext(MCFunction MCFunction, IR.Block Block, GeodeBuilder Builder, FunctionContext Func)
 	{
 		public ScoreValue SuccessScore => Builder.Score("func_success");
+		
+		private LocationRange lastLocation = LocationRange.None;
 
 		public virtual void Add(params IEnumerable<Command> cmds)
 		{
+			var loc = Block.Ctx.LocationStack.Peek();
+
+			if (loc != lastLocation)
+            {
+                MCFunction.Add(new Comment(loc.MapFile(Builder.FileHandler).ToString()));
+				lastLocation = loc;
+            }
+
 			if (Func.IsMacroFunction)
 			{
 				MCFunction.Add(cmds.Select(i =>
