@@ -1,0 +1,20 @@
+---
+sidebar_position: 2
+description: Generic installation
+---
+
+# Platform Agnostic
+
+Amethyst does not currently have installers for all platforms. Instead download a bundle from the [releases](https://github.com/kinderhead/Amethyst/releases) page, extract, then add to path.
+
+## Example Folder Structure
+
+Until installers are created, the following folder structure is both simple and easy to update:
+
+* \<root folder of your choice\>
+  * amethyst(.exe)
+  * std
+  * projects
+    * \<project folders\>
+
+With this system, the compiler can be invoked from a project's directory with `../../amethyst`. Alternatively the `projects` directory could be omitted and have each project just be a folder under the root. Then `../amethyst` can be used to run the compiler.

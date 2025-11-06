@@ -43,15 +43,16 @@ namespace Amethyst.Cli
             AnsiConsole.MarkupLine("[yellow]Amethyst is currently in development. Report issues at [aqua underline]https://github.com/kinderhead/Amethyst/issues[/].[/]\n");
             
             settings.Output ??= Path.GetFileName(settings.Inputs[0]) + ".zip";
+            var compiler = new Compiler(settings);
 
-            if (!new Compiler(settings).Compile())
+            if (!compiler.Compile())
             {
                 return 1;
             }
 
             if (settings.Run)
             {
-                Server.RunDatapack(new DaemonRunOptions() { Datapack = settings.Output });
+                Runner.RunDatapack(new DaemonRunOptions() { Datapack = settings.Output }, compiler);
             }
 
             return 0;

@@ -13,7 +13,7 @@ namespace Geode.Errors
 			// Console.WriteLine(StackTrace);
 
 			var msg = new CompilerMessager(Color.Red);
-			msg.Header($"Error at {loc.Start}");
+			msg.Header($"Error at [underline]{loc.Start}[/]");
 			msg.AddCode(handler, loc);
 
 			if (last)
@@ -39,7 +39,7 @@ namespace Geode.Errors
 			var msg = base.Display(handler, loc, false);
 
 			msg.AddContent("");
-			msg.AddContent($"[green]{RawMessage2} {Location2.Start}[/]");
+			msg.AddContent($"[green]{RawMessage2} [underline]{Location2.Start}[/][/]");
 			msg.AddCode(handler, Location2, last);
 
 			return msg;

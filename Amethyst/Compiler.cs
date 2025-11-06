@@ -23,8 +23,9 @@ namespace Amethyst
 
 		public string CoreLibPath { get; private set; }
 
-		public Dictionary<string, string> Files { get; } = [];
 		public GeodeBuilder IR { get; }
+
+		private Dictionary<string, string> Files { get; } = [];
 
 		public Compiler(BuildOptions opts)
 		{
@@ -39,57 +40,11 @@ namespace Amethyst
 		{
 			var errored = false;
 
-			List<string> inputs = [];
+			LoadFiles();
 
-			foreach (var glob in Options.Inputs.Select(i => i.Replace('\\', '/')))
+			foreach (var (k, v) in Files)
 			{
-				var lastSlash = 0;
-				var firstStar = -1;
-
-				for (var i = 0; i < glob.Length; i++)
-				{
-					if (glob[i] == '/')
-					{
-						lastSlash = i;
-					}
-
-					if (glob[i] == '*')
-					{
-						firstStar = i;
-						break;
-					}
-				}
-
-				if (firstStar == -1)
-				{
-					inputs.Add(glob);
-					continue;
-				}
-
-				IEnumerable<string> globToCheck;
-
-				if (lastSlash == 0)
-				{
-					globToCheck = Glob.Files(Directory.GetCurrentDirectory(), glob);
-				}
-				else
-				{
-					globToCheck = Glob.Files(glob[..lastSlash], glob[(lastSlash + 1)..]);
-				}
-
-				if (!globToCheck.Any())
-				{
-					AnsiConsole.MarkupInterpolated($"[bold yellow]Warning:[/] No files found for glob \"{glob}\"\n");
-				}
-				else
-				{
-					inputs.AddRange(globToCheck.Select(i => Path.Join(glob[..lastSlash], i)));
-				}
-			}
-
-			foreach (var i in new List<string>([.. inputs, .. GetCoreLib()]))
-			{
-				if (!ParseFile(i))
+				if (!ParseFile(k, v))
 				{
 					errored = true;
 				}
@@ -147,11 +102,79 @@ namespace Amethyst
 			return true;
 		}
 
-		public bool ParseFile(string filename)
-		{
-			var file = File.ReadAllText(filename);
-			Files[filename] = file;
+		public void LoadFiles()
+        {
+			List<string> inputs = [];
 
+			foreach (var glob in Options.Inputs.Select(i => i.Replace('\\', '/')))
+			{
+				var lastSlash = 0;
+				var firstStar = -1;
+
+				for (var i = 0; i < glob.Length; i++)
+				{
+					if (glob[i] == '/')
+					{
+						lastSlash = i;
+					}
+
+					if (glob[i] == '*')
+					{
+						firstStar = i;
+						break;
+					}
+				}
+
+				if (firstStar == -1)
+				{
+					inputs.Add(glob);
+					continue;
+				}
+
+				IEnumerable<string> globToCheck;
+
+				if (lastSlash == 0)
+				{
+					globToCheck = Glob.Files(Directory.GetCurrentDirectory(), glob);
+				}
+				else
+				{
+					globToCheck = Glob.Files(glob[..lastSlash], glob[(lastSlash + 1)..]);
+				}
+
+				if (!globToCheck.Any())
+				{
+					AnsiConsole.MarkupInterpolated($"[bold yellow]Warning:[/] No files found for glob \"{glob}\"\n");
+				}
+				else
+				{
+					inputs.AddRange(globToCheck.Select(i => Path.Join(glob[..lastSlash], i)));
+				}
+			}
+
+			foreach (var i in new List<string>([.. inputs, .. GetCoreLib()]))
+			{
+				LoadFile(i);
+			}
+		}
+
+		public void LoadFile(string path) => LoadFile(path, File.ReadAllText(path));
+		public void LoadFile(string path, string file) => Files[path] = file;
+
+		public string GetFile(string path)
+        {
+            if (Files.TryGetValue(path, out var file))
+            {
+                return file;
+            }
+
+			file = File.ReadAllText(path);
+			Files[path] = file;
+			return file;
+        }
+
+		public bool ParseFile(string filename, string file)
+		{
 			var input = new AntlrInputStream(file);
 			var lexer = new AmethystLexer(input);
 			var tokens = new CommonTokenStream(lexer);

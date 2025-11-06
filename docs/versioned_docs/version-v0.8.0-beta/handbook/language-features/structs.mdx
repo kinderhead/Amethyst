@@ -1,0 +1,138 @@
+---
+sidebar_position: 8
+description: Struct usage
+---
+
+import Highlight from "@site/src/components/highlight";
+
+# Structs
+
+## Syntax
+
+Structs are special objects that can hold properties. They are implemented as NBT compounds.
+
+<Highlight code={`\
+    struct vec {
+        int x;
+        int y;
+        int z;
+    }
+
+    vec obj = { x: 10, y: -10 }; // obj.z == 0
+`}/>
+
+Structs without a constructor are instantiated like typeless `nbt` compounds.
+
+:::note
+Properties are set to their default values if not explicitly set.
+:::
+
+## Methods
+
+<Highlight code={`\
+    struct vec {
+        int x;
+        int y;
+        int z;
+
+        int sum() {
+            return this.x + this.y + this.z;
+        }
+    }
+
+    void foo() {
+        print(obj.sum());
+    }
+`}/>
+
+Methods have an implicit variable called `this` which stores a reference to the current object.
+
+Struct methods are processed internally as [Extension Methods](./extension-methods.mdx), where the first parameter is `macro T& this`.
+
+:::tip
+Create an extension method outside of the struct to customize the `this` parameter (eg. removing `macro`).
+:::
+
+## Constructors
+
+<Highlight code={`\
+    struct vec {
+        int x;
+        int y;
+        int z;
+
+        vec(int x, int y, int z) {
+            this.x = x;
+            this.y = y;
+            this.z = z;
+        }
+    }
+
+    vec obj = vec(1, 2, 3); // or var obj = vec(1, 2, 3);
+`}/>
+
+Constructors are processed into functions of the form `type type(...)` where `type` is the name of a struct. The object itself is created as a local variable called `this` in the constructor and automatically returned at the end. As such, it is possible to return earlier from a constructor explicitly if need be. Objects with a constructor must have a non-compound initializer:
+
+<Highlight code={`\
+    vec obj; // Error
+    vec obj = { x: 1, y: 2, z: 3 }; // Error
+    vec obj = vec(1, 2, 3); // Valid
+`}/>
+
+Just like with methods, it is possible to retroactively create a constructor outside of the struct definition, and even make constructors for non-struct types. Amethyst considers that a type has a constructor if a function is found with the following conditions:
+
+* It has the same name as the type, including namespace. Unlike methods, the function is not under a special subpath in the namespace.
+* The function returns the type in question.
+
+:::warning
+Amethyst adds a special variable initializer for `this` in constructors defined in structs that bypasses the `MissingConstructorError`, so it may not be possible in all scenarios to create a constructor for any type.
+:::
+
+## Inheritance
+
+Structs can inherit methods and properties from other types, even non-nbt compound ones. If the base type has a constructor, it is required to implement a new constructor and add an initializer.
+
+<Highlight code={`\
+    struct double_vec implements vec {
+        double_vec(int x, int y, int z) : vec(x * 2, y * 2, z * 2) { }
+    }
+`}/>
+
+The expression after the colon can be anything as long as it can be assigned to `this`.
+
+<Highlight code={`\
+    struct test implements string {
+        test() : "Wow" { }
+    }
+`}/>
+
+Non-nbt compound types obviosly cannot have properties.
+
+## Virtual Methods
+
+Structs can have virtual methods that can be overridden by subclasses. Virtual methods are defined using the `virtual` function modifier like so:
+
+<Highlight code={`\
+    struct vec {
+        int x;
+        int y;
+
+        virtual int sum() {
+            return this.x + this.y;
+        }
+    }
+
+    struct subvec implements vec {
+        // Must also declare as virtual
+        // Signature must be identical to the original method
+        virtual int sum() {
+            return 7;
+        }
+    }
+`}/>
+
+Internally, they are stored as properties in each instance of the object and act like dynamic functions. Abstract methods will be added in the future.
+
+:::warning
+Printing an object with virtual methods will also display the method handles. A solution will be provided in the future.
+:::

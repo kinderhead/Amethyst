@@ -12,9 +12,23 @@ namespace Geode
 
 	public interface IFileHandler
 	{
-		Dictionary<string, string> Files { get; }
-
 		string PathToMap(string path);
 		string MapToPath(string mappedPath);
+
+		string GetFile(string path);
+		
+		bool GetFileOrNull(string path, out string file)
+        {
+            try
+            {
+                file = GetFile(path);
+				return true;
+            }
+			catch
+            {
+				file = "";
+                return false;
+            }
+        }
 	}
 }

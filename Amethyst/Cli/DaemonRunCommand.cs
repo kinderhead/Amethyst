@@ -15,6 +15,11 @@ namespace Amethyst.Cli
 
 	public class DaemonRunCommand : Command<DaemonRunOptions>
 	{
-		public override int Execute(CommandContext context, DaemonRunOptions settings) => Server.RunDatapack(settings);
+		public override int Execute(CommandContext context, DaemonRunOptions settings)
+        {
+            var compiler = new Compiler(new BuildOptions() { Inputs = [], Output = "" });
+            compiler.GetCoreLib(); // Find an std path
+            return Runner.RunDatapack(settings, compiler);
+        }
 	}
 }

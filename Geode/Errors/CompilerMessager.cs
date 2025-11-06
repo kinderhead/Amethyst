@@ -33,7 +33,7 @@ namespace Geode.Errors
 		{
 			AddContent("");
 
-			if (!handler.Files.TryGetValue(loc.Start.File, out var file))
+			if (!handler.GetFileOrNull(loc.Start.File, out var file))
 			{
 				AddContent("[turquoise2]<builtin>[/]");
 				AddContent("");

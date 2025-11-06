@@ -1,0 +1,27 @@
+---
+sidebar_position: 5
+description: Console interactions
+---
+
+import Highlight from "@site/src/components/highlight";
+
+# Console
+
+Amethyst comes with a `print` functions that compiles to `/tellraw @a` which can take any number of arguments and concatenates them together with no spacing.
+
+:::info
+Colors and styling is not implemented, but it is a planned feature.
+:::
+
+## Examples
+
+<Highlight code={`\
+    print("Hello world!");
+    // Hello world!
+`}/>
+
+<Highlight code={`\
+    int x = 7;
+    print("Variable: ", x);
+    // Variable: 7
+`}/>

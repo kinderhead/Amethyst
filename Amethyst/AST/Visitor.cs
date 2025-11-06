@@ -185,6 +185,10 @@ namespace Amethyst.AST
 		{
 			var cmd = context.Command().GetText().Trim()[2..];
 			var loc = Loc(context);
+			
+			// Ignore new line
+			loc = new(loc.Start, new(loc.End.File, loc.End.Line, loc.End.Column - 1));
+
 			var frags = new List<CommandFragment>();
 
 			foreach (Match i in CommandExprRegex().Matches(cmd))
@@ -203,7 +207,7 @@ namespace Amethyst.AST
 				var parser = new AmethystParser(tokens);
 				var visitor = new SubVisitor(this, new(loc.Start.File, loc.Start.Line, loc.Start.Column + 2 + match.Index));
 
-				var error = new ParserErrorHandler(Filename, Compiler.Files[Filename], visitor);
+				var error = new ParserErrorHandler(Filename, Compiler.GetFile(Filename), visitor);
 				lexer.RemoveErrorListeners();
 				lexer.AddErrorListener(error);
 				parser.RemoveErrorListeners();

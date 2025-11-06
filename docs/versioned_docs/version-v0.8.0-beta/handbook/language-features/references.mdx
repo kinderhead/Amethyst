@@ -1,0 +1,100 @@
+---
+sidebar_position: 9
+description: Reference usage
+---
+
+import Highlight from "@site/src/components/highlight";
+
+# References
+
+## Usage
+
+References are a way to modify the same object from multiple places. They work similarly to how they do in C++. References types are defined by adding `&` to the end of a type, so some examples would be `int&` and `string[]&`.
+
+<Highlight code={`\
+    int x = 7;
+    int& ptr = x;
+`}/>
+
+Any further assignments to a reference instead affect the value it points to, so this effectively makes them constant:
+
+<Highlight code={`\
+    ptr = 2; // x is now 2
+`}/>
+
+:::note
+Referencing stack variables causes some overhead, so it is recommended to avoid using references unless passing them as arguments into functions like so:
+
+<Highlight code={`\
+    void main() {
+        string x = "Hi";
+        func(x);
+        print(x); // Bye
+    }
+
+    void func(string& ptr) {
+        ptr = "Bye";
+    }
+`}/>
+
+To reference stack variables, use [Weak References](#weak-references)
+:::
+
+It goes without saying that referencing a constant value will throw a compile-time error.
+
+Passing references into inline commands does not dereference them and instead uses the underlying pointer:
+
+<Highlight code={`\
+    void func(string& ptr) {
+        // Example result:
+        // [Server] storage amethyst:runtime stack[1].frame1.x
+        @/say $(ptr)
+    }
+`}/>
+
+:::tip
+Pass references as macros (`macro T& ptr`) to allow Amethyst to emit more efficient commands.
+:::
+
+## Weak References
+
+Weak references work the same as normal references except it is not guaranteed that they will still be valid if passed into functions. This is because stack variables are addressed by the compiler internally using `stack[-1]...` which means "Access the last stack". As such, accessing a variable depends on the current stack frame. Regular references resolve this `-1` into the correct index, but this operation is redundant in cases where the reference is not passed into a function.
+
+List indexing and property accessors use weak references by default:
+
+<Highlight code={`\
+    arr[5] // weak reference
+    obj.prop // weak reference
+`}/>
+
+Weak references can be explicitly used via the `^` type operator:
+
+<Highlight code={`\
+    int^ weak_ref = x;
+`}/>
+
+A common use-case for weak references are simple macro functions. Most functions in `amethyst:core/ref` do this.
+
+It is currently not possible to convert a weak reference to a normal reference unless the weak reference is constant. This causes some quirks with non-constant list indexing. For example:
+
+<Highlight code={`\
+    int x = 1;
+    string[] arr = ["one", "two"];
+
+    func(arr[0]); // Valid
+    func(arr[x]); // Error: conversion from string^ to string& is not valid here
+
+    void func(string& str) {
+        ...
+    }
+`}/>
+
+A solution will be provided at some point.
+
+References are stored internally as `Datapack.Net.Function.IDataTarget`s, so they work nicely with any commands that use `IDataTarget` (`/execute store`, `/data`, etc). This allows for references to point to entities and blocks instead of just storage. For example, this property is used in `amethyst:core/ref/set` like so:
+
+<Highlight code={`\
+    inline void set(macro nbt^ ref, macro string val) {
+        @/data modify $(ref) set value $(val)
+    }
+`}/>

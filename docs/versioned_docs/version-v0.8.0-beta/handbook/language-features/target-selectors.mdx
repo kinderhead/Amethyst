@@ -1,0 +1,68 @@
+---
+sidebar_position: 6
+description: Target selector usage
+---
+
+import Highlight from "@site/src/components/highlight";
+
+# Target Selectors
+
+## Usage
+
+Minecraft target selectors can be created and used using the `minecraft:target` type. `minecraft:target` is stored internally as strings and can be used in macro scenerios. Currently target selectors are WIP and are missing key features. More uses for them will be added over time.
+
+Target selectors can be implicitly created using the same syntax as they do in commands:
+
+<Highlight code={`\
+    var target = @e[x=8,dx=9,name="Steve"];
+`}/>
+
+But they can also have dynamic values like so:
+
+<Highlight code={`\
+    int my_number = 7;
+    var target = @e[x=my_number];
+`}/>
+
+:::warning
+String arguments like `name` and `type` must be quoted strings or else Amethyst will look for a variable with that name. This may change in the future.
+:::
+
+:::note
+Many of the arguments have not been implemented.
+:::
+
+### Negation
+
+Arguments can be negated by putting a `!` after the equal sign. Additionally, multiple arguments of the same name can exist.
+
+<Highlight code={`\
+    // The ! can go inside or outside of quotes
+    var target = @e[type=!"player",type="!item"];
+`}/>
+
+The above is equivalent to:
+
+<Highlight code={`\
+    var foo = "player";
+    var bar = "!item";
+    var target = @e[type=!foo,type=bar];
+`}/>
+
+:::warning
+No checks have been implemented yet for invalid combinations of arguments. Check the Minecraft logs for errors generated on `/reload`. Adding `-c` to your build command dumps the compiled `.mcfunctions` to the console for easy viewing.
+:::
+
+## Existence Checks
+
+Target selectors can be put in `if` [Execute Statement](./control-flow.mdx#execute-statements) clauses which effectively use `execute if entity` to determine if the entity exists:
+
+<Highlight code={`\
+    if (@s[type="minecraft:player"]) {
+        @/say I am a player!
+    }
+`}/>
+
+:::tip
+Target selectors can also be converted to boolean values. The result is `true` if `execute if entity` is successful.
+:::
