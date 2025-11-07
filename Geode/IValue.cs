@@ -53,10 +53,6 @@ namespace Geode
 			{
 				Store(storage, ctx);
 			}
-			else if (val is ConditionalValue cond)
-			{
-				Store(cond, ctx);
-			}
 			else if (val is MacroValue macro)
 			{
 				Store(macro, ctx);
@@ -81,10 +77,6 @@ namespace Geode
 			{
 				ListAdd(storage, ctx);
 			}
-			else if (val is ConditionalValue cond)
-			{
-				ListAdd(cond, ctx);
-			}
 			else if (val is MacroValue macro)
 			{
 				ListAdd(macro, ctx);
@@ -100,12 +92,6 @@ namespace Geode
 		public abstract void Store(DataTargetValue nbt, RenderContext ctx);
 		public virtual void Store(MacroValue macro, RenderContext ctx) => Store(new LiteralValue(new NBTRawString(macro.GetMacro())), ctx);
 
-		public virtual void Store(ConditionalValue cond, RenderContext ctx)
-		{
-			Store(new LiteralValue(false), ctx);
-			cond.If(cmd => cmd.Run(ctx.WithFaux(i => Store(new LiteralValue(true), i)).Single()), ctx);
-		}
-
 		public abstract void ListAdd(LiteralValue literal, RenderContext ctx);
 
 		public virtual void ListAdd(ScoreValue score, RenderContext ctx)
@@ -116,13 +102,6 @@ namespace Geode
 		}
 
 		public abstract void ListAdd(DataTargetValue nbt, RenderContext ctx);
-
-		public virtual void ListAdd(ConditionalValue cond, RenderContext ctx)
-		{
-			var tmp = ctx.Builder.TempStorage(PrimitiveType.Compound);
-			tmp.Store(cond, ctx);
-			ListAdd(tmp, ctx);
-		}
 
 		public virtual void ListAdd(MacroValue macro, RenderContext ctx) => ListAdd(new LiteralValue(new NBTRawString(macro.GetMacro())), ctx);
 	}

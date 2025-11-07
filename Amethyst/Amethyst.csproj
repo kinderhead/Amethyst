@@ -7,27 +7,27 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <Authors>kinderhead</Authors>
-    <Version>0.8.0-beta</Version>
+    <Version>0.8.1-beta</Version>
     <PublishTrimmed>True</PublishTrimmed>
     <PublishAot>True</PublishAot>
 	<TrimMode>partial</TrimMode>
   </PropertyGroup>
 
-    <PropertyGroup Condition="'$(Configuration)'=='Release'">
-	    <DebugSymbols>False</DebugSymbols>
-	    <DebugType>None</DebugType>
-      <TargetName>amethyst</TargetName>
-		<AllowedReferenceRelatedFileExtensions>*.pdb</AllowedReferenceRelatedFileExtensions>
-		<NativeDebugSymbols>False</NativeDebugSymbols>
-		<StripSymbols>true</StripSymbols>
+  <PropertyGroup Condition="'$(Configuration)'=='Release'">
+    <DebugSymbols>False</DebugSymbols>
+    <DebugType>None</DebugType>
+    <TargetName>amethyst</TargetName>
+    <AllowedReferenceRelatedFileExtensions>*.pdb</AllowedReferenceRelatedFileExtensions>
+    <NativeDebugSymbols>False</NativeDebugSymbols>
+    <StripSymbols>true</StripSymbols>
     <NoWarn>IL3050;IL2104;IL3053;IL3000;IL3002</NoWarn>
-    </PropertyGroup>
+  </PropertyGroup>
 
-    <ItemGroup>
-      <Compile Remove="GeodeAddons\**" />
-      <EmbeddedResource Remove="GeodeAddons\**" />
-      <None Remove="GeodeAddons\**" />
-    </ItemGroup>
+  <ItemGroup>
+    <Compile Remove="GeodeAddons\**" />
+    <EmbeddedResource Remove="GeodeAddons\**" />
+    <None Remove="GeodeAddons\**" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Antlr4.Runtime.Standard" Version="4.13.1" />
@@ -49,9 +49,9 @@
     <None Update="std\**">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-	<None Update="tests\**">
-		<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	</None>
+    <None Update="tests\**">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>

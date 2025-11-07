@@ -20,10 +20,6 @@ namespace Amethyst.AST.Intrinsics
 				{
 					args[i] = ctx.Add(new DereferenceInsn(args[i]));
 				}
-				else if (args[i].Value is ConditionalValue)
-				{
-					args[i] = ctx.Add(new LoadInsn(args[i]));
-				}
 			}
 
 			return ctx.Add(new PrintInsn(args));

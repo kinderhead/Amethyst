@@ -16,28 +16,17 @@ namespace Geode.IR.Instructions
 			var left = Arg<ValueRef>(0).Expect().AsScore(ctx);
 			var right = Arg<ValueRef>(1).Expect().AsScore(ctx);
 
-			ReturnValue.SetValue(new ConditionalValue((cmd, flip) => (Invert != flip ? cmd.Unless : cmd.If).Score(left.Target, left.Score, Op, right.Target, right.Score), ReturnValue.Expect<ConditionalValue>().Flip));
+			ReturnValue.Expect<LValue>().Store(new LiteralValue(false), ctx);
+
+			var cmd = new Execute();
+			(Invert ? cmd.Unless : cmd.If).Score(left.Target, left.Score, Op, right.Target, right.Score).Run(ctx.WithFaux(ctx => ReturnValue.Expect<LValue>().Store(new LiteralValue(true), ctx)).Single());
+			ctx.Add(cmd);
 		}
 
-		protected override IValue? ComputeReturnValue(FunctionContext ctx)
-		{
-			if (Arguments[0] is ValueRef arg1)
-			{
-				ReturnValue.Dependencies.Add(arg1);
-			}
-
-			if (Arguments[1] is ValueRef arg2)
-			{
-				ReturnValue.Dependencies.Add(arg2);
-			}
-
-			var ret = base.ComputeReturnValue(ctx);
-			if (ret is not null)
-			{
-				return ret;
-			}
-
-			return new ConditionalValue((cmd, flip) => throw new InvalidOperationException());
+		public override void ConfigureLifetime(Func<ValueRef, ValueRef, bool> tryLink, Action<ValueRef, ValueRef> markOverlap)
+        {
+            markOverlap(ReturnValue, Arg<ValueRef>(0));
+			markOverlap(ReturnValue, Arg<ValueRef>(1));
 		}
 	}
 
