@@ -23,6 +23,11 @@ namespace Amethyst.Cli
         [Description("Dump Geode IR and don't compile to datapack.")]
         public bool DumpIR { get; set; }
 
+        [CommandOption("-O")]
+        [Description("Set the opimization level.")]
+        [DefaultValue(1)]
+        public int OptimizationLevel { get; set; }
+
         [CommandOption("-c|--dump-cmd")]
         [Description("Dump non-std functions.")]
         public bool DumpCommands { get; set; }
@@ -34,7 +39,7 @@ namespace Amethyst.Cli
         [CommandArgument(0, "<inputs>")]
         [Description("Files to compile.")]
         public required string[] Inputs { get; set; }
-    }
+	}
     
     public class BuildCommand : Command<BuildOptions>
 	{

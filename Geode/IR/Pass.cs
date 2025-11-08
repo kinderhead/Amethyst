@@ -4,9 +4,11 @@ namespace Geode.IR
 {
 	public abstract class Pass
 	{
-		protected virtual bool SkipBlocks { get; } = false;
-		protected virtual bool SkipInsns { get; } = false;
-		protected virtual bool Reversed { get; } = false;
+		public virtual int MinimumOptimizationLevel => 0;
+
+		protected virtual bool SkipBlocks => false;
+		protected virtual bool SkipInsns => false;
+		protected virtual bool Reversed => false;
 		private HashSet<Block> toVisit = [];
 
 		public void Apply(FunctionContext ctx)

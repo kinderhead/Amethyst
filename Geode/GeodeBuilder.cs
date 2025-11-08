@@ -119,6 +119,11 @@ namespace Geode
 		public T ApplyPass<T>() where T : Pass, new() => ApplyPass(new T());
 		public T ApplyPass<T>(T pass) where T : Pass
 		{
+			if (pass.MinimumOptimizationLevel > Options.OptimizationLevel)
+            {
+                return pass;
+            }
+
 			foreach (var i in Functions)
 			{
 				try

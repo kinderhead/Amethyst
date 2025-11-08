@@ -24,6 +24,12 @@ namespace Geode.IR.Instructions
 			ret.Store(val, ctx);
 		}
 
+		public override void ConfigureLifetime(Func<ValueRef, ValueRef, bool> tryLink, Action<ValueRef, ValueRef> markOverlap)
+        {
+            tryLink(Arg<ValueRef>(0), ReturnValue);
+        }
+
+
 		protected override IValue? ComputeReturnValue(FunctionContext ctx)
 		{
 			var val = Arg<ValueRef>(0);

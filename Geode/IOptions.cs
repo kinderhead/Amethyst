@@ -5,5 +5,6 @@
 		string Output { get; set; }
 		bool DumpIR { get; set; }
 		bool Debug { get; set; }
+		int OptimizationLevel { get; set; }
 	}
 }
