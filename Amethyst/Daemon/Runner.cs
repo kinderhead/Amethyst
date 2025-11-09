@@ -5,6 +5,7 @@ using Geode;
 using Geode.Errors;
 using Spectre.Console;
 using System;
+using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using Tmds.Utils;
 
@@ -37,7 +38,19 @@ namespace Amethyst.Daemon
                         return false;
                     }
 
-                    var proc = ExecFunction.Start(() => Server.StartServer(null, timeout: true));
+					if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+					{
+						var thread = new Thread(() => Server.StartServer(null))
+						{
+							IsBackground = true
+						};
+
+						thread.Start();
+					}
+					else
+					{
+						ExecFunction.Start(() => Server.StartServer(null, timeout: true));
+					}
 
                     int delay = 100; // Wait for 15 seconds
                     for (int i = 0; i < 15000 / delay; i++)
@@ -45,11 +58,6 @@ namespace Amethyst.Daemon
                         if (Rcon.IsServerRunning())
                         {
                             return true;
-                        }
-
-                        if (proc.HasExited)
-                        {
-                            break;
                         }
 
                         await Task.Delay(delay);

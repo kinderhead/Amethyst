@@ -11,6 +11,7 @@
     <PublishTrimmed>True</PublishTrimmed>
     <PublishAot>True</PublishAot>
 	<TrimMode>partial</TrimMode>
+	<BuiltInComInteropSupport>true</BuiltInComInteropSupport>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)'=='Release'">

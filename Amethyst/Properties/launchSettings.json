@@ -2,15 +2,15 @@
   "profiles": {
     "Amethyst": {
       "commandName": "Project",
-      "commandLineArgs": "build examples/test.ame -o output.zip"
+      "commandLineArgs": "build examples/test.ame -o output.zip --run"
     },
     "Amethyst Help": {
       "commandName": "Project",
-      "commandLineArgs": "run output.zip"
+      "commandLineArgs": "setup --eula"
     },
     "Test Suite": {
       "commandName": "Project",
-      "commandLineArgs": "build tests/*.ame -d -o output.zip"
+      "commandLineArgs": "build tests/*.ame -d -o output.zip --run"
     }
   }
 }

@@ -31,6 +31,10 @@ The server is installed to the `%AppData%/Local/Amethyst` folder (or equivalent 
 Multiple data packs cannot be run at the same time.
 :::
 
+:::warning
+Due to how Windows deals with files accessed by another program, `amethyst run` will not keep the server alive on Windows for further runs. If `amethyst run` throws an error on repeated runs, stop the `java` process with the Task Manager and report the issue.
+:::
+
 ### Running
 
 When using `amethyst run` or `amethyst build --run`, any `/tellraw` commands will be logged to the console. By default, the command will never end. However it will end if it encounters a message that says "[exit]" which can be sent by calling `amethyst:exit` after your program has completed. For example:
