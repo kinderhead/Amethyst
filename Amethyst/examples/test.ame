@@ -2,10 +2,22 @@
 
 namespace example;
 
+struct vec {
+    int x;
+    int y;
+    int z;
+
+    vec add(macro vec& b) {
+        return { x: this.x + b.x, y: this.y + b.y, z: this.z + b.z };
+    }
+}
+
 #load
 void main() {
-    print("Yay");
-    @/e
+    vec a = { x: 1, y: 2, z: 3 };
+    vec b = { x: 10, y: 20, z: 30 };
+
+    print(a.add(b));
 
     amethyst:exit();
 }

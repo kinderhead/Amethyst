@@ -44,7 +44,7 @@
             "patterns": [
                 {
                     "name": "entity.name.tag.amethyst",
-                    "match": "#[a-zA-Z_][a-zA-Z0-9_\\-:/]*"
+                    "match": "#[a-zA-Z_\\-][a-zA-Z0-9_\\-:/]*"
                 }
             ]
         },
@@ -52,7 +52,7 @@
 			"patterns": [
 				{
 					"name": "meta.namespace.declaration.amethyst",
-					"match": "\\b(namespace)\\s+([a-zA-Z_][a-zA-Z0-9_\\-:/]*)\\b",
+					"match": "\\b(namespace)\\s+([a-zA-Z_\\-][a-zA-Z0-9_\\-:/]*)\\b",
 					"captures": {
 						"1": { "name": "keyword.control.amethyst" },
 						"2": { "name": "support.class.amethyst" }
@@ -76,7 +76,7 @@
       "patterns": [
         {
           "name": "meta.struct.declaration.amethyst",
-          "match": "\\b(struct)\\s+([a-zA-Z_][a-zA-Z0-9_\\-:/]*)(\\s+(implements)\\s+([a-zA-Z_][a-zA-Z0-9_\\-:/]*))?\\b",
+          "match": "\\b(struct)\\s+([a-zA-Z_\\-][a-zA-Z0-9_\\-:/]*)(\\s+(implements)\\s+([a-zA-Z_\\-][a-zA-Z0-9_\\-:/]*))?\\b",
 					"captures": {
 						"1": { "name": "storage.modifier.amethyst" },
 						"2": { "name": "support.class.amethyst" },
@@ -91,7 +91,7 @@
 			"patterns": [
 				{
 					"name": "support.class.amethyst",
-					"match": "\\b[a-zA-Z_][a-zA-Z0-9_\\-:/]*(?:(\\[\\])|&|\\^)*(?=\\s+[a-zA-Z_][a-zA-Z0-9_\\-:/]*\\b)"
+					"match": "\\b[a-zA-Z_\\-][a-zA-Z0-9_\\-/]*(:[a-zA-Z0-9_\\-/]+)?(?:(\\[\\])|&|\\^)*(?=\\s+[a-zA-Z_\\-][a-zA-Z0-9_\\-:/]*\\b)"
 				}
         
 			]
@@ -100,7 +100,7 @@
             "patterns": [
                 {
                     "name": "support.function.amethyst",
-                    "match": "\\b[a-zA-Z_][a-zA-Z0-9_\\-:/]*\\s*(?=\\()"
+                    "match": "\\b[a-zA-Z_\\-][a-zA-Z0-9_\\-:/]*\\s*(?=\\()"
                 }
             ]
         },
@@ -108,7 +108,7 @@
 			"patterns": [
 				{
 					"name": "variable.other.amethyst",
-					"match": "\\b[a-zA-Z_][a-zA-Z0-9_\\-:/]*\\b(?!\\s*\\[\\](?:\\[\\])*(?=\\s+[a-zA-Z_][a-zA-Z0-9_\\-:/]*\\b))"
+					"match": "\\b[a-zA-Z_\\-][a-zA-Z0-9_\\-:/]*\\b(?!\\s*\\[\\](?:\\[\\])*(?=\\s+[a-zA-Z_\\-][a-zA-Z0-9_\\-:/]*\\b))"
 				}
 			]
 		},

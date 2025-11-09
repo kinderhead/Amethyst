@@ -21,7 +21,8 @@ namespace Geode.IR.Instructions
 
 			for (var i = 0; i < Arguments.Length; i++)
 			{
-				if (Arg<ValueRef>(i).Expect() is not IConstantValue l)
+				// Don't use .Expect here since Value could be null
+				if (Arg<ValueRef>(i).Value is not IConstantValue l)
 				{
 					return null;
 				}

@@ -46,6 +46,8 @@ namespace Amethyst.Daemon
 						};
 
 						thread.Start();
+
+						AppDomain.CurrentDomain.ProcessExit += (s, e) => Rcon.StopServer();
 					}
 					else
 					{
