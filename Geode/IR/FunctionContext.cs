@@ -149,6 +149,8 @@ namespace Geode.IR
 
 		public StackValue Temp(TypeSpecifier type) => new(-1, Compiler.IR.RuntimeID, $"tmp{tmpStackVars++}", type);
 
+		public ValueRef AddLoad(ValueRef val) => Add(new LoadInsn(val));
+
 		public ValueRef Add(Instruction insn, string? customName = null)
 		{
 			if (IsFinished)

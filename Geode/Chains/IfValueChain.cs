@@ -37,6 +37,6 @@ namespace Geode.Chains
 			throw new InvalidTypeError(val.Type.ToString(), "score");
 		}
 
-		public static IfValueChain With(ValueRef val, FunctionContext ctx, bool invert = false) => new(ctx.Add(new LoadInsn(val)), invert);
+		public static IfValueChain With(ValueRef val, FunctionContext ctx, bool invert = false) => new(ctx.AddLoad(val), invert);
 	}
 }

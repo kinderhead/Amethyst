@@ -14,8 +14,8 @@ namespace Amethyst.AST.Expressions
 
 		protected override ValueRef ExecuteImpl(FunctionContext ctx, TypeSpecifier? expected)
 		{
-			var left = ctx.Add(new LoadInsn(Left.Execute(ctx, PrimitiveType.Int)));
-			var right = ctx.Add(new LoadInsn(Right.Execute(ctx, PrimitiveType.Int)));
+			var left = ctx.AddLoad(Left.Execute(ctx, PrimitiveType.Int));
+			var right = ctx.AddLoad(Right.Execute(ctx, PrimitiveType.Int));
 
 			return Op switch
 			{

@@ -31,7 +31,7 @@ namespace Amethyst.AST.Expressions
 						throw new InvalidTypeError(val.Type.ToString(), "int");
 					}
 
-					var inc = ctx.Add(new AddInsn(ctx.Add(new LoadInsn(val)), new LiteralValue(1)));
+					var inc = ctx.Add(new AddInsn(ctx.AddLoad(val), new LiteralValue(1)));
 					ctx.Add(new StoreInsn(val, inc));
 					return val;
 				case UnaryOperation.Decrement:
@@ -40,11 +40,11 @@ namespace Amethyst.AST.Expressions
 						throw new InvalidTypeError(val.Type.ToString(), "int");
 					}
 
-					var dec = ctx.Add(new SubInsn(val, new LiteralValue(1)));
+					var dec = ctx.Add(new SubInsn(ctx.AddLoad(val), new LiteralValue(1)));
 					ctx.Add(new StoreInsn(val, dec));
 					return val;
 				case UnaryOperation.Negate:
-					return ctx.Add(new MulInsn(ctx.ImplicitCast(val, PrimitiveType.Int), new LiteralValue(-1)));
+					return ctx.Add(new MulInsn(ctx.AddLoad(ctx.ImplicitCast(val, PrimitiveType.Int)), new LiteralValue(-1)));
 				default:
 					throw new NotImplementedException();
 			}

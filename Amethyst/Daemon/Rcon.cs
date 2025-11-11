@@ -34,7 +34,13 @@ namespace Amethyst.Daemon
 
         public Rcon(string url, int port)
         {
-            client = new(url, port);
+            client = new();
+
+			if (!client.ConnectAsync(url, port).Wait(100))
+			{
+				throw new SocketException((int)SocketError.SocketError);
+			}
+
             stream = client.GetStream();
         }
 

@@ -14,16 +14,16 @@ namespace Amethyst.AST.Expressions
 
 		public override void ExecuteChain(ExecuteChain chain, FunctionContext ctx, bool invert = false)
 		{
-			var left = ctx.Add(new LoadInsn(Left.Execute(ctx, PrimitiveType.Int)));
-			var right = ctx.Add(new LoadInsn(Right.Execute(ctx, PrimitiveType.Int)));
+			var left = ctx.AddLoad(Left.Execute(ctx, PrimitiveType.Int));
+			var right = ctx.AddLoad(Right.Execute(ctx, PrimitiveType.Int));
 
 			chain.Add(new IfScoreChain(left, Op, right, invert));
 		}
 
 		protected override ValueRef ExecuteImpl(FunctionContext ctx, TypeSpecifier? expected)
 		{
-			var left = ctx.Add(new LoadInsn(Left.Execute(ctx, PrimitiveType.Int)));
-			var right = ctx.Add(new LoadInsn(Right.Execute(ctx, PrimitiveType.Int)));
+			var left = ctx.AddLoad(Left.Execute(ctx, PrimitiveType.Int));
+			var right = ctx.AddLoad(Right.Execute(ctx, PrimitiveType.Int));
 
 			return Op switch
 			{
