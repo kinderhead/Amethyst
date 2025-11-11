@@ -366,9 +366,11 @@ FodyWeavers.xsd
 blocks.txt
 entities.json
 blocks.json
+metadata.ini
 *.zip
 .antlr/
 .VSCodeCounter/
+Output/
 
 *.deb
 *.apk

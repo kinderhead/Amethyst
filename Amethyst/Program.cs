@@ -15,10 +15,13 @@ namespace Amethyst
 			{
 				return ExecFunction.Program.Main(args);
 			}
-			
+
 			// #if DEBUG
 			// 			Console.Clear(); // Thanks Visual Studio for being sad
 			// #endif
+
+			AnsiConsole.MarkupLine("[yellow]Amethyst is currently in development. Report issues at [aqua underline]https://github.com/kinderhead/Amethyst/issues[/].[/]\n");
+
 #pragma warning disable IL3050
 			var app = new CommandApp();
 #pragma warning restore IL3050

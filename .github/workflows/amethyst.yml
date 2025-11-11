@@ -43,7 +43,7 @@ jobs:
         distribution: 'zulu'
         java-version: '21'
 
-    - name: Restore dependencies
+    - name: Restore Dependencies
       run: dotnet restore
     - name: Build
       run: dotnet build --no-restore
@@ -60,6 +60,17 @@ jobs:
             sudo gem install fpm && \
             sudo apt-get install -y libarchive-tools && \
             python -u scripts/linux_package.py
+
+    - name: Prep Windows Installer
+      if: ${{ matrix.type.os == 'windows-latest' }}
+      run: python -u scripts/make_metadata_ini.py
+    
+    - name: Build Windows Installer
+      if: ${{ matrix.type.os == 'windows-latest' }}
+      uses: Minionguyjpro/Inno-Setup-Action@v1.2.2
+      with:
+        path: Amethyst/windows-installer.iss
+        options: /O+
 
     - name: Test
       uses: nick-fields/retry@v3
@@ -87,6 +98,13 @@ jobs:
           *.deb
           *.pkg.tar.zst
           *.apk
+
+    - name: Upload Windows Installer
+      if: ${{ matrix.type.os == 'windows-latest' }}
+      uses: actions/upload-artifact@v4
+      with:
+        name: amethyst-windows-installer
+        path: D:/Amethyst/Amethyst/*.exe
   
   linux-pkgs:
     runs-on: ${{ matrix.arch.runner }}
@@ -103,7 +121,7 @@ jobs:
       fail-fast: false
 
     steps:
-      - name: Download artifact
+      - name: Download Artifact
         uses: actions/download-artifact@v4
         with:
           name: ${{ matrix.arch.artifact }}
@@ -111,3 +129,23 @@ jobs:
       
       - name: Run Container
         run: docker run --rm -v "./pkgs:/mnt" ${{ matrix.arch.img }} /bin/sh -c "${{ matrix.arch.cmd }} && amethyst --help"
+  
+  windows-installer:
+    runs-on: "windows-latest"
+    needs: [build]
+
+    strategy:
+      fail-fast: false
+    
+    steps:
+      - name: Download Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: "amethyst-windows-installer"
+          path: ./dist
+      
+      - name: Run Installer
+        run: dist/*.exe /SILENT /SUPPRESSMSGBOXES
+      
+      - name: Test
+        run: amethyst --help

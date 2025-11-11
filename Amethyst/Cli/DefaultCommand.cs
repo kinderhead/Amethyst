@@ -23,8 +23,12 @@ namespace Amethyst.Cli
                 var version = Assembly.GetEntryAssembly()?.GetName().Version ?? new Version();
                 Console.WriteLine($"Amethyst version {version.Major}.{version.Minor}.{version.Build}");
             }
+			else
+			{
+				Console.WriteLine("No arguments specified. Run amethyst --help for more information");
+			}
 
-            return 0;
+			return 0;
         }
 	}
 }

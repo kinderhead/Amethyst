@@ -45,8 +45,6 @@ namespace Amethyst.Cli
 	{
 		public override int Execute(CommandContext context, BuildOptions settings)
         {
-            AnsiConsole.MarkupLine("[yellow]Amethyst is currently in development. Report issues at [aqua underline]https://github.com/kinderhead/Amethyst/issues[/].[/]\n");
-            
             settings.Output ??= Path.GetFileName(settings.Inputs[0]) + ".zip";
             var compiler = new Compiler(settings);
 
