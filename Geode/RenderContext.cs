@@ -140,11 +140,16 @@ namespace Geode
 			return dest;
 		}
 
-		public Command CallSubFunction(MCFunction func)
+		public Command[] GetOnJumpCommands(IR.Block block)
+        {
+            return [];
+        }
+
+		public Command[] JumpTo(IR.Block block)
 		{
 			if (Func.IsMacroFunction)
 			{
-				return new FunctionCommand(func, [.. Func.Decl.FuncType.MacroParameters.Select(i =>
+				return [.. GetOnJumpCommands(block), new FunctionCommand(block.Function, [.. Func.Decl.FuncType.MacroParameters.Select(i =>
 				{
 					if (i.Type == PrimitiveType.String)
 					{
@@ -152,15 +157,15 @@ namespace Geode
 					}
 
 					return new KeyValuePair<string, NBTValue>(i.Name, new NBTRawString(i.GetMacro()));
-				})]);
+				})])];
 			}
 			else
 			{
-				return new FunctionCommand(func);
+				return [.. GetOnJumpCommands(block), new FunctionCommand(block.Function)];
 			}
 		}
 
-		public Command CallSubFunction(MCFunction func, NBTCompound args)
+		public Command[] CallSubFunction(IR.Block block, NBTCompound args)
 		{
 			if (args.Count > 0)
 			{
@@ -172,11 +177,11 @@ namespace Geode
 					}
 				}
 
-				return new FunctionCommand(func, args);
+				return [.. GetOnJumpCommands(block), new FunctionCommand(block.Function, args)];
 			}
 			else
 			{
-				return new FunctionCommand(func);
+				return [.. GetOnJumpCommands(block), new FunctionCommand(block.Function)];
 			}
 		}
 

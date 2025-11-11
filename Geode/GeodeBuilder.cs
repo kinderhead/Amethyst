@@ -56,6 +56,7 @@ namespace Geode
 
 			ApplyPass<InlinePass>();
 			ApplyPass<ResolvePass>();
+			ApplyPass<PhiPass>();
 
 			if (failed)
 			{

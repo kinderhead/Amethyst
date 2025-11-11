@@ -16,7 +16,8 @@ namespace Geode
 
 		public void Add(ExecuteChainSubcommand cmd) => Chain.Add(cmd);
 
-		public void Run(Command ifTrue, RenderContext ctx)
+		public void Run(Command ifTrue, RenderContext ctx) => Run([ifTrue], ctx);
+		public void Run(Command[] ifTrue, RenderContext ctx)
 		{
 			var cmd = new Execute();
 
@@ -26,7 +27,8 @@ namespace Geode
 			});
 		}
 
-		public void RunWithPropagate(Func<NBTCompound, Command> ifTrue, RenderContext ctx)
+		public void RunWithPropagate(Func<NBTCompound, Command> ifTrue, RenderContext ctx) => RunWithPropagate(i => [ifTrue(i)], ctx);
+		public void RunWithPropagate(Func<NBTCompound, Command[]> ifTrue, RenderContext ctx)
 		{
 			var cmd = new Execute();
 
@@ -41,7 +43,7 @@ namespace Geode
 			return Chain.Where(i => i.RequireLiteral).SelectMany(i => i.Values.Select(i => i.Expect()));
 		}
 
-		private void Compute(Execute cmd, Func<Command> ifTrue, IConstantValue[] args, RenderContext ctx)
+		private void Compute(Execute cmd, Func<Command[]> ifTrue, IConstantValue[] args, RenderContext ctx)
 		{
 			int idex = 0;
 
@@ -75,7 +77,7 @@ namespace Geode
 				return;
 			}
 
-			ctx.Add(cmd.Run(ifTrue()));
+			ctx.Add(ifTrue().Select(cmd.Run));
 		}
 	}
 

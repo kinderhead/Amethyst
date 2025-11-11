@@ -17,10 +17,24 @@ namespace Geode.IR.Instructions
 			var ifTrue = Arg<Block>(1);
 			var ifFalse = Arg<Block>(2);
 
-			cond.RunWithPropagate(macros => ctx.CallSubFunction(ifTrue.Function, macros), ctx);
+			cond.RunWithPropagate(macros => ctx.CallSubFunction(ifTrue, macros), ctx);
 
 			var returning = ctx.Func.GetIsFunctionReturningValue();
-			ctx.Add(new Execute().Unless.Data(returning.Storage, returning.Path).Run(ctx.CallSubFunction(ifFalse.Function)));
+			
+			foreach (var i in ctx.JumpTo(ifFalse))
+			{
+				ctx.Add(new Execute().Unless.Data(returning.Storage, returning.Path).Run(i));
+			}
+			
+		}
+
+		public override void OnAdd(Block block)
+        {
+			var ifTrue = Arg<Block>(1);
+			var ifFalse = Arg<Block>(2);
+
+			block.LinkNext(ifTrue);
+			block.LinkNext(ifFalse);
 		}
 
 		protected override IValue? ComputeReturnValue(FunctionContext ctx) => new VoidValue();

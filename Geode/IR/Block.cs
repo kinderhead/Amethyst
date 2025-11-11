@@ -1,10 +1,10 @@
+using System.Text;
 using Datapack.Net.Function;
 using Datapack.Net.Function.Commands;
 using Datapack.Net.Utils;
 using Geode.Errors;
 using Geode.IR.Instructions;
 using Geode.Values;
-using System.Text;
 
 namespace Geode.IR
 {
@@ -14,8 +14,8 @@ namespace Geode.IR
 		public readonly FunctionContext Ctx = ctx;
 
 		public readonly List<Instruction> Instructions = [];
-		public readonly List<Block> Previous = [];
-		public readonly List<Block> Next = [];
+		public readonly HashSet<Block> Previous = [];
+		public readonly HashSet<Block> Next = [];
 
 		public readonly MCFunction Function = new(funcID, true);
 
@@ -28,14 +28,23 @@ namespace Geode.IR
 			if (Instructions.Count == 0 || Instructions.Last() is not ReturnInsn)
 			{
 				Instructions.Add(insn);
+				insn.OnAdd(this);
 			}
 
 			return insn.ReturnValue;
 		}
 
-		public void InsertAtBeginning(params IEnumerable<Instruction> insns) => Instructions.InsertRange(0, insns);
+		public void InsertAtBeginning(params IEnumerable<Instruction> insns)
+		{
+			Instructions.InsertRange(0, insns);
+			
+			foreach (var i in insns)
+			{
+				i.OnAdd(this);
+			}
+		}
 
-		public void Link(Block next)
+		public void LinkNext(Block next)
 		{
 			Next.Add(next);
 			next.Previous.Add(this);
@@ -62,11 +71,13 @@ namespace Geode.IR
 				Function.Add(new Execute().If.Data(returning.Storage, returning.Path).Run(new ReturnCommand(0)));
 			}
 
+			var renderer = GetRenderCtx(builder, ctx);
+			
 			foreach (var i in Instructions)
 			{
 				if (!ctx.Compiler.WrapError(i.Location, ctx, () =>
 				{
-					i.Render(GetRenderCtx(builder, ctx));
+					i.Render(renderer);
 				}))
 				{
 					throw new EmptyGeodeError();

@@ -1,16 +1,29 @@
 using Datapack.Net.Data;
 using Datapack.Net.Function.Commands;
+using Geode.Errors;
 using Geode.Types;
+using Geode.Values;
 
 namespace Geode.IR.Instructions
 {
-	public abstract class OpInsn(ValueRef left, ValueRef right) : Simple2IntInsn<NBTInt>(left, right)
+	public abstract class OpInsn : Simple2IntInsn<NBTInt>
 	{
 		public override TypeSpecifier ReturnType => PrimitiveType.Int;
 		public override bool AlwaysUseScore => true;
 
 		public abstract bool IsCommunitive { get; }
 		public abstract ScoreOperation Op { get; }
+
+		public OpInsn(ValueRef left, ValueRef right) : base(left, right)
+        {
+            foreach (var i in new ValueRef[] { left, right })
+			{
+				if (i.Value is not null and not IConstantValue and not ScoreValue)
+                {
+                    throw new InvalidTypeError(i.Value.GetType().Name.ToLower(), "score");
+                }
+			}
+        }
 
 		public override void ConfigureLifetime(Func<ValueRef, ValueRef, bool> tryLink, Action<ValueRef, ValueRef> markOverlap)
 		{

@@ -13,7 +13,13 @@ namespace Geode.IR.Instructions
 		public override void Render(RenderContext ctx)
 		{
 			var block = Arg<Block>(0);
-			ctx.Add(ctx.CallSubFunction(block.Function));
+			ctx.Add(ctx.JumpTo(block));
+		}
+
+		public override void OnAdd(Block block)
+        {
+			var next = Arg<Block>(0);
+			block.LinkNext(next);
 		}
 
 		protected override IValue? ComputeReturnValue(FunctionContext ctx) => new VoidValue();

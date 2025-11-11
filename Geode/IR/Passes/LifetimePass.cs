@@ -5,7 +5,6 @@ namespace Geode.IR.Passes
 		public readonly Dictionary<Block, HashSet<ValueRef>> Ins = [];
 		public readonly Dictionary<Block, HashSet<ValueRef>> Outs = [];
 
-		//protected override bool Reversed => true;
 		protected override bool SkipInsns => true;
 
 		protected override void OnBlock(FunctionContext ctx, Block block)
@@ -35,7 +34,7 @@ namespace Geode.IR.Passes
 				}
 			}
 
-			// Maybe somehow put this in the other loop
+			// Maybe somehow put this in the previous loop
 			foreach (var i in block.Instructions)
 			{
 				ins.Remove(i.ReturnValue);
@@ -84,18 +83,21 @@ namespace Geode.IR.Passes
 			{
 				alive.Remove(insn.ReturnValue);
 
-				foreach (var arg in insn.Arguments)
+				if (insn.ArgumentsAliveAtInsn)
 				{
-					markAlive(arg);
-					foreach (var dep in arg.Dependencies)
+					foreach (var arg in insn.Arguments)
 					{
-						markAlive(dep);
+						markAlive(arg);
+						foreach (var dep in arg.Dependencies)
+						{
+							markAlive(dep);
+						}
 					}
 				}
 
 				insn.ConfigureLifetime((val1, val2) =>
 				{
-					if (Graphs[ctx].DoConnect(val1, val2))
+					if (Graphs[ctx].DoConnect(val1, val2) || val1.Value is not null || val2.Value is not null)
 					{
 						return false;
 					}

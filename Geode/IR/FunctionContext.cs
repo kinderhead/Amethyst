@@ -265,7 +265,7 @@ namespace Geode.IR
 				throw new InvalidOperationException("Last block in function must have a return instruction");
 			}
 
-			CurrentBlock.Link(ExitBlock);
+			CurrentBlock.LinkNext(ExitBlock);
 			CurrentBlock = ExitBlock;
 
 			dependencies.AddRange(blocks.Select(i => i.Function));
@@ -306,10 +306,6 @@ namespace Geode.IR
 			blocks.Add(trueBlock);
 			blocks.Add(endBlock);
 
-			startingBlock.Link(trueBlock);
-			startingBlock.Link(endBlock);
-			trueBlock.Link(endBlock);
-
 			Add(new BranchInsn(cond, trueBlock, endBlock));
 
 			CurrentBlock = trueBlock;
@@ -347,11 +343,6 @@ namespace Geode.IR
 			blocks.Add(falseBlock);
 			blocks.Add(endBlock);
 
-			startingBlock.Link(trueBlock);
-			startingBlock.Link(falseBlock);
-			trueBlock.Link(endBlock);
-			falseBlock.Link(endBlock);
-
 			Add(new BranchInsn(cond, trueBlock, falseBlock));
 
 			CurrentBlock = trueBlock;
@@ -377,11 +368,6 @@ namespace Geode.IR
 
 			blocks.Add(loopBlock);
 			blocks.Add(endBlock);
-
-			startingBlock.Link(loopBlock);
-			startingBlock.Link(endBlock);
-			loopBlock.Link(loopBlock);
-			loopBlock.Link(endBlock);
 
 			Add(new BranchInsn(cond(), loopBlock, endBlock));
 

@@ -31,7 +31,7 @@ namespace Amethyst.AST.Expressions
 						throw new InvalidTypeError(val.Type.ToString(), "int");
 					}
 
-					var inc = ctx.Add(new AddInsn(val, new LiteralValue(1)));
+					var inc = ctx.Add(new AddInsn(ctx.Add(new LoadInsn(val)), new LiteralValue(1)));
 					ctx.Add(new StoreInsn(val, inc));
 					return val;
 				case UnaryOperation.Decrement:

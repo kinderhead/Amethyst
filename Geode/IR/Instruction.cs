@@ -21,7 +21,8 @@ namespace Geode.IR
 		public Instruction[] ToReplaceWith { get; private set; } = [];
 
 		public virtual bool IsReturn => false;
-		public virtual bool AlwaysUseScore => false; // Tee hee I love band aid fixes for band aid fixes
+		public virtual bool AlwaysUseScore => false; // Tee hee I love band aid fixes for band aid fixes (but it's actually clean!)
+		public virtual bool ArgumentsAliveAtInsn => true;
 
 		public Instruction(IEnumerable<IInstructionArg> args)
 		{
@@ -29,6 +30,8 @@ namespace Geode.IR
 			ReturnValue = new(ReturnType);
 			CheckArguments();
 		}
+
+		public virtual void OnAdd(Block block) { }
 
 		public virtual void CheckArguments()
 		{

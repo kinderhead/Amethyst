@@ -2,22 +2,24 @@
 
 namespace example;
 
-struct vec {
-    int x;
-    int y;
-    int z;
-
-    vec add(macro vec& b) {
-        return { x: this.x + b.x, y: this.y + b.y, z: this.z + b.z };
-    }
-}
-
 #load
 void main() {
-    vec a = { x: 1, y: 2, z: 3 };
-    vec b = { x: 10, y: 20, z: 30 };
+    int x = 4;
+    print(x);
 
-    print(a.add(b));
+    if (x == 4) {
+        x = 3 * x;
+    } else {
+        x = 6 + x;
+    }
+
+    print(x);
+
+    for (int i = 0; i < 4; ++i) {
+        x += i;
+    }
+
+    print(x);
 
     amethyst:exit();
 }

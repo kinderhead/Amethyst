@@ -38,6 +38,16 @@ struct subvec implements vec2 {
     }
 }
 
+struct vec3 {
+    int x;
+    int y;
+    int z;
+
+    vec3 add(macro vec3& b) {
+        return { x: this.x + b.x, y: this.y + b.y, z: this.z + b.z };
+    }
+}
+
 #test
 void test_nbt() {
     start("nbt");
@@ -50,8 +60,8 @@ void test_nbt() {
 }
 
 #test
-void test_static() {
-    start("nbt static");
+void test_normal() {
+    start("nbt normal");
     
     vec obj = { x: 100 };
     obj.y = 7;
@@ -100,6 +110,21 @@ void test_nbt_literal() {
     
     nbt obj = { x: 100 };
     assert((int)obj.x == 100);
+
+    complete();
+}
+
+#test
+void test_nbt_fancy_literal() {
+    start("nbt fancy literal");
+    
+    vec3 a = { x: 1, y: 2, z: 3 };
+    vec3 b = { x: 10, y: 20, z: 30 };
+    vec3 c = a.add(b);
+
+    assert(c.x == 11);
+    assert(c.y == 22);
+    assert(c.z == 33);
 
     complete();
 }
