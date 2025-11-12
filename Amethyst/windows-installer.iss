@@ -132,4 +132,3 @@ Name: "{group}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"
 [UninstallDelete]
 Type: files; Name: "{app}\std\*.*"
 Type: dirifempty; Name: "{app}\std"
-
