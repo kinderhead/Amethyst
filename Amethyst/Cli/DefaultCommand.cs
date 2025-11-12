@@ -16,19 +16,19 @@ namespace Amethyst.Cli
 
 	public class DefaultCommand : Command<DefaultCommandOptions>
 	{
-		public override int Execute(CommandContext context, DefaultCommandOptions settings)
+		public override int Execute(CommandContext context, DefaultCommandOptions settings, CancellationToken cancellationToken)
         {
             if (settings.Version)
             {
                 var version = Assembly.GetEntryAssembly()?.GetName().Version ?? new Version();
                 Console.WriteLine($"Amethyst version {version.Major}.{version.Minor}.{version.Build}");
-            }
+				return 0;
+			}
 			else
 			{
 				Console.WriteLine("No arguments specified. Run amethyst --help for more information");
+				return 1;
 			}
-
-			return 0;
         }
 	}
 }

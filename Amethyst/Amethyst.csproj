@@ -1,58 +1,70 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <OutputType>Exe</OutputType>
-	<TargetName>Amethyst</TargetName>
-    <TargetFramework>net10.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-    <Authors>kinderhead</Authors>
-    <Version>0.9.0-beta</Version>
-    <PublishTrimmed>True</PublishTrimmed>
-    <PublishAot>True</PublishAot>
-	<TrimMode>partial</TrimMode>
-	<BuiltInComInteropSupport>true</BuiltInComInteropSupport>
-  </PropertyGroup>
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <TargetName>Amethyst</TargetName>
+        <TargetFramework>net10.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <Authors>kinderhead</Authors>
+        <Version>0.9.0-beta</Version>
+        <PublishTrimmed>True</PublishTrimmed>
+        <PublishAot>True</PublishAot>
+        <TrimMode>partial</TrimMode>
+        <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
+    </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)'=='Release'">
-    <DebugSymbols>False</DebugSymbols>
-    <DebugType>None</DebugType>
-    <TargetName>amethyst</TargetName>
-    <AllowedReferenceRelatedFileExtensions>*.pdb</AllowedReferenceRelatedFileExtensions>
-    <NativeDebugSymbols>False</NativeDebugSymbols>
-    <StripSymbols>true</StripSymbols>
-    <NoWarn>IL3050;IL2104;IL3053;IL3000;IL3002</NoWarn>
-  </PropertyGroup>
+    <PropertyGroup Condition="'$(Configuration)'=='Release'">
+        <DebugSymbols>False</DebugSymbols>
+        <DebugType>None</DebugType>
+        <TargetName>amethyst</TargetName>
+        <AllowedReferenceRelatedFileExtensions>*.pdb</AllowedReferenceRelatedFileExtensions>
+        <NativeDebugSymbols>False</NativeDebugSymbols>
+        <StripSymbols>true</StripSymbols>
+        <NoWarn>IL3050;IL2104;IL3053;IL3000;IL3002</NoWarn>
+        <OptimizationPreference>Size</OptimizationPreference>
+        <DebuggerSupport>false</DebuggerSupport>
+		<MetadataUpdaterSupport>false</MetadataUpdaterSupport>
+		<EnableUnsafeBinaryFormatterSerialization>false</EnableUnsafeBinaryFormatterSerialization>
+		<EnableUnsafeUTF7Encoding>false</EnableUnsafeUTF7Encoding>
+		<StackTraceSupport>false</StackTraceSupport>
+		<XmlResolverIsNetworkingEnabledByDefault>false</XmlResolverIsNetworkingEnabledByDefault>
+		<Http3Support>false</Http3Support>
+    </PropertyGroup>
 
-  <ItemGroup>
-    <Compile Remove="GeodeAddons\**" />
-    <EmbeddedResource Remove="GeodeAddons\**" />
-    <None Remove="GeodeAddons\**" />
-  </ItemGroup>
+    <ItemGroup>
+        <Compile Remove="GeodeAddons\**" />
+        <EmbeddedResource Remove="GeodeAddons\**" />
+        <None Remove="GeodeAddons\**" />
+    </ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Antlr4.Runtime.Standard" Version="4.13.1" />
-    <PackageReference Include="Glob" Version="1.1.9" />
-    <PackageReference Include="Spectre.Console" Version="0.52.0" />
-    <PackageReference Include="Spectre.Console.Cli" Version="0.52.0" />
-    <PackageReference Include="Tmds.ExecFunction" Version="0.8.0" />
-  </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="Antlr4.Runtime.Standard" Version="4.13.1" />
+        <PackageReference Include="Glob" Version="1.1.9" />
+        <PackageReference Include="Spectre.Console" Version="0.53.0" />
+        <PackageReference Include="Spectre.Console.Cli" Version="0.53.0" />
+        <PackageReference Include="Tmds.ExecFunction" Version="0.8.0" />
+    </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\Datapack.Net\Datapack.Net.csproj" />
-    <ProjectReference Include="..\Geode\Geode.csproj" />
-  </ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\Datapack.Net\Datapack.Net.csproj" />
+        <ProjectReference Include="..\Geode\Geode.csproj" />
+    </ItemGroup>
 
-  <ItemGroup>
+    <ItemGroup>
     <None Update="examples\**">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="std\**">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="tests\**">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-  </ItemGroup>
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Update="EnvDTE" Version="17.14.40260" />
+    </ItemGroup>
 
 </Project>

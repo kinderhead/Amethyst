@@ -41,6 +41,6 @@ namespace Amethyst.Cli
 
 	public class DaemonSetupCommand : Command<DaemonSetupOptions>
 	{
-		public override int Execute(CommandContext context, DaemonSetupOptions settings) => Server.Setup(settings);
+		public override int Execute(CommandContext context, DaemonSetupOptions settings, CancellationToken cancellationToken) => Server.Setup(settings);
     }
 }

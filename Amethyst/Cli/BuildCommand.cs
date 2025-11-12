@@ -43,7 +43,7 @@ namespace Amethyst.Cli
     
     public class BuildCommand : Command<BuildOptions>
 	{
-		public override int Execute(CommandContext context, BuildOptions settings)
+		public override int Execute(CommandContext context, BuildOptions settings, CancellationToken cancellationToken)
         {
             settings.Output ??= Path.GetFileName(settings.Inputs[0]) + ".zip";
             var compiler = new Compiler(settings);

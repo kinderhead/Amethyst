@@ -20,7 +20,7 @@ namespace Amethyst.Cli
 
 	public class DaemonLaunchCommand : Command<DaemonLaunchOptions>
 	{
-		public override int Execute(CommandContext context, DaemonLaunchOptions settings)
+		public override int Execute(CommandContext context, DaemonLaunchOptions settings, CancellationToken cancellationToken)
         {
             if (settings.Command is null)
             {
