@@ -153,4 +153,4 @@ jobs:
         run: .\installer.exe /SUPPRESSMSGBOXES
       
       - name: Test
-        run: amethyst --help
+        run: '"C:\Program Files\Amethyst\amethyst.exe" --help'
