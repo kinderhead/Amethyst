@@ -147,7 +147,7 @@ jobs:
           path: ./dist
       
       - name: Run Installer
-        run: dist/*.exe /SUPPRESSMSGBOXES
+        run: '**\*.exe /SUPPRESSMSGBOXES'
       
       - name: Test
         run: amethyst --help
