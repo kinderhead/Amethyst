@@ -63,7 +63,9 @@ jobs:
 
     - name: Prep Windows Installer
       if: ${{ matrix.type.os == 'windows-latest' }}
-      run: python -u scripts/make_metadata_ini.py
+      run: |
+            python -u scripts/make_metadata_ini.py
+            choco install innosetup --version 6.6.0
     
     - name: Build Windows Installer
       if: ${{ matrix.type.os == 'windows-latest' }}
