@@ -145,9 +145,12 @@ jobs:
         with:
           name: "amethyst-windows-installer"
           path: ./dist
+
+      - name: Setup Installer
+        run: mv dist/*.exe installer.exe
       
       - name: Run Installer
-        run: '**\*.exe /SUPPRESSMSGBOXES'
+        run: installer.exe /SUPPRESSMSGBOXES
       
       - name: Test
         run: amethyst --help
