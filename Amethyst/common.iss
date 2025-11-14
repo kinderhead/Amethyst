@@ -2,25 +2,25 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 ; Non-commercial use only
 
-#define MyAppName "Amethyst"
-#define MyAppVersion ReadIni(SourcePath + "..\metadata.ini", "Amethyst", "Version")
-#define MyAppPublisher "kinderhead"
-#define MyAppURL "https://www.amethyst.dev/"
-#define MyAppExeName "amethyst.exe"
+#define AmethystName "Amethyst"
+#define AmethystVersion ReadIni(SourcePath + "..\metadata.ini", "Amethyst", "Version")
+#define AmethystPublisher "kinderhead"
+#define AmethystURL "https://www.amethyst.dev/"
+#define AmethystExeName "amethyst.exe"
 
 [Setup]
 ; NOTE: The value of AppId uniquely identifies this application. Do not use the same AppId value in installers for other applications.
 ; (To generate a new GUID, click Tools | Generate GUID inside the IDE.)
 AppId={{B74A2A72-2AC3-422E-AC70-6B5769D3D728}}
-AppName={#MyAppName}
-AppVersion={#MyAppVersion}
-AppVerName={#MyAppName} {#MyAppVersion}
-AppPublisher={#MyAppPublisher}
-AppPublisherURL={#MyAppURL}
-AppSupportURL={#MyAppURL}
-AppUpdatesURL={#MyAppURL}
-DefaultDirName={autopf}\{#MyAppName}
-UninstallDisplayIcon={app}\{#MyAppExeName}
+AppName={#AmethystName}
+AppVersion={#AmethystVersion}
+AppVerName={#AmethystName} {#AmethystVersion}
+AppPublisher={#AmethystPublisher}
+AppPublisherURL={#AmethystURL}
+AppSupportURL={#AmethystURL}
+AppUpdatesURL={#AmethystURL}
+DefaultDirName={autopf}\{#AmethystName}
+UninstallDisplayIcon={app}\{#AmethystExeName}
 ; "ArchitecturesAllowed=x64compatible" specifies that Setup cannot run
 ; on anything but x64 and Windows 11 on Arm.
 ArchitecturesAllowed=x64compatible
@@ -29,13 +29,13 @@ ArchitecturesAllowed=x64compatible
 ; meaning it should use the native 64-bit Program Files directory and
 ; the 64-bit view of the registry.
 ArchitecturesInstallIn64BitMode=x64compatible
-DefaultGroupName={#MyAppName}
+DefaultGroupName={#AmethystName}
 DisableProgramGroupPage=yes
 LicenseFile=..\LICENSE
 ; Uncomment the following line to run in non administrative install mode (install for current user only).
 ;PrivilegesRequired=lowest
 PrivilegesRequiredOverridesAllowed=dialog
-OutputBaseFilename=amethyst-{#MyAppVersion}
+OutputBaseFilename=amethyst-{#AmethystVersion}
 SolidCompression=yes
 WizardStyle=modern dynamic
 ChangesEnvironment=yes
@@ -44,7 +44,7 @@ ChangesEnvironment=yes
 Name: "english"; MessagesFile: "compiler:Default.isl"
 
 [Files]
-Source: "dist\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion
+Source: "dist\{#AmethystExeName}"; DestDir: "{app}"; Flags: ignoreversion
 Source: "dist\std\*"; DestDir: "{app}\std"; Flags: ignoreversion recursesubdirs
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
@@ -127,7 +127,7 @@ begin
 end;
 
 [Icons]
-Name: "{group}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"
+Name: "{group}\{#AmethystName}"; Filename: "{app}\{#AmethystExeName}"
 
 [UninstallDelete]
 Type: files; Name: "{app}\std\*.*"

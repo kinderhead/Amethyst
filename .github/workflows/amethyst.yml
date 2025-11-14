@@ -62,16 +62,23 @@ jobs:
             python -u scripts/linux_package.py
 
     - name: Prep Windows Installer
-      if: ${{ matrix.type.os == 'windows-latest' }}
+      if: ${{ runner.os == 'Windows' }}
       run: |
             python -u scripts/make_metadata_ini.py
             choco install innosetup --version 6.6.0
     
-    - name: Build Windows Installer
-      if: ${{ matrix.type.os == 'windows-latest' }}
+    - name: Build Windows Installer x64
+      if: ${{ matrix.type.name == 'windows' }}
       uses: Minionguyjpro/Inno-Setup-Action@v1.2.2
       with:
-        path: Amethyst/windows-installer.iss
+        path: Amethyst/x64-installer.iss
+        options: /O+
+    
+    - name: Build Windows Installer Arm
+      if: ${{ matrix.type.name == 'windows-arm' }}
+      uses: Minionguyjpro/Inno-Setup-Action@v1.2.2
+      with:
+        path: Amethyst/arm-installer.iss
         options: /O+
 
     - name: Test
@@ -102,10 +109,10 @@ jobs:
           *.apk
 
     - name: Upload Windows Installer
-      if: ${{ matrix.type.os == 'windows-latest' }}
+      if: ${{ runner.os == 'Windows' }}
       uses: actions/upload-artifact@v4
       with:
-        name: amethyst-windows-installer
+        name: amethyst-${{ matrix.type.name }}-installer
         path: 'Amethyst/Output/*.exe'
   
   linux-pkgs:
@@ -137,13 +144,18 @@ jobs:
     needs: [build]
 
     strategy:
+      matrix:
+        type: [
+          {os: windows-latest, name: windows},
+          {os: windows-11-arm, name: windows-arm}
+        ]
       fail-fast: false
     
     steps:
       - name: Download Artifact
         uses: actions/download-artifact@v4
         with:
-          name: "amethyst-windows-installer"
+          name: "amethyst-${{ matrix.type.name }}-installer"
           path: ./dist
 
       - name: Setup Installer
