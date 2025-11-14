@@ -37,6 +37,10 @@ for i in dists:
 print("Downloading Linux packages")
 for i in ["arm-pkgs", "pkgs"]:
     call(f"gh run download {runId} -n amethyst-linux-{i} -D dist")
+    
+print("Downloading Windows installers")
+for i in ["windows", "windows-arm"]:
+    call(f"gh run download {runId} -n amethyst-{i}-installer -D dist")
 
 print(f"Creating release for {version}...")
 call(f"gh release create {version} -F CHANGELOG.md")
