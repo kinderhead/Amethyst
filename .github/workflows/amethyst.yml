@@ -106,7 +106,7 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: amethyst-windows-installer
-        path: '*.exe'
+        path: 'Amethyst/Output/*.exe'
   
   linux-pkgs:
     runs-on: ${{ matrix.arch.runner }}
