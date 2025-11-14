@@ -150,7 +150,7 @@ jobs:
         run: mv dist/*.exe installer.exe
       
       - name: Run Installer
-        run: installer.exe /SUPPRESSMSGBOXES
+        run: .\installer.exe /SUPPRESSMSGBOXES
       
       - name: Test
         run: amethyst --help
