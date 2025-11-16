@@ -27,7 +27,7 @@ namespace Amethyst.Cli
 			else
 			{
 				Console.WriteLine("No arguments specified. Run amethyst --help for more information");
-				return 1;
+				return 0;
 			}
         }
 	}
