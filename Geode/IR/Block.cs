@@ -9,7 +9,7 @@ using Geode.Values;
 
 namespace Geode.IR
 {
-	public class Block(string name, NamespacedID funcID, FunctionContext ctx) : GenericTreeNode<Block>, IInstructionArg
+	public class Block(string name, NamespacedID funcID, FunctionContext ctx) : GraphNode<Block>, IInstructionArg
 	{
 		public string Name => name;
 		public readonly FunctionContext Ctx = ctx;

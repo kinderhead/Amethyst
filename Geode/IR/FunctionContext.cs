@@ -7,12 +7,13 @@ using Geode.IR.Instructions;
 using Geode.IR.Passes;
 using Geode.Types;
 using Geode.Util;
+using Geode.Util.Algorithm;
 using Geode.Values;
 using Spectre.Console;
 
 namespace Geode.IR
 {
-	public class FunctionContext : GenericTree<Block>
+	public class FunctionContext : Graph<Block>
 	{
 		public readonly ICompiler Compiler;
 		public readonly FunctionValue Decl;
@@ -20,8 +21,6 @@ namespace Geode.IR
 		public readonly LocationRange Location;
 
 		public readonly Stack<LocationRange> LocationStack = [];
-
-		public override Block Start => blocks.First();
 
 		public readonly Block ExitBlock;
 		public Block CurrentBlock { get; private set; }
@@ -60,7 +59,8 @@ namespace Geode.IR
 
 			PushScope();
 
-			blocks.Add(new("entry", Decl.ID, this));
+			Start = new("entry", Decl.ID, this);
+			blocks.Add(Start);
 			CurrentBlock = blocks.Last();
 
 			ExitBlock = new("exit", GetNewInternalID(), this);
@@ -398,21 +398,96 @@ namespace Geode.IR
 		}
 
 		// Uses "A Simple, Fast Dominance Algorithm" by Keith D. Cooper, et al.
+		public Dictionary<Block, Block> CalculateImmediateDominators()
+		{
+			var idoms = new Dictionary<Block, Block>
+			{
+				[Start] = Start
+			};
+
+			var indices = this.PostorderIndices();
+
+			var changed = true;
+			while (changed)
+			{
+				changed = false;
+				foreach (var i in this.PostorderTraversal().Reverse())
+				{
+					Block? newIdom = null;
+					Block? pickedPred = null;
+
+					foreach (var pred in i.Previous)
+					{
+						if (idoms.TryGetValue(pred, out pickedPred))
+						{
+							newIdom = pickedPred;
+							break;
+						}
+					}
+
+					if (newIdom == null || pickedPred == null)
+					{
+						throw new Exception("Something very silly happened when calculating immediate dominators");
+					}
+
+					foreach (var pred in i.Previous)
+					{
+						if (pred != pickedPred)
+						{
+							if (idoms.ContainsKey(pred))
+							{
+								var finger1 = pred;
+								var finger2 = newIdom;
+
+								while (finger1 != finger2)
+								{
+									while (indices[finger1] < indices[finger2])
+									{
+										finger1 = idoms[finger1];
+									}
+
+									while (indices[finger2] < indices[finger1])
+									{
+										finger2 = idoms[finger2];
+									}
+								}
+
+								newIdom = finger1;
+							}
+						}
+					}
+
+					if (idoms[i] != newIdom)
+					{
+						idoms[i] = newIdom;
+						changed = true;
+					}
+				}
+			}
+
+			return idoms;
+		}
+
 		public Dictionary<Block, HashSet<Block>> CalculateDominanceFrontiers()
         {
-            var doms = new Dictionary<Block, HashSet<Block>>();
+            var doms = new Dictionary<Block, HashSet<Block>>(blocks.Select(i => new KeyValuePair<Block, HashSet<Block>>(i, [])));
+			var idoms = CalculateImmediateDominators();
 
-			// foreach (var i in blocks)
-			// {
-			// 	if (i.Previous.Count >= 2)
-            //     {
-            //         foreach (var pred in i.Previous)
-			// 		{
-			// 			var runner = pred;
-			// 			while (runner != )
-			// 		}
-            //     }
-			// }
+			foreach (var i in blocks)
+			{
+				if (i.Previous.Count >= 2)
+				{
+					foreach (var pred in i.Previous)
+					{
+						var runner = pred;
+						while (runner != idoms[i])
+						{
+							doms[runner].Add(i);
+							runner = idoms[runner];
+						}
+			 		}
+				}
+			}
 
 			return doms;
 		}
