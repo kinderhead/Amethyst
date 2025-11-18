@@ -6,12 +6,13 @@ using Geode.Errors;
 using Geode.IR.Instructions;
 using Geode.IR.Passes;
 using Geode.Types;
+using Geode.Util;
 using Geode.Values;
 using Spectre.Console;
 
 namespace Geode.IR
 {
-	public class FunctionContext
+	public class FunctionContext : GenericTree<Block>
 	{
 		public readonly ICompiler Compiler;
 		public readonly FunctionValue Decl;
@@ -20,7 +21,8 @@ namespace Geode.IR
 
 		public readonly Stack<LocationRange> LocationStack = [];
 
-		public Block FirstBlock => blocks.First();
+		public override Block Start => blocks.First();
+
 		public readonly Block ExitBlock;
 		public Block CurrentBlock { get; private set; }
 
@@ -395,9 +397,29 @@ namespace Geode.IR
 			}
 		}
 
+		// Uses "A Simple, Fast Dominance Algorithm" by Keith D. Cooper, et al.
+		public Dictionary<Block, HashSet<Block>> CalculateDominanceFrontiers()
+        {
+            var doms = new Dictionary<Block, HashSet<Block>>();
+
+			// foreach (var i in blocks)
+			// {
+			// 	if (i.Previous.Count >= 2)
+            //     {
+            //         foreach (var pred in i.Previous)
+			// 		{
+			// 			var runner = pred;
+			// 			while (runner != )
+			// 		}
+            //     }
+			// }
+
+			return doms;
+		}
+
 		public void Render(GeodeBuilder builder)
 		{
-			var firstBlockRenderer = FirstBlock.GetRenderCtx(builder, this);
+			var firstBlockRenderer = Start.GetRenderCtx(builder, this);
 			if (UsesStack)
 			{
 				firstBlockRenderer.Add(new DataCommand.Modify(builder.RuntimeID, "stack").Append().Value("{}"));

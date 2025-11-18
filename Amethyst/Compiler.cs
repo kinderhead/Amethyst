@@ -76,7 +76,7 @@ namespace Amethyst
 				}
 			}
 
-			if (GlobalInitFunc.FirstBlock.Instructions.Count != 0)
+			if (GlobalInitFunc.Start.Instructions.Count != 0)
 			{
 				GlobalInitFunc.Add(new ReturnInsn());
 				GlobalInitFunc.Finish();

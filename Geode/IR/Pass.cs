@@ -29,7 +29,7 @@ namespace Geode.IR
 				}
 				else
 				{
-					Walk(ctx, ctx.FirstBlock);
+					Walk(ctx, ctx.Start);
 				}
 
 				while (toVisit.Count != 0)

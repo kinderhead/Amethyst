@@ -4,18 +4,17 @@ using Datapack.Net.Function.Commands;
 using Datapack.Net.Utils;
 using Geode.Errors;
 using Geode.IR.Instructions;
+using Geode.Util;
 using Geode.Values;
 
 namespace Geode.IR
 {
-	public class Block(string name, NamespacedID funcID, FunctionContext ctx) : IInstructionArg
+	public class Block(string name, NamespacedID funcID, FunctionContext ctx) : GenericTreeNode<Block>, IInstructionArg
 	{
 		public string Name => name;
 		public readonly FunctionContext Ctx = ctx;
 
 		public readonly List<Instruction> Instructions = [];
-		public readonly HashSet<Block> Previous = [];
-		public readonly HashSet<Block> Next = [];
 
 		public readonly MCFunction Function = new(funcID, true);
 

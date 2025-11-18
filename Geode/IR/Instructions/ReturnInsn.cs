@@ -29,7 +29,7 @@ namespace Geode.IR.Instructions
 				throw new InvalidTypeError("void", ctx.Func.Decl.FuncType.ReturnType.ToString());
 			}
 
-			if (ctx.Block != ctx.Func.FirstBlock)
+			if (ctx.Block != ctx.Func.Start)
 			{
 				ctx.Func.GetIsFunctionReturningValue().Store(new LiteralValue(true), ctx);
 			}

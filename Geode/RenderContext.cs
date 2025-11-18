@@ -237,7 +237,7 @@ namespace Geode
 					text
 				)));
 
-				if (Block != Func.FirstBlock)
+				if (Block != Func.Start)
 				{
 					Add(new Execute().If.Score(success.Target, success.Score, 0).Run(WithFaux(ctx =>
 					{
