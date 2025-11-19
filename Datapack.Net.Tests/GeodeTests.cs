@@ -11,6 +11,8 @@ namespace Datapack.Net.Tests
 	{
 		private static FunctionContext GetCtx() => new(new Compiler(new() { Inputs = [], Output = "" }), new("test:main", new(FunctionModifiers.None, new VoidType(), [])), [], LocationRange.None);
 
+
+		// Uses the example graph from https://longfangsong.github.io/en/mem2reg-made-simple/. Block 4 may or may not be wrong since the article didn't mention its dominance frontier set.
 		[Test]
 		public void TestDominanceFrontier()
 		{
