@@ -43,12 +43,6 @@ namespace Geode.IR
 			}
 		}
 
-		public void LinkNext(Block next)
-		{
-			Next.Add(next);
-			next.Previous.Add(this);
-		}
-
 		public string Dump(Func<IInstructionArg, string> valueMap)
 		{
 			var builder = new StringBuilder();
@@ -131,6 +125,8 @@ namespace Geode.IR
 		}
 
 		public void EnableForkGuard() => ForkGuard = true;
+
+		public override string ToString() => Name;
 
 		public RenderContext GetRenderCtx(GeodeBuilder builder, FunctionContext ctx) => new(Function, this, builder, ctx);
 	}

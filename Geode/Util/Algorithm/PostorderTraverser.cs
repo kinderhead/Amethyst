@@ -35,7 +35,7 @@ namespace Geode.Util.Algorithm
 
 		private static IEnumerable<T> TraverseNode<T>(T node, HashSet<T> visited) where T : GraphNode<T>
 		{
-			if (!visited.Contains(node))
+			if (visited.Add(node))
 			{
 				foreach (var i in node.Next)
 				{

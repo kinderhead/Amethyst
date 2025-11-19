@@ -1,68 +1,61 @@
+using Amethyst;
+using Geode;
+using Geode.IR;
+using Geode.IR.Instructions;
+using Geode.Types;
+using Block = Geode.IR.Block;
+
 namespace Datapack.Net.Tests
 {
 	public class GeodeTests
 	{
-		//private static FunctionContext GetCtx() => new(new(new Options()), new("test:main", new(Amethyst.AST.FunctionModifiers.None, new VoidTypeSpecifier(), [])));
+		private static FunctionContext GetCtx() => new(new Compiler(new() { Inputs = [], Output = "" }), new("test:main", new(FunctionModifiers.None, new VoidType(), [])), [], LocationRange.None);
 
-		//[Test]
-		//public void TestLifetime()
-		//{
-		//    var ctx = GetCtx();
+		[Test]
+		public void TestDominanceFrontier()
+		{
+			var ctx = GetCtx();
 
-		//    var entry = ctx.CurrentBlock;
+			Block block(string name)
+			{
+				var b = new Block(name, ctx.GetNewInternalID(), ctx);
+				ctx.Add(b);
+				return b;
+			}
 
-		//    var x = new Variable("x", "x", PrimitiveTypeSpecifier.Int);
-		//    ctx.Add(new StoreInsn(x, new LiteralValue(0)));
+			var b1 = ctx.Start;
+			var b2 = block("b2");
+			var b3 = block("b3");
+			var b4 = block("b4");
+			var b5 = block("b5");
+			var b6 = block("b6");
+			var b7 = block("b7");
+			var b8 = block("b8");
+			b8.Add(new ReturnInsn());
 
-		//    var a = ctx.Add(new AddInsn(x, new LiteralValue(4)), "%a");
-		//    var b = ctx.Add(new MulInsn(x, new LiteralValue(-5)), "%b");
-		//    ValueRef? c = null;
-		//    var cond = ctx.Add(new EqInsn(a, new LiteralValue(4)));
+			b1.LinkNext(b2);
+			b1.LinkNext(b4);
+			b4.LinkNext(b5);
+			b4.LinkNext(b6);
+			b2.LinkNext(b3);
+			b5.LinkNext(b7);
+			b6.LinkNext(b7);
+			b3.LinkNext(b8);
+			b3.LinkNext(b2);
+			b7.LinkNext(b8);
 
-		//    var (ifTrue, ifFalse) = ctx.Branch(cond, "if", () =>
-		//    {
-		//        c = ctx.Add(new AddInsn(a, new LiteralValue(8)), "%c");
-		//        ctx.Add(new StoreInsn(x, c));
-		//    }, () => ctx.Add(new StoreInsn(x, a)));
+			ctx.Finish();
 
-		//    ctx.Add(new StoreInsn(x, b));
-		//    ctx.Add(new ReturnInsn());
+			var doms = ctx.CalculateDominanceFrontiers();
 
-		//    var ifEnd = ctx.CurrentBlock;
-		//    ctx.Finish();
-
-		//    new ResolvePass().Apply(ctx);
-
-		//    var inout = new InOutPass();
-		//    inout.Apply(ctx);
-
-		//    CollectionAssert.AreEquivalent(new HashSet<ValueRef>([]), inout.Ins[entry]);
-		//    CollectionAssert.AreEquivalent(new HashSet<ValueRef>([a, b]), inout.Ins[ifTrue]);
-		//    CollectionAssert.AreEquivalent(new HashSet<ValueRef>([a, b]), inout.Ins[ifFalse]);
-		//    CollectionAssert.AreEquivalent(new HashSet<ValueRef>([b]), inout.Ins[ifEnd]);
-
-		//    CollectionAssert.AreEquivalent(new HashSet<ValueRef>([a, b]), inout.Outs[entry]);
-		//    CollectionAssert.AreEquivalent(new HashSet<ValueRef>([b]), inout.Outs[ifTrue]);
-		//    CollectionAssert.AreEquivalent(new HashSet<ValueRef>([b]), inout.Outs[ifFalse]);
-		//    CollectionAssert.AreEquivalent(new HashSet<ValueRef>([]), inout.Outs[ifEnd]);
-
-		//    var graphPass = new LifetimePass(inout);
-		//    graphPass.Apply(ctx);
-		//    var graph = graphPass.Graphs[ctx];
-
-		//    if (c is null) throw new InvalidOperationException();
-
-		//    CollectionAssert.AreEquivalent(new HashSet<ValueRef>([b]), graph.Graph[a].Edges.Select(i => i.Value));
-		//    CollectionAssert.AreEquivalent(new HashSet<ValueRef>([a, c]), graph.Graph[b].Edges.Select(i => i.Value));
-		//    CollectionAssert.AreEquivalent(new HashSet<ValueRef>([b]), graph.Graph[c].Edges.Select(i => i.Value));
-
-		//    var regs = graph.CalculateDSatur();
-
-		//    Assert.That(regs[a], Is.EqualTo(regs[c]));
-		//    Assert.That(regs[a], Is.Not.EqualTo(regs[b]));
-
-		//    var dump = ctx.Dump();
-		//    Debug.WriteLine(dump);
-		//}
+			CollectionAssert.AreEquivalent(new HashSet<Block>([]), doms[b1]);
+			CollectionAssert.AreEquivalent(new HashSet<Block>([b2, b8]), doms[b2]);
+			CollectionAssert.AreEquivalent(new HashSet<Block>([b2, b8]), doms[b3]);
+			CollectionAssert.AreEquivalent(new HashSet<Block>([b8]), doms[b4]);
+			CollectionAssert.AreEquivalent(new HashSet<Block>([b7]), doms[b5]);
+			CollectionAssert.AreEquivalent(new HashSet<Block>([b7]), doms[b6]);
+			CollectionAssert.AreEquivalent(new HashSet<Block>([b8]), doms[b7]);
+			CollectionAssert.AreEquivalent(new HashSet<Block>([]), doms[b8]);
+		}
 	}
 }

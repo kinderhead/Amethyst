@@ -11,5 +11,11 @@ namespace Geode.Util
     {
         public readonly HashSet<TSelf> Previous = [];
         public readonly HashSet<TSelf> Next = [];
-    }
+
+		public void LinkNext(TSelf next)
+		{
+			Next.Add(next);
+			next.Previous.Add((TSelf)this);
+		}
+	}
 }

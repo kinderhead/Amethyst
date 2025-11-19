@@ -170,6 +170,12 @@ namespace Geode.IR
 			return val;
 		}
 
+		public void Add(Block block)
+		{
+			CurrentBlock = block;
+			blocks.Add(block);
+		}
+
 		public ValueRef ImplicitCast(ValueRef val, TypeSpecifier type)
 		{
 			if (ImplicitCastOrNull(val, type) is ValueRef ret)
@@ -413,14 +419,20 @@ namespace Geode.IR
 				changed = false;
 				foreach (var i in this.PostorderTraversal().Reverse())
 				{
+					if (i == Start)
+					{
+						continue;
+					}
+
 					Block? newIdom = null;
 					Block? pickedPred = null;
 
 					foreach (var pred in i.Previous)
 					{
-						if (idoms.TryGetValue(pred, out pickedPred))
+						if (idoms.ContainsKey(pred))
 						{
-							newIdom = pickedPred;
+							newIdom = pred;
+							pickedPred = pred;
 							break;
 						}
 					}
@@ -432,32 +444,29 @@ namespace Geode.IR
 
 					foreach (var pred in i.Previous)
 					{
-						if (pred != pickedPred)
+						if (pred != pickedPred && idoms.ContainsKey(pred))
 						{
-							if (idoms.ContainsKey(pred))
+							var finger1 = pred;
+							var finger2 = newIdom;
+
+							while (finger1 != finger2)
 							{
-								var finger1 = pred;
-								var finger2 = newIdom;
-
-								while (finger1 != finger2)
+								while (indices[finger1] < indices[finger2])
 								{
-									while (indices[finger1] < indices[finger2])
-									{
-										finger1 = idoms[finger1];
-									}
-
-									while (indices[finger2] < indices[finger1])
-									{
-										finger2 = idoms[finger2];
-									}
+									finger1 = idoms[finger1];
 								}
 
-								newIdom = finger1;
+								while (indices[finger2] < indices[finger1])
+								{
+									finger2 = idoms[finger2];
+								}
 							}
+
+							newIdom = finger1;
 						}
 					}
 
-					if (idoms[i] != newIdom)
+					if (!idoms.TryGetValue(i, out var value) || value != newIdom)
 					{
 						idoms[i] = newIdom;
 						changed = true;
