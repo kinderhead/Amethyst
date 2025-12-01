@@ -1,4 +1,4 @@
-name: Deploy to GitHub Pages
+name: Deploy
 
 on:
   push:
@@ -11,6 +11,7 @@ jobs:
   build:
     name: Build Docusaurus
     runs-on: ubuntu-latest
+    
     steps:
       - uses: actions/checkout@v4
         with:
@@ -34,7 +35,7 @@ jobs:
           path: docs/build
 
   deploy:
-    name: Deploy to GitHub Pages
+    name: Deploy Website
     needs: build
 
     permissions:
