@@ -2,11 +2,11 @@
   "profiles": {
     "Amethyst": {
       "commandName": "Project",
-      "commandLineArgs": "build examples/test.ame -o output.zip --run"
+      "commandLineArgs": "build examples/test.ame -o output.zip -c"
     },
     "Amethyst Help": {
       "commandName": "Project",
-      "commandLineArgs": "setup --eula"
+      "commandLineArgs": "daemon -c \"stop\""
     },
     "Test Suite": {
       "commandName": "Project",

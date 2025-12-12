@@ -135,12 +135,12 @@ namespace Datapack.Net
 		private readonly List<string> FilesWriten = [];
 		internal void WriteFile(string path, string content)
 		{
-// #if DEBUG
-// 			if (path.EndsWith(".mcfunction"))
-// 			{
-// 				Console.WriteLine($"Writing to file \"{path}\":\n{content}\n");
-// 			}
-// #endif
+//#if DEBUG
+//			if (path.EndsWith(".mcfunction"))
+//			{
+//				Console.WriteLine($"Writing to file \"{path}\":\n{content}\n");
+//			}
+//#endif
 
 			if (zipFile != null)
 			{

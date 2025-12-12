@@ -40,7 +40,7 @@ namespace Amethyst.AST.Expressions
 				{
 					"x" or "y" or "z" or "dx" or "dy" or "dz" => effectiveValue.Execute(ctx, PrimitiveType.Double),
 					"limit" => effectiveValue.Execute(ctx, PrimitiveType.Int),
-					"name" or "type" or "tag" or "team" => effectiveValue.Execute(ctx, PrimitiveType.String),
+					"name" or "type" or "team" => effectiveValue.Execute(ctx, PrimitiveType.String),
 					_ => throw new TargetSelectorArgumentError(k),
 				};
 
