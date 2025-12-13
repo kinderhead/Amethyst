@@ -64,7 +64,9 @@ jobs:
 
     - name: Prep Windows Installer
       if: ${{ runner.os == 'Windows' }}
-      run: python -u scripts/make_metadata_ini.py
+      run: |
+        choco install innosetup --ignore-http-cache
+        python -u scripts/make_metadata_ini.py
     
     - name: Build Windows Installer x64
       if: ${{ matrix.type.name == 'windows' }}
