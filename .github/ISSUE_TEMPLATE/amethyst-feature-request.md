@@ -7,7 +7,7 @@ assignees: kinderhead
 
 ---
 
-<--
+<!--
 BEFORE SUBMITTING AN ISSUE
 
 Does this feature solve a bug? Is so, then make a bug report.
