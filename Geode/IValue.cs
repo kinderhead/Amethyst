@@ -8,12 +8,12 @@ namespace Geode
 {
 	public interface IValueLike
 	{
+		TypeSpecifier Type { get; }
 		IValue Expect();
 	}
 
 	public interface IValue : IValueLike
 	{
-		TypeSpecifier Type { get; }
 		bool IsLiteral => this is IConstantValue;
 
 		ScoreValue AsScore(RenderContext ctx);

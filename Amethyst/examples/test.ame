@@ -24,49 +24,17 @@ namespace example;
 //     amethyst:exit();
 // }
 
-struct foo {
-    foo() {}
-
-    void bar() {
-        print("bar!");
-
-        // This prevents this method from running entirely
-        as (@a) {}
+int func(macro int x) {
+    if (x < 0) {
+        return x * 2;
+    } else {
+        return x - 1;
     }
 
-    void baz() {
-        print("baz!");
-
-        // Another example
-        if (1) {}
-    }
-
-    void qux() {
-        print("qux!");
-    }
+    return 0;
 }
-
-
-void the() {
-    print("the!");
-
-    as (@a) {}
-}
-
 
 #load
 void main() {
-    foo f = foo();
-    f.bar();    // Does not execute
-    f.baz();    // Does not execute
-    f.qux();    // Prints "qux!"
-
-    as (@a) {
-        print("Works fine out here");
-    }
-    if (1) {
-        print("Works fine out here");
-    }
-
-    the();  // Works fine for non-struct functions
+    print(func(-3));
 }

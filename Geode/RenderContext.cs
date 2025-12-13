@@ -155,8 +155,14 @@ namespace Geode
 					{
 						throw new MacroStringSubFunctionError();
 					}
-
-					return new KeyValuePair<string, NBTValue>(i.Name, new NBTRawString(i.GetMacro()));
+					else if (i.Type.WrapInQuotesForMacro)
+					{
+						return new KeyValuePair<string, NBTValue>(i.Name, new NBTString(i.GetMacro()));
+					}
+					else
+					{
+						return new KeyValuePair<string, NBTValue>(i.Name, new NBTRawString(i.GetMacro()));
+					}
 				})])];
 			}
 			else

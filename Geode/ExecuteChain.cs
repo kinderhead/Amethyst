@@ -38,9 +38,9 @@ namespace Geode
 			});
 		}
 
-		private IEnumerable<IValue> GetDependencies()
+		private IValue[] GetDependencies()
 		{
-			return Chain.Where(i => i.RequireLiteral).SelectMany(i => i.Values.Select(i => i.Expect()));
+			return [.. Chain.Where(i => i.RequireLiteral).SelectMany(i => i.Values.Select(i => i.Expect()))];
 		}
 
 		private void Compute(Execute cmd, Func<Command[]> ifTrue, IConstantValue[] args, RenderContext ctx)

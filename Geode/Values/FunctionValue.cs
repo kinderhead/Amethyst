@@ -81,7 +81,14 @@ namespace Geode.Values
 						}
 						else
 						{
-							macros.Add(param.Name, val);
+							if (val.Expect() is IConstantValue c and not LiteralValue && val.Type.WrapInQuotesForMacro)
+							{
+								macros.Add(param.Name, new LiteralValue(c.Value.ToString()));
+							}
+							else
+							{
+								macros.Add(param.Name, val);
+							}
 						}
 					}
 					else

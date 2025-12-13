@@ -18,6 +18,7 @@ namespace Amethyst.IR.Types
 		public override NBTType EffectiveType => NBTType.String;
 		public override TypeSpecifier BaseClass => this;
 		public override NamespacedID ID => "amethyst:ref";
+		public override bool WrapInQuotesForMacro => true;
 
 		public override TypeSpecifier AssignmentOverloadType => Inner;
 

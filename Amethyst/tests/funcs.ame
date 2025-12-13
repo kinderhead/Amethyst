@@ -25,6 +25,16 @@ void test_inline_simple() {
     complete();
 }
 
+#test
+void test_macro_propagation() {
+    start("macro propagation");
+    
+    assert(propagate(2) == 1);
+    assert(propagate(-3) == -6);
+
+    complete();
+}
+
 int dyn_func1(int x) {
     return x + 2;
 }
@@ -36,4 +46,14 @@ int dyn_func2(macro int x) {
 inline void simple_inline() {
     int x = 7;
     assert(x == 7);
+}
+
+int propagate(macro int x) {
+    if (x < 0) {
+        return x * 2;
+    } else {
+        return x - 1;
+    }
+
+    return 0; // I'll have to make it smarter at some point
 }

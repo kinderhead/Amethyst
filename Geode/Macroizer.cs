@@ -10,7 +10,7 @@ namespace Geode
 		public readonly GeodeBuilder Builder = builder;
 		public readonly Dictionary<string, MCFunction> CachedFunctions = [];
 
-		public void Run(RenderContext ctx, IEnumerable<IValue> dependencies, Action<IConstantValue[], RenderContext> func)
+		public void Run(RenderContext ctx, IValue[] dependencies, Action<IConstantValue[], RenderContext> func)
 		{
 			var args = new List<IConstantValue>();
 			var toMacro = new Dictionary<string, IValue>();
@@ -83,12 +83,24 @@ namespace Geode
 			}
 		}
 
-		public void RunAndPropagateMacros(RenderContext ctx, IEnumerable<IValue> dependencies, Action<IConstantValue[], NBTCompound, RenderContext> func) => Run(ctx, [.. dependencies, .. ctx.Func.Decl.FuncType.MacroParameters], (args, ctx) =>
-																																									 {
-																																										 func([.. args.Take(dependencies.Count())], [.. ctx.Func.Decl.FuncType.MacroParameters.Zip(args.Skip(1)).Select(i => {
-																																											if (i.First.Type.WrapInQuotesForMacro && i.Second.Value.GetType() != typeof(NBTString)) return new KeyValuePair<string, NBTValue>(i.First.Name, new NBTString(i.Second.Value.ToString()));
-																																											else return new KeyValuePair<string, NBTValue>(i.First.Name, i.Second.Value);
-																																										 })], ctx);
-																																									 }); // Formatting went a bit wild here
+		public void RunAndPropagateMacros(RenderContext ctx, IValue[] dependencies, Action<IConstantValue[], NBTCompound, RenderContext> func) => Run(ctx, [.. dependencies, .. ctx.Func.Decl.FuncType.MacroParameters], (args, ctx) =>
+		{
+			IConstantValue[] realArgs = [.. args.Take(dependencies.Length)];
+			IConstantValue[] propagated;
+
+			if (args.Length == 0)
+			{
+				propagated = ctx.Func.Decl.FuncType.MacroParameters;
+			}
+			else
+			{
+				propagated = [.. args.Skip(dependencies.Length)];
+			}
+
+			func(realArgs, [.. ctx.Func.Decl.FuncType.MacroParameters.Zip(propagated).Select(i => {
+				if (i.First.Type.WrapInQuotesForMacro && i.Second.Value.GetType() != typeof(NBTString)) return new KeyValuePair<string, NBTValue>(i.First.Name, new NBTString(i.Second.Value.ToString()));
+				else return new KeyValuePair<string, NBTValue>(i.First.Name, i.Second.Value);
+			})], ctx);
+		});
 	}
 }
