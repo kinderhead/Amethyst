@@ -17,6 +17,7 @@ namespace Geode
 		public virtual bool IsList => false;
 		public virtual IEnumerable<TypeSpecifier> Subtypes => [];
 		public virtual TypeSpecifier BaseClass => PrimitiveType.Compound;
+		public virtual bool WrapInQuotesForMacro => false;
 
 		public bool ShouldStoreInScore => EffectiveType is NBTType.Int or NBTType.Boolean;
 

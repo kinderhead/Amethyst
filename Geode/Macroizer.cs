@@ -85,7 +85,10 @@ namespace Geode
 
 		public void RunAndPropagateMacros(RenderContext ctx, IEnumerable<IValue> dependencies, Action<IConstantValue[], NBTCompound, RenderContext> func) => Run(ctx, [.. dependencies, .. ctx.Func.Decl.FuncType.MacroParameters], (args, ctx) =>
 																																									 {
-																																										 func([.. args.Take(dependencies.Count())], [.. ctx.Func.Decl.FuncType.MacroParameters.Zip(args.Skip(1)).Select(i => new KeyValuePair<string, NBTValue>(i.First.Name, i.Second.Value))], ctx);
+																																										 func([.. args.Take(dependencies.Count())], [.. ctx.Func.Decl.FuncType.MacroParameters.Zip(args.Skip(1)).Select(i => {
+																																											if (i.First.Type.WrapInQuotesForMacro && i.Second.Value.GetType() != typeof(NBTString)) return new KeyValuePair<string, NBTValue>(i.First.Name, new NBTString(i.Second.Value.ToString()));
+																																											else return new KeyValuePair<string, NBTValue>(i.First.Name, i.Second.Value);
+																																										 })], ctx);
 																																									 }); // Formatting went a bit wild here
 	}
 }
