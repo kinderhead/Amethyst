@@ -42,21 +42,24 @@ amethyst = "amethyst"
 if os.name == "nt":
     amethyst += ".exe"
 
-call(f"dist/{amethyst} build tests/*.ame -o test.zip")
-call(f"dist/{amethyst} setup --eula")
+for arg in ["-d", "", "-O 1"]:
+    print(f"Testing with args: \"{arg}\"")
+    
+    call(f"dist/{amethyst} build tests/*.ame {arg} -o test.zip")
+    call(f"dist/{amethyst} setup --eula")
 
-process = subprocess.Popen(shlex.split(f"dist/{amethyst} run test.zip"), stdout=subprocess.PIPE)
+    process = subprocess.Popen(shlex.split(f"dist/{amethyst} run test.zip"), stdout=subprocess.PIPE)
 
-try:
-    thread = Thread(target=tester, args=[process])
-    thread.daemon = True
-    thread.start()
+    try:
+        thread = Thread(target=tester, args=[process])
+        thread.daemon = True
+        thread.start()
 
-    time.sleep(60)
+        time.sleep(60)
 
-    print("Timed out")
-    process.kill()
+        print("Timed out")
+        process.kill()
 
-    exit(1)
-finally:
-    process.kill()
+        exit(1)
+    finally:
+        process.kill()

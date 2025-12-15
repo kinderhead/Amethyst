@@ -25,7 +25,7 @@ namespace Amethyst.Cli
 
         [CommandOption("-O")]
         [Description("Set the opimization level.")]
-        [DefaultValue(1)]
+        [DefaultValue(0)]
         public int OptimizationLevel { get; set; }
 
         [CommandOption("-c|--dump-cmd")]
@@ -46,6 +46,7 @@ namespace Amethyst.Cli
 		public override int Execute(CommandContext context, BuildOptions settings, CancellationToken cancellationToken)
         {
             settings.Output ??= Path.GetFileName(settings.Inputs[0]) + ".zip";
+
             var compiler = new Compiler(settings);
 
             if (!compiler.Compile())

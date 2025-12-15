@@ -15,6 +15,9 @@ Make sure the issue is with the compiler itself and not your code.
 Compile your code in debug mode (`-d`) to get more information unless the error only happens in optimized builds.
 -->
 
+**Version**: \<version\>
+<!-- If on the nightly builds, first test with the latest release. -->
+
 **Describe the bug**
 A clear and concise description of what the bug is.
 
