@@ -11,7 +11,7 @@ from threading import Thread
 def call(cmd: str):
     ret = subprocess.run(shlex.split(cmd), capture_output=True, text=True)
     if (ret.returncode != 0):
-        raise Exception(ret.stderr)
+        raise Exception(ret.stdout + ret.stderr) # teehee
     return ret.stdout
 
 
@@ -40,13 +40,14 @@ print("Preparing tests")
 amethyst = "amethyst"
 if os.name == "nt":
     amethyst += ".exe"
+    
+call(f"dist/{amethyst} setup --eula")
 
 for arg in ["-d", "", "-O 1"]:
     print(f"Testing with args: \"{arg}\"")
     
     call(f"dist/{amethyst} build tests/*.ame {arg} -o test.zip")
-    call(f"dist/{amethyst} setup --eula")
-
+    
     process = subprocess.Popen(shlex.split(f"dist/{amethyst} run test.zip"), stdout=subprocess.PIPE)
 
     try:
