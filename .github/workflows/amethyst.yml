@@ -124,10 +124,10 @@ jobs:
     strategy:
       matrix:
         arch: [
-          { runner: "ubuntu-latest", artifact: "amethyst-linux-pkgs", img: "ubuntu", cmd: "apt-get update && apt-get install -y ./mnt/*.deb" },
-          { runner: "ubuntu-latest", artifact: "amethyst-linux-pkgs", img: "archlinux", cmd: "pacman -Sy && pacman -U --noconfirm ./mnt/*.pkg.tar.zst" },
-          { runner: "ubuntu-24.04-arm", artifact: "amethyst-linux-arm-pkgs", img: "--platform=linux/arm64 arm64v8/ubuntu", cmd: "apt-get update && apt-get install -y ./mnt/*.deb" },
-          { runner: "ubuntu-24.04-arm", artifact: "amethyst-linux-arm-pkgs", img: "--platform=linux/arm64 ogarcia/archlinux", cmd: "pacman -Sy && pacman -U --noconfirm ./mnt/*.pkg.tar.zst" }
+          { runner: "ubuntu-latest", artifact: "amethyst-linux-pkgs", img: "ubuntu", cmd: "apt-get install -y ./mnt/*.deb" },
+          { runner: "ubuntu-latest", artifact: "amethyst-linux-pkgs", img: "archlinux", cmd: "pacman -U --noconfirm ./mnt/*.pkg.tar.zst" },
+          { runner: "ubuntu-24.04-arm", artifact: "amethyst-linux-arm-pkgs", img: "--platform=linux/arm64 arm64v8/ubuntu", cmd: "apt-get install -y ./mnt/*.deb" },
+          { runner: "ubuntu-24.04-arm", artifact: "amethyst-linux-arm-pkgs", img: "--platform=linux/arm64 ogarcia/archlinux", cmd: "pacman -U --noconfirm ./mnt/*.pkg.tar.zst" }
         ]
       fail-fast: false
 
