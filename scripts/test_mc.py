@@ -28,7 +28,6 @@ def tester(process: subprocess.Popen[bytes]):
             else:
                 print("Passed")
                 process.kill()
-                os._exit(0)
 
         if process.returncode is not None:
             print("Done")
