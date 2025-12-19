@@ -99,10 +99,10 @@ jobs:
               python -u scripts/linux_package.py
       
       - name: Run Ubuntu Container
-        run: docker run --rm -v "./Amethyst/dist:/mnt" ${{ matrix.arch.ubuntu }} /bin/sh -c "apt-get update && apt-get install -y ./mnt/*.deb && amethyst --help"
+        run: docker run --rm -v ".:/mnt" ${{ matrix.arch.ubuntu }} /bin/sh -c "apt-get update && apt-get install -y ./mnt/*.deb && amethyst --help"
 
       - name: Run Arch Container
-        run: docker run --rm -v "./Amethyst/dist:/mnt" ${{ matrix.arch.arch }} /bin/sh -c "pacman -Sy && pacman -U --noconfirm ./mnt/*.pkg.tar.zst && amethyst --help"
+        run: docker run --rm -v ".:/mnt" ${{ matrix.arch.arch }} /bin/sh -c "pacman -Sy && pacman -U --noconfirm ./mnt/*.pkg.tar.zst && amethyst --help"
 
       - name: Upload Linux Packages
         uses: actions/upload-artifact@v4
