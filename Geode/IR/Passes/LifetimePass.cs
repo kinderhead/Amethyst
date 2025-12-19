@@ -17,22 +17,27 @@ namespace Geode.IR.Passes
 
 			foreach (var i in block.Instructions)
 			{
-				foreach (var arg in i.Arguments)
+				if (i.ArgumentsAliveAtInsn)
 				{
-					if (arg is ValueRef v && v.NeedsScoreReg)
+					foreach (var arg in i.Arguments)
 					{
-						ins.Add(v);
-					}
-
-					foreach (var dep in arg.Dependencies)
-					{
-						if (dep is ValueRef d && d.NeedsScoreReg)
+						if (arg is ValueRef v && v.NeedsScoreReg)
 						{
-							ins.Add(d);
+							ins.Add(v);
+						}
+
+						foreach (var dep in arg.Dependencies)
+						{
+							if (dep is ValueRef d && d.NeedsScoreReg)
+							{
+								ins.Add(d);
+							}
 						}
 					}
 				}
 			}
+
+			ins.UnionWith(block.Phi.Dependencies);
 
 			// Maybe somehow put this in the previous loop
 			foreach (var i in block.Instructions)
@@ -77,6 +82,11 @@ namespace Geode.IR.Passes
 					alive.Add(v);
 					Graphs[ctx].Connect(v, alive);
 				}
+			}
+
+			foreach (var i in block.Phi.Dependencies)
+			{
+				markAlive(i);
 			}
 
 			foreach (var insn in block.Instructions.AsEnumerable().Reverse())

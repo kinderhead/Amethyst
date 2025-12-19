@@ -140,11 +140,13 @@ namespace Geode
 			return dest;
 		}
 
-		public Command[] GetOnJumpCommands(IR.Block block)
+		public Command[] GetOnJumpCommands(IR.Block dest)
         {
-            return [];
+			// Mayhaps make this more efficient
+            return [.. WithFaux(ctx => Block.Phi.ExitBlockCommands(dest, ctx))];
         }
 
+		// TODO: Refactor this into a call to the other JumpTo method
 		public Command[] JumpTo(IR.Block block)
 		{
 			if (Func.IsMacroFunction)
@@ -171,7 +173,7 @@ namespace Geode
 			}
 		}
 
-		public Command[] CallSubFunction(IR.Block block, NBTCompound args)
+		public Command[] JumpTo(IR.Block block, NBTCompound args)
 		{
 			if (args.Count > 0)
 			{

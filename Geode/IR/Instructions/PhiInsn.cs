@@ -5,7 +5,7 @@ using System;
 
 namespace Geode.IR.Instructions
 {
-	public class PhiNode(Block path1, ValueRef val1, Block path2, ValueRef val2) : Instruction([path1, val1, path2, val2]), IPhiLike
+	public class PhiInsn(Block path1, ValueRef val1, Block path2, ValueRef val2) : Instruction([path1, val1, path2, val2]), IPhiLike
 	{
 		public override string Name => "phi";
 		public override NBTType?[] ArgTypes => [null, null, null, null];
@@ -27,7 +27,8 @@ namespace Geode.IR.Instructions
 
         public void Process(Block block)
         {
-            
+            block.Phi.Map(Arg<Block>(0), Arg<ValueRef>(1), ReturnValue);
+            block.Phi.Map(Arg<Block>(2), Arg<ValueRef>(3), ReturnValue);
         }
 	}
 }

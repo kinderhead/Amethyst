@@ -17,7 +17,7 @@ namespace Geode.IR.Instructions
 			var ifTrue = Arg<Block>(1);
 			var ifFalse = Arg<Block>(2);
 
-			cond.RunWithPropagate(macros => ctx.CallSubFunction(ifTrue, macros), ctx);
+			cond.RunWithPropagate(macros => ctx.JumpTo(ifTrue, macros), ctx);
 
 			var returning = ctx.Func.GetIsFunctionReturningValue();
 			

@@ -13,7 +13,7 @@ namespace Geode.IR
 	{
 		public string Name => name;
 		public readonly FunctionContext Ctx = ctx;
-
+		public readonly PhiContext Phi = new();
 		public readonly List<Instruction> Instructions = [];
 
 		public readonly MCFunction Function = new(funcID, true);
