@@ -59,7 +59,7 @@ for arg in ["-d", "", "-O 1"]:
         timed_out = True
         for _ in range(60):
             time.sleep(1)
-            if (thread.is_alive()):
+            if (not thread.is_alive()):
                 timed_out = False
                 break
             
