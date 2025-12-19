@@ -30,6 +30,11 @@ namespace Amethyst.Daemon
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
                 Rcon.StopServer();
+                
+                while (Rcon.IsServerRunning())
+                {
+                    Thread.Sleep(100);
+                }
             }
 
             Server.RemoveDatapack();
