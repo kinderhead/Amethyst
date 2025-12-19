@@ -26,6 +26,12 @@ namespace Amethyst.Daemon
                 return 1;
             }
 
+            // Bad windows :(
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                Rcon.StopServer();
+            }
+
             Server.RemoveDatapack();
 
             if (!Rcon.IsServerRunning())
