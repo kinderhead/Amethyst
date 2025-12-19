@@ -94,6 +94,7 @@ jobs:
 
       - name: Build Linux Packages
         run: |
+              dir Amethyst/dist
               sudo gem install fpm && \
               sudo apt-get install -y libarchive-tools && \
               python -u scripts/linux_package.py
