@@ -78,8 +78,8 @@ jobs:
     strategy:
       matrix:
         arch: [
-          { runner: "ubuntu-latest", artifact: "linux", ubuntu: "ubuntu", arch: "archlinux", cmd: "apt-get update && apt-get install -y ./mnt/*.deb" },
-          { runner: "ubuntu-24.04-arm", artifact: "linux-arm", ubuntu: "--platform=linux/arm64 arm64v8/ubuntu", arch: "--platform=linux/arm64 ogarcia/archlinux", cmd: "apt-get update && apt-get install -y ./mnt/*.deb" }
+          { runner: "ubuntu-latest", artifact: "linux", ubuntu: "ubuntu", arch: "archlinux"},
+          { runner: "ubuntu-24.04-arm", artifact: "linux-arm", ubuntu: "--platform=linux/arm64 arm64v8/ubuntu", arch: "--platform=linux/arm64 ogarcia/archlinux"}
         ]
       fail-fast: false
 
@@ -99,10 +99,10 @@ jobs:
               python -u scripts/linux_package.py
       
       - name: Run Ubuntu Container
-        run: docker run --rm -v ".:/mnt" ${{ matrix.arch.ubuntu }} /bin/sh -c "apt-get update && apt-get install -y ./mnt/*.deb && echo Installed && which amethyst && amethyst -v"
+        run: docker run --rm -v ".:/mnt" ${{ matrix.arch.ubuntu }} /bin/sh -c "apt-get update && apt-get install -y ./mnt/*.deb && echo Installed && file /usr/bin/amethyst && echo $PATH && /usr/bin/amethyst -v"
 
       - name: Run Arch Container
-        run: docker run --rm -v ".:/mnt" ${{ matrix.arch.arch }} /bin/sh -c "pacman -Sy && pacman -U --noconfirm ./mnt/*.pkg.tar.zst && echo Installed && which amethyst && amethyst -v"
+        run: docker run --rm -v ".:/mnt" ${{ matrix.arch.arch }} /bin/sh -c "pacman -Sy && pacman -U --noconfirm ./mnt/*.pkg.tar.zst && echo Installed && file /usr/bin/amethyst && echo $PATH && /usr/bin/amethyst -v"
 
       - name: Upload Linux Packages
         uses: actions/upload-artifact@v4
