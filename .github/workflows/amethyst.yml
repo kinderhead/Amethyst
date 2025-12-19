@@ -151,7 +151,7 @@ jobs:
           options: /O+
 
       - name: Setup Installer
-        run: mv Amethyst/Output/*.exe installer.exe
+        run: copy Amethyst/Output/*.exe installer.exe
       
       - name: Run Installer
         run: .\installer.exe /SUPPRESSMSGBOXES
