@@ -16,7 +16,7 @@ Tested on Minecraft 1.21.10, theoretically works on Minecraft 1.20.5+. No, it wi
 
 ## Usage
 
-The latest releases are found [here](https://github.com/kinderhead/Amethyst/releases). Documentation is on the [website](http://www.amethyst.dev/docs/category/handbook/).
+The latest releases are found [here](https://github.com/kinderhead/Amethyst/releases). Documentation is on the [website](https://www.amethyst.dev/docs/category/language-features/).
 
 Nightly builds can be accessed through Github Actions or here:
 
