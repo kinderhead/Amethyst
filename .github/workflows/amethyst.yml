@@ -101,7 +101,7 @@ jobs:
       - name: Test Ubuntu
         run:
              |
-              sudo apt-get install -y *.deb && \
+              sudo apt-get install -y ./*.deb && \
               amethyst -v
     
       - name: Run Arch Container
