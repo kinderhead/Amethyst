@@ -71,7 +71,7 @@ jobs:
           !**/tests/**/*.ame
   
   linux-pkgs:
-    name: "Build ${{ matrix.arch.artifact }}"
+    name: "Build ${{ matrix.arch.artifact }} packages"
     runs-on: ${{ matrix.arch.runner }}
     needs: [build]
     
@@ -90,7 +90,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: amethyst-${{ matrix.arch.artifact }}
-          path: ./dist
+          path: ./Amethyst/dist
 
       - name: Build Linux Packages
         run: |
@@ -114,7 +114,7 @@ jobs:
             *.pkg.tar.zst
   
   windows-installer:
-    name: "Build ${{ matrix.type.name }}"
+    name: "Build ${{ matrix.type.name }} installer"
     runs-on: "windows-latest"
     needs: [build]
 
@@ -131,7 +131,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: "amethyst-${{ matrix.type.name }}"
-          path: ./dist
+          path: ./Amethyst/dist
 
       - name: Prep Installer
         run: |

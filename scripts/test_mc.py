@@ -42,7 +42,7 @@ amethyst = "amethyst"
 if os.name == "nt":
     amethyst += ".exe"
     
-call(f"dist/{amethyst} setup --eula")
+#call(f"dist/{amethyst} setup --eula")
 
 for arg in ["-d", "", "-O 1"]:
     print(f"Testing with args: \"{arg}\"")
@@ -63,7 +63,7 @@ for arg in ["-d", "", "-O 1"]:
                 timed_out = False
                 break
             
-        if timed_out:
+        if not timed_out:
             continue
 
         print("Timed out")
