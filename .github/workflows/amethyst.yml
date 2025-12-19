@@ -78,8 +78,8 @@ jobs:
     strategy:
       matrix:
         arch: [
-          { runner: "ubuntu-latest", artifact: "linux", ubuntu: "ubuntu", arch: "archlinux"},
-          { runner: "ubuntu-24.04-arm", artifact: "linux-arm", ubuntu: "--platform=linux/arm64 arm64v8/ubuntu", arch: "--platform=linux/arm64 ogarcia/archlinux"}
+          { runner: "ubuntu-latest", artifact: "linux", arch: "archlinux"},
+          { runner: "ubuntu-24.04-arm", artifact: "linux-arm", arch: "--platform=linux/arm64 ogarcia/archlinux"}
         ]
       fail-fast: false
 
@@ -97,10 +97,13 @@ jobs:
               sudo gem install fpm && \
               sudo apt-get install -y libarchive-tools && \
               python -u scripts/linux_package.py
-      
-      - name: Run Ubuntu Container
-        run: docker run --rm -v ".:/mnt" ${{ matrix.arch.ubuntu }} /bin/sh -c "apt-get update && apt-get install -y ./mnt/*.deb && echo Installed && dpkg -L amethyst && echo $PATH && /usr/bin/amethyst -v"
 
+      - name: Test Ubuntu
+        run:
+             |
+              sudo apt-get install -y *.deb && \
+              amethyst -v
+    
       - name: Run Arch Container
         run: docker run --rm -v ".:/mnt" ${{ matrix.arch.arch }} /bin/sh -c "pacman -Sy && pacman -U --noconfirm ./mnt/*.pkg.tar.zst && echo Installed && dpkg -L amethyst && echo $PATH && /usr/bin/amethyst -v"
 
