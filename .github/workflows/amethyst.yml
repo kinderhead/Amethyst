@@ -12,6 +12,7 @@ on:
 
 jobs:
   build:
+    name: "Build ${{ matrix.type.name }}"
     runs-on: ${{ matrix.type.os }}
 
     strategy:
@@ -54,41 +55,9 @@ jobs:
     - name: Publish
       working-directory: ./Amethyst
       run: dotnet publish --configuration Release --output dist
-    
-    - name: Build Linux Packages
-      if: ${{ runner.os == 'Linux' }}
-      run: |
-            sudo gem install fpm && \
-            sudo apt-get install -y libarchive-tools && \
-            python -u scripts/linux_package.py
-
-    - name: Prep Windows Installer
-      if: ${{ runner.os == 'Windows' }}
-      run: |
-        choco install innosetup --ignore-http-cache
-        choco upgrade innosetup --ignore-http-cache -y
-        python -u scripts/make_metadata_ini.py
-    
-    - name: Build Windows Installer x64
-      if: ${{ matrix.type.name == 'windows' }}
-      uses: Minionguyjpro/Inno-Setup-Action@v1.2.2
-      with:
-        path: Amethyst/x64-installer.iss
-        options: /O+
-    
-    - name: Build Windows Installer Arm
-      if: ${{ matrix.type.name == 'windows-arm' }}
-      uses: Minionguyjpro/Inno-Setup-Action@v1.2.2
-      with:
-        path: Amethyst/arm-installer.iss
-        options: /O+
 
     - name: Test
-      uses: nick-fields/retry@v3
-      with:
-        max_attempts: 3
-        timeout_minutes: 10
-        command: python -u scripts/test_mc.py
+      run: python -u scripts/test_mc.py
 
     - name: Upload Build
       uses: actions/upload-artifact@v4
@@ -99,57 +68,60 @@ jobs:
           !**/*.pdb
           !**/*.dbg
           !**/tests/**/*.ame
-    
-    - name: Upload Linux Packages
-      uses: actions/upload-artifact@v4
-      if: ${{ runner.os == 'Linux' }}
-      with:
-        name: amethyst-${{ matrix.type.name }}-pkgs
-        path: |
-          *.deb
-          *.pkg.tar.zst
-          *.apk
-
-    - name: Upload Windows Installer
-      if: ${{ runner.os == 'Windows' }}
-      uses: actions/upload-artifact@v4
-      with:
-        name: amethyst-${{ matrix.type.name }}-installer
-        path: 'Amethyst/Output/*.exe'
   
   linux-pkgs:
+    name: "Build ${{ matrix.arch.artifact }}"
     runs-on: ${{ matrix.arch.runner }}
     needs: [build]
     
     strategy:
       matrix:
         arch: [
-          { runner: "ubuntu-latest", artifact: "amethyst-linux-pkgs", img: "ubuntu", cmd: "apt-get update && apt-get install -y ./mnt/*.deb" },
-          { runner: "ubuntu-latest", artifact: "amethyst-linux-pkgs", img: "archlinux", cmd: "pacman -Sy && pacman -U --noconfirm ./mnt/*.pkg.tar.zst" },
-          { runner: "ubuntu-24.04-arm", artifact: "amethyst-linux-arm-pkgs", img: "--platform=linux/arm64 arm64v8/ubuntu", cmd: "apt-get update && apt-get install -y ./mnt/*.deb" },
-          { runner: "ubuntu-24.04-arm", artifact: "amethyst-linux-arm-pkgs", img: "--platform=linux/arm64 ogarcia/archlinux", cmd: "pacman -Sy && pacman -U --noconfirm ./mnt/*.pkg.tar.zst" }
+          { runner: "ubuntu-latest", artifact: "linux", ubuntu: "ubuntu", arch: "archlinux", cmd: "apt-get update && apt-get install -y ./mnt/*.deb" },
+          { runner: "ubuntu-24.04-arm", artifact: "linux-arm", ubuntu: "--platform=linux/arm64 arm64v8/ubuntu", arch: "--platform=linux/arm64 ogarcia/archlinux", cmd: "apt-get update && apt-get install -y ./mnt/*.deb" }
         ]
       fail-fast: false
 
     steps:
+      - uses: actions/checkout@v5
+
       - name: Download Artifact
         uses: actions/download-artifact@v4
         with:
-          name: ${{ matrix.arch.artifact }}
-          path: ./pkgs
+          name: amethyst-${{ matrix.arch.artifact }}
+          path: ./dist
+
+      - name: Build Linux Packages
+        run: |
+              sudo gem install fpm && \
+              sudo apt-get install -y libarchive-tools && \
+              python -u scripts/linux_package.py
       
-      - name: Run Container
-        run: docker run --rm -v "./pkgs:/mnt" ${{ matrix.arch.img }} /bin/sh -c "${{ matrix.arch.cmd }} && amethyst --help"
+      - name: Run Ubuntu Container
+        run: docker run --rm -v "./pkgs:/mnt" ${{ matrix.arch.ubuntu }} /bin/sh -c "apt-get update && apt-get install -y ./mnt/*.deb && amethyst --help"
+
+      - name: Run Arch Container
+        run: docker run --rm -v "./pkgs:/mnt" ${{ matrix.arch.arch }} /bin/sh -c "pacman -Sy && pacman -U --noconfirm ./mnt/*.pkg.tar.zst && amethyst --help"
+
+      - name: Upload Linux Packages
+        uses: actions/upload-artifact@v4
+        if: ${{ runner.os == 'Linux' }}
+        with:
+          name: amethyst-${{ matrix.arch.artifact }}-pkgs
+          path: |
+            *.deb
+            *.pkg.tar.zst
   
   windows-installer:
+    name: "Build ${{ matrix.type.name }}"
     runs-on: "windows-latest"
     needs: [build]
 
     strategy:
       matrix:
         type: [
-          {os: windows-latest, name: windows},
-          {os: windows-11-arm, name: windows-arm}
+          {os: windows-latest, name: windows, iss: "x64"},
+          {os: windows-11-arm, name: windows-arm, iss: "arm"}
         ]
       fail-fast: false
     
@@ -157,14 +129,33 @@ jobs:
       - name: Download Artifact
         uses: actions/download-artifact@v4
         with:
-          name: "amethyst-${{ matrix.type.name }}-installer"
+          name: "amethyst-${{ matrix.type.name }}"
           path: ./dist
 
+      - name: Prep Installer
+        run: |
+          choco install innosetup --ignore-http-cache
+          choco upgrade innosetup --ignore-http-cache -y
+          python -u scripts/make_metadata_ini.py
+      
+      - name: Build Installer
+        uses: Minionguyjpro/Inno-Setup-Action@v1.2.2
+        with:
+          path: Amethyst/${{ matrix.type.iss }}-installer.iss
+          options: /O+
+
       - name: Setup Installer
-        run: mv dist/*.exe installer.exe
+        run: mv Amethyst/Output/*.exe installer.exe
       
       - name: Run Installer
         run: .\installer.exe /SUPPRESSMSGBOXES
       
       - name: Test
         run: '"C:\Program Files\Amethyst\amethyst.exe"'
+
+      - name: Upload Windows Installer
+        if: ${{ runner.os == 'Windows' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: amethyst-${{ matrix.type.name }}-installer
+          path: 'Amethyst/Output/*.exe'
