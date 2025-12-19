@@ -98,16 +98,6 @@ jobs:
               sudo apt-get install -y libarchive-tools && \
               python -u scripts/linux_package.py
 
-      - name: Test Ubuntu
-        run:
-             |
-              ls -al ./Amethyst/dist
-              sudo apt-get install -y ./*.deb && \
-              amethyst -v
-    
-      - name: Run Arch Container
-        run: docker run --rm -v ".:/mnt" ${{ matrix.arch.arch }}archlinux /bin/sh -c "pacman -Sy && pacman -U --noconfirm ./mnt/*.pkg.tar.zst && echo Installed && dpkg -L amethyst && echo $PATH && /usr/bin/amethyst -v"
-
       - name: Upload Linux Packages
         uses: actions/upload-artifact@v4
         if: ${{ runner.os == 'Linux' }}
@@ -116,6 +106,17 @@ jobs:
           path: |
             *.deb
             *.pkg.tar.zst
+
+      - name: Test Ubuntu
+        run:
+             |
+              sudo apt-get install -y ./*.deb && \
+              amethyst -v
+    
+      - name: Run Arch Container
+        run: docker run --rm -v ".:/mnt" ${{ matrix.arch.arch }}archlinux /bin/sh -c "pacman -Sy && pacman -U --noconfirm ./mnt/*.pkg.tar.zst && echo Installed && dpkg -L amethyst && echo $PATH && /usr/bin/amethyst -v"
+
+      
   
   windows-installer:
     name: "Build ${{ matrix.type.name }} installer"
