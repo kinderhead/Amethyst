@@ -9,6 +9,7 @@ on:
       - Datapack.Net/**
       - Datapack.Net.Tests/**
       - .github/workflows/amethyst.yml
+      - scripts/**
 
 jobs:
   build:

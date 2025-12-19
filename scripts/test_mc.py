@@ -15,15 +15,11 @@ def call(cmd: str):
     return ret.stdout
 
 
-done_test = False # So silly, this is terrible. Praise the GIL
-
 def tester(process: subprocess.Popen[bytes]):
-    done_test = False
     while True:
         line = process.stdout.readline().decode()  # pyright: ignore[reportOptionalMemberAccess]
         print(line, end="")
         if "Tests passed" in line:
-            done_test = True
             data = line.split("Tests passed: ")[1].split("/")
             if int(data[0]) != int(data[1]):
                 print("Failed")
@@ -32,6 +28,7 @@ def tester(process: subprocess.Popen[bytes]):
             else:
                 print("Passed")
                 process.kill()
+                break
 
         if process.returncode is not None:
             print("Done")
@@ -59,10 +56,15 @@ for arg in ["-d", "", "-O 1"]:
         thread.daemon = True
         thread.start()
         
+        timed_out = True
         for _ in range(60):
             time.sleep(1)
-            if (done_test):
-                continue
+            if (thread.is_alive()):
+                timed_out = False
+                break
+            
+        if timed_out:
+            continue
 
         print("Timed out")
         process.kill()
