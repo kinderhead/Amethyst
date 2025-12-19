@@ -94,13 +94,12 @@ jobs:
 
       - name: Build Linux Packages
         run: |
-              dir Amethyst/dist
               sudo gem install fpm && \
               sudo apt-get install -y libarchive-tools && \
               python -u scripts/linux_package.py
       
       - name: Run Ubuntu Container
-        run: docker run --rm -v ".:/mnt" ${{ matrix.arch.ubuntu }} /bin/sh -c "apt-get update && apt-get install -y ./mnt/*.deb && amethyst --help"
+        run: docker run --rm -v ".:/mnt" ${{ matrix.arch.ubuntu }} /bin/sh -c "apt-get update && apt-get install -y ./mnt/*.deb && dir /usr/bin/ && amethyst --help"
 
       - name: Run Arch Container
         run: docker run --rm -v ".:/mnt" ${{ matrix.arch.arch }} /bin/sh -c "pacman -Sy && pacman -U --noconfirm ./mnt/*.pkg.tar.zst && amethyst --help"
