@@ -78,8 +78,8 @@ jobs:
     strategy:
       matrix:
         arch: [
-          { runner: "ubuntu-latest", artifact: "linux", arch: "archlinux"},
-          { runner: "ubuntu-24.04-arm", artifact: "linux-arm", arch: "--platform=linux/arm64 ogarcia/archlinux"}
+          { runner: "ubuntu-latest", artifact: "linux", arch: ""},
+          { runner: "ubuntu-24.04-arm", artifact: "linux-arm", arch: "--platform=linux/arm64 ogarcia/"}
         ]
       fail-fast: false
 
@@ -101,11 +101,12 @@ jobs:
       - name: Test Ubuntu
         run:
              |
+              ls -al ./Amethyst/dist
               sudo apt-get install -y ./*.deb && \
               amethyst -v
     
       - name: Run Arch Container
-        run: docker run --rm -v ".:/mnt" ${{ matrix.arch.arch }} /bin/sh -c "pacman -Sy && pacman -U --noconfirm ./mnt/*.pkg.tar.zst && echo Installed && dpkg -L amethyst && echo $PATH && /usr/bin/amethyst -v"
+        run: docker run --rm -v ".:/mnt" ${{ matrix.arch.arch }}archlinux /bin/sh -c "pacman -Sy && pacman -U --noconfirm ./mnt/*.pkg.tar.zst && echo Installed && dpkg -L amethyst && echo $PATH && /usr/bin/amethyst -v"
 
       - name: Upload Linux Packages
         uses: actions/upload-artifact@v4
