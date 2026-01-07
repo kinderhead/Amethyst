@@ -13,5 +13,7 @@ namespace Geode.IR.Instructions
 		public override void Render(RenderContext ctx) => Arg<ValueRef>(0).Expect<LValue>().Store(Arg<ValueRef>(1).Expect(), ctx);
 
 		protected override IValue? ComputeReturnValue(FunctionContext ctx) => new VoidValue();
+
+		public override bool ContainsStoreFor(Variable variable) => Arg<ValueRef>(0).Value == variable;
 	}
 }

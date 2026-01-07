@@ -124,6 +124,8 @@ namespace Geode.IR
 			return insns;
 		}
 
+		public bool ContainsStoreFor(Variable variable) => Instructions.Any(i => i.ContainsStoreFor(variable));
+
 		public void EnableForkGuard() => ForkGuard = true;
 
 		public override string ToString() => Name;

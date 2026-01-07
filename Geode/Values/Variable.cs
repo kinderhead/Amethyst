@@ -12,5 +12,6 @@ namespace Geode.Values
 
 		// TODO: find somewhere else to put this
 		public Variable? Pointer = null;
+		public bool HasReference => Pointer is not null;
 	}
 }

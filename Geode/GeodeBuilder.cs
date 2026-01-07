@@ -55,6 +55,7 @@ namespace Geode
 			failed = false;
 
 			ApplyPass<InlinePass>();
+			ApplyPass<Mem2RegPass>();
 			ApplyPass<ResolvePass>();
 			ApplyPass<PhiPass>();
 
@@ -117,8 +118,8 @@ namespace Geode
 			return true;
 		}
 
-		public T ApplyPass<T>() where T : Pass, new() => ApplyPass(new T());
-		public T ApplyPass<T>(T pass) where T : Pass
+		public T ApplyPass<T>() where T : IPass, new() => ApplyPass(new T());
+		public T ApplyPass<T>(T pass) where T : IPass
 		{
 			if (pass.MinimumOptimizationLevel > Options.OptimizationLevel)
             {

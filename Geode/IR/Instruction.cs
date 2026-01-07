@@ -121,6 +121,8 @@ namespace Geode.IR
 			return insn;
 		}
 
+		public virtual bool ContainsStoreFor(Variable variable) => false;
+
 		protected bool AreArgsLiteral(out LiteralValue[] args)
 		{
 			args = [.. Arguments.Select(a => ((a as ValueRef)?.Value as LiteralValue)!)];

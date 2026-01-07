@@ -45,6 +45,7 @@ namespace Geode.IR
 		private int tmpStackVars = 0;
 
 		public IEnumerable<IValue> AllLocals => totalScopes.SelectMany(i => i.Locals.Values).Select(i => i.Value);
+		public IEnumerable<Variable> AllVariables => AllLocals.Where(i => i is Variable).Cast<Variable>();
 
 		public FunctionContext(ICompiler compiler, FunctionValue decl, IEnumerable<NamespacedID> tags, LocationRange loc, bool hasTagPriority = false)
 		{

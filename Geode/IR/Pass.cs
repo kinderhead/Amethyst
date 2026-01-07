@@ -2,7 +2,14 @@ using Geode.Errors;
 
 namespace Geode.IR
 {
-	public abstract class Pass
+	public interface IPass
+	{
+		public int MinimumOptimizationLevel { get; }
+
+		public void Apply(FunctionContext ctx);
+	}
+
+	public abstract class Pass<T> : IPass
 	{
 		public virtual int MinimumOptimizationLevel => 0;
 
@@ -18,41 +25,42 @@ namespace Geode.IR
 				throw new InvalidOperationException($"Function {ctx.Decl.ID} is not finished");
 			}
 
-			OnFunction(ctx);
+			T? state = default;
+			OnFunction(ctx, ref state);
 
 			if (!SkipBlocks)
 			{
 				toVisit = [.. ctx.Blocks];
 				if (Reversed)
 				{
-					Walk(ctx, ctx.ExitBlock);
+					Walk(ctx, ctx.ExitBlock, ref state);
 				}
 				else
 				{
-					Walk(ctx, ctx.Start);
+					Walk(ctx, ctx.Start, ref state);
 				}
 
 				while (toVisit.Count != 0)
 				{
-					ProcessBlock(ctx, toVisit.First());
+					ProcessBlock(ctx, toVisit.First(), state);
 				}
 			}
 		}
 
-		private void Walk(FunctionContext ctx, Block b)
+		private void Walk(FunctionContext ctx, Block b, ref T? state)
 		{
-			if (!ProcessBlock(ctx, b))
+			if (!ProcessBlock(ctx, b, state))
 			{
 				return;
 			}
 
 			foreach (var i in Reversed ? b.Previous : b.Next)
 			{
-				Walk(ctx, i);
+				Walk(ctx, i, ref state);
 			}
 		}
 
-		private bool ProcessBlock(FunctionContext ctx, Block b)
+		private bool ProcessBlock(FunctionContext ctx, Block b, T? state)
 		{
 			if (!toVisit.Contains(b))
 			{
@@ -61,7 +69,7 @@ namespace Geode.IR
 
 			toVisit.Remove(b);
 
-			OnBlock(ctx, b);
+			OnBlock(ctx, b, state);
 
 			if (!SkipInsns)
 			{
@@ -69,7 +77,7 @@ namespace Geode.IR
 				{
 					if (!ctx.Compiler.WrapError(i.Location, () =>
 					{
-						OnInsn(ctx, b, i);
+						OnInsn(ctx, b, i, state);
 					}))
 					{
 						throw new EmptyGeodeError();
@@ -104,8 +112,20 @@ namespace Geode.IR
 			}
 		}
 
+		protected virtual void OnFunction(FunctionContext ctx, ref T? state) { }
+		protected virtual void OnBlock(FunctionContext ctx, Block block, T? state) { }
+		protected virtual void OnInsn(FunctionContext ctx, Block block, Instruction insn, T? state) { }
+	}
+
+	public abstract class Pass : Pass<object>
+	{
+		protected override void OnFunction(FunctionContext ctx, ref object? state) => OnFunction(ctx);
 		protected virtual void OnFunction(FunctionContext ctx) { }
+
+		protected override void OnBlock(FunctionContext ctx, Block block, object? state) => OnBlock(ctx, block);
 		protected virtual void OnBlock(FunctionContext ctx, Block block) { }
+
+		protected override void OnInsn(FunctionContext ctx, Block block, Instruction insn, object? state) => OnInsn(ctx, block, insn);
 		protected virtual void OnInsn(FunctionContext ctx, Block block, Instruction insn) { }
 	}
 }
