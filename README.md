@@ -23,10 +23,10 @@ Nightly builds can be accessed through Github Actions or here:
 | OS | Builds |
 | -- | ------ |
 | Windows | [x86-64](https://nightly.link/kinderhead/Amethyst/workflows/amethyst/master/amethyst-windows.zip) ([installer](https://nightly.link/kinderhead/Amethyst/workflows/amethyst/master/amethyst-windows-installer.zip)) <br/> [Arm](https://nightly.link/kinderhead/Amethyst/workflows/amethyst/master/amethyst-windows-arm.zip) ([installer](https://nightly.link/kinderhead/Amethyst/workflows/amethyst/master/amethyst-windows-arm-installer.zip))|
-| Linux | [x86-64](https://nightly.link/kinderhead/Amethyst/workflows/amethyst/master/amethyst-linux.zip) ([.deb, .pkg.tar.zst](https://nightly.link/kinderhead/Amethyst/workflows/amethyst/master/amethyst-linux-pkgs.zip)) <br/> [Arm](https://nightly.link/kinderhead/Amethyst/workflows/amethyst/master/amethyst-linux-arm.zip) ([.deb, .pkg.tar.zst](https://nightly.link/kinderhead/Amethyst/workflows/amethyst/master/amethyst-linux-arm-pkgs.zip)) |
+| Linux | [x86-64](https://nightly.link/kinderhead/Amethyst/workflows/amethyst/master/amethyst-linux.zip) ([.deb, .pkg.tar.zst](https://nightly.link/kinderhead/Amethyst/workflows/amethyst/master/amethyst-linux-pkgs.zip)) |
 | Mac | [Apple Silicon](https://nightly.link/kinderhead/Amethyst/workflows/amethyst/master/amethyst-mac.zip) |
 
-Packages for `apt` and `pacman` package managers are built and tested for each commit.
+Packages for the `apt` and `pacman` package managers are built and tested for each commit.
 
 The latest VSCode extension build can be found [here](https://nightly.link/kinderhead/Amethyst/workflows/language_server/master/language-server-vscode-extension.zip).
 
