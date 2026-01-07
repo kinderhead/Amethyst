@@ -161,14 +161,7 @@ namespace Geode.IR
 				throw new InvalidOperationException("Function is finished");
 			}
 
-			if (LocationStack.Count != 0)
-			{
-				insn.Location = LocationStack.Peek();
-			}
-
-			var val = CurrentBlock.Add(insn);
-			val.Name = customName!;
-			return val;
+			return CurrentBlock.Add(insn, customName);
 		}
 
 		public void Add(Block block)

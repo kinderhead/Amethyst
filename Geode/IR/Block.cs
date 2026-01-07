@@ -22,13 +22,20 @@ namespace Geode.IR
 
 		public HashSet<ValueRef> Dependencies { get; } = [];
 
-		public ValueRef Add(Instruction insn)
+		public ValueRef Add(Instruction insn, string? customName = null)
 		{
 			if (Instructions.Count == 0 || Instructions.Last() is not ReturnInsn)
 			{
 				Instructions.Add(insn);
 				insn.OnAdd(this);
 			}
+
+			if (Ctx.LocationStack.Count != 0)
+			{
+				insn.Location = Ctx.LocationStack.Peek();
+			}
+
+			insn.ReturnValue.Name = customName!;
 
 			return insn.ReturnValue;
 		}

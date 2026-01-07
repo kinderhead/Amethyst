@@ -26,7 +26,7 @@ namespace Geode.IR
 			}
 
 			T? state = default;
-			OnFunction(ctx, ref state);
+			OnFunction(ctx, ref state!);
 
 			if (!SkipBlocks)
 			{
@@ -47,7 +47,7 @@ namespace Geode.IR
 			}
 		}
 
-		private void Walk(FunctionContext ctx, Block b, ref T? state)
+		private void Walk(FunctionContext ctx, Block b, ref T state)
 		{
 			if (!ProcessBlock(ctx, b, state))
 			{
@@ -60,7 +60,7 @@ namespace Geode.IR
 			}
 		}
 
-		private bool ProcessBlock(FunctionContext ctx, Block b, T? state)
+		protected bool ProcessBlock(FunctionContext ctx, Block b, T state)
 		{
 			if (!toVisit.Contains(b))
 			{
@@ -112,20 +112,23 @@ namespace Geode.IR
 			}
 		}
 
-		protected virtual void OnFunction(FunctionContext ctx, ref T? state) { }
-		protected virtual void OnBlock(FunctionContext ctx, Block block, T? state) { }
-		protected virtual void OnInsn(FunctionContext ctx, Block block, Instruction insn, T? state) { }
+		protected void MarkVisited(Block b) => toVisit.Remove(b);
+		protected bool Visited(Block b) => !toVisit.Contains(b);
+
+		protected virtual void OnFunction(FunctionContext ctx, ref T state) { }
+		protected virtual void OnBlock(FunctionContext ctx, Block block, T state) { }
+		protected virtual void OnInsn(FunctionContext ctx, Block block, Instruction insn, T state) { }
 	}
 
 	public abstract class Pass : Pass<object>
 	{
-		protected override void OnFunction(FunctionContext ctx, ref object? state) => OnFunction(ctx);
+		protected override void OnFunction(FunctionContext ctx, ref object state) => OnFunction(ctx);
 		protected virtual void OnFunction(FunctionContext ctx) { }
 
-		protected override void OnBlock(FunctionContext ctx, Block block, object? state) => OnBlock(ctx, block);
+		protected override void OnBlock(FunctionContext ctx, Block block, object state) => OnBlock(ctx, block);
 		protected virtual void OnBlock(FunctionContext ctx, Block block) { }
 
-		protected override void OnInsn(FunctionContext ctx, Block block, Instruction insn, object? state) => OnInsn(ctx, block, insn);
+		protected override void OnInsn(FunctionContext ctx, Block block, Instruction insn, object state) => OnInsn(ctx, block, insn);
 		protected virtual void OnInsn(FunctionContext ctx, Block block, Instruction insn) { }
 	}
 }
