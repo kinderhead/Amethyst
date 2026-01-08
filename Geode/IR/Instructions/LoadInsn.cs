@@ -4,13 +4,15 @@ using Geode.Values;
 
 namespace Geode.IR.Instructions
 {
-	public class LoadInsn(ValueRef val, TypeSpecifier? type = null) : Instruction([val])
+	public class LoadInsn(ValueRef val, TypeSpecifier? type = null) : Instruction([val]), ILoadInsn
 	{
 		public override string Name => "load";
 		public override NBTType?[] ArgTypes => [null];
 		public override TypeSpecifier ReturnType => type ?? PrimitiveType.Int;
 		public override bool AlwaysUseScore => true;
-		
+
+		public ValueRef Variable => Arg<ValueRef>(0);
+
 		public override void Render(RenderContext ctx)
 		{
 			var val = Arg<ValueRef>(0).Expect();

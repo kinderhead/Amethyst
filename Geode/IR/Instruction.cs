@@ -6,10 +6,20 @@ using System.Text;
 
 namespace Geode.IR
 {
-	public abstract class Instruction
+	public interface IBasicInstruction
+	{
+		public IInstructionArg[] Arguments { get; }
+		public ValueRef ReturnValue { get; }
+		public string Name { get; }
+		public TypeSpecifier ReturnType { get; }
+
+		public void Remove();
+	}
+
+	public abstract class Instruction : IBasicInstruction
 	{
 		public IInstructionArg[] Arguments { get; private set; }
-		public readonly ValueRef ReturnValue;
+		public ValueRef ReturnValue { get; private init; }
 
 		public LocationRange Location = LocationRange.None;
 
@@ -150,7 +160,7 @@ namespace Geode.IR
 			return true;
 		}
 
-		protected void Remove() => MarkedForRemoval = true;
+		public void Remove() => MarkedForRemoval = true;
 
 		public void ReplaceWith(params Instruction[] insns) => ToReplaceWith = insns;
 

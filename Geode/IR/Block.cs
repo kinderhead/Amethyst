@@ -14,7 +14,9 @@ namespace Geode.IR
 		public string Name => name;
 		public readonly FunctionContext Ctx = ctx;
 		public readonly PhiContext Phi = new();
-		public readonly List<Instruction> Instructions = [];
+
+		private readonly List<Instruction> instructions = [];
+		public IReadOnlyList<Instruction> Instructions => instructions;
 
 		public readonly MCFunction Function = new(funcID, true);
 
@@ -22,14 +24,25 @@ namespace Geode.IR
 
 		public HashSet<ValueRef> Dependencies { get; } = [];
 
+		public ValueRef Prepend(Instruction insn, string? customName = null)
+		{
+			instructions.Insert(0, insn);
+			return ProcessInsn(insn, customName);
+		}
+
 		public ValueRef Add(Instruction insn, string? customName = null)
 		{
-			if (Instructions.Count == 0 || Instructions.Last() is not ReturnInsn)
+			if (instructions.Count == 0 || instructions.Last() is not ReturnInsn)
 			{
-				Instructions.Add(insn);
+				instructions.Add(insn);
 				insn.OnAdd(this);
 			}
 
+			return ProcessInsn(insn, customName);
+		}
+
+		private ValueRef ProcessInsn(Instruction insn, string? customName)
+		{
 			if (Ctx.LocationStack.Count != 0)
 			{
 				insn.Location = Ctx.LocationStack.Peek();
@@ -38,16 +51,6 @@ namespace Geode.IR
 			insn.ReturnValue.Name = customName!;
 
 			return insn.ReturnValue;
-		}
-
-		public void InsertAtBeginning(params IEnumerable<Instruction> insns)
-		{
-			Instructions.InsertRange(0, insns);
-			
-			foreach (var i in insns)
-			{
-				i.OnAdd(this);
-			}
 		}
 
 		public string Dump(Func<IInstructionArg, string> valueMap)
@@ -85,6 +88,21 @@ namespace Geode.IR
 			}
 
 			builder.Register(Function);
+		}
+
+		public void Cleanse()
+		{
+			instructions.RemoveAll(x => x.MarkedForRemoval);
+
+			for (var i = 0; i < instructions.Count; i++)
+			{
+				if (instructions[i].ToReplaceWith.Length != 0)
+				{
+					instructions.InsertRange(i + 1, instructions[i].ToReplaceWith);
+					instructions.RemoveAt(i);
+					i--;
+				}
+			}
 		}
 
 		public List<Instruction> Copy(string newVariableBaseLoc)

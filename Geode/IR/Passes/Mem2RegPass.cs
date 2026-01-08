@@ -1,4 +1,5 @@
 
+using Geode.IR.Instructions;
 using Geode.Values;
 
 namespace Geode.IR.Passes
@@ -50,19 +51,28 @@ namespace Geode.IR.Passes
 				throw new InvalidOperationException("Error picking variable for Mem2Reg. Report the issue and turn off optimizations.");
 			}
 
-			foreach (var (variable, blocks) in state.PhiLocations)
+            bool usesVariable(Variable variable) => state.PhiLocations.ContainsKey(variable);
+
+			foreach (var (variable, _) in state.PhiLocations.Where(i => i.Value.Contains(block)))
             {
                 var val = decide(variable);
-                
+                //block.Prepend()
             }
-
-            MarkVisited(block);
+            
             if (Visited(block))
             {
                 return;
             }
 
+            MarkVisited(block);
 
+            foreach (var i in block.Instructions)
+            {
+                if (i is ILoadInsn load && load.Variable.Value is Variable v && usesVariable(v))
+                {
+                    load.Remove();
+                }
+            }
         }
 
         public class State

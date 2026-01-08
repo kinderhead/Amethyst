@@ -44,6 +44,12 @@ namespace Geode.IR
 				{
 					ProcessBlock(ctx, toVisit.First(), state);
 				}
+
+				// Do this here in case OnBlock modifies other blocks
+				foreach (var b in ctx.Blocks)
+				{
+					b.Cleanse();
+				}
 			}
 		}
 
@@ -82,18 +88,6 @@ namespace Geode.IR
 					{
 						throw new EmptyGeodeError();
 					}
-				}
-			}
-
-			b.Instructions.RemoveAll(x => x.MarkedForRemoval);
-
-			for (var i = 0; i < b.Instructions.Count; i++)
-			{
-				if (b.Instructions[i].ToReplaceWith.Length != 0)
-				{
-					b.Instructions.InsertRange(i + 1, b.Instructions[i].ToReplaceWith);
-					b.Instructions.RemoveAt(i);
-					i--;
 				}
 			}
 
