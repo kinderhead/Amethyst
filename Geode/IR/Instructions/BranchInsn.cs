@@ -5,11 +5,14 @@ using Geode.Values;
 
 namespace Geode.IR.Instructions
 {
-	public class BranchInsn(ExecuteChain cond, Block ifTrue, Block ifFalse) : Instruction([cond, ifTrue, ifFalse])
+	public class BranchInsn(ExecuteChain cond, Block ifTrue, Block ifFalse) : Instruction([cond, ifTrue, ifFalse]), IBranchInsn
 	{
 		public override string Name => "br";
 		public override NBTType?[] ArgTypes => [null, null, null];
 		public override TypeSpecifier ReturnType => new VoidType();
+
+		public Block TrueBlock => Arg<Block>(1);
+		public Block FalseBlock => Arg<Block>(2);
 
 		public override void Render(RenderContext ctx)
 		{

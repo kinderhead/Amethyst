@@ -384,6 +384,17 @@ namespace Geode.IR
 			return loopBlock;
 		}
 
+		public void ReplaceValue(ValueRef val, ValueRef with)
+		{
+			foreach (var b in blocks)
+			{
+				foreach (var i in b.Instructions)
+				{
+					i.ReplaceValue(val, with);
+				}
+			}
+		}
+
 		public void AllocateRegisters(GeodeBuilder builder, LifetimeGraph graph)
 		{
 			var colors = graph.CalculateDSatur();

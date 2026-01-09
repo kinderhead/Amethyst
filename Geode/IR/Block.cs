@@ -4,6 +4,7 @@ using Datapack.Net.Function.Commands;
 using Datapack.Net.Utils;
 using Geode.Errors;
 using Geode.IR.Instructions;
+using Geode.IR.Passes;
 using Geode.Util;
 using Geode.Values;
 
@@ -17,6 +18,7 @@ namespace Geode.IR
 
 		private readonly List<Instruction> instructions = [];
 		public IReadOnlyList<Instruction> Instructions => instructions;
+		public IEnumerable<PhiInsn> PhiInsns => Instructions.Where(i => i is PhiInsn).Cast<PhiInsn>();
 
 		public readonly MCFunction Function = new(funcID, true);
 

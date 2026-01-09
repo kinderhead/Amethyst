@@ -1,8 +1,8 @@
+using System.Text;
 using Datapack.Net.Data;
 using Geode.Errors;
 using Geode.Types;
 using Geode.Values;
-using System.Text;
 
 namespace Geode.IR
 {
@@ -18,7 +18,7 @@ namespace Geode.IR
 
 	public abstract class Instruction : IBasicInstruction
 	{
-		public IInstructionArg[] Arguments { get; private set; }
+		public virtual IInstructionArg[] Arguments { get; private set; }
 		public ValueRef ReturnValue { get; private init; }
 
 		public LocationRange Location = LocationRange.None;
@@ -60,7 +60,6 @@ namespace Geode.IR
 					if (!(ArgTypes[i] == NBTType.Int && (v.NeedsScoreReg || v.Value is ScoreValue)))
 					{
 						throw new InvalidTypeError(v.Type.ToString(), $"{ArgTypes[i]}".ToLower()); // Use string interpolation to handle the null case
-
 					}
 				}
 
@@ -131,6 +130,18 @@ namespace Geode.IR
 			return insn;
 		}
 
+		public virtual void ReplaceValue(ValueRef val, ValueRef with)
+		{
+			// There's got to be a better way to do this
+			for (int i = 0; i < Arguments.Length; i++)
+			{
+				if (Arguments[i] == val)
+				{
+					Arguments[i] = with;
+				}
+			}
+		}
+
 		public virtual bool ContainsStoreFor(Variable variable) => false;
 
 		protected bool AreArgsLiteral(out LiteralValue[] args)
@@ -169,5 +180,15 @@ namespace Geode.IR
 		/// </summary>
 		/// <returns>Value or null</returns>
 		protected abstract IValue? ComputeReturnValue(FunctionContext ctx);
+	}
+
+	public abstract class DynamicInstruction() : Instruction([])
+	{
+		public sealed override NBTType?[] ArgTypes => [];
+		public override IInstructionArg[] Arguments => throw new InvalidOperationException($"{Name} handles arguments manually");
+
+		public override void CheckArguments() { }
+
+		public abstract override void ReplaceValue(ValueRef val, ValueRef with);
 	}
 }

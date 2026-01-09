@@ -7,7 +7,8 @@ namespace Geode.IR.Passes
     public class Mem2RegPass : Pass<Mem2RegPass.State>
     {
 		public override int MinimumOptimizationLevel => 1;
-		protected override bool SkipInsns => true; // Handle manually
+		protected override bool SkipBlocks => true; // Handle manually
+        protected override bool SkipInsns => true;
 
 		protected override void OnFunction(FunctionContext ctx, ref State state)
         {
@@ -33,12 +34,19 @@ namespace Geode.IR.Passes
                         }
                     }
                 }
+
+                foreach (var i in state.PhiLocations[variable])
+                {
+                    i.Prepend(new PhiInsn(variable));
+                }
             }
+
+            OnBlock(ctx, ctx.Start, state);
         }
 
 		protected override void OnBlock(FunctionContext ctx, Block block, State state)
         {
-			(Block Block, IValue Value) decide(Variable variable)
+			(Block Block, ValueRef Value) decide(Variable variable)
 			{
 				foreach (var i in state.ValueStack.Reverse())
 				{
@@ -53,10 +61,11 @@ namespace Geode.IR.Passes
 
             bool usesVariable(Variable variable) => state.PhiLocations.ContainsKey(variable);
 
-			foreach (var (variable, _) in state.PhiLocations.Where(i => i.Value.Contains(block)))
+			foreach (var i in block.PhiInsns)
             {
-                var val = decide(variable);
-                //block.Prepend()
+                var val = decide(i.Variable);
+                i.Add(val.Block, val.Value);
+                state.ValueStack.Peek()[i.Variable] = (val.Block, i.ReturnValue);
             }
             
             if (Visited(block))
@@ -68,17 +77,38 @@ namespace Geode.IR.Passes
 
             foreach (var i in block.Instructions)
             {
-                if (i is ILoadInsn load && load.Variable.Value is Variable v && usesVariable(v))
+                if (i is ILoadInsn load && load.Variable.Value is Variable v1 && usesVariable(v1))
                 {
+                    var (_, val) = decide(v1);
                     load.Remove();
+                    ctx.ReplaceValue(load.ReturnValue, val);
+                }
+                else if (i is IStoreInsn store && store.Variable.Value is Variable v2 && usesVariable(v2))
+                {
+                    state.ValueStack.Peek()[v2] = (block, store.Value);
+                    store.Remove();
+                }
+                else if (i is IBranchInsn branch)
+                {
+                    state.ValueStack.Push([]);
+                    OnBlock(ctx, branch.TrueBlock, state);
+                    state.ValueStack.Pop();
+
+                    state.ValueStack.Push([]);
+                    OnBlock(ctx, branch.FalseBlock, state);
+                    state.ValueStack.Pop();
+                }
+                else if (i is IJumpInsn jump)
+                {
+                    OnBlock(ctx, jump.DestBlock, state);
                 }
             }
         }
 
         public class State
         {
-            public readonly Dictionary<Variable, HashSet<Block>> PhiLocations = [];
-            public readonly Stack<Dictionary<Variable, (Block Block, IValue Value)>> ValueStack = new([[]]);
+            public readonly Dictionary<Variable, HashSet<Block>> PhiLocations = []; // I suppose keep this around for the unit tests
+            public readonly Stack<Dictionary<Variable, (Block Block, ValueRef Value)>> ValueStack = new([[]]);
         }
     }
 }

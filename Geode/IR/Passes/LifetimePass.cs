@@ -160,12 +160,22 @@ namespace Geode.IR.Passes
 
 			nodes.Sort();
 
+		loop:
 			while (nodes.Count > 0)
 			{
 				var colors = new bool[Graph.Count]; // Apparently this is cheaper than Array.Clear for reasonable sizes
 
 				var node = nodes[0];
 				nodes.RemoveAt(0);
+
+				foreach (var i in node.Links)
+				{
+					if (i.Color >= 0)
+					{
+						node.SetColor(i.Color);
+						goto loop; // teehee
+					}
+				}
 
 				foreach (var i in node.Edges)
 				{
@@ -234,6 +244,11 @@ namespace Geode.IR.Passes
 				return;
 			}
 
+			if (edges.Contains(other))
+			{
+				throw new InvalidOperationException("Cannot link node to an edge");
+			}
+
 			links.Add(other);
 			other.links.Add(this);
 		}
@@ -243,6 +258,11 @@ namespace Geode.IR.Passes
 			if (other == this)
 			{
 				return;
+			}
+
+			if (links.Contains(other))
+			{
+				throw new InvalidOperationException("Cannot connect linked nodes");
 			}
 
 			edges.Add(other);

@@ -26,11 +26,11 @@ namespace Geode.IR
 			}
 
 			T? state = default;
+			toVisit = [.. ctx.Blocks];
 			OnFunction(ctx, ref state!);
 
 			if (!SkipBlocks)
 			{
-				toVisit = [.. ctx.Blocks];
 				if (Reversed)
 				{
 					Walk(ctx, ctx.ExitBlock, ref state);
@@ -68,12 +68,12 @@ namespace Geode.IR
 
 		protected bool ProcessBlock(FunctionContext ctx, Block b, T state)
 		{
-			if (!toVisit.Contains(b))
+			if (Visited(b))
 			{
 				return false;
 			}
 
-			toVisit.Remove(b);
+			MarkVisited(b);
 
 			OnBlock(ctx, b, state);
 

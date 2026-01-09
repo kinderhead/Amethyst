@@ -1,34 +1,55 @@
 using Datapack.Net.Data;
 using Geode.Errors;
 using Geode.IR.Passes;
+using Geode.Values;
 using System;
 
 namespace Geode.IR.Instructions
 {
-	public class PhiInsn(Block path1, ValueRef val1, Block path2, ValueRef val2) : Instruction([path1, val1, path2, val2]), IPhiLike
+	public class PhiInsn(Variable variable) : DynamicInstruction, IPhiLike
 	{
 		public override string Name => "phi";
-		public override NBTType?[] ArgTypes => [null, null, null, null];
-		public override TypeSpecifier ReturnType => Arg<ValueRef>(0).Type != Arg<ValueRef>(1).Type ? throw new InvalidTypeError(Arg<ValueRef>(1).Type.ToString(), Arg<ValueRef>(0).Type.ToString()) : Arg<ValueRef>(0).Type;
+		public override TypeSpecifier ReturnType => Variable.Type;
 		public override bool ArgumentsAliveAtInsn => false;
+
+        public readonly Variable Variable = variable;
+
+        private readonly Dictionary<Block, ValueRef> values = [];
+        public IReadOnlyDictionary<Block, ValueRef> Values => values;
 
 		public override void Render(RenderContext ctx) { }
 		protected override IValue? ComputeReturnValue(FunctionContext ctx) => null;
 
+        public void Add(Block from, ValueRef val)
+        {
+            values[from] = val;
+        }
+
 		public override void ConfigureLifetime(Func<ValueRef, ValueRef, bool> tryLink, Action<ValueRef, ValueRef> markOverlap)
         {
-            var val1 = Arg<ValueRef>(0);
-            var val2 = Arg<ValueRef>(1);
-
-            tryLink(ReturnValue, val1);
-            tryLink(ReturnValue, val2);
-            tryLink(val1, val2);
+            foreach (var (_, val) in values)
+            {
+                tryLink(ReturnValue, val);
+            }
         }
 
         public void Process(Block block)
         {
-            block.Phi.Map(Arg<Block>(0), Arg<ValueRef>(1), ReturnValue);
-            block.Phi.Map(Arg<Block>(2), Arg<ValueRef>(3), ReturnValue);
+            foreach (var (from, val) in values)
+            {
+                block.Phi.Map(from, val, ReturnValue);
+            }
+        }
+
+		public override void ReplaceValue(ValueRef val, ValueRef with)
+        {
+            foreach (var (k, v) in values)
+            {
+                if (v == val)
+                {
+                    values[k] = with;
+                }
+            }
         }
 	}
 }
