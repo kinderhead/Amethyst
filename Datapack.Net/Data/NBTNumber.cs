@@ -50,6 +50,13 @@ namespace Datapack.Net.Data
 		static bool IComparisonOperators<TSelf, TSelf, bool>.operator >(TSelf left, TSelf right) => left.Value > right.Value;
 		static bool IComparisonOperators<TSelf, TSelf, bool>.operator <=(TSelf left, TSelf right) => left.Value <= right.Value;
 		static bool IComparisonOperators<TSelf, TSelf, bool>.operator >=(TSelf left, TSelf right) => left.Value >= right.Value;
+
+		public static bool operator ==(NBTNumber<T, TSelf> left, NBTNumber<T, TSelf> right) => left.Value == right.Value;
+		public static bool operator !=(NBTNumber<T, TSelf> left, NBTNumber<T, TSelf> right) => !(left.Value == right.Value);
+		public static bool operator <(NBTNumber<T, TSelf> left, NBTNumber<T, TSelf> right) => left.Value < right.Value;
+		public static bool operator >(NBTNumber<T, TSelf> left, NBTNumber<T, TSelf> right) => left.Value > right.Value;
+		public static bool operator <=(NBTNumber<T, TSelf> left, NBTNumber<T, TSelf> right) => left.Value <= right.Value;
+		public static bool operator >=(NBTNumber<T, TSelf> left, NBTNumber<T, TSelf> right) => left.Value >= right.Value;
 	}
 
 	public class NBTInt(int val) : NBTNumber<int, NBTInt>(val, "")

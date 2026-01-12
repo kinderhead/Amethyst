@@ -46,10 +46,10 @@ namespace Geode.Chains
 
 			insn.Resolve(ctx.Func);
 
-			if (insn.MarkedForRemoval)
-			{
-				throw new NotImplementedException();
-			}
+			// if (insn.MarkedForRemoval)
+			// {
+			// 	throw new NotImplementedException();
+			// }
 
 			var realLeft = left.Expect().AsScore(ctx);
 			var realRight = right.Expect().AsScore(ctx);

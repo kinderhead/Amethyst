@@ -48,7 +48,7 @@ namespace Geode.IR.Passes
         {
 			(Block Block, ValueRef Value) decide(Variable variable)
 			{
-				foreach (var i in state.ValueStack.Reverse())
+				foreach (var i in state.ValueStack)
 				{
 					if (i.TryGetValue(variable, out var ret))
 					{
