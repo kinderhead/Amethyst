@@ -17,6 +17,8 @@ namespace Geode.IR.Instructions
         private readonly Dictionary<Block, ValueRef> values = [];
         public IReadOnlyDictionary<Block, ValueRef> Values => values;
 
+		public override IEnumerable<ValueRef> Dependencies => Values.Values;
+
 		public override void Render(RenderContext ctx) { }
 		protected override IValue? ComputeReturnValue(FunctionContext ctx) => null;
 

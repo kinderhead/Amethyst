@@ -102,6 +102,15 @@ namespace Geode.IR.Passes
                 {
                     OnBlock(ctx, jump.DestBlock, state);
                 }
+				else
+				{
+					// Iterate with ValueRefs instead of Variables to keep references correct
+					foreach (var variable in i.Dependencies.Where(i => i.Value is Variable v && usesVariable(v)))
+					{
+						var (_, val) = decide((Variable?)variable.Value!);
+						i.ReplaceValue(variable, val);
+					}
+				}
             }
         }
 

@@ -158,5 +158,6 @@ namespace Geode.IR
 		public override string ToString() => Name;
 
 		public RenderContext GetRenderCtx(GeodeBuilder builder, FunctionContext ctx) => new(Function, this, builder, ctx);
+		public void ReplaceValue(ValueRef value, ValueRef with) { }
 	}
 }

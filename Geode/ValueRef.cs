@@ -18,17 +18,19 @@ namespace Geode
 
 		public string Name { get => field is null ? Value is not null ? $"{(Value.IsLiteral || Value is DataTargetValue ? "" : "%")}{Value}" : "" : field; set; }
 
-		public HashSet<ValueRef> Dependencies { get; } = [];
+		public HashSet<ValueRef> Dependencies { get; }
 
 		public ValueRef(IValue val)
 		{
 			Value = val;
 			Type = val.Type;
+			Dependencies = [this];
 		}
 
 		public ValueRef(TypeSpecifier type)
 		{
 			Type = type;
+			Dependencies = [this];
 		}
 
 		public IValue Expect(NBTType type)
@@ -58,6 +60,14 @@ namespace Geode
 
 		public ValueRef Clone() => Value is null ? new(Type) : new(Value);
 		object ICloneable.Clone() => Clone();
+
+		public void ReplaceValue(ValueRef value, ValueRef with)
+		{
+			if (value == this)
+			{
+				throw new InvalidOperationException("Cannot replace self");
+			}
+		}
 
 		public static implicit operator ValueRef(Value val) => new(val);
 	}

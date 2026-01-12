@@ -5,7 +5,8 @@ namespace Geode.IR
 		/// <summary>
 		/// Empty string if no name
 		/// </summary>
-		string Name { get; }
-		HashSet<ValueRef> Dependencies { get; }
+		public string Name { get; }
+		public HashSet<ValueRef> Dependencies { get; }
+		public void ReplaceValue(ValueRef value, ValueRef with);
 	}
 }

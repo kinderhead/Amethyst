@@ -19,6 +19,7 @@ namespace Geode.IR
 	public abstract class Instruction : IBasicInstruction
 	{
 		public virtual IInstructionArg[] Arguments { get; private set; }
+		public virtual IEnumerable<ValueRef> Dependencies => Arguments.SelectMany(i => i.Dependencies);
 		public ValueRef ReturnValue { get; private init; }
 
 		public LocationRange Location = LocationRange.None;
@@ -139,6 +140,10 @@ namespace Geode.IR
 				{
 					Arguments[i] = with;
 				}
+				else
+				{
+					Arguments[i].ReplaceValue(val, with);
+				}
 			}
 		}
 
@@ -186,6 +191,7 @@ namespace Geode.IR
 	{
 		public sealed override NBTType?[] ArgTypes => [];
 		public override IInstructionArg[] Arguments => throw new InvalidOperationException($"{Name} handles arguments manually");
+		public override abstract IEnumerable<ValueRef> Dependencies { get; }
 
 		public override void CheckArguments() { }
 

@@ -79,6 +79,8 @@ namespace Geode
 
 			ctx.Add(ifTrue().Select(cmd.Run));
 		}
+
+		public void ReplaceValue(ValueRef value, ValueRef with) => throw new NotImplementedException();
 	}
 
 	public abstract class ExecuteChainSubcommand(IEnumerable<ValueRef> vals)
