@@ -2,6 +2,7 @@ using Datapack.Net.Data;
 using Geode.Errors;
 using Geode.IR;
 using Geode.Values;
+using System.Collections.Immutable;
 
 namespace Geode
 {
@@ -18,19 +19,20 @@ namespace Geode
 
 		public string Name { get => field is null ? Value is not null ? $"{(Value.IsLiteral || Value is DataTargetValue ? "" : "%")}{Value}" : "" : field; set; }
 
-		public HashSet<ValueRef> Dependencies { get; }
+		private readonly HashSet<ValueRef> dependencies = [];
+		public IReadOnlySet<ValueRef> Dependencies => dependencies;
 
 		public ValueRef(IValue val)
 		{
 			Value = val;
 			Type = val.Type;
-			Dependencies = [this];
+			dependencies = [this];
 		}
 
 		public ValueRef(TypeSpecifier type)
 		{
 			Type = type;
-			Dependencies = [this];
+			dependencies = [this];
 		}
 
 		public IValue Expect(NBTType type)
@@ -61,11 +63,18 @@ namespace Geode
 		public ValueRef Clone() => Value is null ? new(Type) : new(Value);
 		object ICloneable.Clone() => Clone();
 
+		public void AddDependency(ValueRef dep) => dependencies.Add(dep);
+
 		public void ReplaceValue(ValueRef value, ValueRef with)
 		{
 			if (value == this)
 			{
 				throw new InvalidOperationException("Cannot replace self");
+			}
+
+			if (dependencies.Remove(value))
+			{
+				dependencies.Add(with);
 			}
 		}
 

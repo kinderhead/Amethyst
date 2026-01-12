@@ -24,7 +24,7 @@ namespace Geode.IR.Instructions
 			for (var i = 0; i < Arguments.Length; i++)
 			{
 				var val = Arg<ValueRef>(i);
-				ReturnValue.Dependencies.Add(val);
+				ReturnValue.AddDependency(val);
 				args.Add(Keys[i], val.Expect());
 			}
 

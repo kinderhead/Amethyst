@@ -3,6 +3,7 @@ using Datapack.Net.Function;
 using Datapack.Net.Function.Commands;
 using Geode.IR;
 using Geode.Values;
+using System.Collections.Immutable;
 
 namespace Geode
 {
@@ -10,7 +11,7 @@ namespace Geode
 	{
 		public readonly List<ExecuteChainSubcommand> Chain = [];
 		public string Name => "chain";
-		public HashSet<ValueRef> Dependencies => [.. Chain.SelectMany(i => i.Values)];
+		public IReadOnlySet<ValueRef> Dependencies => ImmutableHashSet.Create([.. Chain.SelectMany(i => i.Values)]);
 
 		public bool Forks => Chain.Any(i => i.Forks);
 
@@ -80,7 +81,13 @@ namespace Geode
 			ctx.Add(ifTrue().Select(cmd.Run));
 		}
 
-		public void ReplaceValue(ValueRef value, ValueRef with) => throw new NotImplementedException();
+		public void ReplaceValue(ValueRef value, ValueRef with)
+		{
+			foreach (var i in Chain)
+			{
+				i.ReplaceValue(value, with);
+			}
+		}
 	}
 
 	public abstract class ExecuteChainSubcommand(IEnumerable<ValueRef> vals)
@@ -98,6 +105,17 @@ namespace Geode
 		/// <param name="cmd">Execute command</param>
 		/// <returns>True if the result is always true, false if the result is always false, null otherwise</returns>
 		public abstract bool? Build(IValue[] processedArgs, RenderContext ctx, Execute cmd);
+
+		public void ReplaceValue(ValueRef value, ValueRef with)
+		{
+			for (int i = 0; i < Values.Length; i++)
+			{
+				if (Values[i] == value)
+				{
+					Values[i] = with;
+				}
+			}
+		}
 	}
 
 	public abstract class ExecuteChainConditional(IEnumerable<ValueRef> vals, bool invert) : ExecuteChainSubcommand(vals)

@@ -24,7 +24,7 @@ namespace Geode.IR
 
 		public bool ForkGuard { get; private set; }
 
-		public HashSet<ValueRef> Dependencies { get; } = [];
+		public IReadOnlySet<ValueRef> Dependencies { get; } = new HashSet<ValueRef>();
 
 		public ValueRef Prepend(Instruction insn, string? customName = null)
 		{
