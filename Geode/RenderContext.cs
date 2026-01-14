@@ -143,7 +143,7 @@ namespace Geode
 		public Command[] GetOnJumpCommands(IR.Block dest)
         {
 			// Mayhaps make this more efficient
-            return [.. WithFaux(ctx => Block.Phi.ExitBlockCommands(dest, ctx))];
+            return [.. WithFaux(ctx => dest.Phi.JumpToBlockCommands(Block, ctx))];
         }
 
 		// TODO: Refactor this into a call to the other JumpTo method

@@ -11,6 +11,9 @@ namespace Geode
 		public IValue? Value { get; private set; }
 		public TypeSpecifier Type { get; private set; }
 
+		// Used for debugging
+		public readonly Instruction? SourceInsn = null;
+
 		public bool ForceScoreReg = false;
 
 		public bool IsLiteral => Value is not null && Value.IsLiteral;
@@ -29,10 +32,11 @@ namespace Geode
 			dependencies = [this];
 		}
 
-		public ValueRef(TypeSpecifier type)
+		public ValueRef(TypeSpecifier type, Instruction? insn = null)
 		{
 			Type = type;
 			dependencies = [this];
+			SourceInsn = insn;
 		}
 
 		public IValue Expect(NBTType type)
@@ -45,7 +49,19 @@ namespace Geode
 			return Value;
 		}
 
-		public T Expect<T>() where T : class, IValue => Value as T ?? throw new InvalidTypeError(Value?.GetType().Name.ToLower() ?? "<error>", typeof(T).Name.ToLower());
+		public T Expect<T>() where T : class, IValue
+		{
+			if (Value is T val)
+			{
+				return val;
+			}
+
+#if DEBUG
+			System.Diagnostics.Debugger.Break();
+#endif
+
+			throw new InvalidTypeError(Value?.GetType().Name.ToLower() ?? "<error>", typeof(T).Name.ToLower());
+		}
 		public IValue Expect() => Expect<IValue>();
 
 		public void SetValue(IValue val)

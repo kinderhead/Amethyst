@@ -1,6 +1,3 @@
-using Datapack.Net.Function;
-using System;
-
 namespace Geode.IR
 {
     public class PhiContext
@@ -20,9 +17,9 @@ namespace Geode.IR
             vars.Add((src, dest));
         }
 
-        public void ExitBlockCommands(Block dest, RenderContext ctx)
+        public void JumpToBlockCommands(Block src, RenderContext ctx)
         {
-            if (map.TryGetValue(dest, out var vars))
+            if (map.TryGetValue(src, out var vars))
             {
                 foreach (var i in vars)
                 {

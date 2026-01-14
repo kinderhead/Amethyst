@@ -38,7 +38,7 @@ namespace Geode.IR
 		public Instruction(IEnumerable<IInstructionArg> args)
 		{
 			Arguments = [.. args];
-			ReturnValue = new(ReturnType);
+			ReturnValue = new(ReturnType, this);
 			CheckArguments();
 		}
 
