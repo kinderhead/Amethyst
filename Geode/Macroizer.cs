@@ -29,7 +29,8 @@ namespace Geode
 				if (val is MacroValue m)
 				{
 					propagatedMacroMap[macro.GetMacro()] = m;
-					toMacro.Add(macro.Name, new LiteralValue(new NBTRawString(m.GetMacro()), m.Type));
+					// TODO: refactor how string macros are handled.
+					toMacro.Add(macro.Name, new LiteralValue(m.Type.WrapInQuotesForMacro ? new NBTString(m.GetMacro()) : new NBTRawString(m.GetMacro()), m.Type));
 				}
 				else
 				{
