@@ -10,7 +10,6 @@ namespace Amethyst.IR.Instructions
 	{
 		public override string Name => "deref";
 		public override NBTType?[] ArgTypes => [null];
-
 		public override TypeSpecifier ReturnType => ((ReferenceType)ptr.Type).Inner;
 
 		public override void Render(RenderContext ctx)

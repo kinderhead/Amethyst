@@ -10,6 +10,7 @@ namespace Amethyst.IR.Instructions
 	{
 		public override string Name => "dyncall";
 		public override NBTType?[] ArgTypes => [NBTType.String];
+		public override bool HasSideEffects => true;
 
 		public override void Render(RenderContext ctx)
 		{

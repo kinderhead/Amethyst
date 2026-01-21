@@ -57,7 +57,6 @@ namespace Geode
 			ApplyPass<InlinePass>();
 			ApplyPass<Mem2RegPass>();
 			ApplyPass<ResolvePass>();
-			ApplyPass<PhiPass>();
 
 			if (failed)
 			{
@@ -70,16 +69,11 @@ namespace Geode
 			}
 
 			AllocateRegisters();
+			ApplyPass<PhiPass>();
 
 			if (failed)
 			{
 				return false;
-			}
-
-			if (Options.DumpIR)
-			{
-				DumpIR();
-				return true;
 			}
 
 			foreach (var i in Functions)

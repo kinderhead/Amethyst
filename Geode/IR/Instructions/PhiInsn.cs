@@ -3,6 +3,7 @@ using Geode.Errors;
 using Geode.IR.Passes;
 using Geode.Values;
 using System;
+using System.Text;
 
 namespace Geode.IR.Instructions
 {
@@ -52,6 +53,25 @@ namespace Geode.IR.Instructions
                     values[k] = with;
                 }
             }
+        }
+
+		public override string Dump(Func<IInstructionArg, string> valueMap)
+        {
+            var builder = new StringBuilder();
+
+            builder.Append($"{valueMap(ReturnValue)} = {Name} ");
+
+            foreach (var (block, val) in Values)
+            {
+                builder.Append($"[{valueMap(block)}: {valueMap(val)}], ");
+            } 
+
+            if (Values.Count > 0)
+            {
+                builder.Length -= 2;
+            }
+
+            return builder.ToString();
         }
 	}
 }

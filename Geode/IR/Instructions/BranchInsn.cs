@@ -11,8 +11,7 @@ namespace Geode.IR.Instructions
 		public override NBTType?[] ArgTypes => [null, null, null];
 		public override TypeSpecifier ReturnType => new VoidType();
 
-		public Block TrueBlock => Arg<Block>(1);
-		public Block FalseBlock => Arg<Block>(2);
+		public Block[] Destinations => [Arg<Block>(1), Arg<Block>(2)];
 
 		public override void Render(RenderContext ctx)
 		{

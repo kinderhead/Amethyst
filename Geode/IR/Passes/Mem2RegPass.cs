@@ -88,7 +88,7 @@ namespace Geode.IR.Passes
                 }
                 else if (i is IBranchInsn branch)
                 {
-                    foreach (var dest in new Block[] { branch.TrueBlock, branch.FalseBlock })
+                    foreach (var dest in branch.Destinations)
                     {
                         foreach (var phi in dest.PhiInsns.Where(i => usesVariable(i.Variable)))
                         {
@@ -100,10 +100,6 @@ namespace Geode.IR.Passes
                         OnBlock(ctx, dest, state);
                         state.ValueStack.Pop();
                     }
-                }
-                else if (i is IJumpInsn jump)
-                {
-                    OnBlock(ctx, jump.DestBlock, state);
                 }
 				else
 				{

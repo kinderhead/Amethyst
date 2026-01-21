@@ -574,6 +574,13 @@ namespace Geode.IR
 						return val.Name;
 					}
 
+#if DEBUG
+					if (val is ValueRef vref)
+					{
+						return $"#{vref.ID}";
+					}
+#endif
+
 					if (!valueMap.TryGetValue(val, out var num))
 					{
 						num = valCounter++;

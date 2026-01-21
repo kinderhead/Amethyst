@@ -14,6 +14,10 @@ namespace Geode
 		// Used for debugging
 		public readonly Instruction? SourceInsn = null;
 
+#if DEBUG
+		public readonly int ID = ValueCounter++;
+#endif
+
 		public bool ForceScoreReg = false;
 
 		public bool IsLiteral => Value is not null && Value.IsLiteral;
@@ -95,5 +99,9 @@ namespace Geode
 		}
 
 		public static implicit operator ValueRef(Value val) => new(val);
+
+#if DEBUG
+		private static int ValueCounter = 0;
+#endif
 	}
 }

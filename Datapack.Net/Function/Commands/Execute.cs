@@ -53,6 +53,11 @@ namespace Datapack.Net.Function.Commands
 
 		public Execute Run(Command cmd)
 		{
+			if (Subcommands.Any(i => i is Subcommand.Run))
+			{
+				throw new InvalidOperationException("Execute command already has a run subcommand");
+			}
+
 			if (cmd.Macro)
 			{
 				Macro = true;

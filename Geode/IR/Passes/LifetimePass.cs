@@ -1,3 +1,5 @@
+using Geode.Types;
+
 namespace Geode.IR.Passes
 {
 	public class InOutPass : Pass
@@ -91,7 +93,10 @@ namespace Geode.IR.Passes
 
 			foreach (var insn in block.Instructions.AsEnumerable().Reverse())
 			{
-				alive.Remove(insn.ReturnValue);
+				if (!alive.Remove(insn.ReturnValue) && insn.ReturnType is not VoidType && !insn.HasSideEffects)
+				{
+					insn.Remove();
+				}
 
 				if (insn.ArgumentsAliveAtInsn)
 				{

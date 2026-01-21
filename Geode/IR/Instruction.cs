@@ -35,6 +35,11 @@ namespace Geode.IR
 		public virtual bool AlwaysUseScore => false; // Tee hee I love band aid fixes for band aid fixes (but it's actually clean!)
 		public virtual bool ArgumentsAliveAtInsn => true;
 
+		/// <summary>
+		/// Affects values outside of the return value
+		/// </summary>
+		public virtual bool HasSideEffects { get; }
+
 		public Instruction(IEnumerable<IInstructionArg> args)
 		{
 			Arguments = [.. args];

@@ -17,9 +17,9 @@ namespace Geode.IR
             vars.Add((src, dest));
         }
 
-        public void JumpToBlockCommands(Block src, RenderContext ctx)
+        public void JumpToBlockCommands(Block dest, RenderContext ctx)
         {
-            if (map.TryGetValue(src, out var vars))
+            if (map.TryGetValue(dest, out var vars))
             {
                 foreach (var i in vars)
                 {

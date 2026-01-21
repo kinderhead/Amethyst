@@ -4,13 +4,13 @@ using Geode.Values;
 
 namespace Geode.IR.Instructions
 {
-	public class JumpInsn(Block dest) : Instruction([dest]), IJumpInsn
+	public class JumpInsn(Block dest) : Instruction([dest]), IBranchInsn
 	{
 		public override string Name => "jump";
 		public override NBTType?[] ArgTypes => [null];
 		public override TypeSpecifier ReturnType => new VoidType();
 
-		public Block DestBlock => Arg<Block>(0);
+		public Block[] Destinations => [Arg<Block>(0)];
 
 		public override void Render(RenderContext ctx)
 		{
