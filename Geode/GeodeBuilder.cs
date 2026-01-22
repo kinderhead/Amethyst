@@ -57,6 +57,7 @@ namespace Geode
 			ApplyPass<InlinePass>();
 			ApplyPass<Mem2RegPass>();
 			ApplyPass<ResolvePass>();
+			ApplyPass<PhiPass>();
 
 			if (failed)
 			{
@@ -69,7 +70,6 @@ namespace Geode
 			}
 
 			AllocateRegisters();
-			ApplyPass<PhiPass>();
 
 			if (failed)
 			{

@@ -21,6 +21,11 @@ namespace Amethyst.IR.Types
 					throw new ReferenceError(val.Name);
 				}
 
+				if (val.Value is Variable v)
+				{
+					v.HasReference = true;
+				}
+
 				return ctx.Add(new WeakReferenceInsn(val));
 			}
 

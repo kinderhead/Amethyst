@@ -29,6 +29,31 @@ void test_mem2reg_simple() {
     complete();
 }
 
+#test
+void test_mem2reg_complex() {
+    start("mem2reg_complex");
+    
+    int x = 4;
+
+    assert(x == 4);
+
+    if (_optimization_preventer(true)) {
+        x = 3 * x;
+    } else {
+        x = 6 + x;
+    }
+
+    assert(x == 12);
+
+    for (int i = 0; i < 4; ++i) {
+        x += i;
+    }
+
+    assert(x == 18);
+    
+    complete();
+}
+
 bool _optimization_preventer(bool val) {
     return val;
 }

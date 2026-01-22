@@ -78,7 +78,9 @@ namespace Geode
 				return;
 			}
 
-			ctx.Add(ifTrue().Select(cmd.Run));
+			// Realistically, only Phi node variables would be updated in execute run which are marked alive
+			// through branch instructions, so no conflicts should occur.
+			ctx.Add(ifTrue().Select(i => cmd.Copy().Run(i)));
 		}
 
 		public void ReplaceValue(ValueRef value, ValueRef with)

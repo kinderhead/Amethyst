@@ -93,7 +93,7 @@ namespace Geode.IR.Passes
 
 			foreach (var insn in block.Instructions.AsEnumerable().Reverse())
 			{
-				if (!alive.Remove(insn.ReturnValue) && insn.ReturnType is not VoidType && !insn.HasSideEffects)
+				if (!alive.Remove(insn.ReturnValue) && insn.ReturnValue.NeedsScoreReg && insn.ReturnType is not VoidType && !insn.HasSideEffects)
 				{
 					insn.Remove();
 				}

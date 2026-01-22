@@ -181,7 +181,7 @@ namespace Geode.IR
 			return true;
 		}
 
-		public void Remove() => MarkedForRemoval = true;
+		public virtual void Remove() => MarkedForRemoval = true;
 
 		public void ReplaceWith(params Instruction[] insns) => ToReplaceWith = insns;
 

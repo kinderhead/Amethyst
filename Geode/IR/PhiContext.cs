@@ -17,7 +17,15 @@ namespace Geode.IR
             vars.Add((src, dest));
         }
 
-        public void JumpToBlockCommands(Block dest, RenderContext ctx)
+		public void Unmap(Block block, ValueRef src)
+		{
+			if (map.TryGetValue(block, out var vars))
+			{
+				vars.RemoveAll(i => i.src == src);
+			}
+		}
+
+		public void JumpToBlockCommands(Block dest, RenderContext ctx)
         {
             if (map.TryGetValue(dest, out var vars))
             {

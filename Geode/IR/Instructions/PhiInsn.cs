@@ -4,6 +4,7 @@ using Geode.IR.Passes;
 using Geode.Values;
 using System;
 using System.Text;
+using static Datapack.Net.Function.Commands.Execute.Conditional.Subcommand;
 
 namespace Geode.IR.Instructions
 {
@@ -23,6 +24,8 @@ namespace Geode.IR.Instructions
 		public override void Render(RenderContext ctx) { }
 		protected override IValue? ComputeReturnValue(FunctionContext ctx) => null;
 
+		private Block? processed = null;
+
         public void Add(Block from, ValueRef val)
         {
             values[from] = val;
@@ -38,6 +41,8 @@ namespace Geode.IR.Instructions
 
         public void Process(Block block)
         {
+			processed = block;
+
             foreach (var (from, val) in values)
             {
                 block.Phi.Map(from, val, ReturnValue);
@@ -54,6 +59,19 @@ namespace Geode.IR.Instructions
                 }
             }
         }
+
+		public override void Remove()
+		{
+			base.Remove();
+
+			if (processed is not null)
+			{
+				foreach (var (from, val) in values)
+				{
+					processed.Phi.Unmap(from, val);
+				}
+			}
+		}
 
 		public override string Dump(Func<IInstructionArg, string> valueMap)
         {
