@@ -19,6 +19,11 @@ namespace Geode.IR.Passes
 
 				var (newInsns, newVariables) = other.Blocks.First().Copy("inline_frame");
 
+				foreach (var i in newVariables)
+				{
+					ctx.RegisterExtraLocal(i);
+				}
+
 				for (var i = 0; i < newInsns.Count; i++)
 				{
 					if (newInsns[i] is ReturnInsn ret)
@@ -28,7 +33,7 @@ namespace Geode.IR.Passes
 							throw new NotImplementedException();
 						}
 
-						newInsns.RemoveAt(i);
+						newInsns = newInsns[..i];
 					}
 				}
 

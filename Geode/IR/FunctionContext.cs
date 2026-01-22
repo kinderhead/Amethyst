@@ -44,7 +44,8 @@ namespace Geode.IR
 		private readonly HashSet<int> registersInUse = [];
 		private int tmpStackVars = 0;
 
-		public IEnumerable<IValue> AllLocals => totalScopes.SelectMany(i => i.Locals.Values).Select(i => i.Value);
+		private readonly List<IValue> extraLocals = [];
+		public IEnumerable<IValue> AllLocals => [.. totalScopes.SelectMany(i => i.Locals.Values).Select(i => i.Value), .. extraLocals];
 		public IEnumerable<Variable> AllVariables => AllLocals.Where(i => i is Variable).Cast<Variable>();
 
 		public FunctionContext(ICompiler compiler, FunctionValue decl, IEnumerable<NamespacedID> tags, LocationRange loc, bool hasTagPriority = false)
@@ -149,6 +150,8 @@ namespace Geode.IR
 
 			activeScopes.Peek().Locals[name] = new(name, val, loc);
 		}
+
+		public void RegisterExtraLocal(IValue val) => extraLocals.Add(val);
 
 		public StackValue Temp(TypeSpecifier type) => new(-1, Compiler.IR.RuntimeID, $"tmp{tmpStackVars++}", type);
 
