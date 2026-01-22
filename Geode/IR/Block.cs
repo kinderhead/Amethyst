@@ -107,10 +107,11 @@ namespace Geode.IR
 			}
 		}
 
-		public List<Instruction> Copy(string newVariableBaseLoc)
+		public (List<Instruction> insns, List<Variable> variables) Copy(string newVariableBaseLoc)
 		{
 			List<Instruction> insns = [];
-			Dictionary<ValueRef, ValueRef> valueMap = [];
+			List<Variable> variables = [];
+			Dictionary <ValueRef, ValueRef> valueMap = [];
 
 			ValueRef map(ValueRef val)
 			{
@@ -123,7 +124,9 @@ namespace Geode.IR
 
 				if (newValue.Value is Variable v)
 				{
-					newValue.SetValue(new Variable(v.Name, Ctx.Compiler.IR.RuntimeID, newVariableBaseLoc, v.Frame, v.Type));
+					var newVariable = new Variable(v.Name, Ctx.Compiler.IR.RuntimeID, newVariableBaseLoc, v.Frame, v.Type);
+					newValue.SetValue(newVariable);
+					variables.Add(newVariable);
 				}
 
 				valueMap[val] = newValue;
@@ -148,7 +151,7 @@ namespace Geode.IR
 				insns.Add(newInsn);
 			}
 
-			return insns;
+			return (insns, variables);
 		}
 
 		public bool ContainsStoreFor(Variable variable) => Instructions.Any(i => i.ContainsStoreFor(variable));

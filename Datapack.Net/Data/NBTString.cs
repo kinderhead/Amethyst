@@ -21,7 +21,7 @@ namespace Datapack.Net.Data
 			return val.Replace("\\\\", "\\");
 		}
 
-		public override NBTValue Cast(NBTNumberType type) => throw new InvalidOperationException();
+		public override NBTValue Cast(NBTNumberType type) => throw new InvalidOperationException($"Cannot cast string to number");
 
 		public static implicit operator NBTString(string val) => new(val);
 		public static implicit operator string(NBTString val) => val.Value;

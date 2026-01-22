@@ -18,7 +18,7 @@ namespace Datapack.Net.Data
 
 		public void Add(T item) => Values.Add(item);
 
-		public override NBTValue Cast(NBTNumberType type) => throw new InvalidOperationException();
+		public override NBTValue Cast(NBTNumberType type) => throw new InvalidOperationException("Cannot cast list to number");
 
 		public override void Build(StringBuilder sb)
 		{

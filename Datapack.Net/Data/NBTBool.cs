@@ -23,5 +23,6 @@ namespace Datapack.Net.Data
 
 		public static implicit operator NBTBool(bool val) => new(val);
 		public static implicit operator bool(NBTBool val) => val.Value;
+		public static implicit operator NBTInt(NBTBool val) => new(val.Value ? 1 : 0);
 	}
 }

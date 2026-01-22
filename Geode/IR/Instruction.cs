@@ -175,8 +175,23 @@ namespace Geode.IR
 				return false;
 			}
 
-			arg1 = args[0].Value as T1 ?? throw new InvalidCastException($"Expected {typeof(T1)}");
-			arg2 = args[1].Value as T2 ?? throw new InvalidCastException($"Expected {typeof(T2)}");
+			if (NBTValue.IsNumberType(args[0].Type.EffectiveType) && NBTValue.IsNumberType<T1>() is NBTNumberType t1)
+			{
+				arg1 = (T1)args[0].Value.Cast(t1);
+			}
+			else
+			{
+				arg1 = args[0].Value as T1 ?? throw new InvalidCastException($"Expected {typeof(T1)}");
+			}
+
+			if (NBTValue.IsNumberType(args[1].Type.EffectiveType) && NBTValue.IsNumberType<T2>() is NBTNumberType t2)
+			{
+				arg2 = (T2)args[1].Value.Cast(t2);
+			}
+			else
+			{
+				arg2 = args[1].Value as T2 ?? throw new InvalidCastException($"Expected {typeof(T2)}");
+			}
 
 			return true;
 		}

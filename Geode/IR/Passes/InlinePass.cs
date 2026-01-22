@@ -17,7 +17,7 @@ namespace Geode.IR.Passes
 					return;
 				}
 
-				var newInsns = other.Blocks.First().Copy("inline_frame");
+				var (newInsns, newVariables) = other.Blocks.First().Copy("inline_frame");
 
 				for (var i = 0; i < newInsns.Count; i++)
 				{

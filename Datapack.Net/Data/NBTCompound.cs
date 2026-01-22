@@ -25,7 +25,7 @@ namespace Datapack.Net.Data
 			}
 		}
 
-		public override NBTValue Cast(NBTNumberType type) => throw new InvalidOperationException();
+		public override NBTValue Cast(NBTNumberType type) => throw new InvalidOperationException("Cannot cast compound to number");
 
 		ICollection<NBTValue> IDictionary<string, NBTValue>.Values => Values.Values;
 
