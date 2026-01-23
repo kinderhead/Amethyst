@@ -1,6 +1,6 @@
 #include "common.iss"
 
 [Setup]
-OutputBaseFilename=amethyst-{#AmethystVersion}-x64
+OutputBaseFilename=amethyst-{#AmethystVersion}-windows-installer
 ArchitecturesInstallIn64BitMode=x64compatible
 ArchitecturesAllowed=x64compatible
