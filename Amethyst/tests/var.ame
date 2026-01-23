@@ -5,7 +5,7 @@ void test_var_int() {
     start("var int");
 
     int x = 5;
-    assert(x == 5);
+    assert_eq(x, 5);
 
     complete();
 }
@@ -18,7 +18,7 @@ void test_var_bool() {
     assert(t);
 
     bool f = false;
-    assert(f == 0);
+    assert_eq(f, 0);
 
     complete();
 }

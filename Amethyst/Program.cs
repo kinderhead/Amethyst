@@ -16,9 +16,9 @@ namespace Amethyst
 				return ExecFunction.Program.Main(args);
 			}
 
-			// #if DEBUG
-			// 			Console.Clear(); // Thanks Visual Studio for being sad
-			// #endif
+#if DEBUG
+			Console.Clear(); // Thanks Visual Studio for being sad
+#endif
 
 			AnsiConsole.MarkupLine("[yellow]Amethyst is currently in development. Report issues at [aqua underline]https://github.com/kinderhead/Amethyst/issues[/].[/]\n");
 

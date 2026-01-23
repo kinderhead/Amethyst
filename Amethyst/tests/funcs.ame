@@ -7,8 +7,8 @@ void test_dyn_call() {
     var f1 = dyn_func1;
     var f2 = dyn_func2;
 
-    assert(f1(6) == 8);
-    assert(f2(6) == 4);
+    assert_eq(f1(6), 8);
+    assert_eq(f2(6), 4);
 
     complete();
 }
@@ -18,9 +18,9 @@ void test_inline_simple() {
     start("inline simple");
 
     int x = 2;
-    assert(x == 2);
+    assert_eq(x, 2);
     simple_inline();
-    assert(x == 2);
+    assert_eq(x, 2);
 
     complete();
 }
@@ -29,8 +29,8 @@ void test_inline_simple() {
 void test_macro_propagation() {
     start("macro propagation");
     
-    assert(propagate(2) == 1);
-    assert(propagate(-3) == -6);
+    assert_eq(propagate(2), 1);
+    assert_eq(propagate(-3), -6);
 
     complete();
 }
@@ -45,7 +45,7 @@ int dyn_func2(macro int x) {
 
 inline void simple_inline() {
     int x = 7;
-    assert(x == 7);
+    assert_eq(x, 7);
 }
 
 int propagate(macro int x) {

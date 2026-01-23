@@ -54,7 +54,7 @@ namespace Geode
 		{
 			failed = false;
 
-			ApplyPass<InlinePass>();
+			// ApplyPass<InlinePass>();
 			ApplyPass<Mem2RegPass>();
 			ApplyPass<ResolvePass>();
 			ApplyPass<PhiPass>();

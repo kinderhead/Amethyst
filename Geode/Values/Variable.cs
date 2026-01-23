@@ -1,4 +1,5 @@
 using Datapack.Net.Function;
+using System.Reflection;
 
 namespace Geode.Values
 {
@@ -7,6 +8,7 @@ namespace Geode.Values
 		public readonly string Name = name;
 		public readonly string BaseLocation = baseLoc;
 		public readonly int Frame = frame;
+		public bool ForceStack { get => field || HasReference; set => field = value; }
 
 		public override string ToString() => Name;
 

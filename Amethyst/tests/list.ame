@@ -11,10 +11,10 @@ void test_int_list_add() {
     x.add(y);
     x.add(y * 2);
 
-    assert(x[0] == 10);
-    assert(x[1] == 6);
-    assert(x[2] == 12);
-    assert(x.size() == 3);
+    assert_eq(x[0], 10);
+    assert_eq(x[1], 6);
+    assert_eq(x[2], 12);
+    assert_eq(x.size(), 3);
     
     complete();
 }
@@ -31,13 +31,13 @@ void test_int_list_index() {
     x.add(y * 2);
 
     int i = 0;
-    assert(x[i] == 10);
+    assert_eq(x[i], 10);
 
     i = i + 1;
-    assert(x[i] == 6);
+    assert_eq(x[i], 6);
 
     i = i + 1;
-    assert(x[i] == 12);
+    assert_eq(x[i], 12);
     
     complete();
 }
@@ -49,11 +49,11 @@ void test_int_list_literal() {
     int y = 6;
     int[] x = [10, y, y * 2, 7];
 
-    assert(x[0] == 10);
-    assert(x[1] == 6);
-    assert(x[2] == 12);
-    assert(x[3] == 7);
-    assert(x.size() == 4);
+    assert_eq(x[0], 10);
+    assert_eq(x[1], 6);
+    assert_eq(x[2], 12);
+    assert_eq(x[3], 7);
+    assert_eq(x.size(), 4);
     
     complete();
 }
@@ -69,11 +69,11 @@ void test_int_list_ref() {
     int i = 0;
     arr[i].add(-90);
 
-    assert(arr[0][0] == 1);
-    assert(arr[0][1] == 2);
-    assert(arr[0][2] == 5);
-    assert(arr[0][3] == 7);
-    assert(arr[0][4] == -90);
+    assert_eq(arr[0][0], 1);
+    assert_eq(arr[0][1], 2);
+    assert_eq(arr[0][2], 5);
+    assert_eq(arr[0][3], 7);
+    assert_eq(arr[0][4], -90);
     
     complete();
 }

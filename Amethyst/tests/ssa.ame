@@ -2,7 +2,7 @@ namespace test;
 
 #test
 void test_mem2reg_simple() {
-    start("mem2reg_simple");
+    start("mem2reg simple");
     
     int x = 1;
     int y = 2;
@@ -13,7 +13,7 @@ void test_mem2reg_simple() {
         y = 200;
     }
 
-    assert(x + y == 102);
+    assert_eq(x + y, 102);
 
     x = 1;
     y = 2;
@@ -24,18 +24,18 @@ void test_mem2reg_simple() {
         y = 200;
     }
 
-    assert(x + y == 201);
+    assert_eq(x + y, 201);
 
     complete();
 }
 
 #test
 void test_mem2reg_complex() {
-    start("mem2reg_complex");
+    start("mem2reg complex");
     
     int x = 4;
 
-    assert(x == 4);
+    assert_eq(x, 4);
 
     if (_optimization_preventer(true)) {
         x = 3 * x;
@@ -43,14 +43,14 @@ void test_mem2reg_complex() {
         x = 6 + x;
     }
 
-    assert(x == 12);
+    assert_eq(x, 12);
 
     for (int i = 0; i < 4; ++i) {
         x += i;
     }
 
-    assert(x == 18);
-    
+    assert_eq(x, 18);
+
     complete();
 }
 

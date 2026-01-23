@@ -4,26 +4,18 @@ namespace example;
 
 #load
 void main() {
-    // 4
-    // 12
-    // 18
+    @/kill @e[type=wither]
+
+    @/summon wither
+    @/summon wither
+
+    int x = 0;
+
+    as (@e[type="wither"]) {
+        ++x;
+    }
     
-    int x = 4;
     print(x);
 
-    if (x == 4) {
-        x = 3 * x;
-    } else {
-        x = 6 + x;
-    }
-
-    print(x);
-
-    for (int i = 0; i < 4; ++i) {
-        x += i;
-    }
-
-    print(x);
-
-    amethyst:exit();
+    @/kill @e[type=wither]
 }

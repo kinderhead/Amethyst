@@ -54,7 +54,7 @@ void test_nbt() {
     
     nbt obj;
     obj.x = 100;
-    assert((int)obj.x == 100);
+    assert_eq((int)obj.x, 100);
 
     complete();
 }
@@ -66,10 +66,10 @@ void test_normal() {
     vec obj = { x: 100 };
     obj.y = 7;
 
-    assert(obj.x == 100);
-    assert(obj.y == 7);
-    assert(obj.z == 0);
-    assert(obj.sum() == 107);
+    assert_eq(obj.x, 100);
+    assert_eq(obj.y, 7);
+    assert_eq(obj.z, 0);
+    assert_eq(obj.sum(), 107);
 
     complete();
 }
@@ -80,11 +80,11 @@ void test_constructor() {
     
     vec2 obj = vec2(3, 6, 4);
 
-    assert(obj.x == 3);
-    assert(obj.y == 6);
-    assert(obj.z == 4);
-    assert(obj.sum() == 13);
-    assert(obj.get-x() == 3);
+    assert_eq(obj.x, 3);
+    assert_eq(obj.y, 6);
+    assert_eq(obj.z, 4);
+    assert_eq(obj.sum(), 13);
+    assert_eq(obj.get-x(), 3);
 
     complete();
 }
@@ -95,11 +95,11 @@ void test_inheritance() {
     
     subvec obj = subvec(1, 2, 3);
 
-    assert(obj.x == 2);
-    assert(obj.y == 4);
-    assert(obj.z == 6);
-    assert(obj.sum() == 12);
-    assert(obj.get-x() == 4);
+    assert_eq(obj.x, 2);
+    assert_eq(obj.y, 4);
+    assert_eq(obj.z, 6);
+    assert_eq(obj.sum(), 12);
+    assert_eq(obj.get-x(), 4);
 
     complete();
 }
@@ -109,7 +109,7 @@ void test_nbt_literal() {
     start("nbt literal");
     
     nbt obj = { x: 100 };
-    assert((int)obj.x == 100);
+    assert_eq((int)obj.x, 100);
 
     complete();
 }
@@ -122,9 +122,9 @@ void test_nbt_fancy_literal() {
     vec3 b = { x: 10, y: 20, z: 30 };
     vec3 c = a.add(b);
 
-    assert(c.x == 11);
-    assert(c.y == 22);
-    assert(c.z == 33);
+    assert_eq(c.x, 11);
+    assert_eq(c.y, 22);
+    assert_eq(c.z, 33);
 
     complete();
 }

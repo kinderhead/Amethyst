@@ -7,7 +7,7 @@ void test_add() {
     int x = 5;
     int y = x + 70;
 
-    assert(y == 75);
+    assert_eq(y, 75);
 
     complete();
 }
@@ -19,7 +19,7 @@ void test_sub() {
     int x = 5;
     int y = 70 - x;
 
-    assert(y == 65);
+    assert_eq(y, 65);
     
     complete();
 }
@@ -31,7 +31,7 @@ void test_mul() {
     int x = 5;
     int y = 6 * x;
 
-    assert(y == 30);
+    assert_eq(y, 30);
     
     complete();
 }
@@ -43,7 +43,7 @@ void test_div() {
     int x = 100;
     int y = x / 4;
 
-    assert(y == 25);
+    assert_eq(y, 25);
     
     complete();
 }
@@ -58,7 +58,7 @@ void test_big_math() {
     int d = -3;
 
     int ret = a + b - 10 * c / d + 80 - a * b;
-    assert(ret == 112); // I think scoreboard division floors while C truncates
+    assert_eq(ret, 112); // I think scoreboard division floors while C truncates
     
     complete();
 }
@@ -70,16 +70,16 @@ void test_assign_math() {
     int x = 5;
 
     x += 10;
-    assert(x == 15);
+    assert_eq(x, 15);
 
     x -= 12;
-    assert(x == 3);
+    assert_eq(x, 3);
 
     x *= -6;
-    assert(x == -18);
+    assert_eq(x, -18);
 
     x /= 2;
-    assert(x == -9);
+    assert_eq(x, -9);
     
     complete();
 }
@@ -89,7 +89,7 @@ void test_inc() {
     start("int increment");
 
     int x = 5;
-    assert(++x == 6);
+    assert_eq(++x, 6);
     
     complete();
 }
@@ -99,7 +99,7 @@ void test_dec() {
     start("int decrement");
 
     int x = -5;
-    assert(--x == -6);
+    assert_eq(--x, -6);
     
     complete();
 }
@@ -109,10 +109,10 @@ void test_negate() {
     start("int negate");
 
     int x = 5;
-    assert(-x == -5);
+    assert_eq(-x, -5);
 
     x = -9;
-    assert(-x == 9);
+    assert_eq(-x, 9);
     
     complete();
 }

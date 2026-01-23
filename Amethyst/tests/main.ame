@@ -39,7 +39,14 @@ void start(string name) {
 }
 
 void assert(bool condition) {
-    if (condition == 0) currentTestFailed = true;
+    if (!condition) currentTestFailed = true;
+}
+
+void assert_eq(int value, int expected) {
+    if (value != expected) {
+        print("--> Expected ", expected, " but got ", value);
+        currentTestFailed = true;
+    }
 }
 
 void complete() {

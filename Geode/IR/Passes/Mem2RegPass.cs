@@ -16,7 +16,7 @@ namespace Geode.IR.Passes
 
             var dominanceFrontiers = ctx.CalculateDominanceFrontiers();
 
-            foreach (var variable in ctx.AllVariables.Where(i => !i.HasReference && i.Type.ShouldStoreInScore))
+            foreach (var variable in ctx.AllVariables.Where(i => !i.ForceStack && i.Type.ShouldStoreInScore))
             {
                 HashSet<Block> hasStore = [..ctx.Blocks.Where(i => i.ContainsStoreFor(variable))];
                 Stack<Block> stack = new(hasStore.Reverse());

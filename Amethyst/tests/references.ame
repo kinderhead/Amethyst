@@ -9,8 +9,8 @@ void test_int_ref() {
 
     ref = -4;
 
-    assert(x == -4);
-    assert(ref == -4);
+    assert_eq(x, -4);
+    assert_eq(ref, -4);
 
     complete();
 }
@@ -26,10 +26,10 @@ void test_int_2_ref() {
 
     ref1 = ref2;
 
-    assert(x == -3);
-    assert(y == -3);
-    assert(ref1 == -3);
-    assert(ref2 == -3);
+    assert_eq(x, -3);
+    assert_eq(y, -3);
+    assert_eq(ref1, -3);
+    assert_eq(ref2, -3);
 
     complete();
 }
@@ -43,8 +43,8 @@ void test_int_weak_ref() {
 
     ref = -4;
 
-    assert(x == -4);
-    assert(ref == -4);
+    assert_eq(x, -4);
+    assert_eq(ref, -4);
 
     complete();
 }
@@ -60,10 +60,10 @@ void test_int_2_weak_ref() {
 
     ref1 = ref2;
 
-    assert(x == -3);
-    assert(y == -3);
-    assert(ref1 == -3);
-    assert(ref2 == -3);
+    assert_eq(x, -3);
+    assert_eq(y, -3);
+    assert_eq(ref1, -3);
+    assert_eq(ref2, -3);
 
     complete();
 }
@@ -74,9 +74,9 @@ void test_int_arg_ref() {
 
     int x = 75;
 
-    assert(x == 75);
+    assert_eq(x, 75);
     _modify(x);
-    assert(x == -9);
+    assert_eq(x, -9);
 
     complete();
 }
@@ -84,9 +84,9 @@ void test_int_arg_ref() {
 void _modify(int& ref) {
     int _dummy = 9;
 
-    assert(ref == 75);
+    assert_eq(ref, 75);
     ref = -9;
-    assert(ref == -9);
+    assert_eq(ref, -9);
 }
 
 #test 
@@ -97,10 +97,10 @@ void test_int_arr_ref() {
     arr.add(10);
 
     int[]& ref = arr;
-    assert(ref[0] == 10);
+    assert_eq(ref[0], 10);
 
     int x = 0;
-    assert(ref[x] == 10);
+    assert_eq(ref[x], 10);
 
     complete();
 }
