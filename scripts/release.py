@@ -27,7 +27,7 @@ if (os.path.isdir("dist")):
     shutil.rmtree("dist")
 os.mkdir("dist")
 
-dists = ["windows", "windows-arm", "linux", "linux-arm", "mac"]
+dists = ["windows", "windows-arm", "linux", "mac"]
 for i in dists:
     print(f"Downloading dist for {i}")
     call(f"gh run download {runId} -n amethyst-{i} -D dist/amethyst-{i}")
