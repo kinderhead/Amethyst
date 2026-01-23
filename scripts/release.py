@@ -35,7 +35,7 @@ for i in dists:
     shutil.rmtree(f"dist/amethyst-{i}")
     
 print("Downloading Linux packages")
-for i in ["arm-pkgs", "pkgs"]:
+for i in ["pkgs"]:
     call(f"gh run download {runId} -n amethyst-linux-{i} -D dist")
     
 print("Downloading Windows installers")

@@ -8,8 +8,7 @@ on:
       - Geode/**
       - Datapack.Net/**
       - Datapack.Net.Tests/**
-      - .github/workflows/amethyst.yml
-      - scripts/**
+      - scripts/test_mc.py
 
 jobs:
   build:
