@@ -1,0 +1,72 @@
+---
+sidebar_position: 3
+description: Daemon mode usage
+---
+
+import Highlight from "@site/src/components/highlight";
+
+# Daemon Mode
+
+## Usage
+
+Amethyst comes with the ability to run data packs from the command line. It installs a local Minecraft Fabric server and runs it when requested by `amethyst run`. Java must be installed already and the path can be set with the `--java` flag.
+
+Example:
+
+```sh
+amethyst setup --eula --java java --memory 2G --port 25600 --timeout 30
+amethyst run test.zip
+
+# Or
+amethyst build examples/test.ame -o test.zip --run
+```
+
+Once started with `amethyst run` or `amethyst build --run`, the Minecraft server will stay alive for a specified amount of time (default 30 minutes) before automatically shutting down.
+
+Running `amethyst daemon` starts the server without the timeout in the current shell. 
+
+The server is installed to the `%AppData%/Local/Amethyst` folder (or equivalent on other operating systems, see .NET's `Environment.SpecialFolder.LocalApplicationData` for more information).
+
+:::note
+Multiple data packs cannot be run at the same time.
+:::
+
+:::warning
+Due to how Windows deals with files accessed by another program, `amethyst run` will not keep the server alive on Windows for further runs. If `amethyst run` throws an error on repeated runs, stop the `Java` process with Task Manager and report the issue.
+:::
+
+### Running
+
+When using `amethyst run` or `amethyst build --run`, any `/tellraw` commands will be logged to the console. By default, the command will never end. However it will end if it encounters a message that says "[exit]" which can be sent by calling `amethyst:exit` after your program has completed. For example:
+
+<Highlight code={`\
+    #load
+    void main() {
+        print("I'm in the console :)");
+        amethyst:exit();
+    }
+`}/>
+
+`amethyst:exit` can be put anywhere in case your program uses multiple ticks.
+
+Amethyst will attempt to detect any errors generated during `/reload` and display them in the console. For now, errors will not cause `amethyst run` to stop.
+
+If an issue arises, try deleting the whole server folder and reinstalling.
+
+:::tip
+Since no players are on the server by default, no chunks and therefore no entities are loaded either. You can forceload chunks using a program or by calling `amethyst daemon -c "forceload ..."`. The default port used for the server is 25600 but this can be configured using `amethyst setup --eula`. Running `amethyst setup --eula` again will preserve your world, mods, `server.properties`, and more. Only the server jar and the default mods will be reset.
+:::
+
+### Source Mapping
+
+By default, Amethyst adds source maps to compiled `.mcfunction`s using special comments. Source maps are used for `amethyst run` error checking.
+
+Source map comments take the form:
+
+```mcfunction
+#<file>: <line>:<start column>-<end column>
+# Or a multiline range
+#<file>: <start line>:<start column>-<end line>:<end column>
+```
+
+The source file path is relative to the current working directory of the `amethyst build` command when it was built. In the case of a location within the standard library, a special `@std/` prefix is used.

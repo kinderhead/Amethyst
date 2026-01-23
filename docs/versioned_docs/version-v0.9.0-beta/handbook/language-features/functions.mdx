@@ -1,0 +1,85 @@
+---
+sidebar_position: 2
+description: Function usage
+---
+
+import Highlight from "@site/src/components/highlight";
+
+# Functions
+
+## Syntax
+
+Most code in Amethyst is defined in functions. Functions have a return type, a name, parameters, and a body. They are defined C-style like so:
+
+<Highlight code={`\
+    int func(string arg1, nbt& arg2, int[] arg3) {
+        ...
+    }
+`}/>
+
+Functions can be called like the following:
+
+<Highlight code={`\
+    func("Hello", obj, [1, 2, 3]);
+`}/>
+
+See [Namespaces](./namespaces.mdx) for more information.
+
+:::warning
+Minecraft does not allow capital letters in function names, so Amethyst throws an error when encountering them.
+:::
+
+## Tags
+
+Functions can have any number of tags. They are defined by adding the tag before the function declaration:
+
+<Highlight code={`\
+    #example:mytag
+    void func() {}
+`}/>
+
+Tags without declaring a namespace instead use the current namespace set with the `namespace` keyword, except for a few default tags:
+
+* `load`: Resolves to `minecraft:load`
+* `tick`: Resolves to `minecraft:tick`
+
+## Macro Functions
+
+Function arguments can be optionally defined as macro arguments as follows:
+
+<Highlight code={`\
+    void func(macro int arg, string non_macro_arg) {
+        ...
+    }
+`}/>
+
+:::danger
+Only string literals can be passed into `macro string` arguments. This is because Minecraft strips quotes from strings and un-escapes them, and there is no good way to re-escape the strings later. Use `macro nbt` if this behavior is intended. Additionally, functions with macro strings cannot have conditional blocks or anything similar where the macros have to be propagated between `.mcfunction`s.
+:::
+
+## Inline Functions
+
+:::note
+Inline functions are currently disabled until they can be implemented properly.
+:::
+
+Functions can be marked `inline`. Currently, a function can only be inlined if it meets the following conditions:
+
+* It has no parameters.
+* It returns void.
+* It has no conditionals (more than one `Block` in the Geode IR).
+
+All conditions will eventually be removed. If a function marked `inline` does not follow these conditions, then nothing will happen.
+
+Example:
+
+<Highlight code={`\
+    inline void func() {
+        print("Hello");
+    }
+`}/>
+
+## Calling Convention
+
+Amethyst compiles functions into `.mcfunction` files of the same name. The argument calling convention is to place named arguments into a special place in the current stack frame. In most cases, this will be `amethyst:runtime stack[-1].args`. The called function will push a new frame and access arguments using `amethyst:runtime stack[-2].args`. Functions without arguments (or with only macro arguments) can be easily called in-game using `/function`.
+
