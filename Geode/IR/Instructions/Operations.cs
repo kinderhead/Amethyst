@@ -87,7 +87,7 @@ namespace Geode.IR.Instructions
 		public override string Name => "div";
 		public override bool IsCommunitive => false;
 		public override ScoreOperation Op => ScoreOperation.Div;
-		public override NBTInt Compute(NBTInt left, NBTInt right) => left / right;
+		public override NBTInt Compute(NBTInt left, NBTInt right) => new((int)Math.Floor((float)left.Value / right.Value)); // Minecraft handles division differently
 	}
 
 	public class ModInsn(ValueRef left, ValueRef right) : OpInsn(left, right)

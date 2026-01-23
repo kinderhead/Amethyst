@@ -4,18 +4,13 @@ namespace example;
 
 #load
 void main() {
-    @/kill @e[type=wither]
+    int a = 4;
+    int b = 2;
+    int c = 10;
+    int d = -3;
 
-    @/summon wither
-    @/summon wither
+    int ret = a + b - 10 * c / d + 80 - a * b;
+    print(ret);
 
-    int x = 0;
-
-    as (@e[type="wither"]) {
-        ++x;
-    }
-    
-    print(x);
-
-    @/kill @e[type=wither]
+    amethyst:exit();
 }

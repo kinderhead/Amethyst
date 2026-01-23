@@ -1,5 +1,6 @@
 using Geode;
 using Geode.IR;
+using Geode.Values;
 
 namespace Amethyst.AST.Expressions
 {
@@ -7,6 +8,16 @@ namespace Amethyst.AST.Expressions
 	{
 		public readonly string Name = name;
 
-		protected override ValueRef ExecuteImpl(FunctionContext ctx, TypeSpecifier? expected) => new(ctx.GetVariable(Name));
+		protected override ValueRef ExecuteImpl(FunctionContext ctx, TypeSpecifier? expected)
+		{
+			var val = ctx.GetVariable(Name);
+
+			if (ctx.InForkingExecute && val is Variable v)
+			{
+				v.ForceStack = true;
+			}
+
+			return new(val);
+		}
 	}
 }

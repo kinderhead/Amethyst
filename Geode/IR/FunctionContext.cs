@@ -32,6 +32,8 @@ namespace Geode.IR
 		public readonly bool IsMacroFunction;
 		public readonly bool HasTagPriority;
 
+		public bool InForkingExecute { get; private set; } = false;
+
 		public IReadOnlyCollection<Block> Blocks => blocks;
 		public IReadOnlyCollection<MCFunction> Dependencies => dependencies;
 		private readonly List<MCFunction> dependencies = [];
@@ -316,10 +318,23 @@ namespace Geode.IR
 			Add(new BranchInsn(cond, trueBlock, endBlock));
 
 			CurrentBlock = trueBlock;
+
+			bool tmpFork = InForkingExecute;
+
+			if (cond.Forks)
+			{
+				InForkingExecute = true;
+			}
+
 			ifTrue();
 
-			if (!cond.Forks) {
+			if (!cond.Forks)
+			{
 				Add(new JumpInsn(endBlock));
+			}
+			else
+			{
+				InForkingExecute = tmpFork;
 			}
 
 			CurrentBlock = endBlock;
