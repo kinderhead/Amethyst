@@ -34,12 +34,6 @@ jobs:
       with:
         dotnet-version: 10.0.x
 
-    - name: Setup Java
-      uses: actions/setup-java@v5
-      with:
-        distribution: 'zulu'
-        java-version: '21'
-
     - name: Restore Dependencies
       run: dotnet restore
     - name: Build
@@ -86,10 +80,20 @@ jobs:
           name: amethyst-${{ matrix.type.name }}
           path: ./Amethyst/dist
 
+      - name: "Mark file as executable"
+        if: runner.os != 'Windows'
+        run: chmod +x ./Amethyst/dist/amethyst
+
       - name: Setup Python
         uses: actions/setup-python@v6
         with:
           python-version: '3.13'
+
+      - name: Setup Java
+        uses: actions/setup-java@v5
+        with:
+          distribution: 'zulu'
+          java-version: '21'
       
       - name: Test
         run: python -u scripts/test_mc.py ${{ matrix.version }}
