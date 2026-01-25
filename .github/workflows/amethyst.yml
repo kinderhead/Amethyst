@@ -64,6 +64,7 @@ jobs:
   test:
     name: "Test ${{ matrix.version }} on ${{ matrix.type.name }}"
     runs-on: ${{ matrix.type.os }}
+    needs: [build]
 
     strategy:
       matrix:
