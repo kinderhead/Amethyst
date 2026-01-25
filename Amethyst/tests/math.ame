@@ -49,6 +49,18 @@ void test_div() {
 }
 
 #test
+void test_mod() {
+    start("int mod");
+
+    int x = 8;
+    int y = x % 7;
+
+    assert_eq(y, 1);
+    
+    complete();
+}
+
+#test
 void test_big_math() {
     start("int big math");
 

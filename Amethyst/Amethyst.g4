@@ -108,7 +108,7 @@ additiveExpression
     ;
 
 multiplicativeExpression
-    : castExpression ((Star | Slash) castExpression)*
+    : castExpression ((Star | Slash | Mod) castExpression)*
     ;
 
 castExpression
@@ -222,6 +222,7 @@ Plus: '+';
 Minus: '-';
 Star: '*';
 Slash: '/';
+Mod: '%';
 Not: '!';
 PlusEq: '+=';
 MinusEq: '-=';

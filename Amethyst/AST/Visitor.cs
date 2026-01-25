@@ -343,7 +343,13 @@ namespace Amethyst.AST
 			var node = (Expression)Visit(context.children.First());
 			for (var i = 1; i < context.children.Count; i++)
 			{
-				var op = context.children[i].GetText() == "*" ? ScoreOperation.Mul : ScoreOperation.Div;
+				var op = context.children[i].GetText() switch
+				{
+					"*" => ScoreOperation.Mul,
+					"/" => ScoreOperation.Div,
+					"%" => ScoreOperation.Mod,
+					_ => throw new NotImplementedException()
+				};
 				node = new ArithmeticExpression(Loc(context), node, op, (Expression)Visit(context.children[++i]));
 			}
 
