@@ -42,35 +42,37 @@ amethyst = "amethyst"
 if os.name == "nt":
     amethyst += ".exe"
     
-for version in ["1.21.9", "1.21.10", "1.21.11"]:
-    print(f"Setting up Minecraft version {version}")
-    call(f"dist/{amethyst} setup --eula -v {version}")
+version = sys.argv[1]
 
-    for arg in ["-d", "", "-O 1"]:
-        print(f"Testing with args: \"{arg}\"")
-        
-        call(f"dist/{amethyst} build tests/*.ame {arg} -o test.zip")
-        
-        process = subprocess.Popen(shlex.split(f"dist/{amethyst} run test.zip"), stdout=subprocess.PIPE)
+print(f"Setting up Minecraft version {version}")
 
-        try:
-            thread = Thread(target=tester, args=[process])
-            thread.daemon = True
-            thread.start()
+call(f"dist/{amethyst} setup --eula -v {version}")
+
+for arg in ["-d", "", "-O 1"]:
+    print(f"Testing with args: \"{arg}\"")
+    
+    call(f"dist/{amethyst} build tests/*.ame {arg} -o test.zip")
+    
+    process = subprocess.Popen(shlex.split(f"dist/{amethyst} run test.zip"), stdout=subprocess.PIPE)
+
+    try:
+        thread = Thread(target=tester, args=[process])
+        thread.daemon = True
+        thread.start()
+        
+        timed_out = True
+        for _ in range(60):
+            time.sleep(1)
+            if (not thread.is_alive()):
+                timed_out = False
+                break
             
-            timed_out = True
-            for _ in range(60):
-                time.sleep(1)
-                if (not thread.is_alive()):
-                    timed_out = False
-                    break
-                
-            if not timed_out:
-                continue
+        if not timed_out:
+            continue
 
-            print("Timed out")
-            process.kill()
+        print("Timed out")
+        process.kill()
 
-            exit(1)
-        finally:
-            process.kill()
+        exit(1)
+    finally:
+        process.kill()

@@ -20,7 +20,6 @@ jobs:
       matrix:
         type: [
           {os: ubuntu-latest, name: linux},
-          {os: ubuntu-24.04-arm, name: linux-arm},
           {os: windows-latest, name: windows},
           {os: windows-11-arm, name: windows-arm},
           {os: macos-latest, name: "mac"}
@@ -34,11 +33,6 @@ jobs:
       uses: actions/setup-dotnet@v4
       with:
         dotnet-version: 10.0.x
-
-    - name: Setup Python
-      uses: actions/setup-python@v6
-      with:
-        python-version: '3.13'
 
     - name: Setup Java
       uses: actions/setup-java@v5
@@ -57,9 +51,6 @@ jobs:
       working-directory: ./Amethyst
       run: dotnet publish --configuration Release --output dist
 
-    - name: Test
-      run: python -u scripts/test_mc.py
-
     - name: Upload Build
       uses: actions/upload-artifact@v4
       with:
@@ -69,17 +60,49 @@ jobs:
           !**/*.pdb
           !**/*.dbg
           !**/tests/**/*.ame
+
+  test:
+    name: "Test ${{ matrix.version }} on ${{ matrix.type.name }}"
+    runs-on: ${{ matrix.type.os }}
+
+    strategy:
+      matrix:
+        type: [
+          {os: ubuntu-latest, name: linux},
+          {os: windows-latest, name: windows},
+          {os: windows-11-arm, name: windows-arm},
+          {os: macos-latest, name: "mac"}
+        ]
+        version: ["1.21.9", "1.21.10", "1.21.11"]
+      fail-fast: false
+    
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Download Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: amethyst-${{ matrix.type.name }}
+          path: ./Amethyst/dist
+
+      - name: Setup Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: '3.13'
+      
+      - name: Test
+        run: python -u scripts/test_mc.py ${{ matrix.version }}
   
   linux-pkgs:
-    name: "Build ${{ matrix.arch.artifact }} packages"
-    runs-on: ${{ matrix.arch.runner }}
+    name: "Build ${{ matrix.type.name }} packages"
+    runs-on: ${{ matrix.type.os }}
     needs: [build]
     
     strategy:
       matrix:
-        arch: [
-          { runner: "ubuntu-latest", artifact: "linux", arch: ""},
-          # { runner: "ubuntu-24.04-arm", artifact: "linux-arm", arch: "--platform=linux/arm64 ogarcia/"}
+        type: [
+          { os: "ubuntu-latest", name: "linux", arch: ""},
+          # { os: "ubuntu-24.04-arm", artifact: "linux-arm", arch: "--platform=linux/arm64 ogarcia/"}
         ]
       fail-fast: false
 
@@ -89,7 +112,7 @@ jobs:
       - name: Download Artifact
         uses: actions/download-artifact@v4
         with:
-          name: amethyst-${{ matrix.arch.artifact }}
+          name: amethyst-${{ matrix.type.name }}
           path: ./Amethyst/dist
 
       - name: Build Linux Packages
@@ -105,12 +128,12 @@ jobs:
               amethyst -v
     
       - name: Run Arch Container
-        run: docker run --rm -v ".:/mnt" ${{ matrix.arch.arch }}archlinux /bin/sh -c "pacman-key --init && pacman -Sy && pacman -U --noconfirm ./mnt/*.pkg.tar.zst && /usr/bin/amethyst -v"
+        run: docker run --rm -v ".:/mnt" ${{ matrix.type.arch }}archlinux /bin/sh -c "pacman-key --init && pacman -Sy && pacman -U --noconfirm ./mnt/*.pkg.tar.zst && /usr/bin/amethyst -v"
 
       - name: Upload Linux Packages
         uses: actions/upload-artifact@v4
         with:
-          name: amethyst-${{ matrix.arch.artifact }}-pkgs
+          name: amethyst-${{ matrix.type.name }}-pkgs
           path: |
             *.deb
             *.pkg.tar.zst
