@@ -4,8 +4,9 @@ namespace example;
 
 #load
 void main() {
-    int ret = 7;
-    print(^ret);
+    int x = 7;
+    int^ ptr = x;
+    @/tellraw @a "$(*ptr)"
 
     amethyst:exit();
 }

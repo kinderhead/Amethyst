@@ -7,7 +7,7 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <Authors>kinderhead</Authors>
-        <Version>0.9.1-beta</Version>
+        <Version>0.10.0-beta</Version>
         <PublishTrimmed>True</PublishTrimmed>
         <PublishAot>True</PublishAot>
         <TrimMode>partial</TrimMode>

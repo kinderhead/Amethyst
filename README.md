@@ -82,6 +82,8 @@ See the documentation for information about the `setup`, `run`, and `daemon` com
 
 ## Planned Features
 
+See the [1.0 release project](https://github.com/users/kinderhead/projects/3) for more details.
+
 * Inline functions
 * Entity and world manipulation
 * Generics

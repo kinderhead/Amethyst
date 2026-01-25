@@ -117,7 +117,7 @@ castExpression
     ;
 
 unaryExpression
-    : (PlusPlus | MinusMinus | Not | Minus)* postfixExpression
+    : (PlusPlus | MinusMinus | Not | Minus | And | WeakRef | Star)* postfixExpression
     ;
 
 postfixExpression

@@ -1,4 +1,6 @@
-﻿using Geode;
+﻿using Amethyst.IR.Instructions;
+using Amethyst.IR.Types;
+using Geode;
 using Geode.Errors;
 using Geode.IR;
 using Geode.IR.Instructions;
@@ -11,7 +13,10 @@ namespace Amethyst.AST.Expressions
 	{
 		Increment,
 		Decrement,
-		Negate
+		Negate,
+		Reference,
+		WeakReference,
+		Dereference
 	}
 
 	public class UnaryExpression(LocationRange loc, UnaryOperation op, Expression val) : Expression(loc)
@@ -45,6 +50,17 @@ namespace Amethyst.AST.Expressions
 					return val;
 				case UnaryOperation.Negate:
 					return ctx.Add(new MulInsn(ctx.AddLoad(ctx.ImplicitCast(val, PrimitiveType.Int)), new LiteralValue(-1)));
+				case UnaryOperation.Reference:
+					return ctx.ImplicitCast(val, new ReferenceType(val.Type));
+				case UnaryOperation.WeakReference:
+					return ctx.ImplicitCast(val, new WeakReferenceType(val.Type));
+				case UnaryOperation.Dereference:
+					if (val.Type is not ReferenceType rt)
+					{
+						throw new InvalidTypeError(val.Type.ToString(), "reference");
+					}
+
+					return rt.Deref(val, ctx);
 				default:
 					throw new NotImplementedException();
 			}

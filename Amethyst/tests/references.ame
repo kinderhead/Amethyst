@@ -105,3 +105,32 @@ void test_int_arr_ref() {
     complete();
 }
 
+#test 
+void test_int_ref_inline() {
+    start("int ref inline");
+
+    int x = 10;
+    var ref = &x;
+
+    ref = -4;
+
+    assert_eq(x, -4);
+    assert_eq(*ref, -4);
+
+    complete();
+}
+
+#test
+void test_int_weak_ref_inline() {
+    start("int weak ref inline");
+    
+    int x = 10;
+    var ref = ^x;
+
+    ref = -4;
+
+    assert_eq(x, -4);
+    assert_eq(*ref, -4);
+
+    complete();
+}

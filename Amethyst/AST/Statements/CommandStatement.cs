@@ -32,10 +32,11 @@ namespace Amethyst.AST.Statements
 				cmdCtx.LocationStack.Push(Location);
 				cmdCtx.Add(new CommandInsn(cmd.ToString()));
 				cmdCtx.Add(new ReturnInsn());
+				ctx.AddDependency(cmdCtx.CurrentBlock.Function);
 				cmdCtx.Finish();
 				cmdCtx.LocationStack.Pop();
 
-				ctx.Add(new CallInsn(func, Fragments.Where(i => i is CommandExprFragment).Cast<CommandExprFragment>().Select(i => ctx.ImplicitCast(i.Value, PrimitiveType.Compound))));
+				ctx.Add(new CallInsn(func, Fragments.Where(i => i is CommandExprFragment).Cast<CommandExprFragment>().Select(i => i.Value.SetType(PrimitiveType.Compound))));
 			}
 		}
 	}
