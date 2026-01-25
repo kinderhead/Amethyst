@@ -6,18 +6,18 @@ namespace Datapack.Net.Pack
 	public class MCMeta
 	{
 		public FormattedText Description = new FormattedText().Text("A data pack built with Datapack.Net");
-		public PackVersion Min = PackVersion.Latest;
-		public PackVersion Max = PackVersion.Latest;
+		public PackVersion MinVersion = PackVersion.Latest;
+		public PackVersion MaxVersion = PackVersion.Latest;
 
-		public MCMeta SetMin(PackVersion min)
+		public MCMeta SetMinVersion(PackVersion min)
 		{
-			Min = min;
+			MinVersion = min;
 			return this;
 		}
 
-		public MCMeta SetMax(PackVersion max)
+		public MCMeta SetMaxVersion(PackVersion max)
 		{
-			Max = max;
+			MaxVersion = max;
 			return this;
 		}
 
@@ -35,9 +35,9 @@ namespace Datapack.Net.Pack
 
 		public JObject Build()
 		{
-			if (Min > Max)
+			if (MinVersion > MaxVersion)
 			{
-				(Min, Max) = (Max, Min);
+				(MinVersion, MaxVersion) = (MaxVersion, MinVersion);
 			}
 
 			var ret = new JObject();
@@ -47,16 +47,16 @@ namespace Datapack.Net.Pack
 				["description"] = Description.Optimize().ToJson()
 			};
 
-			if (Max.IsNewStyle)
+			if (MaxVersion.IsNewStyle)
 			{
-				pack["max_format"] = Max.Get();
-				pack["min_format"] = Min.Get();
+				pack["max_format"] = MaxVersion.Get();
+				pack["min_format"] = MinVersion.Get();
 			}
 
-			if (!Min.IsNewStyle)
+			if (!MinVersion.IsNewStyle)
 			{
-				pack["pack_format"] = Max.Major;
-				pack["supported_formats"] = new JArray(Min, Max);
+				pack["pack_format"] = MaxVersion.Major;
+				pack["supported_formats"] = new JArray(MinVersion, MaxVersion);
 			}
 
 			ret["pack"] = pack;

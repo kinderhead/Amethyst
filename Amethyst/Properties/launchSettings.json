@@ -2,15 +2,15 @@
   "profiles": {
     "Amethyst": {
       "commandName": "Project",
-      "commandLineArgs": "build examples/test.ame -o output.zip --dump-ir -c -O 1\r\n"
-    },
-    "Amethyst Help": {
-      "commandName": "Project",
-      "commandLineArgs": "daemon -c \"stop\""
+      "commandLineArgs": "build examples/test.ame -o output.zip -c\r\n"
     },
     "Test Suite": {
       "commandName": "Project",
-      "commandLineArgs": "build tests/*.ame -d -O 1 -o output.zip --run"
+      "commandLineArgs": "build tests/*.ame -d -o output.zip --run"
+    },
+    "Amethyst Random": {
+      "commandName": "Project",
+      "commandLineArgs": "setup --eula"
     }
   }
 }

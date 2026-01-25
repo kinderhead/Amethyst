@@ -4,13 +4,8 @@ namespace example;
 
 #load
 void main() {
-    int a = 4;
-    int b = 2;
-    int c = 10;
-    int d = -3;
-
-    int ret = a + b - 10 * c / d + 80 - a * b;
-    print(ret);
+    int ret = 7;
+    print(^ret);
 
     amethyst:exit();
 }

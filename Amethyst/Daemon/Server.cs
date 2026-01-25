@@ -3,7 +3,9 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using Amethyst.Cli;
+using Datapack.Net.Utils;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using Spectre.Console;
 using Tmds.Utils;
 
@@ -11,7 +13,7 @@ namespace Amethyst.Daemon
 {
     public static class Server
     {
-        public static int Setup(DaemonSetupOptions settings)
+        public static async Task<int> Setup(DaemonSetupOptions settings)
         {
             if (!settings.EULA)
             {
@@ -35,7 +37,7 @@ namespace Amethyst.Daemon
 
             File.Delete(EULALocation);
 
-            if (!GetMinecraftServer(settings.MinecraftVersion))
+            if (!await GetMinecraftServer(settings.MinecraftVersion))
             {
                 return 1;
             }
@@ -199,14 +201,21 @@ namespace Amethyst.Daemon
             File.WriteAllLines(ServerPropertiesLocation, data);
         }
 
-        public static bool GetMinecraftServer(string version)
+        public static async Task<bool> GetMinecraftServer(string version)
         {
             Directory.CreateDirectory(Path.Combine(ServerFolder, "mods"));
 
+			var (success, tellraw) = await GetTellrawLoggerVersion(version);
+
+			if (!success)
+			{
+				return false; 
+			}
+
             if (!DownloadFiles(
                 ($"Minecraft {version}", new($"https://meta.fabricmc.net/v2/versions/loader/{version}/0.17.3/1.1.0/server/jar"), MinecraftServerLocation),
-                ($"Tellraw Logger", new($"https://github.com/kinderhead/TellrawLogger/releases/download/v1.0.0/tellraw-logger-1.0.0.jar"), Path.Combine(ServerFolder, "mods", "tellraw-logger.jar")),
-                ($"Better Log4j Config", new($"https://github.com/BigWingBeat/better_log4j_config/releases/download/1.2.0/better_log4j_config-1.2.0-fabric.jar"), Path.Combine(ServerFolder, "mods", "better-log4j-config.jar"))
+                ($"Tellraw Logger", new(tellraw), Path.Combine(ServerFolder, "mods", "tellraw-logger.jar")),
+                ($"Better Log4j Config", new("https://github.com/BigWingBeat/better_log4j_config/releases/download/1.2.0/better_log4j_config-1.2.0-fabric.jar"), Path.Combine(ServerFolder, "mods", "better-log4j-config.jar"))
             ))
             {
                 return false;
@@ -214,6 +223,20 @@ namespace Amethyst.Daemon
 
             return true;
         }
+
+		public static async Task<(bool, string)> GetTellrawLoggerVersion(string mcversion)
+		{
+			using var client = new HttpClient();
+			var versions = JArray.Parse(await client.GetStringAsync($"https://api.modrinth.com/v2/project/tellraw-logger/version?game_versions=[\"{mcversion}\"]"));
+			
+			if (versions.Count == 0)
+			{
+				AnsiConsole.MarkupLineInterpolated($"[red]Unsupported Daemon Minecraft version {mcversion}[/]");
+				return (false, "");
+			}
+
+			return (true, versions[0]["files"]?[0]?["url"]?.ToString() ?? "");
+		}
 
         public static bool DownloadFiles(params (string name, Uri url, string path)[] files)
         {

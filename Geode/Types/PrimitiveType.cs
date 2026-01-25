@@ -1,5 +1,6 @@
 ﻿using Datapack.Net.Data;
 using Datapack.Net.Utils;
+using Geode.IR;
 using Geode.Values;
 
 namespace Geode.Types
@@ -39,6 +40,23 @@ namespace Geode.Types
 		protected override bool EqualsImpl(TypeSpecifier obj) => obj is PrimitiveType p && p.Type == Type;
 		public override string ToString() => Type == NBTType.Compound ? "nbt" : Type == NBTType.Boolean ? "bool" : Enum.GetName(Type)?.ToLower() ?? throw new InvalidOperationException();
 		public override object Clone() => new PrimitiveType(Type);
+
+		public override ValueRef? CastToOverload(ValueRef val, FunctionContext ctx)
+		{
+			if (val.Value is LiteralValue literal)
+			{
+				if (literal.Value.NumberType is NBTNumberType && EffectiveNumberType is NBTNumberType destType)
+				{
+					return new LiteralValue(literal.Value.Cast(destType));
+				}
+			}
+			else if ((Type == NBTType.Double || Type == NBTType.Float) && ctx.TryImplicitCast(val, Int) is ValueRef toFloat)
+			{
+				return toFloat;
+			}
+
+			return null;
+		}
 
 		public static PrimitiveType Int => new(NBTType.Int);
 		public static PrimitiveType Long => new(NBTType.Long);

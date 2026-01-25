@@ -25,7 +25,7 @@ namespace Amethyst.Cli
 
         [CommandOption("-v|--version")]
         [Description("Minecraft server version.")]
-        [DefaultValue("1.21.10")]
+        [DefaultValue("1.21.11")]
         public string MinecraftVersion { get; set; }
 
         [CommandOption("-p|--port")]
@@ -41,6 +41,6 @@ namespace Amethyst.Cli
 
 	public class DaemonSetupCommand : Command<DaemonSetupOptions>
 	{
-		public override int Execute(CommandContext context, DaemonSetupOptions settings, CancellationToken cancellationToken) => Server.Setup(settings);
-    }
+		public override int Execute(CommandContext context, DaemonSetupOptions settings, CancellationToken cancellationToken) => Server.Setup(settings).Result;
+	}
 }

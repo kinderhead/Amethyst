@@ -177,7 +177,7 @@ namespace Geode.IR
 
 		public ValueRef ImplicitCast(ValueRef val, TypeSpecifier type)
 		{
-			if (ImplicitCastOrNull(val, type) is ValueRef ret)
+			if (TryImplicitCast(val, type) is ValueRef ret)
 			{
 				return ret;
 			}
@@ -185,7 +185,7 @@ namespace Geode.IR
 			throw new InvalidTypeError(val.Type.ToString(), type.ToString());
 		}
 
-		public ValueRef? ImplicitCastOrNull(ValueRef val, TypeSpecifier type)
+		public ValueRef? TryImplicitCast(ValueRef val, TypeSpecifier type)
 		{
 			if (val.Type == type)
 			{
@@ -194,14 +194,6 @@ namespace Geode.IR
 			else if (type is VarType)
 			{
 				return val;
-			}
-			else if (type is AnyType)
-			{
-				return val.SetType(type);
-			}
-			else if (val.Type is AnyType)
-			{
-				return val.SetType(type);
 			}
 			else if (val.Type.CastFromOverload(val, type, this) is ValueRef cast)
 			{
@@ -215,24 +207,13 @@ namespace Geode.IR
 			{
 				return val.SetType(type);
 			}
-			else if (val.Value is LiteralValue literal && type is PrimitiveType)
-			{
-				if (literal.Value.NumberType is Datapack.Net.Data.NBTNumberType && type.EffectiveNumberType is Datapack.Net.Data.NBTNumberType destType)
-				{
-					return new LiteralValue(literal.Value.Cast(destType));
-				}
-			}
-			else if ((type == PrimitiveType.Double || type == PrimitiveType.Float) && ImplicitCastOrNull(val, PrimitiveType.Int) is ValueRef toFloat)
-			{
-				return toFloat.SetType(type);
-			}
 
 			return null;
 		}
 
 		public ValueRef ExplicitCast(ValueRef val, TypeSpecifier type)
 		{
-			if (ImplicitCastOrNull(val, type) is ValueRef ret)
+			if (TryImplicitCast(val, type) is ValueRef ret)
 			{
 				return ret;
 			}
@@ -240,13 +221,13 @@ namespace Geode.IR
 			{
 				return cast.SetType(type);
 			}
-			else if (type.EffectiveType == Datapack.Net.Data.NBTType.Int)
-			{
-				return Add(new LoadInsn(val, type)).SetType(type);
-			}
 			else if (type.Implements(val.Type))
 			{
 				return val.SetType(type);
+			}
+			else if (type.EffectiveType == Datapack.Net.Data.NBTType.Int)
+			{
+				return Add(new LoadInsn(val, type)).SetType(type);
 			}
 
 			throw new InvalidTypeError(val.Type.ToString(), type.ToString());

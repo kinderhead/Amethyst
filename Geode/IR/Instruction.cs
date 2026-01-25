@@ -90,7 +90,7 @@ namespace Geode.IR
 				return;
 			}
 
-			if (ReturnType is not AnyType && ret.Type != ReturnType)
+			if (ret.Type != ReturnType)
 			{
 				throw new InvalidTypeError(ret.Type.ToString(), ReturnType.ToString());
 			}
