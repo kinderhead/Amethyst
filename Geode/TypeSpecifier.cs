@@ -113,6 +113,7 @@ namespace Geode
 		public virtual void AssignmentOverload(ValueRef dest, ValueRef val, FunctionContext ctx) => ctx.Add(new StoreInsn(dest, ctx.ImplicitCast(val, this)));
 
 		public virtual ValueRef? ExplicitCastFromOverload(ValueRef val, TypeSpecifier to, FunctionContext ctx) => null;
+		public virtual ValueRef? ExplicitCastToOverload(ValueRef val, FunctionContext ctx) => null;
 		public virtual ValueRef? CastFromOverload(ValueRef val, TypeSpecifier to, FunctionContext ctx) => null;
 		public virtual ValueRef? CastToOverload(ValueRef val, FunctionContext ctx) => null;
 		public virtual void ExecuteChainOverload(ValueRef val, ExecuteChain chain, FunctionContext ctx, bool invert = false) => chain.Add(IfValueChain.With(val, ctx, invert));

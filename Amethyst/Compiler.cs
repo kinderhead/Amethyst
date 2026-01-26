@@ -283,6 +283,7 @@ namespace Amethyst
 			Register(PrimitiveType.String);
 			Register(PrimitiveType.List);
 			Register(PrimitiveType.Compound);
+			Register(new UnsafeString());
 
 			Register(new TargetSelectorType());
 

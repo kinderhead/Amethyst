@@ -7,7 +7,7 @@
             "request": "launch",
             "preLaunchTask": "build",
             "program": "${workspaceFolder}/Amethyst/bin/Debug/net10.0/Amethyst.dll",
-            "args": ["build", "examples/test.ame", "-c", "-O", "1", "-o", "test.zip", "--run"],
+            "args": ["build", "examples/test.ame", "-c", "-o", "test.zip", "--run"],
             "cwd": "${workspaceFolder}/Amethyst",
             "stopAtEntry": false,
             "console": "integratedTerminal"
