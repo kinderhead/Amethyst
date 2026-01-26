@@ -28,7 +28,7 @@ Nightly builds can be accessed through Github Actions or here:
 
 Packages for the `apt` and `pacman` package managers are built and tested for each commit.
 
-The latest VSCode extension build can be found [here](https://nightly.link/kinderhead/Amethyst/workflows/language_server/master/language-server-vscode-extension.zip).
+The latest VS Code extension build can be found [here](https://nightly.link/kinderhead/Amethyst/workflows/language_server/master/language-server-vscode-extension.zip) or through the official VS Code [Marketplace](https://marketplace.visualstudio.com/items?itemName=kinderhead.amethyst-language).
 
 Examples:
 ```sh
