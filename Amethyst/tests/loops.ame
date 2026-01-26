@@ -12,3 +12,39 @@ void test_for() {
 
     complete();
 }
+
+#test
+void test_for_break() {
+    start("for");
+    
+    int x = 0;
+
+    for (int i = 0; i < 10; ++i) {
+        if (x == 7) {
+            break;
+        }
+        ++x;
+    }
+
+    assert_eq(x, 7);
+
+    complete();
+}
+
+#test
+void test_for_continue() {
+    start("for");
+    
+    int x = 0;
+
+    for (int i = 0; i < 10; ++i) {
+        if (i == 7) {
+            continue;
+        }
+        ++x;
+    }
+
+    assert_eq(x, 9);
+
+    complete();
+}

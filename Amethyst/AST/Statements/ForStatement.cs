@@ -21,6 +21,8 @@ namespace Amethyst.AST.Statements
 			}, "for", () =>
 			{
 				Body.Compile(ctx);
+			}, () =>
+			{
 				Iterator.Execute(ctx, null);
 			});
 		}

@@ -48,6 +48,7 @@ statement
         initAssignmentStatement
         | expressionStatement
         | returnStatement
+        | loopControlStatement
     ) Semi+
     | commandStatement
     | block
@@ -82,6 +83,10 @@ forStatement
 returnStatement
     : Return (expression)?
     ;
+
+loopControlStatement
+    : Continue
+    | Break;
 
 expression
     : assignmentExpression
@@ -200,6 +205,8 @@ At: 'at';
 Else: 'else';
 For: 'for';
 Return: 'return';
+Break: 'break';
+Continue: 'continue';
 
 Struct: 'struct';
 Implements: 'implements';

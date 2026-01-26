@@ -180,6 +180,7 @@ namespace Amethyst.AST
 
 		public override Node VisitForStatement([NotNull] AmethystParser.ForStatementContext context) => new ForStatement(Loc(context), context.initAssignmentStatement() is not null ? (Statement?)Visit(context.initAssignmentStatement()) : null, Visit(context.cond), Visit(context.it), Visit(context.statement()));
 		public override Node VisitReturnStatement([NotNull] AmethystParser.ReturnStatementContext context) => new ReturnStatement(Loc(context), context.expression() is null ? null : Visit(context.expression()));
+		public override Node VisitLoopControlStatement([NotNull] AmethystParser.LoopControlStatementContext context) => new LoopControlStatement(Loc(context), context.Continue() is not null ? LoopControlType.Continue : LoopControlType.Break);
 
 		public override Node VisitCommandStatement([NotNull] AmethystParser.CommandStatementContext context)
 		{

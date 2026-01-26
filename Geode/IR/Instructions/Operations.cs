@@ -29,7 +29,7 @@ namespace Geode.IR.Instructions
 		{
 			if (!(Arguments[0] is ValueRef v0 && tryLink(ReturnValue, v0)))
 			{
-				if (IsCommunitive && Arguments[1] is ValueRef v1)
+				if (IsCommunitive && Arguments[1] is ValueRef v1 && !v1.IsLiteral)
 				{
 					tryLink(ReturnValue, v1);
 					Arguments[1] = Arguments[0];

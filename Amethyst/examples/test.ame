@@ -4,9 +4,13 @@ namespace example;
 
 #load
 void main() {
-    int x = 7;
-    int^ ptr = x;
-    @/tellraw @a "$(*ptr)"
+    for (int i = 0; i < 10; ++i) {
+        if (i == 4) {
+            continue;
+        }
+        
+        print(i);
+    }
 
     amethyst:exit();
 }

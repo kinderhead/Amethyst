@@ -27,11 +27,13 @@ namespace Geode.IR.Passes
                     var block = stack.Pop();
                     foreach (var frontier in dominanceFrontiers[block])
                     {
-                        state.PhiLocations[variable].Add(frontier);
-                        if (!hasStore.Contains(frontier))
-                        {
-                            stack.Push(frontier);
-                        }
+						if (state.PhiLocations[variable].Add(frontier))
+						{
+							if (!hasStore.Contains(frontier))
+							{
+								stack.Push(frontier);
+							}
+						}
                     }
                 }
 

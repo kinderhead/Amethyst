@@ -34,7 +34,7 @@ namespace Geode.IR
 
 		public ValueRef Add(Instruction insn, string? customName = null)
 		{
-			if (instructions.Count == 0 || instructions.Last() is not ReturnInsn)
+			if (instructions.Count == 0 || instructions.Last() is not IBlockCapstoneInsn)
 			{
 				instructions.Add(insn);
 				insn.OnAdd(this);

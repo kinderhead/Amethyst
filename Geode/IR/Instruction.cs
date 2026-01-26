@@ -6,7 +6,7 @@ using Geode.Values;
 
 namespace Geode.IR
 {
-	public interface IBasicInstruction
+	public interface IBasicInsn
 	{
 		public IInstructionArg[] Arguments { get; }
 		public ValueRef ReturnValue { get; }
@@ -16,7 +16,7 @@ namespace Geode.IR
 		public void Remove();
 	}
 
-	public abstract class Instruction : IBasicInstruction
+	public abstract class Instruction : IBasicInsn
 	{
 		public virtual IInstructionArg[] Arguments { get; private set; }
 		public virtual IEnumerable<ValueRef> Dependencies => Arguments.SelectMany(i => i.Dependencies);

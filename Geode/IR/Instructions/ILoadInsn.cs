@@ -2,7 +2,7 @@ using System;
 
 namespace Geode.IR.Instructions
 {
-    public interface ILoadInsn : IBasicInstruction
+    public interface ILoadInsn : IBasicInsn
     {
         public ValueRef Variable { get; }
     }

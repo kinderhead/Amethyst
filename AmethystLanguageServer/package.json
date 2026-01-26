@@ -1,8 +1,9 @@
 {
   "name": "amethyst-language",
-  "displayName": "amethyst-language",
+  "displayName": "Amethyst",
   "description": "Syntax highlighting for the Amethyst programming language",
-  "version": "0.1.5",
+  "version": "0.1.6",
+  "publisher": "kinderhead",
   "repository": {
     "type": "git",
     "url": "https://github.com/kinderhead/Amethyst"
@@ -37,7 +38,7 @@
     ]
   },
   "devDependencies": {
-    "@vscode/vsce": "^3.6.0"
+    "@vscode/vsce": "^3.7.1"
   },
   "scripts": {
     "build": "npx vsce package"

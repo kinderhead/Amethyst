@@ -41,6 +41,7 @@ namespace Geode.IR
 		private readonly List<Scope> totalScopes = [];
 		private readonly Stack<Scope> activeScopes = [];
 		private readonly Dictionary<string, int> labelCounters = [];
+		private readonly Stack<(Block loop, Action iter, Block end)> loopStack = [];
 
 		// Could just be the max register used, but who knows if one goes poof somewhere
 		private readonly HashSet<int> registersInUse = [];
@@ -250,7 +251,7 @@ namespace Geode.IR
 
 		public void Finish()
 		{
-			if (CurrentBlock.Instructions.Count == 0 || !CurrentBlock.Instructions.Last().IsReturn)
+			if (CurrentBlock.Instructions.Count == 0 || !CurrentBlock.Instructions[CurrentBlock.Instructions.Count - 1].IsReturn)
 			{
 				throw new InvalidOperationException("Last block in function must have a return instruction");
 			}
@@ -361,7 +362,7 @@ namespace Geode.IR
 			return (trueBlock, falseBlock);
 		}
 
-		public Block Loop(Func<ExecuteChain> cond, string label, Action loop)
+		public Block Loop(Func<ExecuteChain> cond, string label, Action loop, Action iter)
 		{
 			label = GetNewLabelName(label);
 
@@ -375,12 +376,36 @@ namespace Geode.IR
 			Add(new BranchInsn(cond(), loopBlock, endBlock));
 
 			CurrentBlock = loopBlock;
+			loopStack.Push((loopBlock, iter, endBlock));
 			loop();
+			iter();
+			loopStack.Pop();
 			Add(new BranchInsn(cond(), loopBlock, endBlock));
 
 			CurrentBlock = endBlock;
 
 			return loopBlock;
+		}
+
+		public void LoopBreak()
+		{
+			if (!loopStack.TryPeek(out var res))
+			{
+				throw new NotInLoopError();
+			}
+
+			Add(new JumpInsn(res.end));
+		}
+
+		public void LoopContinue()
+		{
+			if (!loopStack.TryPeek(out var res))
+			{
+				throw new NotInLoopError();
+			}
+
+			res.iter();
+			Add(new JumpInsn(res.loop));
 		}
 
 		public void ReplaceValue(ValueRef val, ValueRef with)

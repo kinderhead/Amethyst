@@ -19,10 +19,12 @@ namespace Geode.IR.Instructions
 			var tmp = 0;
 			foreach (var i in Arguments)
 			{
+#pragma warning disable CA1859
 				if (i is not ValueRef vref || vref.Value is not IValue val)
 				{
 					throw new InvalidOperationException($"Invalid print argument of type {i.GetType().Name}");
 				}
+#pragma warning restore CA1859
 
 				if (val is RawDataTargetValue macro && macro.RawTarget.Contains("$("))
 				{

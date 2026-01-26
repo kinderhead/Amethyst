@@ -141,6 +141,12 @@ public interface IAmethystVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <return>The visitor result.</return>
 	Result VisitReturnStatement([NotNull] AmethystParser.ReturnStatementContext context);
 	/// <summary>
+	/// Visit a parse tree produced by <see cref="AmethystParser.loopControlStatement"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitLoopControlStatement([NotNull] AmethystParser.LoopControlStatementContext context);
+	/// <summary>
 	/// Visit a parse tree produced by <see cref="AmethystParser.expression"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>

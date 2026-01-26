@@ -5,7 +5,7 @@ using Geode.Values;
 
 namespace Geode.IR.Instructions
 {
-	public class ReturnInsn : Instruction
+	public class ReturnInsn : Instruction, IBlockCapstoneInsn
 	{
 		public ReturnInsn(ValueRef ret) : base([ret]) { }
 		public ReturnInsn() : base([]) { }
