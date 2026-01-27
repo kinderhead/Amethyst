@@ -66,3 +66,20 @@ Target selectors can be put in `if` [Execute Statement](./control-flow.mdx#execu
 :::tip
 Target selectors can also be converted to boolean values. The result is `true` if `execute if entity` is successful.
 :::
+
+## Unsafe Strings
+
+Some target selector arguments, like `tag`, only accept alphanumeric strings. To support this, a special `unsafe_string` type is available that does not have any of the safeguards that normal `string`s have.
+
+<Highlight code={`\
+    unsafe_string tag = "womp";
+
+    @/summon wither
+    @/tag @e[type=wither] add $(tag)
+
+    if (@e[tag=tag]) {
+        print("yay");
+    }
+
+    @/kill @e[type=wither]
+`}/>

@@ -3,31 +3,31 @@ using Datapack.Net.Utils;
 using Geode.Errors;
 using Geode.IR;
 using Geode.Values;
-using System;
+using System.Text.RegularExpressions;
 
 namespace Geode.Types
 {
-	public class UnsafeString : TypeSpecifier
+	public class UnsafeStringType : TypeSpecifier
 	{
 		public override LiteralValue DefaultValue => new("", this);
 		public override NamespacedID ID => "minecraft:unsafe_string";
 		public override NBTType EffectiveType => NBTType.String;
 		public override bool WrapInQuotesForMacro => true;
 
-		public override object Clone() => new UnsafeString();
+		public override object Clone() => new UnsafeStringType();
 		public override string ToString() => "unsafe_string";
-		protected override bool EqualsImpl(TypeSpecifier obj) => obj is UnsafeString;
+		protected override bool EqualsImpl(TypeSpecifier obj) => obj is UnsafeStringType;
 
 		public override ValueRef? CastToOverload(ValueRef val, FunctionContext ctx)
         {
             if (val.Type == PrimitiveType.String && val.Value is IConstantValue c && c.Value is NBTString str)
             {
-                if (str.Value.Contains('"') || str.Value.Contains('\'') || str.Value.Contains(' '))
+                if (new Regex(@"[^a-zA-Z0-9\-_]").Match(str.Value).Success)
                 {
                     throw new UnsafeStringError();
                 }
 
-                return val;
+                return new LiteralValue(new NBTRawString(str.Value));
             }
 
             return null;

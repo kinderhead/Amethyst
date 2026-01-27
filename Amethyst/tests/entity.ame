@@ -50,3 +50,21 @@ void test_entity_negate() {
 
     complete();
 }
+
+#test
+void test_entity_tag() {
+    start("entity tag");
+
+    @/kill @e[type=wither]
+    
+    unsafe_string tag = "womp";
+
+    @/summon wither
+    @/tag @e[type=wither] add $(tag)
+    
+    assert(@e[tag=tag]);
+
+    @/kill @e[type=wither]
+
+    complete();
+}
