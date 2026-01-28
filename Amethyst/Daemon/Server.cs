@@ -27,11 +27,7 @@ namespace Amethyst.Daemon
                 return 1;
             }
 
-            if (Rcon.IsServerRunning())
-            {
-                AnsiConsole.MarkupLine("[red]Minecraft server is running. Stop it before reconfiguring[/]");
-                return 1;
-            }
+            Rcon.StopServer();
 
             var config = UpdateConfig(settings);
 

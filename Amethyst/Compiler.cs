@@ -284,6 +284,8 @@ namespace Amethyst
 			Register(PrimitiveType.List);
 			Register(PrimitiveType.Compound);
 			Register(new UnsafeStringType());
+			Register(new IntRangeType());
+			Register(new FloatRangeType());
 
 			Register(new TargetSelectorType());
 

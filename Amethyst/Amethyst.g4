@@ -141,7 +141,8 @@ propertyExpression
 
 rangeExpression
     : primaryExpression (RangeOp (primaryExpression)?)?
-	| RangeOp primaryExpression;
+	| RangeOp primaryExpression
+    ;
 
 primaryExpression
     : id
@@ -251,8 +252,8 @@ AndAnd: '&&';
 OrOr: '||';
 PlusPlus: '++';
 MinusMinus: '--';
-Dot: '.';
 RangeOp: '..';
+Dot: '.';
 WeakRef: '^';
 
 RawIdentifier: ([a-z] | [A-Z] | '_' ) ([a-z] | [A-Z] | [0-9] | '_' | '-' | '/')*;
@@ -260,7 +261,8 @@ RawIdentifier: ([a-z] | [A-Z] | '_' ) ([a-z] | [A-Z] | [0-9] | '_' | '-' | '/')*
 String: '"' ( ~[\\"\n\r] | '\\' [\\"] )* '"';
 Command: '@/' ( ~[\n\r] )* ('\r' | '\n');
 TargetSelectorVariable: '@' [praesn];
-Number: '-'? (([0-9]+ [bsilBSIL]?) | ([0-9] [0-9.]* [fdFD]?));
+
+Number: '-'? (([0-9]+ [bsilfdBSILFD]?) | ([0-9]* '.' [0-9]+ [fdFD]?));
 
 Whitespace: (' '|'\t'|'\n'|'\r')+ -> skip;
 Comment: '/*' .*? '*/' -> skip;

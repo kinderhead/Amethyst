@@ -442,7 +442,14 @@ namespace Amethyst.AST
 				return Visit(context.children[0]);
 			}
 
-			throw new NotImplementedException();
+			if (context.children[0].GetText() == "..")
+			{
+				return new RangeExpression(Loc(context), null, (Expression)Visit(context.primaryExpression()[0]));
+			}
+			else
+			{
+				return new RangeExpression(Loc(context), (Expression)Visit(context.primaryExpression()[0]), context.primaryExpression().Length == 1 ? null : (Expression)Visit(context.primaryExpression()[1]));
+			}
 		}
 
 

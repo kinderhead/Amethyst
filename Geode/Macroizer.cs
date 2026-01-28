@@ -18,6 +18,11 @@ namespace Geode
 
 			IConstantValue apply(IValue val)
 			{
+				if (val is IAdvancedMacroValue amv)
+				{
+					return amv.Macroize(apply);
+				}
+
 				// Include macros in the dependencies
 				if (val is IConstantValue c and not MacroValue)
 				{
@@ -42,14 +47,7 @@ namespace Geode
 
 			foreach (var i in dependencies)
 			{
-				if (i is IAdvancedMacroValue amv)
-				{
-					args.Add(amv.Macroize(apply));
-				}
-				else
-				{
-					args.Add(apply(i));
-				}
+				args.Add(apply(i));
 			}
 
 			if (toMacro.Count == propagatedMacroMap.Count)

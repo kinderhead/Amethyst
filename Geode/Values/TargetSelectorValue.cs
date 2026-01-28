@@ -48,7 +48,7 @@ namespace Geode.Values
 				string val;
 
 				// Remove quotes if constant
-				if (arg is "type" && v is IConstantValue c && c.Value is NBTString str2)
+				if ((arg is "type" || v.Type is RangeType) && v is IConstantValue c && c.Value is NBTString str2)
 				{
 					val = str2.Value;
 				}

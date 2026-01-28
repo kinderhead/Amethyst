@@ -88,7 +88,7 @@ namespace Datapack.Net.Data
 		public static implicit operator float(NBTFloat val) => val.Value;
 	}
 
-	public class NBTDouble(double val) : NBTNumber<double, NBTDouble>(val, "d")
+	public class NBTDouble(double val) : NBTNumber<double, NBTDouble>(val, "")
 	{
 		public override NBTType Type => NBTType.Double;
 		public static implicit operator NBTDouble(double val) => new(val);

@@ -93,3 +93,17 @@ Some target selector arguments, like `tag` and `team`, only accept alphanumeric 
 `}/>
 
 As such, `unsafe_string` can be used in macro arguments without restrictions.
+
+## Ranges
+
+Other target selector arguments accept a range of values. Amethyst supports the typical target selector range syntax through `int_range` and `float_range`.
+
+<Highlight code={`\
+    if (@e[distance=..6]) { }
+`}/>
+
+Of course, variables can be used as well:
+
+<Highlight code={`\
+    as (@e[x_rotation=a..b]) { }
+`}/>

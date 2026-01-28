@@ -13,6 +13,8 @@ on:
       - Datapack.Net.Tests/**
       - .github/workflows/amethyst.yml
       - scripts/test_mc.py
+  pull_request:
+    branches: [ "master" ]
 
 jobs:
   build:
