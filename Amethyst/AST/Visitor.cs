@@ -10,8 +10,10 @@ using Datapack.Net.Function.Commands;
 using Datapack.Net.Utils;
 using Geode;
 using Geode.Chains;
+using Geode.Errors;
 using Geode.Types;
 using Geode.Util;
+using Geode.Values;
 using System.Text.RegularExpressions;
 
 namespace Amethyst.AST
@@ -487,7 +489,29 @@ namespace Amethyst.AST
 
 			foreach (var i in context.targetSelectorArgument())
 			{
-				args.Add(i.RawIdentifier().GetText(), Visit(i.expression()));
+				var arg = i.RawIdentifier().GetText();
+				Expression expr;
+
+				if (i.expression() is null)
+				{
+					if (arg is not "tag" and not "team")
+					{
+						throw new TargetSelectorEmptyArgumentError(arg);
+					}
+
+					expr = new LiteralExpression(Loc(i), "");
+
+					if (i.Not() is not null)
+					{
+						expr = new NotExpression(Loc(i), expr);
+					}
+				}
+				else
+				{
+					expr = Visit(i.expression());
+				}
+
+				args.Add(arg, expr);
 			}
 
 			return new TargetSelectorExpression(Loc(context), type, args);

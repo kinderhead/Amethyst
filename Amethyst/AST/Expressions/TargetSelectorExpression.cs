@@ -40,8 +40,8 @@ namespace Amethyst.AST.Expressions
 				{
 					"x" or "y" or "z" or "dx" or "dy" or "dz" => effectiveValue.Execute(ctx, PrimitiveType.Double),
 					"limit" => effectiveValue.Execute(ctx, PrimitiveType.Int),
-					"name" or "type" or "team" => effectiveValue.Execute(ctx, PrimitiveType.String),
-					"tag" => effectiveValue.Execute(ctx, new UnsafeStringType()),
+					"name" or "type" => effectiveValue.Execute(ctx, PrimitiveType.String),
+					"tag" or "team" => effectiveValue.Execute(ctx, new UnsafeStringType()),
 					_ => throw new TargetSelectorArgumentError(k),
 				};
 

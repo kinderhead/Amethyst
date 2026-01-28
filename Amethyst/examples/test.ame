@@ -4,16 +4,9 @@ namespace example;
 
 #load
 void main() {
-    unsafe_string tag = "womp";
-
-    @/summon wither
-    @/tag @e[type=wither] add $(tag)
-
-    if (@e[tag=tag]) {
+    if (@e[team="w.4"]) {
         print("yay");
     }
-
-    @/kill @e[type=wither]
 
     amethyst:exit();
 }

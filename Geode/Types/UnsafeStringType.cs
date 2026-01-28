@@ -7,7 +7,7 @@ using System.Text.RegularExpressions;
 
 namespace Geode.Types
 {
-	public class UnsafeStringType : TypeSpecifier
+	public partial class UnsafeStringType : TypeSpecifier
 	{
 		public override LiteralValue DefaultValue => new("", this);
 		public override NamespacedID ID => "minecraft:unsafe_string";
@@ -22,7 +22,7 @@ namespace Geode.Types
         {
             if (val.Type == PrimitiveType.String && val.Value is IConstantValue c && c.Value is NBTString str)
             {
-                if (new Regex(@"[^a-zA-Z0-9\-_]").Match(str.Value).Success)
+                if (ValidUnsafeString().IsMatch(str.Value))
                 {
                     throw new UnsafeStringError();
                 }
@@ -52,5 +52,8 @@ namespace Geode.Types
 
             return null;
         }
+
+		[GeneratedRegex(@"[^a-zA-Z0-9\-_\+\.]")]
+		private static partial Regex ValidUnsafeString();
 	}
 }

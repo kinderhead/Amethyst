@@ -16,5 +16,17 @@ namespace Geode.Values
 		public override string ToString() => Value.ToString();
 		public override int GetHashCode() => Value.GetHashCode();
 		public override FormattedText Render(FormattedText text, RenderContext ctx) => Value is NBTString str ? text.Text(str.Value) : text.Text(Value.ToString());
+
+		public bool Is<T>(out T val) where T : NBTValue
+		{
+			if (Value is T ret)
+			{
+				val = ret;
+				return true; 
+			}
+
+			val = null!;
+			return false;
+		}
 	}
 }

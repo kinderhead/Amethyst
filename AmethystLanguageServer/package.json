@@ -1,6 +1,6 @@
 {
   "name": "amethyst-language",
-  "displayName": "Amethyst",
+  "displayName": "Amethyst Language Support",
   "description": "Syntax highlighting for the Amethyst programming language",
   "version": "0.1.7",
   "publisher": "kinderhead",

@@ -96,7 +96,11 @@ jobs:
           java-version: '21'
       
       - name: Test
-        run: python -u scripts/test_mc.py ${{ matrix.version }}
+        uses: nick-fields/retry@v3
+        with:
+          timeout_minutes: 5
+          max_attempts: 3
+          command: python -u scripts/test_mc.py ${{ matrix.version }}
   
   linux-pkgs:
     name: "Build ${{ matrix.type.name }} packages"

@@ -27,7 +27,7 @@ namespace Amethyst.IR.Instructions
 
 		protected override IValue? ComputeReturnValue(FunctionContext ctx)
 		{
-			if (Arg<ValueRef>(0).Expect() is LiteralValue l && l.Value is NBTString str)
+			if (Arg<ValueRef>(0).Expect() is LiteralValue l && l.Is<NBTString>(out var str))
 			{
 				Remove();
 				if (str.Value.Contains("stack[-1]."))

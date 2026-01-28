@@ -40,12 +40,17 @@ namespace Geode.Values
 					negated = true;
                 }
 
+				if (v is LiteralValue literal && literal.Is<NBTString>(out var str) && str.Value.Contains('!'))
+				{
+					throw new TargetSelectorNegatedLiteralError(str.Value);
+				}
+
 				string val;
 
 				// Remove quotes if constant
-				if (arg is "type" && v is IConstantValue c && c.Value is NBTString str)
+				if (arg is "type" && v is IConstantValue c && c.Value is NBTString str2)
 				{
-					val = str.Value;
+					val = str2.Value;
 				}
 				else
 				{

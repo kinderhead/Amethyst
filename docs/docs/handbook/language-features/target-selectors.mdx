@@ -25,7 +25,7 @@ But they can also have dynamic values like so:
 `}/>
 
 :::warning
-String arguments like `name` and `type` must be quoted strings or else Amethyst will look for a variable with that name. This may change in the future.
+String arguments like `name` and `type` must be quoted strings or else Amethyst will look for a variable with that name.
 :::
 
 :::note
@@ -34,23 +34,31 @@ Many of the arguments have not been implemented.
 
 ### Negation
 
-Arguments can be negated by putting a `!` after the equal sign. Additionally, multiple arguments of the same name can exist.
+Some arguments can be negated by putting a `!` after the equal sign. Additionally, multiple arguments of the same name can exist.
 
 <Highlight code={`\
-    // The ! can go inside or outside of quotes
-    var target = @e[type=!"player",type="!item"];
+    // The ! has to go outside the quotes
+    var target = @e[type=!"player"];
+    var target = @e[type="!item"]; // Error
 `}/>
 
-The above is equivalent to:
+Variables can be negated as well.
 
 <Highlight code={`\
     var foo = "player";
-    var bar = "!item";
-    var target = @e[type=!foo,type=bar];
+    var bar = "item";
+    var target = @e[type=!foo, type=!bar];
+`}/>
+
+Some arguments allow empty values which are internally represented as empty strings, so the following is possible:
+
+<Highlight code={`\
+    var foo = "";
+    var target = @e[tag=, team=!foo];
 `}/>
 
 :::warning
-No checks have been implemented yet for invalid combinations of arguments. Check the Minecraft logs for errors generated on `/reload`. Adding `-c` to your build command dumps the compiled `.mcfunctions` to the console for easy viewing.
+Few checks have been implemented for invalid combinations of arguments. Check the Minecraft logs for errors generated on `/reload`. Adding `-c` to your build command dumps the compiled `.mcfunction`s to the console for easy viewing. Running with [Daemon Mode](../daemon.mdx) will give helpful error messages.
 :::
 
 ## Existence Checks
@@ -69,7 +77,7 @@ Target selectors can also be converted to boolean values. The result is `true` i
 
 ## Unsafe Strings
 
-Some target selector arguments, like `tag`, only accept alphanumeric strings. To support this, a special `unsafe_string` type is available that does not have any of the safeguards that normal `string`s have.
+Some target selector arguments, like `tag` and `team`, only accept alphanumeric strings. To support this, a special `unsafe_string` type is available that does not have any of the safeguards that normal `string`s have. See the [Minecraft Wiki](https://minecraft.wiki/w/Commands/tag#Arguments) for valid strings.
 
 <Highlight code={`\
     unsafe_string tag = "womp";
@@ -83,3 +91,5 @@ Some target selector arguments, like `tag`, only accept alphanumeric strings. To
 
     @/kill @e[type=wither]
 `}/>
+
+As such, `unsafe_string` can be used in macro arguments without restrictions.

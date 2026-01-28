@@ -166,7 +166,7 @@ targetSelector
     ;
 
 targetSelectorArgument
-    : RawIdentifier Eq expression
+    : RawIdentifier Eq (expression | Not)?
     ;
 
 paramList

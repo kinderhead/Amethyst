@@ -5,7 +5,17 @@ namespace Geode.Errors
 
 	}
 
+	public class TargetSelectorEmptyArgumentError(string arg) : GeodeError($"Target selector argument \"{arg}\" cannot be blank")
+	{
+
+	}
+
 	public class TargetSelectorMacroArgumentError(string arg) : GeodeError($"Dynamic argument \"{arg}\" is not valid in this context")
+	{
+
+	}
+
+	public class TargetSelectorNegatedLiteralError(string literal) : GeodeError($"Literal \"{literal}\" contains an exclamation mark. Move it outside the string")
 	{
 
 	}
