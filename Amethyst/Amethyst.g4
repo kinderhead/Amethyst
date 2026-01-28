@@ -126,7 +126,7 @@ unaryExpression
     ;
 
 postfixExpression
-    : primaryExpression (
+    : rangeExpression (
         expressionList | indexExpression | propertyExpression
     )*
     ;
@@ -138,6 +138,10 @@ indexExpression
 propertyExpression
     : Dot RawIdentifier
     ;
+
+rangeExpression
+    : primaryExpression (RangeOp (primaryExpression)?)?
+	| RangeOp primaryExpression;
 
 primaryExpression
     : id
@@ -248,6 +252,7 @@ OrOr: '||';
 PlusPlus: '++';
 MinusMinus: '--';
 Dot: '.';
+RangeOp: '..';
 WeakRef: '^';
 
 RawIdentifier: ([a-z] | [A-Z] | '_' ) ([a-z] | [A-Z] | [0-9] | '_' | '-' | '/')*;

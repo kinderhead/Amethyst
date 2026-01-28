@@ -435,6 +435,17 @@ namespace Amethyst.AST
 			return node;
 		}
 
+		public override Node VisitRangeExpression([NotNull] AmethystParser.RangeExpressionContext context)
+		{
+			if (context.children.Count == 1)
+			{
+				return Visit(context.children[0]);
+			}
+
+			throw new NotImplementedException();
+		}
+
+
 		public override Node VisitPrimaryExpression([NotNull] AmethystParser.PrimaryExpressionContext context)
 		{
 			if (context.id() is AmethystParser.IdContext id)

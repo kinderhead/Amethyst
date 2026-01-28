@@ -19,6 +19,17 @@ The variable is set to a default value if there is no initializer. Objects with 
 
 The `var` keyword can be used to inference the type of the variable using the initializer.
 
+:::note
+Property and index expressions by default return a reference (just like in C++), but `var` will dereference them automatically.
+
+<Highlight code={`\
+    var x = obj.number;
+    // x is an int and not int^
+`}/>
+
+Strictly type your variable to avoid this behavior.
+:::
+
 ## Scopes
 
 Variable obey the traditional rules of scoping, so variables can be redefined inside of scopes and can be accessed from descendent scopes.

@@ -1,1 +1,2 @@
 * Fixed an issue with `var` declarations where it would incorrectly reference some variables.
+* Fixed a casting issue.

@@ -222,7 +222,7 @@ namespace Geode.IR
 			{
 				return cast.SetType(type);
 			}
-			else if (val.Type.ExplicitCastToOverload(val, this) is ValueRef cast2)
+			else if (type.ExplicitCastToOverload(val, this) is ValueRef cast2)
 			{
 				return cast2.SetType(type);
 			}
