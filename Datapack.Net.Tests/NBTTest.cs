@@ -10,7 +10,7 @@
 														 Assert.That(new NBTInt(13).Build(), Is.EqualTo("13"));
 														 Assert.That(new NBTLong(13).Build(), Is.EqualTo("13l"));
 														 Assert.That(new NBTFloat(13.67f).Build(), Is.EqualTo("13.67f"));
-														 Assert.That(new NBTDouble(13.67).Build(), Is.EqualTo("13.67d"));
+														 Assert.That(new NBTDouble(13.67).Build(), Is.EqualTo("13.67"));
 													 });
 
 		[Test]
