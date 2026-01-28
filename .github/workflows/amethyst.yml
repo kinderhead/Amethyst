@@ -14,7 +14,8 @@ on:
       - .github/workflows/amethyst.yml
       - scripts/test_mc.py
   pull_request:
-    branches: [ "master" ]
+    branches:
+      - '**'
 
 jobs:
   build:

@@ -402,7 +402,6 @@ namespace Amethyst.AST
 				{
 					node = new UnaryExpression(Loc(context), UnaryOperation.Dereference, node);
 				}
-				// No check for other cases because parser errors might hit it and we don't want to stop the error checker
 			}
 
 			return node;
