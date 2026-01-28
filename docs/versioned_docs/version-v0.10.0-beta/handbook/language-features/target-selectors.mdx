@@ -1,0 +1,95 @@
+---
+sidebar_position: 6
+description: Target selector usage
+---
+
+import Highlight from "@site/src/components/highlight";
+
+# Target Selectors
+
+## Usage
+
+Minecraft target selectors can be created and used using the `minecraft:target` type. `minecraft:target` is stored internally as strings and can be used in macro scenerios. Currently target selectors are WIP and are missing key features. More uses for them will be added over time.
+
+Target selectors can be implicitly created using the same syntax as they do in commands:
+
+<Highlight code={`\
+    var target = @e[x=8,dx=9,name="Steve"];
+`}/>
+
+But they can also have dynamic values like so:
+
+<Highlight code={`\
+    int my_number = 7;
+    var target = @e[x=my_number];
+`}/>
+
+:::warning
+String arguments like `name` and `type` must be quoted strings or else Amethyst will look for a variable with that name.
+:::
+
+:::note
+Many of the arguments have not been implemented.
+:::
+
+### Negation
+
+Some arguments can be negated by putting a `!` after the equal sign. Additionally, multiple arguments of the same name can exist.
+
+<Highlight code={`\
+    // The ! has to go outside the quotes
+    var target = @e[type=!"player"];
+    var target = @e[type="!item"]; // Error
+`}/>
+
+Variables can be negated as well.
+
+<Highlight code={`\
+    var foo = "player";
+    var bar = "item";
+    var target = @e[type=!foo, type=!bar];
+`}/>
+
+Some arguments allow empty values which are internally represented as empty strings, so the following is possible:
+
+<Highlight code={`\
+    var foo = "";
+    var target = @e[tag=, team=!foo];
+`}/>
+
+:::warning
+Few checks have been implemented for invalid combinations of arguments. Check the Minecraft logs for errors generated on `/reload`. Adding `-c` to your build command dumps the compiled `.mcfunction`s to the console for easy viewing. Running with [Daemon Mode](../daemon.mdx) will give helpful error messages.
+:::
+
+## Existence Checks
+
+Target selectors can be put in `if` [Execute Statement](./control-flow.mdx#execute-statements) clauses which effectively use `execute if entity` to determine if the entity exists:
+
+<Highlight code={`\
+    if (@s[type="minecraft:player"]) {
+        @/say I am a player!
+    }
+`}/>
+
+:::tip
+Target selectors can also be converted to boolean values. The result is `true` if `execute if entity` is successful.
+:::
+
+## Unsafe Strings
+
+Some target selector arguments, like `tag` and `team`, only accept alphanumeric strings. To support this, a special `unsafe_string` type is available that does not have any of the safeguards that normal `string`s have. See the [Minecraft Wiki](https://minecraft.wiki/w/Commands/tag#Arguments) for valid strings.
+
+<Highlight code={`\
+    unsafe_string tag = "womp";
+
+    @/summon wither
+    @/tag @e[type=wither] add $(tag)
+
+    if (@e[tag=tag]) {
+        print("yay");
+    }
+
+    @/kill @e[type=wither]
+`}/>
+
+As such, `unsafe_string` can be used in macro arguments without restrictions.

@@ -37,7 +37,7 @@ Referencing stack variables causes some overhead, so it is recommended to avoid 
     }
 `}/>
 
-To reference stack variables, use [Weak References](#weak-references)
+To reference stack variables locally, use [Weak References](#weak-references)
 :::
 
 It goes without saying that referencing a constant value will throw a compile-time error.
@@ -97,4 +97,22 @@ References are stored internally as `Datapack.Net.Function.IDataTarget`s, so the
     inline void set(macro nbt^ ref, macro string val) {
         @/data modify $(ref) set value $(val)
     }
+`}/>
+
+## Reference Operators
+
+References can also be created with dedicated reference operators. This is useful for [inline commands](./inline-commands.mdx) like so:
+
+<Highlight code={`\
+    int x = 1;
+    // &x also works too, but is more expensive in this context
+    @/data modify $(^x) set value 4
+`}/>
+
+Dereferencing can be performed with `*` and works on all reference types.
+
+<Highlight code={`\
+    int x = 1;
+    int^ ptr = x;
+    @/say $(*ptr)
 `}/>

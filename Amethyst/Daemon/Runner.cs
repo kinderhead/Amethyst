@@ -5,6 +5,7 @@ using Geode;
 using Geode.Errors;
 using Spectre.Console;
 using System;
+using System.IO.Compression;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using Tmds.Utils;
@@ -27,15 +28,15 @@ namespace Amethyst.Daemon
             }
 
             // Bad windows :(
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-            {
-                Rcon.StopServer();
+            //if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            //{
+            //    Rcon.StopServer();
                 
-                while (Rcon.IsServerRunning())
-                {
-                    Thread.Sleep(100);
-                }
-            }
+            //    while (Rcon.IsServerRunning())
+            //    {
+            //        Thread.Sleep(100);
+            //    }
+            //}
 
             Server.RemoveDatapack();
 
@@ -65,7 +66,7 @@ namespace Amethyst.Daemon
 						ExecFunction.Start(() => Server.StartServer(null, timeout: true));
 					}
 
-                    int delay = 100; // Wait for 15 seconds
+					int delay = 100; // Wait for 15 seconds
                     for (int i = 0; i < 15000 / delay; i++)
                     {
                         if (Rcon.IsServerRunning())
@@ -94,7 +95,8 @@ namespace Amethyst.Daemon
                     return 1;
                 }
 
-                File.Copy(settings.Datapack, Server.DatapackLocation + ".zip", true);
+				File.Copy(settings.Datapack, Server.DatapackLocation + ".zip", true);
+				//ZipFile.ExtractToDirectory(settings.Datapack, Server.DatapackLocation);
             }
             else
             {

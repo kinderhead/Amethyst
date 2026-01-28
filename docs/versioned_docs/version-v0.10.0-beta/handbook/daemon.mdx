@@ -31,6 +31,10 @@ The server is installed to the `%AppData%/Local/Amethyst` folder (or equivalent 
 Multiple data packs cannot be run at the same time.
 :::
 
+:::warning
+Due to how Windows deals with files accessed by another program, `amethyst run` will not keep the server alive on Windows for further runs. If `amethyst run` throws an error on repeated runs, stop the `Java` process with Task Manager and report the issue.
+:::
+
 ### Running
 
 When using `amethyst run` or `amethyst build --run`, any `/tellraw` commands will be logged to the console. By default, the command will never end. However it will end if it encounters a message that says "[exit]" which can be sent by calling `amethyst:exit` after your program has completed. For example:
@@ -45,12 +49,24 @@ When using `amethyst run` or `amethyst build --run`, any `/tellraw` commands wil
 
 `amethyst:exit` can be put anywhere in case your program uses multiple ticks.
 
+Amethyst will attempt to detect any errors generated during `/reload` and display them in the console. For now, errors will not cause `amethyst run` to stop.
+
 If an issue arises, try deleting the whole server folder and reinstalling.
 
 :::tip
 Since no players are on the server by default, no chunks and therefore no entities are loaded either. You can forceload chunks using a program or by calling `amethyst daemon -c "forceload ..."`. The default port used for the server is 25600 but this can be configured using `amethyst setup --eula`. Running `amethyst setup --eula` again will preserve your world, mods, `server.properties`, and more. Only the server jar and the default mods will be reset.
 :::
 
-:::warning
-Currently any errors loading your data pack are ignored and `amethyst run` assumes everything went smoothly. This will change in the future. For now, the server output can be viewed by running `amethyst daemon` in a different terminal. If an instance of the server is already running, then stop it with `amethyst daemon -c "stop"`.
-:::
+### Source Mapping
+
+By default, Amethyst adds source maps to compiled `.mcfunction`s using special comments. Source maps are used for `amethyst run` error checking.
+
+Source map comments take the form:
+
+```mcfunction
+#<file>: <line>:<start column>-<end column>
+# Or a multiline range
+#<file>: <start line>:<start column>-<end line>:<end column>
+```
+
+The source file path is relative to the current working directory of the `amethyst build` command when it was built. In the case of a location within the standard library, a special `@std/` prefix is used.
