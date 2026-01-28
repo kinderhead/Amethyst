@@ -200,3 +200,8 @@ jobs:
         with:
           name: amethyst-${{ matrix.type.name }}-installer
           path: 'Amethyst/Output/*.exe'
+
+  finished:
+    name: "Finished"
+    runs-on: "ubuntu"
+    needs: [test, windows-installer, linux-pkgs]
