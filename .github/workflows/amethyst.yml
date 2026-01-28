@@ -2,6 +2,8 @@ name: Amethyst
 
 on:
   push:
+    branches:
+      - '**'
     tags-ignore:
       - '**'
     paths:
