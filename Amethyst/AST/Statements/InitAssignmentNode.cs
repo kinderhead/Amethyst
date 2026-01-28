@@ -1,4 +1,6 @@
-﻿using Amethyst.Errors;
+﻿using Amethyst.AST.Expressions;
+using Amethyst.Errors;
+using Amethyst.IR.Types;
 using Geode;
 using Geode.IR;
 using Geode.IR.Instructions;
@@ -19,7 +21,15 @@ namespace Amethyst.AST.Statements
 
 			if (type is VarType && Expression is not null)
 			{
-				type = val.Type;
+				if (Expression is IPropertyLikeExpression)
+				{
+					type = ((ReferenceType)val.Type).Inner;
+					val = ctx.ImplicitCast(val, type);
+				}
+				else
+				{
+					type = val.Type;
+				}
 			}
 			else if (Expression is null)
 			{

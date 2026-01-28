@@ -2,9 +2,16 @@
 
 namespace example;
 
+struct test {
+    int x;
+}
+
 #load
 void main() {
-    print("yay");
+    test obj = { x: 5 };
+
+    var y = obj.x;
+    @/tellraw @a "$(y)"
 
     amethyst:exit();
 }
