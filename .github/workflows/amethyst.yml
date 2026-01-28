@@ -2,7 +2,8 @@ name: Amethyst
 
 on:
   push:
-    branches: ["master"]
+    tags-ignore:
+      - '**'
     paths:
       - Amethyst/**
       - Geode/**
