@@ -67,6 +67,9 @@ try:
         if (not thread.is_alive()):
             timed_out = False
             break
+        
+    if not timed_out:
+        exit(0)
 
     print("Timed out")
     process.kill()
