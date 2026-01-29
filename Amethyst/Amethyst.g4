@@ -19,7 +19,7 @@ functionTag
     ;
 
 functionModifier
-    : Inline
+    : Inline | Overload
     ;
 
 block
@@ -219,6 +219,7 @@ Implements: 'implements';
 Macro: 'macro';
 Inline: 'inline';
 Virtual: 'virtual';
+Overload: 'overload';
 
 Semi: ';';
 Colon: ':';
