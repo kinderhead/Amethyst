@@ -202,7 +202,11 @@ jobs:
           name: amethyst-${{ matrix.type.name }}-installer
           path: 'Amethyst/Output/*.exe'
 
-  finished:
-    name: "Finished"
+  success:
+    name: "Success"
     runs-on: "ubuntu"
     needs: [test, windows-installer, linux-pkgs]
+
+    steps:
+      - name: Nothing
+        run: echo hi
