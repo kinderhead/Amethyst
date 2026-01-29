@@ -19,4 +19,14 @@ namespace Geode.Errors
 	{
 
 	}
+
+	public class TargetSelectorInvalidSortError(string sort) : GeodeError($"Invalid sort option \"{sort}\"")
+	{
+
+	}
+
+	public class TargetSelectorInvalidGamemodeError(string sort) : GeodeError($"Invalid gamemode \"{sort}\"")
+	{
+
+	}
 }

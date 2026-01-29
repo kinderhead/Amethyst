@@ -4,9 +4,11 @@ namespace example;
 
 #load
 void main() {
-    if (@e[distance=..7]) {
+    if (@e[nbt={OnGround: true}, sort="random"]) {
         print("yay");
     }
+
+    print("womp");
 
     amethyst:exit();
 }

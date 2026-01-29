@@ -57,6 +57,16 @@ namespace Geode.Values
 					val = v.ToString() ?? "";
 				}
 
+				if (arg is "sort" && v is IConstantValue c2 && c2.Value is NBTString str3 && str3.Value is not "nearest" and not "furthest" and not "random" and not "arbituary")
+				{
+					throw new TargetSelectorInvalidSortError(str3.Value);
+				}
+
+				if (arg is "gamemode" && v is IConstantValue c3 && c3.Value is NBTString str4 && str4.Value is not "survival" and not "creative" and not "spectator" and not "adventure")
+				{
+					throw new TargetSelectorInvalidSortError(str4.Value);
+				}
+
 				if (negated)
                 {
                     target.Add(arg, '!' + val);
