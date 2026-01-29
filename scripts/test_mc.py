@@ -43,7 +43,10 @@ if os.name == "nt":
     amethyst += ".exe"
     
 version = sys.argv[1]
-arg = sys.argv[2]
+
+arg = ""
+if len(sys.argv) > 3:
+    arg = sys.argv[2]
 
 print(f"Setting up Minecraft version {version}")
 call(f"dist/{amethyst} setup --eula -v {version}")
