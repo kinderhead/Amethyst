@@ -2,7 +2,10 @@ name: Language Server
 
 on:
   push:
-    branches: [ "master" ]
+    branches:
+      - '**'
+    tags-ignore:
+      - '**'
     paths:
      - AmethystLanguageServer/**
      - .github/workflows/language_server.yml

@@ -13,6 +13,9 @@ on:
       - Datapack.Net.Tests/**
       - .github/workflows/amethyst.yml
       - scripts/test_mc.py
+  # pull_request:
+  #   branches:
+  #     - '**'
 
 jobs:
   build:
@@ -59,7 +62,7 @@ jobs:
           !**/tests/**/*.ame
 
   test:
-    name: "Test ${{ matrix.version }} on ${{ matrix.type.name }}"
+    name: "Test ${{ matrix.version }} on ${{ matrix.type.name }} with args \"${{ matrix.args }}\""
     runs-on: ${{ matrix.type.os }}
     needs: [build]
 
@@ -72,6 +75,7 @@ jobs:
           {os: macos-latest, name: "mac"}
         ]
         version: ["1.21.9", "1.21.10", "1.21.11"]
+        args: ["", "-d", "-O 1"]
       fail-fast: false
     
     steps:
@@ -103,7 +107,7 @@ jobs:
         with:
           timeout_minutes: 5
           max_attempts: 3
-          command: python -u scripts/test_mc.py ${{ matrix.version }}
+          command: python -u scripts/test_mc.py ${{ matrix.version }} "${{ matrix.args }}"
   
   linux-pkgs:
     name: "Build ${{ matrix.type.name }} packages"
@@ -198,3 +202,12 @@ jobs:
         with:
           name: amethyst-${{ matrix.type.name }}-installer
           path: 'Amethyst/Output/*.exe'
+
+  success:
+    name: "Success"
+    runs-on: ubuntu-latest
+    needs: [test, windows-installer, linux-pkgs]
+
+    steps:
+      - name: Nothing
+        run: echo hi

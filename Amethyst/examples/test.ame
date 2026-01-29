@@ -2,16 +2,11 @@
 
 namespace example;
 
-struct test {
-    int x;
-}
-
 #load
 void main() {
-    test obj = { x: 5 };
-
-    var y = obj.x;
-    @/tellraw @a "$(y)"
+    if (@e[distance=..7]) {
+        print("yay");
+    }
 
     amethyst:exit();
 }

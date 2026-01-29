@@ -43,7 +43,7 @@ public partial class AmethystParser : Parser {
 		RBrak=23, Eq=24, Plus=25, Minus=26, Star=27, Slash=28, Mod=29, Not=30, 
 		PlusEq=31, MinusEq=32, StarEq=33, SlashEq=34, Hash=35, EqEq=36, Neq=37, 
 		Gt=38, Gte=39, Lt=40, Lte=41, And=42, AndAnd=43, OrOr=44, PlusPlus=45, 
-		MinusMinus=46, Dot=47, RangeOp=48, WeakRef=49, RawIdentifier=50, String=51, 
+		MinusMinus=46, RangeOp=47, Dot=48, WeakRef=49, RawIdentifier=50, String=51, 
 		Command=52, TargetSelectorVariable=53, Number=54, Whitespace=55, Comment=56, 
 		LineComment=57;
 	public const int
@@ -80,7 +80,7 @@ public partial class AmethystParser : Parser {
 		"'virtual'", "';'", "':'", "','", "'('", "')'", "'['", "']'", "'{'", "'}'", 
 		"'='", "'+'", "'-'", "'*'", "'/'", "'%'", "'!'", "'+='", "'-='", "'*='", 
 		"'/='", "'#'", "'=='", "'!='", "'>'", "'>='", "'<'", "'<='", "'&'", "'&&'", 
-		"'||'", "'++'", "'--'", "'.'", "'..'", "'^'"
+		"'||'", "'++'", "'--'", "'..'", "'.'", "'^'"
 	};
 	private static readonly string[] _SymbolicNames = {
 		null, "Namespace", "If", "As", "At", "Else", "For", "Return", "Break", 
@@ -88,7 +88,7 @@ public partial class AmethystParser : Parser {
 		"Colon", "Comma", "LParen", "RParen", "LSquareBrak", "RSquareBrak", "LBrak", 
 		"RBrak", "Eq", "Plus", "Minus", "Star", "Slash", "Mod", "Not", "PlusEq", 
 		"MinusEq", "StarEq", "SlashEq", "Hash", "EqEq", "Neq", "Gt", "Gte", "Lt", 
-		"Lte", "And", "AndAnd", "OrOr", "PlusPlus", "MinusMinus", "Dot", "RangeOp", 
+		"Lte", "And", "AndAnd", "OrOr", "PlusPlus", "MinusMinus", "RangeOp", "Dot", 
 		"WeakRef", "RawIdentifier", "String", "Command", "TargetSelectorVariable", 
 		"Number", "Whitespace", "Comment", "LineComment"
 	};
@@ -493,7 +493,7 @@ public partial class AmethystParser : Parser {
 			State = 132;
 			ErrorHandler.Sync(this);
 			_la = TokenStream.LA(1);
-			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & 35857274485605340L) != 0)) {
+			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & 35716536997250012L) != 0)) {
 				{
 				{
 				State = 129;
@@ -1409,7 +1409,7 @@ public partial class AmethystParser : Parser {
 			State = 251;
 			ErrorHandler.Sync(this);
 			_la = TokenStream.LA(1);
-			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & 31353674858233856L) != 0)) {
+			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & 31212937369878528L) != 0)) {
 				{
 				State = 250;
 				expression();
@@ -2166,7 +2166,7 @@ public partial class AmethystParser : Parser {
 			State = 324;
 			ErrorHandler.Sync(this);
 			_la = TokenStream.LA(1);
-			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & 140737489666048L) != 0)) {
+			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & 281474978021376L) != 0)) {
 				{
 				State = 322;
 				ErrorHandler.Sync(this);
@@ -2530,7 +2530,7 @@ public partial class AmethystParser : Parser {
 			State = 366;
 			ErrorHandler.Sync(this);
 			_la = TokenStream.LA(1);
-			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & 31353674858233856L) != 0)) {
+			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & 31212937369878528L) != 0)) {
 				{
 				State = 358;
 				expression();
@@ -3056,7 +3056,7 @@ public partial class AmethystParser : Parser {
 			State = 441;
 			ErrorHandler.Sync(this);
 			_la = TokenStream.LA(1);
-			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & 31353674858233856L) != 0)) {
+			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & 31212937369878528L) != 0)) {
 				{
 				State = 433;
 				expression();
@@ -3386,10 +3386,10 @@ public partial class AmethystParser : Parser {
 		323,3,82,41,0,320,323,3,58,29,0,321,323,3,60,30,0,322,319,1,0,0,0,322,
 		320,1,0,0,0,322,321,1,0,0,0,323,326,1,0,0,0,324,322,1,0,0,0,324,325,1,
 		0,0,0,325,57,1,0,0,0,326,324,1,0,0,0,327,328,5,20,0,0,328,329,3,38,19,
-		0,329,330,5,21,0,0,330,59,1,0,0,0,331,332,5,47,0,0,332,333,5,50,0,0,333,
-		61,1,0,0,0,334,339,3,64,32,0,335,337,5,48,0,0,336,338,3,64,32,0,337,336,
+		0,329,330,5,21,0,0,330,59,1,0,0,0,331,332,5,48,0,0,332,333,5,50,0,0,333,
+		61,1,0,0,0,334,339,3,64,32,0,335,337,5,47,0,0,336,338,3,64,32,0,337,336,
 		1,0,0,0,337,338,1,0,0,0,338,340,1,0,0,0,339,335,1,0,0,0,339,340,1,0,0,
-		0,340,344,1,0,0,0,341,342,5,48,0,0,342,344,3,64,32,0,343,334,1,0,0,0,343,
+		0,340,344,1,0,0,0,341,342,5,47,0,0,342,344,3,64,32,0,343,334,1,0,0,0,343,
 		341,1,0,0,0,344,63,1,0,0,0,345,356,3,86,43,0,346,356,5,51,0,0,347,356,
 		5,54,0,0,348,356,3,66,33,0,349,356,3,68,34,0,350,356,3,72,36,0,351,352,
 		5,18,0,0,352,353,3,38,19,0,353,354,5,19,0,0,354,356,1,0,0,0,355,345,1,

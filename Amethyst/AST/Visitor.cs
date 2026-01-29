@@ -402,7 +402,6 @@ namespace Amethyst.AST
 				{
 					node = new UnaryExpression(Loc(context), UnaryOperation.Dereference, node);
 				}
-				// No check for other cases because parser errors might hit it and we don't want to stop the error checker
 			}
 
 			return node;
@@ -442,7 +441,14 @@ namespace Amethyst.AST
 				return Visit(context.children[0]);
 			}
 
-			throw new NotImplementedException();
+			if (context.children[0].GetText() == "..")
+			{
+				return new RangeExpression(Loc(context), null, (Expression)Visit(context.primaryExpression()[0]));
+			}
+			else
+			{
+				return new RangeExpression(Loc(context), (Expression)Visit(context.primaryExpression()[0]), context.primaryExpression().Length == 1 ? null : (Expression)Visit(context.primaryExpression()[1]));
+			}
 		}
 
 
