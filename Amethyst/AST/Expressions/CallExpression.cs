@@ -45,6 +45,11 @@ namespace Amethyst.AST.Expressions
 			{
 				return ctx.Call(f, args);
 			}
+			// else if (func.Value is OverloadedFunctionValue overload)
+			// {
+			// 	if (!overload.TryGet())
+			// 	return ctx.Call()
+			// }
 			else
 			{
 				ctx.Add(new PushFuncArgsInsn(type, ctx.PrepArgs(type, args)));

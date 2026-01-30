@@ -66,7 +66,14 @@ namespace Amethyst.AST
 
 		public virtual void Process(Compiler ctx, RootNode root)
 		{
-			ctx.IR.AddSymbol(new(ID, Location, new FunctionValue(ID, GetFunctionType(ctx, true))));
+			Value func = new FunctionValue(ID, GetFunctionType(ctx, true), Location);
+			
+			if (Modifiers.HasFlag(FunctionModifiers.Overload))
+			{
+				func = new OverloadedFunctionValue(ID).Add((FunctionValue)func);
+			}
+
+			ctx.IR.AddSymbol(new(ID, Location, func));
 			root.Functions.Add(this);
 		}
 	}

@@ -69,6 +69,10 @@ namespace Amethyst.AST
 				{
 					mod |= FunctionModifiers.Inline;
 				}
+				else if (i.GetText() == "overload")
+				{
+					mod |= FunctionModifiers.Overload;
+				}
 			}
 
 			return new FunctionNode(Loc(context), [.. context.functionTag().Select(i =>

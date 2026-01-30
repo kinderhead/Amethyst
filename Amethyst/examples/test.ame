@@ -2,13 +2,13 @@
 
 namespace example;
 
+overload void test(int x) {
+    print(x);
+}
+
 #load
 void main() {
-    if (@e[nbt={OnGround: true}, sort="random"]) {
-        print("yay");
-    }
-
-    print("womp");
+    
 
     amethyst:exit();
 }

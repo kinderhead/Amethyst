@@ -1,6 +1,7 @@
 ﻿using Datapack.Net.Data;
 using Datapack.Net.Utils;
 using Geode.Values;
+using System.Collections.Immutable;
 
 namespace Geode.Types
 {
@@ -16,7 +17,8 @@ namespace Geode.Types
 	{
 		None = 0,
 		Inline = 1,
-		Virtual = 2
+		Virtual = 2,
+		Overload = 4
 	}
 
 	public readonly record struct Parameter(ParameterModifiers Modifiers, TypeSpecifier Type, string Name);
@@ -25,10 +27,11 @@ namespace Geode.Types
 	{
 		public readonly FunctionModifiers Modifiers = modifiers;
 		public readonly TypeSpecifier ReturnType = returnType;
-		public readonly Parameter[] Parameters = [.. parameters];
+		public readonly ImmutableArray<Parameter> Parameters = [.. parameters];
 
 		public readonly bool IsMacroFunction = parameters.Any(i => i.Modifiers.HasFlag(ParameterModifiers.Macro));
-		public readonly MacroValue[] MacroParameters = [.. parameters.Where(i => i.Modifiers.HasFlag(ParameterModifiers.Macro)).Select(i => new MacroValue(i.Name, i.Type))];
+		public readonly ImmutableArray<MacroValue> MacroParameters = [.. parameters.Where(i => i.Modifiers.HasFlag(ParameterModifiers.Macro)).Select(i => new MacroValue(i.Name, i.Type))];
+		public readonly TypeArray ParameterTypes = new([.. parameters.Select(i => i.Type)]);
 
 		public override IEnumerable<TypeSpecifier> Subtypes => [ReturnType, .. Parameters.Select(i => i.Type)];
 		public override NamespacedID ID => "amethyst:func";

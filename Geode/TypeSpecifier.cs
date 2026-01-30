@@ -5,6 +5,7 @@ using Geode.IR;
 using Geode.IR.Instructions;
 using Geode.Types;
 using Geode.Values;
+using System.Collections.Immutable;
 
 namespace Geode
 {
@@ -127,5 +128,24 @@ namespace Geode
 
 		public static bool operator ==(TypeSpecifier a, TypeSpecifier b) => a.Equals(b);
 		public static bool operator !=(TypeSpecifier a, TypeSpecifier b) => !a.Equals(b);
+	}
+
+	public class TypeArray(IEnumerable<TypeSpecifier> types)
+	{
+		public readonly ImmutableArray<TypeSpecifier> Types = [.. types];
+
+		public override bool Equals(object? obj) => obj is TypeArray other && Types.SequenceEqual(other.Types);
+
+		public override int GetHashCode()
+		{
+			var hash = new HashCode();
+
+			foreach (var i in Types)
+			{
+				hash.Add(i);
+			}
+
+			return hash.ToHashCode();
+		}
 	}
 }
