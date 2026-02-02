@@ -5,8 +5,12 @@ struct vec {
     int y;
     int z;
 
-    int sum() {
+    overload int sum() {
         return this.x + this.y + this.z;
+    }
+
+    overload int sum(int mod) {
+        return this.x + this.y + this.z + mod;
     }
 }
 
@@ -70,6 +74,7 @@ void test_normal() {
     assert_eq(obj.y, 7);
     assert_eq(obj.z, 0);
     assert_eq(obj.sum(), 107);
+    assert_eq(obj.sum(3), 110);
 
     complete();
 }

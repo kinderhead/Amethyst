@@ -6,6 +6,8 @@ using Geode.IR.Instructions;
 using Geode.Types;
 using Geode.Values;
 using System.Collections.Immutable;
+using System.Text;
+using System.Text.RegularExpressions;
 
 namespace Geode
 {
@@ -133,6 +135,10 @@ namespace Geode
 	public class TypeArray(IEnumerable<TypeSpecifier> types)
 	{
 		public readonly ImmutableArray<TypeSpecifier> Types = [.. types];
+		public int Length => Types.Length;
+		public TypeSpecifier this[int i] => Types[i];
+
+		public NamespacedID Mangle(NamespacedID id) => $"{id.GetContainingFolder()}:/__{id.GetFile()}-{new Regex(@"[^a-zA-Z0-9\-_]").Replace(ToString(), "_")}";
 
 		public override bool Equals(object? obj) => obj is TypeArray other && Types.SequenceEqual(other.Types);
 
@@ -147,5 +153,25 @@ namespace Geode
 
 			return hash.ToHashCode();
 		}
+
+		public override string ToString()
+		{
+			var sb = new StringBuilder();
+
+			foreach (var i in Types)
+			{
+				sb.Append($"{i}, ");
+			}
+
+			sb.Length -= 2;
+
+			return sb.ToString();
+		}
+
+
+		public static bool operator==(TypeArray a, TypeArray b) => a.Equals(b);
+		public static bool operator!=(TypeArray a, TypeArray b) => !a.Equals(b);
+
+		public static TypeArray From(IEnumerable<IValueLike> args) => new(args.Select(i => i.Type));
 	}
 }

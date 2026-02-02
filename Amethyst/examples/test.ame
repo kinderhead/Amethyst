@@ -2,13 +2,21 @@
 
 namespace example;
 
-overload void test(int x) {
-    print(x);
+struct obj {
+    overload void test(int x) {
+        print(x);
+    }
+
+    overload void test(string str) {
+        print(str);
+    }
 }
 
 #load
 void main() {
-    
+    obj x;
+    x.test(5);
+    x.test("womp");
 
     amethyst:exit();
 }

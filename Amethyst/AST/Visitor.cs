@@ -144,6 +144,10 @@ namespace Amethyst.AST
 				{
 					mod |= FunctionModifiers.Inline;
 				}
+				else if (i == "overload")
+				{
+					mod |= FunctionModifiers.Overload;
+				}
 			}
 
 			var id = IdentifierToID(context.RawIdentifier().GetText());

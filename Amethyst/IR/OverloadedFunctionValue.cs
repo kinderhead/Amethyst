@@ -1,13 +1,17 @@
+using System;
+using Amethyst.IR.Types;
 using Datapack.Net.Data;
 using Datapack.Net.Utils;
+using Geode;
 using Geode.Errors;
-using Geode.Types;
-using System;
+using Geode.Values;
 
-namespace Geode.Values
+namespace Amethyst.IR
 {
     public class OverloadedFunctionValue(NamespacedID id) : LiteralValue(new NBTString(id.ToString()))
     {
+        public readonly NamespacedID ID = id;
+
         private readonly Dictionary<TypeArray, (LocationRange loc, NamespacedID id)> funcs = [];
 
         public OverloadedFunctionValue Add(FunctionValue val)
@@ -27,9 +31,23 @@ namespace Geode.Values
         {
             List<(LocationRange loc, NamespacedID id)> ret = [];
 
-            foreach (var i in funcs)
+            foreach (var (k, v) in funcs)
             {
-                
+                if (k.Length == args.Length)
+                {
+                    for (int i = 0; i < args.Length; i++)
+                    {
+                        // TODO: Make this check implicit casting compatability somehow instead
+                        if (!args[i].Implements(k[i]) && !(args[i] is ReferenceType ptr && ptr.Inner.Implements(k[i])) && !(k[i] is ReferenceType ptr2 && args[i].Implements(ptr2.Inner)))
+                        {
+                            goto end;
+                        }
+                    }
+
+                    ret.Add(v);
+                }
+
+            end:;
             }
 
             return [.. ret];

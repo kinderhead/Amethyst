@@ -1,5 +1,6 @@
 ﻿using Amethyst.AST.Statements;
 using Amethyst.Errors;
+using Amethyst.IR;
 using Datapack.Net.Utils;
 using Geode;
 using Geode.IR;
@@ -13,7 +14,7 @@ namespace Amethyst.AST
 		public readonly List<NamespacedID> Tags = tags;
 		public readonly FunctionModifiers Modifiers = modifiers;
 		public readonly AbstractTypeSpecifier ReturnType = ret;
-		public readonly NamespacedID ID = id;
+		public NamespacedID ID { get; private set; } = id;
 		public readonly List<AbstractParameter> Parameters = parameters;
 		public readonly BlockNode Body = body;
 
@@ -34,6 +35,7 @@ namespace Amethyst.AST
 
 			var funcType = GetFunctionType(compiler);
 
+			// TODO: make this a proper regex test
 			if (ID.Path.Any(char.IsUpper))
 			{
 				throw new InvalidNameError(ID.ToString());
@@ -66,14 +68,35 @@ namespace Amethyst.AST
 
 		public virtual void Process(Compiler ctx, RootNode root)
 		{
-			Value func = new FunctionValue(ID, GetFunctionType(ctx, true), Location);
+			var realID = ID;
+			var funcType = GetFunctionType(ctx, true);
+
+			if (Modifiers.HasFlag(FunctionModifiers.Overload))
+			{
+				realID = funcType.ParameterTypes.Mangle(ID);
+			}
+
+			var func = new FunctionValue(realID, funcType, Location);
 			
 			if (Modifiers.HasFlag(FunctionModifiers.Overload))
 			{
-				func = new OverloadedFunctionValue(ID).Add((FunctionValue)func);
+				if (ctx.IR.GetGlobal(ID) is OverloadedFunctionValue overload)
+				{
+					overload.Add(func);
+				}
+				else
+				{
+					ctx.IR.AddSymbol(new(ID, Location, new OverloadedFunctionValue(ID).Add(func)));
+				}
+
+				ctx.IR.AddSymbol(new(realID, Location, func));
+				ID = realID;
+			}
+			else
+			{
+				ctx.IR.AddSymbol(new(ID, Location, func));
 			}
 
-			ctx.IR.AddSymbol(new(ID, Location, func));
 			root.Functions.Add(this);
 		}
 	}
