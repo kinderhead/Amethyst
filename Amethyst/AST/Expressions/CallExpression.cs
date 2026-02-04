@@ -53,7 +53,15 @@ namespace Amethyst.AST.Expressions
 					throw new AmbiguousOverloadError(overload.ID, types);
 				}
 
-				func = new(ctx.GetVariable(options[0].id.ToString()));
+				if (Function is PropertyExpression prop2)
+				{
+					// args[0] here is the this parameter
+					func = ReferenceType.TryDeref(ctx.GetProperty(args[0], options[0].id.GetFile()), ctx);
+				}
+				else
+				{
+					func = new(ctx.GetVariable(options[0].id.ToString()));
+				}
 			}
 
 			if (func.Type is not FunctionType type)

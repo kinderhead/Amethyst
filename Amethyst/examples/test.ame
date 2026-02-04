@@ -3,18 +3,29 @@
 namespace example;
 
 struct obj {
-    overload void test(int x) {
+    virtual overload void test(int x) {
         print(x);
     }
 
-    overload void test(string str) {
+    virtual overload void test(string str) {
         print(str);
+    }
+}
+
+struct obj2 implements obj {
+    virtual overload void test(int x) {
+        print(x, 2);
+    }
+
+    virtual overload void test(string str) {
+        print(str, "hi");
     }
 }
 
 #load
 void main() {
-    obj x;
+    obj2 x2;
+    obj x = x2;
     x.test(5);
     x.test("womp");
 

@@ -32,6 +32,14 @@ struct vec2 {
     virtual int get-x() {
         return this.x;
     }
+
+    overload virtual int get-x2() {
+        return this.x;
+    }
+
+    overload virtual int get-x2(int y) {
+        return this.x + y;
+    }
 }
 
 struct subvec implements vec2 {
@@ -39,6 +47,14 @@ struct subvec implements vec2 {
 
     virtual int get-x() {
         return this.x * 2;
+    }
+
+    overload virtual int get-x2() {
+        return this.x + 1;
+    }
+
+    overload virtual int get-x2(int y) {
+        return this.x + y + 1;
     }
 }
 
@@ -90,6 +106,8 @@ void test_constructor() {
     assert_eq(obj.z, 4);
     assert_eq(obj.sum(), 13);
     assert_eq(obj.get-x(), 3);
+    assert_eq(obj.get-x2(), 3);
+    assert_eq(obj.get-x2(3), 6);
 
     complete();
 }
@@ -105,6 +123,8 @@ void test_inheritance() {
     assert_eq(obj.z, 6);
     assert_eq(obj.sum(), 12);
     assert_eq(obj.get-x(), 4);
+    assert_eq(obj.get-x2(), 3);
+    assert_eq(obj.get-x2(3), 6);
 
     complete();
 }

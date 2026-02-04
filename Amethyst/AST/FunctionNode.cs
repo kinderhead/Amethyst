@@ -73,7 +73,7 @@ namespace Amethyst.AST
 
 			if (Modifiers.HasFlag(FunctionModifiers.Overload))
 			{
-				realID = funcType.ParameterTypes.Mangle(ID);
+				realID = Mangle(funcType.ParameterTypes);
 			}
 
 			var func = new FunctionValue(realID, funcType, Location);
@@ -99,6 +99,8 @@ namespace Amethyst.AST
 
 			root.Functions.Add(this);
 		}
+
+		protected virtual NamespacedID Mangle(TypeArray args) => args.Mangle(ID);
 	}
 
 	public readonly record struct AbstractParameter(ParameterModifiers Modifiers, AbstractTypeSpecifier Type, string Name);

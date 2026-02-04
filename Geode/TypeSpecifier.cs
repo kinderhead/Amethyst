@@ -163,7 +163,10 @@ namespace Geode
 				sb.Append($"{i}, ");
 			}
 
-			sb.Length -= 2;
+			if (Length > 1)
+			{
+				sb.Length -= 2;
+			}
 
 			return sb.ToString();
 		}
