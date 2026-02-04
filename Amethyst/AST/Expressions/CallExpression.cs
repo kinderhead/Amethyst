@@ -1,4 +1,6 @@
-﻿using Amethyst.IR.Instructions;
+﻿using Amethyst.Errors;
+using Amethyst.IR;
+using Amethyst.IR.Instructions;
 using Amethyst.IR.Types;
 using Geode;
 using Geode.Errors;
@@ -18,11 +20,6 @@ namespace Amethyst.AST.Expressions
 		{
 			var func = ReferenceType.TryDeref(Function.Execute(ctx, null), ctx);
 
-			if (func.Type is not FunctionType type)
-			{
-				throw new InvalidTypeError(func.Type.ToString(), "function");
-			}
-
 			Expression[] newArgs;
 
 			if (Function is PropertyExpression prop)
@@ -39,7 +36,40 @@ namespace Amethyst.AST.Expressions
 				return i.Execute(ctx, [.. newArgs.Select(i => i.Execute(ctx, null))]);
 			}
 
-			ValueRef[] args = [.. newArgs.Zip(type.Parameters).Select(i => i.First.Execute(ctx, i.Second.Type))];
+			ValueRef[]? args = null;
+
+			if (func.Value is OverloadedFunctionValue overload)
+			{
+				args = [.. newArgs.Select(i => i.Execute(ctx, null))];
+				var types = TypeArray.From(args);
+				var options = overload.Get(types);
+
+				if (options.Length == 0)
+				{
+					throw new NoOverloadError(overload.ID, types);
+				}
+				else if (options.Length > 1)
+				{
+					throw new AmbiguousOverloadError(overload.ID, types);
+				}
+
+				if (Function is PropertyExpression prop2)
+				{
+					// args[0] here is the this parameter
+					func = ReferenceType.TryDeref(ctx.GetProperty(args[0], options[0].id.GetFile()), ctx);
+				}
+				else
+				{
+					func = new(ctx.GetVariable(options[0].id.ToString()));
+				}
+			}
+
+			if (func.Type is not FunctionType type)
+			{
+				throw new InvalidTypeError(func.Type.ToString(), "function");
+			}
+
+			args ??= [.. newArgs.Zip(type.Parameters).Select(i => i.First.Execute(ctx, i.Second.Type))];
 
 			if (func.Value is FunctionValue f)
 			{

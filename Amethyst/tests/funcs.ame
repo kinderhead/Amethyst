@@ -35,6 +35,16 @@ void test_macro_propagation() {
     complete();
 }
 
+#test
+void test_overload() {
+    start("overload");
+    
+    assert_eq(overload_test(5), 5);
+    assert_eq(overload_test("hi"), 7);
+
+    complete();
+}
+
 int dyn_func1(int x) {
     return x + 2;
 }
@@ -56,4 +66,12 @@ int propagate(macro int x) {
     }
 
     return 0; // I'll have to make it smarter at some point
+}
+
+overload int overload_test(int x) {
+    return x;
+}
+
+overload int overload_test(string str) {
+    return 7;
 }

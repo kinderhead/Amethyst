@@ -12,14 +12,14 @@ namespace Datapack.Net.Utils
 
 		public NamespacedID(string id)
 		{
-			if (id.Count(c => c == ':') != 1)
+			if (!id.Any(c => c == ':'))
 			{
 				throw new FormatException($"Invalid namespaced id: {id}");
 			}
 
 			var parts = id.Split(":");
 			Namespace = parts[0];
-			Path = DuplicateSlashRegex().Replace(parts[1], "/");
+			Path = DuplicateSlashRegex().Replace(string.Join("", parts[1..]), "/").Trim('/');
 		}
 
 		public override string ToString() => $"{Namespace}:{Path}";

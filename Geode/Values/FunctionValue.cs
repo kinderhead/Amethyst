@@ -7,15 +7,16 @@ using Geode.Types;
 
 namespace Geode.Values
 {
-	public class FunctionValue(NamespacedID id, FunctionType type) : LiteralValue(new NBTString(id.ToString())), IFunctionLike
+	public class FunctionValue(NamespacedID id, FunctionType type, LocationRange loc) : LiteralValue(new NBTString(id.ToString())), IFunctionLike
 	{
 		public readonly NamespacedID ID = id;
+		public readonly LocationRange Location = loc;
 		public override TypeSpecifier Type => type;
 		public override string ToString() => ID.ToString();
 		public FunctionType FuncType => (FunctionType)Type;
 
 		public virtual void Call(RenderContext ctx, IValueLike[] args) => Call(ctx, ID, FuncType, args);
-		public virtual IFunctionLike CloneWithType(FunctionType type) => new FunctionValue(ID, type);
+		public virtual IFunctionLike CloneWithType(FunctionType type) => new FunctionValue(ID, type, Location);
 
 		public static void Call(RenderContext ctx, NamespacedID id, FunctionType funcType, IValueLike[] args)
 		{

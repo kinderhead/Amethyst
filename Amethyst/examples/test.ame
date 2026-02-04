@@ -2,13 +2,30 @@
 
 namespace example;
 
-#load
-void main() {
-    if (@e[nbt={OnGround: true}, sort="random"]) {
-        print("yay");
+struct obj {
+    overload obj(int x) {
+        print(x);
     }
 
-    print("womp");
+    overload obj(string x) {
+        print(x);
+    }
+}
+
+struct obj2 implements obj {
+    overload obj2(int x) : obj(x + 2) {
+        
+    }
+
+    overload obj2(string x) : obj("hi") {
+        print(x);
+    }
+}
+
+#load
+void main() {
+    var a = obj2(5);
+    var b = obj2("womp");
 
     amethyst:exit();
 }

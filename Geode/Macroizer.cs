@@ -89,7 +89,7 @@ namespace Geode
 
 			if (args.Length == 0)
 			{
-				propagated = ctx.Func.Decl.FuncType.MacroParameters;
+				propagated = [.. ctx.Func.Decl.FuncType.MacroParameters];
 			}
 			else
 			{

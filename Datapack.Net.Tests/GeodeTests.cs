@@ -11,7 +11,7 @@ namespace Datapack.Net.Tests
 {
 	public class GeodeTests : Mem2RegPass
 	{
-		private static FunctionContext GetCtx(TypeSpecifier returnType) => new(new Compiler(new() { Inputs = [], Output = "" }), new("test:main", new(FunctionModifiers.None, returnType, [])), [], LocationRange.None);
+		private static FunctionContext GetCtx(TypeSpecifier returnType) => new(new Compiler(new() { Inputs = [], Output = "" }), new("test:main", new(FunctionModifiers.None, returnType, []), LocationRange.None), [], LocationRange.None);
 
 		// Uses the example graph from https://longfangsong.github.io/en/mem2reg-made-simple/. Block 4 may or may not be wrong since the article didn't mention its dominance frontier set.
 		private static FunctionContext GetMem2RegCtx(out Variable a, out Block b1, out Block b2, out Block b3, out Block b4, out Block b5, out Block b6, out Block b7, out Block b8)

@@ -12,14 +12,14 @@
 			"include": "#types"
 		},
 		{
-            "include": "#function-calls"
-        },
+      "include": "#function-calls"
+    },
 		{
 			"include": "#identifiers"
 		},
-        {
-            "include": "#tags"
-        },
+    {
+      "include": "#tags"
+    },
 		{
 			"include": "#strings"
 		},
@@ -64,7 +64,7 @@
 				},
 				{
 					"name": "storage.modifier.amethyst",
-					"match": "\\b(macro|virtual|inline|this|true|false|var|void|bool|byte|int|short|long|float|double|nbt|list|string|unsafe_string|int_range|float_range)\\b"
+					"match": "\\b(macro|virtual|inline|overload|this|true|false|var|void|bool|byte|int|short|long|float|double|nbt|list|string|unsafe_string|int_range|float_range)\\b"
 				},
         {
           "name": "support.class.amethyst",

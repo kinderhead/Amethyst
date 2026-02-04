@@ -1,7 +1,9 @@
 using Datapack.Net.Data;
 using Datapack.Net.Function.Commands;
 using Geode;
+using Geode.Errors;
 using Geode.IR.Instructions;
+using Geode.Types;
 using Geode.Values;
 
 namespace Amethyst.IR.Instructions
@@ -15,6 +17,11 @@ namespace Amethyst.IR.Instructions
 		public override void Render(RenderContext ctx)
 		{
 			var func = Arg<ValueRef>(0).Expect();
+
+			if (func.Type is not FunctionType)
+			{
+				throw new InvalidTypeError(func.Type.ToString(), "function");
+			}
 
 			new StackValue(-1, ctx.Builder.RuntimeID, "func", func.Type).Store(func, ctx);
 

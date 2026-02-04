@@ -5,8 +5,12 @@ struct vec {
     int y;
     int z;
 
-    int sum() {
+    overload int sum() {
         return this.x + this.y + this.z;
+    }
+
+    overload int sum(int mod) {
+        return this.x + this.y + this.z + mod;
     }
 }
 
@@ -28,6 +32,14 @@ struct vec2 {
     virtual int get-x() {
         return this.x;
     }
+
+    overload virtual int get-x2() {
+        return this.x;
+    }
+
+    overload virtual int get-x2(int y) {
+        return this.x + y;
+    }
 }
 
 struct subvec implements vec2 {
@@ -35,6 +47,14 @@ struct subvec implements vec2 {
 
     virtual int get-x() {
         return this.x * 2;
+    }
+
+    overload virtual int get-x2() {
+        return this.x + 1;
+    }
+
+    overload virtual int get-x2(int y) {
+        return this.x + y + 1;
     }
 }
 
@@ -70,6 +90,7 @@ void test_normal() {
     assert_eq(obj.y, 7);
     assert_eq(obj.z, 0);
     assert_eq(obj.sum(), 107);
+    assert_eq(obj.sum(3), 110);
 
     complete();
 }
@@ -85,6 +106,8 @@ void test_constructor() {
     assert_eq(obj.z, 4);
     assert_eq(obj.sum(), 13);
     assert_eq(obj.get-x(), 3);
+    assert_eq(obj.get-x2(), 3);
+    assert_eq(obj.get-x2(3), 6);
 
     complete();
 }
@@ -100,6 +123,8 @@ void test_inheritance() {
     assert_eq(obj.z, 6);
     assert_eq(obj.sum(), 12);
     assert_eq(obj.get-x(), 4);
+    assert_eq(obj.get-x2(), 3);
+    assert_eq(obj.get-x2(3), 6);
 
     complete();
 }

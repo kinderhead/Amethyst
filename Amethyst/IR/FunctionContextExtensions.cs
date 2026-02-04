@@ -28,7 +28,9 @@ namespace Amethyst.IR
 			public ValueRef? GetMethodOrNull(ValueRef val, string name, TypeSpecifier? effectiveMethodType = null)
 			{
 				effectiveMethodType ??= val.Type is ReferenceType r1 ? r1.Inner : val.Type;
-				if (ctx.GetGlobal($"{effectiveMethodType.ID}/{name}") is IFunctionLike func && func.FuncType.Parameters.Length >= 1)
+				var global = ctx.GetGlobal($"{effectiveMethodType.ID}/{name}");
+
+				if (global is IFunctionLike func && func.FuncType.Parameters.Length >= 1)
 				{
 					func = func.CloneWithType(func.FuncType.ApplyGenericWithParams([new ReferenceType(effectiveMethodType)]));
 					var firstArgType = func.FuncType.Parameters[0].Type;
@@ -36,6 +38,10 @@ namespace Amethyst.IR
 					{
 						return new(func);
 					}
+				}
+				else if (global is OverloadedFunctionValue)
+				{
+					return new(global);
 				}
 
 				if (effectiveMethodType.BaseClass != effectiveMethodType)
