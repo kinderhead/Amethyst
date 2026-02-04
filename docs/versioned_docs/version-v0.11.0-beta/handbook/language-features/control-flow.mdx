@@ -58,11 +58,14 @@ If an `execute` statement forks, all `return`s inside will terminate future fork
 
 ## For Loops
 
-Amethyst supports traditional C-style `for` loops:
+Amethyst supports traditional C-style `for` loops as well as `continue` and `break`:
 
 <Highlight code={`\
     for (int i = 0; i < 10; ++i) {
         print("Loop ", i + 1);
+        if (some_condition()) {
+            break;
+        }
     }
 `}/>
 
