@@ -3,31 +3,29 @@
 namespace example;
 
 struct obj {
-    virtual overload void test(int x) {
+    overload obj(int x) {
         print(x);
     }
 
-    virtual overload void test(string str) {
-        print(str);
+    overload obj(string x) {
+        print(x);
     }
 }
 
 struct obj2 implements obj {
-    virtual overload void test(int x) {
-        print(x, 2);
+    overload obj2(int x) : obj(x + 2) {
+        
     }
 
-    virtual overload void test(string str) {
-        print(str, "hi");
+    overload obj2(string x) : obj("hi") {
+        print(x);
     }
 }
 
 #load
 void main() {
-    obj2 x2;
-    obj x = x2;
-    x.test(5);
-    x.test("womp");
+    var a = obj2(5);
+    var b = obj2("womp");
 
     amethyst:exit();
 }

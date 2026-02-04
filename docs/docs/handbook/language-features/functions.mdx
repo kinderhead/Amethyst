@@ -83,3 +83,28 @@ Example:
 
 Amethyst compiles functions into `.mcfunction` files of the same name. The argument calling convention is to place named arguments into a special place in the current stack frame. In most cases, this will be `amethyst:runtime stack[-1].args`. The called function will push a new frame and access arguments using `amethyst:runtime stack[-2].args`. Functions without arguments (or with only macro arguments) can be easily called in-game using `/function`.
 
+## Function Overloading
+
+:::warning
+Overloading behavior is subject to change. See this [poll](https://github.com/kinderhead/Amethyst/discussions/33) for more information. The poll will stay open until either a consensus is made or 1.0 is released.
+:::
+
+Functions, [methods](./structs.mdx#methods), and [constructors](./structs.mdx#constructors) can be overloaded. Currently, only functions with the `overload` modifier can be overloaded due to name mangling concerns. See the above notice for a poll to vote on the behavior.
+
+<Highlight code={`\
+    overload void func() {
+        print("Hi");
+    }
+
+    overload int func(int x) {
+        print("Hi ", x);
+        return x * 2;
+    }
+
+    func();
+    int ret = func(10);
+`}/>
+
+Functions marked with `overload` will have their names mangled. Mangled functions have their arguments included in their `.mcfunction` names along with some other filler characters.
+
+It is possible to call specific overload by using its mangled name, but this is not recommended. Additionally, overloaded functions cannot be used in dynamic function pointers.

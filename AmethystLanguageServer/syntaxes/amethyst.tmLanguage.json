@@ -12,14 +12,14 @@
 			"include": "#types"
 		},
 		{
-            "include": "#function-calls"
-        },
+      "include": "#function-calls"
+    },
 		{
 			"include": "#identifiers"
 		},
-        {
-            "include": "#tags"
-        },
+    {
+      "include": "#tags"
+    },
 		{
 			"include": "#strings"
 		},
