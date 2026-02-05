@@ -1,4 +1,5 @@
-﻿using Datapack.Net.Data;
+﻿using Amethyst.IR.Instructions;
+using Datapack.Net.Data;
 using Datapack.Net.Utils;
 using Geode;
 using Geode.IR;
@@ -20,6 +21,17 @@ namespace Amethyst.IR.Types
 		public override object Clone() => new EntityType(ID, BaseClass, Properties, Methods);
 		public override string ToString() => ID.ToString();
 		protected override bool EqualsImpl(TypeSpecifier obj) => obj is EntityType other && other.ID == ID;
+
+		public override ValueRef? CastToOverload(ValueRef val, FunctionContext ctx)
+		{
+			if (val.Type is TargetSelectorType)
+			{
+				return ctx.Add(new EntityRefInsn(val));
+			}
+
+			return base.CastToOverload(val, ctx);
+		}
+
 
 		public static readonly EntityType Dummy = new("amethyst:dummy", null, [], []);
 	}
