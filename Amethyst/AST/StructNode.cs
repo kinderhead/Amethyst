@@ -8,8 +8,15 @@ using Geode.Types;
 
 namespace Amethyst.AST
 {
-	public class StructNode(LocationRange loc, NamespacedID id, AbstractTypeSpecifier? baseClass, Dictionary<string, AbstractTypeSpecifier> props, List<MethodNode> methods) : Node(loc), IRootChild
+	public enum ContainerType
 	{
+		Struct,
+		Entity
+	}
+
+	public class StructNode(ContainerType type, LocationRange loc, NamespacedID id, AbstractTypeSpecifier? baseClass, Dictionary<string, AbstractTypeSpecifier> props, List<MethodNode> methods) : Node(loc), IRootChild
+	{
+		public readonly ContainerType Type = type;
 		public readonly NamespacedID ID = id;
 		public readonly Dictionary<string, AbstractTypeSpecifier> Properties = props;
 		public readonly List<MethodNode> Methods = methods;
@@ -17,7 +24,7 @@ namespace Amethyst.AST
 
 		public void Process(Compiler ctx, RootNode root)
 		{
-			var baseClass = BaseClass?.Resolve(ctx, ID.GetContainingFolder()) ?? PrimitiveType.Compound;
+			var baseClass = BaseClass?.Resolve(ctx, ID.GetContainingFolder()) ?? (Type == ContainerType.Entity ? PrimitiveType.Compound : EntityType.Dummy);
 
 			var props = new Dictionary<string, TypeSpecifier>();
 			var methods = new Dictionary<string, FunctionType>();
@@ -27,7 +34,13 @@ namespace Amethyst.AST
 				props[k] = v.Resolve(ctx, ID.GetContainingFolder());
 			}
 
-			var selfType = new StructType(ID, baseClass, props, methods);
+			var selfType = Type switch
+			{
+				ContainerType.Struct => new StructType(ID, baseClass, props, methods),
+				ContainerType.Entity => new EntityType(ID, baseClass, props, methods),
+				_ => throw new NotImplementedException()
+			};
+
 			ctx.IR.AddType(new(ID, Location, selfType));
 
 			ConstructorNode? constructor = null;
@@ -46,6 +59,11 @@ namespace Amethyst.AST
 					methods[i.ID.GetFile()] = type;
 
 					var thisIsVirtual = i.Modifiers.HasFlag(FunctionModifiers.Virtual);
+
+					if (thisIsVirtual && Type == ContainerType.Entity)
+					{
+						throw new VirtualEntityMethodError();
+					}
 
 					if (selfType.HierarchyMethod(i.ID.GetFile())?.Type is FunctionType other)
 					{

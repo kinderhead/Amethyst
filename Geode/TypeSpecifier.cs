@@ -6,6 +6,7 @@ using Geode.IR.Instructions;
 using Geode.Types;
 using Geode.Values;
 using System.Collections.Immutable;
+using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -29,7 +30,7 @@ namespace Geode
 		public virtual TypeSpecifier? DefaultPropertyType => null;
 		public virtual Dictionary<string, TypeSpecifier> Properties => [];
 
-		public TypeSpecifier? Property(string name)
+		public TypeSpecifier? HasProperty(string name)
 		{
 			if (Properties.TryGetValue(name, out var type))
 			{
@@ -41,7 +42,7 @@ namespace Geode
 			}
 		}
 
-		public virtual LiteralValue? DefaultPropertyValue(string name) => Property(name)?.DefaultValue;
+		public virtual LiteralValue? DefaultPropertyValue(string name) => HasProperty(name)?.DefaultValue;
 
 		public override bool Equals(object? obj)
 		{
@@ -120,6 +121,17 @@ namespace Geode
 		public virtual ValueRef? CastFromOverload(ValueRef val, TypeSpecifier to, FunctionContext ctx) => null;
 		public virtual ValueRef? CastToOverload(ValueRef val, FunctionContext ctx) => null;
 		public virtual void ExecuteChainOverload(ValueRef val, ExecuteChain chain, FunctionContext ctx, bool invert = false) => chain.Add(IfValueChain.With(val, ctx, invert));
+
+		/// <summary>
+		/// Property get overload.
+		/// Return null for the default behavior.
+		/// Return <see cref="VoidValue"/> to mark as failed.
+		/// </summary>
+		/// <param name="val">This</param>
+		/// <param name="name">Name</param>
+		/// <param name="ctx">Context</param>
+		/// <returns></returns>
+		public virtual ValueRef? GetPropertyOverload(ValueRef val, string name, FunctionContext ctx) => null;
 
 		public override int GetHashCode() => ToString().GetHashCode();
 

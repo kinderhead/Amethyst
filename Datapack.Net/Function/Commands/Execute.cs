@@ -79,7 +79,7 @@ namespace Datapack.Net.Function.Commands
 		public Execute Positioned(Heightmap heightmap) => Add(new Subcommand.Positioned(heightmap));
 		public Execute Rotated(Rotation rotation) => Add(new Subcommand.Rotated(rotation));
 		public Execute Rotated(IEntityTarget target) => Add(new Subcommand.Rotated(target));
-		public Execute Summon(EntityType target) => Add(new Subcommand.Summon(target));
+		public Execute Summon(EntityData target) => Add(new Subcommand.Summon(target));
 		public Execute Store(IDataTarget target, NBTNumberType type, double scale, bool result = true) => Add(new Subcommand.Store { Target = target, DataType = type, Scale = scale, Result = result });
 		public Execute Store(Position pos, string path, NBTNumberType type, double scale, bool result = true) => Add(new Subcommand.Store { Target = new BlockDataTarget(pos, path), DataType = type, Scale = scale, Result = result });
 		public Execute Store(Bossbar id, BossbarValueType type, bool result = true) => Add(new Subcommand.Store { BossbarID = id, BossbarType = type, Result = result });
@@ -469,9 +469,9 @@ namespace Datapack.Net.Function.Commands
 				}
 			}
 
-			public class Summon(EntityType target) : Subcommand
+			public class Summon(EntityData target) : Subcommand
 			{
-				public readonly EntityType Target = target;
+				public readonly EntityData Target = target;
 
 				public override string ToString() => $"summon {Target}";
 			}

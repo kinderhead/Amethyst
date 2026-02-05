@@ -41,6 +41,7 @@
     "@vscode/vsce": "^3.7.1"
   },
   "scripts": {
-    "build": "npx vsce package"
+    "build": "npx vsce package",
+    "publish": "npx vsce publish"
   }
 }

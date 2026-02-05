@@ -14,5 +14,5 @@ for i in names:
     
     nice_name = i.split(":")[1].split("_")
     nice_name = "".join([e.capitalize() for e in nice_name])
-    line = f"public static readonly EntityType {nice_name} = new(new(\"{i}\"));"
+    line = f"public static readonly EntityData {nice_name} = new(new(\"{i}\"));"
     print(line)

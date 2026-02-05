@@ -2,30 +2,19 @@
 
 namespace example;
 
-struct obj {
-    overload obj(int x) {
-        print(x);
-    }
-
-    overload obj(string x) {
-        print(x);
-    }
-}
-
-struct obj2 implements obj {
-    overload obj2(int x) : obj(x + 2) {
-        
-    }
-
-    overload obj2(string x) : obj("hi") {
-        print(x);
-    }
-}
+// entityref entity {
+//     string id;
+// }
 
 #load
 void main() {
-    var a = obj2(5);
-    var b = obj2("womp");
+    @/summon wither
+
+    as (@e[type="wither", limit=1]) {
+        print(amethyst:core/entity/ref());
+    }
+
+    @/kill @e[type=wither]
 
     amethyst:exit();
 }

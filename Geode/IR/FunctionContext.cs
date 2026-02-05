@@ -431,7 +431,7 @@ namespace Geode.IR
 				if (kv.Key.NeedsScoreReg)
 				{
 					registersInUse.Add(kv.Value);
-					kv.Key.SetValue(builder.Reg(kv.Value));
+					kv.Key.SetValue(builder.Reg(kv.Value, kv.Key.Type));
 				}
 			}
 		}

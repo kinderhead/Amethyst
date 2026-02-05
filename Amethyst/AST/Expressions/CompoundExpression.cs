@@ -25,7 +25,7 @@ namespace Amethyst.AST.Expressions
 
 			foreach (var (k, v) in Values)
 			{
-				if (type.Property(k) is not TypeSpecifier t)
+				if (type.HasProperty(k) is not TypeSpecifier t)
 				{
 					throw new PropertyError(type.ToString(), k);
 				}

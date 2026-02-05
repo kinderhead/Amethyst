@@ -1,0 +1,16 @@
+namespace amethyst:core/entity;
+
+amethyst:dummy ref() {
+    // Need to implement a bunch of stuff
+    amethyst:dummy id;
+    @/execute store result $(^id) run random value 1..2147483646
+
+    target t;
+    @/data modify $(^t) set value "@e[scores={amethyst_id=$(id)]"
+
+    if (t) {
+        return ref();
+    }
+
+    return id;
+}
