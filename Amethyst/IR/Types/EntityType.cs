@@ -16,8 +16,6 @@ namespace Amethyst.IR.Types
 		public override LiteralValue DefaultValue => new(0, this);
 		public override NBTType EffectiveType => NBTType.Int;
 
-		public override ValueRef? GetPropertyOverload(ValueRef val, string name, FunctionContext ctx) => new VoidValue();
-
 		public override object Clone() => new EntityType(ID, BaseClass, Properties, Methods);
 		public override string ToString() => ID.ToString();
 		protected override bool EqualsImpl(TypeSpecifier obj) => obj is EntityType other && other.ID == ID;

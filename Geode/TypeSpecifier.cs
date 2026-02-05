@@ -122,17 +122,6 @@ namespace Geode
 		public virtual ValueRef? CastToOverload(ValueRef val, FunctionContext ctx) => null;
 		public virtual void ExecuteChainOverload(ValueRef val, ExecuteChain chain, FunctionContext ctx, bool invert = false) => chain.Add(IfValueChain.With(val, ctx, invert));
 
-		/// <summary>
-		/// Property get overload.
-		/// Return null for the default behavior.
-		/// Return <see cref="VoidValue"/> to mark as failed.
-		/// </summary>
-		/// <param name="val">This</param>
-		/// <param name="name">Name</param>
-		/// <param name="ctx">Context</param>
-		/// <returns></returns>
-		public virtual ValueRef? GetPropertyOverload(ValueRef val, string name, FunctionContext ctx) => null;
-
 		public override int GetHashCode() => ToString().GetHashCode();
 
 		public abstract override string ToString();

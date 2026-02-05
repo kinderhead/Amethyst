@@ -13,13 +13,7 @@ namespace Amethyst.IR
 		{
 			public ValueRef GetProperty(ValueRef val, string name)
 			{
-				var ret = val.Type.GetPropertyOverload(val, name, ctx);
-				if (ret is not null && ret.Value is not VoidValue)
-				{
-					return ret;
-				}
-				// It works :)
-				else if (val.Type.HasProperty(name) is TypeSpecifier t && ret is null)
+				if (val.Type.HasProperty(name) is TypeSpecifier t)
 				{
 					return ctx.Add(new PropertyInsn(val, new LiteralValue(name), t));
 				}

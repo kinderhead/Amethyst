@@ -8,12 +8,9 @@ entitydef entity {
 
 #load
 void main() {
-    @/summon wither
-
-    amethyst:dummy e = @e[type="wither", limit=1];
+    amethyst:dummy e = @e[type="armor_stand", limit=1];
     print(e);
-
-    @/kill @e[type=wither]
-    amethyst:exit();
+    
+    //amethyst:exit();
 }
 

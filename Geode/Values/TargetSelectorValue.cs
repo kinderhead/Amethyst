@@ -16,7 +16,7 @@ namespace Geode.Values
 
 		public override ScoreValue AsScore(RenderContext ctx) => throw new InvalidTypeError(Type.ToString(), "int");
 
-		public override void If(Action<Execute> apply, RenderContext ctx, int tmp = 0) => ctx.Builder.Macroizer.Run(ctx, [this], (args, ctx) =>
+		public override void If(Action<Execute> apply, RenderContext ctx, int tmp = 0) => ctx.Macroize([this], (args, ctx) =>
 		{
 			var cmd = new Execute().If.Entity(new NamedTarget(args[0].Value.Build()));
 			apply(cmd);
@@ -150,7 +150,7 @@ namespace Geode.Values
 				}
 			}
 
-			ctx.Builder.Macroizer.Run(ctx, [this], (args, ctx) =>
+			ctx.Macroize([this], (args, ctx) =>
 			{
 				// Macroize returns NBTRawString, so make it a regular string to add quotes
 				val.Store(new LiteralValue(args[0].Value.Build(), Type), ctx);

@@ -14,15 +14,13 @@ namespace Amethyst.IR.Instructions
 
 		public override void Render(RenderContext ctx)
 		{
-			var ret = ReturnValue.Expect();
-			if (ret is ScoreValue score)
+			var ret = ReturnValue.Expect<LValue>();
+			var ptr = Arg<ValueRef>(0).Expect();
+
+			ctx.Macroize([ptr], (args, ctx) =>
 			{
-				ctx.Call("amethyst:core/ref/set-score", new LiteralValue($"{score.Target.Get()} {score.Score.Name}"), Arg<ValueRef>(0));
-			}
-			else
-			{
-				ctx.Call("amethyst:core/ref/set-ref", WeakReferenceType.From((DataTargetValue)ret), Arg<ValueRef>(0));
-			}
+				ret.Store(new RawDataTargetValue(args[0].Value.ToString(), args[0].Type), ctx);
+			});
 		}
 
 		protected override IValue? ComputeReturnValue(FunctionContext ctx)

@@ -21,7 +21,10 @@ namespace Amethyst.IR.Instructions
 
 			if (arg.Type is ReferenceType)
 			{
-				ctx.Call("amethyst:core/ref/set-score", new LiteralValue($"{ret.Target.Get()} {ret.Score.Name}"), arg);
+				ctx.Macroize([arg], (args, ctx) =>
+				{
+					ret.Store(new RawDataTargetValue(args[0].Value.ToString(), args[0].Type), ctx);
+				});
 			}
 			else
 			{

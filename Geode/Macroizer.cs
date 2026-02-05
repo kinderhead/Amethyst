@@ -26,6 +26,11 @@ namespace Geode
 				// Include macros in the dependencies
 				if (val is IConstantValue c and not MacroValue)
 				{
+					if (val.Type.WrapInQuotesForMacro && c.Value is NBTString str)
+					{
+						return new LiteralValue(new NBTRawString(str.Value), val.Type);
+					}
+
 					return c;
 				}
 

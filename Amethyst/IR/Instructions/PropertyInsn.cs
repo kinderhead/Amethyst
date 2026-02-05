@@ -18,6 +18,7 @@ namespace Amethyst.IR.Instructions
 		public override void Render(RenderContext ctx)
 		{
 			var val = Arg<ValueRef>(0).Expect();
+			var prop = Arg<ValueRef>(1).Expect();
 
 			if (val.Type is not ReferenceType && val is DataTargetValue nbt)
 			{
@@ -29,7 +30,10 @@ namespace Amethyst.IR.Instructions
 				val = WeakReferenceType.From(nbt);
 			}
 
-			ctx.Call("amethyst:core/ref/property", WeakReferenceType.From(ReturnValue.Expect<DataTargetValue>()), val, Arg<ValueRef>(1));
+			ctx.Macroize([val, prop], (args, ctx) =>
+			{
+				ReturnValue.Expect<LValue>().Store(new LiteralValue($"{args[0]}.{args[1]}"), ctx);
+			});
 		}
 
 		protected override IValue? ComputeReturnValue(FunctionContext ctx)
@@ -37,7 +41,7 @@ namespace Amethyst.IR.Instructions
 			var val = Arg<ValueRef>(0);
 			var prop = Arg<ValueRef>(1);
 
-			if (prop.Value is LiteralValue l)
+			if (prop.Value is LiteralValue l && val.Type is not EntityType)
 			{
 				if (l.Value is not NBTString name)
 				{
