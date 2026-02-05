@@ -24,7 +24,7 @@ namespace Amethyst.AST
 
 		public void Process(Compiler ctx, RootNode root)
 		{
-			var baseClass = BaseClass?.Resolve(ctx, ID.GetContainingFolder()) ?? (Type == ContainerType.Entity ? PrimitiveType.Compound : EntityType.Dummy);
+			var baseClass = BaseClass?.Resolve(ctx, ID.GetContainingFolder()) ?? (Type == ContainerType.Struct ? PrimitiveType.Compound : EntityType.Dummy);
 
 			var props = new Dictionary<string, TypeSpecifier>();
 			var methods = new Dictionary<string, FunctionType>();
