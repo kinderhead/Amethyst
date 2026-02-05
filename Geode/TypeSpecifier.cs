@@ -132,13 +132,13 @@ namespace Geode
 		public static bool operator !=(TypeSpecifier a, TypeSpecifier b) => !a.Equals(b);
 	}
 
-	public class TypeArray(IEnumerable<TypeSpecifier> types)
+	public partial class TypeArray(IEnumerable<TypeSpecifier> types)
 	{
 		public readonly ImmutableArray<TypeSpecifier> Types = [.. types];
 		public int Length => Types.Length;
 		public TypeSpecifier this[int i] => Types[i];
 
-		public NamespacedID Mangle(NamespacedID id) => $"{id.GetContainingFolder()}:/__{id.GetFile()}-{new Regex(@"[^a-zA-Z0-9\-_]").Replace(ToString(), "_")}";
+		public NamespacedID Mangle(NamespacedID id) => $"{id.GetContainingFolder()}:/__{id.GetFile()}-{ResourceLocationRegex().Replace(ToString(), "_")}";
 
 		public override bool Equals(object? obj) => obj is TypeArray other && Types.SequenceEqual(other.Types);
 
@@ -176,5 +176,7 @@ namespace Geode
 		public static bool operator!=(TypeArray a, TypeArray b) => !a.Equals(b);
 
 		public static TypeArray From(IEnumerable<IValueLike> args) => new(args.Select(i => i.Type));
+		[GeneratedRegex(@"[^a-zA-Z0-9\-_]")]
+		private static partial Regex ResourceLocationRegex();
 	}
 }
