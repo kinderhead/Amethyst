@@ -94,7 +94,7 @@ namespace Amethyst.AST
 				throw new MissingConstructorError(selfType.BaseClass.ToString());
 			}
 
-			if (Properties.Count != 0 && selfType.EffectiveType != NBTType.Compound)
+			if (Properties.Count != 0 && Type == ContainerType.Struct && selfType.EffectiveType != NBTType.Compound)
 			{
 				throw new PropertyError(selfType.ToString());
 			}

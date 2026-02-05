@@ -2,20 +2,14 @@
 
 namespace example;
 
-// entityref entity {
-//     string id;
-// }
+entitydef entity {
+    string id;
+}
 
 #load
 void main() {
-    @/summon wither
-
-    as (@e[type="wither", limit=1]) {
+    as (@e[type="armor_stand"]) {
         print(amethyst:core/entity/ref());
     }
-
-    @/kill @e[type=wither]
-
-    amethyst:exit();
 }
 
