@@ -14,7 +14,7 @@ namespace Amethyst.AST
 		public TypeSpecifier Resolve(Compiler ctx, string baseNamespace, bool allowAuto = false)
 		{
 			TypeSpecifier? ret = null;
-			if (!ctx.WrapError(Location, () => ret = ResolveImpl(ctx, baseNamespace, allowAuto)))
+			if (!ctx.WrapError(Location, [System.Diagnostics.DebuggerNonUserCode] () => ret = ResolveImpl(ctx, baseNamespace, allowAuto)))
 			{
 				throw new EmptyGeodeError();
 			}

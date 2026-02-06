@@ -1,5 +1,6 @@
 ﻿using Amethyst.IR.Instructions;
 using Amethyst.IR.Types;
+using Geode;
 using Geode.IR;
 using Geode.IR.Instructions;
 using Geode.Values;
@@ -22,6 +23,11 @@ namespace Amethyst.IR
 
 				return self.Pointer;
 			}
+		}
+
+		extension (IValueLike self)
+		{
+			public bool IsTypeOrRef<T>() where T : TypeSpecifier => self.Type is T || (self.Type is ReferenceType ptr && ptr.Inner is T);
 		}
 	}
 }

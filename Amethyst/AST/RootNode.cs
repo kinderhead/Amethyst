@@ -16,7 +16,7 @@ namespace Amethyst.AST
 
 			foreach (var i in Children)
 			{
-				if (!Ctx.WrapError(i.Location, () =>
+				if (!Ctx.WrapError(i.Location, [System.Diagnostics.DebuggerNonUserCode] () =>
 				{
 					i.Process(Ctx, this);
 				}))

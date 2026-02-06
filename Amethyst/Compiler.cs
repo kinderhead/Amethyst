@@ -216,6 +216,7 @@ namespace Amethyst
 			return true;
 		}
 
+		[System.Diagnostics.DebuggerNonUserCode] // Hide this on the call stack
 		public bool WrapError(LocationRange loc, Action cb)
 		{
 			try
@@ -231,6 +232,7 @@ namespace Amethyst
 			return true;
 		}
 
+		[System.Diagnostics.DebuggerNonUserCode] // Hide this on the call stack
 		public bool WrapError(LocationRange loc, FunctionContext ctx, Action cb)
 		{
 			ctx.LocationStack.Push(loc);

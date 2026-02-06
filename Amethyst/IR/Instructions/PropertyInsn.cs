@@ -20,26 +20,43 @@ namespace Amethyst.IR.Instructions
 			var val = Arg<ValueRef>(0).Expect();
 			var prop = Arg<ValueRef>(1).Expect();
 
-			if (val.Type is not ReferenceType && val is DataTargetValue nbt)
+			if (val.Type is EntityType)
 			{
-				if (val is MacroValue)
+				ReturnValue.Expect<DynamicValue>()
+					.Add(new LiteralValue(new NBTRawString("entity @e[scores={amethyst_id=")))
+					.Add(val)
+					.Add(new LiteralValue(new NBTRawString("},limit=1] ")))
+					.Add(prop);
+			}
+			else
+			{
+				if (val.Type is not ReferenceType && val is DataTargetValue nbt)
 				{
-					throw new MacroPropertyError();
+					if (val is MacroValue)
+					{
+						throw new MacroPropertyError();
+					}
+
+					val = WeakReferenceType.From(nbt);
 				}
 
-				val = WeakReferenceType.From(nbt);
+				ReturnValue.Expect<DynamicValue>()
+					.Add(val)
+					.Add(new LiteralValue(new NBTRawString(".")))
+					.Add(prop);
 			}
-
-			ctx.Macroize([val, prop], (args, ctx) =>
-			{
-				ReturnValue.Expect<LValue>().Store(new LiteralValue($"{args[0]}.{args[1]}"), ctx);
-			});
 		}
 
 		protected override IValue? ComputeReturnValue(FunctionContext ctx)
 		{
 			var val = Arg<ValueRef>(0);
 			var prop = Arg<ValueRef>(1);
+
+			// I don't want to deal with nested Macroizer stuff
+			if (val.Type is ReferenceType r && r.Inner is EntityType e)
+			{
+				throw new InvalidTypeError(prop.Type.ToString(), e.ToString());
+			}
 
 			if (prop.Value is LiteralValue l && val.Type is not EntityType)
 			{
@@ -68,7 +85,10 @@ namespace Amethyst.IR.Instructions
                 }
 			}
 
-			return null;
+			ReturnValue.AddDependency(val);
+			ReturnValue.AddDependency(prop);
+
+			return new DynamicValue(ReturnType);
 		}
 	}
 }

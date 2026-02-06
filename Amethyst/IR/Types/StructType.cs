@@ -8,7 +8,7 @@ namespace Amethyst.IR.Types
 {
 	public class StructType(NamespacedID id, TypeSpecifier? baseClass, Dictionary<string, TypeSpecifier> props, Dictionary<string, FunctionType> methods) : TypeSpecifier
 	{
-		public override Dictionary<string, TypeSpecifier> Properties => new([.. props, .. BaseClass.Properties]);
+		public override Dictionary<string, TypeSpecifier> Properties => new([.. props, .. BaseClass == this ? [] : BaseClass.Properties]);
 		public readonly Dictionary<string, FunctionType> Methods = methods;
 
 		public override NBTType EffectiveType => BaseClass.EffectiveType;

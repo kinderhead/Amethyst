@@ -28,13 +28,14 @@ namespace Amethyst.IR.Instructions
 			if (Arg<ValueRef>(0).Expect() is LiteralValue l && l.Is<NBTString>(out var str))
 			{
 				Remove();
+
 				if (str.Value.Contains("stack[-1]."))
 				{
-					return new StackValue(-1, ctx.Compiler.IR.RuntimeID, str.Value.Split("stack[-1].")[1], ReturnType);
+					return new StackValue(-1, ctx.Compiler.IR.RuntimeID, str.Value.Split("stack[-1].")[1].Replace("\"", ""), ReturnType);
 				}
 				else
 				{
-					return new RawDataTargetValue(str.Value, ReturnType);
+					return new RawDataTargetValue(str.Value.Replace("\"", ""), ReturnType);
 				}
 			}
 

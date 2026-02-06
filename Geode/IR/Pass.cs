@@ -81,7 +81,7 @@ namespace Geode.IR
 			{
 				foreach (var i in Reversed ? b.Instructions.AsEnumerable().Reverse() : b.Instructions)
 				{
-					if (!ctx.Compiler.WrapError(i.Location, () =>
+					if (!ctx.Compiler.WrapError(i.Location, [System.Diagnostics.DebuggerNonUserCode] () =>
 					{
 						OnInsn(ctx, b, i, state);
 					}))

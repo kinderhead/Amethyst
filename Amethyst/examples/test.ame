@@ -2,15 +2,22 @@
 
 namespace example;
 
-entitydef entity {
-    string id;
+entitydef test_entity {
+    bool Invulnerable;
 }
 
 #load
 void main() {
-    amethyst:dummy e = @e[type="armor_stand", limit=1];
-    print(e);
+    @/kill @e[type=wither]
+    @/summon wither
     
+    test_entity e = @e[type="wither", limit=1];
+    print(e);
+    e.Invulnerable = true;
+    @/tellraw @a {nbt:"",entity:"@e[scores={amethyst_id=$(e)},limit=1]"}
+
+    @/kill @e[type=wither]
+
     //amethyst:exit();
 }
 

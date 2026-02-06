@@ -80,7 +80,7 @@ namespace Geode.IR
 			
 			foreach (var i in Instructions)
 			{
-				if (!ctx.Compiler.WrapError(i.Location, ctx, () =>
+				if (!ctx.Compiler.WrapError(i.Location, ctx, [System.Diagnostics.DebuggerNonUserCode] () =>
 				{
 					i.Render(renderer);
 				}))

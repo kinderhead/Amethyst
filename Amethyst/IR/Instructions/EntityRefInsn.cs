@@ -24,7 +24,7 @@ namespace Amethyst.IR.Instructions
 
 				ReturnValue.Expect<LValue>().Store(new LiteralValue(0), ctx);
 				ctx.Add(new Execute().As(target).Run(new FunctionCommand("amethyst:core/entity/ref")));
-				ctx.Add(new Execute().If.Entity(target).Run(ctx.WithFaux(ctx => ReturnValue.Expect<LValue>().Store(ctx.Func.GetFunctionReturnValue(ReturnType, 1), ctx)).Single()));
+				ctx.Add(new Execute().If.Entity(target).Run(ctx.WithFaux(ctx => ReturnValue.Expect<LValue>().Store(ctx.Func.GetFunctionReturnValue(ReturnType, -1), ctx)).Single()));
 			});
         }
 

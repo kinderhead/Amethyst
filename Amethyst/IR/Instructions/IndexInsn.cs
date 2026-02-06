@@ -49,15 +49,17 @@ namespace Amethyst.IR.Instructions
 				val = WeakReferenceType.From(nbt);
 			}
 
-			ctx.Macroize([val, index], (args, ctx) =>
-			{
-				ReturnValue.Expect<LValue>().Store(new LiteralValue($"{args[0]}[{args[1]}]"), ctx);
-			});
+			ReturnValue.Expect<DynamicValue>()
+				.Add(val)
+				.Add(new LiteralValue(new NBTRawString("[")))
+				.Add(index)
+				.Add(new LiteralValue(new NBTRawString("]")));
 		}
 
 		protected override IValue? ComputeReturnValue(FunctionContext ctx)
 		{
 			var val = Arg<ValueRef>(0);
+			var index = Arg<ValueRef>(1);
 
 			if (val.Value is MacroValue && val.Type is not ReferenceType)
 			{
@@ -75,7 +77,10 @@ namespace Amethyst.IR.Instructions
 				return WeakReferenceType.From(list.Index(ind.Value, ActualReturnType));
 			}
 
-			return null;
+			ReturnValue.AddDependency(val);
+			ReturnValue.AddDependency(index);
+
+			return new DynamicValue(ReturnType);
 		}
 	}
 }

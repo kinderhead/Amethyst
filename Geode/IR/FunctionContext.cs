@@ -251,7 +251,13 @@ namespace Geode.IR
 			return args.Zip(type.Parameters).Select(i => ImplicitCast(i.First, i.Second.Type));
 		}
 
-		public void AddDependency(MCFunction func) => dependencies.Add(func);
+		public void AddDependency(MCFunction func)
+		{
+			if (!dependencies.Contains(func))
+			{
+				dependencies.Add(func);
+			}
+		}
 
 		public void Finish()
 		{

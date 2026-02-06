@@ -1,5 +1,6 @@
 ﻿using Amethyst.IR.Instructions;
 using Amethyst.IR.Types;
+using Datapack.Net.Data;
 using Geode;
 using Geode.Errors;
 using Geode.IR;
@@ -15,7 +16,7 @@ namespace Amethyst.IR
 			{
 				if (val.Type.HasProperty(name) is TypeSpecifier t)
 				{
-					return ctx.Add(new PropertyInsn(val, new LiteralValue(name), t));
+					return ctx.Add(new PropertyInsn(val, new LiteralValue(new NBTRawString(name)), t));
 				}
 				else if (ctx.GetMethodOrNull(val, name) is ValueRef method)
 				{

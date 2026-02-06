@@ -9,7 +9,7 @@ namespace Amethyst.AST
 		public ValueRef Execute(FunctionContext ctx, TypeSpecifier? expected, bool autoCast = true)
 		{
 			ValueRef? ret = null;
-			if (!ctx.Compiler.WrapError(Location, ctx, () => ret = ExecuteImpl(ctx, expected)))
+			if (!ctx.Compiler.WrapError(Location, ctx, [System.Diagnostics.DebuggerNonUserCode]  () => ret = ExecuteImpl(ctx, expected)))
 			{
 				throw new EmptyGeodeError();
 			}

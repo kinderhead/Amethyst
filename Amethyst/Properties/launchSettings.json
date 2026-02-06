@@ -6,7 +6,7 @@
     },
     "Test Suite": {
       "commandName": "Project",
-      "commandLineArgs": "build tests/*.ame -d -o output.zip"
+      "commandLineArgs": "build tests/*.ame -c -o output.zip"
     },
     "Amethyst Random": {
       "commandName": "Project",
