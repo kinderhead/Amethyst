@@ -2,8 +2,14 @@
 
 namespace example;
 
-entitydef test_entity {
+entitydef minecraft:base {
     bool Invulnerable;
+}
+
+entitydef test_entity implements minecraft:base {
+    void test() {
+        print(this.Invulnerable);
+    }
 }
 
 #load
@@ -12,12 +18,12 @@ void main() {
     @/summon wither
     
     test_entity e = @e[type="wither", limit=1];
-    print(e);
+    
     e.Invulnerable = true;
-    @/tellraw @a {nbt:"",entity:"@e[scores={amethyst_id=$(e)},limit=1]"}
+    e.test();
 
     @/kill @e[type=wither]
 
-    //amethyst:exit();
+    amethyst:exit();
 }
 

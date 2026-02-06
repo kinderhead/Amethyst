@@ -20,7 +20,7 @@ namespace Amethyst.IR.Types
 
 		public (StructType Source, FunctionType Type)? HierarchyMethod(string name)
 		{
-			if (BaseClass is StructType s)
+			if (BaseClass is StructType s && BaseClass != this)
 			{
 				if (s.Methods.TryGetValue(name, out var type))
 				{

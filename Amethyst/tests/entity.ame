@@ -81,9 +81,29 @@ void test_entity_ref() {
     @/summon wither
     
     test_entity e = @e[type="wither", limit=1];
+    
     assert(!e.Invulnerable);
     e.Invulnerable = true;
     assert(e.Invulnerable);
+
+    @/kill @e[type=wither]
+
+    complete();
+}
+
+#test
+void test_entity_ref_ref() {
+    start("entity ref ref");
+
+    @/kill @e[type=wither]
+    @/summon wither
+    
+    test_entity e = @e[type="wither", limit=1];
+    test_entity^ ptr = e;
+
+    assert(!ptr.Invulnerable);
+    ptr.Invulnerable = true;
+    assert(ptr.Invulnerable);
 
     @/kill @e[type=wither]
 

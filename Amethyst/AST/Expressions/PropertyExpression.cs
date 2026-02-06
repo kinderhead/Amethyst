@@ -1,4 +1,5 @@
 using Amethyst.IR;
+using Amethyst.IR.Types;
 using Geode;
 using Geode.IR;
 
@@ -9,6 +10,16 @@ namespace Amethyst.AST.Expressions
 		public readonly Expression Expression = expression;
 		public readonly string Property = prop;
 
-		protected override ValueRef ExecuteImpl(FunctionContext ctx, TypeSpecifier? expected) => ctx.GetProperty(Expression.Execute(ctx, null), Property);
+		protected override ValueRef ExecuteImpl(FunctionContext ctx, TypeSpecifier? expected)
+		{
+			var val = Expression.Execute(ctx, null);
+
+			if (val.Type is ReferenceType r && r.Inner is EntityType e)
+			{
+				val = ctx.ImplicitCast(val, e);
+			}
+
+			return ctx.GetProperty(val, Property);
+		}
 	}
 }

@@ -33,11 +33,22 @@ namespace Amethyst.IR
 
 				if (global is IFunctionLike func && func.FuncType.Parameters.Length >= 1)
 				{
-					func = func.CloneWithType(func.FuncType.ApplyGenericWithParams([new ReferenceType(effectiveMethodType)]));
-					var firstArgType = func.FuncType.Parameters[0].Type;
+					// With references
+					var genericFunc = func.CloneWithType(func.FuncType.ApplyGenericWithParams([new ReferenceType(effectiveMethodType)]));
+					var firstArgType = genericFunc.FuncType.Parameters[0].Type;
+
 					if (firstArgType is ReferenceType r2 && effectiveMethodType.Implements(r2.Inner))
 					{
-						return new(func);
+						return new(genericFunc);
+					}
+
+					// Without references
+					genericFunc = func.CloneWithType(func.FuncType.ApplyGenericWithParams([effectiveMethodType]));
+					firstArgType = genericFunc.FuncType.Parameters[0].Type;
+
+					if (effectiveMethodType.Implements(firstArgType))
+					{
+						return new(genericFunc);
 					}
 				}
 				else if (global is OverloadedFunctionValue)

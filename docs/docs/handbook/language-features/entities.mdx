@@ -1,0 +1,41 @@
+---
+sidebar_position: 10
+description: Entity references and manipulation
+---
+
+import Highlight from "@site/src/components/highlight";
+
+# Entities
+
+## Entity Definitions
+
+Before entities can be used as first-class objects, an entity definition needs to be supplied.
+
+:::note
+Amethyst currently does not provide definitions for Minecraft entities. Eventually they will be provided in `libminecraft`. See this [issue](https://github.com/kinderhead/Amethyst/issues/36) for updates.
+:::
+
+Entity definitions work similarly to structs. They can have properties and methods, but currently no virtual methods. Properties in entity definitions correspond to NBT tags that the entity has. To define one, use the `entitydef` keyword:
+
+<Highlight code={`\
+    entitydef minecraft:entity {
+        bool Invulnerable;
+        bool OnGround;
+    }
+`}/>
+
+Entity definitions can also have base classes:
+
+<Highlight code={`\
+    entitydef minecraft:living_entity implements entity {
+        float Health;
+    }
+`}/>
+
+Check the [Minecraft Wiki](https://minecraft.wiki/w/Entity_format) for entity data information.
+
+:::warning
+Beware that not all NBT properties listed are always defined on a given instance of the entity. Accessing an undefined property will result in undefined behavior. 
+
+For example, `OnGround` is undefined if `false`.
+:::

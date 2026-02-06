@@ -1,5 +1,6 @@
 using Amethyst.AST.Expressions;
 using Amethyst.AST.Statements;
+using Amethyst.IR.Types;
 using Datapack.Net.Utils;
 using Geode;
 using Geode.Types;
@@ -10,7 +11,14 @@ namespace Amethyst.AST
 	{
 		public override void Process(Compiler ctx, RootNode root)
 		{
-			Parameters.Insert(0, new AbstractParameter(ParameterModifiers.Macro, new AbstractReferenceTypeSpecifier(Location, new SimpleAbstractTypeSpecifier(Location, string.Join('/', ID.ToString().Split('/')[..^1]))), "this"));
+			AbstractTypeSpecifier selfType = new SimpleAbstractTypeSpecifier(Location, string.Join('/', ID.ToString().Split('/')[..^1]));
+
+			if (ctx.IR.GetGlobal(((SimpleAbstractTypeSpecifier)selfType).Type) is StructType)
+			{
+				selfType = new AbstractReferenceTypeSpecifier(Location, selfType);
+			}
+
+			Parameters.Insert(0, new AbstractParameter(ParameterModifiers.Macro, selfType, "this"));
 			base.Process(ctx, root);
 		}
 
