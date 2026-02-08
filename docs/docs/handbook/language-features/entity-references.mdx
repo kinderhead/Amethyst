@@ -5,7 +5,7 @@ description: Entity references and manipulation
 
 import Highlight from "@site/src/components/highlight";
 
-# Entities
+# Entity References
 
 ## Entity Definitions
 
@@ -39,3 +39,34 @@ Beware that not all NBT properties listed are always defined on a given instance
 
 For example, `OnGround` is undefined if `false`.
 :::
+
+## Using Definitions
+
+Amethyst interacts with entities through entity references which take the form of a unique ID score (`amethyst_id`). UUIDs are not used due to the performance impact of the `nbt` target selector argument. To create a reference to an existing entity, cast a `minecraft:target` to an entity definition:
+
+<Highlight code={`\
+    living_entity cow = @e[type="cow", limit=1];
+`}/>
+
+:::note
+While `limit=1` is not technically required, it prevents Amethyst giving an ID to every entity that fits the target selector. If multiple entities are selected, the *last* entity processed will be the one chosen.
+:::
+
+Entity NBT can be accessed just like structs:
+
+<Highlight code={`\
+    print(cow.Air);
+    cow.Health = 1;
+`}/>
+
+### Existence Checks
+
+There is currently no mechanism for automatically checking if the reference was created successfully. Instead, entity references can be checked manually:
+
+<Highlight code={`\
+    if (!entity) {
+        print("Uh oh!");
+    }
+`}/>
+
+Additionally, entity references can be used in `as`, `at`, and anything else that requires `minecraft:target`.

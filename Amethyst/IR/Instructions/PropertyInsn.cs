@@ -23,9 +23,9 @@ namespace Amethyst.IR.Instructions
 			if (val.Type is EntityType)
 			{
 				ReturnValue.Expect<DynamicValue>()
-					.Add(new LiteralValue(new NBTRawString("entity @e[scores={amethyst_id=")))
+					.Add("entity @e[scores={amethyst_id=")
 					.Add(val)
-					.Add(new LiteralValue(new NBTRawString("},limit=1] ")))
+					.Add("},limit=1] ")
 					.Add(prop);
 			}
 			else
@@ -42,7 +42,7 @@ namespace Amethyst.IR.Instructions
 
 				ReturnValue.Expect<DynamicValue>()
 					.Add(val)
-					.Add(new LiteralValue(new NBTRawString(".")))
+					.Add(".")
 					.Add(prop);
 			}
 		}

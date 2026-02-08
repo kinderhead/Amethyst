@@ -4,9 +4,12 @@ namespace example;
 
 entitydef minecraft:base {
     bool Invulnerable;
+    string CustomName;
 }
 
 entitydef test_entity implements minecraft:base {
+    float Health;
+
     void test() {
         print(this.Invulnerable);
     }
@@ -14,16 +17,11 @@ entitydef test_entity implements minecraft:base {
 
 #load
 void main() {
-    @/kill @e[type=wither]
-    @/summon wither
+    test_entity e = @e[type="sheep"];
+    e.CustomName = "womp";
     
-    test_entity e = @e[type="wither", limit=1];
-    
-    e.Invulnerable = true;
-    e.test();
-
-    @/kill @e[type=wither]
-
-    amethyst:exit();
+    as (e) {
+        @/say @s
+    }
 }
 

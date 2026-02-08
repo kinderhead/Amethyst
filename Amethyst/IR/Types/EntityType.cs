@@ -2,6 +2,7 @@
 using Datapack.Net.Data;
 using Datapack.Net.Utils;
 using Geode;
+using Geode.Chains;
 using Geode.IR;
 using Geode.Types;
 using Geode.Values;
@@ -30,6 +31,17 @@ namespace Amethyst.IR.Types
 			return base.CastToOverload(val, ctx);
 		}
 
+		public override ValueRef? CastFromOverload(ValueRef val, TypeSpecifier to, FunctionContext ctx)
+		{
+			if (to is TargetSelectorType)
+			{
+				return ctx.Add(new EntityToTargetInsn(val));
+			}
+
+			return base.CastFromOverload(val, to, ctx);
+		}
+
+		public override void ExecuteChainOverload(ValueRef val, ExecuteChain chain, FunctionContext ctx, bool invert = false) => chain.Add(new IfEntityChain(ctx.ImplicitCast(val, new TargetSelectorType()), invert));
 
 		public static readonly EntityType Dummy = new("amethyst:dummy", null, [], []);
 	}

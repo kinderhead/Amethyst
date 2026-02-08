@@ -19,6 +19,8 @@ namespace Geode.Values
 			return this;
 		}
 
+		public DynamicValue Add(string str) => Add(new LiteralValue(new NBTRawString(str)));
+
 		public override ScoreValue AsScore(RenderContext ctx) => throw new InvalidOperationException();
 		public override void If(Action<Execute> apply, RenderContext ctx, int tmp = 0) => throw new NotImplementedException();
 		public override FormattedText Render(FormattedText text, RenderContext ctx) => throw new NotImplementedException();

@@ -51,9 +51,9 @@ namespace Amethyst.IR.Instructions
 
 			ReturnValue.Expect<DynamicValue>()
 				.Add(val)
-				.Add(new LiteralValue(new NBTRawString("[")))
+				.Add("[")
 				.Add(index)
-				.Add(new LiteralValue(new NBTRawString("]")));
+				.Add("]");
 		}
 
 		protected override IValue? ComputeReturnValue(FunctionContext ctx)
