@@ -6,6 +6,7 @@ using Geode.IR.Instructions;
 using Geode.Types;
 using Geode.Values;
 using System.Collections.Immutable;
+using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -29,7 +30,7 @@ namespace Geode
 		public virtual TypeSpecifier? DefaultPropertyType => null;
 		public virtual Dictionary<string, TypeSpecifier> Properties => [];
 
-		public TypeSpecifier? Property(string name)
+		public TypeSpecifier? HasProperty(string name)
 		{
 			if (Properties.TryGetValue(name, out var type))
 			{
@@ -41,7 +42,7 @@ namespace Geode
 			}
 		}
 
-		public virtual LiteralValue? DefaultPropertyValue(string name) => Property(name)?.DefaultValue;
+		public virtual LiteralValue? DefaultPropertyValue(string name) => HasProperty(name)?.DefaultValue;
 
 		public override bool Equals(object? obj)
 		{

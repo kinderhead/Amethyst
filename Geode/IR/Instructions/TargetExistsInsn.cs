@@ -18,7 +18,7 @@ namespace Geode.IR.Instructions
 
 			ret.Store(new LiteralValue(false), ctx);
 
-			ctx.Builder.Macroizer.Run(ctx, [Arg<ValueRef>(0).Expect()], (args, ctx) =>
+			ctx.Macroize([Arg<ValueRef>(0).Expect()], (args, ctx) =>
 			{
 				var set = ctx.WithFaux(ctx => ret.Store(new LiteralValue(true), ctx)).Single();
 				ctx.Add(new Execute().If.Entity(new NamedTarget(args[0].Value.Build())).Run(set));

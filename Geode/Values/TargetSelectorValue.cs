@@ -16,7 +16,7 @@ namespace Geode.Values
 
 		public override ScoreValue AsScore(RenderContext ctx) => throw new InvalidTypeError(Type.ToString(), "int");
 
-		public override void If(Action<Execute> apply, RenderContext ctx, int tmp = 0) => ctx.Builder.Macroizer.Run(ctx, [this], (args, ctx) =>
+		public override void If(Action<Execute> apply, RenderContext ctx, int tmp = 0) => ctx.Macroize([this], (args, ctx) =>
 		{
 			var cmd = new Execute().If.Entity(new NamedTarget(args[0].Value.Build()));
 			apply(cmd);
@@ -24,6 +24,38 @@ namespace Geode.Values
 		});
 
 		public override FormattedText Render(FormattedText text, RenderContext ctx) => throw new NotImplementedException();
+
+		public bool IsSingle()
+		{
+			int? limit = null;
+
+			foreach (var (k, v) in Arguments)
+			{
+				if (k == "limit")
+				{
+					if (v is LiteralValue l && l.Is<NBTInt>(out var nbt))
+					{
+						limit = nbt.Value;
+					}
+					break;
+				}
+			}
+
+			if (TargetType is TargetType.e or TargetType.a && limit == 1)
+			{
+				return true;
+			}
+			else if (TargetType is TargetType.s && limit is null)
+			{
+				return true;
+			}
+			else if (TargetType is TargetType.p or TargetType.r && limit is null or 1)
+			{
+				return true;
+			}
+
+			return false;
+		}
 
 		public override string ToString()
 		{
@@ -118,7 +150,7 @@ namespace Geode.Values
 				}
 			}
 
-			ctx.Builder.Macroizer.Run(ctx, [this], (args, ctx) =>
+			ctx.Macroize([this], (args, ctx) =>
 			{
 				// Macroize returns NBTRawString, so make it a regular string to add quotes
 				val.Store(new LiteralValue(args[0].Value.Build(), Type), ctx);

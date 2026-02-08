@@ -22,17 +22,12 @@ namespace Amethyst.IR.Instructions
 			{
 				l.ListAdd(val, ctx);
 			}
-			else if (list is IConstantValue c && c.Value is NBTString ptr)
-			{
-				new RawDataTargetValue(ptr.Value, PrimitiveType.List).ListAdd(val, ctx);
-			}
-			else if (val is DataTargetValue nbt)
-			{
-				ctx.Call("amethyst:core/ref/append-ref", list, WeakReferenceType.From(nbt));
-			}
 			else
 			{
-				ctx.Call("amethyst:core/ref/append", list, val);
+				ctx.Macroize([list], (args, ctx) =>
+				{
+					new RawDataTargetValue(args[0].Value.ToString(), args[0].Type).ListAdd(val, ctx);
+				});
 			}
 		}
 

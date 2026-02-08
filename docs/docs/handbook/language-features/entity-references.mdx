@@ -1,0 +1,72 @@
+---
+sidebar_position: 10
+description: Entity references and manipulation
+---
+
+import Highlight from "@site/src/components/highlight";
+
+# Entity References
+
+## Entity Definitions
+
+Before entities can be used as first-class objects, an entity definition needs to be supplied.
+
+:::note
+Amethyst currently does not provide definitions for Minecraft entities. Eventually they will be provided in `libminecraft`. See this [issue](https://github.com/kinderhead/Amethyst/issues/36) for updates.
+:::
+
+Entity definitions work similarly to structs. They can have properties and methods, but currently no virtual methods. Properties in entity definitions correspond to NBT tags that the entity has. To define one, use the `entitydef` keyword:
+
+<Highlight code={`\
+    entitydef minecraft:entity {
+        bool Invulnerable;
+        short Air;
+    }
+`}/>
+
+Entity definitions can also have base classes:
+
+<Highlight code={`\
+    entitydef minecraft:living_entity implements entity {
+        float Health;
+    }
+`}/>
+
+Check the [Minecraft Wiki](https://minecraft.wiki/w/Entity_format) for entity data information.
+
+:::warning
+Beware that not all NBT properties listed are always defined on a given instance of the entity. Accessing an undefined property will result in undefined behavior. 
+
+For example, `OnGround` is undefined if `false`.
+:::
+
+## Using Definitions
+
+Amethyst interacts with entities through entity references which take the form of a unique ID score (`amethyst_id`). UUIDs are not used due to the performance impact of the `nbt` target selector argument. To create a reference to an existing entity, cast a `minecraft:target` to an entity definition:
+
+<Highlight code={`\
+    living_entity cow = @e[type="cow", limit=1];
+`}/>
+
+:::note
+While `limit=1` is not technically required, it prevents Amethyst giving an ID to every entity that fits the target selector. If multiple entities are selected, the *last* entity processed will be the one chosen.
+:::
+
+Entity NBT can be accessed just like structs:
+
+<Highlight code={`\
+    print(cow.Air);
+    cow.Health = 1;
+`}/>
+
+### Existence Checks
+
+There is currently no mechanism for automatically checking if the reference was created successfully. Instead, entity references can be checked manually:
+
+<Highlight code={`\
+    if (!entity) {
+        print("Uh oh!");
+    }
+`}/>
+
+Additionally, entity references can be used in `as`, `at`, and anything else that requires `minecraft:target`.

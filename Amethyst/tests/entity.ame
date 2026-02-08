@@ -1,5 +1,9 @@
 namespace test;
 
+entitydef test_entity {
+    bool Invulnerable;
+}
+
 #test
 void test_entity_exists() {
     start("entity exists");
@@ -63,6 +67,43 @@ void test_entity_tag() {
     @/tag @e[type=wither] add $(tag)
     
     assert(@e[tag=tag]);
+
+    @/kill @e[type=wither]
+
+    complete();
+}
+
+#test
+void test_entity_ref() {
+    start("entity ref");
+
+    @/kill @e[type=wither]
+    @/summon wither
+    
+    test_entity e = @e[type="wither", limit=1];
+    
+    assert(!e.Invulnerable);
+    e.Invulnerable = true;
+    assert(e.Invulnerable);
+
+    @/kill @e[type=wither]
+
+    complete();
+}
+
+#test
+void test_entity_ref_ref() {
+    start("entity ref ref");
+
+    @/kill @e[type=wither]
+    @/summon wither
+    
+    test_entity e = @e[type="wither", limit=1];
+    test_entity^ ptr = e;
+
+    assert(!ptr.Invulnerable);
+    ptr.Invulnerable = true;
+    assert(ptr.Invulnerable);
 
     @/kill @e[type=wither]
 

@@ -5,35 +5,11 @@ string get-stack-ref(string name, int offset) {
 
     // TODO: string concatenation
     string ref;
-    @/data modify storage amethyst:runtime stack[-1].frame1.ref set value "storage amethyst:runtime stack[$(offset)].$(name)"
+    @/data modify $(^ref) set value "storage amethyst:runtime stack[$(offset)].$(name)"
     
     return ref;
 }
 
-inline void set(macro nbt^ ref, macro string val) {
-    @/data modify $(ref) set value $(val)
-}
-
 inline void set-ref(macro nbt^ ref, macro nbt^ val) {
     @/data modify $(ref) set from $(val)
-}
-
-inline void append(macro nbt^ ref, macro string val) {
-    @/data modify $(ref) append value $(val)
-}
-
-inline void append-ref(macro nbt^ ref, macro nbt^ val) {
-    @/data modify $(ref) append from $(val)
-}
-
-inline void set-score(macro nbt dest, macro nbt^ ref) {
-    @/execute store result score $(dest) run data get $(ref)
-}
-
-inline void property(macro nbt^ dest, macro nbt^ ref, macro nbt prop) {
-    @/data modify $(dest) set value "$(ref).$(prop)"
-}
-
-inline void index(macro nbt^ dest, macro nbt^ ref, macro int index) {
-    @/data modify $(dest) set value "$(ref)[$(index)]"
 }

@@ -18,18 +18,33 @@ namespace Amethyst.IR.Instructions
 		public override void Render(RenderContext ctx)
 		{
 			var val = Arg<ValueRef>(0).Expect();
+			var prop = Arg<ValueRef>(1).Expect();
 
-			if (val.Type is not ReferenceType && val is DataTargetValue nbt)
+			if (val.Type is EntityType)
 			{
-				if (val is MacroValue)
+				ReturnValue.Expect<DynamicValue>()
+					.Add("entity @e[scores={amethyst_id=")
+					.Add(val)
+					.Add("},limit=1] ")
+					.Add(prop);
+			}
+			else
+			{
+				if (val.Type is not ReferenceType && val is DataTargetValue nbt)
 				{
-					throw new MacroPropertyError();
+					if (val is MacroValue)
+					{
+						throw new MacroPropertyError();
+					}
+
+					val = WeakReferenceType.From(nbt);
 				}
 
-				val = WeakReferenceType.From(nbt);
+				ReturnValue.Expect<DynamicValue>()
+					.Add(val)
+					.Add(".")
+					.Add(prop);
 			}
-
-			ctx.Call("amethyst:core/ref/property", WeakReferenceType.From(ReturnValue.Expect<DataTargetValue>()), val, Arg<ValueRef>(1));
 		}
 
 		protected override IValue? ComputeReturnValue(FunctionContext ctx)
@@ -37,7 +52,13 @@ namespace Amethyst.IR.Instructions
 			var val = Arg<ValueRef>(0);
 			var prop = Arg<ValueRef>(1);
 
-			if (prop.Value is LiteralValue l)
+			// I don't want to deal with nested Macroizer stuff
+			if (val.Type is ReferenceType r && r.Inner is EntityType e)
+			{
+				throw new InvalidTypeError(prop.Type.ToString(), e.ToString());
+			}
+
+			if (prop.Value is LiteralValue l && val.Type is not EntityType)
 			{
 				if (l.Value is not NBTString name)
 				{
@@ -64,7 +85,10 @@ namespace Amethyst.IR.Instructions
                 }
 			}
 
-			return null;
+			ReturnValue.AddDependency(val);
+			ReturnValue.AddDependency(prop);
+
+			return new DynamicValue(ReturnType);
 		}
 	}
 }

@@ -9,7 +9,7 @@ namespace Datapack.Net.Reader
         public readonly string FilePath;
         public readonly bool IsZip;
 
-        private Dictionary<string, string> cache = [];
+        private readonly Dictionary<string, string> cache = [];
 
         public DatapackReader(string path)
         {

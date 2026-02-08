@@ -83,7 +83,16 @@ namespace Geode
 		public ValueRef Clone() => Value is null ? new(Type) : new(Value);
 		object ICloneable.Clone() => Clone();
 
-		public void AddDependency(ValueRef dep) => dependencies.Add(dep);
+		public void AddDependency(ValueRef dep)
+		{
+			if (dependencies.Add(dep))
+			{
+				foreach (var i in dep.Dependencies)
+				{
+					AddDependency(i);
+				}
+			}
+		}
 
 		public void ReplaceValue(ValueRef value, ValueRef with)
 		{

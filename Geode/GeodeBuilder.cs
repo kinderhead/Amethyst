@@ -157,15 +157,15 @@ namespace Geode
 			}
 		}
 
-		public ScoreValue Score(string name)
+		public ScoreValue Score(string name, TypeSpecifier? type = null)
 		{
 			var score = new Score(name, "dummy");
 			Register(score);
-			return new(RuntimeEntity, score);
+			return new(RuntimeEntity, score, type);
 		}
 
-		public ScoreValue Reg(int num) => Score($"reg_{num}");
-		public ScoreValue Temp(int num) => Score($"tmp_{num}");
+		public ScoreValue Reg(int num, TypeSpecifier? type = null) => Score($"reg_{num}", type);
+		public ScoreValue Temp(int num, TypeSpecifier? type = null) => Score($"tmp_{num}", type);
 
 		public ScoreValue Constant(int num)
 		{

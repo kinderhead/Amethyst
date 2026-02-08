@@ -32,7 +32,7 @@ namespace Amethyst.AST.Expressions
                     }
 					else
                     {
-                        throw new CannotNegateArgument(k);
+                        throw new CannotNegateArgumentError(k);
                     }
                 }
 

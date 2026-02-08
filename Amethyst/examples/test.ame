@@ -2,31 +2,26 @@
 
 namespace example;
 
-struct obj {
-    overload obj(int x) {
-        print(x);
-    }
-
-    overload obj(string x) {
-        print(x);
-    }
+entitydef minecraft:base {
+    bool Invulnerable;
+    string CustomName;
 }
 
-struct obj2 implements obj {
-    overload obj2(int x) : obj(x + 2) {
-        
-    }
+entitydef test_entity implements minecraft:base {
+    float Health;
 
-    overload obj2(string x) : obj("hi") {
-        print(x);
+    void test() {
+        print(this.Invulnerable);
     }
 }
 
 #load
 void main() {
-    var a = obj2(5);
-    var b = obj2("womp");
-
-    amethyst:exit();
+    test_entity e = @e[type="sheep"];
+    e.CustomName = "womp";
+    
+    as (e) {
+        @/say @s
+    }
 }
 

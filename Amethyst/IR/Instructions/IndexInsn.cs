@@ -37,6 +37,7 @@ namespace Amethyst.IR.Instructions
 		public override void Render(RenderContext ctx)
 		{
 			var val = Arg<ValueRef>(0).Expect();
+			var index = Arg<ValueRef>(1).Expect();
 
 			if (val.Type is not ReferenceType && val is DataTargetValue nbt)
 			{
@@ -48,12 +49,17 @@ namespace Amethyst.IR.Instructions
 				val = WeakReferenceType.From(nbt);
 			}
 
-			ctx.Call("amethyst:core/ref/index", WeakReferenceType.From(ReturnValue.Expect<DataTargetValue>()), val, Arg<ValueRef>(1));
+			ReturnValue.Expect<DynamicValue>()
+				.Add(val)
+				.Add("[")
+				.Add(index)
+				.Add("]");
 		}
 
 		protected override IValue? ComputeReturnValue(FunctionContext ctx)
 		{
 			var val = Arg<ValueRef>(0);
+			var index = Arg<ValueRef>(1);
 
 			if (val.Value is MacroValue && val.Type is not ReferenceType)
 			{
@@ -71,7 +77,10 @@ namespace Amethyst.IR.Instructions
 				return WeakReferenceType.From(list.Index(ind.Value, ActualReturnType));
 			}
 
-			return null;
+			ReturnValue.AddDependency(val);
+			ReturnValue.AddDependency(index);
+
+			return new DynamicValue(ReturnType);
 		}
 	}
 }

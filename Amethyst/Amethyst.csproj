@@ -7,7 +7,7 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <Authors>kinderhead</Authors>
-        <Version>0.11.0-beta</Version>
+        <Version>0.11.1-beta</Version>
         <PublishTrimmed>True</PublishTrimmed>
         <PublishAot>True</PublishAot>
         <TrimMode>partial</TrimMode>
@@ -61,10 +61,6 @@
     <None Update="tests\**">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    </ItemGroup>
-
-    <ItemGroup>
-        <PackageReference Update="EnvDTE" Version="17.14.40260" />
     </ItemGroup>
 
 </Project>

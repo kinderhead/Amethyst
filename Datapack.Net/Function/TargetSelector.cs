@@ -222,10 +222,10 @@ namespace Datapack.Net.Function
 		Arbitrary
 	}
 
-	public class EntityTypeSelector : List<Negatable<EntityType>>
+	public class EntityTypeSelector : List<Negatable<EntityData>>
 	{
-		public static implicit operator EntityTypeSelector(Negatable<EntityType> type) => [type];
+		public static implicit operator EntityTypeSelector(Negatable<EntityData> type) => [type];
 
-		public static implicit operator EntityTypeSelector(EntityType type) => [type];
+		public static implicit operator EntityTypeSelector(EntityData type) => [type];
 	}
 }

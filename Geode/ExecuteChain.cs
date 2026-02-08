@@ -22,7 +22,7 @@ namespace Geode
 		{
 			var cmd = new Execute();
 
-			ctx.Builder.Macroizer.Run(ctx, GetDependencies(), (args, ctx) =>
+			ctx.Macroize(GetDependencies(), (args, ctx) =>
 			{
 				Compute(cmd, () => ifTrue, args, ctx);
 			});

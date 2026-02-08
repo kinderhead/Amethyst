@@ -26,7 +26,7 @@ namespace Amethyst.AST.Statements
 			ctx.PushScope();
 			foreach (var i in Statements)
 			{
-				if (!ctx.Compiler.WrapError(i.Location, ctx, () => i.Compile(ctx)))
+				if (!ctx.Compiler.WrapError(i.Location, ctx, [System.Diagnostics.DebuggerNonUserCode] () => i.Compile(ctx)))
 				{
 					success = false;
 				}

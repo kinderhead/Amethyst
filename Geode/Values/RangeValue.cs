@@ -22,7 +22,7 @@ namespace Geode.Values
 
 		public void StoreTo(DataTargetValue val, RenderContext ctx)
         {
-            ctx.Builder.Macroizer.Run(ctx, [this], (args, ctx) =>
+            ctx.Macroize([this], (args, ctx) =>
             {
                 // Macroize returns NBTRawString, so make it a regular string to add quotes
                 val.Store(new LiteralValue(args[0].Value.Build(), Type), ctx);

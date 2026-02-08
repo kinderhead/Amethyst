@@ -16,6 +16,7 @@ namespace Geode.IR.Instructions
 		{
 			var func = Arg<ValueRef>(0).Expect<FunctionValue>();
 			func.Call(ctx, [.. Arguments[1..].Cast<ValueRef>()]);
+
 			if (ReturnValue.Expect() is LValue ret)
 			{
 				ret.Store(ctx.Func.GetFunctionReturnValue(ReturnType, -1), ctx);

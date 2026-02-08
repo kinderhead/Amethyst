@@ -2,6 +2,7 @@ using Datapack.Net.Function.Commands;
 using Geode.Errors;
 using Geode.IR;
 using Geode.IR.Instructions;
+using Geode.Types;
 using Geode.Values;
 
 namespace Geode.Chains
@@ -37,6 +38,6 @@ namespace Geode.Chains
 			throw new InvalidTypeError(val.Type.ToString(), "score");
 		}
 
-		public static IfValueChain With(ValueRef val, FunctionContext ctx, bool invert = false) => new(ctx.AddLoad(val), invert);
+		public static IfValueChain With(ValueRef val, FunctionContext ctx, bool invert = false) => new(ctx.AddLoad(ctx.ImplicitCast(val, PrimitiveType.Bool)), invert);
 	}
 }

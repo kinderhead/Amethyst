@@ -1,6 +1,6 @@
 import { transformerColorizedBrackets } from '@shikijs/colorized-brackets';
 import darkPlus from "@shikijs/themes/dark-plus";
-import amethyst from "@site/amethyst.tmLanguage.json";
+import amethyst from "@site/../AmethystLanguageServer/syntaxes/amethyst.tmLanguage.json";
 import React from 'react';
 import { createJavaScriptRegexEngine } from "shiki";
 import { createHighlighterCoreSync } from "shiki/core";

@@ -5,7 +5,7 @@ using Geode.Types;
 
 namespace Geode.Values
 {
-	public class ScoreValue(IEntityTarget target, Score score) : DataLValue
+	public class ScoreValue(IEntityTarget target, Score score, TypeSpecifier? type = null) : DataLValue
 	{
 		public readonly IEntityTarget Target = target;
 		public readonly Score Score = score;
@@ -41,7 +41,7 @@ namespace Geode.Values
 		public override FormattedText Render(FormattedText text, RenderContext ctx) => text.Score(Target, Score);
 		public override bool Equals(object? obj) => obj is ScoreValue s && s.Score == Score && s.Target.Get() == Target.Get();
 
-		public override TypeSpecifier Type => PrimitiveType.Int;
+		public override TypeSpecifier Type => type ?? PrimitiveType.Int;
 
 		public override int GetHashCode() => HashCode.Combine(Target, Score);
 

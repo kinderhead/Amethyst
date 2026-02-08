@@ -1,5 +1,5 @@
 ---
-sidebar_position: 10
+sidebar_position: 11
 description: Extension method declarations
 ---
 
@@ -11,7 +11,7 @@ import Highlight from "@site/src/components/highlight";
 
 Methods can be added to any type at any time. When searching for a method to call, Amethyst will see if any functions exist that satisfy the following conditions:
 
-* The first argument is a reference to the target type or to a base class of the target type.
+* The first argument is an optional reference to the target type or to a base class of the target type.
 * The function is in the same namespace and path as the type, including the name of the type.
 
 For example, this adds an extension method to all objects:
@@ -27,8 +27,12 @@ For example, this adds an extension method to all objects:
 
     namespace minecraft:nbt;
 
-    void say(nbt& this) {
+    void say(macro nbt& this) {
         // print dereferences pointers automatically
         print(this);
     }
 `}/>
+
+:::note
+While it is not necessary to make the `this` parameter a reference, it is highly recommended to do so. Entities are the only built-in objects that don't follow this rule. Additionally, setting `this` to be a `macro` parameter will allow Amethyst to generate simpler code.
+:::

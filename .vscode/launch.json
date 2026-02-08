@@ -13,7 +13,7 @@
             "console": "integratedTerminal"
         },
         {
-            "name": "Amethyst Test Suite",
+            "name": "Test Suite",
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build",

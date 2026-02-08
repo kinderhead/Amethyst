@@ -2,7 +2,9 @@
 using Amethyst.AST;
 using Amethyst.AST.Intrinsics;
 using Amethyst.Cli;
+using Amethyst.IR.Types;
 using Antlr4.Runtime;
+using Datapack.Net.Function;
 using Geode;
 using Geode.Errors;
 using Geode.IR;
@@ -214,6 +216,7 @@ namespace Amethyst
 			return true;
 		}
 
+		[System.Diagnostics.DebuggerNonUserCode] // Hide this on the call stack
 		public bool WrapError(LocationRange loc, Action cb)
 		{
 			try
@@ -229,6 +232,7 @@ namespace Amethyst
 			return true;
 		}
 
+		[System.Diagnostics.DebuggerNonUserCode] // Hide this on the call stack
 		public bool WrapError(LocationRange loc, FunctionContext ctx, Action cb)
 		{
 			ctx.LocationStack.Push(loc);
@@ -283,6 +287,7 @@ namespace Amethyst
 			Register(PrimitiveType.String);
 			Register(PrimitiveType.List);
 			Register(PrimitiveType.Compound);
+			Register(EntityType.Dummy);
 			Register(new UnsafeStringType());
 			Register(new IntRangeType());
 			Register(new FloatRangeType());
@@ -298,6 +303,8 @@ namespace Amethyst
 			IR.AddSymbol(new("builtin:true", LocationRange.None, new LiteralValue(true)));
 			IR.AddSymbol(new("builtin:false", LocationRange.None, new LiteralValue(false)));
 			IR.AddSymbol(new("amethyst:stack", LocationRange.None, new StorageValue(IR.RuntimeID, "stack", new ListType(PrimitiveType.Compound))));
+
+			IR.Register(new Score("amethyst_id", "dummy"));
 		}
 
 		protected FunctionContext GetGlobalInitFunc() => new(this, new(new("amethyst", GeodeBuilder.InternalPath + "/" + GeodeBuilder.RandomString), FunctionType.VoidFunc, LocationRange.None), ["minecraft:load"], LocationRange.None, hasTagPriority: true);
