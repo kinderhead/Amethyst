@@ -13,7 +13,7 @@ namespace Amethyst.AST
 		{
 			AbstractTypeSpecifier selfType = new SimpleAbstractTypeSpecifier(Location, string.Join('/', ID.ToString().Split('/')[..^1]));
 
-			if (ctx.IR.GetGlobal(((SimpleAbstractTypeSpecifier)selfType).Type) is StructType)
+			if (ctx.IR.Types[((SimpleAbstractTypeSpecifier)selfType).Type].Type is StructType)
 			{
 				selfType = new AbstractReferenceTypeSpecifier(Location, selfType);
 			}
