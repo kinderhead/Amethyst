@@ -28,6 +28,22 @@ namespace Amethyst.IR
 		extension (IValueLike self)
 		{
 			public bool IsTypeOrRef<T>() where T : TypeSpecifier => self.Type is T || (self.Type is ReferenceType ptr && ptr.Inner is T);
+			public bool IsTypeOrRef<T>(out T type) where T : TypeSpecifier 
+			{
+				if (self.Type is T ret1)
+				{
+					type = ret1;
+					return true;
+				}
+				else if (self.Type is ReferenceType ptr && ptr.Inner is T ret2)
+				{
+					type = ret2;
+					return true;
+				}
+
+				type = null!;
+				return false;
+			}
 		}
 	}
 }

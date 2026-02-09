@@ -79,6 +79,13 @@ namespace Amethyst.AST
 		protected override TypeSpecifier ResolveImpl(Compiler ctx, string baseNamespace, bool allowAuto = false) => new ListType(Inner.Resolve(ctx, baseNamespace));
 	}
 
+	public class AbstractMapTypeSpecifier(LocationRange loc, AbstractTypeSpecifier inner) : AbstractTypeSpecifier(loc)
+	{
+		public readonly AbstractTypeSpecifier Inner = inner;
+
+		protected override TypeSpecifier ResolveImpl(Compiler ctx, string baseNamespace, bool allowAuto = false) => new SimpleMapType(Inner.Resolve(ctx, baseNamespace));
+	}
+
 	public class AbstractReferenceTypeSpecifier(LocationRange loc, AbstractTypeSpecifier inner) : AbstractTypeSpecifier(loc)
 	{
 		public readonly AbstractTypeSpecifier Inner = inner;

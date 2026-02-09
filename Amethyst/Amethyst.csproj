@@ -7,7 +7,7 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <Authors>kinderhead</Authors>
-        <Version>0.12.0-beta</Version>
+        <Version>0.12.1-beta</Version>
         <PublishTrimmed>True</PublishTrimmed>
         <PublishAot>True</PublishAot>
         <TrimMode>partial</TrimMode>
@@ -22,7 +22,7 @@
         <NativeDebugSymbols>False</NativeDebugSymbols>
         <StripSymbols>true</StripSymbols>
         <NoWarn>IL3050;IL2104;IL3053;IL3000;IL3002</NoWarn>
-        <OptimizationPreference>Size</OptimizationPreference>
+        <OptimizationPreference>Speed</OptimizationPreference>
         <DebuggerSupport>false</DebuggerSupport>
 		<MetadataUpdaterSupport>false</MetadataUpdaterSupport>
 		<EnableUnsafeBinaryFormatterSerialization>false</EnableUnsafeBinaryFormatterSerialization>

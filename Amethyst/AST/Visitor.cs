@@ -246,6 +246,10 @@ namespace Amethyst.AST
 			{
 				return new AbstractListTypeSpecifier(Loc(context), Visit(context.type()));
 			}
+			else if (context.LBrak() is not null)
+			{
+				return new AbstractMapTypeSpecifier(Loc(context), Visit(context.type()));
+			}
 			else if (context.And() is not null)
 			{
 				return new AbstractReferenceTypeSpecifier(Loc(context), Visit(context.type()));

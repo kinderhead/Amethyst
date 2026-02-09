@@ -11,9 +11,10 @@ namespace Geode.Types
         public readonly TypeSpecifier Inner = inner;
 		public override LiteralValue DefaultValue => new("", this);
 		public override NBTType EffectiveType => NBTType.String;
+		public override IEnumerable<TypeSpecifier> Subtypes => [Inner];
+
 		public override bool WrapInQuotesForMacro => true;
 
-		public override object Clone() => throw new NotImplementedException();
 		public override string ToString() => ID.Path;
 		protected override bool EqualsImpl(TypeSpecifier obj) => obj is RangeType r && r.Inner == Inner;
 
@@ -42,11 +43,15 @@ namespace Geode.Types
 
             return null;
         }
-    }
+
+		public override object Clone() => new IntRangeType();
+	}
 
     // Use doubles to get rid of the f postfix
     public class FloatRangeType() : RangeType(PrimitiveType.Double)
     {
         public override NamespacedID ID => "minecraft:float_range";
-    }
+
+		public override object Clone() => new FloatRangeType();
+	}
 }

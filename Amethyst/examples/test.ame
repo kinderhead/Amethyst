@@ -14,9 +14,9 @@ entitydef test_entity implements minecraft:base {
 
 #load
 void main() {
-    at (@p) {
-        test_entity e = summon("sheep");
-        e.Tags.add("gaming");
-    }
+    int{} map;
+    map["silly_name"] = 7;
+    print(map);
+    amethyst:exit();
 }
 

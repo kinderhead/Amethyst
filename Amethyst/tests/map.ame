@@ -1,0 +1,18 @@
+namespace test;
+
+#test
+void test_int_map() {
+    start("int map");
+
+    int{} x;
+    int y = 6;
+    unsafe_string id = "e";
+
+    x["womp"] = 3;
+    x[id] = y;
+
+    assert_eq(x["womp"], 3);
+    assert_eq(x[id], y);
+    
+    complete();
+}

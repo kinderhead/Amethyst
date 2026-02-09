@@ -193,6 +193,7 @@ expressionList
 type
     : id
     | type LSquareBrak RSquareBrak
+    | type LBrak RBrak
     | type And
     | type WeakRef
     ;
