@@ -13,9 +13,7 @@ Not every feature is covered in the tutorial. The handbook is still a valuable r
 
 ### Visual Studio Code
 
-It is recommended to use Visual Studio Code since an extension exists to provide syntax highlighting. As of now, the extension is not available in the marketplace and has to be installed manually.
-
-The latest version can be found in [Github Actions](https://nightly.link/kinderhead/Amethyst/workflows/language_server/master/language-server-vscode-extension.zip). Extract the `.vsix` file and install it by either running `code --install-extension amethyst-language-<version>.vsix` or by opening the containing folder in VS Code and right-clicking the `.vsix` file.
+It is recommended to use Visual Studio Code since an [extension](https://marketplace.visualstudio.com/items?itemName=kinderhead.amethyst-language) exists to provide syntax highlighting and more in the future.
 
 :::note
 The extension's version does not match up with the compiler's version. An update is only made to the extension when the Amethyst syntax changes. If you encounter incorrect highlighting, try updating the extension.
@@ -23,13 +21,17 @@ The extension's version does not match up with the compiler's version. An update
 
 ### Minecraft
 
-This version of Amethyst is tested on Minecraft 1.21.10, but can theoretically work in versions as early as 1.20.5 or so.
+This version of Amethyst is tested on Minecraft 1.21.9 through 1.21.11, but can theoretically work in versions as early as 1.20.5 or so.
 
 There are two main ways to run an Amethyst program:
-1. Create a Minecraft world and build the data pack into the `datapacks` folder in your world.
+1. Create a Minecraft world and build or symlink the data pack into the `datapacks` folder in your world.
 2. Use an automatically configured Minecraft server with the built-in [daemon mode](../handbook/daemon.mdx).
 
 To use the second option, run `amethyst setup --eula` to install the Minecraft server. An appropriate version of Java must be installed on the machine for this to work. See the [documentation](../handbook/daemon.mdx) for configuration options.
+
+:::warning
+Note that on Windows, building directly into the `datapacks` folder will likely freeze the compiler due to Windows file locking mechanics. The easiest way to get around this is to create a symlink to the zipped data pack. A solution will be provided in the future.
+:::
 
 ## Your First Program
 

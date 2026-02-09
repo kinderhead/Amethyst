@@ -1,0 +1,47 @@
+---
+sidebar_position: 3
+description: Basic variable usage
+---
+
+import Highlight from "@site/src/components/highlight";
+
+# Variables
+
+Variables defined in functions are allocated on the stack.
+
+<Highlight code={`\
+    int x = 7;
+    string str = "Hello";
+`}/>
+
+Amethyst is a statically-typed programming language. Primitives include the following:
+
+* `byte`
+* `short`
+* `int`
+* `long`
+* `float`
+* `double`
+* `bool`
+* `string`
+* `nbt`
+
+The NBT compound type `nbt` type acts like `object` in other programming languages. Almost all types inherit from it and thus can be assigned to it.
+
+:::tip
+See the [appendix](../handbook/appendix/inheritance.mdx) for more information on built-in types.
+:::
+
+With optimizations disabled, all variables are placed on the stack which is a location in NBT storage (`amethyst:runtime stack`). When optimizations are enabled, some integer related variables will be assigned to scores instead.
+
+Currently, all variables are mutable.
+
+## References
+
+Variables can be referenced, which creates a pointer to them. There are two main types of references, strong and weak. Unlike other languages, they don't just differentiate in the way they affect garbage collection. Traditional pointers are numbers that point to a location in memory. Pointers in Amethyst are NBT path strings that point to any NBT location.
+
+For example, a pointer to a player's health could be represented as `entity @p Health`. Those who are familiar with Minecraft commands may recognize this as `/data` command syntax. Amethyst internally uses macros to put these pointers directly into `/data` and `/execute`. The operators `^` and `&` can be applied to types for weak and strong references, respectively.
+
+:::tip
+See the [handbook](../handbook/language-features/references.mdx) for how to use references.
+:::
