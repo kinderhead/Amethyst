@@ -57,7 +57,7 @@ void test_if_many() {
         assert(false);
     }
 
-    @/kill @e[type=wither]
+    kill(@e[type="wither"]);
 
     complete();
 }
@@ -71,7 +71,7 @@ void test_as_return() {
 
     assert_eq(as_return_tester(), 3);
 
-    @/kill @e[type=wither]
+    kill(@e[type="wither"]);
 
     complete();
 }
@@ -90,7 +90,7 @@ int as_return_tester() {
 void test_as_many() {
     start("as many");
 
-    @/kill @e[type=wither]
+    kill(@e[type="wither"]);
 
     summon("wither");
     summon("wither");
@@ -103,7 +103,7 @@ void test_as_many() {
     
     assert_eq(x, 2);
 
-    @/kill @e[type=wither]
+    kill(@e[type="wither"]);
 
     complete();
 }

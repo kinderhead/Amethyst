@@ -300,6 +300,7 @@ namespace Amethyst
 			Register(new ListSize());
 			Register(new StringLength());
 			Register(new Summon());
+			Register(new Kill());
 
 			IR.AddSymbol(new("builtin:true", LocationRange.None, new LiteralValue(true)));
 			IR.AddSymbol(new("builtin:false", LocationRange.None, new LiteralValue(false)));

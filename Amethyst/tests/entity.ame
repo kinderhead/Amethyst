@@ -8,7 +8,7 @@ entitydef test_entity {
 void test_entity_exists() {
     start("entity exists");
 
-    @/kill @e[type=wither]
+    kill(@e[type="wither"]);
     
     macro_entity_tester(false);
     assert(!@e[type="wither"]);
@@ -18,7 +18,7 @@ void test_entity_exists() {
     macro_entity_tester(true);
     assert(@e[type="wither"]);
 
-    @/kill @e[type=wither]
+    kill(@e[type="wither"]);
 
     macro_entity_tester(false);
     assert(!@e[type="wither"]);
@@ -40,7 +40,7 @@ void macro_entity_tester(macro bool x) {
 void test_entity_negate() {
     start("entity negate");
 
-    @/kill @e[type=wither]
+    kill(@e[type="wither"]);
     @/summon wither ~ ~ ~ { CustomName: "womp1" }
     @/summon wither ~ ~ ~ { CustomName: "womp2" }
 
@@ -50,7 +50,7 @@ void test_entity_negate() {
 
     assert(@e[type="wither",name=!"womp1",name=!"womp2"]);
 
-    @/kill @e[type=wither]
+    kill(@e[type="wither"]);
 
     complete();
 }
@@ -59,7 +59,7 @@ void test_entity_negate() {
 void test_entity_tag() {
     start("entity tag");
 
-    @/kill @e[type=wither]
+    kill(@e[type="wither"]);
     
     unsafe_string tag = "womp";
 
@@ -68,7 +68,7 @@ void test_entity_tag() {
     
     assert(@e[tag=tag]);
 
-    @/kill @e[type=wither]
+    kill(@e[type="wither"]);
 
     complete();
 }
@@ -77,7 +77,7 @@ void test_entity_tag() {
 void test_entity_ref() {
     start("entity ref");
 
-    @/kill @e[type=wither]
+    kill(@e[type="wither"]);
     summon("wither");
     
     test_entity e = @e[type="wither", limit=1];
@@ -86,7 +86,7 @@ void test_entity_ref() {
     e.Invulnerable = true;
     assert(e.Invulnerable);
 
-    @/kill @e[type=wither]
+    kill(@e[type="wither"]);
 
     complete();
 }
@@ -95,7 +95,7 @@ void test_entity_ref() {
 void test_entity_ref_ref() {
     start("entity ref ref");
 
-    @/kill @e[type=wither]
+    kill(@e[type="wither"]);
     summon("wither");
     
     test_entity e = @e[type="wither", limit=1];
@@ -105,7 +105,7 @@ void test_entity_ref_ref() {
     ptr.Invulnerable = true;
     assert(ptr.Invulnerable);
 
-    @/kill @e[type=wither]
+    kill(@e[type="wither"]);
 
     complete();
 }

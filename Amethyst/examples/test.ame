@@ -5,6 +5,7 @@ namespace example;
 entitydef minecraft:base {
     bool Invulnerable;
     string CustomName;
+    unsafe_string[] Tags;
 }
 
 entitydef test_entity implements minecraft:base {
@@ -15,7 +16,7 @@ entitydef test_entity implements minecraft:base {
 void main() {
     at (@p) {
         test_entity e = summon("sheep");
-        print(e.Health);
+        e.Tags.add("gaming");
     }
 }
 

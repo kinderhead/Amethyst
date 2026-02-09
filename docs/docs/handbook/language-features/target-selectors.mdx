@@ -61,7 +61,7 @@ Some arguments allow empty values which are internally represented as empty stri
 Few checks have been implemented for invalid combinations of arguments. Check the Minecraft logs for errors generated on `/reload`. Adding `-c` to your build command dumps the compiled `.mcfunction`s to the console for easy viewing. Running with [Daemon Mode](../daemon.mdx) will give helpful error messages.
 :::
 
-## Existence Checks
+### Existence Checks
 
 Target selectors can be put in `if` [Execute Statement](./control-flow.mdx#execute-statements) clauses which effectively use `execute if entity` to determine if the entity exists:
 
@@ -89,7 +89,7 @@ Some target selector arguments, like `tag` and `team`, only accept alphanumeric 
         print("yay");
     }
 
-    @/kill @e[type=wither]
+    kill(@e[type="wither"]);
 `}/>
 
 As such, `unsafe_string` can be used in macro arguments without restrictions.
