@@ -27,6 +27,10 @@ namespace Amethyst.IR.Types
 			{
 				return ctx.Add(new EntityRefInsn(val));
 			}
+			else if (val.Type is EntityType other && other.ID == "amethyst:dummy")
+			{
+				return val;
+			}
 
 			return base.CastToOverload(val, ctx);
 		}

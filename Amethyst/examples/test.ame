@@ -9,19 +9,13 @@ entitydef minecraft:base {
 
 entitydef test_entity implements minecraft:base {
     float Health;
-
-    void test() {
-        print(this.Invulnerable);
-    }
 }
 
 #load
 void main() {
-    test_entity e = @e[type="sheep"];
-    e.CustomName = "womp";
-    
-    as (e) {
-        @/say @s
+    at (@p) {
+        test_entity e = summon("sheep");
+        print(e.Health);
     }
 }
 

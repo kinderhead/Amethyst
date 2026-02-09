@@ -82,7 +82,7 @@ Some target selector arguments, like `tag` and `team`, only accept alphanumeric 
 <Highlight code={`\
     unsafe_string tag = "womp";
 
-    @/summon wither
+    summon("wither");
     @/tag @e[type=wither] add $(tag)
 
     if (@e[tag=tag]) {

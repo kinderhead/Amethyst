@@ -200,13 +200,13 @@ namespace Amethyst.AST
 			// Ignore new line
 			loc = new(loc.Start, new(loc.End.File, loc.End.Line, loc.End.Column - 1));
 
-			var frags = new List<CommandFragment>();
+			var frags = new List<Expression>();
 
 			foreach (Match i in CommandExprRegex().Matches(cmd))
 			{
 				if (i.Groups["other"].Success)
 				{
-					frags.Add(new CommandTextFragment(i.Groups["other"].Value));
+					frags.Add(new LiteralExpression(loc, new NBTRawString(i.Groups["other"].Value)));
 					continue;
 				}
 
@@ -225,9 +225,7 @@ namespace Amethyst.AST
 				parser.AddErrorListener(error);
 
 				var expr = parser.expression();
-				var node = visitor.Visit(expr);
-
-				frags.Add(new CommandExprFragment(node));
+				frags.Add(visitor.Visit(expr));
 
 				if (error.Errored)
 				{

@@ -49,7 +49,7 @@ void test_if_many() {
     int x = 8;
     string type = "wither";
 
-    @/summon wither
+    summon("wither");
 
     if (x == 8) if (x > 4) if (@e[type=type]) {
         assert(true);
@@ -66,8 +66,8 @@ void test_if_many() {
 void test_as_return() {
     start("as return");
 
-    @/summon wither
-    @/summon wither
+    summon("wither");
+    summon("wither");
 
     assert_eq(as_return_tester(), 3);
 
@@ -92,8 +92,8 @@ void test_as_many() {
 
     @/kill @e[type=wither]
 
-    @/summon wither
-    @/summon wither
+    summon("wither");
+    summon("wither");
 
     int x = 0;
 

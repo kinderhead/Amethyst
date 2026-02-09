@@ -1,6 +1,6 @@
 namespace amethyst:core/ref;
 
-string get-stack-ref(string name, int offset) {
+string get-stack-ref(unsafe_string name, int offset) {
     offset += amethyst:stack.size() - 1;
 
     // TODO: string concatenation

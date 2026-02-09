@@ -59,6 +59,20 @@ Entity NBT can be accessed just like structs:
     cow.Health = 1;
 `}/>
 
+### `amethyst:dummy`
+
+Since `minecraft:entity` may not always be defined, a special all-encompasing entity type exists. `amethyst:dummy` can be implicitly casted to any entity definition and is the default base type when using `entitydef`.
+
+### Summoning
+
+The other way to reference entities is to directly summon them.
+
+<Highlight code={`\
+    living_entity cow = summon("cow");
+`}/>
+
+`minecraft:summon` currently returns an `amethyst:dummy`, so `var` should not be used in this context.
+
 ### Existence Checks
 
 There is currently no mechanism for automatically checking if the reference was created successfully. Instead, entity references can be checked manually:
@@ -70,3 +84,7 @@ There is currently no mechanism for automatically checking if the reference was 
 `}/>
 
 Additionally, entity references can be used in `as`, `at`, and anything else that requires `minecraft:target`.
+
+## Manual Referencing
+
+In some cases, it may be necessary to manually reference an entity. Calling `amethyst:core/entity/ref` with no arguments will return a reference to `@s`.

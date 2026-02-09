@@ -13,7 +13,7 @@ void test_entity_exists() {
     macro_entity_tester(false);
     assert(!@e[type="wither"]);
 
-    @/summon wither
+    summon("wither");
 
     macro_entity_tester(true);
     assert(@e[type="wither"]);
@@ -46,7 +46,7 @@ void test_entity_negate() {
 
     assert(!@e[type="wither",name=!"womp1",name=!"womp2"]);
 
-    @/summon wither
+    summon("wither");
 
     assert(@e[type="wither",name=!"womp1",name=!"womp2"]);
 
@@ -63,7 +63,7 @@ void test_entity_tag() {
     
     unsafe_string tag = "womp";
 
-    @/summon wither
+    summon("wither");
     @/tag @e[type=wither] add $(tag)
     
     assert(@e[tag=tag]);
@@ -78,7 +78,7 @@ void test_entity_ref() {
     start("entity ref");
 
     @/kill @e[type=wither]
-    @/summon wither
+    summon("wither");
     
     test_entity e = @e[type="wither", limit=1];
     
@@ -96,7 +96,7 @@ void test_entity_ref_ref() {
     start("entity ref ref");
 
     @/kill @e[type=wither]
-    @/summon wither
+    summon("wither");
     
     test_entity e = @e[type="wither", limit=1];
     test_entity^ ptr = e;
