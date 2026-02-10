@@ -13,10 +13,11 @@ namespace Geode.Types
         public override bool IsList => true;
         public override TypeSpecifier BaseClass => PrimitiveType.Compound;
         public override NamespacedID ID => "amethyst:map";
-
         public override LiteralValue DefaultValue => new(new NBTCompound(), this);
 
-        // public override bool IsAssignableTo(TypeSpecifier other) => other.EffectiveType == NBTType.List || base.IsAssignableTo(other);
+		public override TypeSpecifier? DefaultPropertyType => Inner;
+		public override LiteralValue? DefaultPropertyValue(string name) => Inner.DefaultValue;
+        
         protected override bool EqualsImpl(TypeSpecifier obj) => obj is SimpleMapType arr && arr.Inner == Inner;
         public override string ToString() => $"{Inner}{{}}";
         public override object Clone() => new SimpleMapType((TypeSpecifier)Inner.Clone());

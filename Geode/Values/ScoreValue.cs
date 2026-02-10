@@ -27,7 +27,8 @@ namespace Geode.Values
 
 			ctx.Add(new Scoreboard.Players.Set(Target, Score, val));
 		}
-		public override void Store(DataTargetValue nbt, RenderContext ctx) => ctx.Add(new Execute().Store(Target, Score).Run(new DataCommand.Get(nbt.Target)));
+		public override void Store(DataTargetValue nbt, RenderContext ctx) => ctx.Add(StoreExecute().Run(new DataCommand.Get(nbt.Target)));
+		public override Execute StoreExecute(bool result = true) => new Execute().Store(Target, Score, result);
 
 		public override ScoreValue AsScore(RenderContext ctx) => this;
 

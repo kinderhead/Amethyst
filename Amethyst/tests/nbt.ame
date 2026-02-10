@@ -135,6 +135,8 @@ void test_nbt_literal() {
     
     nbt obj = { x: 100 };
     assert_eq((int)obj.x, 100);
+    assert(obj.contains("x"));
+    assert(!obj.contains("y"));
 
     complete();
 }

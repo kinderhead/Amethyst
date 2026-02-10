@@ -116,6 +116,15 @@ Lists store an ordered collection of values. Untyped lists (using `list`) are un
 There are currently no bounds checks. Eventually it will be included in debug builds and optionally in release mode builds.
 :::
 
+## Maps
+
+Maps act like dictionaries in other languages except only [`unsafe_string`](./target-selectors.mdx#unsafe-strings)s can be used as keys. To create one, append `{}` to the desired value type:
+
+<Highlight code={`\
+    int{} map = { one: 1, two: 2, three: 3 };
+    map["four"] = 4;
+`}/>
+
 ## Objects
 
 Typeless NBT compounds can be created using the `nbt` type:
@@ -124,4 +133,10 @@ Typeless NBT compounds can be created using the `nbt` type:
     nbt x = { thing1: 7, thing2: 6s };
     x.property = "Hi";
     print(x);
+`}/>
+
+Maps, NBT compounds, and derivative types have a `contains` method for checking if a property is defined.
+
+<Highlight code={`\
+    print(x.contains("thing1"));
 `}/>

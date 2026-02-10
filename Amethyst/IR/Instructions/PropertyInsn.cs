@@ -27,24 +27,24 @@ namespace Amethyst.IR.Instructions
 					.Add(val)
 					.Add("},limit=1] ")
 					.Add(prop);
-			}
-			else
-			{
-				if (val.Type is not ReferenceType && val is DataTargetValue nbt)
-				{
-					if (val is MacroValue)
-					{
-						throw new MacroPropertyError();
-					}
 
-					val = WeakReferenceType.From(nbt);
+				return;
+			}
+
+			if (val.Type is not ReferenceType && val is DataTargetValue nbt)
+			{
+				if (val is MacroValue)
+				{
+					throw new MacroPropertyError();
 				}
 
-				ReturnValue.Expect<DynamicValue>()
-					.Add(val)
-					.Add(".")
-					.Add(prop);
+				val = WeakReferenceType.From(nbt);
 			}
+
+			ReturnValue.Expect<DynamicValue>()
+				.Add(val)
+				.Add(".")
+				.Add(prop);
 		}
 
 		protected override IValue? ComputeReturnValue(FunctionContext ctx)

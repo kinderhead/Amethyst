@@ -35,6 +35,7 @@ namespace Geode
 	{
 		public abstract void Store(IValue val, RenderContext ctx);
 		public abstract void ListAdd(IValue val, RenderContext ctx);
+		public abstract Execute StoreExecute(bool result = true);
 	}
 
 	public abstract class DataLValue : LValue

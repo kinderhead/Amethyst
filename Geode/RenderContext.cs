@@ -203,7 +203,7 @@ namespace Geode
 			func.Call(this, args);
 		}
 
-		public void Macroize(IValue[] dependencies, Action<IConstantValue[], RenderContext> func) => Builder.Macroizer.Run(this, dependencies, func);
+		public void Macroize(IValueLike[] dependencies, Action<IConstantValue[], RenderContext> func) => Builder.Macroizer.Run(this, dependencies, func);
 
 		public List<Command> WithFaux(Action<FauxRenderContext> func)
 		{

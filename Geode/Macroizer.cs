@@ -10,7 +10,7 @@ namespace Geode
 		public readonly GeodeBuilder Builder = builder;
 		public readonly Dictionary<string, MCFunction> CachedFunctions = [];
 
-		public void Run(RenderContext ctx, IValue[] dependencies, Action<IConstantValue[], RenderContext> func)
+		public void Run(RenderContext ctx, IValueLike[] dependencies, Action<IConstantValue[], RenderContext> func)
 		{
 			var args = new List<IConstantValue>();
 			var toMacro = new Dictionary<string, IValue>();
@@ -52,7 +52,7 @@ namespace Geode
 
 			foreach (var i in dependencies)
 			{
-				args.Add(apply(i));
+				args.Add(apply(i.Expect()));
 			}
 
 			if (toMacro.Count == propagatedMacroMap.Count)
@@ -87,7 +87,7 @@ namespace Geode
 			}
 		}
 
-		public void RunAndPropagateMacros(RenderContext ctx, IValue[] dependencies, Action<IConstantValue[], NBTCompound, RenderContext> func) => Run(ctx, [.. dependencies, .. ctx.Func.Decl.FuncType.MacroParameters], (args, ctx) =>
+		public void RunAndPropagateMacros(RenderContext ctx, IValueLike[] dependencies, Action<IConstantValue[], NBTCompound, RenderContext> func) => Run(ctx, [.. dependencies, .. ctx.Func.Decl.FuncType.MacroParameters], (args, ctx) =>
 		{
 			IConstantValue[] realArgs = [.. args.Take(dependencies.Length)];
 			IConstantValue[] propagated;

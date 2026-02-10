@@ -14,9 +14,9 @@ entitydef test_entity implements minecraft:base {
 
 #load
 void main() {
-    int{} map;
-    map["silly_name"] = 7;
-    print(map);
-    amethyst:exit();
-}
+    int{} map = {a: 1};
+    print(map.contains("a"));
+    print(map.contains("yay"));
 
+    //amethyst:exit();
+}

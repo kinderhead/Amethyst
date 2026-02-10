@@ -288,10 +288,10 @@ namespace Amethyst
 			Register(PrimitiveType.List);
 			Register(PrimitiveType.Compound);
 			Register(EntityType.Dummy);
+
 			Register(new UnsafeStringType());
 			Register(new IntRangeType());
 			Register(new FloatRangeType());
-
 			Register(new TargetSelectorType());
 
 			Register(new Print());
@@ -301,6 +301,8 @@ namespace Amethyst
 			Register(new StringLength());
 			Register(new Summon());
 			Register(new Kill());
+			Register(new AST.Intrinsics.Random());
+			Register(new Contains());
 
 			IR.AddSymbol(new("builtin:true", LocationRange.None, new LiteralValue(true)));
 			IR.AddSymbol(new("builtin:false", LocationRange.None, new LiteralValue(false)));

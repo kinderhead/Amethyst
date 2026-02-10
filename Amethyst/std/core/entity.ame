@@ -10,7 +10,7 @@ amethyst:dummy ref() {
         return id;
     }
     
-    @/execute store result $(^id) int 1 run random value 1..2147483646
+    id = (amethyst:dummy)random(1, 2147483646);
     @/data modify $(^t) set value "@e[scores={amethyst_id=$(id)}]"
 
     if (t) {

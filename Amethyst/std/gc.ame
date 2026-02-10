@@ -1,1 +1,7 @@
 namespace amethyst:gc;
+
+nbt&{} heap;
+
+// nbt& malloc() {
+
+// }

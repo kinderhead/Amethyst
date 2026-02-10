@@ -1,6 +1,7 @@
 using Amethyst.IR.Instructions;
 using Amethyst.IR.Types;
 using Geode;
+using Geode.Errors;
 using Geode.IR;
 using Geode.Types;
 
@@ -15,6 +16,11 @@ namespace Amethyst.AST.Intrinsics
 
 		public override ValueRef Execute(FunctionContext ctx, params ValueRef[] args)
 		{
+			if (args.Length != 2)
+			{
+				throw new MismatchedArgumentCountError(1, args.Length);
+			}
+
 			var list = args[0];
 			var val = args[1];
 
