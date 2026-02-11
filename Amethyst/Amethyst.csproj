@@ -12,6 +12,7 @@
         <PublishAot>True</PublishAot>
         <TrimMode>partial</TrimMode>
         <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
+        <LangVersion>preview</LangVersion>
     </PropertyGroup>
 
     <PropertyGroup Condition="'$(Configuration)'=='Release'">

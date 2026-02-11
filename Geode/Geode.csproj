@@ -14,6 +14,7 @@
     <RepositoryUrl>https://github.com/kinderhead/Amethyst/Geode</RepositoryUrl>
     <PackageTags>minecraft,datapack</PackageTags>
     <AssemblyVersion>0.1.0</AssemblyVersion>
+    <LangVersion>preview</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>

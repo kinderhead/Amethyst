@@ -42,6 +42,7 @@
 		<PackageTags>minecraft,datapack</PackageTags>
 		<Version>0.4.0</Version>
 		<PackageLicenseFile>LICENSE</PackageLicenseFile>
+		<LangVersion>preview</LangVersion>
 	</PropertyGroup>
 
 </Project>

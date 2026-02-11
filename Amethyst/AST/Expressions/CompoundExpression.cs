@@ -10,7 +10,9 @@ namespace Amethyst.AST.Expressions
 {
 	public class CompoundExpression(LocationRange loc, IEnumerable<KeyValuePair<string, Expression>> values) : Expression(loc)
 	{
+#pragma warning disable IDE0028 // Wait for C# 15
 		public readonly Dictionary<string, Expression> Values = new(values);
+#pragma warning restore IDE0028
 
 		protected override ValueRef ExecuteImpl(FunctionContext ctx, TypeSpecifier? expected)
 		{
@@ -25,7 +27,7 @@ namespace Amethyst.AST.Expressions
 
 			foreach (var (k, v) in Values)
 			{
-				if (type.HasProperty(k) is not TypeSpecifier t)
+				if (type.HasProperty(k, true) is not TypeSpecifier t)
 				{
 					throw new PropertyError(type.ToString(), k);
 				}

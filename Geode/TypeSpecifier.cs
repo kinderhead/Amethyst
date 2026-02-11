@@ -30,16 +30,14 @@ namespace Geode
 		public virtual TypeSpecifier? DefaultPropertyType => null;
 		public virtual Dictionary<string, TypeSpecifier> Properties => [];
 
-		public TypeSpecifier? HasProperty(string name)
+		public TypeSpecifier? HasProperty(string name, bool allowDefault = false)
 		{
 			if (Properties.TryGetValue(name, out var type))
 			{
 				return type;
 			}
-			else
-			{
-				return DefaultPropertyType;
-			}
+
+			return allowDefault ? DefaultPropertyType : null;
 		}
 
 		public virtual LiteralValue? DefaultPropertyValue(string name) => HasProperty(name)?.DefaultValue;
