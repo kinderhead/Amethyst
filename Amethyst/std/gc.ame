@@ -1,7 +1,30 @@
 namespace amethyst:gc;
 
-nbt&{} heap;
+struct node {
+    nbt data;
+    nbt& ptr;
+    int id;
 
-// nbt& malloc() {
+    void assign_id() {
+        this.id = random(1, 2147483646);
+        @/data modify $(this.ptr) set value $(^heap)[{id: $(this.id)}]
 
-// }
+        // TODO: this
+        bool exists = false;
+        @/execute if data $(*this.ptr) run data modify $(^exists) set value 1b
+
+        if (exists) {
+            this.assign_id();
+        }
+    }
+}
+
+node[] heap;
+
+nbt& malloc() {
+    node n = {};
+    n.assign_id();
+    heap.add(n);
+    
+    return n.ptr;
+}
