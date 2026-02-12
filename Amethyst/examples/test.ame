@@ -14,9 +14,9 @@ entitydef test_entity implements minecraft:base {
 
 #load
 void main() {
-    nbt& data = amethyst:gc/malloc();
+    nbt& data = amethyst2:gc/malloc();
     data = {a: 1};
-    @/say $(data)
+    @/tellraw @a "$(data)"
 
-    //amethyst:exit();
+    amethyst:exit();
 }

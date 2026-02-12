@@ -19,6 +19,16 @@ namespace Amethyst.IR.Instructions
 			ReturnValue.Expect<LValue>().Store(ctx.Func.GetFunctionReturnValue(ReturnType, -1), ctx);
 		}
 
-		protected override IValue? ComputeReturnValue(FunctionContext ctx) => null;
+		protected override IValue? ComputeReturnValue(FunctionContext ctx)
+		{
+			var val = Arg<ValueRef>(0);
+
+			if (val.Value is DataTargetValue data and not StackValue)
+			{
+				return new LiteralValue(data.Target.GetTarget(), ReturnType);
+			}
+
+			return null;
+		}
 	}
 }

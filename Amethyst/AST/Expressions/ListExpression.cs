@@ -15,7 +15,7 @@ namespace Amethyst.AST.Expressions
 		{
 			if (Expressions.Count == 0)
 			{
-				return new LiteralValue(new NBTList());
+				return new LiteralValue(new NBTList(), expected);
 			}
 
 			TypeSpecifier? type = null;

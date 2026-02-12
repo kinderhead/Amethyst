@@ -1,4 +1,4 @@
-namespace amethyst:gc;
+namespace amethyst2:gc;
 
 struct node {
     nbt data;
@@ -7,7 +7,7 @@ struct node {
 
     void assign_id() {
         this.id = random(1, 2147483646);
-        @/data modify $(this.ptr) set value $(^heap)[{id: $(this.id)}]
+        @/data modify $(this.ptr) set value "$(^heap)[{id: $(*this.id)}][0]"
 
         // TODO: this
         bool exists = false;
@@ -19,10 +19,14 @@ struct node {
     }
 }
 
-node[] heap;
+// Remove initializer for production
+node[] heap = [];
+
+// Change to a static variable once implemented
+node n;
 
 nbt& malloc() {
-    node n = {};
+    n = {};
     n.assign_id();
     heap.add(n);
     
