@@ -53,6 +53,20 @@ Struct methods are processed internally as [Extension Methods](./extension-metho
 Create an extension method outside of the struct to customize the `this` parameter (eg. removing `macro`).
 :::
 
+:::warning
+Currently, all property and index operations return a [reference](./references.mdx). Consider the following:
+
+<Highlight code={`\
+    // [Server] storage amethyst:runtime stack[2].vec.x
+    @/say $(this.x)
+
+    // [Server] 4
+    @/say $(*this.x)
+`}/>
+
+The first `/say` command will print a pointer to `this.x` while the second one will print the value at `this.x` because of the dereference (`*`) operator.
+:::
+
 ## Constructors
 
 <Highlight code={`\
