@@ -14,8 +14,10 @@ namespace Geode
 		{
 			var args = new List<IConstantValue>();
 			var toMacro = new Dictionary<string, IValue>();
-			var propagatedMacroMap = new Dictionary<string, MacroValue>();
+			var propagatedMacroList = new List<MacroValue>();
 			var applied = new Dictionary<IValue, IConstantValue>();
+
+			int macroIdx = 0;
 
 			IConstantValue apply(IValue val)
 			{
@@ -32,8 +34,6 @@ namespace Geode
 					goto end;
 				}
 
-
-
 				// Include macros in the dependencies
 				if (val is IConstantValue c and not MacroValue)
 				{
@@ -47,19 +47,25 @@ namespace Geode
 					goto end;
 				}
 
-				var macro = new MacroValue($"arg{toMacro.Count}", val.Type);
-
 				if (val is MacroValue m)
 				{
-					propagatedMacroMap[macro.GetMacro()] = m;
+					propagatedMacroList.Add(m);
 					// TODO: refactor how string macros are handled.
-					toMacro.Add(macro.Name, new LiteralValue(m.Type.WrapInQuotesForMacro ? new NBTString(m.GetMacro()) : new NBTRawString(m.GetMacro()), m.Type));
-				}
-				else
-				{
-					toMacro.Add(macro.Name, val);
+					toMacro.Add(m.Name, new LiteralValue(m.Type.WrapInQuotesForMacro ? new NBTString(m.GetMacro()) : new NBTRawString(m.GetMacro()), m.Type));
+					ret = m;
+					goto end;
 				}
 
+				// Allow existing macros to keep their name
+				string macroName = $"arg{macroIdx++}";
+
+				while (toMacro.ContainsKey(macroName))
+				{
+					macroName = $"arg{macroIdx++}";
+				}
+
+				var macro = new MacroValue(macroName, val.Type);
+				toMacro.Add(macro.Name, val);
 				ret = macro;
 			end:
 				applied[val] = ret;
@@ -71,9 +77,9 @@ namespace Geode
 				args.Add(apply(i.Expect()));
 			}
 
-			if (toMacro.Count == propagatedMacroMap.Count)
+			if (toMacro.Count == propagatedMacroList.Count)
 			{
-				func([.. args.Select(i => propagatedMacroMap.TryGetValue(i.Value.Build(), out var orig) && i.Type == orig.Type ? orig : i)], ctx);
+				func([.. args], ctx);
 			}
 			else
 			{

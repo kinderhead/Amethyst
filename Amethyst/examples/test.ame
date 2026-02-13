@@ -12,11 +12,32 @@ entitydef test_entity implements minecraft:base {
     float Health;
 }
 
+struct vec {
+    int x;
+    int y;
+    int z;
+
+    overload int sum() {
+        return this.x + this.y + this.z;
+    }
+
+    overload int sum(int mod) {
+        return this.x + this.y + this.z + mod;
+    }
+}
+
 #load
 void main() {
-    nbt& data = amethyst2:gc/malloc();
-    data = {a: 1};
-    @/tellraw @a "$(data)"
+    // nbt& data = amethyst2:gc/malloc();
+    // data = {a: 1};
+    // @/tellraw @a "$(data)"
+
+    // print(amethyst2:gc/heap);
+
+    vec obj = { x: 100 };
+    obj.y = 7;
+
+    print(obj.sum());
 
     amethyst:exit();
 }

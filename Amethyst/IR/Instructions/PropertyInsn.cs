@@ -68,21 +68,17 @@ namespace Amethyst.IR.Instructions
 					throw new InvalidTypeError(prop.Type.ToString(), "string");
 				}
 
-				Remove();
-
+				// TODO: Probably should clean this up at some point
 				if (val.Type is not ReferenceType && val.Value is DataTargetValue nbt)
 				{
+					Remove();
 					return WeakReferenceType.From(nbt.Property(name, ActualReturnType));
 				}
-				else if (val.Type is ReferenceType && val.Value is IConstantValue v)
-				{
-					return new LiteralValue(new NBTString($"{v.Value}.{name.Value}"), new WeakReferenceType(ActualReturnType));
-				}
-				else if (val.Value is MacroValue)
+				else if (val.Value is MacroValue && val.Type is not ReferenceType)
 				{
 					throw new MacroPropertyError();
 				}
-				else
+				else if (!(val.Type is ReferenceType && val.Value is IConstantValue))
                 {
                     throw new ReferenceError(val.Type.ToString());
                 }
