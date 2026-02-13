@@ -61,6 +61,9 @@ namespace Amethyst.IR.Instructions
 			var val = Arg<ValueRef>(0);
 			var index = Arg<ValueRef>(1);
 
+			ReturnValue.AddDependency(val);
+			ReturnValue.AddDependency(index);
+
 			if (val.Value is MacroValue && val.Type is not ReferenceType)
 			{
 				throw new MacroPropertyError();
@@ -76,9 +79,6 @@ namespace Amethyst.IR.Instructions
 				Remove();
 				return WeakReferenceType.From(list.Index(ind.Value, ActualReturnType));
 			}
-
-			ReturnValue.AddDependency(val);
-			ReturnValue.AddDependency(index);
 
 			return new DynamicValue(ReturnType);
 		}

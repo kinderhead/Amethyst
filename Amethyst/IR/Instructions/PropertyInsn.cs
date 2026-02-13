@@ -52,6 +52,9 @@ namespace Amethyst.IR.Instructions
 			var val = Arg<ValueRef>(0);
 			var prop = Arg<ValueRef>(1);
 
+			ReturnValue.AddDependency(val);
+			ReturnValue.AddDependency(prop);
+
 			// I don't want to deal with nested Macroizer stuff
 			if (val.Type is ReferenceType r && r.Inner is EntityType e)
 			{
@@ -84,9 +87,6 @@ namespace Amethyst.IR.Instructions
                     throw new ReferenceError(val.Type.ToString());
                 }
 			}
-
-			ReturnValue.AddDependency(val);
-			ReturnValue.AddDependency(prop);
 
 			return new DynamicValue(ReturnType);
 		}

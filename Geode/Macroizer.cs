@@ -15,23 +15,36 @@ namespace Geode
 			var args = new List<IConstantValue>();
 			var toMacro = new Dictionary<string, IValue>();
 			var propagatedMacroMap = new Dictionary<string, MacroValue>();
+			var applied = new Dictionary<IValue, IConstantValue>();
 
 			IConstantValue apply(IValue val)
 			{
+				if (applied.TryGetValue(val, out var existing))
+				{
+					return existing;
+				}
+
+				IConstantValue ret;
+
 				if (val is IAdvancedMacroValue amv)
 				{
-					return amv.Macroize(apply);
+					ret = amv.Macroize(apply);
+					goto end;
 				}
+
+
 
 				// Include macros in the dependencies
 				if (val is IConstantValue c and not MacroValue)
 				{
 					if (val.Type.WrapInQuotesForMacro && c.Value is NBTString str)
 					{
-						return new LiteralValue(new NBTRawString(str.Value), val.Type);
+						ret = new LiteralValue(new NBTRawString(str.Value), val.Type);
+						goto end;
 					}
 
-					return c;
+					ret = c;
+					goto end;
 				}
 
 				var macro = new MacroValue($"arg{toMacro.Count}", val.Type);
@@ -47,7 +60,10 @@ namespace Geode
 					toMacro.Add(macro.Name, val);
 				}
 
-				return macro;
+				ret = macro;
+			end:
+				applied[val] = ret;
+				return ret;
 			}
 
 			foreach (var i in dependencies)
