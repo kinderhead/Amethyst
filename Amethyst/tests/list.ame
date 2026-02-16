@@ -10,11 +10,13 @@ void test_int_list_add() {
     x.add(10);
     x.add(y);
     x.add(y * 2);
+    x.add(7);
 
     assert_eq(x[0], 10);
     assert_eq(x[1], 6);
     assert_eq(x[2], 12);
-    assert_eq(x.size(), 3);
+    assert_eq(x[3], 7);
+    assert_eq(x.size(), 4);
     
     complete();
 }

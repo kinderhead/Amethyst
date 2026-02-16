@@ -80,7 +80,7 @@ void test_nbt() {
 }
 
 #test
-void test_normal() {
+void test_nbt_normal() {
     start("nbt normal");
     
     vec obj = { x: 100 };
@@ -96,7 +96,7 @@ void test_normal() {
 }
 
 #test
-void test_constructor() {
+void test_nbt_constructor() {
     start("nbt constructor");
     
     vec2 obj = vec2(3, 6, 4);
@@ -113,7 +113,7 @@ void test_constructor() {
 }
 
 #test
-void test_inheritance() {
+void test_nbt_inheritance() {
     start("nbt inheritance");
     
     subvec obj = subvec(1, 2, 3);

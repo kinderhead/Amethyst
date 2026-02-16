@@ -29,7 +29,7 @@ namespace Amethyst.Cli
         public int OptimizationLevel { get; set; }
 
         [CommandOption("-c|--dump-cmd")]
-        [Description("Dump non-std functions.")]
+        [Description("Dump non-std functions to console.")]
         public bool DumpCommands { get; set; }
 
         [CommandOption("--run")]
