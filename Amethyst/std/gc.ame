@@ -1,4 +1,4 @@
-namespace amethyst2:gc;
+namespace amethyst:gc;
 
 struct node {
     nbt data;

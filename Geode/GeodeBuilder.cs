@@ -177,7 +177,7 @@ namespace Geode
 			return score;
 		}
 
-		public StorageValue TempStorage(TypeSpecifier type) => new(RuntimeID, $"tmp.{RandomString}", type);
+		public StorageValue TempStorage(TypeSpecifier type) => new(RuntimeID, $"tmp.{UniqueString}", type);
 
 		public void AddSymbol(GlobalSymbol sym)
 		{
@@ -205,7 +205,7 @@ namespace Geode
 
 		public (FunctionContext ctx, FunctionValue func) AnonymousFunction(FunctionType type)
 		{
-			var func = new FunctionValue(new("amethyst", InternalPath + "/" + RandomString), type, LocationRange.None);
+			var func = new FunctionValue(new("amethyst", InternalPath + "/" + UniqueString), type, LocationRange.None);
 			var ctx = new FunctionContext(Compiler, func, [], LocationRange.None);
 			AddFunctions(ctx);
 			return (ctx, func);
@@ -240,7 +240,7 @@ namespace Geode
 
 		private MCFunction GetInitFunc()
 		{
-			var func = new MCFunction(new("amethyst", $"{InternalPath}/{RandomString}"));
+			var func = new MCFunction(new("amethyst", $"{InternalPath}/{UniqueString}"));
 
 			func.Add(new DataCommand.Modify(new Storage(new("amethyst", "runtime")), "stack").Set().Value("[{}]"));
 
@@ -261,7 +261,7 @@ namespace Geode
 
 		private MCFunction GetCleanupFunc()
 		{
-			var func = new MCFunction(new("amethyst", $"{InternalPath}/{RandomString}"));
+			var func = new MCFunction(new("amethyst", $"{InternalPath}/{UniqueString}"));
 
 			foreach (var i in RuntimeStorageUsed)
 			{
@@ -277,7 +277,14 @@ namespace Geode
 		}
 
 		public const string InternalPath = "zz_internal";
-		public static string RandomString => Guid.NewGuid().ToString();
+
+// TODO: Remove this debugging measure
+#if true
+		private static int uniqueIndex = 0;
+		public static string UniqueString => $"{uniqueIndex++}";
+#else
+		public static string UniqueString => Guid.NewGuid().ToString();
+#endif
 		public static readonly string[] RuntimeStorageUsed = ["stack", "tmp"];
 
 		public static T? NamespaceWalk<T>(string baseNamespace, string name, Dictionary<NamespacedID, T> syms)

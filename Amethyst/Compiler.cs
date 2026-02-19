@@ -311,7 +311,7 @@ namespace Amethyst
 			IR.Register(new Score("amethyst_id", "dummy"));
 		}
 
-		protected FunctionContext GetGlobalInitFunc() => new(this, new(new("amethyst", GeodeBuilder.InternalPath + "/" + GeodeBuilder.RandomString), FunctionType.VoidFunc, LocationRange.None), ["minecraft:load"], LocationRange.None, hasTagPriority: true);
+		protected FunctionContext GetGlobalInitFunc() => new(this, new(new("amethyst", GeodeBuilder.InternalPath + "/" + GeodeBuilder.UniqueString), FunctionType.VoidFunc, LocationRange.None), ["minecraft:load"], LocationRange.None, hasTagPriority: true);
 
 		public void Register(Intrinsic func) => IR.Symbols[func.ID] = new(func.ID, LocationRange.None, func);
 		public void Register(TypeSpecifier type) => IR.Types[type.ID] = new(type.ID, LocationRange.None, type);

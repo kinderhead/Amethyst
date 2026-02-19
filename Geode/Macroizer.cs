@@ -89,7 +89,7 @@ namespace Geode
 					return i;
 				});
 
-				var mcFunc = new MCFunction($"{Builder.Namespace}:{GeodeBuilder.InternalPath}/{GeodeBuilder.RandomString}");
+				var mcFunc = new MCFunction($"{Builder.Namespace}:{GeodeBuilder.InternalPath}/{GeodeBuilder.UniqueString}");
 				mcFunc.Add(faux);
 				var compiled = mcFunc.Build();
 
