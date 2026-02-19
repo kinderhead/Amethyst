@@ -173,20 +173,24 @@ namespace Geode.IR.Passes
 				var node = nodes[0];
 				nodes.RemoveAt(0);
 
-				foreach (var i in node.Links)
-				{
-					if (i.Color >= 0)
-					{
-						node.SetColor(i.Color);
-						goto loop; // teehee
-					}
-				}
-
 				foreach (var i in node.Edges)
 				{
 					if (i.Color >= 0)
 					{
 						colors[i.Color] = true;
+					}
+				}
+
+				foreach (var i in node.Links)
+				{
+					if (i.Color >= 0)
+					{
+						if (colors[i.Color])
+						{
+							throw new InvalidOperationException();
+						}
+						node.SetColor(i.Color);
+						goto loop; // teehee
 					}
 				}
 

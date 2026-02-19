@@ -64,12 +64,12 @@ namespace Geode
 				return false;
 			}
 
+			AllocateRegisters();
+
 			if (Options.DumpIR)
 			{
 				DumpIR();
 			}
-
-			AllocateRegisters();
 
 			if (failed)
 			{
