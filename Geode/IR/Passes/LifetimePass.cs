@@ -148,7 +148,22 @@ namespace Geode.IR.Passes
 		{
 			if (Graph.TryGetValue(val1, out var val1Node) && Graph.TryGetValue(val2, out var val2Node))
 			{
-				val1Node.Link(val2Node);
+				LifetimeGraphNode[] toConnect = [val1Node, val2Node, ..val1Node.Links, ..val2Node.Links];
+				LifetimeGraphNode[] edges = [.. toConnect.SelectMany(i => i.Edges)];
+
+				// TODO: Optimize this
+				foreach (var pair in toConnect.SelectMany(_ => toConnect, (a, b) => (a, b)))
+				{
+					pair.a.Link(pair.b);
+				}
+
+				foreach (var i in toConnect)
+				{
+					foreach (var j in edges)
+					{
+						i.Connect(j);
+					}
+				}
 			}
 		}
 
@@ -187,8 +202,9 @@ namespace Geode.IR.Passes
 					{
 						if (colors[i.Color])
 						{
-							throw new InvalidOperationException();
+							throw new InvalidOperationException("Error allocating registers. Report this issue to Github");
 						}
+
 						node.SetColor(i.Color);
 						goto loop; // teehee
 					}

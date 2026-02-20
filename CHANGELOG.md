@@ -5,3 +5,4 @@
 * Fixed issue where methods could not be called on global variables.
 * Fixed issue where global variables in namespaces with paths did not compile correctly.
 * Fixed issue with accessing properties of macro references.
+* Fixed issue register allocation.
