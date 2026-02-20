@@ -84,13 +84,6 @@ See the documentation for information about the `setup`, `run`, and `daemon` com
 
 See the [1.0 release project](https://github.com/users/kinderhead/projects/3) for more details.
 
-* Inline functions
-* Entity and world manipulation
-* Generics
-* Async programming and tick scheduling
-* Automatic data generation for compile-time block states, entity data, and more
-* Error handling and exceptions
-* Optimizations
-* Visual Studio Code language server (autocomplete)
-* Debugger mod
-* And more
+## Suppport the Project
+
+Like what you see? Support me on [Ko-fi](https://ko-fi.com/kinderhead).
