@@ -22,12 +22,12 @@ namespace Geode.Types
         {
             if (val.Type == PrimitiveType.String && val.Value is IConstantValue c && c.Value is NBTString str)
             {
-                if (ValidUnsafeString().IsMatch(str.Value))
+                if (InvalidUnsafeString().IsMatch(str.Value))
                 {
                     throw new UnsafeStringError();
                 }
 
-                return new LiteralValue(new NBTRawString(str.Value));
+                return LiteralValue.Raw(str.Value);
             }
 
             return null;
@@ -45,7 +45,11 @@ namespace Geode.Types
 
 		public override ValueRef? ExplicitCastToOverload(ValueRef val, FunctionContext ctx)
         {
-            if (val.Type == PrimitiveType.String)
+			if (val.Type == PrimitiveType.String && val.Value is IConstantValue c && c.Value is NBTString str && !InvalidUnsafeString().IsMatch(str.Value))
+			{
+				return LiteralValue.Raw(str.Value);
+			}
+			else if (val.Type == PrimitiveType.String)
             {
                 return val;
             }
@@ -54,6 +58,6 @@ namespace Geode.Types
         }
 
 		[GeneratedRegex(@"[^a-zA-Z0-9\-_\+\.]")]
-		private static partial Regex ValidUnsafeString();
+		private static partial Regex InvalidUnsafeString();
 	}
 }

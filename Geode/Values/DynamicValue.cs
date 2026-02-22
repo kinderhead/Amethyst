@@ -19,7 +19,7 @@ namespace Geode.Values
 			return this;
 		}
 
-		public DynamicValue Add(string str) => Add(new LiteralValue(new NBTRawString(str)));
+		public DynamicValue Add(string str) => Add(LiteralValue.Raw(str));
 
 		public override ScoreValue AsScore(RenderContext ctx) => throw new InvalidOperationException();
 		public override void If(Action<Execute> apply, RenderContext ctx, int tmp = 0) => throw new NotImplementedException();
@@ -43,7 +43,7 @@ namespace Geode.Values
 				builder.Append(apply(i).Value);
 			}
 
-			return new LiteralValue(new NBTRawString(builder.ToString()));
+			return LiteralValue.Raw(builder.ToString());
 		}
 	}
 }

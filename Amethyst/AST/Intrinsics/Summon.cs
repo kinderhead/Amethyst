@@ -24,9 +24,9 @@ namespace Amethyst.AST.Intrinsics
 				throw new MismatchedArgumentCountError(1, args.Length);
 			}
 
-			ctx.Add(new CommandInsn(new LiteralValue(new NBTRawString("summon ")), ctx.ExplicitCast(args[0], new UnsafeStringType()), new LiteralValue(new NBTRawString(" ~ ~ ~ {Tags:[\"__amethyst_summon\"]}"))));
-			var ret = ctx.Add(new EntityRefInsn(new LiteralValue(new NBTRawString("@e[tag=__amethyst_summon,limit=1]"))));
-			ctx.Add(new CommandInsn(new LiteralValue(new NBTRawString("tag @e remove __amethyst_summon"))));
+			ctx.Add(new CommandInsn(LiteralValue.Raw("summon "), ctx.ExplicitCast(args[0], new UnsafeStringType()), LiteralValue.Raw(" ~ ~ ~ {Tags:[\"__amethyst_summon\"]}")));
+			var ret = ctx.Add(new EntityRefInsn(LiteralValue.Raw("@e[tag=__amethyst_summon,limit=1]")));
+			ctx.Add(new CommandInsn(LiteralValue.Raw("tag @e remove __amethyst_summon")));
 
 			return ret;
 		}

@@ -128,7 +128,22 @@ namespace Amethyst.AST
 			List<MethodNode> methods = [.. context.method().Select(i => (MethodNode)Visit(i))];
 			currentNamespace = oldNs;
 
-			return new StructNode(context.Struct() is null ? ContainerType.Entity : ContainerType.Struct, Loc(context), id, context.type() is null ? null : Visit(context.type()), props, methods);
+			ContainerType type;
+
+			if (context.Struct() is not null)
+			{
+				type = ContainerType.Struct;
+			}
+			else if (context.EntityDef() is not null)
+			{
+				type = ContainerType.Entity;
+			}
+			else
+			{
+				type = ContainerType.Class;
+			}
+
+			return new StructNode(type, Loc(context), id, context.type() is null ? null : Visit(context.type()), props, methods);
 		}
 
 		public override Node VisitMethod([NotNull] AmethystParser.MethodContext context)

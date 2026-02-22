@@ -16,7 +16,7 @@ namespace Amethyst.IR
 			{
 				if (val.Type.HasProperty(name) is TypeSpecifier t)
 				{
-					return ctx.Add(new PropertyInsn(val, new LiteralValue(new NBTRawString(name)), t));
+					return ctx.Add(new PropertyInsn(val, LiteralValue.Raw(name), t));
 				}
 				else if (ctx.GetMethodOrNull(val, name) is ValueRef method)
 				{
@@ -24,7 +24,7 @@ namespace Amethyst.IR
 				}
 				else if (val.Type.DefaultPropertyType is TypeSpecifier t2)
 				{
-					return ctx.Add(new PropertyInsn(val, new LiteralValue(new NBTRawString(name)), t2));
+					return ctx.Add(new PropertyInsn(val, LiteralValue.Raw(name), t2));
 				}
 
 				throw new PropertyError(val.Type.ToString(), name);

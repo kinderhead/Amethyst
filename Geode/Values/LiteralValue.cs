@@ -28,5 +28,7 @@ namespace Geode.Values
 			val = null!;
 			return false;
 		}
+
+		public static LiteralValue Raw(string val) => new(new NBTRawString(val));
 	}
 }

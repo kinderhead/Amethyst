@@ -214,11 +214,7 @@ namespace Geode.IR
 
 		public ValueRef ExplicitCast(ValueRef val, TypeSpecifier type)
 		{
-			if (TryImplicitCast(val, type) is ValueRef ret)
-			{
-				return ret;
-			}
-			else if (val.Type.ExplicitCastFromOverload(val, type, this) is ValueRef cast)
+			if (val.Type.ExplicitCastFromOverload(val, type, this) is ValueRef cast)
 			{
 				return cast.SetType(type);
 			}
@@ -233,6 +229,10 @@ namespace Geode.IR
 			else if (type.EffectiveType == Datapack.Net.Data.NBTType.Int)
 			{
 				return Add(new LoadInsn(val, type)).SetType(type);
+			}
+			else if (TryImplicitCast(val, type) is ValueRef ret)
+			{
+				return ret;
 			}
 
 			throw new InvalidTypeError(val.Type.ToString(), type.ToString());

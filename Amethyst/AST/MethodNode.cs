@@ -1,6 +1,7 @@
 using Amethyst.AST.Expressions;
 using Amethyst.AST.Statements;
 using Amethyst.IR.Types;
+using Datapack.Net.Data;
 using Datapack.Net.Utils;
 using Geode;
 using Geode.Types;
@@ -33,10 +34,24 @@ namespace Amethyst.AST
 		{
 			var selfId = new NamespacedID(string.Join('/', ID.ToString().Split('/')[..^1]));
 			var self = new SimpleAbstractTypeSpecifier(Location, selfId.ToString());
-			var constructor = new FunctionNode(Location, Tags, Modifiers, self, selfId, Parameters, Body);
+
+			bool isClass = false;
+
+			if (ctx.IR.Types[self.Type].Type is ReferenceType)
+			{
+				isClass = true;
+				Parameters.Insert(0, new AbstractParameter(ParameterModifiers.Macro, self, "this"));
+			}
+
+			var constructor = new FunctionNode(Location, Tags, Modifiers, isClass ? new SimpleAbstractTypeSpecifier(Location, "void") : self, selfId, Parameters, Body);
 
 			constructor.Body.Prepend(new ConstructorInitStatement(Location, self, BaseCall));
-			constructor.Body.Add(new ReturnStatement(Location, new VariableExpression(Location, "this")));
+
+			if (!isClass)
+			{
+				constructor.Body.Add(new ReturnStatement(Location, new VariableExpression(Location, "this")));
+			}
+
 			constructor.Process(ctx, root);
 		}
 

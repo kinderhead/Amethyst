@@ -23,7 +23,7 @@ namespace Amethyst.AST.Intrinsics
 				throw new MismatchedArgumentCountError(1, args.Length);
 			}
 
-			return ctx.Add(new CommandInsn(new LiteralValue(new NBTRawString("kill ")), ctx.ImplicitCast(args[0], new TargetSelectorType())));
+			return ctx.Add(new CommandInsn(LiteralValue.Raw("kill "), ctx.ImplicitCast(args[0], new TargetSelectorType())));
 		}
 	}
 }

@@ -12,7 +12,7 @@ using System.Text;
 
 namespace Amethyst.IR.Types
 {
-	public class EntityType(NamespacedID id, TypeSpecifier? baseClass, Dictionary<string, TypeSpecifier> props, Dictionary<string, FunctionType> methods) : StructType(id, baseClass, props, methods)
+	public class EntityType(NamespacedID id, TypeSpecifier? baseClass, Dictionary<string, TypeSpecifier> props, Dictionary<string, FunctionType> methods) : StructType(id, baseClass, props, methods, false)
 	{
 		public override LiteralValue DefaultValue => new(0, this);
 		public override NBTType EffectiveType => NBTType.Int;

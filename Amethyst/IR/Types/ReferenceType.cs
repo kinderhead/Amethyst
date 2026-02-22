@@ -9,22 +9,29 @@ using Geode.Values;
 
 namespace Amethyst.IR.Types
 {
-	public class ReferenceType(TypeSpecifier inner) : TypeSpecifier
+	public class ReferenceType(TypeSpecifier inner, bool mutable = true) : TypeSpecifier
 	{
 		public readonly TypeSpecifier Inner = inner;
+		public readonly bool Mutable = mutable;
+
 		public override IEnumerable<TypeSpecifier> Subtypes => [Inner]; // Shouldn't need to unecessarily include the base subtypes here
 		public override LiteralValue DefaultValue => new("");
-		public override string ToString() => $"{Inner}&";
 		public override NBTType EffectiveType => NBTType.String;
 		public override TypeSpecifier BaseClass => this;
 		public override NamespacedID ID => "amethyst:ref";
 		public override bool WrapInQuotesForMacro => true;
 
+		public virtual string Postfix => "&";
+
 		public override TypeSpecifier AssignmentOverloadType => Inner;
 
 		public override void AssignmentOverload(ValueRef dest, ValueRef val, FunctionContext ctx)
 		{
-			if (val.Type is ReferenceType)
+			if (!Mutable)
+			{
+				base.AssignmentOverload(dest, val, ctx);
+			}
+			else if (val.Type is ReferenceType)
 			{
 				ctx.Call("amethyst:core/ref/set-ref", dest, ctx.ImplicitCast(val, this));
 			}
@@ -74,6 +81,10 @@ namespace Amethyst.IR.Types
 			{
 				return ctx.Add(new LoadInsn(Deref(val, ctx), to));
 			}
+			else if (to is ReferenceType r && r.Inner.Implements(Inner))
+			{
+				return val;
+			}
 
 			return null;
 		}
@@ -82,7 +93,7 @@ namespace Amethyst.IR.Types
 		public override Dictionary<string, TypeSpecifier> Properties => Inner.Properties;
 
 		protected override bool EqualsImpl(TypeSpecifier obj) => obj is ReferenceType p && p.Inner == Inner;
-		public override object Clone() => new ReferenceType((TypeSpecifier)Inner.Clone());
+		public override object Clone() => new ReferenceType((TypeSpecifier)Inner.Clone(), Mutable);
 
 		public virtual ValueRef Deref(ValueRef src, FunctionContext ctx) => ctx.Add(new DereferenceInsn(src));
 		public static LiteralValue From(DataTargetValue val) => new(val.Target.GetTarget(), new ReferenceType(val.Type));
@@ -95,6 +106,16 @@ namespace Amethyst.IR.Types
 			}
 
 			return src;
+		}
+
+		public override string ToString()
+		{
+			if (Inner is StructType s && s.IsClass)
+			{
+				return s.ToString();
+			}
+
+			return $"{Inner}{Postfix}";
 		}
 	}
 }

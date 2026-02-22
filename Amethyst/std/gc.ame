@@ -2,7 +2,7 @@ namespace amethyst:gc;
 
 struct node {
     nbt data;
-    nbt& ptr;
+    nbt^ ptr;
     int id;
 
     void assign_id() {
@@ -30,5 +30,5 @@ nbt& malloc() {
     n.assign_id();
     heap.add(n);
     
-    return n.ptr;
+    return (nbt&)*n.ptr;
 }

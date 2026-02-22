@@ -9,7 +9,7 @@ namespace Amethyst.IR.Types
 {
 	public class WeakReferenceType(TypeSpecifier inner) : ReferenceType(inner)
 	{
-		public override string ToString() => $"{Inner}^";
+		public override string Postfix => "^";
 		public override NamespacedID ID => "amethyst:weak_ref";
 
 		public override ValueRef? CastToOverload(ValueRef val, FunctionContext ctx)

@@ -27,7 +27,7 @@ block
     ;
 
 struct
-    : (Struct | EntityDef) id (Implements type)? LBrak (declaration | method)* RBrak
+    : (Struct | Class | EntityDef) id (Implements type)? LBrak (declaration | method)* RBrak
     ;
 
 declaration
@@ -215,6 +215,7 @@ Break: 'break';
 Continue: 'continue';
 
 Struct: 'struct';
+Class: 'class';
 EntityDef: 'entitydef';
 Implements: 'implements';
 

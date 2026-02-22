@@ -91,7 +91,7 @@ namespace Geode
 		public abstract void Store(LiteralValue literal, RenderContext ctx);
 		public abstract void Store(ScoreValue score, RenderContext ctx);
 		public abstract void Store(DataTargetValue nbt, RenderContext ctx);
-		public virtual void Store(MacroValue macro, RenderContext ctx) => Store(new LiteralValue(new NBTRawString(macro.GetMacro())), ctx);
+		public virtual void Store(MacroValue macro, RenderContext ctx) => Store(LiteralValue.Raw(macro.GetMacro()), ctx);
 
 		public abstract void ListAdd(LiteralValue literal, RenderContext ctx);
 
@@ -104,6 +104,6 @@ namespace Geode
 
 		public abstract void ListAdd(DataTargetValue nbt, RenderContext ctx);
 
-		public virtual void ListAdd(MacroValue macro, RenderContext ctx) => ListAdd(new LiteralValue(new NBTRawString(macro.GetMacro())), ctx);
+		public virtual void ListAdd(MacroValue macro, RenderContext ctx) => ListAdd(LiteralValue.Raw(macro.GetMacro()), ctx);
 	}
 }

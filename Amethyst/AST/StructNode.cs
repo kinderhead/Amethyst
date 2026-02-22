@@ -5,12 +5,14 @@ using Datapack.Net.Utils;
 using Geode;
 using Geode.Errors;
 using Geode.Types;
+using System.Collections.ObjectModel;
 
 namespace Amethyst.AST
 {
 	public enum ContainerType
 	{
 		Struct,
+		Class,
 		Entity
 	}
 
@@ -24,7 +26,12 @@ namespace Amethyst.AST
 
 		public void Process(Compiler ctx, RootNode root)
 		{
-			var baseClass = BaseClass?.Resolve(ctx, ID.GetContainingFolder()) ?? (Type == ContainerType.Struct ? PrimitiveType.Compound : EntityType.Dummy);
+			var baseClass = BaseClass?.Resolve(ctx, ID.GetContainingFolder()) ?? (Type == ContainerType.Entity ? EntityType.Dummy : PrimitiveType.Compound);
+
+			if (baseClass is ReferenceType r)
+			{
+				baseClass = r.Inner;
+			}
 
 			var props = new Dictionary<string, TypeSpecifier>();
 			var methods = new Dictionary<string, FunctionType>();
@@ -32,16 +39,32 @@ namespace Amethyst.AST
 			foreach (var (k, v) in Properties)
 			{
 				props[k] = v.Resolve(ctx, ID.GetContainingFolder());
+
+				if (Type != ContainerType.Class && props[k] is ReferenceType && props[k] is not WeakReferenceType)
+				{
+					throw new ReferencePropertyError(k);
+				}
+				else if (ReservedProperties.Contains(k))
+				{
+					throw new ReservedNameError(k);
+				}
 			}
 
 			var selfType = Type switch
 			{
-				ContainerType.Struct => new StructType(ID, baseClass, props, methods),
+				ContainerType.Struct or ContainerType.Class => new StructType(ID, baseClass, props, methods, Type == ContainerType.Class),
 				ContainerType.Entity => new EntityType(ID, baseClass, props, methods),
 				_ => throw new NotImplementedException()
 			};
 
-			ctx.IR.AddType(new(ID, Location, selfType));
+			if (Type == ContainerType.Class)
+			{
+				ctx.IR.AddType(new(ID, Location, new ReferenceType(selfType, false)));
+			}
+			else
+			{
+				ctx.IR.AddType(new(ID, Location, selfType));
+			}
 
 			ConstructorNode? constructor = null;
 
@@ -99,5 +122,7 @@ namespace Amethyst.AST
 				throw new PropertyError(selfType.ToString());
 			}
 		}
+
+		public static readonly ReadOnlySet<string> ReservedProperties = [StructType.TypeIDProperty];
 	}
 }

@@ -19,11 +19,6 @@ namespace Geode.IR.Instructions
 		{
 			var val = Arguments.Length == 1 ? Arg<ValueRef>(0).Expect() : null;
 
-			if (val is not null && val.Type != ctx.Func.Decl.FuncType.ReturnType)
-			{
-				throw new InvalidTypeError(val.Type.ToString(), ctx.Func.Decl.FuncType.ReturnType.ToString());
-			}
-
 			if (val is null && ctx.Func.Decl.FuncType.ReturnType is not VoidType)
 			{
 				throw new InvalidTypeError("void", ctx.Func.Decl.FuncType.ReturnType.ToString());
@@ -36,7 +31,15 @@ namespace Geode.IR.Instructions
 
 			if (val is not null)
 			{
-				ctx.Func.GetFunctionReturnValue().Store(val, ctx);
+				// Make SetType affect existing values in ValueRef
+				if (val is IConstantValue c && Arg<ValueRef>(0).Type.WrapInQuotesForMacro)
+				{
+					ctx.Func.GetFunctionReturnValue().Store(new LiteralValue($"{c.Value}"), ctx);
+				}
+				else
+				{
+					ctx.Func.GetFunctionReturnValue().Store(val, ctx);
+				}
 			}
 		}
 

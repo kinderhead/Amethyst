@@ -1,3 +1,4 @@
+using Amethyst.Errors;
 using Amethyst.IR.Types;
 using Datapack.Net.Data;
 using Geode;
