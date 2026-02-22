@@ -78,10 +78,6 @@ namespace Amethyst.IR.Instructions
 				{
 					throw new MacroPropertyError();
 				}
-				else if (!(val.Type is ReferenceType && val.Value is IConstantValue))
-                {
-                    throw new ReferenceError(val.Type.ToString());
-                }
 			}
 
 			return new DynamicValue(ReturnType);

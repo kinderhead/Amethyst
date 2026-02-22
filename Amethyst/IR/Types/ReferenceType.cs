@@ -18,7 +18,7 @@ namespace Amethyst.IR.Types
 		public override LiteralValue DefaultValue => new("");
 		public override NBTType EffectiveType => NBTType.String;
 		public override TypeSpecifier BaseClass => this;
-		public override NamespacedID ID => "amethyst:ref";
+		public override NamespacedID ID => Mutable ? "amethyst:ref" : Inner.ID;
 		public override bool WrapInQuotesForMacro => true;
 
 		public virtual string Postfix => "&";

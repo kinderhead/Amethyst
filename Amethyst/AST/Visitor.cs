@@ -285,7 +285,7 @@ namespace Amethyst.AST
 		{
 			if (context.expression() is null)
 			{
-				return Visit(context.logicalExpression());
+				return Visit(context.newExpression());
 			}
 			else
 			{
@@ -308,8 +308,18 @@ namespace Amethyst.AST
 					type = AssignmentType.Division;
 				}
 
-				return new AssignmentExpression(Loc(context), (Expression)Visit(context.logicalExpression()), type, Visit(context.expression()));
+				return new AssignmentExpression(Loc(context), (Expression)Visit(context.newExpression()), type, Visit(context.expression()));
 			}
+		}
+
+		public override Node VisitNewExpression([NotNull] AmethystParser.NewExpressionContext context)
+		{
+			if (context.logicalExpression() is not null)
+			{
+				return Visit(context.logicalExpression());
+			}
+
+			return new NewExpression(Loc(context), Visit(context.type()), Visit(context.expressionList()));
 		}
 
 		public override Node VisitLogicalExpression([NotNull] AmethystParser.LogicalExpressionContext context)

@@ -46,8 +46,9 @@ namespace Amethyst.AST
 						funcs.Add(ctx);
 					}
 				}
-				catch (GeodeError)
+				catch (GeodeError e)
 				{
+					e.Display(Ctx, i.Location);
 					success = false;
 				}
 			}

@@ -54,11 +54,13 @@ namespace Amethyst.AST.Statements
 			{
 				if (def is null)
 				{
-					ctx.Add(new StoreRefInsn(self, thisType.DefaultValue));
+					ctx.Add(new StoreRefInsn(self, thisType.DefaultValueWithMetadata));
 				}
-
-				var typeIDProp = ctx.Add(new PropertyInsn(self, new LiteralValue(StructType.TypeIDProperty), PrimitiveType.String));
-				typeIDProp.Type.AssignmentOverload(typeIDProp, new LiteralValue(thisType.ID.ToString()), ctx);
+				else
+				{
+					var typeIDProp = ctx.Add(new PropertyInsn(self, new LiteralValue(StructType.TypeIDProperty), PrimitiveType.String));
+					typeIDProp.Type.AssignmentOverload(typeIDProp, new LiteralValue(thisType.ID.ToString()), ctx);
+				}
 			}
 			else
 			{

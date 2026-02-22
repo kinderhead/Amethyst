@@ -93,7 +93,12 @@ expression
     ;
 
 assignmentExpression
-    : logicalExpression ((Eq | PlusEq | MinusEq | StarEq | SlashEq) expression)?
+    : newExpression ((Eq | PlusEq | MinusEq | StarEq | SlashEq) expression)?
+    ;
+
+newExpression
+    : logicalExpression
+    | New type expressionList
     ;
 
 logicalExpression
@@ -213,6 +218,7 @@ For: 'for';
 Return: 'return';
 Break: 'break';
 Continue: 'continue';
+New: 'new';
 
 Struct: 'struct';
 Class: 'class';

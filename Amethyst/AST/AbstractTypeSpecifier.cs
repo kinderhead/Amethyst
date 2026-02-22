@@ -83,7 +83,17 @@ namespace Amethyst.AST
 	{
 		public readonly AbstractTypeSpecifier Inner = inner;
 
-		protected override TypeSpecifier ResolveImpl(Compiler ctx, string baseNamespace, bool allowAuto = false) => new SimpleMapType(Inner.Resolve(ctx, baseNamespace));
+		protected override TypeSpecifier ResolveImpl(Compiler ctx, string baseNamespace, bool allowAuto = false)
+		{
+			var inner = Inner.Resolve(ctx, baseNamespace);
+
+			if (inner is ReferenceType and not WeakReferenceType)
+			{
+				throw new ReferenceMapError(); 
+			}
+
+			return new SimpleMapType(inner);
+		}
 	}
 
 	public class AbstractReferenceTypeSpecifier(LocationRange loc, AbstractTypeSpecifier inner) : AbstractTypeSpecifier(loc)

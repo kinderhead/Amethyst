@@ -24,7 +24,7 @@ Structs are special objects that can hold properties. They are implemented as NB
 Structs without a constructor are instantiated like typeless `nbt` compounds.
 
 :::note
-Properties are set to their default values if not explicitly set.
+Properties are set to their default values if not explicitly set. Additionally, structs cannot contain strong reference properties (i.e. `int&` or [classes](./classes.mdx)) due to a lack of garbage collection capabilities.
 :::
 
 ## Methods

@@ -55,6 +55,8 @@ namespace Amethyst.IR.Types
 			return null;
 		}
 
+		public LiteralValue DefaultValueWithMetadata => new(new NBTCompound([.. Properties.Select(i => new KeyValuePair<string, NBTValue>(i.Key, DefaultPropertyValue(i.Key)?.Value ?? i.Value.DefaultValue.Value)), new(TypeIDProperty, ID.ToString())]), this);
+
 		// TODO: Recursive generics
 		public override bool ConstraintSatisfiedBy(TypeSpecifier other) => other == this;
 

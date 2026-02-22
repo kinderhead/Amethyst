@@ -1,4 +1,5 @@
-﻿using Amethyst.Errors;
+﻿using Amethyst.AST.Expressions;
+using Amethyst.Errors;
 using Amethyst.IR.Types;
 using Datapack.Net.Data;
 using Datapack.Net.Utils;
@@ -26,7 +27,8 @@ namespace Amethyst.AST
 
 		public void Process(Compiler ctx, RootNode root)
 		{
-			var baseClass = BaseClass?.Resolve(ctx, ID.GetContainingFolder()) ?? (Type == ContainerType.Entity ? EntityType.Dummy : PrimitiveType.Compound);
+			var actualBaseClass = BaseClass?.Resolve(ctx, ID.GetContainingFolder()) ?? (Type == ContainerType.Entity ? EntityType.Dummy : PrimitiveType.Compound);
+			var baseClass = actualBaseClass;
 
 			if (baseClass is ReferenceType r)
 			{
@@ -110,6 +112,12 @@ namespace Amethyst.AST
 						props[i.ID.GetFile()] = type;
 					}
 				}
+			}
+
+			if (constructor is null && Type == ContainerType.Class)
+			{
+				constructor = new(Location, [], FunctionModifiers.Inline, $"{ID}/{ID.GetFile()}", [], actualBaseClass is ReferenceType cls ? new CallExpression(Location, new VariableExpression(Location, cls.Inner.ID.ToString()), [new VariableExpression(Location, "this")]) : null, new(Location));
+				constructor.Process(ctx, root);
 			}
 
 			if (ctx.IR.GetConstructorOrNull(selfType.BaseClass) is not null && (constructor is null || constructor.BaseCall is null))

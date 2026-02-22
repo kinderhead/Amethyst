@@ -68,6 +68,64 @@ struct vec3 {
     }
 }
 
+class clsvec {
+    int x;
+    int y;
+    int z;
+
+    overload int sum() {
+        return this.x + this.y + this.z;
+    }
+
+    overload int sum(int mod) {
+        return this.x + this.y + this.z + mod;
+    }
+}
+
+class clsvec2 {
+    int x;
+    int y;
+    int z;
+
+    clsvec2(int x, int y, int z) {
+        this.x = x;
+        this.y = y;
+        this.z = z;
+    }
+
+    int sum() {
+        return this.x + this.y + this.z;
+    }
+
+    virtual int get-x() {
+        return this.x;
+    }
+
+    overload virtual int get-x2() {
+        return this.x;
+    }
+
+    overload virtual int get-x2(int y) {
+        return this.x + y;
+    }
+}
+
+class clssubvec implements clsvec2 {
+    clssubvec(int x, int y, int z) : clsvec2(x * 2, y * 2, z * 2) { }
+
+    virtual int get-x() {
+        return this.x * 2;
+    }
+
+    overload virtual int get-x2() {
+        return this.x + 1;
+    }
+
+    overload virtual int get-x2(int y) {
+        return this.x + y + 1;
+    }
+}
+
 #test
 void test_nbt() {
     start("nbt");
@@ -152,6 +210,57 @@ void test_nbt_fancy_literal() {
     assert_eq(c.x, 11);
     assert_eq(c.y, 22);
     assert_eq(c.z, 33);
+
+    complete();
+}
+
+#test
+void test_class_normal() {
+    start("class normal");
+    
+    var obj = new clsvec();
+    obj.x = 100;
+    obj.y = 7;
+
+    assert_eq(obj.x, 100);
+    assert_eq(obj.y, 7);
+    assert_eq(obj.z, 0);
+    assert_eq(obj.sum(), 107);
+    assert_eq(obj.sum(3), 110);
+
+    complete();
+}
+
+#test
+void test_class_constructor() {
+    start("class constructor");
+    
+    var obj = new clsvec2(3, 6, 4);
+
+    assert_eq(obj.x, 3);
+    assert_eq(obj.y, 6);
+    assert_eq(obj.z, 4);
+    assert_eq(obj.sum(), 13);
+    assert_eq(obj.get-x(), 3);
+    assert_eq(obj.get-x2(), 3);
+    assert_eq(obj.get-x2(3), 6);
+
+    complete();
+}
+
+#test
+void test_class_inheritance() {
+    start("class inheritance");
+    
+    var obj = new clssubvec(1, 2, 3);
+
+    assert_eq(obj.x, 2);
+    assert_eq(obj.y, 4);
+    assert_eq(obj.z, 6);
+    assert_eq(obj.sum(), 12);
+    assert_eq(obj.get-x(), 4);
+    assert_eq(obj.get-x2(), 3);
+    assert_eq(obj.get-x2(3), 6);
 
     complete();
 }

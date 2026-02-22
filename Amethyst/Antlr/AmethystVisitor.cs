@@ -159,6 +159,12 @@ public interface IAmethystVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <return>The visitor result.</return>
 	Result VisitAssignmentExpression([NotNull] AmethystParser.AssignmentExpressionContext context);
 	/// <summary>
+	/// Visit a parse tree produced by <see cref="AmethystParser.newExpression"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitNewExpression([NotNull] AmethystParser.NewExpressionContext context);
+	/// <summary>
 	/// Visit a parse tree produced by <see cref="AmethystParser.logicalExpression"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>

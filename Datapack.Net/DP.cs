@@ -132,7 +132,7 @@ namespace Datapack.Net
 			return toRemove.Count != 0;
 		}
 
-		private readonly List<string> FilesWriten = [];
+		private readonly HashSet<string> FilesWriten = [];
 		internal void WriteFile(string path, string content)
 		{
 //#if DEBUG

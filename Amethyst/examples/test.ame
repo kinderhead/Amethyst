@@ -12,25 +12,26 @@ entitydef test_entity implements minecraft:base {
     float Health;
 }
 
-class test {
+class Test {
     int x;
 
-    test(int val) {
+    Test(int val) {
         this.x = val;
+    }
+}
+
+class Test2 implements Test {
+    int y;
+
+    Test2(int val1, int val2) : Test(val1) {
+        this.y = val2;
     }
 }
 
 #load
 void main() {
-    test obj1 = (test)amethyst:gc/malloc();
-    test(obj1, 5);
+    var obj1 = new Test2(5, 6);
 
-    test obj2 = (test)amethyst:gc/malloc();
-    test(obj2, 10);
-
-    obj1 = obj2;
-
-    print(obj1);
     print(amethyst:gc/heap);
 
     //amethyst:exit();

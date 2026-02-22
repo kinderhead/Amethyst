@@ -36,10 +36,10 @@ namespace Amethyst.AST
 			var funcType = GetFunctionType(compiler);
 
 			// TODO: make this a proper regex test
-			if (ID.Path.Any(char.IsUpper))
-			{
-				throw new InvalidNameError(ID.ToString());
-			}
+			//if (ID.Path.Any(char.IsUpper))
+			//{
+			//	throw new InvalidNameError(ID.ToString());
+			//}
 
 			ctx = new FunctionContext(compiler, (FunctionValue)compiler.IR.Symbols[ID].Value, Tags, Location);
 
@@ -68,7 +68,7 @@ namespace Amethyst.AST
 
 		public virtual void Process(Compiler ctx, RootNode root)
 		{
-			var realID = ID;
+			var realID = new NamespacedID(ID.ToString().ToLower());
 			var funcType = GetFunctionType(ctx, true);
 
 			if (Modifiers.HasFlag(FunctionModifiers.Overload))
