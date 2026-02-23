@@ -26,7 +26,7 @@ namespace Amethyst.AST.Expressions
 
 		protected override ValueRef ExecuteImpl(FunctionContext ctx, TypeSpecifier? expected)
 		{
-			var val = Value.Execute(ctx, null);
+			var val = Value.Execute(ctx, new VarType());
 
 			switch (Op)
 			{
@@ -51,8 +51,18 @@ namespace Amethyst.AST.Expressions
 				case UnaryOperation.Negate:
 					return ctx.Add(new MulInsn(ctx.AddLoad(ctx.ImplicitCast(val, PrimitiveType.Int)), new LiteralValue(-1)));
 				case UnaryOperation.Reference:
+					if (Value is IPropertyLikeExpression)
+					{
+						return val;
+					}
+
 					return ctx.ImplicitCast(val, new ReferenceType(val.Type));
 				case UnaryOperation.WeakReference:
+					if (Value is IPropertyLikeExpression)
+					{
+						return val;
+					}
+					
 					return ctx.ImplicitCast(val, new WeakReferenceType(val.Type));
 				case UnaryOperation.Dereference:
 					if (val.Type is not ReferenceType rt)

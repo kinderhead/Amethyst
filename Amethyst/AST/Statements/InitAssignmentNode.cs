@@ -17,19 +17,11 @@ namespace Amethyst.AST.Statements
 		public override void Compile(FunctionContext ctx)
 		{
 			var type = Type.Resolve(ctx, Expression is not null);
-			var val = Expression is null ? type.DefaultValue : Expression.Execute(ctx, type);
+			var val = Expression is null ? type.DefaultValue : Expression.Execute(ctx, type is VarType ? null : type);
 
 			if (type is VarType && Expression is not null)
 			{
-				if (Expression is IPropertyLikeExpression)
-				{
-					type = ((ReferenceType)val.Type).Inner;
-					val = ctx.ImplicitCast(val, type);
-				}
-				else
-				{
-					type = val.Type;
-				}
+				type = val.Type;
 			}
 			else if (Expression is null)
 			{

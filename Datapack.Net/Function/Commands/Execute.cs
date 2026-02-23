@@ -153,6 +153,7 @@ namespace Datapack.Net.Function.Commands
 			public Execute Data(Position pos, string path) => Add(new Subcommand.Data(pos, path));
 			public Execute Data(IEntityTarget target, string path) => Add(new Subcommand.Data(target, path));
 			public Execute Data(Storage source, string path) => Add(new Subcommand.Data(source, path));
+			public Execute Data(IDataTarget target) => Add(new Subcommand.Data(target));
 			public Execute Dimension(Dimension dimension) => Add(new Subcommand.Dimension(dimension));
 			public Execute Entity(IEntityTarget entities) => Add(new Subcommand.Entity(entities));
 			public Execute Function(MCFunction function) => Add(new Subcommand.Function(function));
@@ -202,44 +203,14 @@ namespace Datapack.Net.Function.Commands
 
 				public class Data : Subcommand
 				{
-					public readonly Position? Position;
-					public readonly IEntityTarget? Target;
-					public readonly Storage? Source;
-					public readonly string Path;
+					public readonly IDataTarget Target;
 
-					public Data(Position pos, string path)
-					{
-						Position = pos;
-						Path = path;
-					}
+					public Data(Position pos, string path) => Target = new BlockDataTarget(pos, path);
+					public Data(IEntityTarget target, string path) => Target = new EntityDataTarget(target, path);
+					public Data(Storage source, string path) => Target = new StorageTarget(source, path);
+					public Data(IDataTarget target) => Target = target;
 
-					public Data(IEntityTarget target, string path)
-					{
-						Target = target;
-						Path = path;
-					}
-
-					public Data(Storage source, string path)
-					{
-						Source = source;
-						Path = path;
-					}
-
-					public override string Get()
-					{
-						if (Position != null)
-						{
-							return $"data block {Position} {Path}";
-						}
-						else if (Target != null)
-						{
-							return $"data entity {Target.Get()} {Path}";
-						}
-						else
-						{
-							return $"data storage {Source} {Path}";
-						}
-					}
+					public override string Get() => "data " + Target.GetTarget();
 				}
 
 				public class Dimension(Net.Data.Dimension dimension) : Subcommand

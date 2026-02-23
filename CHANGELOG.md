@@ -3,3 +3,4 @@
 * Improved inline command syntax highlighting to support macros in strings.
 * Added classes.
 * Added support for function names with capital letters.
+* Changed property accessors to dereference automatically.

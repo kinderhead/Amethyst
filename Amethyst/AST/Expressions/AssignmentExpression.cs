@@ -22,7 +22,7 @@ namespace Amethyst.AST.Expressions
 
 		protected override ValueRef ExecuteImpl(FunctionContext ctx, TypeSpecifier? expected)
 		{
-			var dest = Dest.Execute(ctx, null);
+			var dest = Dest.Execute(ctx, new VarType());
 			var val = Expression.Execute(ctx, dest.Type.AssignmentOverloadType, false);
 
 			switch (Type)

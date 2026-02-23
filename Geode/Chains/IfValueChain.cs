@@ -7,13 +7,9 @@ using Geode.Values;
 
 namespace Geode.Chains
 {
-	public class IfValueChain : ExecuteChainConditional
+	// Do val != 0
+	public class IfValueChain(ValueRef val, bool invert = false) : ExecuteChainConditional([val], !invert)
 	{
-		// Do val != 0
-		private IfValueChain(ValueRef val, bool invert = false) : base([val], !invert)
-		{
-		}
-
 		protected override bool? Build(IValue[] processedArgs, RenderContext ctx, Execute.Conditional cmd)
 		{
 			var val = processedArgs[0];

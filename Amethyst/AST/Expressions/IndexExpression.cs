@@ -1,6 +1,7 @@
 using Amethyst.Errors;
 using Amethyst.IR;
 using Amethyst.IR.Instructions;
+using Amethyst.IR.Types;
 using Geode;
 using Geode.IR;
 using Geode.Types;
@@ -15,17 +16,27 @@ namespace Amethyst.AST.Expressions
 		protected override ValueRef ExecuteImpl(FunctionContext ctx, TypeSpecifier? expected)
 		{
 			var val = Value.Execute(ctx, null);
+			ValueRef ret;
 
 			if (val.IsTypeOrRef<ListType>())
 			{
-				return ctx.Add(new IndexInsn(val, Index.Execute(ctx, PrimitiveType.Int)));
+				ret = ctx.Add(new IndexInsn(val, Index.Execute(ctx, PrimitiveType.Int)));
 			}
 			else if (val.IsTypeOrRef<SimpleMapType>(out var map))
 			{
-				return ctx.Add(new PropertyInsn(val, Index.Execute(ctx, new UnsafeStringType()), map.Inner));
+				ret = ctx.Add(new PropertyInsn(val, Index.Execute(ctx, new UnsafeStringType()), map.Inner));
+			}
+			else
+			{
+				throw new CannotIndexError(val.Type.ToString());
 			}
 
-			throw new CannotIndexError(val.Type.ToString());
+			if (expected is null)
+			{
+				ret = ctx.ImplicitCast(ret, ((ReferenceType)ret.Type).Inner);
+			}
+
+			return ret;
 		}
 	}
 }

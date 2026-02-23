@@ -7,11 +7,11 @@ struct node {
 
     void assign_id() {
         this.id = random(1, 2147483646);
-        @/data modify $(this.ptr) set value "$(^heap)[{id: $(*this.id)}].data"
+        @/data modify $(^this.ptr) set value "$(^heap)[{id: $(this.id)}].data"
 
         // TODO: this
         bool exists = false;
-        @/execute if data $(*this.ptr) run data modify $(^exists) set value 1b
+        @/execute if data $(this.ptr) run data modify $(^exists) set value 1b
 
         if (exists) {
             this.assign_id();
@@ -21,14 +21,44 @@ struct node {
 
 // Remove initializer for production
 node[] heap = [];
+bool allocated_since_pass = false;
 
 // Change to a static variable once implemented
 node n;
+int ticks = 0;
 
 nbt& malloc() {
     n = {};
     n.assign_id();
     heap.add(n);
+    allocated_since_pass = true;
     
-    return (nbt&)*n.ptr;
+    return (nbt&)n.ptr;
+}
+
+#tick
+void _loop() {
+    // Run once a second
+    ticks = (ticks + 1) % 20;
+
+    // TODO: implement &&
+    if (ticks == 0) if (allocated_since_pass) {
+        collect();
+    }
+}
+
+node[] white;
+node[] grey;
+node[] black;
+
+void collect() {
+    white = heap;
+    grey = [];
+    black = [];
+
+    @/function #amethyst:gc_root
+}
+
+void mark(macro nbt& ptr) {
+
 }

@@ -18,7 +18,7 @@ namespace Amethyst.AST.Expressions
 
 		protected override ValueRef ExecuteImpl(FunctionContext ctx, TypeSpecifier? expected)
 		{
-			var func = ReferenceType.TryDeref(Function.Execute(ctx, null), ctx);
+			var func = ReferenceType.TryDeref(Function.Execute(ctx, new VarType()), ctx);
 
 			Expression[] newArgs;
 
@@ -33,14 +33,14 @@ namespace Amethyst.AST.Expressions
 
 			if (func.Value is Intrinsic i)
 			{
-				return i.Execute(ctx, [.. newArgs.Select(i => i.Execute(ctx, null))]);
+				return i.Execute(ctx, [.. newArgs.Select(i => i.Execute(ctx, new VarType()))]);
 			}
 
 			ValueRef[]? args = null;
 
 			if (func.Value is OverloadedFunctionValue overload)
 			{
-				args = [.. newArgs.Select(i => i.Execute(ctx, null))];
+				args = [.. newArgs.Select(i => i.Execute(ctx, new VarType()))];
 				var types = TypeArray.From(args);
 				var options = overload.Get(types);
 

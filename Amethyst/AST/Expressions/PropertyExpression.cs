@@ -19,7 +19,14 @@ namespace Amethyst.AST.Expressions
 				val = ctx.ImplicitCast(val, e);
 			}
 
-			return ctx.GetProperty(val, Property);
+			var ret = ctx.GetProperty(val, Property);
+
+			if (expected is null && ret.Type is ReferenceType ptr)
+			{
+				ret = ctx.ImplicitCast(ret, ptr.Inner);
+			}
+
+			return ret;
 		}
 	}
 }
