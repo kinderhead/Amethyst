@@ -24,11 +24,11 @@ namespace Amethyst.AST.Expressions
 			}
 			else if (val.IsTypeOrRef<SimpleMapType>(out var map))
 			{
-				ret = ctx.Add(new PropertyInsn(val, Index.Execute(ctx, new UnsafeStringType()), map.Inner));
+				ret = ctx.Add(new PropertyInsn(val, Index.Execute(ctx, PrimitiveType.String), map.Inner));
 			}
 			else if (val.IsTypeOrRef<PrimitiveType>(out var raw) && raw == PrimitiveType.Compound)
 			{
-				ret = ctx.Add(new PropertyInsn(val, Index.Execute(ctx, new UnsafeStringType()), raw));
+				ret = ctx.Add(new PropertyInsn(val, Index.Execute(ctx, PrimitiveType.String), raw));
 			}
 			else
 			{

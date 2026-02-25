@@ -1,4 +1,5 @@
 ﻿using System.Reflection;
+using System.Runtime.ExceptionServices;
 using Amethyst.Cli;
 using Spectre.Console;
 using Spectre.Console.Cli;
@@ -42,8 +43,9 @@ namespace Amethyst
 
 				config.SetExceptionHandler((ex, resolver) =>
                 {
-					AnsiConsole.MarkupLineInterpolated($"[red]{ex.GetType().Name}: {ex.Message}[/]");
-                    return 1;
+					ExceptionDispatchInfo.Capture(ex).Throw();
+					// AnsiConsole.MarkupLineInterpolated($"[red]{ex.GetType().Name}: {ex.Message}[/]");
+                    // return 1;
                 });
 
 				config.AddCommand<BuildCommand>("build")

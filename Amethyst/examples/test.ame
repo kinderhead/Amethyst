@@ -31,15 +31,20 @@ class Test2 implements Test {
 #load
 void main() {
     var obj1 = new Test2(5, 6);
-    var obj2 = new Test2(7, 8);
 
-    nbt& womp;
+    // nbt& womp;
 
-    if (!womp) {
-        print("yay");
-    }
+    // print(^womp);
 
-    print(amethyst:gc/heap);
+    // if (!womp) {
+    //     print("yay");
+    // } else {
+    //     print("uhh");
+    // }
 
-    //amethyst:exit();
+    amethyst:gc/mark(obj1);
+
+    print(amethyst:gc/heap_info);
+
+    amethyst:exit();
 }

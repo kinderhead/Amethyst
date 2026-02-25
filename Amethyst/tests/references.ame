@@ -134,3 +134,39 @@ void test_int_weak_ref_inline() {
 
     complete();
 }
+
+#test
+void test_ref_exists() {
+    start("ref exists");
+    
+    nbt x = {a: 1};
+    nbt& p1;
+
+    if (p1) {
+        assert(false);
+    } else {
+        assert(true);
+    }
+
+    if (!p1) {
+        assert(true);
+    } else {
+        assert(false);
+    }
+
+    nbt& p2 = x;
+
+    if (p2) {
+        assert(true);
+    } else {
+        assert(false);
+    }
+
+    if (p2) {
+        assert(false);
+    } else {
+        assert(true);
+    }
+
+    complete();
+}

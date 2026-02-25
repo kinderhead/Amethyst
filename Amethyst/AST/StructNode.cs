@@ -1,4 +1,5 @@
 ﻿using Amethyst.AST.Expressions;
+using Amethyst.AST.Statements;
 using Amethyst.Errors;
 using Amethyst.IR.Types;
 using Datapack.Net.Data;
@@ -134,6 +135,26 @@ namespace Amethyst.AST
 			{
 				throw new PropertyError(selfType.ToString());
 			}
+
+			if (Type == ContainerType.Class)
+			{
+				GenerateMetaMethods(ctx, root);
+			}
+		}
+
+		private void GenerateMetaMethods(Compiler ctx, RootNode root)
+		{
+			GenerateGCMark(ctx, root);
+		}
+
+		private void GenerateGCMark(Compiler ctx, RootNode root)
+		{
+			var id = new NamespacedID($"{ID}/{GeodeBuilder.InternalPath}/mark".ToLower());
+			var body = new BlockNode(Location);
+
+			body.Add(new ExpressionStatement(Location, new CallExpression(Location, new VariableExpression(Location, "print"), [new LiteralExpression(Location, $"{ID} mark")])));
+
+			new FunctionNode(Location, [], FunctionModifiers.None, new SimpleAbstractTypeSpecifier(Location, "void"), id, [new AbstractParameter(ParameterModifiers.Macro, new AbstractReferenceTypeSpecifier(Location, new SimpleAbstractTypeSpecifier(Location, ID.ToString())), "this")], body).Process(ctx, root);
 		}
 
 		public static readonly ReadOnlySet<string> ReservedProperties = [StructType.TypeIDProperty];
