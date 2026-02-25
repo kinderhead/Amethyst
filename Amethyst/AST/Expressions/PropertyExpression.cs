@@ -2,6 +2,7 @@ using Amethyst.IR;
 using Amethyst.IR.Types;
 using Geode;
 using Geode.IR;
+using Geode.Types;
 
 namespace Amethyst.AST.Expressions
 {
@@ -12,7 +13,7 @@ namespace Amethyst.AST.Expressions
 
 		protected override ValueRef ExecuteImpl(FunctionContext ctx, TypeSpecifier? expected)
 		{
-			var val = Expression.Execute(ctx, null);
+			var val = Expression.Execute(ctx, new VarType());
 
 			if (val.Type is ReferenceType r && r.Inner is EntityType e)
 			{

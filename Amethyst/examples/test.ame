@@ -28,33 +28,18 @@ class Test2 implements Test {
     }
 }
 
-struct node {
-    nbt data;
-    nbt^ ptr;
-    int id;
-
-    void assign_id() {
-        this.id = random(1, 2147483646);
-        @/data modify $(^this.ptr) set value "$(^heap)[{id: $(this.id)}].data"
-
-        // TODO: this
-        bool exists = false;
-        @/execute if data $(this.ptr) run data modify $(^exists) set value 1b
-
-        if (exists) {
-            this.assign_id();
-        }
-    }
-}
-
-node[] heap = [];
-
 #load
 void main() {
     var obj1 = new Test2(5, 6);
-    obj1.x = 10;
+    var obj2 = new Test2(7, 8);
+
+    nbt& womp;
+
+    if (!womp) {
+        print("yay");
+    }
 
     print(amethyst:gc/heap);
 
-    amethyst:exit();
+    //amethyst:exit();
 }

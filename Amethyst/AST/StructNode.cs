@@ -35,6 +35,11 @@ namespace Amethyst.AST
 				baseClass = r.Inner;
 			}
 
+			if (Type == ContainerType.Class && !(baseClass is StructType || baseClass == PrimitiveType.Compound))
+			{
+				throw new InvalidBaseClassError(baseClass.ToString());
+			}
+
 			var props = new Dictionary<string, TypeSpecifier>();
 			var methods = new Dictionary<string, FunctionType>();
 

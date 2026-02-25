@@ -27,7 +27,7 @@ block
     ;
 
 struct
-    : (Struct | Class | EntityDef) id (Implements type)? LBrak (declaration | method)* RBrak
+    : (Struct | Class | EntityDef) id (Implements simpleType)? LBrak (declaration | method)* RBrak
     ;
 
 declaration
@@ -57,7 +57,7 @@ statement
     ;
 
 initAssignmentStatement
-    : type id (Eq expression)?
+    : (Const)* type id (Eq expression)?
     ;
 
 expressionStatement
@@ -196,11 +196,15 @@ expressionList
     ;
 
 type
-    : id
+    : simpleType
     | type LSquareBrak RSquareBrak
     | type LBrak RBrak
     | type And
     | type WeakRef
+    ;
+
+simpleType
+    : id
     ;
 
 id
@@ -229,6 +233,7 @@ Macro: 'macro';
 Inline: 'inline';
 Virtual: 'virtual';
 Overload: 'overload';
+Const: 'const';
 
 Semi: ';';
 Colon: ':';

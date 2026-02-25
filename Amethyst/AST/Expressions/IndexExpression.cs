@@ -26,6 +26,10 @@ namespace Amethyst.AST.Expressions
 			{
 				ret = ctx.Add(new PropertyInsn(val, Index.Execute(ctx, new UnsafeStringType()), map.Inner));
 			}
+			else if (val.IsTypeOrRef<PrimitiveType>(out var raw) && raw == PrimitiveType.Compound)
+			{
+				ret = ctx.Add(new PropertyInsn(val, Index.Execute(ctx, new UnsafeStringType()), raw));
+			}
 			else
 			{
 				throw new CannotIndexError(val.Type.ToString());

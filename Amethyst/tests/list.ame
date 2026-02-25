@@ -1,5 +1,10 @@
 namespace test;
 
+struct list_tester {
+    int x;
+    int y;
+}
+
 #test
 void test_int_list_add() {
     start("int list add");
@@ -74,6 +79,47 @@ void test_int_list_ref() {
     assert_eq(arr[0][2], 5);
     assert_eq(arr[0][3], 7);
     assert_eq(arr[0][4], -90);
+    
+    complete();
+}
+
+#test
+void test_list_where() {
+    start("list where");
+
+    list_tester[] l = [];
+    l.add((list_tester){x: 1, y: 1});
+    l.add((list_tester){x: 1, y: 2});
+    l.add((list_tester){x: 2, y: 3});
+
+    var subset = l.where({x: 1});
+
+    assert_eq(subset.size(), 2);
+    assert_eq(subset[0].x, 1);
+    assert_eq(subset[0].y, 1);
+    assert_eq(subset[1].x, 1);
+    assert_eq(subset[1].y, 2);
+    
+    complete();
+}
+
+#test
+void test_list_all() {
+    start("list all");
+
+    list_tester[] l = [];
+    l.add((list_tester){x: 1, y: 1});
+    l.add((list_tester){x: 1, y: 2});
+    l.add((list_tester){x: 2, y: 3});
+
+    l.all().x = 7;
+
+    assert_eq(l[0].x, 7);
+    assert_eq(l[0].y, 1);
+    assert_eq(l[1].x, 7);
+    assert_eq(l[1].y, 2);
+    assert_eq(l[2].x, 7);
+    assert_eq(l[2].y, 3);
     
     complete();
 }

@@ -143,7 +143,7 @@ namespace Amethyst.AST
 				type = ContainerType.Class;
 			}
 
-			return new StructNode(type, Loc(context), id, context.type() is null ? null : Visit(context.type()), props, methods);
+			return new StructNode(type, Loc(context), id, context.simpleType() is null ? null : Visit(context.simpleType()), props, methods);
 		}
 
 		public override Node VisitMethod([NotNull] AmethystParser.MethodContext context)
@@ -179,7 +179,7 @@ namespace Amethyst.AST
 			}
 		}
 
-		public override Node VisitInitAssignmentStatement([NotNull] AmethystParser.InitAssignmentStatementContext context) => new InitAssignmentNode(Loc(context), Visit(context.type()), Visit(context.id()), context.expression() is null ? null : Visit(context.expression()));
+		public override Node VisitInitAssignmentStatement([NotNull] AmethystParser.InitAssignmentStatementContext context) => new InitAssignmentNode(Loc(context), context.Const().Length > 0 ? StorageModifiers.Const : StorageModifiers.None, Visit(context.type()), Visit(context.id()), context.expression() is null ? null : Visit(context.expression()));
 		public override Node VisitExpressionStatement([NotNull] AmethystParser.ExpressionStatementContext context) => new ExpressionStatement(Loc(context), Visit(context.expression()));
 		public override Node VisitExecuteStatement([NotNull] AmethystParser.ExecuteStatementContext context) => new ExecuteStatement(Loc(context), context.executeSubcommand().Select(i => (ExecuteStatementSubcommand)Visit(i)), Visit(context.statement().First()), context.statement().Length == 2 ? Visit(context.statement().Last()) : null);
 
@@ -253,9 +253,9 @@ namespace Amethyst.AST
 
 		public override Node VisitType([NotNull] AmethystParser.TypeContext context)
 		{
-			if (context.id() is AmethystParser.IdContext id)
+			if (context.simpleType() is AmethystParser.SimpleTypeContext simple)
 			{
-				return new SimpleAbstractTypeSpecifier(Loc(context), Visit(id));
+				return Visit(simple);
 			}
 			else if (context.LSquareBrak() is not null)
 			{
@@ -273,10 +273,18 @@ namespace Amethyst.AST
 			{
 				return new AbstractWeakReferenceTypeSpecifier(Loc(context), Visit(context.type()));
 			}
-			else
+			
+			throw new NotImplementedException();
+		}
+
+		public override Node VisitSimpleType([NotNull] AmethystParser.SimpleTypeContext context)
+		{
+			if (context.id() is AmethystParser.IdContext id)
 			{
-				throw new NotImplementedException();
+				return new SimpleAbstractTypeSpecifier(Loc(context), Visit(id));
 			}
+
+			throw new NotImplementedException();
 		}
 
 		public override Node VisitExpression([NotNull] AmethystParser.ExpressionContext context) => Visit(context.children.First());
@@ -570,6 +578,7 @@ namespace Amethyst.AST
 		}
 
 		public AbstractTypeSpecifier Visit(AmethystParser.TypeContext context) => (AbstractTypeSpecifier)Visit((IParseTree)context);
+		public AbstractTypeSpecifier Visit(AmethystParser.SimpleTypeContext context) => (AbstractTypeSpecifier)Visit((IParseTree)context);
 		public BlockNode Visit(AmethystParser.BlockContext context) => (BlockNode)Visit((IParseTree)context);
 		public Statement Visit(AmethystParser.StatementContext context) => (Statement)Visit((IParseTree)context);
 		public Expression Visit(AmethystParser.ExpressionContext context) => (Expression)Visit((IParseTree)context);

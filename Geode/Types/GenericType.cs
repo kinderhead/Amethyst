@@ -16,6 +16,7 @@ namespace Geode.Types
 		public override TypeSpecifier BaseClass => Constraint;
 		public override NBTType EffectiveType => Constraint.EffectiveType;
 		public override IEnumerable<TypeSpecifier> Subtypes => Constraint.Subtypes;
+		public override Dictionary<string, TypeSpecifier> Properties => Constraint.Properties;
 
 		// Also kinda does the GetHashCode as well because I did a silly for that
 		public override string ToString() => Resolved ? Constraint.ToString() : Name;

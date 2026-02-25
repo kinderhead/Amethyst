@@ -1,13 +1,13 @@
 namespace amethyst:gc;
 
 struct node {
-    nbt data;
     nbt^ ptr;
     int id;
+    bool marked;
 
     void assign_id() {
         this.id = random(1, 2147483646);
-        @/data modify $(^this.ptr) set value "$(^heap)[{id: $(this.id)}].data"
+        @/data modify $(^this.ptr) set value "$(^heap).$(this.id)"
 
         // TODO: this
         bool exists = false;
@@ -19,8 +19,10 @@ struct node {
     }
 }
 
-// Remove initializer for production
-node[] heap = [];
+// Remove initializers for production
+node[] heap_info = [];
+nbt{} heap = {};
+
 bool allocated_since_pass = false;
 
 // Change to a static variable once implemented
@@ -30,7 +32,7 @@ int ticks = 0;
 nbt& malloc() {
     n = {};
     n.assign_id();
-    heap.add(n);
+    heap_info.add(n);
     allocated_since_pass = true;
     
     return (nbt&)n.ptr;
@@ -47,18 +49,20 @@ void _loop() {
     }
 }
 
-node[] white;
-node[] grey;
-node[] black;
+node&[] grey = [];
 
 void collect() {
-    white = heap;
-    grey = [];
-    black = [];
+    allocated_since_pass = false;
 
-    @/function #amethyst:gc_root
+    @/function #amethyst:gc/mark
 }
 
 void mark(macro nbt& ptr) {
+    node& node;
+    @/data modify $(^node) set value "$(^heap_info)[{ptr: \"$(ptr)\"}]"
 
+    if (node) if (!node.marked) {
+        node.marked = true;
+        //grey.add(node);
+    }
 }

@@ -18,13 +18,14 @@ namespace Amethyst.AST.Expressions
 
 		protected override ValueRef ExecuteImpl(FunctionContext ctx, TypeSpecifier? expected)
 		{
-			var func = ReferenceType.TryDeref(Function.Execute(ctx, new VarType()), ctx);
+			var func = ReferenceType.TryDeref(Function.Execute(ctx, null), ctx);
 
 			Expression[] newArgs;
 
 			if (Function is PropertyExpression prop)
 			{
-				newArgs = [prop.Expression, .. Args];
+				// Make sure the this parameter isn't dereferenced
+				newArgs = [new ValueRefExpression(prop.Expression.Location, prop.Expression.Execute(ctx, new VarType())), .. Args];
 			}
 			else
 			{
@@ -33,14 +34,14 @@ namespace Amethyst.AST.Expressions
 
 			if (func.Value is Intrinsic i)
 			{
-				return i.Execute(ctx, [.. newArgs.Select(i => i.Execute(ctx, new VarType()))]);
+				return i.Execute(ctx, [.. newArgs.Select(i => i.Execute(ctx, null))]);
 			}
 
 			ValueRef[]? args = null;
 
 			if (func.Value is OverloadedFunctionValue overload)
 			{
-				args = [.. newArgs.Select(i => i.Execute(ctx, new VarType()))];
+				args = [.. newArgs.Select(i => i.Execute(ctx, null))];
 				var types = TypeArray.From(args);
 				var options = overload.Get(types);
 

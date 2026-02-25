@@ -298,6 +298,8 @@ namespace Amethyst
 			Register(new CountOf());
 			Register(new ListAdd());
 			Register(new ListSize());
+			Register(new ListWhere());
+			Register(new ListAll());
 			Register(new StringLength());
 			Register(new Summon());
 			Register(new Kill());

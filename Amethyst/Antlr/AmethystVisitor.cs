@@ -297,6 +297,12 @@ public interface IAmethystVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <return>The visitor result.</return>
 	Result VisitType([NotNull] AmethystParser.TypeContext context);
 	/// <summary>
+	/// Visit a parse tree produced by <see cref="AmethystParser.simpleType"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitSimpleType([NotNull] AmethystParser.SimpleTypeContext context);
+	/// <summary>
 	/// Visit a parse tree produced by <see cref="AmethystParser.id"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>

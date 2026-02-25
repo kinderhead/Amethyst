@@ -33,7 +33,7 @@ namespace Geode.Types
 		public readonly ImmutableArray<MacroValue> MacroParameters = [.. parameters.Where(i => i.Modifiers.HasFlag(ParameterModifiers.Macro)).Select(i => new MacroValue(i.Name, i.Type))];
 		public readonly TypeArray ParameterTypes = new([.. parameters.Select(i => i.Type)]);
 
-		public override IEnumerable<TypeSpecifier> Subtypes => [ReturnType, .. Parameters.Select(i => i.Type)];
+		public override IEnumerable<TypeSpecifier> Subtypes => [.. Parameters.Select(i => i.Type), ReturnType];
 		public override NamespacedID ID => "amethyst:func";
 		public override TypeSpecifier BaseClass => this;
 		public override NBTType EffectiveType => NBTType.String;

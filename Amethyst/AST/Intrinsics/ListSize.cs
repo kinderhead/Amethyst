@@ -7,7 +7,7 @@ using Geode.Types;
 namespace Amethyst.AST.Intrinsics
 {
 	public class ListSize(FunctionType? type = null) : Intrinsic("amethyst:list/size", type ?? new(FunctionModifiers.None, PrimitiveType.Int, [
-			new(ParameterModifiers.None, new ReferenceType(new ListType(new GenericType("T"))), "this")
+			new(ParameterModifiers.None, new ReferenceType(PrimitiveType.List), "this")
 		]))
 	{
 		public override IFunctionLike CloneWithType(FunctionType type) => new ListSize(type);

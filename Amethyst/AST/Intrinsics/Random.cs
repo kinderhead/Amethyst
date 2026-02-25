@@ -21,7 +21,7 @@ namespace Amethyst.AST.Intrinsics
 		{
 			if (args.Length != 2)
 			{
-				throw new MismatchedArgumentCountError(1, args.Length);
+				throw new MismatchedArgumentCountError(2, args.Length);
 			}
 
 			return ctx.Add(new RandomInsn(ctx.ImplicitCast(args[0], PrimitiveType.Int), ctx.ImplicitCast(args[1], PrimitiveType.Int)));

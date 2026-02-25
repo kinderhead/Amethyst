@@ -1,4 +1,5 @@
 ﻿using Amethyst.Errors;
+using Amethyst.IR.Chains;
 using Amethyst.IR.Instructions;
 using Datapack.Net.Data;
 using Datapack.Net.Utils;
@@ -20,6 +21,8 @@ namespace Amethyst.IR.Types
 		public override TypeSpecifier BaseClass => this;
 		public override NamespacedID ID => Mutable ? "amethyst:ref" : Inner.ID;
 		public override bool WrapInQuotesForMacro => true;
+		public override TypeSpecifier? DefaultPropertyType => Inner.DefaultPropertyType;
+		public override Dictionary<string, TypeSpecifier> Properties => Inner.Properties;
 
 		public virtual string Postfix => "&";
 
@@ -89,8 +92,7 @@ namespace Amethyst.IR.Types
 			return null;
 		}
 
-		public override TypeSpecifier? DefaultPropertyType => Inner.DefaultPropertyType;
-		public override Dictionary<string, TypeSpecifier> Properties => Inner.Properties;
+		public override void ExecuteChainOverload(ValueRef val, ExecuteChain chain, FunctionContext ctx, bool invert = false) => chain.Add(new IfReferenceExists(val, invert));
 
 		protected override bool EqualsImpl(TypeSpecifier obj) => obj is ReferenceType p && p.Inner == Inner;
 		public override object Clone() => new ReferenceType((TypeSpecifier)Inner.Clone(), Mutable);
