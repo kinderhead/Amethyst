@@ -18,6 +18,10 @@ class Test {
     Test(int val) {
         this.x = val;
     }
+
+    virtual void foo() {
+        print(this.x);
+    }
 }
 
 class Test2 implements Test {
@@ -26,11 +30,16 @@ class Test2 implements Test {
     Test2(int val1, int val2) : Test(val1) {
         this.y = val2;
     }
+
+    virtual void foo() {
+        print(this.x, " ", this.y);
+    }
 }
 
 #load
 void main() {
     var obj1 = new Test2(5, 6);
+    obj1.foo();
 
     // nbt& womp;
 
@@ -46,5 +55,5 @@ void main() {
 
     print(amethyst:gc/heap_info);
 
-    amethyst:exit();
+    // amethyst:exit();
 }

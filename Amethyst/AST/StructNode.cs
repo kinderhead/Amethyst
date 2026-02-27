@@ -7,6 +7,7 @@ using Datapack.Net.Utils;
 using Geode;
 using Geode.Errors;
 using Geode.Types;
+using Geode.Values;
 using System.Collections.ObjectModel;
 
 namespace Amethyst.AST
@@ -42,7 +43,7 @@ namespace Amethyst.AST
 			}
 
 			var props = new Dictionary<string, TypeSpecifier>();
-			var methods = new Dictionary<string, FunctionType>();
+			var methods = new Dictionary<string, FunctionValue>();
 
 			foreach (var (k, v) in Properties)
 			{
@@ -68,6 +69,7 @@ namespace Amethyst.AST
 			if (Type == ContainerType.Class)
 			{
 				ctx.IR.AddType(new(ID, Location, new ReferenceType(selfType, false)));
+				ctx.RegisterTypeInfo(selfType);
 			}
 			else
 			{
@@ -87,16 +89,16 @@ namespace Amethyst.AST
 				else
 				{
 					var type = i.GetFunctionType(ctx);
-					methods[i.ID.GetFile()] = type;
+					methods[i.ID.GetFile()] = (FunctionValue?)ctx.IR.GetGlobal(i.ID) ?? throw new UndefinedSymbolError(i.ID.ToString());
 
 					var thisIsVirtual = i.Modifiers.HasFlag(FunctionModifiers.Virtual);
 
-					if (thisIsVirtual && Type == ContainerType.Entity)
+					if (thisIsVirtual && Type != ContainerType.Class)
 					{
-						throw new VirtualEntityMethodError();
+						throw new VirtualMethodError();
 					}
 
-					if (selfType.HierarchyMethod(i.ID.GetFile())?.Type is FunctionType other)
+					if (selfType.HierarchyMethod(i.ID.GetFile())?.Function.Type is FunctionType other)
 					{
 						var otherIsVirtual = other.Modifiers.HasFlag(FunctionModifiers.Virtual);
 
@@ -112,10 +114,6 @@ namespace Amethyst.AST
 						{
 							throw new InvalidOverrideSignatureError(i.ID.GetFile());
 						}
-					}
-					else if (thisIsVirtual)
-					{
-						props[i.ID.GetFile()] = type;
 					}
 				}
 			}

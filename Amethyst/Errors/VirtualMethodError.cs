@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Amethyst.Errors
 {
-	public class VirtualEntityMethodError() : GeodeError("Virtual methods are not supported for entities")
+	public class VirtualMethodError() : GeodeError("Virtual methods are not supported in this context")
 	{
 	}
 }

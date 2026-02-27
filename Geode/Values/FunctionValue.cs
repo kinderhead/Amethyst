@@ -3,6 +3,8 @@ using Datapack.Net.Function;
 using Datapack.Net.Function.Commands;
 using Datapack.Net.Utils;
 using Geode.Errors;
+using Geode.IR;
+using Geode.IR.Instructions;
 using Geode.Types;
 
 namespace Geode.Values
@@ -15,6 +17,7 @@ namespace Geode.Values
 		public override string ToString() => ID.ToString();
 		public FunctionType FuncType => (FunctionType)Type;
 
+		public virtual ValueRef CallBehavior(FunctionContext ctx, params ValueRef[] args) => ctx.Add(new CallInsn(this, ctx.PrepArgs(FuncType, args)));
 		public virtual void Call(RenderContext ctx, IValueLike[] args) => Call(ctx, ID, FuncType, args);
 		public virtual IFunctionLike CloneWithType(FunctionType type) => new FunctionValue(ID, type, Location);
 

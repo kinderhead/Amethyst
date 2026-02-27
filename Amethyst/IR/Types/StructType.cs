@@ -6,13 +6,13 @@ using Geode.Values;
 
 namespace Amethyst.IR.Types
 {
-	public class StructType(NamespacedID id, TypeSpecifier? baseClass, Dictionary<string, TypeSpecifier> props, Dictionary<string, FunctionType> methods, bool isClass) : TypeSpecifier
+	public class StructType(NamespacedID id, TypeSpecifier? baseClass, Dictionary<string, TypeSpecifier> props, Dictionary<string, FunctionValue> methods, bool isClass) : TypeSpecifier
 	{
 #pragma warning disable IDE0028 // Simplify collection initialization
 		public override Dictionary<string, TypeSpecifier> Properties => new([.. props, .. BaseClass == this ? [] : BaseClass.Properties]);
 #pragma warning restore IDE0028 // Simplify collection initialization
 
-		public readonly Dictionary<string, FunctionType> Methods = methods;
+		public readonly Dictionary<string, FunctionValue> Methods = methods;
 		public readonly bool IsClass = isClass;
 
 		public override NBTType EffectiveType => BaseClass.EffectiveType;
@@ -22,7 +22,7 @@ namespace Amethyst.IR.Types
 
 		public override NamespacedID ID => id;
 
-		public (StructType Source, FunctionType Type)? HierarchyMethod(string name)
+		public (StructType Source, FunctionValue Function)? HierarchyMethod(string name)
 		{
 			if (BaseClass is StructType s && BaseClass != this)
 			{
@@ -39,11 +39,7 @@ namespace Amethyst.IR.Types
 
 		public override LiteralValue? DefaultPropertyValue(string name)
 		{
-			if (Methods.TryGetValue(name, out var method))
-			{
-				return new(new NamespacedID($"{ID}/{name}").ToString(), method);
-			}
-			else if (BaseClass is StructType && BaseClass.DefaultPropertyValue(name) is LiteralValue b) // Handle virtual methods nicely
+			if (BaseClass is StructType && BaseClass.DefaultPropertyValue(name) is LiteralValue b)
 			{
 				return b;
 			}
@@ -54,6 +50,14 @@ namespace Amethyst.IR.Types
 
 			return null;
 		}
+#pragma warning disable IDE0028 // Simplify collection initialization
+
+		public NBTCompound GetTypeInfo() =>
+			new([
+				new("methods", new NBTCompound([.. Methods.Select(i => new KeyValuePair<string, NBTValue>(i.Key, i.Value.ID.ToString()))])),
+				new("properties", new NBTCompound([.. Properties.Select(i => new KeyValuePair<string, NBTValue>(i.Key, i.Value.ToString()))])),
+				new("base", BaseClass.ID.ToString()),
+			]);
 
 		public LiteralValue DefaultValueWithMetadata => new(new NBTCompound([.. Properties.Select(i => new KeyValuePair<string, NBTValue>(i.Key, DefaultPropertyValue(i.Key)?.Value ?? i.Value.DefaultValue.Value)), new(TypeIDProperty, ID.ToString())]), this);
 
@@ -66,8 +70,8 @@ namespace Amethyst.IR.Types
 		protected override bool EqualsImpl(TypeSpecifier obj) => obj is StructType other && other.ID == ID;// && Properties.Count == other.Properties.Count && Properties.All(kv => other.Properties.TryGetValue(kv.Key, out var prop) && prop.Equals(kv.Value));
 		public override string ToString() => ID.ToString();
 
-#pragma warning disable IDE0028 // Simplify collection initialization
 		public override object Clone() => new StructType(ID, BaseClass, new(props.Select(i => new KeyValuePair<string, TypeSpecifier>(i.Key, i.Value))), Methods, IsClass);
+
 #pragma warning restore IDE0028 // Simplify collection initialization
 
 		public static readonly string TypeIDProperty = "@type";

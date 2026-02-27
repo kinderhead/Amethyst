@@ -29,32 +29,16 @@ struct vec2 {
         return this.x + this.y + this.z;
     }
 
-    virtual int get-x() {
+    int get-x() {
         return this.x;
     }
 
-    overload virtual int get-x2() {
+    overload int get-x2() {
         return this.x;
     }
 
-    overload virtual int get-x2(int y) {
+    overload int get-x2(int y) {
         return this.x + y;
-    }
-}
-
-struct subvec implements vec2 {
-    subvec(int x, int y, int z) : vec2(x * 2, y * 2, z * 2) { }
-
-    virtual int get-x() {
-        return this.x * 2;
-    }
-
-    overload virtual int get-x2() {
-        return this.x + 1;
-    }
-
-    overload virtual int get-x2(int y) {
-        return this.x + y + 1;
     }
 }
 
@@ -164,23 +148,6 @@ void test_nbt_constructor() {
     assert_eq(obj.z, 4);
     assert_eq(obj.sum(), 13);
     assert_eq(obj.get-x(), 3);
-    assert_eq(obj.get-x2(), 3);
-    assert_eq(obj.get-x2(3), 6);
-
-    complete();
-}
-
-#test
-void test_nbt_inheritance() {
-    start("nbt inheritance");
-    
-    subvec obj = subvec(1, 2, 3);
-
-    assert_eq(obj.x, 2);
-    assert_eq(obj.y, 4);
-    assert_eq(obj.z, 6);
-    assert_eq(obj.sum(), 12);
-    assert_eq(obj.get-x(), 4);
     assert_eq(obj.get-x2(), 3);
     assert_eq(obj.get-x2(3), 6);
 

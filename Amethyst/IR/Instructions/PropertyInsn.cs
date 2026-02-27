@@ -8,11 +8,12 @@ using Geode.Values;
 
 namespace Amethyst.IR.Instructions
 {
-	public class PropertyInsn(ValueRef val, ValueRef prop, TypeSpecifier destType) : Instruction([val, prop])
+	public class PropertyInsn(ValueRef val, ValueRef prop, TypeSpecifier destType, bool addQuotes = false) : Instruction([val, prop])
 	{
 		public override string Name => "prop";
 		public override NBTType?[] ArgTypes => [null, NBTType.String];
 		public TypeSpecifier ActualReturnType => destType;
+		public readonly bool AddQuotes = addQuotes;
 		public override TypeSpecifier ReturnType => new WeakReferenceType(ActualReturnType);
 
 		public override void Render(RenderContext ctx)
@@ -22,11 +23,23 @@ namespace Amethyst.IR.Instructions
 
 			if (val.Type is EntityType)
 			{
-				ReturnValue.Expect<DynamicValue>()
-					.Add("entity @e[scores={amethyst_id=")
-					.Add(val)
-					.Add("},limit=1] ")
-					.Add(prop);
+				if (AddQuotes)
+				{
+					ReturnValue.Expect<DynamicValue>()
+						.Add("entity @e[scores={amethyst_id=")
+						.Add(val)
+						.Add("},limit=1] \"")
+						.Add(prop)
+						.Add("\"");
+				}
+				else
+				{
+					ReturnValue.Expect<DynamicValue>()
+						.Add("entity @e[scores={amethyst_id=")
+						.Add(val)
+						.Add("},limit=1] ")
+						.Add(prop);
+				}
 
 				return;
 			}
@@ -41,10 +54,21 @@ namespace Amethyst.IR.Instructions
 				val = WeakReferenceType.From(nbt);
 			}
 
-			ReturnValue.Expect<DynamicValue>()
-				.Add(val)
-				.Add(".")
-				.Add(prop);
+			if (AddQuotes)
+			{
+				ReturnValue.Expect<DynamicValue>()
+					.Add(val)
+					.Add(".\"")
+					.Add(prop)
+					.Add("\"");
+			}
+			else
+			{
+				ReturnValue.Expect<DynamicValue>()
+					.Add(val)
+					.Add(".")
+					.Add(prop);
+			}
 		}
 
 		protected override IValue? ComputeReturnValue(FunctionContext ctx)

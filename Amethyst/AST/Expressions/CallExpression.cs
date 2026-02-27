@@ -74,7 +74,7 @@ namespace Amethyst.AST.Expressions
 
 			if (func.Value is FunctionValue f)
 			{
-				return ctx.Call(f, args);
+				return f.CallBehavior(ctx, args);
 			}
 			else
 			{

@@ -1,10 +1,14 @@
 ﻿using Amethyst.Antlr;
 using Amethyst.AST;
+using Amethyst.AST.Expressions;
 using Amethyst.AST.Intrinsics;
 using Amethyst.Cli;
+using Amethyst.IR.Instructions;
 using Amethyst.IR.Types;
 using Antlr4.Runtime;
+using Datapack.Net.Data;
 using Datapack.Net.Function;
+using Datapack.Net.Utils;
 using Geode;
 using Geode.Errors;
 using Geode.IR;
@@ -28,6 +32,7 @@ namespace Amethyst
 		public GeodeBuilder IR { get; }
 
 		private Dictionary<string, string> Files { get; } = [];
+		private readonly Dictionary<NamespacedID, StructType> typeInfo = [];
 
 		public Compiler(BuildOptions opts)
 		{
@@ -57,13 +62,20 @@ namespace Amethyst
 				return false;
 			}
 
-			// Do class decls before
+			// Do class decls before functions
 			foreach (var i in Roots)
 			{
 				if (!i.Value.BuildSymbols())
 				{
 					errored = true;
 				}
+			}
+
+			var info = new ValueRef(GlobalInitFunc.GetVariable("amethyst:type_info"));
+
+			foreach (var (id, val) in typeInfo)
+			{
+				GlobalInitFunc.Add(new StoreRefInsn(GlobalInitFunc.Add(new PropertyInsn(info, new LiteralValue(id.ToString()), PrimitiveType.Compound)), new LiteralValue(val.GetTypeInfo())));
 			}
 
 			foreach (var i in Roots)
@@ -275,6 +287,8 @@ namespace Amethyst
 			return mappedPath;
         }
 
+		public void RegisterTypeInfo(StructType type) => typeInfo[type.ID] = type;
+
 		protected virtual void RegisterGlobals()
 		{
 			Register(PrimitiveType.Bool);
@@ -309,6 +323,7 @@ namespace Amethyst
 			IR.AddSymbol(new("builtin:true", LocationRange.None, new LiteralValue(true)));
 			IR.AddSymbol(new("builtin:false", LocationRange.None, new LiteralValue(false)));
 			IR.AddSymbol(new("amethyst:stack", LocationRange.None, new StorageValue(IR.RuntimeID, "stack", new ListType(PrimitiveType.Compound))));
+			IR.AddSymbol(new("amethyst:type_info", LocationRange.None, new StorageValue(IR.RuntimeID, "type_info", new SimpleMapType(PrimitiveType.Compound))));
 
 			IR.Register(new Score("amethyst_id", "dummy"));
 		}

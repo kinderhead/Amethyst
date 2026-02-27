@@ -69,15 +69,6 @@ namespace Amethyst.AST.Statements
 
 			if (thisType.BaseClass != thisType && thisType.BaseClass is StructType parent)
 			{
-				foreach (var (k, v) in thisType.Methods)
-				{
-					if (v.Modifiers.HasFlag(FunctionModifiers.Virtual))
-					{
-						var prop = ctx.GetProperty(self, k);
-						prop.Type.AssignmentOverload(prop, thisType.DefaultPropertyValue(k)!, ctx);
-					}
-				}
-
 				foreach (var (k, _) in thisType.Properties)
 				{
 					if (!parent.Properties.ContainsKey(k))

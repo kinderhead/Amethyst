@@ -238,8 +238,7 @@ namespace Geode.IR
 			throw new InvalidTypeError(val.Type.ToString(), type.ToString());
 		}
 
-		public ValueRef Call(NamespacedID id, params ValueRef[] args) => Call(GetGlobal(id) as FunctionValue ?? throw new UndefinedSymbolError(id.ToString()), args);
-		public ValueRef Call(FunctionValue f, params ValueRef[] args) => Add(new CallInsn(f, PrepArgs(f.FuncType, args)));
+		public ValueRef Call(NamespacedID id, params ValueRef[] args) => (GetGlobal(id) as FunctionValue ?? throw new UndefinedSymbolError(id.ToString())).CallBehavior(this, args);
 
 		public IEnumerable<ValueRef> PrepArgs(FunctionType type, params ValueRef[] args)
 		{

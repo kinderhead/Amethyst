@@ -34,6 +34,31 @@ Classes are pass-by-reference and are always instantiated on the heap by interna
 
 Amethyst internally uses immutable references to access classes on the heap. This allows easy control over changing which reference points to which object.
 
+## Virtual Methods
+
+Classes can have virtual methods that can be overridden by subclasses. Virtual methods are defined using the `virtual` function modifier like so:
+
+<Highlight code={`\
+    class Vec {
+        int x;
+        int y;
+
+        virtual int sum() {
+            return this.x + this.y;
+        }
+    }
+
+    class SubVec implements Vec {
+        // Must also declare as virtual
+        // Signature must be identical to the original method
+        virtual int sum() {
+            return 7;
+        }
+    }
+`}/>
+
+Amethyst stores class type information at runtime at `storage amethyst:runtime type_info` with keys corresponding to the full names of classes.
+
 ## Differences from Structs
 
 * Classes can hold any type of property, including references and other classes.

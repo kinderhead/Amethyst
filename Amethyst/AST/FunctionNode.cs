@@ -76,7 +76,7 @@ namespace Amethyst.AST
 				realID = Mangle(funcType.ParameterTypes);
 			}
 
-			var func = new FunctionValue(realID, funcType, Location);
+			var func = Modifiers.HasFlag(FunctionModifiers.Virtual) ? new VirtualFunctionValue(realID, funcType, Location) : new FunctionValue(realID, funcType, Location);
 			
 			if (Modifiers.HasFlag(FunctionModifiers.Overload))
 			{
