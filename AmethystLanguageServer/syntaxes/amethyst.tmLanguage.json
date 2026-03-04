@@ -181,7 +181,7 @@
           "name": "string.interpolated.amethyst"
         }
       },
-      "end": "(?=$|\\n)",
+      "end": "(?=\\n)",
       "patterns": [
         {
           "include": "#literals"
@@ -194,9 +194,6 @@
         },
         {
           "include": "#subcommands"
-        },
-        {
-          "include": "#property"
         },
         {
           "include": "#operators"
@@ -619,156 +616,6 @@
           },
           "match": "[\\-%?!+*<>\\\\/|&=.:,;]",
           "name": "meta.operators"
-        }
-      ]
-    },
-    "property": {
-      "patterns": [
-        {
-          "applyEndPatternLast": 1,
-          "begin": "\\{",
-          "captures": {
-            "0": {
-              "name": "punctuation.mcfunction"
-            }
-          },
-          "end": "\\}",
-          "name": "meta.property.curly",
-          "patterns": [
-            {
-              "include": "#resource-name"
-            },
-            {
-              "include": "#literals"
-            },
-            {
-              "include": "#property_key"
-            },
-            {
-              "include": "#operators-mc"
-            },
-            {
-              "include": "#property_value"
-            },
-            {
-              "include": "$self"
-            }
-          ]
-        },
-        {
-          "applyEndPatternLast": 1,
-          "begin": "\\[",
-          "captures": {
-            "0": {
-              "name": "variable.other.mcfunction"
-            }
-          },
-          "end": "\\]",
-          "name": "meta.property.square",
-          "patterns": [
-            {
-              "include": "#resource-name"
-            },
-            {
-              "include": "#literals"
-            },
-            {
-              "include": "#property_key"
-            },
-            {
-              "include": "#operators-mc"
-            },
-            {
-              "include": "#property_value"
-            },
-            {
-              "include": "$self"
-            }
-          ]
-        },
-        {
-          "applyEndPatternLast": 1,
-          "begin": "\\(",
-          "captures": {
-            "0": {
-              "name": "punctuation.mcfunction"
-            }
-          },
-          "end": "\\)",
-          "name": "meta.property.paren",
-          "patterns": [
-            {
-              "include": "#resource-name"
-            },
-            {
-              "include": "#literals"
-            },
-            {
-              "include": "#property_key"
-            },
-            {
-              "include": "#operators-mc"
-            },
-            {
-              "include": "#property_value"
-            },
-            {
-              "include": "$self"
-            }
-          ]
-        }
-      ]
-    },
-    "property_key": {
-      "patterns": [
-        {
-          "captures": {
-            "0": {
-              "name": "variable.other.mcfunction"
-            }
-          },
-          "match": "#?[a-z_][a-z_\\.\\-]*\\:[a-z0-9_\\.\\-/]+(?=\\s*\\=:)",
-          "name": "meta.property_key"
-        },
-        {
-          "captures": {
-            "0": {
-              "name": "variable.other.mcfunction"
-            }
-          },
-          "match": "#?[a-z_][a-z0-9_\\.\\-/]+",
-          "name": "meta.property_key"
-        },
-        {
-          "captures": {
-            "0": {
-              "name": "variable.other.mcfunction"
-            }
-          },
-          "match": "[A-Za-z_]+[A-Za-z_\\-\\+]*",
-          "name": "meta.property_key"
-        }
-      ]
-    },
-    "property_value": {
-      "patterns": [
-        {
-          "captures": {
-            "0": {
-              "name": "string.unquoted.mcfunction"
-            }
-          },
-          "match": "#?[a-z_][a-z_\\.\\-]*\\:[a-z0-9_\\.\\-/]+",
-          "name": "meta.property_value"
-        },
-        {
-          "captures": {
-            "0": {
-              "name": "string.unquoted.mcfunction"
-            }
-          },
-          "match": "#?[a-z_][a-z0-9_\\.\\-/]+",
-          "name": "meta.property_value"
         }
       ]
     },

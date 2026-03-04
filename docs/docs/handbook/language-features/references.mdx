@@ -59,10 +59,17 @@ Pass references as macros (`macro T& ptr`) to allow Amethyst to emit more effici
 References can also be checked to see if they are valid:
 
 <Highlight code={`\
-    if (ptr) {
-        
-    }
+    if (ptr) { }
 `}/>
+
+The following pattern can be used to check the existence of properties of objects or elements in an array:
+
+<Highlight code={`\
+    if (^obj.prop) { }
+    if (^array[7]) { }
+`}/>
+
+This works because while accessing a member of an object normally dereferences it, adding a [reference operator](#reference-operators) turns it back into a reference.
 
 ## Weak References
 

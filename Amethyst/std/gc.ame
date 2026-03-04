@@ -55,6 +55,15 @@ void collect() {
     allocated_since_pass = false;
 
     @/function #amethyst:gc/mark
+
+    for (; grey.size() != 0; 0) {
+        var ptr = grey.pop().ptr;
+
+        if (^ptr["@type"]) {
+            var info = amethyst:type_info[(qstring)ptr["@type"]];
+            @/function $(info.methods["@mark"]) {this: "$(ptr)"}
+        }
+    }
 }
 
 void mark(macro nbt& ptr) {
@@ -64,9 +73,5 @@ void mark(macro nbt& ptr) {
     if (node) if (!node.marked) {
         node.marked = true;
         grey.add(node);
-
-        if (^ptr["@type"]) {
-            @/function $(ptr["@type"])/zz_internal/mark
-        }
     }
 }

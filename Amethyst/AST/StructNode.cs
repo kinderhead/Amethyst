@@ -136,23 +136,24 @@ namespace Amethyst.AST
 
 			if (Type == ContainerType.Class)
 			{
-				GenerateMetaMethods(ctx, root);
+				GenerateMetaMethods(ctx, root, methods);
 			}
 		}
 
-		private void GenerateMetaMethods(Compiler ctx, RootNode root)
+		private void GenerateMetaMethods(Compiler ctx, RootNode root, Dictionary<string, FunctionValue> methods)
 		{
-			GenerateGCMark(ctx, root);
+			GenerateGCMark(ctx, root, methods);
 		}
 
-		private void GenerateGCMark(Compiler ctx, RootNode root)
+		private void GenerateGCMark(Compiler ctx, RootNode root, Dictionary<string, FunctionValue> methods)
 		{
 			var id = new NamespacedID($"{ID}/{GeodeBuilder.InternalPath}/mark".ToLower());
 			var body = new BlockNode(Location);
 
 			body.Add(new ExpressionStatement(Location, new CallExpression(Location, new VariableExpression(Location, "print"), [new LiteralExpression(Location, $"{ID} mark")])));
 
-			new FunctionNode(Location, [], FunctionModifiers.None, new SimpleAbstractTypeSpecifier(Location, "void"), id, [new AbstractParameter(ParameterModifiers.Macro, new AbstractReferenceTypeSpecifier(Location, new SimpleAbstractTypeSpecifier(Location, ID.ToString())), "this")], body).Process(ctx, root);
+			new FunctionNode(Location, [], FunctionModifiers.Virtual, new SimpleAbstractTypeSpecifier(Location, "void"), id, [new AbstractParameter(ParameterModifiers.Macro, new AbstractReferenceTypeSpecifier(Location, new SimpleAbstractTypeSpecifier(Location, ID.ToString())), "this")], body).Process(ctx, root);
+			methods["@mark"] = (FunctionValue?)ctx.IR.GetGlobal(id) ?? throw new UndefinedSymbolError(id.ToString());
 		}
 
 		public static readonly ReadOnlySet<string> ReservedProperties = [StructType.TypeIDProperty];
