@@ -6,7 +6,7 @@ void test_int_map() {
 
     int{} x;
     int y = 6;
-    unsafe_string id = "e";
+    qstring id = "e";
 
     x["womp"] = 3;
     x[id] = y;

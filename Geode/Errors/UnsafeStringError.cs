@@ -6,4 +6,9 @@ namespace Geode.Errors
     {
         
     }
+
+    public class QStringError() : GeodeError($"String is not a valid qstring")
+    {
+
+    }
 }

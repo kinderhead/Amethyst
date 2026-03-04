@@ -39,7 +39,10 @@ void start(string name) {
 }
 
 void assert(bool condition) {
-    if (!condition) currentTestFailed = true;
+    if (!condition) {
+        print("--> Assertion failure");
+        currentTestFailed = true;
+    }
 }
 
 void assert_eq(int value, int expected) {

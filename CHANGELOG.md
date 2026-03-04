@@ -9,3 +9,4 @@
 * Added `T[].all()`.
 * Fixed issue with methods not working for lists of references.
 * Added `T[].pop()`.
+* Added `qstring`.

@@ -4,6 +4,6 @@ namespace Geode.Values
 {
 	public interface IConstantValue : IValue
 	{
-		NBTValue Value { get; }
+		new NBTValue Value { get; }
 	}
 }

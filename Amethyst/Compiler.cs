@@ -304,6 +304,7 @@ namespace Amethyst
 			Register(EntityType.Dummy);
 
 			Register(new UnsafeStringType());
+			Register(new QStringType());
 			Register(new IntRangeType());
 			Register(new FloatRangeType());
 			Register(new TargetSelectorType());

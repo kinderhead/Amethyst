@@ -88,6 +88,14 @@ Strings in Amethyst are implemented using NBT strings. Only double quotes are su
 All Minecraft string escape codes can be used.
 :::
 
+### `qstring`
+
+Minecraft un-escapes strings when passing them as macros and does not provide an efficient way to escape them. As such, normal strings are not allowed to be passed as macro arguments. Amethyst provides a solution through `qstring`s. A `qstring` is a special type of string that cannot have double quotes in it. Technically this restriction can be bypassed relatively easily through casting, but doing so will likely cause a runtime error.
+
+:::note
+Programmers are not good at coming up with names, so `qstring` may be renamed in the future.
+:::
+
 ### Methods
 
 * `int str.length()`: String length. Compiles internally as `(int)str`.
