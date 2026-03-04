@@ -16,7 +16,7 @@ namespace Amethyst.IR.Types
 		public readonly bool Mutable = mutable;
 
 		public override IEnumerable<TypeSpecifier> Subtypes => [Inner]; // Shouldn't need to unecessarily include the base subtypes here
-		public override LiteralValue DefaultValue => new("block 0 0 0 null", this);
+		public override LiteralValue DefaultValue => new($"storage amethyst:runtime null.{Guid.NewGuid()}", this);
 		public override NBTType EffectiveType => NBTType.String;
 		public override TypeSpecifier BaseClass => this;
 		public override NamespacedID ID => Mutable ? "amethyst:ref" : Inner.ID;

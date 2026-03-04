@@ -1,6 +1,7 @@
 using Datapack.Net.Data;
 using Datapack.Net.Function;
 using Datapack.Net.Function.Commands;
+using Geode.Errors;
 using Geode.Types;
 using Geode.Values;
 
@@ -9,7 +10,41 @@ namespace Geode
 	public interface IValueLike
 	{
 		TypeSpecifier Type { get; }
-		IValue Expect();
+		IValue? Value { get; }
+	}
+
+	public static class ValueExtensions
+	{
+		extension(IValueLike self)
+		{
+			public IValue Expect(NBTType type)
+			{
+				var val = self.Value;
+
+				if (val is null || val.Type.EffectiveType != type)
+				{
+					throw new InvalidTypeError(val is null ? "<error>" : (Enum.GetName(val.Type.EffectiveType)?.ToLower() ?? "<error>"), Enum.GetName(type)?.ToLower() ?? "<error>");
+				}
+
+				return val;
+			}
+
+			public T Expect<T>() where T : class, IValue
+			{
+				if (self.Value is T val)
+				{
+					return val;
+				}
+
+#if DEBUG
+				System.Diagnostics.Debugger.Break();
+#endif
+
+				throw new InvalidTypeError(self.Value?.GetType().Name.ToLower() ?? "<error>", typeof(T).Name.ToLower());
+			}
+
+			public IValue Expect() => self.Expect<IValue>();
+		}
 	}
 
 	public interface IValue : IValueLike
@@ -24,9 +59,9 @@ namespace Geode
 	public abstract class Value : IValue
 	{
 		public abstract TypeSpecifier Type { get; }
+		IValue? IValueLike.Value => this;
 
 		public abstract ScoreValue AsScore(RenderContext ctx);
-		public IValue Expect() => this;
 		public abstract void If(Action<Execute> apply, RenderContext ctx, int tmp = 0);
 		public abstract FormattedText Render(FormattedText text, RenderContext ctx);
 	}

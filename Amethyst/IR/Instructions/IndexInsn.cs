@@ -36,18 +36,8 @@ namespace Amethyst.IR.Instructions
 
 		public override void Render(RenderContext ctx)
 		{
-			var val = Arg<ValueRef>(0).Expect();
+			var val = Arg<ValueRef>(0).AsRef();
 			var index = Arg<ValueRef>(1).Expect();
-
-			if (val.Type is not ReferenceType && val is DataTargetValue nbt)
-			{
-				if (val is MacroValue)
-				{
-					throw new MacroPropertyError();
-				}
-
-				val = WeakReferenceType.From(nbt);
-			}
 
 			ReturnValue.Expect<DynamicValue>()
 				.Add(val)

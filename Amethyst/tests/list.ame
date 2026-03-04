@@ -123,3 +123,19 @@ void test_list_all() {
     
     complete();
 }
+
+#test
+void test_int_list_pop() {
+    start("int list pop");
+
+    int[] x = [1, 2, 3, 4, 5];
+
+    assert_eq(x.pop(), 5);
+    assert_eq(x.pop(), 4);
+    assert_eq(x.pop(), 3);
+    assert_eq(x.pop(), 2);
+    assert_eq(x.pop(), 1);
+    assert_eq(x.size(), 0);
+    
+    complete();
+}

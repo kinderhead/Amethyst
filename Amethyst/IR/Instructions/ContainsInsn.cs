@@ -34,15 +34,7 @@ namespace Amethyst.IR.Instructions
 				return;
 			}
 
-			if (val.Type is not ReferenceType && val is DataTargetValue nbt)
-			{
-				if (val is MacroValue)
-				{
-					throw new MacroPropertyError();
-				}
-
-				val = WeakReferenceType.From(nbt);
-			}
+			val = val.AsRef();
 
 			ctx.Macroize([val, prop], (args, ctx) =>
 			{

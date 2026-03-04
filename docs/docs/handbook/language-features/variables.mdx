@@ -90,7 +90,7 @@ All Minecraft string escape codes can be used.
 
 ### Methods
 
-* `.length()`: String length. Compiles internally as `(int)str`.
+* `int str.length()`: String length. Compiles internally as `(int)str`.
 
 ## Lists
 
@@ -108,10 +108,11 @@ Lists store an ordered collection of values. Untyped lists (using `list`) are un
 
 ### Methods
 
-* `.add(T val)`: Add a value to the end of the list.
-* `.size()`: Get the size of the list.
-* `.where(nbt predicate)`: Get a copy of a subset of the list that matches a predicate. Uses [NBT paths](https://minecraft.wiki/w/NBT_path) of the form `list[predicate]`. Only works on lists of [compounds](#objects), [maps](#maps), or [structs](./structs.mdx).
-* `.all()`: Get a special reference using an [NBT path](https://minecraft.wiki/w/NBT_path) of the form `list[]`. This allows modifying the properties of all NBT compounds in a list at once.
+* `void T[].add(T val)`: Add a value to the end of the list.
+* `T T[].pop()`: Pop a value from the end of the list.
+* `int T[].size()`: Get the size of the list.
+* `T[] T[].where(nbt predicate)`: Get a copy of a subset of the list that matches a predicate. Uses [NBT paths](https://minecraft.wiki/w/NBT_path) of the form `list[predicate]`. Only works on lists of [compounds](#objects), [maps](#maps), or [structs](./structs.mdx).
+* `T^ T[].all()`: Get a special reference using an [NBT path](https://minecraft.wiki/w/NBT_path) of the form `list[]`. This allows modifying the properties of all NBT compounds in a list at once.
 
 :::warning
 There are currently no bounds checks. Eventually it will be included in debug builds and optionally in release mode builds.

@@ -20,13 +20,7 @@ namespace Amethyst.IR.Instructions
 		public override void Render(RenderContext ctx)
 		{
 			var ret = ReturnValue.Expect<LValue>();
-			var list = Arg<ValueRef>(0).Expect();
-
-			if (list.Type is not ReferenceType)
-			{
-				// Re-check list
-				list = WeakReferenceType.From(Arg<ValueRef>(0).Expect<DataTargetValue>());
-			}
+			var list = Arg<ValueRef>(0).AsRef();
 
 			// Thanks Minecraft for making it work this way
 			ret.Store(new LiteralValue(new NBTList()), ctx);

@@ -311,6 +311,7 @@ namespace Amethyst
 			Register(new Print());
 			Register(new CountOf());
 			Register(new ListAdd());
+			Register(new ListPop());
 			Register(new ListSize());
 			Register(new ListWhere());
 			Register(new ListAll());

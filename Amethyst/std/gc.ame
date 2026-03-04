@@ -63,7 +63,7 @@ void mark(macro nbt& ptr) {
 
     if (node) if (!node.marked) {
         node.marked = true;
-        //grey.add(node);
+        grey.add(node);
 
         if (^ptr["@type"]) {
             @/function $(ptr["@type"])/zz_internal/mark

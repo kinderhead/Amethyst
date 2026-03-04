@@ -44,15 +44,7 @@ namespace Amethyst.IR.Instructions
 				return;
 			}
 
-			if (val.Type is not ReferenceType && val is DataTargetValue nbt)
-			{
-				if (val is MacroValue)
-				{
-					throw new MacroPropertyError();
-				}
-
-				val = WeakReferenceType.From(nbt);
-			}
+			val = val.AsRef();
 
 			if (AddQuotes)
 			{
@@ -79,7 +71,7 @@ namespace Amethyst.IR.Instructions
 			ReturnValue.AddDependency(val);
 			ReturnValue.AddDependency(prop);
 
-			// I don't want to deal with nested Macroizer stuff
+			// I don't want to deal with nested Macroizer stuff yet
 			if (val.Type is ReferenceType r && r.Inner is EntityType e)
 			{
 				throw new InvalidTypeError(prop.Type.ToString(), e.ToString());

@@ -6,11 +6,12 @@ using Geode.Values;
 
 namespace Amethyst.IR.Instructions
 {
-	public class DereferenceInsn(ValueRef ptr) : Instruction([ptr])
+	public class DereferenceInsn(ValueRef ptr, bool force = false) : Instruction([ptr])
 	{
 		public override string Name => "deref";
 		public override NBTType?[] ArgTypes => [null];
 		public override TypeSpecifier ReturnType => ((ReferenceType)ptr.Type).Inner;
+		public readonly bool Force = force;
 
 		public override void Render(RenderContext ctx)
 		{
@@ -25,7 +26,7 @@ namespace Amethyst.IR.Instructions
 
 		protected override IValue? ComputeReturnValue(FunctionContext ctx)
 		{
-			if (Arg<ValueRef>(0).Expect() is LiteralValue l && l.Is<NBTString>(out var str))
+			if (!Force && Arg<ValueRef>(0).Expect() is LiteralValue l && l.Is<NBTString>(out var str))
 			{
 				Remove();
 

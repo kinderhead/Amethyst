@@ -43,31 +43,6 @@ namespace Geode
 			SourceInsn = insn;
 		}
 
-		public IValue Expect(NBTType type)
-		{
-			if (Value is null || Value.Type.EffectiveType != type)
-			{
-				throw new InvalidTypeError((Value is not null ? Enum.GetName(Value.Type.EffectiveType)?.ToLower() : "<error>") ?? "<error>", Enum.GetName(type)?.ToLower() ?? "<error>");
-			}
-
-			return Value;
-		}
-
-		public T Expect<T>() where T : class, IValue
-		{
-			if (Value is T val)
-			{
-				return val;
-			}
-
-#if DEBUG
-			System.Diagnostics.Debugger.Break();
-#endif
-
-			throw new InvalidTypeError(Value?.GetType().Name.ToLower() ?? "<error>", typeof(T).Name.ToLower());
-		}
-		public IValue Expect() => Expect<IValue>();
-
 		public void SetValue(IValue val)
 		{
 			Value = val;

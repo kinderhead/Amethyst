@@ -243,6 +243,7 @@ namespace Geode
 			var func = new MCFunction(new("amethyst", $"{InternalPath}/{UniqueString}"));
 
 			func.Add(new DataCommand.Modify(new Storage(new("amethyst", "runtime")), "stack").Set().Value("[{}]"));
+			func.Add(new DataCommand.Remove(new Storage(new("amethyst", "runtime")), "null"));
 
 			foreach (var i in registeredScores)
 			{

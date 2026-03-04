@@ -7,7 +7,7 @@ namespace Geode.Types
 	public class GenericType(string name, TypeSpecifier? constraint = null, bool resolved = false) : TypeSpecifier
 	{
 		public readonly string Name = name;
-		public TypeSpecifier Constraint { get; private set; } = constraint ?? PrimitiveType.Compound;
+		public TypeSpecifier Constraint { get; private set; } = constraint ?? new VarType();
 		public bool Resolved { get; private set; } = resolved;
 
 		public override LiteralValue DefaultValue => Constraint.DefaultValue;
@@ -21,7 +21,7 @@ namespace Geode.Types
 		// Also kinda does the GetHashCode as well because I did a silly for that
 		public override string ToString() => Resolved ? Constraint.ToString() : Name;
 
-		public override bool ConstraintSatisfiedBy(TypeSpecifier other) => other.Implements(Constraint);
+		public override bool ConstraintSatisfiedBy(TypeSpecifier other) => Constraint is VarType || other.Implements(Constraint);
 		public override bool Implements(TypeSpecifier other) => Constraint.Implements(other);
 
 		public void Set(TypeSpecifier type)
