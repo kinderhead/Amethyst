@@ -117,6 +117,7 @@ Lists store an ordered collection of values. Untyped lists (using `list`) are un
 ### Methods
 
 * `void T[].add(T val)`: Add a value to the end of the list.
+* `void T[].remove_at(int index)`: Remove a value at an index.
 * `T T[].pop()`: Pop a value from the end of the list.
 * `int T[].size()`: Get the size of the list.
 * `T[] T[].where(nbt predicate)`: Get a copy of a subset of the list that matches a predicate. Uses [NBT paths](https://minecraft.wiki/w/NBT_path) of the form `list[predicate]`. Only works on lists of [compounds](#objects), [maps](#maps), or [structs](./structs.mdx).

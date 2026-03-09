@@ -5,11 +5,12 @@
 * Added support for function names with capital letters.
 * Changed property accessors to dereference automatically.
 * Added `const` variables.
-* Added `T[].where(nbt predicate)`.
-* Added `T[].all()`.
+* Added `T[] T[].where(nbt predicate)`.
+* Added `T& T[].all()`.
 * Fixed issue with methods not working for lists of references.
-* Added `T[].pop()`.
+* Added `T T[].pop()`.
 * Added `qstring`.
 * Made properties and indexers preserve strong references.
 * Added `null`.
 * Added garbage collection.
+* Added `void T[].remove_at(int index)`.

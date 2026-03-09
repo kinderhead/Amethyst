@@ -20,24 +20,23 @@ class Node {
     }
 }
 
-class List {
-    Node[] arr;
+Node[] nodes = [];
+int idex = 0;
 
-    void print() {
-        for (int i = 0; i < this.arr.size(); ++i) {
-            print(this.arr[i]);
-        }
+#tick
+void tick() {
+    nodes.add(new Node(++idex));
+
+    if (nodes.size() > 100) {
+        nodes.remove_at(0);
     }
+
+    print(amethyst:gc/heap_info.size());
 }
 
-List save;
+// #load
+// void main() {
+    
 
-#load
-void main() {
-    save = new List();
-    save = null;
-
-    @/tellraw @a "$(save)"
-
-    amethyst:exit();
-}
+//     amethyst:exit();
+// }

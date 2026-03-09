@@ -341,6 +341,7 @@ namespace Amethyst
 			Register(new ListSize());
 			Register(new ListWhere());
 			Register(new ListAll());
+			Register(new ListRemoveAt());
 			Register(new StringLength());
 			Register(new Summon());
 			Register(new Kill());

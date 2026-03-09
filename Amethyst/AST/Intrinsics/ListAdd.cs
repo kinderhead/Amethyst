@@ -18,7 +18,7 @@ namespace Amethyst.AST.Intrinsics
 		{
 			if (args.Length != 2)
 			{
-				throw new MismatchedArgumentCountError(1, args.Length);
+				throw new MismatchedArgumentCountError(2, args.Length);
 			}
 
 			var list = args[0];
