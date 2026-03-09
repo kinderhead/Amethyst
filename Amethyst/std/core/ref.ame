@@ -9,7 +9,3 @@ string get-stack-ref(unsafe_string name, int offset) {
     
     return ref;
 }
-
-inline void set-ref(macro nbt^ ref, macro nbt^ val) {
-    @/data modify $(ref) set from $(val)
-}

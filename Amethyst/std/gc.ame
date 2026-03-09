@@ -19,15 +19,13 @@ struct node {
     }
 }
 
-// Remove initializers for production
-node[] heap_info = [];
-nbt{} heap = {};
+node[] heap_info;
+nbt{} heap;
 
 bool allocated_since_pass = false;
 
 // Change to a static variable once implemented
 node n;
-int ticks = 0;
 
 nbt& malloc() {
     n = {};
@@ -37,6 +35,8 @@ nbt& malloc() {
     
     return (nbt&)n.ptr;
 }
+
+int ticks = 0;
 
 #tick
 void _loop() {
@@ -62,6 +62,17 @@ void collect() {
         if (^ptr["@type"]) {
             var info = amethyst:type_info[(qstring)ptr["@type"]];
             @/function $(info.methods["@mark"]) {this: "$(ptr)"}
+        }
+    }
+
+    for (int i = 0; i < heap_info.size(); ++i) {
+        if (!heap_info[i].marked) {
+            // TODO: implement delete
+            @/data remove $(heap_info[i].ptr)
+            @/data remove $(^heap_info[i])
+            --i;
+        } else {
+            heap_info[i].marked = false;
         }
     }
 }

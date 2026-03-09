@@ -32,7 +32,7 @@ namespace Amethyst.IR.Instructions
 				throw new InvalidTypeError(dest.Type.ToString(), "list");
 			}
 		}
-		public override TypeSpecifier ReturnType => new WeakReferenceType(ActualReturnType);
+		public override TypeSpecifier ReturnType => Arg<ValueRef>(0).Type is ReferenceType and not WeakReferenceType ? new ReferenceType(ActualReturnType) : new WeakReferenceType(ActualReturnType);
 
 		public override void Render(RenderContext ctx)
 		{

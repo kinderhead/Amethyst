@@ -1,0 +1,25 @@
+namespace test;
+
+class Node {
+    int val;
+    Node next;
+
+    Node(int x) {
+        this.x = x;
+    }
+}
+
+Node save;
+
+#test
+void test_gc_simple() {
+    start("gc simple");
+
+    var n1 = new Node(1);
+    var n2 = new Node(1);
+
+    
+    
+    complete();
+}
+

@@ -8,9 +8,7 @@ namespace Amethyst.IR.Types
 {
 	public class StructType(NamespacedID id, TypeSpecifier? baseClass, Dictionary<string, TypeSpecifier> props, Dictionary<string, FunctionValue> methods, bool isClass) : TypeSpecifier
 	{
-#pragma warning disable IDE0028 // Simplify collection initialization
-		public override Dictionary<string, TypeSpecifier> Properties => new([.. props, .. BaseClass == this ? [] : BaseClass.Properties]);
-#pragma warning restore IDE0028 // Simplify collection initialization
+		public override IReadOnlyDictionary<string, TypeSpecifier> Properties => new Dictionary<string, TypeSpecifier>([.. props, .. BaseClass == this ? new Dictionary<string, TypeSpecifier>() : BaseClass.Properties]);
 
 		public readonly Dictionary<string, FunctionValue> Methods = methods;
 		public readonly bool IsClass = isClass;

@@ -8,6 +8,8 @@ int ticksSinceStart = 0;
 #load
 void init() {
     @/forceload add -64 -64 64 64
+
+    amethyst:gc/collect();
 }
 
 #tick

@@ -28,7 +28,7 @@ namespace Geode
 		public NBTNumberType? EffectiveNumberType => Enum.IsDefined((NBTNumberType)EffectiveType) ? (NBTNumberType)EffectiveType : null;
 
 		public virtual TypeSpecifier? DefaultPropertyType => null;
-		public virtual Dictionary<string, TypeSpecifier> Properties => [];
+		public virtual IReadOnlyDictionary<string, TypeSpecifier> Properties => new Dictionary<string, TypeSpecifier>();
 
 		public TypeSpecifier? HasProperty(string name, bool allowDefault = false)
 		{

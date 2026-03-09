@@ -3,6 +3,8 @@ using Amethyst.AST;
 using Amethyst.AST.Expressions;
 using Amethyst.AST.Intrinsics;
 using Amethyst.Cli;
+using Amethyst.GC;
+using Amethyst.IR;
 using Amethyst.IR.Instructions;
 using Amethyst.IR.Types;
 using Antlr4.Runtime;
@@ -71,12 +73,8 @@ namespace Amethyst
 				}
 			}
 
-			var info = new ValueRef(GlobalInitFunc.GetVariable("amethyst:type_info"));
-
-			foreach (var (id, val) in typeInfo)
-			{
-				GlobalInitFunc.Add(new StoreRefInsn(GlobalInitFunc.Add(new PropertyInsn(info, new LiteralValue(id.ToString()), PrimitiveType.Compound)), new LiteralValue(val.GetTypeInfo())));
-			}
+			GenerateTypeInfo();
+			GenerateGCMarkFunction();
 
 			foreach (var i in Roots)
 			{
@@ -289,7 +287,34 @@ namespace Amethyst
 
 		public void RegisterTypeInfo(StructType type) => typeInfo[type.ID] = type;
 
-		protected virtual void RegisterGlobals()
+		private void GenerateTypeInfo()
+		{
+			var info = new ValueRef(GlobalInitFunc.GetVariable("amethyst:type_info"));
+
+			foreach (var (id, val) in typeInfo)
+			{
+				GlobalInitFunc.Add(new StoreRefInsn(GlobalInitFunc.Add(new PropertyInsn(info, new LiteralValue(id.ToString()), PrimitiveType.Compound)), new LiteralValue(val.GetTypeInfo())));
+			}
+		}
+
+		private void GenerateGCMarkFunction()
+		{
+			var ctx = new FunctionContext(this, new(new("amethyst", GeodeBuilder.InternalPath + "/" + GeodeBuilder.UniqueString), FunctionType.VoidFunc, LocationRange.None), ["amethyst:gc/mark"], LocationRange.None, hasTagPriority: true);
+
+			foreach (var (_, val) in IR.Symbols)
+			{
+				GCHelper.Mark(val.Value, ctx);
+			}
+
+			if (ctx.Start.Instructions.Count != 0)
+			{
+				ctx.Add(new ReturnInsn());
+				ctx.Finish();
+				IR.AddFunctions(ctx);
+			}
+		}
+
+		private void RegisterGlobals()
 		{
 			Register(PrimitiveType.Bool);
 			Register(PrimitiveType.Byte);
@@ -324,6 +349,7 @@ namespace Amethyst
 
 			IR.AddSymbol(new("builtin:true", LocationRange.None, new LiteralValue(true)));
 			IR.AddSymbol(new("builtin:false", LocationRange.None, new LiteralValue(false)));
+			IR.AddSymbol(new("builtin:null", LocationRange.None, new NullValue()));
 			IR.AddSymbol(new("amethyst:stack", LocationRange.None, new StorageValue(IR.RuntimeID, "stack", new ListType(PrimitiveType.Compound))));
 			IR.AddSymbol(new("amethyst:type_info", LocationRange.None, new StorageValue(IR.RuntimeID, "type_info", new SimpleMapType(PrimitiveType.Compound))));
 

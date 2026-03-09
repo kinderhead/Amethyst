@@ -14,7 +14,6 @@ namespace Geode.Values
         public override TypeSpecifier Type => type;
 
 		public override ScoreValue AsScore(RenderContext ctx) => throw new InvalidTypeError(Type.ToString(), "int");
-		public override void If(Action<Execute> apply, RenderContext ctx, int tmp = 0) => throw new InvalidTypeError(Type.ToString(), "bool");
 
 		public IConstantValue Macroize(Func<IValue, IConstantValue> apply) => new LiteralValue(new NBTRawString($"{apply(Min.Expect()).Value}..{apply(Max.Expect()).Value}"), Type);
 

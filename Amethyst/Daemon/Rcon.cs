@@ -59,7 +59,7 @@ namespace Amethyst.Daemon
 
         public void Dispose()
         {
-            GC.SuppressFinalize(this);
+            System.GC.SuppressFinalize(this);
             stream.Close();
             client.Close();
         }

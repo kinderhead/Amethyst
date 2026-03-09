@@ -45,20 +45,6 @@ namespace Amethyst.AST
 			var props = new Dictionary<string, TypeSpecifier>();
 			var methods = new Dictionary<string, FunctionValue>();
 
-			foreach (var (k, v) in Properties)
-			{
-				props[k] = v.Resolve(ctx, ID.GetContainingFolder());
-
-				if (Type != ContainerType.Class && props[k] is ReferenceType && props[k] is not WeakReferenceType)
-				{
-					throw new ReferencePropertyError(k);
-				}
-				else if (ReservedProperties.Contains(k))
-				{
-					throw new ReservedNameError(k);
-				}
-			}
-
 			var selfType = Type switch
 			{
 				ContainerType.Struct or ContainerType.Class => new StructType(ID, baseClass, props, methods, Type == ContainerType.Class),
@@ -74,6 +60,20 @@ namespace Amethyst.AST
 			else
 			{
 				ctx.IR.AddType(new(ID, Location, selfType));
+			}
+
+			foreach (var (k, v) in Properties)
+			{
+				props[k] = v.Resolve(ctx, ID.GetContainingFolder());
+
+				if (Type != ContainerType.Class && props[k] is ReferenceType && props[k] is not WeakReferenceType)
+				{
+					throw new ReferencePropertyError(k);
+				}
+				else if (ReservedProperties.Contains(k))
+				{
+					throw new ReservedNameError(k);
+				}
 			}
 
 			ConstructorNode? constructor = null;
@@ -150,9 +150,9 @@ namespace Amethyst.AST
 			var id = new NamespacedID($"{ID}/{GeodeBuilder.InternalPath}/mark".ToLower());
 			var body = new BlockNode(Location);
 
-			body.Add(new ExpressionStatement(Location, new CallExpression(Location, new VariableExpression(Location, "print"), [new LiteralExpression(Location, $"{ID} mark")])));
+			body.Add(new GCMarkStatement(Location));
 
-			new FunctionNode(Location, [], FunctionModifiers.Virtual, new SimpleAbstractTypeSpecifier(Location, "void"), id, [new AbstractParameter(ParameterModifiers.Macro, new AbstractReferenceTypeSpecifier(Location, new SimpleAbstractTypeSpecifier(Location, ID.ToString())), "this")], body).Process(ctx, root);
+			new FunctionNode(Location, [], FunctionModifiers.Virtual, new SimpleAbstractTypeSpecifier(Location, "void"), id, [new AbstractParameter(ParameterModifiers.Macro, new SimpleAbstractTypeSpecifier(Location, ID.ToString()), "this")], body).Process(ctx, root);
 			methods["@mark"] = (FunctionValue?)ctx.IR.GetGlobal(id) ?? throw new UndefinedSymbolError(id.ToString());
 		}
 

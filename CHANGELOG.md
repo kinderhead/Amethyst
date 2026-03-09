@@ -10,3 +10,6 @@
 * Fixed issue with methods not working for lists of references.
 * Added `T[].pop()`.
 * Added `qstring`.
+* Made properties and indexers preserve strong references.
+* Added `null`.
+* Added garbage collection.

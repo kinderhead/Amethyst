@@ -15,7 +15,6 @@ namespace Geode.Values
 
 		public override ScoreValue AsScore(RenderContext ctx) => throw new InvalidOperationException();
 		public override bool Equals(object? obj) => obj is MacroValue m && m.Name == Name;
-		public override void If(Action<Execute> apply, RenderContext ctx, int tmp = 0) => throw new InvalidOperationException();
 		public override FormattedText Render(FormattedText text, RenderContext ctx) => text.Text(GetMacro());
 		public override string ToString() => GetMacro();
 		public override int GetHashCode() => HashCode.Combine(Name, Type);

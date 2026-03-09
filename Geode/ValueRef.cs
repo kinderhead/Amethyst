@@ -55,6 +55,7 @@ namespace Geode
 			return this;
 		}
 
+		public ValueRef ToValueRef() => this;
 		public ValueRef Clone() => Value is null ? new(Type) : new(Value);
 		object ICloneable.Clone() => Clone();
 

@@ -12,41 +12,32 @@ entitydef test_entity implements minecraft:base {
     float Health;
 }
 
-class Test {
+class Node {
     int x;
 
-    Test(int val) {
-        this.x = val;
-    }
-
-    virtual void foo() {
-        print(this.x);
+    Node(int x) {
+        this.x = x;
     }
 }
 
-class Test2 implements Test {
-    int y;
+class List {
+    Node[] arr;
 
-    Test2(int val1, int val2) : Test(val1) {
-        this.y = val2;
-    }
-
-    virtual void foo() {
-        print(this.x, " ", this.y);
+    void print() {
+        for (int i = 0; i < this.arr.size(); ++i) {
+            print(this.arr[i]);
+        }
     }
 }
+
+List save;
 
 #load
 void main() {
-    var obj1 = new Test2(5, 6);
-    var obj2 = new Test2(7, 8);
-    obj1.foo();
-    obj2.foo();
+    save = new List();
+    save = null;
 
-    amethyst:gc/mark(obj1);
-    amethyst:gc/collect();
+    @/say $(save)
 
-    print(amethyst:gc/heap_info);
-
-    amethyst:exit();
+    //amethyst:exit();
 }

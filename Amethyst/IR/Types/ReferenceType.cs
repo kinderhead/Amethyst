@@ -22,7 +22,7 @@ namespace Amethyst.IR.Types
 		public override NamespacedID ID => Mutable ? "amethyst:ref" : Inner.ID;
 		public override bool WrapInQuotesForMacro => true;
 		public override TypeSpecifier? DefaultPropertyType => Inner.DefaultPropertyType;
-		public override Dictionary<string, TypeSpecifier> Properties => Inner.Properties;
+		public override IReadOnlyDictionary<string, TypeSpecifier> Properties => Inner.Properties;
 
 		public virtual string Postfix => "&";
 
@@ -30,13 +30,17 @@ namespace Amethyst.IR.Types
 
 		public override void AssignmentOverload(ValueRef dest, ValueRef val, FunctionContext ctx)
 		{
-			if (!Mutable)
+			if (val.Value is NullValue)
+			{
+				base.AssignmentOverload(dest, dest.Type.DefaultValue, ctx);
+			}
+			else if (!Mutable)
 			{
 				base.AssignmentOverload(dest, val, ctx);
 			}
 			else if (val.Type is ReferenceType)
 			{
-				ctx.Call("amethyst:core/ref/set-ref", dest, ctx.ImplicitCast(val, this));
+				ctx.Add(new StoreRefToRefInsn(dest, ctx.ImplicitCast(val, this)));
 			}
 			else
 			{

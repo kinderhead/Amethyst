@@ -32,13 +32,6 @@ namespace Geode.Values
 
 		public override ScoreValue AsScore(RenderContext ctx) => this;
 
-		public override void If(Action<Execute> apply, RenderContext ctx, int tmp = 0)
-		{
-			var cmd = new Execute().Unless.Score(Target, Score, 0);
-			apply(cmd);
-			ctx.Add(cmd);
-		}
-
 		public override FormattedText Render(FormattedText text, RenderContext ctx) => text.Score(Target, Score);
 		public override bool Equals(object? obj) => obj is ScoreValue s && s.Score == Score && s.Target.Get() == Target.Get();
 

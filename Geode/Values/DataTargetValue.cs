@@ -13,13 +13,6 @@ namespace Geode.Values
 
 		public override ScoreValue AsScore(RenderContext ctx) => throw new InvalidOperationException("Cannot implicitly convert an NBT value to a score");//// No type checking because this acts like a cast to int//var val = ctx.Builder.Temp(tmp);//val.Store(this, ctx);//return val;
 
-		public override void If(Action<Execute> apply, RenderContext ctx, int tmp = 0)
-		{
-			var val = ctx.Builder.Temp(tmp); // Find some way to put it in a register nicely
-			val.Store(this, ctx);
-			val.If(apply, ctx, tmp + 1);
-		}
-
 		public override void Store(IValue val, RenderContext ctx)
 		{
 			if (val is IDataWritable data)

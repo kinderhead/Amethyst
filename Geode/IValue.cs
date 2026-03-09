@@ -11,6 +11,8 @@ namespace Geode
 	{
 		TypeSpecifier Type { get; }
 		IValue? Value { get; }
+
+		ValueRef ToValueRef();
 	}
 
 	public static class ValueExtensions
@@ -52,7 +54,6 @@ namespace Geode
 		bool IsLiteral => this is IConstantValue;
 
 		ScoreValue AsScore(RenderContext ctx);
-		void If(Action<Execute> apply, RenderContext ctx, int tmp = 0);
 		FormattedText Render(FormattedText text, RenderContext ctx);
 	}
 
@@ -62,8 +63,8 @@ namespace Geode
 		IValue? IValueLike.Value => this;
 
 		public abstract ScoreValue AsScore(RenderContext ctx);
-		public abstract void If(Action<Execute> apply, RenderContext ctx, int tmp = 0);
 		public abstract FormattedText Render(FormattedText text, RenderContext ctx);
+		public ValueRef ToValueRef() => new(this);
 	}
 
 	public abstract class LValue : Value

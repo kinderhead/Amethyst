@@ -12,12 +12,16 @@ using System.Text;
 
 namespace Amethyst.IR.Types
 {
+#pragma warning disable CS9107
 	public class EntityType(NamespacedID id, TypeSpecifier? baseClass, Dictionary<string, TypeSpecifier> props, Dictionary<string, FunctionValue> methods) : StructType(id, baseClass, props, methods, false)
+#pragma warning restore CS9107
 	{
 		public override LiteralValue DefaultValue => new(0, this);
 		public override NBTType EffectiveType => NBTType.Int;
 
-		public override object Clone() => new EntityType(ID, BaseClass, Properties, Methods);
+#pragma warning disable IDE0028
+		public override object Clone() => new EntityType(ID, BaseClass, new(props.Select(i => new KeyValuePair<string, TypeSpecifier>(i.Key, i.Value))), Methods);
+#pragma warning restore IDE0028
 		public override string ToString() => ID.ToString();
 		protected override bool EqualsImpl(TypeSpecifier obj) => obj is EntityType other && other.ID == ID;
 
