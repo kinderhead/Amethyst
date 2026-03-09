@@ -1,4 +1,5 @@
-﻿using Amethyst.IR.Types;
+﻿using Amethyst.IR;
+using Amethyst.IR.Types;
 using Geode;
 using Geode.IR;
 using System;
@@ -13,7 +14,10 @@ namespace Amethyst.GC.Behaviors
 
 		public override void Mark(ReferenceType type, ValueRef val, FunctionContext ctx)
 		{
-			ctx.Call("amethyst:gc/mark", val);
+			if (val.Value is not NullValue)
+			{
+				ctx.Call("amethyst:gc/mark", val);
+			}
 		}
 	}
 }

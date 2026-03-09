@@ -68,11 +68,7 @@ Amethyst stores class type information at runtime at `storage amethyst:runtime t
 
 ## Garbage Collection
 
-:::warning
-This feature is currently WIP. 
-:::
-
-Objects allocated on the heap will be deleted if no surviving references to it are found. Every few ticks, the garbage collector will run automatically.
+Objects allocated on the heap will be deleted if no surviving references to it are found. The garbage collector will run automatically every few ticks when necessary.
 
 Places references are checked for:
 
@@ -91,3 +87,16 @@ To get around these limitations, use [weak references](./references.mdx#weak-ref
 :::warning
 Storing lists or classes as `nbt` or `nbt&` will cause nested references to not be correctly marked as alive. Additionally, references to references do not check nested properties.
 :::
+
+### Manual Marking
+
+On every collection cycle, the `#amethyst:gc/mark` function tag is called. The purpose of these functions is to locate alive references that may contain heap-allocated data. In this state, calling `void amethyst:gc/mark(nbt&)` will mark the reference as alive for the garbage collector.
+
+Example:
+
+<Highlight code={`\
+    #amethyst:gc/mark
+    void my_mark() {
+        amethyst:gc/mark(my_reference_that_for_some_reason_wasnt_marked);
+    }
+`}/>

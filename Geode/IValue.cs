@@ -94,6 +94,10 @@ namespace Geode
 			{
 				Store(macro, ctx);
 			}
+			else if (val is StoreableValue s)
+			{
+				Store(s.AsStoreable(), ctx);
+			}
 			else
 			{
 				throw new NotImplementedException();

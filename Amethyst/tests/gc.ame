@@ -5,11 +5,12 @@ class Node {
     Node next;
 
     Node(int x) {
-        this.x = x;
+        this.val = x;
     }
 }
 
-Node save;
+Node save = null;
+Node[] saves = [];
 
 #test
 void test_gc_simple() {
@@ -18,8 +19,88 @@ void test_gc_simple() {
     var n1 = new Node(1);
     var n2 = new Node(1);
 
-    
+    save = n1;
+    amethyst:gc/collect();
+
+    if (save) assert(true);
+    else assert(false);
+
+    if (n1) assert(true);
+    else assert(false);
+
+    if (n2) assert(false);
+    else assert(true);
     
     complete();
 }
 
+#test
+void test_gc_subref() {
+    start("gc subref");
+
+    var n1 = new Node(1);
+    var n2 = new Node(2);
+    var n3 = new Node(3);
+    var n4 = new Node(4);
+
+    n1.next = n2;
+    n2.next = n3;
+    n3.next = n1;
+    save = n1;
+    amethyst:gc/collect();
+
+    if (save) assert(true);
+    else assert(false);
+
+    if (n1) assert(true);
+    else assert(false);
+    assert_eq(n1.val, 1);
+
+    if (n2) assert(true);
+    else assert(false);
+    assert_eq(n2.val, 2);
+
+    if (n3) assert(true);
+    else assert(false);
+    assert_eq(n3.val, 3);
+
+    if (n4) assert(false);
+    else assert(true);
+    
+    complete();
+}
+
+#test
+void test_gc_list() {
+    start("gc list");
+
+    var n1 = new Node(1);
+    var n2 = new Node(2);
+    var n3 = new Node(3);
+    var n4 = new Node(4);
+
+    saves = [];
+    saves.add(n1);
+    saves.add(n2);
+    saves.add(n3);
+    saves.add(n4);
+    amethyst:gc/collect();
+    
+    if (n1) assert(true);
+    else assert(false);
+    assert_eq(n1.val, 1);
+
+    if (n2) assert(true);
+    else assert(false);
+    assert_eq(n2.val, 2);
+
+    if (n3) assert(true);
+    else assert(false);
+    assert_eq(n3.val, 3);
+
+    if (n4) assert(true);
+    else assert(false);
+    assert_eq(n4.val, 4);
+    
+    complete();
+}

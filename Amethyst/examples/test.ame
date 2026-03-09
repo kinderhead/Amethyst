@@ -37,7 +37,7 @@ void main() {
     save = new List();
     save = null;
 
-    @/say $(save)
+    @/tellraw @a "$(save)"
 
-    //amethyst:exit();
+    amethyst:exit();
 }

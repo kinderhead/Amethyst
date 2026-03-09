@@ -6,6 +6,7 @@ using Datapack.Net.Utils;
 using Geode;
 using Geode.IR;
 using Geode.IR.Instructions;
+using Geode.Types;
 using Geode.Values;
 
 namespace Amethyst.IR.Types
@@ -30,11 +31,7 @@ namespace Amethyst.IR.Types
 
 		public override void AssignmentOverload(ValueRef dest, ValueRef val, FunctionContext ctx)
 		{
-			if (val.Value is NullValue)
-			{
-				base.AssignmentOverload(dest, dest.Type.DefaultValue, ctx);
-			}
-			else if (!Mutable)
+			if (!Mutable || val.Value is NullValue)
 			{
 				base.AssignmentOverload(dest, val, ctx);
 			}
@@ -77,6 +74,10 @@ namespace Amethyst.IR.Types
 			if (Inner.Implements(to))
 			{
 				return Deref(val, ctx);
+			}
+			else if (to is ReferenceType && Inner is VoidType)
+			{
+				return val;
 			}
 
 			return null;
