@@ -9,6 +9,8 @@ import Highlight from "@site/src/components/highlight";
 
 ## Syntax
 
+Variables are stored on the stack. While other high-level languages only store certain objects like numbers and booleans on the stack, Amethyst stores all NBT objects on the stack. This includes strings, [lists](#lists), and [compounds](#objects). Therefore these objects are **pass-by-value** (see [references](./references.mdx) for passing values by reference). The only exceptions to this rule are [entities](./entity-references.mdx) and [classes](./classes.mdx).
+
 <Highlight code={`\
     int x = 7;
     string y;
@@ -19,16 +21,13 @@ The variable is set to a default value if there is no initializer. Objects with 
 
 The `var` keyword can be used to inference the type of the variable using the initializer.
 
-:::note
-Property and index expressions by default return a reference (just like in C++), but `var` will dereference them automatically.
+### Constant Variables
+
+Variables can be marked constant via the `const` storage modifier. Constants can only be literal values and must have an initializer.
 
 <Highlight code={`\
-    var x = obj.number;
-    // x is an int and not int^
+    const int x = 7;
 `}/>
-
-Strictly type your variable to avoid this behavior.
-:::
 
 ## Scopes
 
@@ -89,9 +88,17 @@ Strings in Amethyst are implemented using NBT strings. Only double quotes are su
 All Minecraft string escape codes can be used.
 :::
 
+### `qstring`
+
+Minecraft un-escapes strings when passing them as macros and does not provide an efficient way to escape them. As such, normal strings are not allowed to be passed as macro arguments. Amethyst provides a solution through `qstring`s. A `qstring` is a special type of string that cannot have double quotes in it. Technically this restriction can be bypassed relatively easily through casting, but doing so will likely cause a runtime error.
+
+:::note
+Programmers are not good at coming up with names, so `qstring` may be renamed in the future.
+:::
+
 ### Methods
 
-* `.length()`: String length. Compiles internally as `(int)str`.
+* `int str.length()`: String length. Compiles internally as `(int)str`.
 
 ## Lists
 
@@ -109,12 +116,25 @@ Lists store an ordered collection of values. Untyped lists (using `list`) are un
 
 ### Methods
 
-* `.add(T val)`: Add a value to the end of the list.
-* `.size()`: Get the size of the list.
+* `void T[].add(T val)`: Add a value to the end of the list.
+* `void T[].remove_at(int index)`: Remove a value at an index.
+* `T T[].pop()`: Pop a value from the end of the list.
+* `int T[].size()`: Get the size of the list.
+* `T[] T[].where(nbt predicate)`: Get a copy of a subset of the list that matches a predicate. Uses [NBT paths](https://minecraft.wiki/w/NBT_path) of the form `list[predicate]`. Only works on lists of [compounds](#objects), [maps](#maps), or [structs](./structs.mdx).
+* `T^ T[].all()`: Get a special reference using an [NBT path](https://minecraft.wiki/w/NBT_path) of the form `list[]`. This allows modifying the properties of all NBT compounds in a list at once.
 
 :::warning
 There are currently no bounds checks. Eventually it will be included in debug builds and optionally in release mode builds.
 :::
+
+## Maps
+
+Maps act like dictionaries in other languages except only [`unsafe_string`](./target-selectors.mdx#unsafe-strings)s can be used as keys. To create one, append `{}` to the desired value type:
+
+<Highlight code={`\
+    int{} map = { one: 1, two: 2, three: 3 };
+    map["four"] = 4;
+`}/>
 
 ## Objects
 
@@ -124,4 +144,10 @@ Typeless NBT compounds can be created using the `nbt` type:
     nbt x = { thing1: 7, thing2: 6s };
     x.property = "Hi";
     print(x);
+`}/>
+
+Maps, NBT compounds, and derivative types have a `contains` method for checking if a property is defined.
+
+<Highlight code={`\
+    print(x.contains("thing1"));
 `}/>

@@ -29,7 +29,7 @@ String arguments like `name` and `type` must be quoted strings or else Amethyst 
 :::
 
 :::note
-Many of the arguments have not been implemented.
+Many of the arguments have not been implemented. See [this](https://github.com/kinderhead/Amethyst/issues/12) issue for more information.
 :::
 
 ### Negation
@@ -61,7 +61,7 @@ Some arguments allow empty values which are internally represented as empty stri
 Few checks have been implemented for invalid combinations of arguments. Check the Minecraft logs for errors generated on `/reload`. Adding `-c` to your build command dumps the compiled `.mcfunction`s to the console for easy viewing. Running with [Daemon Mode](../daemon.mdx) will give helpful error messages.
 :::
 
-## Existence Checks
+### Existence Checks
 
 Target selectors can be put in `if` [Execute Statement](./control-flow.mdx#execute-statements) clauses which effectively use `execute if entity` to determine if the entity exists:
 
@@ -93,3 +93,17 @@ Some target selector arguments, like `tag` and `team`, only accept alphanumeric 
 `}/>
 
 As such, `unsafe_string` can be used in macro arguments without restrictions.
+
+## Ranges
+
+Other target selector arguments accept a range of values. Amethyst supports the typical target selector range syntax through `int_range` and `float_range`.
+
+<Highlight code={`\
+    if (@e[distance=..6]) { }
+`}/>
+
+Of course, variables can be used as well:
+
+<Highlight code={`\
+    as (@e[x_rotation=a..b]) { }
+`}/>

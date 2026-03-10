@@ -1,0 +1,102 @@
+---
+sidebar_position: 10
+description: Struct usage
+---
+
+import Highlight from "@site/src/components/highlight";
+
+# Classes
+
+## Syntax
+
+Classes are a kind of [struct](./structs.mdx) that support more advanced features.
+
+<Highlight code={`\
+    class Node {
+        Node next;
+        int value;
+
+        Node(int val) {
+            this.value = val;
+        }
+    }
+`}/>
+
+## Usage
+
+Classes are pass-by-reference and are always instantiated on the heap by internally using `amethyst:gc/malloc`. In most cases, manually allocating memory on the heap is unecessary as classes are instantiated with the `new` keyword like so:
+
+<Highlight code={`\
+    var start = new Node(5);
+    var end = new Node(10);
+    start.next = end;
+`}/>
+
+Amethyst internally uses immutable references to access classes on the heap. This allows easy control over changing which reference points to which object.
+
+## Virtual Methods
+
+Classes can have virtual methods that can be overridden by subclasses. Virtual methods are defined using the `virtual` function modifier like so:
+
+<Highlight code={`\
+    class Vec {
+        int x;
+        int y;
+
+        virtual int sum() {
+            return this.x + this.y;
+        }
+    }
+
+    class SubVec implements Vec {
+        // Must also declare as virtual
+        // Signature must be identical to the original method
+        virtual int sum() {
+            return 7;
+        }
+    }
+`}/>
+
+Amethyst stores class type information at runtime at `storage amethyst:runtime type_info` with keys corresponding to the full names of classes.
+
+## Differences from Structs
+
+* Classes can hold any type of property, including references and other classes.
+* Classes are pass-by-reference.
+* Classes have a hidden `@type` property that holds the ID of the class.
+* Constructors have a hidden `this` parameter just like methods.
+
+## Garbage Collection
+
+Objects allocated on the heap will be deleted if no surviving references to it are found. The garbage collector will run automatically every few ticks when necessary.
+
+Places references are checked for:
+
+* Global variables
+* Lists if strongly-typed
+* Class properties
+
+Blocked locations for references:
+
+* Struct properties
+* Entity properties
+* Maps
+
+To get around these limitations, use [weak references](./references.mdx#weak-references).
+
+:::warning
+Storing lists or classes as `nbt` or `nbt&` will cause nested references to not be correctly marked as alive. Additionally, references to references do not check nested properties.
+:::
+
+### Manual Marking
+
+On every collection cycle, the `#amethyst:gc/mark` function tag is called. The purpose of these functions is to locate alive references that may contain heap-allocated data. In this state, calling `void amethyst:gc/mark(nbt&)` will mark the reference as alive for the garbage collector.
+
+Example:
+
+<Highlight code={`\
+    #amethyst:gc/mark
+    void my_mark() {
+        amethyst:gc/mark(my_reference_that_for_some_reason_wasnt_marked);
+    }
+`}/>
