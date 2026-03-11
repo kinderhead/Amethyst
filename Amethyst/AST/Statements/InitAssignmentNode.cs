@@ -13,7 +13,8 @@ namespace Amethyst.AST.Statements
 	public enum StorageModifiers
 	{
 		None = 0,
-		Const = 1
+		Const = 1,
+		Static = 2,
 	}
 
 	public class InitAssignmentNode(LocationRange loc, StorageModifiers mod, AbstractTypeSpecifier type, string name, Expression? expr) : Statement(loc)
@@ -26,7 +27,7 @@ namespace Amethyst.AST.Statements
 		public override void Compile(FunctionContext ctx)
 		{
 			var type = Type.Resolve(ctx, Expression is not null);
-			var val = Expression is null ? type.DefaultValue : Expression.Execute(ctx, type is VarType ? null : type);
+			var val = Expression is null ? type.DefaultValue : Expression.Execute(Modifiers.HasFlag(StorageModifiers.Static) ? ((Compiler)ctx.Compiler).GlobalInitFunc : ctx, type is VarType ? null : type);
 
 			if (type is VarType && Expression is not null)
 			{
@@ -48,6 +49,16 @@ namespace Amethyst.AST.Statements
 				}
 
 				ctx.RegisterLocal(Name, c, Location);
+			}
+			else if (Modifiers.HasFlag(StorageModifiers.Static))
+			{
+				var dest = ctx.Compiler.IR.AddGlobal($"{ctx.Decl.ID}/\"@{Name}\"", type, Location, "static");
+				ctx.RegisterLocal(Name, dest, Location);
+
+				if (Expression is not null)
+				{
+					((Compiler)ctx.Compiler).GlobalInitFunc.Add(new StoreInsn(dest, val));
+				}
 			}
 			else
 			{

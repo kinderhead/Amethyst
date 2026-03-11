@@ -86,6 +86,8 @@ To get around these limitations, use [weak references](./references.mdx#weak-ref
 
 :::warning
 Storing lists or classes as `nbt` or `nbt&` will cause nested references to not be correctly marked as alive. Additionally, references to references do not check nested properties.
+
+Additionally, the garbage collection algorithm will start to lag the game at around 700 objects. A future asynchronous algorithm may be applied in the future.
 :::
 
 ### Manual Marking

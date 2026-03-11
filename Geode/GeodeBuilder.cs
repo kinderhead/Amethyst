@@ -203,6 +203,13 @@ namespace Geode
 			}
 		}
 
+		public StorageValue AddGlobal(NamespacedID id, TypeSpecifier type, LocationRange loc, string context = "globals")
+		{
+			var val = new StorageValue(new NamespacedID(id.Namespace, context), id.Path.Replace('/', '.'), type);
+			AddSymbol(new(id, loc, val));
+			return val;
+		}
+
 		public (FunctionContext ctx, FunctionValue func) AnonymousFunction(FunctionType type)
 		{
 			var func = new FunctionValue(new("amethyst", InternalPath + "/" + UniqueString), type, LocationRange.None);

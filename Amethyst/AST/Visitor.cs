@@ -179,7 +179,23 @@ namespace Amethyst.AST
 			}
 		}
 
-		public override Node VisitInitAssignmentStatement([NotNull] AmethystParser.InitAssignmentStatementContext context) => new InitAssignmentNode(Loc(context), context.Const().Length > 0 ? StorageModifiers.Const : StorageModifiers.None, Visit(context.type()), Visit(context.id()), context.expression() is null ? null : Visit(context.expression()));
+		public override Node VisitInitAssignmentStatement([NotNull] AmethystParser.InitAssignmentStatementContext context)
+		{
+			var flags = StorageModifiers.None;
+
+			if (context.Const().Length > 0)
+			{
+				flags |= StorageModifiers.Const;
+			}
+
+			if (context.Static().Length > 0)
+			{
+				flags |= StorageModifiers.Static;
+			}
+
+			return new InitAssignmentNode(Loc(context), flags, Visit(context.type()), Visit(context.id()), context.expression() is null ? null : Visit(context.expression()));
+		}
+		
 		public override Node VisitExpressionStatement([NotNull] AmethystParser.ExpressionStatementContext context) => new ExpressionStatement(Loc(context), Visit(context.expression()));
 		public override Node VisitExecuteStatement([NotNull] AmethystParser.ExecuteStatementContext context) => new ExecuteStatement(Loc(context), context.executeSubcommand().Select(i => (ExecuteStatementSubcommand)Visit(i)), Visit(context.statement().First()), context.statement().Length == 2 ? Visit(context.statement().Last()) : null);
 

@@ -24,10 +24,9 @@ nbt{} heap;
 
 bool allocated_since_pass = false;
 
-// Change to a static variable once implemented
-node n;
-
 nbt& malloc() {
+    static node n;
+
     n = {};
     n.assign_id();
     heap_info.add(n);
@@ -36,10 +35,10 @@ nbt& malloc() {
     return (nbt&)n.ptr;
 }
 
-int ticks = 0;
-
 #tick
 void _loop() {
+    static int ticks = 0;
+
     // Run once a second
     ticks = (ticks + 1) % 20;
 
@@ -49,11 +48,12 @@ void _loop() {
     }
 }
 
-node&[] grey = [];
+node&[] grey;
 
 void collect() {
     allocated_since_pass = false;
 
+    grey = [];
     @/function #amethyst:gc/mark
 
     for (; grey.size() != 0; 0) {

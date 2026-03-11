@@ -1,0 +1,23 @@
+namespace example;
+
+class Node {
+    int x;
+
+    Node(int x) {
+        this.x = x;
+    }
+}
+
+Node[] nodes = [];
+int idex = 0;
+
+#tick
+void tick() {
+    nodes.add(new Node(++idex));
+
+    if (nodes.size() > 100) {
+        nodes.remove_at(0);
+    }
+
+    print(amethyst:gc/heap_info.size());
+}

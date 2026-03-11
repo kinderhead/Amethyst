@@ -88,7 +88,10 @@ namespace Datapack.Net
 			foreach (var i in toRemove)
 			{
 				GetResource<Functions>().Resources.Remove(i);
+
+#if DEBUG
 				Console.WriteLine($"Removing empty function: {i.ID}");
+#endif
 			}
 
 			foreach (var i in GetResource<Functions>().Resources.Cast<MCFunction>())

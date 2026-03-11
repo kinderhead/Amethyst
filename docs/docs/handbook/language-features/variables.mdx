@@ -29,6 +29,17 @@ Variables can be marked constant via the `const` storage modifier. Constants can
     const int x = 7;
 `}/>
 
+### Static Variables
+
+Static variables work similarly to how they do in C. They act exactly like global variables except they are defined inside of functions.
+
+<Highlight code={`\
+    void func() {
+        static string str = "Hi";
+        str = "Hi2"; // str is now "Hi2" until the next reload. Static variable initializers are optional.
+    }
+`}/>
+
 ## Scopes
 
 Variable obey the traditional rules of scoping, so variables can be redefined inside of scopes and can be accessed from descendent scopes.

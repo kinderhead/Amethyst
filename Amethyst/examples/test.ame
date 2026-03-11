@@ -12,31 +12,11 @@ entitydef test_entity implements minecraft:base {
     float Health;
 }
 
-class Node {
-    int x;
+#load
+void main() {
+    static int x = 7;
+    print(x);
+    x = 4;
 
-    Node(int x) {
-        this.x = x;
-    }
+    amethyst:exit();
 }
-
-Node[] nodes = [];
-int idex = 0;
-
-#tick
-void tick() {
-    nodes.add(new Node(++idex));
-
-    if (nodes.size() > 100) {
-        nodes.remove_at(0);
-    }
-
-    print(amethyst:gc/heap_info.size());
-}
-
-// #load
-// void main() {
-    
-
-//     amethyst:exit();
-// }

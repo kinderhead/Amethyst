@@ -57,7 +57,7 @@ statement
     ;
 
 initAssignmentStatement
-    : (Const)* type id (Eq expression)?
+    : (Const | Static)* type id (Eq expression)?
     ;
 
 expressionStatement
@@ -234,6 +234,7 @@ Inline: 'inline';
 Virtual: 'virtual';
 Overload: 'overload';
 Const: 'const';
+Static: 'static';
 
 Semi: ';';
 Colon: ':';
