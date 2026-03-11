@@ -12,13 +12,13 @@ def call(cmd: str):
         raise Exception(ret.stderr)
     return ret.stdout
 
-# os.chdir("docs")
-# call("npm run update")
-# os.chdir("..")
-# call("git add .")
-# call("git commit -m \"Publish documentation for release\"")
-# call("git push")
-# call("gh workflow run Release")
+os.chdir("docs")
+call("npm run update")
+os.chdir("..")
+call("git add .")
+call("git commit -m \"Publish documentation for release\"")
+call("git push")
+call("gh workflow run Release")
 
 with open("CHANGELOG.md", "w+") as f:
     f.write("")
