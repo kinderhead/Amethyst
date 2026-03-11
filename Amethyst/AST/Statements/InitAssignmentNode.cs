@@ -52,7 +52,7 @@ namespace Amethyst.AST.Statements
 			}
 			else if (Modifiers.HasFlag(StorageModifiers.Static))
 			{
-				var dest = ctx.Compiler.IR.AddGlobal($"{ctx.Decl.ID}/\"@{Name}\"", type, Location, "static");
+				var dest = ctx.Compiler.IR.AddGlobal($"{ctx.Decl.ID}/{GeodeBuilder.InternalPath}/{Name}", type, Location, "static");
 				ctx.RegisterLocal(Name, dest, Location);
 
 				if (Expression is not null)
