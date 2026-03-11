@@ -15,6 +15,7 @@ def call(cmd: str):
 os.chdir("docs")
 call("npm run update")
 os.chdir("..")
-call("git commit -am \"Publish documentation for release\"")
+call("git add .")
+call("git commit -m \"Publish documentation for release\"")
 call("git push")
 call("gh workflow run Release")

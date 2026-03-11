@@ -1,0 +1,16 @@
+---
+sidebar_position: 1
+description: List of intrinsics
+---
+
+# Intrinsics
+
+Amethyst exposes some special Geode IR instructions as inline functions:
+
+* `builtin:print(args...)`: `/tellraw`s all players. Arguments are concatenated with no separators. See [Console](../language-features/console.mdx).
+* `builtin:count_of(constant string id)`: gets the number of functions that have a specified tag. Only accepts constant strings.
+* Various types in the `minecraft` namespace have intrinsic methods.
+
+:::note  
+All symbols in the `builtin` namespace are considered global and can be accessed without `builtin` anywhere.
+:::

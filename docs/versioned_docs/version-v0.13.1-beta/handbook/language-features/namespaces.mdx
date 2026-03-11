@@ -1,0 +1,80 @@
+---
+sidebar_position: 1
+description: Namespace usage
+---
+
+import Highlight from "@site/src/components/highlight";
+
+# Namespaces
+
+Every symbol in Amethyst is put into a namespace for organization.
+
+## Syntax
+
+The `namespace` statement denotes the default namespace that future symbols use if they don't have a namespace explicitly defined.
+
+<Highlight code={`\
+    namespace example;
+
+    // Compiles to example:foo
+    void foo() { }
+
+    // Compiles to other:bar
+    void other:bar() { }
+`}/>
+
+Multiple namespaces can be declared in the same file:
+
+<Highlight code={`\
+    // Equivalent to the previous example
+    namespace example;
+    void foo() { }
+
+    namespace other;
+    void bar() { }
+`}/>
+
+## Directories
+
+You can also declare a subdirectory:
+
+<Highlight code={`\
+    // Compiles to example:folder/func
+    namespace example:folder;
+    void func() { }
+`}/>
+
+The namespace and path of a function determines where to search for other functions or global variables when not using fully-qualified names. For example:
+
+<Highlight code={`\
+    namespace example;
+
+    void func() {
+        // Yes, you can have dashes in function names
+        other-func();
+    }
+
+    void other-func() {
+        print("yay");
+    }
+
+    namespace example:sub;
+
+    void test() {
+        // Can use example:func implicitly
+        func();
+    }
+
+    namespace main;
+
+    #load
+    void main() {
+        // Omitting example causes Amethyst to search the main namespace
+        // for other-func which results in an error
+        example:other-func();
+    }
+`}/>
+
+:::info
+All symbols in the `builtin` and base `minecraft` namespace are available everywhere.
+:::
