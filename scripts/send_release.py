@@ -12,5 +12,9 @@ def call(cmd: str):
         raise Exception(ret.stderr)
     return ret.stdout
 
-
+os.chdir("docs")
+call("npm run update")
+os.chdir("..")
+call("git commit -am \"Publish documentation for release\"")
+call("git push")
 call("gh workflow run Release")
