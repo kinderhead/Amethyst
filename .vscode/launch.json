@@ -29,26 +29,10 @@
             "request": "launch",
             "preLaunchTask": "build",
             "program": "${workspaceFolder}/Amethyst/bin/Debug/net10.0/Amethyst.dll",
-            "args": ["daemon", "-c", "op kinderhead"],
+            "args": ["build"],
             "cwd": "${workspaceFolder}/Amethyst",
             "stopAtEntry": false,
             "console": "integratedTerminal"
-        },
-        {
-            // Use IntelliSense to find out which attributes exist for C# debugging
-            // Use hover for the description of the existing attributes
-            // For further information visit https://github.com/dotnet/vscode-csharp/blob/main/debugger-launchjson.md
-            "name": ".NET Core Launch (console)",
-            "type": "coreclr",
-            "request": "launch",
-            "preLaunchTask": "build",
-            // If you have changed target frameworks, make sure to update the program path.
-            "program": "${workspaceFolder}/TNTCannon/bin/Debug/net10.0/TNTCannon.dll",
-            "args": [],
-            "cwd": "${workspaceFolder}/TNTCannon",
-            // For more information about the 'console' field, see https://aka.ms/VSCode-CS-LaunchJson-Console
-            "console": "internalConsole",
-            "stopAtEntry": false
         },
         {
 			"name": "Extension",

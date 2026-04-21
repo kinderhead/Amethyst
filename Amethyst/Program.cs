@@ -43,7 +43,15 @@ namespace Amethyst
 
 				config.SetExceptionHandler((ex, resolver) =>
                 {
-					ExceptionDispatchInfo.Capture(ex).Throw();
+					if (ex is CommandRuntimeException cre)
+					{
+						AnsiConsole.MarkupLineInterpolated($"[red]Error:[/] {cre.Message}");
+						
+					}
+					else
+					{
+						ExceptionDispatchInfo.Capture(ex).Throw();
+					}
 					// AnsiConsole.MarkupLineInterpolated($"[red]{ex.GetType().Name}: {ex.Message}[/]");
                     // return 1;
                 });
