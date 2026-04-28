@@ -342,6 +342,7 @@ namespace Amethyst.Daemon
             proc.StartInfo.Arguments = args;
             proc.StartInfo.UseShellExecute = false;
             proc.StartInfo.RedirectStandardOutput = true;
+            proc.StartInfo.RedirectStandardError = true;
             proc.StartInfo.CreateNoWindow = true;
             proc.StartInfo.WorkingDirectory = ServerFolder;
 

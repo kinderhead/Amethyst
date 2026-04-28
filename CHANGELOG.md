@@ -1,0 +1,1 @@
+* Hide Java `stderr` when running `amethyst setup`.
