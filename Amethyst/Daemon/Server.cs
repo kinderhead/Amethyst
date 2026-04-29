@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
@@ -157,7 +158,7 @@ namespace Amethyst.Daemon
             return JsonConvert.DeserializeObject<Config>(File.ReadAllText(ConfigLocation));
         }
 
-        public static Config UpdateConfig(DaemonSetupOptions baseSettings)
+		public static Config UpdateConfig(DaemonSetupOptions baseSettings)
         {
             Directory.CreateDirectory(ServerFolder);
 

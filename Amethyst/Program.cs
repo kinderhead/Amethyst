@@ -46,7 +46,6 @@ namespace Amethyst
 					if (ex is CommandRuntimeException cre)
 					{
 						AnsiConsole.MarkupLineInterpolated($"[red]Error:[/] {cre.Message}");
-						
 					}
 					else
 					{
@@ -61,18 +60,20 @@ namespace Amethyst
 					.WithExample("build", "examples/test.ame", "-o", "datapack.zip")
 					.WithExample("build", "tests/*.ame", "-o", "tests.zip");
 
+				//config.AddBranch("pkg")
+
 				config.AddCommand<DaemonSetupCommand>("setup")
 					.WithDescription("Amethyst runtime Minecraft server setup.")
 					.WithExample("setup", "--eula");
 
 				config.AddCommand<DaemonRunCommand>("run")
 					.WithDescription("Run a datapack.")
-					.WithExample("run test.zip");
+					.WithExample("run", "test.zip");
 
 				config.AddCommand<DaemonLaunchCommand>("daemon")
 					.WithDescription("Run the Amethyst runtime Minecraft server without a timeout.")
 					.WithExample("daemon")
-					.WithExample("daemon -c \"op steve\"");
+					.WithExample("daemon", "-c", "\"op steve\"");
 			});
 
 			return app.Run(args);

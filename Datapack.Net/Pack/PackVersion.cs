@@ -1,7 +1,23 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Datapack.Net.Pack
 {
+	public class PackVersionJsonConverter : JsonConverter<PackVersion>
+	{
+		public override PackVersion ReadJson(JsonReader reader, Type objectType, PackVersion existingValue, bool hasExistingValue, JsonSerializer serializer)
+		{
+			var arr = JArray.Load(reader);
+			return new PackVersion((int)arr[0], (int)arr[1]);
+		}
+
+		public override void WriteJson(JsonWriter writer, PackVersion value, JsonSerializer serializer)
+		{
+			value.Get(true).WriteTo(writer);
+		}
+	}
+
+	[JsonConverter(typeof(PackVersionJsonConverter))]
 	public readonly record struct PackVersion(int Major, int Minor) : IComparable<PackVersion>
 	{
 		public bool IsNewStyle => Major >= 82;

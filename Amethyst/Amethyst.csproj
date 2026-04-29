@@ -3,6 +3,7 @@
     <PropertyGroup>
         <OutputType>Exe</OutputType>
         <TargetName>Amethyst</TargetName>
+        <ApplicationIcon>../icon.ico</ApplicationIcon>
         <TargetFramework>net10.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
@@ -42,6 +43,7 @@
     <ItemGroup>
         <PackageReference Include="Antlr4.Runtime.Standard" Version="4.13.1" />
         <PackageReference Include="Glob" Version="1.1.9" />
+        <PackageReference Include="SemVer2" Version="1.0.0" />
         <PackageReference Include="Spectre.Console" Version="0.54.0" />
         <PackageReference Include="Spectre.Console.Cli" Version="0.53.1" />
         <PackageReference Include="Tmds.ExecFunction" Version="0.8.0" />

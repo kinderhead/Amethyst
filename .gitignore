@@ -372,6 +372,7 @@ metadata.ini
 .antlr/
 .VSCodeCounter/
 Output/
+tmp/
 
 *.deb
 *.apk
