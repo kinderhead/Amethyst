@@ -4,7 +4,7 @@
  */
 
 .heroBanner {
-  padding: 4rem 0;
+  padding: 2rem 0;
   text-align: center;
   position: relative;
   overflow: hidden;
@@ -36,15 +36,26 @@
   display: flex;
   flex-direction: row;
   justify-content: center;
+  align-items: center;
+}
+
+.titleContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.title {
+  font-size: 5rem;
 }
 
 .logo {
-  width: 160px;
-  height: 160px;
+  width: 256px;
+  height: 256px;
   margin-top: auto;
   margin-bottom: auto;
-  margin-right: -160px;
-  transform: translate(-200px, 0);
+  margin-right: -128px;
+  transform: translate(-128px, 0);
 }
 
 .section {

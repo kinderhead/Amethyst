@@ -74,7 +74,7 @@ jobs:
           {os: windows-11-arm, name: windows-arm},
           {os: macos-latest, name: "mac"}
         ]
-        version: ["1.21.9", "1.21.10", "1.21.11"]
+        version: ["1.21.9", "1.21.10", "1.21.11", "26.1.2"]
         args: ["", "-d", "-O 1"]
       fail-fast: false
     

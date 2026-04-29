@@ -24,12 +24,12 @@
             "console": "integratedTerminal"
         },
         {
-            "name": "Amethyst Random",
+            "name": "Random",
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build",
             "program": "${workspaceFolder}/Amethyst/bin/Debug/net10.0/Amethyst.dll",
-            "args": ["build"],
+            "args": ["setup", "--eula"],
             "cwd": "${workspaceFolder}/Amethyst",
             "stopAtEntry": false,
             "console": "integratedTerminal"

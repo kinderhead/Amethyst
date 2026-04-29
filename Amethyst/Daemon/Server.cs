@@ -210,7 +210,7 @@ namespace Amethyst.Daemon
 			}
 
             if (!DownloadFiles(
-                ($"Minecraft {version}", new($"https://meta.fabricmc.net/v2/versions/loader/{version}/0.17.3/1.1.0/server/jar"), MinecraftServerLocation),
+                ($"Minecraft {version}", new($"https://meta.fabricmc.net/v2/versions/loader/{version}/0.19.2/1.1.0/server/jar"), MinecraftServerLocation),
                 ($"Tellraw Logger", new(tellraw), Path.Combine(ServerFolder, "mods", "tellraw-logger.jar")),
                 ($"Better Log4j Config", new("https://github.com/BigWingBeat/better_log4j_config/releases/download/1.2.0/better_log4j_config-1.2.0-fabric.jar"), Path.Combine(ServerFolder, "mods", "better-log4j-config.jar"))
             ))

@@ -16,25 +16,26 @@
     "update": "node version_incrementer.js"
   },
   "dependencies": {
-    "@docusaurus/core": "3.9.2",
-    "@docusaurus/plugin-sitemap": "^3.9.2",
-    "@docusaurus/preset-classic": "3.9.2",
-    "@mdx-js/react": "^3.0.0",
-    "@shikijs/themes": "^3.14.0",
-    "clsx": "^2.0.0",
-    "prism-react-renderer": "^2.3.0",
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "@docusaurus/core": "3.10.0",
+    "@docusaurus/plugin-sitemap": "^3.10.0",
+    "@docusaurus/preset-classic": "3.10.0",
+    "@mdx-js/react": "^3.1.1",
+    "@shikijs/themes": "^4.0.2",
+    "clsx": "^2.1.1",
+    "prism-react-renderer": "^2.4.1",
+    "react": "^19.2.5",
+    "react-dom": "^19.2.5"
   },
   "devDependencies": {
-    "@docusaurus/module-type-aliases": "3.9.2",
-    "@docusaurus/tsconfig": "3.9.2",
-    "@docusaurus/types": "3.9.2",
-    "@shikijs/colorized-brackets": "^3.14.0",
-    "@types/node": "^24.9.2",
+    "@docusaurus/faster": "^3.10.0",
+    "@docusaurus/module-type-aliases": "3.10.0",
+    "@docusaurus/tsconfig": "3.10.0",
+    "@docusaurus/types": "3.10.0",
+    "@shikijs/colorized-brackets": "^4.0.2",
+    "@types/node": "^25.6.0",
     "@types/xml2js": "^0.4.14",
-    "shiki": "^3.14.0",
-    "typescript": "~5.6.2",
+    "shiki": "^4.0.2",
+    "typescript": "~6.0.3",
     "xml2js": "^0.6.2"
   },
   "browserslist": {

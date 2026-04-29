@@ -4,6 +4,7 @@ import Heading from '@theme/Heading';
 import Layout from '@theme/Layout';
 import clsx from 'clsx';
 import type { ReactNode } from 'react';
+import Logo from '@site/static/img/logo.svg';
 
 import Home from '@site/src/components/Home';
 import styles from './index.module.css';
@@ -13,11 +14,13 @@ function HomepageHeader() {
     return (
         <header className={clsx('hero', styles.heroBanner, styles.heroDark)}>
             <div className={clsx("container", styles.headerContainer)}>
-                {/* <img src={require("@site/static/img/logo.png").default} className={styles.logo} /> */}
+                <Logo className={styles.logo} />
                 <div>
-                    <Heading as="h1" className="hero__title">
-                        {siteConfig.title}
-                    </Heading>
+                    <span className={styles.titleContainer}>
+                        <Heading as="h1" className={clsx(styles.title, "hero__title")}>
+                            {siteConfig.title}
+                        </Heading>
+                    </span>
                     <p className="hero__subtitle">{siteConfig.tagline}</p>
                     <div className={styles.buttons}>
                         <Link className="button button--secondary button--lg" to="/docs/tutorial/installing/">
