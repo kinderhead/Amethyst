@@ -60,30 +60,10 @@ void main() {
 }
 ```
 
-## CLI Options
-
-```
-$ amethyst --help
-USAGE:
-    amethyst [OPTIONS] [COMMAND]
-
-OPTIONS:
-    -h, --help       Prints help information    
-    -v, --version    Print the version and close
-
-COMMANDS:
-    build <inputs>     Amethyst compiler                                          
-    setup              Amethyst runtime Minecraft server setup                    
-    run <data pack>    Run a datapack                                             
-    daemon             Run the Amethyst runtime Minecraft server without a timeout
-```
-
-See the documentation for information about the `setup`, `run`, and `daemon` commands.
-
 ## Planned Features
 
 See the [1.0 release project](https://github.com/users/kinderhead/projects/3) for more details.
 
-## Suppport the Project
+## Support the Project
 
 Like what you see? Support me on [Ko-fi](https://ko-fi.com/kinderhead).
