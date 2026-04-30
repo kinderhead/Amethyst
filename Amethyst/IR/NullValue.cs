@@ -10,9 +10,8 @@ using System.Text;
 
 namespace Amethyst.IR
 {
-	public class NullValue : StoreableValue
+	public class NullValue() : StoreableValue(new ReferenceType(new VoidType(), false))
 	{
-		public override TypeSpecifier Type => new ReferenceType(new VoidType(), false);
 		public override ScoreValue AsScore(RenderContext ctx) => ctx.Builder.Constant(0);
 		public override IValue AsStoreable() => Type.DefaultValue;
 		public override FormattedText Render(FormattedText text, RenderContext ctx) => text.Text("null");

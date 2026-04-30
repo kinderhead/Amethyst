@@ -1,3 +1,4 @@
+using Datapack.Net.Pack;
 using Newtonsoft.Json;
 using System;
 using System.ComponentModel;
@@ -16,6 +17,9 @@ namespace Amethyst
 
         [JsonProperty("version")]
         public readonly SemVer Version;
+
+        [JsonProperty("pack_version")]
+        public readonly PackVersion PackVersion;
 
         [JsonProperty("src")]
         [DefaultValue("src")]

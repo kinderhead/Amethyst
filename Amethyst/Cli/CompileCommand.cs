@@ -1,19 +1,23 @@
-using Amethyst.Daemon;
-using Geode;
-using Spectre.Console;
-using Spectre.Console.Cli;
-using System;
 using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
+using Amethyst.Daemon;
+using Datapack.Net.Pack;
+using Geode;
+using Spectre.Console.Cli;
 
 namespace Amethyst.Cli
 {
     [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.AllFields | DynamicallyAccessedMemberTypes.AllProperties)]
-    public class BuildOptions : CommandSettings, IOptions
+    public class CompileOptions : CommandSettings, IOptions
     {
         [CommandOption("-o|--output")]
         [Description("Zipped datapack, defaults to first input file's name.")]
-        public required string Output { get; set; }
+        public string Output { get; set; }
+
+        [CommandOption("-p|--pack-version")]
+        [Description("Data pack version to support.")]
+        [DefaultValue("101.1")]
+        public PackVersion PackVersion { get; set; }
 
         [CommandOption("-d|--debug")]
         [Description("Enable debug checks.")]
@@ -41,9 +45,9 @@ namespace Amethyst.Cli
         public required string[] Inputs { get; set; }
 	}
     
-    public class BuildCommand : Command<BuildOptions>
+    public class CompileCommand : Command<CompileOptions>
 	{
-		public override int Execute(CommandContext context, BuildOptions settings, CancellationToken cancellationToken)
+		public override int Execute(CommandContext context, CompileOptions settings, CancellationToken cancellationToken)
         {
             settings.Output ??= Path.GetFileName(settings.Inputs[0]) + ".zip";
 

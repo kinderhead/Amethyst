@@ -9,7 +9,7 @@ namespace Geode
 {
 	public interface IValueLike
 	{
-		TypeSpecifier Type { get; }
+		TypeSpecifier Type { get; set; }
 		IValue? Value { get; }
 
 		ValueRef ToValueRef();
@@ -57,9 +57,9 @@ namespace Geode
 		FormattedText Render(FormattedText text, RenderContext ctx);
 	}
 
-	public abstract class Value : IValue
+	public abstract class Value(TypeSpecifier type) : IValue
 	{
-		public abstract TypeSpecifier Type { get; }
+		public TypeSpecifier Type { get; set; } = type;
 		IValue? IValueLike.Value => this;
 
 		public abstract ScoreValue AsScore(RenderContext ctx);
@@ -67,14 +67,14 @@ namespace Geode
 		public ValueRef ToValueRef() => new(this);
 	}
 
-	public abstract class LValue : Value
+	public abstract class LValue(TypeSpecifier type) : Value(type)
 	{
 		public abstract void Store(IValue val, RenderContext ctx);
 		public abstract void ListAdd(IValue val, RenderContext ctx);
 		public abstract Execute StoreExecute(bool result = true);
 	}
 
-	public abstract class DataLValue : LValue
+	public abstract class DataLValue(TypeSpecifier type) : LValue(type)
 	{
 		public override void Store(IValue val, RenderContext ctx)
 		{

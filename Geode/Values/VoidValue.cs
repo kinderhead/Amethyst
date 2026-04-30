@@ -4,9 +4,8 @@ using Geode.Types;
 
 namespace Geode.Values
 {
-	public class VoidValue : Value
+	public class VoidValue() : Value(new VoidType())
 	{
-		public override TypeSpecifier Type => new VoidType();
 		public override ScoreValue AsScore(RenderContext ctx) => throw new InvalidOperationException();
 		public override bool Equals(object? obj) => obj is VoidValue;
 		public override int GetHashCode() => 0; // hmm

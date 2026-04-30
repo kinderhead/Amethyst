@@ -45,10 +45,22 @@ namespace Datapack.Net.Function
 			return this;
 		}
 
-		public FormattedText NBT(IDataTarget target, Modifiers? modifiers = null)
+		public FormattedText NBT(IDataTarget target, bool interpret = false, bool plain = false, Modifiers? modifiers = null)
 		{
 			modifiers ??= ModifierStack.Count != 0 ? ModifierStack.Peek() : new();
-			Obj.Add(modifiers.Value.Process(new JObject(new JProperty("nbt", target.Path), new JProperty(target.Type, target.Source)), this));
+			var nbt = new JObject(new JProperty("nbt", target.Path), new JProperty(target.Type, target.Source));
+
+			if (interpret)
+			{
+				nbt["interpret"] = true;
+			}
+
+			if (plain)
+			{
+				nbt["plain"] = true;
+			}
+
+			Obj.Add(modifiers.Value.Process(nbt, this));
 			return this;
 		}
 

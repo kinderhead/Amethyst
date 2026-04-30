@@ -2,13 +2,12 @@ using Datapack.Net.Function;
 
 namespace Geode.Values
 {
-	public class StorageValue(Storage storage, string path, TypeSpecifier type) : DataTargetValue
+	public class StorageValue(Storage storage, string path, TypeSpecifier type) : DataTargetValue(type)
 	{
 		public readonly Storage Storage = storage;
 		public readonly string Path = path;
 
 		public override IDataTarget Target => new StorageTarget(Storage, Path);
-		public override TypeSpecifier Type => type;
 
 		public override DataTargetValue Property(string member, TypeSpecifier type) => new StorageValue(Storage, $"{Path}.{member}", type);
 		public override DataTargetValue Index(int index, TypeSpecifier type) => new StorageValue(Storage, $"{Path}[{index}]", type);

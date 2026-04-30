@@ -1,10 +1,11 @@
 ﻿using Datapack.Net.Data;
 using Datapack.Net.Function;
 using Datapack.Net.Function.Commands;
+using Datapack.Net.Pack;
 
 namespace Geode.Values
 {
-	public abstract class DataTargetValue : DataLValue, IValueWithProperties<DataTargetValue>
+	public abstract class DataTargetValue(TypeSpecifier type) : DataLValue(type), IValueWithProperties<DataTargetValue>
 	{
 		public abstract IDataTarget Target { get; }
 
@@ -33,6 +34,6 @@ namespace Geode.Values
 		public override void ListAdd(LiteralValue literal, RenderContext ctx) => ctx.Add(new DataCommand.Modify(Target).Append().Value(literal.Value.ToString()));
 		public override void ListAdd(DataTargetValue nbt, RenderContext ctx) => ctx.Add(new DataCommand.Modify(Target).Append().From(nbt.Target));
 
-		public override FormattedText Render(FormattedText text, RenderContext ctx) => text.NBT(Target);
+		public override FormattedText Render(FormattedText text, RenderContext ctx) => text.NBT(Target, Type.EffectiveType == NBTType.String && ctx.Builder.Options.PackVersion >= new PackVersion(101, 0));
 	}
 }

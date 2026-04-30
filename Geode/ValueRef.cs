@@ -8,8 +8,10 @@ namespace Geode
 {
 	public class ValueRef : IInstructionArg, IValueLike, ICloneable
 	{
+		private TypeSpecifier type;
+
 		public IValue? Value { get; private set; }
-		public TypeSpecifier Type { get; private set; }
+		public TypeSpecifier Type { get => type; set => SetType(value); }
 
 		// Used for debugging
 		public readonly Instruction? SourceInsn = null;
@@ -51,7 +53,8 @@ namespace Geode
 
 		public ValueRef SetType(TypeSpecifier type)
 		{
-			Type = type;
+			this.type = type;
+			//Value?.Type = type;
 			return this;
 		}
 

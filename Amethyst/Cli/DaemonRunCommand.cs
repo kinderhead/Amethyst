@@ -17,7 +17,7 @@ namespace Amethyst.Cli
 	{
 		public override int Execute(CommandContext context, DaemonRunOptions settings, CancellationToken cancellationToken)
         {
-            var compiler = new Compiler(new BuildOptions() { Inputs = [], Output = "" });
+            var compiler = new Compiler(new CompileOptions() { Inputs = [], Output = "" });
             compiler.GetCoreLib(); // Find an std path
             return Runner.RunDatapack(settings, compiler);
         }

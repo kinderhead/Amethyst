@@ -12,7 +12,7 @@
 
 There's been many different attempts at making a high-level programming language for Minecraft Data packs over the years, but one flaw I've seen in all of them is that they let the limitations of commands dictate what's possible. All of that changed when Minecraft added macro functions, greatly increasing the flexibility of data packs. The goal of Amethyst is to leverage macro functions and other features to allow users to make data packs as easily as they would write any other program.
 
-Supports Minecraft 1.21.9 through 26.1.2, theoretically works on Minecraft 1.20.5+ with some tweaks to the `pack.mcmeta` file. No, it will not be ported to earlier versions without macro functions.
+Supports data pack versions 88.0 (1.21.9) through 101.1 (26.1.2), theoretically works on Minecraft 1.20.5+ with some tweaks to the `pack.mcmeta` file. No, it will not be ported to earlier versions without macro functions.
 
 ## Usage
 
@@ -32,8 +32,8 @@ The latest VS Code extension build can be found [here](https://nightly.link/kind
 
 Examples:
 ```sh
-amethyst build examples/test.ame -o datapack.zip
-amethyst build tests/*.ame -o tests.zip
+amethyst compile examples/test.ame -o datapack.zip
+amethyst compile tests/*.ame -o tests.zip
 ```
 
 Simple program:

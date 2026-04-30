@@ -9,11 +9,10 @@ using Geode.Types;
 
 namespace Geode.Values
 {
-	public class FunctionValue(NamespacedID id, FunctionType type, LocationRange loc) : LiteralValue(new NBTString(id.ToString())), IFunctionLike
+	public class FunctionValue(NamespacedID id, FunctionType type, LocationRange loc) : LiteralValue(new NBTString(id.ToString()), type), IFunctionLike
 	{
 		public readonly NamespacedID ID = id;
 		public readonly LocationRange Location = loc;
-		public override TypeSpecifier Type => type;
 		public override string ToString() => ID.ToString();
 		public FunctionType FuncType => (FunctionType)Type;
 

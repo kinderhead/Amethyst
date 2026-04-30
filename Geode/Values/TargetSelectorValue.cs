@@ -7,12 +7,10 @@ using Geode.Util;
 
 namespace Geode.Values
 {
-	public class TargetSelectorValue(TargetType type, MultiDictionary<string, IValue> args) : Value, IDataWritable, IAdvancedMacroValue
+	public class TargetSelectorValue(TargetType type, MultiDictionary<string, IValue> args) : Value(new TargetSelectorType()), IDataWritable, IAdvancedMacroValue
 	{
 		public readonly TargetType TargetType = type;
 		public readonly MultiDictionary<string, IValue> Arguments = args;
-
-		public override TypeSpecifier Type => new TargetSelectorType();
 
 		public override ScoreValue AsScore(RenderContext ctx) => throw new InvalidTypeError(Type.ToString(), "int");
 

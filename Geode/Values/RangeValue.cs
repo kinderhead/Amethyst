@@ -7,11 +7,10 @@ using System;
 
 namespace Geode.Values
 {
-	public class RangeValue(ValueRef min, ValueRef max, TypeSpecifier type) : Value, IDataWritable, IAdvancedMacroValue
+	public class RangeValue(ValueRef min, ValueRef max, TypeSpecifier type) : Value(type), IDataWritable, IAdvancedMacroValue
 	{
         public readonly ValueRef Min = min;
         public readonly ValueRef Max = max;
-        public override TypeSpecifier Type => type;
 
 		public override ScoreValue AsScore(RenderContext ctx) => throw new InvalidTypeError(Type.ToString(), "int");
 

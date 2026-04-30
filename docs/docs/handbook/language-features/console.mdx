@@ -9,8 +9,10 @@ import Highlight from "@site/src/components/highlight";
 
 Amethyst comes with a `print` function that compiles to `/tellraw @a` which can take any number of arguments and concatenates them together with no spacing.
 
-:::info
-Colors and styling is not implemented but is a planned feature.
+Colors and styling are not implemented but are planned features.
+
+:::warning
+On Minecraft 26.1 and above, text component NBT rendering changed to allow pretty printing NBT. As a consequence, `string`s by default are now rendered with quotes. Amethyst mitigates this by setting the `interpret` flag to `true` when it detects that it is printing a `string`. If a `string` is casted to something else like `nbt`, then it will have quotes around it in chat.
 :::
 
 ## Examples

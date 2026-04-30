@@ -315,6 +315,6 @@ namespace Geode
 			}
 		}
 
-		private static DP GetDP(IOptions opts) => new(opts.Output, new MCMeta().SetDescription("A project made with Amethyst").SetMinVersion(88));
+		private static DP GetDP(IOptions opts) => new(opts.Output, new MCMeta().SetDescription("A project made with Amethyst").SetMinVersion(opts.PackVersion).SetMaxVersion(opts.PackVersion));
 	}
 }

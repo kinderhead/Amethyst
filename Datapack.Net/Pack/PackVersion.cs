@@ -1,5 +1,7 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using System.ComponentModel;
+using System.Globalization;
 
 namespace Datapack.Net.Pack
 {
@@ -7,8 +9,8 @@ namespace Datapack.Net.Pack
 	{
 		public override PackVersion ReadJson(JsonReader reader, Type objectType, PackVersion existingValue, bool hasExistingValue, JsonSerializer serializer)
 		{
-			var arr = JArray.Load(reader);
-			return new PackVersion((int)arr[0], (int)arr[1]);
+			var data = JToken.Load(reader);
+			return new PackVersion((string?)data ?? throw new FormatException($"Invalid pack version: \"{data}\". Expected \"Major.Minor\""));
 		}
 
 		public override void WriteJson(JsonWriter writer, PackVersion value, JsonSerializer serializer)
@@ -17,9 +19,34 @@ namespace Datapack.Net.Pack
 		}
 	}
 
+	public class PackVersionConverter : TypeConverter
+	{
+		public override bool CanConvertFrom(ITypeDescriptorContext? context, Type sourceType) => sourceType == typeof(string) || base.CanConvertFrom(context, sourceType);
+
+		public override object? ConvertFrom(ITypeDescriptorContext? context, CultureInfo? culture, object value)
+		{
+			if (value is string str)
+			{
+				try
+				{
+					return new PackVersion(str);
+				}
+				catch (Exception)
+				{
+					throw new FormatException($"Invalid pack version: \"{str}\". Expected \"Major.Minor\"");
+				}
+			}
+
+			return base.ConvertFrom(context, culture, value);
+		}
+	}
+
 	[JsonConverter(typeof(PackVersionJsonConverter))]
+	[TypeConverter(typeof(PackVersionConverter))]
 	public readonly record struct PackVersion(int Major, int Minor) : IComparable<PackVersion>
 	{
+		public PackVersion(string version) : this(int.Parse(version.Split('.')[0]), int.Parse(version.Split('.')[1])) { }
+
 		public bool IsNewStyle => Major >= 82;
 
 		public int CompareTo(PackVersion other) => Major == other.Major ? Major.CompareTo(other.Major) : Minor.CompareTo(other.Minor);

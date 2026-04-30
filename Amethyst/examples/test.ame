@@ -12,11 +12,35 @@ entitydef test_entity implements minecraft:base {
     float Health;
 }
 
+class Node {
+    int val;
+    Node next;
+
+    Node(int x) {
+        this.val = x;
+    }
+}
+
+Node save = null;
+
 #load
 void main() {
-    static int x = 7;
-    print(x);
-    x = 4;
+    var n1 = new Node(1);
+    // var n2 = new Node(2);
+    // var n3 = new Node(3);
+    // var n4 = new Node(4);
+
+    // n1.next = n2;
+    // n2.next = n3;
+    // n3.next = n1;
+    save = n1;
+    amethyst:gc/collect();
+
+    test(n1.val, 1);
 
     amethyst:exit();
+}
+
+void test(int x, int y) {
+    print(x, " ", y);
 }

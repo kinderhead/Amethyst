@@ -43,6 +43,16 @@ if os.name == "nt":
     amethyst += ".exe"
     
 version = sys.argv[1]
+packver = "88.0"
+
+if version == "1.21.10":
+    packver = "88.0"
+elif version == "1.21.11":
+    packver = "94.1"
+elif version == "26.1.2":
+    packver = "101.1"
+else:
+    raise Exception(f"Version {version} not supported yet")
 
 arg = ""
 if len(sys.argv) > 3:
@@ -52,7 +62,7 @@ print(f"Setting up Minecraft version {version}")
 call(f"dist/{amethyst} setup --eula -v {version}")
 
 print(f"Testing with args: \"{arg}\"")
-call(f"dist/{amethyst} build tests/*.ame {arg} -o test.zip")
+call(f"dist/{amethyst} compile tests/*.ame {arg} -o test.zip")
 
 process = subprocess.Popen(shlex.split(f"dist/{amethyst} run test.zip"), stdout=subprocess.PIPE)
 

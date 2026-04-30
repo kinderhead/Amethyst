@@ -4,10 +4,9 @@ using Datapack.Net.Function.Commands;
 
 namespace Geode.Values
 {
-	public class MacroValue(string name, TypeSpecifier type) : Value, IConstantValue
+	public class MacroValue(string name, TypeSpecifier type) : Value(type), IConstantValue
 	{
 		public readonly string Name = name;
-		public override TypeSpecifier Type => type;
 
 		public NBTValue Value => new NBTRawString(GetMacro());
 

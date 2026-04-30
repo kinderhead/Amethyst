@@ -7,10 +7,8 @@ using System.Text;
 
 namespace Geode.Values
 {
-	public class DynamicValue(TypeSpecifier type) : Value, IDataWritable, IAdvancedMacroValue
+	public class DynamicValue(TypeSpecifier type) : Value(type), IDataWritable, IAdvancedMacroValue
 	{
-		public override TypeSpecifier Type => type;
-
 		private readonly List<IValue> parts = [];
 
 		public DynamicValue Add(IValue val)

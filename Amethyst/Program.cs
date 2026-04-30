@@ -55,10 +55,10 @@ namespace Amethyst
                     // return 1;
                 });
 
-				config.AddCommand<BuildCommand>("build")
-					.WithDescription("Amethyst compiler.")
-					.WithExample("build", "examples/test.ame", "-o", "datapack.zip")
-					.WithExample("build", "tests/*.ame", "-o", "tests.zip");
+				config.AddCommand<CompileCommand>("compile")
+					.WithDescription("Amethyst compiler. For use with individual files outside of a project.")
+					.WithExample("compile", "examples/test.ame", "-o", "datapack.zip")
+					.WithExample("compile", "tests/*.ame", "-o", "tests.zip");
 
 				//config.AddBranch("pkg")
 
