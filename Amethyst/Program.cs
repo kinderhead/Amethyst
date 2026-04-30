@@ -60,7 +60,12 @@ namespace Amethyst
 					.WithExample("compile", "examples/test.ame", "-o", "datapack.zip")
 					.WithExample("compile", "tests/*.ame", "-o", "tests.zip");
 
-				//config.AddBranch("pkg")
+				config.AddBranch("shard", cmd =>
+				{
+					cmd.AddCommand<ProjectInitCommand>("init")
+						.WithDescription("Initialize a project.")
+						.WithExample("init");
+				});
 
 				config.AddCommand<DaemonSetupCommand>("setup")
 					.WithDescription("Amethyst runtime Minecraft server setup.")

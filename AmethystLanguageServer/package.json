@@ -40,6 +40,12 @@
         "scopeName": "source.ame",
         "path": "./syntaxes/amethyst.tmLanguage.json"
       }
+    ],
+    "jsonValidation": [
+      {
+        "fileMatch": "**/shard.json",
+        "url": "./shard.schema.json"
+      }
     ]
   },
   "devDependencies": {

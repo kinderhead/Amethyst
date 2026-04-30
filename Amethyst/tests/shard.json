@@ -1,0 +1,8 @@
+{
+  "name": "tests",
+  "description": "Tests",
+  "version": "1.0.0",
+  "pack_version": "101.1",
+  "source": "src",
+  "data": "data"
+}

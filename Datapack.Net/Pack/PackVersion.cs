@@ -15,7 +15,7 @@ namespace Datapack.Net.Pack
 
 		public override void WriteJson(JsonWriter writer, PackVersion value, JsonSerializer serializer)
 		{
-			value.Get(true).WriteTo(writer);
+			serializer.Serialize(writer, value.ToString());
 		}
 	}
 
@@ -63,12 +63,15 @@ namespace Datapack.Net.Pack
 			}
 		}
 
+		public override string ToString() => $"{Major}.{Minor}";
+
+
 		public static implicit operator PackVersion(int x) => new(x, 0);
 		public static bool operator <(PackVersion a, PackVersion b) => a.CompareTo(b) < 0;
 		public static bool operator >(PackVersion a, PackVersion b) => a.CompareTo(b) > 0;
 		public static bool operator <=(PackVersion a, PackVersion b) => a.CompareTo(b) <= 0;
 		public static bool operator >=(PackVersion a, PackVersion b) => a.CompareTo(b) >= 0;
 
-		public static readonly PackVersion Latest = new(94, 1);
+		public static readonly PackVersion Latest = new(101, 1);
 	}
 }

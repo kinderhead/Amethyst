@@ -390,5 +390,7 @@ namespace Amethyst
 		}
 
 		public static IEnumerable<string> GetAllAmethystFilesFromDirectory(string dir) => Glob.Files(dir, "**/*.ame").Select(i => Path.Join(dir, i));
+
+		public const string SHARD_PROJECT = "shard.json";
 	}
 }

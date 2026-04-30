@@ -1,0 +1,36 @@
+{
+    "title": "Amethyst project",
+    "type": "object",
+    "properties": {
+        "name": {
+            "type": "string",
+            "description": "Name of the project."
+        },
+        "description": {
+            "type": "string",
+            "description": "Project description to be included in the pack.mcmeta."
+        },
+        "version": {
+            "type": "string",
+            "description": "Project version."
+        },
+        "pack_version": {
+            "type": "string",
+            "description": "Data pack version to support."
+        },
+        "source": {
+            "type": "string",
+            "description": "Source directory with .ame files.",
+            "default": "src"
+        },
+        "data": {
+            "type": "string",
+            "description": "Additional directory to be packaged with the final data pack.",
+            "default": "data"
+        }
+    },
+    "required": [
+        "name",
+        "description"
+    ]
+}

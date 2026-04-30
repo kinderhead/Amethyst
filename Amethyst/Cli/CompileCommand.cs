@@ -12,7 +12,7 @@ namespace Amethyst.Cli
     {
         [CommandOption("-o|--output")]
         [Description("Zipped datapack, defaults to first input file's name.")]
-        public string Output { get; set; }
+        public required string Output { get; set; }
 
         [CommandOption("-p|--pack-version")]
         [Description("Data pack version to support.")]

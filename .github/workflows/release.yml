@@ -12,7 +12,7 @@ on:
 jobs:
   publish:
     runs-on: ubuntu-latest
-    if: ${{ github.event.inputs.publish }}
+    if: ${{ inputs.publish }}
 
     steps:
     - uses: actions/checkout@v6
