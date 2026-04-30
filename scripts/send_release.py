@@ -34,4 +34,3 @@ csproj.write("Amethyst/Amethyst.csproj")
 
 call("git add .")
 call("git commit -m \"Bump version\"")
-call("git push")
