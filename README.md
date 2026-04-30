@@ -1,4 +1,4 @@
-<img src="./icon.svg" width="256">
+<img src="./logo.svg" width="256">
 
 ![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/kinderhead/Amethyst/amethyst.yml) ![Latest Version](https://img.shields.io/github/v/release/kinderhead/Amethyst)
 
