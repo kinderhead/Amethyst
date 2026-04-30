@@ -202,7 +202,6 @@ jobs:
         with:
           name: amethyst-${{ matrix.type.name }}-installer
           path: 'Amethyst/Output/*.exe'
-          archive: false
 
   success:
     name: "Success"
