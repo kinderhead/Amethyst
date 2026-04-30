@@ -19,7 +19,7 @@ version = "v" + str(data.find("PropertyGroup").find("Version").text)  # type: ig
 print("Searching for builds...")
 runId = str(json.loads(call('gh run list -L 1 -w "Amethyst" --json databaseId'))[0]["databaseId"])
 
-print("Waiting for build...")
+print(f"Waiting for build {runId}...")
 call(f"gh run watch {runId}")
 call(f"gh run view {runId} --exit-status")
 
