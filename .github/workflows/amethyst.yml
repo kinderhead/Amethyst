@@ -75,7 +75,7 @@ jobs:
           {os: macos-latest, name: "mac"}
         ]
         version: ["1.21.10", "1.21.11", "26.1.2"]
-        args: ["", "-d", "-O 1"]
+        args: ["-O 0", "-d", "-O 1"]
       fail-fast: false
     
     steps:
