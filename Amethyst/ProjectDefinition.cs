@@ -35,17 +35,12 @@ namespace Amethyst
 
         public readonly string Serialize()
         {
-            return JsonConvert.SerializeObject(this, new JsonSerializerSettings
-            {
-                Formatting = Formatting.Indented,
-                DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate,
-                Converters = [new SemVerJsonConverter()]
-            });
+            return JsonConvert.SerializeObject(this, JsonSettings);
         }
 
         public static ProjectDefinition Deserialize(string path)
         {
-            var project = JsonConvert.DeserializeObject<ProjectDefinition>(File.ReadAllText(path));
+            var project = JsonConvert.DeserializeObject<ProjectDefinition>(File.ReadAllText(path), JsonSettings);
 
             if (!ValidNameRegex().IsMatch(project.Name))
             {
@@ -57,6 +52,13 @@ namespace Amethyst
 
         [GeneratedRegex(@"^[a-z0-9\-_]+$")]
         private static partial Regex ValidNameRegex();
+
+        private static readonly JsonSerializerSettings JsonSettings = new()
+		{
+            Formatting = Formatting.Indented,
+            DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate,
+            Converters = [new SemVerJsonConverter()]
+        };
     }
 
     public class SemVerJsonConverter : JsonConverter<SemVer>

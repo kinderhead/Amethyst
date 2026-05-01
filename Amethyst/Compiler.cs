@@ -25,7 +25,7 @@ namespace Amethyst
 {
 	public class Compiler : ICompiler, IFileHandler
 	{
-		public readonly CompileOptions Options;
+		public readonly IAmethystOptions Options;
 		public readonly Dictionary<string, RootNode> Roots = [];
 		public readonly FunctionContext GlobalInitFunc;
 
@@ -36,7 +36,7 @@ namespace Amethyst
 		private Dictionary<string, string> Files { get; } = [];
 		private readonly Dictionary<NamespacedID, StructType> typeInfo = [];
 
-		public Compiler(CompileOptions opts)
+		public Compiler(IAmethystOptions opts)
 		{
 			Options = opts;
 			IR = new(Options, this, this, "amethyst");

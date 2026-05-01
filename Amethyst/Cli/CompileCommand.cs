@@ -8,7 +8,7 @@ using Spectre.Console.Cli;
 namespace Amethyst.Cli
 {
     [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.AllFields | DynamicallyAccessedMemberTypes.AllProperties)]
-    public class CompileOptions : CommandSettings, IOptions
+    public class CompileOptions : CommandSettings, IAmethystOptions
     {
         [CommandOption("-o|--output")]
         [Description("Zipped datapack, defaults to first input file's name.")]

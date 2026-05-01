@@ -1,5 +1,7 @@
+using Amethyst.Daemon;
 using Datapack.Net.Pack;
 using Geode;
+using Spectre.Console;
 using Spectre.Console.Cli;
 using System;
 using System.ComponentModel;
@@ -14,7 +16,7 @@ namespace Amethyst.Cli
         public string ShardFile { get; set; }
     }
 
-    public class BuildProjectSettings : BaseProjectSettings, IOptions
+    public class BuildProjectSettings : BaseProjectSettings, IAmethystOptions
     {
         [CommandOption("-d|--debug")]
         [Description("Enable debug checks.")]
@@ -37,10 +39,11 @@ namespace Amethyst.Cli
         [Description("Run the datapack if built successfully.")]
         public bool Run { get; set; }
 
-        // IOptions settings
+        // IAmethystOptions settings
 		public string Output { get; set; }
 		public PackVersion PackVersion { get; set; }
-	}
+        public string[] Inputs { get; set; }
+    }
 
 	public class BuildProjectCommand : Command<BuildProjectSettings>
 	{
@@ -48,6 +51,30 @@ namespace Amethyst.Cli
         {
             var project = ProjectDefinition.Deserialize(settings.ShardFile);
             Environment.CurrentDirectory = Path.GetDirectoryName(Path.GetFullPath(settings.ShardFile)) ?? throw new FormatException($"Invalid path {settings.ShardFile}");
+
+            settings.Output = Path.Join(Environment.CurrentDirectory, "build", $"{project.Name}-{project.Version}.zip");
+            settings.PackVersion = project.PackVersion;
+            settings.Inputs = [Path.Join(project.SourceDir, "**/*.ame")];
+
+            Directory.CreateDirectory(Path.Join(Environment.CurrentDirectory, "build"));
+
+            var compiler = new Compiler(settings);
+            var success = false;
+
+            AnsiConsole.Status().Start("[darkviolet]Compiling...[/]", ctx =>
+            {
+                success = compiler.Compile();
+            });
+
+            if (!success)
+            {
+                return 1;
+            }
+
+            if (settings.Run)
+            {
+                Runner.RunDatapack(new DaemonRunOptions() { Datapack = settings.Output }, compiler);
+            }
 
             return 0;
         }
