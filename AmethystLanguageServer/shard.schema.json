@@ -18,6 +18,10 @@
             "type": "string",
             "description": "Data pack version to support."
         },
+        "dependencies": {
+            "type": "object",
+            "description": "Collection of dependencies."
+        },
         "source": {
             "type": "string",
             "description": "Source directory with .ame files.",
@@ -31,6 +35,7 @@
     },
     "required": [
         "name",
-        "description"
+        "description",
+        "dependencies"
     ]
 }

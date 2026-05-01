@@ -43,7 +43,7 @@
     ],
     "jsonValidation": [
       {
-        "fileMatch": "**/shard.json",
+        "fileMatch": "**/*shard.json",
         "url": "./shard.schema.json"
       }
     ]

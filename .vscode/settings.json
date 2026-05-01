@@ -14,5 +14,13 @@
         "**/.vscode/**",
         "**/node_modules/**",
         "**/1_20_4/**"
+    ],
+    "json.schemas": [
+        {
+            "fileMatch": [
+                "**/*shard.json"
+            ],
+            "url": "./AmethystLanguageServer/shard.schema.json"
+        }
     ]
 }

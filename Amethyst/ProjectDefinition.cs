@@ -3,40 +3,60 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.ComponentModel;
+using System.Text.RegularExpressions;
 
 namespace Amethyst
 {
     [JsonObject(MemberSerialization.OptIn)]
-    public readonly struct ProjectDefinition()
+    public partial struct ProjectDefinition()
     {
         [JsonProperty("name")]
-        public readonly string Name { get; init; }
+        public string Name;
 
         [JsonProperty("description")]
-        public readonly string Description { get; init; }
+        public string Description;
 
         [JsonProperty("version")]
-        [JsonConverter(typeof(SemVerJsonConverter))]
-        public readonly SemVer Version { get; init; } = SemVer.Create(1, 0, 0);
+        public SemVer Version = SemVer.Create(1, 0, 0);
 
         [JsonProperty("pack_version")]
-        public readonly PackVersion PackVersion { get; init; } = PackVersion.Latest;
+        public PackVersion PackVersion;
+
+        [JsonProperty("dependencies")]
+        public SortedDictionary<string, SemVer> Dependencies = [];
 
         [JsonProperty("source")]
         [DefaultValue("src")]
-        public readonly string SourceDir { get; init; } = "src";
+        public string SourceDir = "src";
 
         [JsonProperty("data")]
         [DefaultValue("data")]
-        public readonly string DataDir { get; init; } = "data";
+        public string DataDir = "data";
 
-        public string Serialize()
+        public readonly string Serialize()
         {
             return JsonConvert.SerializeObject(this, new JsonSerializerSettings
             {
-                Formatting = Formatting.Indented
+                Formatting = Formatting.Indented,
+                DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate,
+                Converters = [new SemVerJsonConverter()]
             });
         }
+
+        public static ProjectDefinition Deserialize(string path)
+        {
+            var project = JsonConvert.DeserializeObject<ProjectDefinition>(File.ReadAllText(path));
+
+            if (!ValidNameRegex().IsMatch(project.Name))
+            {
+                throw new FormatException($"{project.Name} is not a valid package name. Only lowercase alphanumeric characters, -, and _ are allowed.");
+            }
+
+            return project;
+        }
+
+        [GeneratedRegex(@"^[a-z0-9\-_]+$")]
+        private static partial Regex ValidNameRegex();
     }
 
     public class SemVerJsonConverter : JsonConverter<SemVer>

@@ -29,7 +29,7 @@ namespace Amethyst.Cli
 
         [CommandOption("-O")]
         [Description("Set the opimization level.")]
-        [DefaultValue(0)]
+        [DefaultValue(1)]
         public int OptimizationLevel { get; set; }
 
         [CommandOption("-c|--dump-cmd")]

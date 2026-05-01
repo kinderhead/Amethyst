@@ -1,0 +1,5 @@
+#load
+void main() {
+    print("Hello world!");
+    amethyst:exit();
+}

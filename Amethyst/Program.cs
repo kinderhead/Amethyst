@@ -55,6 +55,11 @@ namespace Amethyst
                     // return 1;
                 });
 
+				config.AddCommand<BuildProjectCommand>("build")
+					.WithDescription("Build shard project.")
+					.WithExample("build")
+					.WithExample("build", "-d", "--run");
+
 				config.AddCommand<CompileCommand>("compile")
 					.WithDescription("Amethyst compiler. For use with individual files outside of a project.")
 					.WithExample("compile", "examples/test.ame", "-o", "datapack.zip")
