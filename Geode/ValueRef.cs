@@ -16,9 +16,7 @@ namespace Geode
 		// Used for debugging
 		public readonly Instruction? SourceInsn = null;
 
-#if DEBUG
 		public readonly int ID = ValueCounter++;
-#endif
 
 		public bool ForceScoreReg = false;
 
