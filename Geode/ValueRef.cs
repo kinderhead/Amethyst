@@ -103,8 +103,6 @@ namespace Geode
 
 		public static implicit operator ValueRef(Value val) => new(val);
 
-#if DEBUG
 		private static int ValueCounter = 0;
-#endif
 	}
 }
