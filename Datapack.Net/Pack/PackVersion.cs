@@ -72,6 +72,6 @@ namespace Datapack.Net.Pack
 		public static bool operator <=(PackVersion a, PackVersion b) => a.CompareTo(b) <= 0;
 		public static bool operator >=(PackVersion a, PackVersion b) => a.CompareTo(b) >= 0;
 
-		public static readonly PackVersion Latest = new(101, 1);
+		public static readonly PackVersion Latest = new(107, 1);
 	}
 }

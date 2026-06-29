@@ -51,6 +51,8 @@ elif version == "1.21.11":
     packver = "94.1"
 elif version == "26.1.2":
     packver = "101.1"
+elif version == "26.2":
+    packver = "107.1"
 else:
     raise Exception(f"Version {version} not supported yet")
 

@@ -2,8 +2,8 @@
   "name": "example",
   "description": "A project made with Amethyst",
   "version": "1.0.0",
-  "pack_version": "101.1",
+  "pack_version": "107.1",
   "dependencies": {
-    "minecraft": "26.1.2"
+    "minecraft": "26.2"
   }
 }
