@@ -22,25 +22,35 @@ class Node {
 }
 
 Node save = null;
+Node[] saves = [];
+
+int test() {
+    return 2;
+}
 
 #load
 void main() {
-    var n1 = new Node(1);
+    amethyst:gc/heap = {};
+    amethyst:gc/heap_info = [];
+
+    // var n1 = new Node(1);
     // var n2 = new Node(2);
-    // var n3 = new Node(3);
-    // var n4 = new Node(4);
 
-    // n1.next = n2;
-    // n2.next = n3;
-    // n3.next = n1;
-    save = n1;
-    amethyst:gc/collect();
+    // save = n1;
+    // amethyst:gc/collect();
 
-    test(n1.val, 1);
+    // if (save) print(true);
+    // else print(false);
+
+    // if (n1) print(true);
+    // else print(false);
+
+    // if (n2) print(false);
+    // else print(true);
+
+    for (int i = 0; i < test(); ++i) {
+        print(i);
+    }
 
     amethyst:exit();
-}
-
-void test(int x, int y) {
-    print(x, " ", y);
 }

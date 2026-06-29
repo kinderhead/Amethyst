@@ -73,15 +73,15 @@ namespace Geode.IR.Instructions
 			}
 		}
 
-		public override string Dump(Func<IInstructionArg, string> valueMap)
+		public override string Dump()
         {
             var builder = new StringBuilder();
 
-            builder.Append($"{valueMap(ReturnValue)} = {Name} ");
+            builder.Append($"{ReturnValue} = {Name} ");
 
             foreach (var (block, val) in Values)
             {
-                builder.Append($"[{valueMap(block)}: {valueMap(val)}], ");
+                builder.Append($"[{block}: {val}], ");
             } 
 
             if (Values.Count > 0)

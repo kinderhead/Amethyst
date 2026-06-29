@@ -55,14 +55,14 @@ namespace Geode.IR
 			return insn.ReturnValue;
 		}
 
-		public string Dump(Func<IInstructionArg, string> valueMap)
+		public string Dump()
 		{
 			var builder = new StringBuilder();
 
 			builder.AppendLine($"{Name}:");
 			foreach (var i in Instructions)
 			{
-				builder.AppendLine($"    {i.Dump(valueMap)}");
+				builder.AppendLine($"    {i.Dump()}");
 			}
 
 			return builder.ToString();

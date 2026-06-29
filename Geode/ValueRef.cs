@@ -86,6 +86,23 @@ namespace Geode
 			}
 		}
 
+		public override string? ToString()
+		{
+			if (!string.IsNullOrEmpty(Name))
+			{
+#if DEBUG
+				return $"#{ID}<{Name}>";
+#else
+				return Name;
+#endif
+			}
+			else
+			{
+				return $"#{ID}";
+			}
+		}
+
+
 		public static implicit operator ValueRef(Value val) => new(val);
 
 #if DEBUG

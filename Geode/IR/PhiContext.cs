@@ -5,6 +5,7 @@ namespace Geode.IR
         private readonly Dictionary<Block, List<(ValueRef src, ValueRef dest)>> map = [];
 
         public IEnumerable<ValueRef> Dependencies => map.Values.SelectMany(i => i.Select(i => i.src));
+        public IEnumerable<ValueRef> Destinations => map.Values.SelectMany(i => i.Select(i => i.dest));
 
         public void Map(Block block, ValueRef src, ValueRef dest)
         {

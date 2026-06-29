@@ -34,6 +34,8 @@ namespace Geode.Chains
 			throw new InvalidTypeError(val.Type.ToString(), "score");
 		}
 
+		protected override string StringPart() => $"{Values[0]}";
+
 		public static IfValueChain With(ValueRef val, FunctionContext ctx, bool invert = false) => new(ctx.AddLoad(ctx.ImplicitCast(val, PrimitiveType.Bool)), invert);
 	}
 }

@@ -15,5 +15,7 @@ namespace Amethyst.IR.Chains
             cmd.Data(new RawDataTarget(((IConstantValue)processedArgs[0]).Value.ToString()));
             return null;
         }
-	}
+
+        protected override string StringPart() => $"ref {Values[0]}";
+    }
 }

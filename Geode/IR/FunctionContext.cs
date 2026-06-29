@@ -590,9 +590,6 @@ namespace Geode.IR
 
 			builder.AppendLine(((FunctionType)Decl.Type).ToString(Decl.ID.ToString()) + " {");
 
-			var valCounter = 0;
-			Dictionary<IInstructionArg, int> valueMap = [];
-
 			foreach (var i in blocks)
 			{
 				if (i.Instructions.Count == 0)
@@ -600,28 +597,7 @@ namespace Geode.IR
 					continue;
 				}
 
-				builder.AppendLine(i.Dump(val =>
-				{
-					if (val.Name != "")
-					{
-						return val.Name;
-					}
-
-#if DEBUG
-					if (val is ValueRef vref)
-					{
-						return $"#{vref.ID}";
-					}
-#endif
-
-					if (!valueMap.TryGetValue(val, out var num))
-					{
-						num = valCounter++;
-						valueMap[val] = num;
-					}
-
-					return $"%{num}";
-				}));
+				builder.AppendLine(i.Dump());
 			}
 
 			builder.Length--;

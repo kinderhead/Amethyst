@@ -4,6 +4,7 @@ using Datapack.Net.Function.Commands;
 using Geode.IR;
 using Geode.Values;
 using System.Collections.Immutable;
+using System.Text;
 
 namespace Geode
 {
@@ -78,8 +79,7 @@ namespace Geode
 				return;
 			}
 
-			// Realistically, only Phi node variables would be updated in execute run which are marked alive
-			// through branch instructions, so no conflicts should occur.
+			// Realistically, only Phi node variables would be updated in execute run which are marked alive through branch instructions, so no conflicts should occur.
 			ctx.Add(ifTrue().Select(i => cmd.Copy().Run(i)));
 		}
 
@@ -90,6 +90,8 @@ namespace Geode
 				i.ReplaceValue(value, with);
 			}
 		}
+
+		public override string ToString() => string.Join(' ', Chain);
 	}
 
 	public abstract class ExecuteChainSubcommand(IEnumerable<ValueRef> vals)
@@ -107,6 +109,8 @@ namespace Geode
 		/// <param name="cmd">Execute command</param>
 		/// <returns>True if the result is always true, false if the result is always false, null otherwise</returns>
 		public abstract bool? Build(IValue[] processedArgs, RenderContext ctx, Execute cmd);
+
+		public abstract override string ToString();
 
 		public void ReplaceValue(ValueRef value, ValueRef with)
 		{
@@ -126,5 +130,8 @@ namespace Geode
 
 		public override bool? Build(IValue[] processedArgs, RenderContext ctx, Execute cmd) => Build(processedArgs, ctx, Invert ? cmd.Unless : cmd.If);
 		protected abstract bool? Build(IValue[] processedArgs, RenderContext ctx, Execute.Conditional cmd);
+
+		public sealed override string ToString() => (Invert ? "unless " : "if ") + StringPart();
+		protected abstract string StringPart();
 	}
 }

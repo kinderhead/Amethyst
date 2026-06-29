@@ -104,7 +104,11 @@ namespace Amethyst
 			{
 				foreach (var i in IR.Functions)
 				{
-					if (i.Decl.ID.Namespace != "amethyst")
+					if (i.Decl.ID.Namespace != "amethyst"
+#if DEBUG
+						|| i.Tags.Any(i => i.ToString().Contains("debug"))
+#endif
+					)
                     {
                         i.FancyPrintCommands();
                     }

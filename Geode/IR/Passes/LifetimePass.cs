@@ -1,3 +1,4 @@
+using Geode.IR.Instructions;
 using Geode.Types;
 
 namespace Geode.IR.Passes
@@ -106,6 +107,17 @@ namespace Geode.IR.Passes
 						foreach (var dep in arg.Dependencies)
 						{
 							markAlive(dep);
+						}
+					}
+				}
+
+				if (insn is IBlockCapstoneInsn)
+				{
+					foreach (var next in block.Next)
+					{
+						foreach (var i in next.Phi.Destinations)
+						{
+							Graphs[ctx].Connect(i, insn.Dependencies);
 						}
 					}
 				}

@@ -58,5 +58,18 @@ namespace Geode.Chains
 
 			return null;
 		}
+
+		protected override string StringPart() => $"score {Values[0]} {OpToString(Op)} {Values[1]}";
+
+		public static string OpToString(ComparisonOperator op) => op switch
+		{
+			ComparisonOperator.Eq => "==",
+			ComparisonOperator.Neq => "!=",
+			ComparisonOperator.Gt => ">",
+			ComparisonOperator.Gte => ">=",
+			ComparisonOperator.Lt => "<",
+			ComparisonOperator.Lte => "<=",
+			_ => "[invalid]"
+		};
 	}
 }

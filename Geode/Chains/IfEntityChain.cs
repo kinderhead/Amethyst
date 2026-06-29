@@ -14,5 +14,7 @@ namespace Geode.Chains
 			cmd.Entity(new NamedTarget(entity));
 			return null;
 		}
+
+		protected override string StringPart() => $"entity {Values[0]}";
 	}
 }

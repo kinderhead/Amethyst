@@ -19,6 +19,8 @@ namespace Geode.IR
 	public abstract class Instruction : IBasicInsn
 	{
 		public virtual IInstructionArg[] Arguments { get; private set; }
+
+		// Includes arguments through self-dependencies. Kind of dark and evil, but it works.
 		public virtual IEnumerable<ValueRef> Dependencies => Arguments.SelectMany(i => i.Dependencies);
 		public ValueRef ReturnValue { get; private init; }
 
@@ -105,20 +107,20 @@ namespace Geode.IR
 		public abstract void Render(RenderContext ctx);
 		public virtual void ConfigureLifetime(Func<ValueRef, ValueRef, bool> tryLink, Action<ValueRef, ValueRef> markOverlap) { }
 
-		public virtual string Dump(Func<IInstructionArg, string> valueMap)
+		public virtual string Dump()
 		{
 			var builder = new StringBuilder();
 
 			if (ReturnType is not VoidType)
 			{
-				builder.Append($"{valueMap(ReturnValue)} = ");
+				builder.Append($"{ReturnValue} = ");
 			}
 
 			builder.Append($"{Name} ");
 
 			foreach (var i in Arguments)
 			{
-				builder.Append($"{valueMap(i)}, ");
+				builder.Append($"{i}, ");
 			}
 
 			if (Arguments.Length > 0)
