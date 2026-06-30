@@ -1,5 +1,8 @@
 name: Language Server
 
+permissions:
+  contents: read
+
 on:
   push:
     branches:

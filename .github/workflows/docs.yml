@@ -1,5 +1,10 @@
 name: Deploy
 
+permissions:
+  contents: read
+  deployments: write
+  pages: write
+
 on:
   push:
     branches:
