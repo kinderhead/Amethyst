@@ -183,7 +183,7 @@ jobs:
           python -u scripts/make_metadata_ini.py
       
       - name: Build Installer
-        uses: Minionguyjpro/Inno-Setup-Action@v1.2.7
+        uses: Minionguyjpro/Inno-Setup-Action@v1.2.8
         with:
           path: Amethyst/${{ matrix.type.iss }}-installer.iss
           options: /O+

@@ -29,8 +29,8 @@
             "request": "launch",
             "preLaunchTask": "build",
             "program": "${workspaceFolder}/Amethyst/bin/Debug/net10.0/Amethyst.dll",
-            "args": ["build", "-f", "examples/shard/shard.json", "--run"],
-            "cwd": "${workspaceFolder}/Amethyst",
+            "args": ["build", "--run"],
+            "cwd": "${workspaceFolder}/Amethyst/examples/shard",
             "stopAtEntry": false,
             "console": "integratedTerminal"
         },

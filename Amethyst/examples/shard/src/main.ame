@@ -1,3 +1,5 @@
+namespace example;
+
 #load
 void main() {
     print("Hello world!");

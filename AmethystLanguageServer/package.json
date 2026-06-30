@@ -49,7 +49,7 @@
     ]
   },
   "devDependencies": {
-    "@vscode/vsce": "^3.7.1"
+    "@vscode/vsce": "^3.9.2"
   },
   "scripts": {
     "build": "npx vsce package",

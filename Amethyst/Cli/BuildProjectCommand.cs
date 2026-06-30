@@ -61,7 +61,7 @@ namespace Amethyst.Cli
             var compiler = new Compiler(settings);
             var success = false;
 
-            AnsiConsole.Status().Start("[darkviolet]Compiling...[/]", ctx =>
+            AnsiConsole.Status().Start("[darkviolet]Compiling...[/]", async ctx =>
             {
                 success = compiler.Compile();
             });

@@ -45,7 +45,7 @@ namespace Amethyst
 			RegisterGlobals();
 		}
 
-		public bool Compile()
+		public bool Compile(StatusContext? ctx = null)
 		{
 			var errored = false;
 
@@ -53,6 +53,7 @@ namespace Amethyst
 
 			foreach (var (k, v) in Files)
 			{
+                ctx?.Status = $"[darkviolet]Parsing {k}...[/]";
 				if (!ParseFile(k, v))
 				{
 					errored = true;
@@ -67,7 +68,8 @@ namespace Amethyst
 			// Do class decls before functions
 			foreach (var i in Roots)
 			{
-				if (!i.Value.BuildSymbols())
+                ctx?.Status = $"[darkviolet]Processing {i.Key}...[/]";
+                if (!i.Value.BuildSymbols())
 				{
 					errored = true;
 				}
@@ -78,7 +80,8 @@ namespace Amethyst
 
 			foreach (var i in Roots)
 			{
-				if (!i.Value.CompileFunctions(out var funcs))
+                ctx?.Status = $"[darkviolet]Compiling {i.Key}...[/]";
+                if (!i.Value.CompileFunctions(out var funcs))
 				{
 					errored = true;
 				}
@@ -95,7 +98,9 @@ namespace Amethyst
 				IR.AddFunctions(GlobalInitFunc);
 			}
 
-			if (errored || !IR.Compile())
+            ctx?.Status = $"[darkviolet]Generating commands...[/]";
+
+            if (errored || !IR.Compile())
 			{
 				return false;
 			}
@@ -115,7 +120,9 @@ namespace Amethyst
 				}
 			}
 
-			return true;
+            ctx?.Status = $"[darkviolet]Done![/]";
+
+            return true;
 		}
 
 		public void LoadFiles()

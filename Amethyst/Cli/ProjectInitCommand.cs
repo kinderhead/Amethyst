@@ -65,7 +65,7 @@ namespace Amethyst.Cli
                 AnsiConsole.MarkupLineInterpolated($"[aqua]Pick a Minecraft version[/]: {version}");
                 
                 project.PackVersion = SupportedVersions.Versions[version];
-                project.Dependencies["minecraft"] = SemVer.Create(version.Major, version.Minor, version.Patch);
+                project.Dependencies["minecraft"] = version;
             }
 
             Directory.CreateDirectory(output);

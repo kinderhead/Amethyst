@@ -1,8 +1,10 @@
 using Datapack.Net.Pack;
+using Datapack.Net.Utils;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.ComponentModel;
+using System.Text;
 using System.Text.RegularExpressions;
 
 namespace Amethyst
@@ -17,13 +19,13 @@ namespace Amethyst
         public string Description;
 
         [JsonProperty("version")]
-        public SemVer Version = SemVer.Create(1, 0, 0);
+        public MinecraftVersion Version = new(1, 0, 0);
 
         [JsonProperty("pack_version")]
         public PackVersion PackVersion;
 
         [JsonProperty("dependencies")]
-        public SortedDictionary<string, SemVer> Dependencies = [];
+        public SortedDictionary<string, MinecraftVersion> Dependencies = [];
 
         [JsonProperty("source")]
         [DefaultValue("src")]
@@ -35,6 +37,12 @@ namespace Amethyst
 
         public readonly string Serialize()
         {
+            using var text = new StringWriter();
+            
+            using var writer = new JsonTextWriter(text);
+            writer.Indentation = 4;
+
+            JsonSerializer.CreateDefault(JsonSettings).Serialize(writer, this);
             return JsonConvert.SerializeObject(this, JsonSettings);
         }
 
@@ -56,22 +64,7 @@ namespace Amethyst
         private static readonly JsonSerializerSettings JsonSettings = new()
 		{
             Formatting = Formatting.Indented,
-            DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate,
-            Converters = [new SemVerJsonConverter()]
+            DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate
         };
-    }
-
-    public class SemVerJsonConverter : JsonConverter<SemVer>
-    {
-        public override SemVer ReadJson(JsonReader reader, Type objectType, SemVer existingValue, bool hasExistingValue, JsonSerializer serializer)
-        {
-            var data = JToken.Load(reader);
-            return SemVer.Parse((string?)data ?? throw new FormatException("Expected string for SemVer."));
-        }
-
-        public override void WriteJson(JsonWriter writer, SemVer value, JsonSerializer serializer)
-        {
-            serializer.Serialize(writer, value.ToString());
-        }
     }
 }

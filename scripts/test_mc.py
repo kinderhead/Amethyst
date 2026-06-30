@@ -76,7 +76,7 @@ try:
     timed_out = True
     for _ in range(120):
         time.sleep(1)
-        if (not thread.is_alive()):
+        if not thread.is_alive():
             timed_out = False
             break
         
