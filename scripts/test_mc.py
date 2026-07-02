@@ -1,18 +1,7 @@
 import os
-import shlex
 import subprocess
-import sys
-import time
-import urllib
-import urllib.request
-from threading import Thread
 
-
-def call(cmd: str):
-    ret = subprocess.run(shlex.split(cmd), capture_output=True, text=True)
-    if (ret.returncode != 0):
-        raise Exception(ret.stdout + ret.stderr) # teehee
-    return ret.stdout
+from tester import *
 
 
 def tester(process: subprocess.Popen[bytes]):
@@ -38,54 +27,12 @@ os.chdir("Amethyst")
 
 print("Preparing tests")
 
-amethyst = "amethyst"
-if os.name == "nt":
-    amethyst += ".exe"
-    
-version = sys.argv[1]
-packver = "88.0"
-
-if version == "1.21.10":
-    packver = "88.0"
-elif version == "1.21.11":
-    packver = "94.1"
-elif version == "26.1.2":
-    packver = "101.1"
-elif version == "26.2":
-    packver = "107.1"
-else:
-    raise Exception(f"Version {version} not supported yet")
-
-arg = ""
-if len(sys.argv) > 3:
-    arg = sys.argv[2]
+amethyst, version, packver, arg = test_info()
 
 print(f"Setting up Minecraft version {version}")
-call(f"dist/{amethyst} setup --eula -v {version}")
+call(f"{amethyst} setup --eula -v {version}")
 
-print(f"Testing with args: \"{arg}\"")
-call(f"dist/{amethyst} compile tests/*.ame {arg} -o test.zip")
+print("Running tests...")
+call(f"{amethyst} compile tests/*.ame {arg} -o test.zip")
 
-process = subprocess.Popen(shlex.split(f"dist/{amethyst} run test.zip"), stdout=subprocess.PIPE)
-
-try:
-    thread = Thread(target=tester, args=[process])
-    thread.daemon = True
-    thread.start()
-    
-    timed_out = True
-    for _ in range(120):
-        time.sleep(1)
-        if not thread.is_alive():
-            timed_out = False
-            break
-        
-    if not timed_out:
-        exit(0)
-
-    print("Timed out")
-    process.kill()
-
-    exit(1)
-finally:
-    process.kill()
+run_test(f"{amethyst} run test.zip", tester)

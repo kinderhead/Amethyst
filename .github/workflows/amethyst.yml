@@ -105,12 +105,19 @@ jobs:
           distribution: 'zulu'
           java-version: '25'
       
-      - name: Test
+      - name: Test Language
         uses: nick-fields/retry@v4
         with:
           timeout_minutes: 5
           max_attempts: 3
           command: python -u scripts/test_mc.py ${{ matrix.version }} "${{ matrix.args }}"
+
+      - name: Test Shard
+        uses: nick-fields/retry@v4
+        with:
+          timeout_minutes: 5
+          max_attempts: 3
+          command: python -u scripts/test_shard.py ${{ matrix.version }} "${{ matrix.args }}"
   
   linux-pkgs:
     name: "Build ${{ matrix.type.name }} packages"

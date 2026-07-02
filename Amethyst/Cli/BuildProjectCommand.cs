@@ -23,7 +23,7 @@ namespace Amethyst.Cli
         public bool Debug { get; set; }
 
         [CommandOption("--dump-ir")]
-        [Description("Dump Geode IR and don't compile to datapack.")]
+        [Description("Dump Geode IR.")]
         public bool DumpIR { get; set; }
 
         [CommandOption("-O")]
