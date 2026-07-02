@@ -9,13 +9,13 @@ on:
       - '**'
     tags-ignore:
       - '**'
-    paths:
-      - Amethyst/**
-      - Geode/**
-      - Datapack.Net/**
-      - Datapack.Net.Tests/**
-      - .github/workflows/amethyst.yml
-      - scripts/test_mc.py
+    # paths:
+    #   - Amethyst/**
+    #   - Geode/**
+    #   - Datapack.Net/**
+    #   - Datapack.Net.Tests/**
+    #   - .github/workflows/amethyst.yml
+    #   - scripts/test_mc.py
   # pull_request:
   #   branches:
   #     - '**'
@@ -207,7 +207,7 @@ jobs:
           path: 'Amethyst/Output/*.exe'
 
   success:
-    name: "Success"
+    name: "Amethyst Test"
     runs-on: ubuntu-latest
     needs: [test, windows-installer, linux-pkgs]
 

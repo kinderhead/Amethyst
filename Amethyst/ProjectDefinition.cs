@@ -1,11 +1,8 @@
+using System.ComponentModel;
+using System.Text.RegularExpressions;
 using Datapack.Net.Pack;
 using Datapack.Net.Utils;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using System;
-using System.ComponentModel;
-using System.Text;
-using System.Text.RegularExpressions;
 
 namespace Amethyst
 {
@@ -21,8 +18,8 @@ namespace Amethyst
         [JsonProperty("version")]
         public MinecraftVersion Version = new(1, 0, 0);
 
-        [JsonProperty("pack_version")]
-        public PackVersion PackVersion;
+        [JsonProperty("pack_format")]
+        public PackFormat PackFormat;
 
         [JsonProperty("dependencies")]
         public SortedDictionary<string, MinecraftVersion> Dependencies = [];

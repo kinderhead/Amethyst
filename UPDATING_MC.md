@@ -14,7 +14,7 @@ For example, `26.1.2` is preferred over `26.1`.
 2. Add the version to `Amethyst/SupportedVersions.cs`.
 3. Also update the latest pack format in `Datapack.Net/Pack/PackVersion.cs`.
 4. Add testing support in `scripts/test_mc.py` and `.github/workflows/amethyst.yml`.
-5. Modify `README.md` to reflect the latest supported version.
+5. Modify `README.md` and `docs/docs/tutorial/getting-started.mdx` to reflect the latest supported version.
 6. Add the targeted version to the supported versions for the latest [TellrawLogger](https://github.com/kinderhead/TellrawLogger/) version on Modrinth.
    1. If the mod fails, then it will need to be manually ported.
 7. Test the latest version and fix any issues.

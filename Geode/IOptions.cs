@@ -5,7 +5,7 @@ namespace Geode
 	public interface IOptions
 	{
 		string Output { get; set; }
-		PackVersion PackVersion { get; set; }
+		PackFormat PackVersion { get; set; }
 		bool DumpIR { get; set; }
 		bool Debug { get; set; }
 		int OptimizationLevel { get; set; }

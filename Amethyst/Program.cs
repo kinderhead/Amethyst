@@ -67,9 +67,10 @@ namespace Amethyst
 
 				config.AddBranch("shard", cmd =>
 				{
+                    cmd.SetDescription("Project subcommands.");
 					cmd.AddCommand<ProjectInitCommand>("init")
 						.WithDescription("Initialize a project.")
-						.WithExample("init");
+						.WithExample("shard init");
 				});
 
 				config.AddCommand<DaemonSetupCommand>("setup")

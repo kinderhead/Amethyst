@@ -22,7 +22,7 @@ namespace Amethyst.Cli
 
         [CommandOption("-p|--pack-version")]
         [Description("Data pack version to support. Setting this flag disables picking a Minecraft definitions package.")]
-        public FlagValue<PackVersion> PackVersion { get; set; }
+        public FlagValue<PackFormat> PackVersion { get; set; }
 
         [CommandOption("-o|--output")]
         [Description("Folder to generate the project.")]
@@ -50,7 +50,7 @@ namespace Amethyst.Cli
 
             if (settings.PackVersion.IsSet)
             {
-                project.PackVersion = settings.PackVersion.Value;
+                project.PackFormat = settings.PackVersion.Value;
             }
             else
             {
@@ -64,7 +64,7 @@ namespace Amethyst.Cli
                 
                 AnsiConsole.MarkupLineInterpolated($"[aqua]Pick a Minecraft version[/]: {version}");
                 
-                project.PackVersion = SupportedVersions.Versions[version];
+                project.PackFormat = SupportedVersions.Versions[version];
                 project.Dependencies["minecraft"] = version;
             }
 
@@ -76,11 +76,13 @@ namespace Amethyst.Cli
             var mainPath = Path.Join(output, "src", "main.ame");
             if (!Path.Exists(mainPath))
             {
-                File.WriteAllText(mainPath, @"#load
-void main() {
+                File.WriteAllText(mainPath, $@"namespace {project.Name};
+                
+#load
+void main() {{
     print(""Hello world!"");
     amethyst:exit();
-}
+}}
 ");
             }
 

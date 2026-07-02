@@ -6,16 +6,16 @@ namespace Datapack.Net.Pack
 	public class MCMeta
 	{
 		public FormattedText Description = new FormattedText().Text("A data pack built with Datapack.Net");
-		public PackVersion MinVersion = PackVersion.Latest;
-		public PackVersion MaxVersion = PackVersion.Latest;
+		public PackFormat MinVersion = PackFormat.Latest;
+		public PackFormat MaxVersion = PackFormat.Latest;
 
-		public MCMeta SetMinVersion(PackVersion min)
+		public MCMeta SetMinVersion(PackFormat min)
 		{
 			MinVersion = min;
 			return this;
 		}
 
-		public MCMeta SetMaxVersion(PackVersion max)
+		public MCMeta SetMaxVersion(PackFormat max)
 		{
 			MaxVersion = max;
 			return this;

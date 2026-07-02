@@ -34,6 +34,6 @@ namespace Geode.Values
 		public override void ListAdd(LiteralValue literal, RenderContext ctx) => ctx.Add(new DataCommand.Modify(Target).Append().Value(literal.Value.ToString()));
 		public override void ListAdd(DataTargetValue nbt, RenderContext ctx) => ctx.Add(new DataCommand.Modify(Target).Append().From(nbt.Target));
 
-		public override FormattedText Render(FormattedText text, RenderContext ctx) => text.NBT(Target, Type.EffectiveType == NBTType.String && ctx.Builder.Options.PackVersion >= new PackVersion(101, 0));
+		public override FormattedText Render(FormattedText text, RenderContext ctx) => text.NBT(Target, Type.EffectiveType == NBTType.String && ctx.Builder.Options.PackVersion >= new PackFormat(101, 0));
 	}
 }

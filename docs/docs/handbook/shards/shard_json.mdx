@@ -1,0 +1,38 @@
+---
+sidebar_position: 1
+description: Shard definition reference
+---
+
+# `shard.json`
+
+`shard.json` defines an Amethyst shard.
+
+```json
+{
+    "name": "example",
+    "description": "A project made with Amethyst",
+    "version": "1.0.0",
+    "pack_format": "107.1",
+    "dependencies": {
+        "minecraft": "26.2"
+    },
+    "source": "src",
+    "data": "data"
+}
+```
+
+## Shard Info
+
+* `name`: Name of the shard. Only lowercase alphanumeric characters, `-`, and `_` are allowed for this field.
+* `description`: Description of the shard. Included in `pack.mcmeta`.
+* `version`: Shard version. Follows a simplified semver format that supports Minecraft's versions.
+* `pack_format`: Target pack format. Does not support format ranges. Multiple `shard.json` files can be used to compile for different pack formats.
+
+## Dependencies
+
+WIP
+
+## Paths
+
+* `source`: Source directory with `.ame` files. Defaults to `src`.
+* `data`: Additional data directory. Defaults to `data`.

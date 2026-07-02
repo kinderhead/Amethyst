@@ -9,15 +9,15 @@ on:
       - '**'
     tags-ignore:
       - '**'
-    paths:
-     - AmethystLanguageServer/**
-     - .github/workflows/language_server.yml
+    # paths:
+    #  - AmethystLanguageServer/**
+    #  - .github/workflows/language_server.yml
   pull_request:
     branches: [ "master" ]
 
 jobs:
   build:
-
+    name: "Language Server Build"
     runs-on: ubuntu-latest
 
     steps:

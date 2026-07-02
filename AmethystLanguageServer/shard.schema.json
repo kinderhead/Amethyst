@@ -14,7 +14,7 @@
             "type": "string",
             "description": "Project version."
         },
-        "pack_version": {
+        "pack_format": {
             "type": "string",
             "description": "Data pack version to support."
         },
