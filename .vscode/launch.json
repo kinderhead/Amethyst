@@ -30,6 +30,7 @@
             "preLaunchTask": "build",
             "program": "${workspaceFolder}/Amethyst/bin/Debug/net10.0/Amethyst.dll",
             "args": ["build", "--run"],
+            // "args": ["shard", "init", "-o", "new"],
             "cwd": "${workspaceFolder}/Amethyst/examples/shard",
             "stopAtEntry": false,
             "console": "integratedTerminal"

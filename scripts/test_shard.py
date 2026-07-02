@@ -18,7 +18,7 @@ def tester(process: subprocess.Popen[bytes]):
             break
 
 
-os.makedirs("shard")
+os.makedirs("shard", exist_ok=True)
 os.chdir("shard")
 
 amethyst, version, packver, arg = test_info()

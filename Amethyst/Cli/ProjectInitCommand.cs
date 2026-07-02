@@ -12,17 +12,19 @@ namespace Amethyst.Cli
     [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.AllFields | DynamicallyAccessedMemberTypes.AllProperties)]
     public class ProjectInitCommandOptions : CommandSettings
     {
+        // Flag values do not work for some reason, so null checks it is.
+
         [CommandOption("-n|--name")]
         [Description("Name of the project.")]
-        public FlagValue<string> Name { get; set; }
+        public string? Name { get; set; }
 
         [CommandOption("-d|--description")]
         [Description("Project description.")]
-        public FlagValue<string> Description { get; set; }
+        public string? Description { get; set; }
 
         [CommandOption("-p|--pack-version")]
         [Description("Data pack version to support. Setting this flag disables picking a Minecraft definitions package.")]
-        public FlagValue<PackFormat> PackVersion { get; set; }
+        public PackFormat? PackFormat { get; set; }
 
         [CommandOption("-o|--output")]
         [Description("Folder to generate the project.")]
@@ -44,13 +46,13 @@ namespace Amethyst.Cli
 
             var project = new ProjectDefinition
             {
-                Name = settings.Name.IsSet ? settings.Name.Value : AnsiConsole.Ask("[aqua]Project name[/]:", Path.GetFileName(Path.GetFullPath(output)).ToLower()),
-                Description = settings.Description.IsSet ? settings.Description.Value : AnsiConsole.Ask("[aqua]Data pack description[/]:", "A project made with Amethyst")
+                Name = settings.Name is not null ? settings.Name : AnsiConsole.Ask("[aqua]Project name[/]:", Path.GetFileName(Path.GetFullPath(output)).ToLower()),
+                Description = settings.Description is not null ? settings.Description : AnsiConsole.Ask("[aqua]Data pack description[/]:", "A project made with Amethyst")
             };
 
-            if (settings.PackVersion.IsSet)
+            if (settings.PackFormat is not null)
             {
-                project.PackFormat = settings.PackVersion.Value;
+                project.PackFormat = settings.PackFormat.Value;
             }
             else
             {
