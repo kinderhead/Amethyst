@@ -65,7 +65,7 @@ jobs:
           !**/tests/**/*.ame
 
   test:
-    name: "Test ${{ matrix.version }} on ${{ matrix.type.name }} with args \"${{ matrix.args }}\""
+    name: "Test ${{ matrix.script.name }} ${{ matrix.version }} on ${{ matrix.type.name }} with args \"${{ matrix.args }}\""
     runs-on: ${{ matrix.type.os }}
     needs: [build]
 
@@ -79,6 +79,10 @@ jobs:
         ]
         version: ["1.21.10", "1.21.11", "26.1.2", "26.2"]
         args: ["-O 0", "-d", "-O 1"]
+        script: [
+          {path: "scripts/test_mc.py", name: suite},
+          {path: "scripts/test_shard.py", name: shard}
+        ]
       fail-fast: false
     
     steps:
@@ -105,19 +109,12 @@ jobs:
           distribution: 'zulu'
           java-version: '25'
       
-      - name: Test Language
+      - name: Test
         uses: nick-fields/retry@v4
         with:
           timeout_minutes: 5
           max_attempts: 3
-          command: python -u scripts/test_mc.py ${{ matrix.version }} "${{ matrix.args }}"
-
-      - name: Test Shard
-        uses: nick-fields/retry@v4
-        with:
-          timeout_minutes: 5
-          max_attempts: 3
-          command: python -u scripts/test_shard.py ${{ matrix.version }} "${{ matrix.args }}"
+          command: python -u ${{ matrix.script.path }} ${{ matrix.version }} "${{ matrix.args }}"
   
   linux-pkgs:
     name: "Build ${{ matrix.type.name }} packages"
