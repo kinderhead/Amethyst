@@ -23,6 +23,6 @@ os.chdir("shard")
 
 amethyst, version, packver, arg = test_info()
 
-call(f"{amethyst} shard init -n test -d Test -p {packver}")
+call(f"../Amethyst/{amethyst} shard init -n test -d Test -p {packver}")
 
-run_test(f"{amethyst} build {arg} --run", tester)
+run_test(f"../Amethyst/{amethyst} build {arg} --run", tester)

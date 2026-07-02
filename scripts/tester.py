@@ -17,8 +17,6 @@ def test_info():
     amethyst = "dist/amethyst"
     if os.name == "nt":
         amethyst += ".exe"
-        
-    amethyst = os.path.abspath(amethyst)
 
     version = sys.argv[1]
     packver = format_from_version(version)
