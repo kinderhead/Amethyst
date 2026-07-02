@@ -45,7 +45,7 @@ def format_from_version(version: str):
             
     return packver
 
-def run_test(cmd: str, cb: Callable[[subprocess.Popen[bytes]]]):
+def run_test(cmd: str, cb: Callable[[subprocess.Popen[bytes]], None]):
     process = subprocess.Popen(shlex.split(cmd), stdout=subprocess.PIPE)
     
     try:
