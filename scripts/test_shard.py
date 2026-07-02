@@ -1,4 +1,5 @@
 import os
+import shutil
 import subprocess
 
 from tester import *
@@ -18,6 +19,7 @@ def tester(process: subprocess.Popen[bytes]):
             break
 
 
+shutil.rmtree("shard", ignore_errors=True)
 os.makedirs("shard", exist_ok=True)
 os.chdir("shard")
 
