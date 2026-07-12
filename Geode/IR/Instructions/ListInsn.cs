@@ -9,7 +9,8 @@ namespace Geode.IR.Instructions
 		public override NBTType?[] ArgTypes => [.. Enumerable.Repeat<NBTType?>(null, Arguments.Length)];
 		public override TypeSpecifier ReturnType => type;
 
-		public override void Render(RenderContext ctx) => ctx.StoreList(ReturnValue.Expect<DataTargetValue>(), [.. Arguments.Cast<ValueRef>()]);
+		public override void Render(RenderContext ctx) =>
+			ctx.StoreList(ReturnValue.Expect<DataTargetValue>(), [.. Arguments.Cast<ValueRef>()]);
 
 		protected override IValue? ComputeReturnValue(FunctionContext ctx)
 		{

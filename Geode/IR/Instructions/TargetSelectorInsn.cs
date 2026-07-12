@@ -8,16 +8,16 @@ namespace Geode.IR.Instructions
 {
 	public class TargetSelectorInsn(TargetType type, MultiDictionary<string, ValueRef> vals) : Instruction(vals.Values)
 	{
+		public readonly string[] Keys = [.. vals.Keys];
+
+		public readonly TargetType Type = type;
 		public override string Name => "target";
 		public override NBTType?[] ArgTypes => [.. Enumerable.Repeat<NBTType?>(null, Arguments.Length)];
 		public override TypeSpecifier ReturnType => new TargetSelectorType();
 
-		public readonly TargetType Type = type;
-		public readonly string[] Keys = [.. vals.Keys];
-
 		public override void Render(RenderContext ctx) { }
 
-		protected override IValue? ComputeReturnValue(FunctionContext ctx)
+		protected override IValue ComputeReturnValue(FunctionContext ctx)
 		{
 			var args = new MultiDictionary<string, IValue>();
 

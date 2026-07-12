@@ -44,7 +44,7 @@
 		_12,
 		_13,
 		_14,
-		_15,
+		_15
 	}
 
 	public enum To25
@@ -111,7 +111,7 @@
 		_1 = 1,
 		_2,
 		_3,
-		_4,
+		_4
 	}
 
 	public enum To4Low
@@ -120,7 +120,7 @@
 		_1,
 		_2,
 		_3,
-		_4,
+		_4
 	}
 
 	public enum To3Low
@@ -128,21 +128,21 @@
 		_0 = 0,
 		_1,
 		_2,
-		_3,
+		_3
 	}
 
 	public enum To3High
 	{
 		_1 = 1,
 		_2,
-		_3,
+		_3
 	}
 
 	public enum To2
 	{
 		_0 = 0,
 		_1,
-		_2,
+		_2
 	}
 
 	public enum To5

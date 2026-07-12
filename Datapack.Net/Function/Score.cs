@@ -1,6 +1,7 @@
 ﻿namespace Datapack.Net.Function
 {
-	public readonly struct Score(string name, string criteria, string displayName = "") : IComparable<Score>
+	public readonly struct Score(string name, string criteria, string displayName = "")
+		: IComparable<Score>, IEquatable<Score>
 	{
 		public readonly string Name = name;
 		public readonly string Criteria = criteria;
@@ -28,6 +29,8 @@
 
 		public override int GetHashCode() => Name.GetHashCode();
 
-		public int CompareTo(Score other) => Name.CompareTo(other.Name);
+		public int CompareTo(Score other) => string.Compare(Name, other.Name, StringComparison.Ordinal);
+
+		public bool Equals(Score other) => Name == other.Name;
 	}
 }

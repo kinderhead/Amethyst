@@ -13,8 +13,8 @@ namespace Amethyst.AST.Expressions
 {
 	public class CallExpression(LocationRange loc, Expression func, List<Expression> args) : Expression(loc)
 	{
-		public readonly Expression Function = func;
 		public readonly List<Expression> Args = args;
+		public readonly Expression Function = func;
 
 		protected override ValueRef ExecuteImpl(FunctionContext ctx, TypeSpecifier? expected)
 		{
@@ -24,8 +24,12 @@ namespace Amethyst.AST.Expressions
 
 			if (Function is PropertyExpression prop)
 			{
-				// Make sure the this parameter isn't dereferenced
-				newArgs = [new ValueRefExpression(prop.Expression.Location, prop.Expression.Execute(ctx, new VarType())), .. Args];
+				// Make sure the `this` parameter isn't dereferenced
+				newArgs =
+				[
+					new ValueRefExpression(prop.Expression.Location, prop.Expression.Execute(ctx, new VarType())),
+					.. Args
+				];
 			}
 			else
 			{
@@ -49,20 +53,17 @@ namespace Amethyst.AST.Expressions
 				{
 					throw new NoOverloadError(overload.ID, types);
 				}
-				else if (options.Length > 1)
+
+				if (options.Length > 1)
 				{
 					throw new AmbiguousOverloadError(overload.ID, types);
 				}
 
-				if (Function is PropertyExpression prop2)
-				{
-					// args[0] here is the this parameter
-					func = ReferenceType.TryDeref(ctx.GetProperty(args[0], options[0].id.GetFile()), ctx);
-				}
-				else
-				{
-					func = new(ctx.GetVariable(options[0].id.ToString()));
-				}
+				// args[0] here is the `this` parameter
+				func = Function is PropertyExpression
+					? ReferenceType.TryDeref(ctx.GetProperty(args[0], options[0].id
+						.GetFile()), ctx)
+					: new(ctx.GetVariable(options[0].id.ToString()));
 			}
 
 			if (func.Type is not FunctionType type)
@@ -76,11 +77,9 @@ namespace Amethyst.AST.Expressions
 			{
 				return f.CallBehavior(ctx, args);
 			}
-			else
-			{
-				ctx.Add(new PushFuncArgsInsn(type, ctx.PrepArgs(type, args)));
-				return ctx.Add(new DynCallInsn(func));
-			}
+
+			ctx.Add(new PushFuncArgsInsn(type, ctx.PrepArgs(type, args)));
+			return ctx.Add(new DynCallInsn(func));
 		}
 	}
 }

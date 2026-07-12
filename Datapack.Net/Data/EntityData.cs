@@ -6,9 +6,9 @@ namespace Datapack.Net.Data
 	{
 		public readonly NamespacedID ID = id;
 
-		public override string ToString() => ID.ToString();
-
 		public Negatable<EntityData> Negate() => new(this, true);
+
+		public override string ToString() => ID.ToString();
 
 		public static Negatable<EntityData> operator !(EntityData type) => type.Negate();
 		public static implicit operator Negatable<EntityData>(EntityData type) => new(type);

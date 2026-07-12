@@ -4,8 +4,8 @@ namespace Datapack.Net.Pack
 {
 	public abstract class ResourceType(string path, string fileExtension)
 	{
-		public readonly string Path = path;
 		public readonly string FileExtension = fileExtension;
+		public readonly string Path = path;
 
 		internal List<Resource> Resources = [];
 
@@ -17,10 +17,12 @@ namespace Datapack.Net.Pack
 			}
 		}
 
-		public virtual string ComputePath(NamespacedID id, string extraPath = "") => $"data/{id.Namespace}/{Path}/{extraPath}{id.Path}{FileExtension}";
+		public virtual string ComputePath(NamespacedID id, string extraPath = "") =>
+			$"data/{id.Namespace}/{Path}/{extraPath}{id.Path}{FileExtension}";
 	}
 
-	public abstract class GenericResourceType(string path, string fileExtension = ".json") : ResourceType(path, fileExtension)
+	public abstract class GenericResourceType(string path, string fileExtension = ".json")
+		: ResourceType(path, fileExtension)
 	{
 		public void Add(Resource resource) => Resources.Add(resource);
 		public void Remove(Resource resource) => Resources.Remove(resource);
@@ -100,7 +102,6 @@ namespace Datapack.Net.Pack
 	{
 		public Functions() : base("function", ".mcfunction")
 		{
-
 		}
 	}
 }

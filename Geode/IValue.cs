@@ -4,6 +4,7 @@ using Datapack.Net.Function.Commands;
 using Geode.Errors;
 using Geode.Types;
 using Geode.Values;
+using System.Diagnostics;
 
 namespace Geode
 {
@@ -25,7 +26,9 @@ namespace Geode
 
 				if (val is null || val.Type.EffectiveType != type)
 				{
-					throw new InvalidTypeError(val is null ? "<error>" : (Enum.GetName(val.Type.EffectiveType)?.ToLower() ?? "<error>"), Enum.GetName(type)?.ToLower() ?? "<error>");
+					throw new InvalidTypeError(
+						val is null ? "<error>" : Enum.GetName(val.Type.EffectiveType)?.ToLower() ?? "<error>",
+						Enum.GetName(type)?.ToLower() ?? "<error>");
 				}
 
 				return val;
@@ -39,7 +42,7 @@ namespace Geode
 				}
 
 #if DEBUG
-				System.Diagnostics.Debugger.Break();
+				Debugger.Break();
 #endif
 
 				throw new InvalidTypeError(self.Value?.GetType().Name.ToLower() ?? "<error>", typeof(T).Name.ToLower());
@@ -60,7 +63,7 @@ namespace Geode
 	public abstract class Value(TypeSpecifier type) : IValue
 	{
 		public TypeSpecifier Type { get; set; } = type;
-		IValue? IValueLike.Value => this;
+		IValue IValueLike.Value => this;
 
 		public abstract ScoreValue AsScore(RenderContext ctx);
 		public abstract FormattedText Render(FormattedText text, RenderContext ctx);
@@ -78,29 +81,30 @@ namespace Geode
 	{
 		public override void Store(IValue val, RenderContext ctx)
 		{
-			if (val is LiteralValue literal)
+			while (true)
 			{
-				Store(literal, ctx);
-			}
-			else if (val is ScoreValue score)
-			{
-				Store(score, ctx);
-			}
-			else if (val is DataTargetValue storage)
-			{
-				Store(storage, ctx);
-			}
-			else if (val is MacroValue macro)
-			{
-				Store(macro, ctx);
-			}
-			else if (val is StoreableValue s)
-			{
-				Store(s.AsStoreable(), ctx);
-			}
-			else
-			{
-				throw new NotImplementedException();
+				switch (val)
+				{
+					case LiteralValue literal:
+						Store(literal, ctx);
+						break;
+					case ScoreValue score:
+						Store(score, ctx);
+						break;
+					case DataTargetValue storage:
+						Store(storage, ctx);
+						break;
+					case MacroValue macro:
+						Store(macro, ctx);
+						break;
+					case StoreableValue s:
+						val = s.AsStoreable();
+						continue;
+					default:
+						throw new NotImplementedException();
+				}
+
+				break;
 			}
 		}
 
@@ -131,7 +135,9 @@ namespace Geode
 		public abstract void Store(LiteralValue literal, RenderContext ctx);
 		public abstract void Store(ScoreValue score, RenderContext ctx);
 		public abstract void Store(DataTargetValue nbt, RenderContext ctx);
-		public virtual void Store(MacroValue macro, RenderContext ctx) => Store(LiteralValue.Raw(macro.GetMacro()), ctx);
+
+		public virtual void Store(MacroValue macro, RenderContext ctx) =>
+			Store(LiteralValue.Raw(macro.GetMacro()), ctx);
 
 		public abstract void ListAdd(LiteralValue literal, RenderContext ctx);
 
@@ -144,6 +150,7 @@ namespace Geode
 
 		public abstract void ListAdd(DataTargetValue nbt, RenderContext ctx);
 
-		public virtual void ListAdd(MacroValue macro, RenderContext ctx) => ListAdd(LiteralValue.Raw(macro.GetMacro()), ctx);
+		public virtual void ListAdd(MacroValue macro, RenderContext ctx) =>
+			ListAdd(LiteralValue.Raw(macro.GetMacro()), ctx);
 	}
 }

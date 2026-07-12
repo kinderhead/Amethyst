@@ -5,9 +5,6 @@ using Geode.IR;
 using Geode.IR.Instructions;
 using Geode.Types;
 using Geode.Values;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Amethyst.GC.Behaviors
 {
@@ -22,20 +19,20 @@ namespace Amethyst.GC.Behaviors
 			var size = ctx.Add(new ListSizeInsn(val));
 
 			ctx.Loop(() =>
-			{
-				var chain = new ExecuteChain();
-				chain.Add(new IfScoreChain(ctx.AddLoad(i), ComparisonOperator.Lt, ctx.AddLoad(size)));
-				return chain;
-			}, "list_mark",
-			() =>
-			{
-				GCHelper.Mark(ctx.Add(new IndexInsn(val, i)), ctx);
-			},
-			() =>
-			{
-				var inc = ctx.Add(new AddInsn(ctx.AddLoad(i), new LiteralValue(1)));
-				ctx.Add(new StoreInsn(i, inc));
-			});
+				{
+					var chain = new ExecuteChain();
+					chain.Add(new IfScoreChain(ctx.AddLoad(i), ComparisonOperator.Lt, ctx.AddLoad(size)));
+					return chain;
+				}, "list_mark",
+				() =>
+				{
+					GCHelper.Mark(ctx.Add(new IndexInsn(val, i)), ctx);
+				},
+				() =>
+				{
+					var inc = ctx.Add(new AddInsn(ctx.AddLoad(i), new LiteralValue(1)));
+					ctx.Add(new StoreInsn(i, inc));
+				});
 		}
 	}
 }

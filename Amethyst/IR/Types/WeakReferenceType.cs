@@ -33,15 +33,14 @@ namespace Amethyst.IR.Types
 			{
 				return val;
 			}
-			else
-			{
-				return base.CastToOverload(val, ctx);
-			}
+
+			return base.CastToOverload(val, ctx);
 		}
 
 		protected override bool EqualsImpl(TypeSpecifier obj) => obj is WeakReferenceType p && p.Inner == Inner;
 		public override object Clone() => new WeakReferenceType((TypeSpecifier)Inner.Clone());
 
-		public static new LiteralValue From(DataTargetValue val) => new(val.Target.GetTarget(), new WeakReferenceType(val.Type));
+		public static new LiteralValue From(DataTargetValue val) =>
+			new(val.Target.GetTarget(), new WeakReferenceType(val.Type));
 	}
 }

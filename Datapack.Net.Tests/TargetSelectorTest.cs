@@ -7,7 +7,7 @@ namespace Datapack.Net.Tests
 		[Test]
 		public void TestX()
 		{
-			var sel = new TargetSelector(TargetType.p, x: 1);
+			var sel = new TargetSelector(TargetType.p, 1);
 			Assert.That(sel.Get(), Is.EqualTo("@p[x=1]"));
 		}
 
@@ -150,21 +150,22 @@ namespace Datapack.Net.Tests
 		[Test]
 		public void TestNBT()
 		{
-			var sel = new TargetSelector(TargetType.e, nbt: new NBTCompound() { { "test", new NBTInt(4) } });
+			var sel = new TargetSelector(TargetType.e, nbt: new NBTCompound { { "test", new NBTInt(4) } });
 			Assert.That(sel.Get(), Is.EqualTo("@e[nbt={\"test\":4}]"));
 		}
 
 		[Test]
 		public void TestOne()
 		{
-			List<TargetSelector> sels = [
-				new TargetSelector(TargetType.a, limit: 1),
-				new TargetSelector(TargetType.e, limit: 1),
+			List<TargetSelector> sels =
+			[
+				new(TargetType.a, limit: 1),
+				new(TargetType.e, limit: 1),
 				TargetSelector.Self,
-				new TargetSelector(TargetType.p),
-				new TargetSelector(TargetType.r),
-				new TargetSelector(TargetType.p, limit: 1),
-				new TargetSelector(TargetType.r, limit: 1)
+				new(TargetType.p),
+				new(TargetType.r),
+				new(TargetType.p, limit: 1),
+				new(TargetType.r, limit: 1)
 			];
 
 			Assert.Multiple(() =>

@@ -48,6 +48,7 @@ namespace Geode.Errors
 
 	public class EmptyGeodeError() : GeodeError("")
 	{
-		public override CompilerMessager Display(IFileHandler handler, LocationRange loc, bool lastNewlines = true) => new(Color.Red);
+		public override CompilerMessager Display(IFileHandler handler, LocationRange loc, bool lastNewlines = true) =>
+			new(Color.Red);
 	}
 }

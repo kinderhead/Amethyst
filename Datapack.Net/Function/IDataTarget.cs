@@ -51,7 +51,7 @@
 
 		public string Type => Target.Split(' ')[0];
 		public string Source => Target.Split(' ')[1];
-		public string? Path => Target.Split(' ')[2];
+		public string Path => Target.Split(' ')[2];
 
 		public string GetTarget() => Target ?? "";
 		public override string ToString() => GetTarget();

@@ -20,7 +20,7 @@ namespace Geode.IR.Instructions
 			foreach (var i in Arguments)
 			{
 #pragma warning disable CA1859
-				if (i is not ValueRef vref || vref.Value is not IValue val)
+				if (i is not ValueRef vref || vref.Value is not { } val)
 				{
 					throw new InvalidOperationException($"Invalid print argument of type {i.GetType().Name}");
 				}
@@ -45,6 +45,6 @@ namespace Geode.IR.Instructions
 		}
 
 		public override void CheckArguments() { }
-		protected override IValue? ComputeReturnValue(FunctionContext ctx) => new VoidValue();
+		protected override IValue ComputeReturnValue(FunctionContext ctx) => new VoidValue();
 	}
 }

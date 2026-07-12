@@ -6,24 +6,24 @@ using Geode.Errors;
 using Geode.IR;
 using Geode.Types;
 using Geode.Values;
+using Block = Geode.IR.Block;
 
 namespace Geode
 {
-	public record class RenderContext(MCFunction MCFunction, IR.Block Block, GeodeBuilder Builder, FunctionContext Func)
+	public record RenderContext(MCFunction MCFunction, Block Block, GeodeBuilder Builder, FunctionContext Func)
 	{
-		public ScoreValue SuccessScore => Builder.Score("func_success");
-		
 		private LocationRange lastLocation = LocationRange.None;
+		public ScoreValue SuccessScore => Builder.Score("func_success");
 
 		public virtual void Add(params IEnumerable<Command> cmds)
 		{
 			var loc = Block.Ctx.LocationStack.Peek();
 
 			if (loc != lastLocation)
-            {
-                MCFunction.Add(new Comment(loc.MapFile(Builder.FileHandler).ToString()));
+			{
+				MCFunction.Add(new Comment(loc.MapFile(Builder.FileHandler).ToString()));
 				lastLocation = loc;
-            }
+			}
 
 			if (Func.IsMacroFunction)
 			{
@@ -48,7 +48,8 @@ namespace Geode
 			}
 		}
 
-		public IValue StoreCompoundOrReturnConstant(DataTargetValue dest, Dictionary<string, IValueLike> dict, bool setEmpty = true)
+		public IValue StoreCompoundOrReturnConstant(DataTargetValue dest, Dictionary<string, IValueLike> dict,
+			bool setEmpty = true)
 		{
 			var nbt = new NBTCompound();
 			var runtime = new Dictionary<string, IValue>();
@@ -78,7 +79,8 @@ namespace Geode
 			{
 				return new LiteralValue(nbt);
 			}
-			else if (setEmpty || nbt.Count != 0)
+
+			if (setEmpty || nbt.Count != 0)
 			{
 				dest.Store(new LiteralValue(nbt), this);
 			}
@@ -127,7 +129,8 @@ namespace Geode
 			{
 				return new LiteralValue(nbt);
 			}
-			else if (setEmpty || nbt.Count != 0)
+
+			if (setEmpty || nbt.Count != 0)
 			{
 				dest.Store(new LiteralValue(nbt), this);
 			}
@@ -140,40 +143,40 @@ namespace Geode
 			return dest;
 		}
 
-		public Command[] GetOnJumpCommands(IR.Block dest)
-        {
+		public Command[] GetOnJumpCommands(Block dest) =>
 			// Mayhaps make this more efficient
-            return [.. WithFaux(ctx => dest.Phi.JumpToBlockCommands(Block, ctx))];
-        }
+			[.. WithFaux(ctx => dest.Phi.JumpToBlockCommands(Block, ctx))];
 
 		// TODO: Refactor this into a call to the other JumpTo method
-		public Command[] JumpTo(IR.Block block)
+		public Command[] JumpTo(Block block)
 		{
 			if (Func.IsMacroFunction)
 			{
-				return [.. GetOnJumpCommands(block), new FunctionCommand(block.Function, [.. Func.Decl.FuncType.MacroParameters.Select(i =>
-				{
-					if (i.Type == PrimitiveType.String)
-					{
-						throw new MacroStringSubFunctionError();
-					}
-					else if (i.Type.WrapInQuotesForMacro)
-					{
-						return new KeyValuePair<string, NBTValue>(i.Name, new NBTString(i.GetMacro()));
-					}
-					else
-					{
-						return new KeyValuePair<string, NBTValue>(i.Name, new NBTRawString(i.GetMacro()));
-					}
-				})])];
+				return
+				[
+					.. GetOnJumpCommands(block), new FunctionCommand(block.Function, [
+						.. Func.Decl.FuncType.MacroParameters.Select(i =>
+						{
+							if (i.Type == PrimitiveType.String)
+							{
+								throw new MacroStringSubFunctionError();
+							}
+
+							if (i.Type.WrapInQuotesForMacro)
+							{
+								return new(i.Name, new NBTString(i.GetMacro()));
+							}
+
+							return new KeyValuePair<string, NBTValue>(i.Name, new NBTRawString(i.GetMacro()));
+						})
+					])
+				];
 			}
-			else
-			{
-				return [.. GetOnJumpCommands(block), new FunctionCommand(block.Function)];
-			}
+
+			return [.. GetOnJumpCommands(block), new FunctionCommand(block.Function)];
 		}
 
-		public Command[] JumpTo(IR.Block block, NBTCompound args)
+		public Command[] JumpTo(Block block, NBTCompound args)
 		{
 			if (args.Count > 0)
 			{
@@ -187,10 +190,8 @@ namespace Geode
 
 				return [.. GetOnJumpCommands(block), new FunctionCommand(block.Function, args)];
 			}
-			else
-			{
-				return [.. GetOnJumpCommands(block), new FunctionCommand(block.Function)];
-			}
+
+			return [.. GetOnJumpCommands(block), new FunctionCommand(block.Function)];
 		}
 
 		public void Call(NamespacedID id, params IValueLike[] args)
@@ -203,7 +204,8 @@ namespace Geode
 			func.Call(this, args);
 		}
 
-		public void Macroize(IValueLike[] dependencies, Action<IConstantValue[], RenderContext> func) => Builder.Macroizer.Run(this, dependencies, func);
+		public void Macroize(IValueLike[] dependencies, Action<IConstantValue[], RenderContext> func) =>
+			Builder.Macroizer.Run(this, dependencies, func);
 
 		public List<Command> WithFaux(Action<FauxRenderContext> func)
 		{
@@ -212,7 +214,8 @@ namespace Geode
 			return ctx.Commands;
 		}
 
-		public void PossibleErrorChecker(Command cmd, string msg, params ValueRef[] extras) => PossibleErrorChecker(cmd, text => text.Text($": {msg} "), extras);
+		public void PossibleErrorChecker(Command cmd, string msg, params ValueRef[] extras) =>
+			PossibleErrorChecker(cmd, text => text.Text($": {msg} "), extras);
 
 		public void PossibleErrorChecker(Command cmd, Action<FormattedText> msg, params ValueRef[] extras)
 		{
@@ -223,15 +226,15 @@ namespace Geode
 				Add(new Execute().Store(success.Target, success.Score, false).Run(cmd));
 
 				var text = new FormattedText()
-						.PushModifiers(new FormattedText.Modifiers { Color = "red" })
-						.Text("Error at ")
-						.Text(Func.LocationStack.Peek().ToString(), new FormattedText.Modifiers { Color = "#9A5CC6" });
+					.PushModifiers(new() { Color = "red" })
+					.Text("Error at ")
+					.Text(Func.LocationStack.Peek().ToString(), new FormattedText.Modifiers { Color = "#9A5CC6" });
 
 				msg(text);
 
 				if (extras.Length > 0)
 				{
-					text.PushModifiers(new FormattedText.Modifiers { Color = "dark_aqua" });
+					text.PushModifiers(new() { Color = "dark_aqua" });
 
 					foreach (var i in extras)
 					{
@@ -255,7 +258,8 @@ namespace Geode
 					}).Single()));
 				}
 
-				Add(new Execute().If.Score(success.Target, success.Score, 0).Run(new ReturnCommand(0))); // Purposeful not fail, maybe check it
+				Add(new Execute().If.Score(success.Target, success.Score, 0)
+					.Run(new ReturnCommand(0))); // Purposeful not fail, maybe check it
 			}
 			else
 			{
@@ -264,7 +268,8 @@ namespace Geode
 		}
 	}
 
-	public record class FauxRenderContext(MCFunction MCFunction, IR.Block Block, GeodeBuilder Builder, FunctionContext Func) : RenderContext(MCFunction, Block, Builder, Func)
+	public record FauxRenderContext(MCFunction MCFunction, Block Block, GeodeBuilder Builder, FunctionContext Func)
+		: RenderContext(MCFunction, Block, Builder, Func)
 	{
 		public readonly List<Command> Commands = [];
 		public override void Add(params IEnumerable<Command> cmds) => Commands.AddRange(cmds);

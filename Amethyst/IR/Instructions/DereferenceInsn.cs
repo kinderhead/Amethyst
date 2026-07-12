@@ -8,10 +8,10 @@ namespace Amethyst.IR.Instructions
 {
 	public class DereferenceInsn(ValueRef ptr, bool force = false) : Instruction([ptr])
 	{
+		public readonly bool Force = force;
 		public override string Name => "deref";
 		public override NBTType?[] ArgTypes => [null];
 		public override TypeSpecifier ReturnType => ((ReferenceType)ptr.Type).Inner;
-		public readonly bool Force = force;
 
 		public override void Render(RenderContext ctx)
 		{
@@ -32,12 +32,11 @@ namespace Amethyst.IR.Instructions
 
 				if (str.Value.Contains("stack[-1]."))
 				{
-					return new StackValue(-1, ctx.Compiler.IR.RuntimeID, str.Value.Split("stack[-1].")[1].Replace("\"", ""), ReturnType);
+					return new StackValue(-1, ctx.Compiler.IR.RuntimeID,
+						str.Value.Split("stack[-1].")[1].Replace("\"", ""), ReturnType);
 				}
-				else
-				{
-					return new RawDataTargetValue(str.Value.Replace("\"", ""), ReturnType);
-				}
+
+				return new RawDataTargetValue(str.Value.Replace("\"", ""), ReturnType);
 			}
 
 			return null;

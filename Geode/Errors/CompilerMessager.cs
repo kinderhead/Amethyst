@@ -8,7 +8,7 @@ namespace Geode.Errors
 		public const int MAX_CODE_LINES = 3;
 
 		public readonly Color BaseColor = baseColor;
-		public bool ShouldBeFinal = false;
+		public bool ShouldBeFinal;
 
 		public Style Style => new(BaseColor);
 
@@ -41,7 +41,11 @@ namespace Geode.Errors
 			}
 
 			// Evil tabs
-			string[] lines = [.. file.Split('\n').Skip(loc.Start.Line - 1).Take(Math.Min(loc.End.Line - loc.Start.Line + 1, MAX_CODE_LINES)).Select(i => i.Replace('\t', ' '))];
+			string[] lines =
+			[
+				.. file.Split('\n').Skip(loc.Start.Line - 1)
+					.Take(Math.Min(loc.End.Line - loc.Start.Line + 1, MAX_CODE_LINES)).Select(i => i.Replace('\t', ' '))
+			];
 
 			var indentToSkip = lines.Select(i => i.TakeWhile(c => c == ' ').Count()).Min();
 
@@ -63,7 +67,8 @@ namespace Geode.Errors
 					Final();
 				}
 
-				AddContent($"{new string(' ', loc.Start.Column - 1 - indentToSkip)}{new string('~', loc.End.Column - loc.Start.Column + 1)}");
+				AddContent(
+					$"{new string(' ', loc.Start.Column - 1 - indentToSkip)}{new string('~', loc.End.Column - loc.Start.Column + 1)}");
 			}
 			else if (!final)
 			{

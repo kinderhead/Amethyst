@@ -1,33 +1,21 @@
-using Datapack.Net.Data;
-using Geode.Errors;
 using Geode.IR;
 using Geode.Values;
-using System.Collections.Immutable;
 
 namespace Geode
 {
 	public class ValueRef : IInstructionArg, IValueLike, ICloneable
 	{
-		private TypeSpecifier type;
+		private static int _valueCounter;
 
-		public IValue? Value { get; private set; }
-		public TypeSpecifier Type { get => type; set => SetType(value); }
+		private readonly HashSet<ValueRef> dependencies;
+
+		public readonly int ID = _valueCounter++;
 
 		// Used for debugging
-		public readonly Instruction? SourceInsn = null;
-
-		public readonly int ID = ValueCounter++;
+		public readonly Instruction? SourceInsn;
 
 		public bool ForceScoreReg = false;
-
-		public bool IsLiteral => Value is not null && Value.IsLiteral;
-		public bool NeedsScoreReg => Value is null && (Type.ShouldStoreInScore || ForceScoreReg);
-		public bool NeedsStackVar => Value is null && !(Type.ShouldStoreInScore || ForceScoreReg);
-
-		public string Name { get => field is null ? Value is not null ? $"{(Value.IsLiteral || Value is DataTargetValue ? "" : "%")}{Value}" : "" : field; set; }
-
-		private readonly HashSet<ValueRef> dependencies = [];
-		public IReadOnlySet<ValueRef> Dependencies => dependencies;
+		private TypeSpecifier type;
 
 		public ValueRef(IValue val)
 		{
@@ -43,33 +31,20 @@ namespace Geode
 			SourceInsn = insn;
 		}
 
-		public void SetValue(IValue val)
-		{
-			Value = val;
-			Type = val.Type;
-		}
-
-		public ValueRef SetType(TypeSpecifier type)
-		{
-			this.type = type;
-			//Value?.Type = type;
-			return this;
-		}
-
-		public ValueRef ToValueRef() => this;
-		public ValueRef Clone() => Value is null ? new(Type) : new(Value);
+		public bool IsLiteral => Value is not null && Value.IsLiteral;
+		public bool NeedsScoreReg => Value is null && (Type.ShouldStoreInScore || ForceScoreReg);
+		public bool NeedsStackVar => Value is null && !(Type.ShouldStoreInScore || ForceScoreReg);
 		object ICloneable.Clone() => Clone();
 
-		public void AddDependency(ValueRef dep)
+		public string Name
 		{
-			if (dependencies.Add(dep))
-			{
-				foreach (var i in dep.Dependencies)
-				{
-					AddDependency(i);
-				}
-			}
+			get => field is null
+				? Value is not null ? $"{(Value.IsLiteral || Value is DataTargetValue ? "" : "%")}{Value}" : ""
+				: field;
+			set;
 		}
+
+		public IReadOnlySet<ValueRef> Dependencies => dependencies;
 
 		public void ReplaceValue(ValueRef value, ValueRef with)
 		{
@@ -84,7 +59,38 @@ namespace Geode
 			}
 		}
 
-		public override string? ToString()
+		public IValue? Value { get; private set; }
+		public TypeSpecifier Type { get => type; set => SetType(value); }
+
+		public ValueRef ToValueRef() => this;
+
+		public void SetValue(IValue val)
+		{
+			Value = val;
+			Type = val.Type;
+		}
+
+		public ValueRef SetType(TypeSpecifier type)
+		{
+			this.type = type;
+			//Value?.Type = type;
+			return this;
+		}
+
+		public ValueRef Clone() => Value is null ? new(Type) : new(Value);
+
+		public void AddDependency(ValueRef dep)
+		{
+			if (dependencies.Add(dep))
+			{
+				foreach (var i in dep.Dependencies)
+				{
+					AddDependency(i);
+				}
+			}
+		}
+
+		public override string ToString()
 		{
 			if (!string.IsNullOrEmpty(Name))
 			{
@@ -94,15 +100,11 @@ namespace Geode
 				return Name;
 #endif
 			}
-			else
-			{
-				return $"#{ID}";
-			}
+
+			return $"#{ID}";
 		}
 
 
 		public static implicit operator ValueRef(Value val) => new(val);
-
-		private static int ValueCounter = 0;
 	}
 }

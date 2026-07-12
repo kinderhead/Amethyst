@@ -6,12 +6,7 @@ namespace Datapack.Net.Data
 {
 	public class NBTCompound : NBTValue, IDictionary<string, NBTValue>, INegatable<NBTCompound>
 	{
-		public override NBTType Type => NBTType.Compound;
 		public Dictionary<string, NBTValue> Values = [];
-		public NBTValue this[string key] { get => Values[key]; set => Values[key] = value; }
-		public ICollection<string> Keys => Values.Keys;
-		public int Count => Values.Count;
-		public bool IsReadOnly => false;
 
 		public NBTCompound()
 		{
@@ -25,13 +20,42 @@ namespace Datapack.Net.Data
 			}
 		}
 
-		public override NBTValue Cast(NBTNumberType type) => throw new InvalidOperationException("Cannot cast compound to number");
+		public override NBTType Type => NBTType.Compound;
+		public NBTValue this[string key] { get => Values[key]; set => Values[key] = value; }
+		public ICollection<string> Keys => Values.Keys;
+		public int Count => Values.Count;
+		public bool IsReadOnly => false;
 
 		ICollection<NBTValue> IDictionary<string, NBTValue>.Values => Values.Values;
 
 		public void Add(string key, NBTValue value) => Values.Add(key, value);
 
 		public void Add(KeyValuePair<string, NBTValue> item) => Values.Add(item.Key, item.Value);
+
+		public void Clear() => Values.Clear();
+
+		public bool Contains(KeyValuePair<string, NBTValue> item) => Values.Contains(item);
+
+		public bool ContainsKey(string key) => Values.ContainsKey(key);
+
+		public void CopyTo(KeyValuePair<string, NBTValue>[] array, int arrayIndex) =>
+			throw new NotImplementedException();
+
+		public IEnumerator<KeyValuePair<string, NBTValue>> GetEnumerator() => Values.GetEnumerator();
+
+		public bool Remove(string key) => Values.Remove(key);
+
+		public bool Remove(KeyValuePair<string, NBTValue> item) => Values.Remove(item.Key);
+
+		public bool TryGetValue(string key, [MaybeNullWhen(false)] out NBTValue value) =>
+			Values.TryGetValue(key, out value);
+
+		IEnumerator IEnumerable.GetEnumerator() => Values.GetEnumerator();
+
+		public Negatable<NBTCompound> Negate() => new(this, true);
+
+		public override NBTValue Cast(NBTNumberType type) =>
+			throw new InvalidOperationException("Cannot cast compound to number");
 
 		public override void Build(StringBuilder sb)
 		{
@@ -53,26 +77,6 @@ namespace Datapack.Net.Data
 
 			sb.Append('}');
 		}
-
-		public void Clear() => Values.Clear();
-
-		public bool Contains(KeyValuePair<string, NBTValue> item) => Values.Contains(item);
-
-		public bool ContainsKey(string key) => Values.ContainsKey(key);
-
-		public void CopyTo(KeyValuePair<string, NBTValue>[] array, int arrayIndex) => throw new NotImplementedException();
-
-		public IEnumerator<KeyValuePair<string, NBTValue>> GetEnumerator() => Values.GetEnumerator();
-
-		public Negatable<NBTCompound> Negate() => new(this, true);
-
-		public bool Remove(string key) => Values.Remove(key);
-
-		public bool Remove(KeyValuePair<string, NBTValue> item) => Values.Remove(item.Key);
-
-		public bool TryGetValue(string key, [MaybeNullWhen(false)] out NBTValue value) => Values.TryGetValue(key, out value);
-
-		IEnumerator IEnumerable.GetEnumerator() => Values.GetEnumerator();
 
 		public static Negatable<NBTCompound> operator !(NBTCompound nbt) => nbt.Negate();
 		public static implicit operator Negatable<NBTCompound>(NBTCompound nbt) => new(nbt);

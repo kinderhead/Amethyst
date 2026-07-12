@@ -8,13 +8,17 @@ using Geode.Values;
 
 namespace Amethyst.IR.Instructions
 {
-	public class PropertyInsn(ValueRef val, ValueRef prop, TypeSpecifier destType, bool addQuotes = false) : Instruction([val, prop])
+	public class PropertyInsn(ValueRef val, ValueRef prop, TypeSpecifier destType, bool addQuotes = false)
+		: Instruction([val, prop])
 	{
+		public readonly bool AddQuotes = addQuotes;
 		public override string Name => "prop";
 		public override NBTType?[] ArgTypes => [null, NBTType.String];
 		public TypeSpecifier ActualReturnType => destType;
-		public readonly bool AddQuotes = addQuotes;
-		public override TypeSpecifier ReturnType => Arg<ValueRef>(0).Type is ReferenceType and not WeakReferenceType ? new ReferenceType(ActualReturnType) : new WeakReferenceType(ActualReturnType);
+
+		public override TypeSpecifier ReturnType => Arg<ValueRef>(0).Type is ReferenceType and not WeakReferenceType
+			? new ReferenceType(ActualReturnType)
+			: new WeakReferenceType(ActualReturnType);
 
 		public override void Render(RenderContext ctx)
 		{
@@ -63,7 +67,7 @@ namespace Amethyst.IR.Instructions
 			}
 		}
 
-		protected override IValue? ComputeReturnValue(FunctionContext ctx)
+		protected override IValue ComputeReturnValue(FunctionContext ctx)
 		{
 			var val = Arg<ValueRef>(0);
 			var prop = Arg<ValueRef>(1);
@@ -90,7 +94,8 @@ namespace Amethyst.IR.Instructions
 					Remove();
 					return WeakReferenceType.From(nbt.Property(name, ActualReturnType));
 				}
-				else if (val.Value is MacroValue && val.Type is not ReferenceType)
+
+				if (val.Value is MacroValue && val.Type is not ReferenceType)
 				{
 					throw new MacroPropertyError();
 				}

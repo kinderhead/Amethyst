@@ -7,13 +7,23 @@ namespace Datapack.Net.Function.Commands
 	{
 		public class Get(IDataTarget target, double? scale = null, bool macro = false) : DataCommand(macro)
 		{
+			public readonly double? Scale = scale;
 			public readonly IDataTarget Target = target;
 
-			public readonly double? Scale = scale;
+			public Get(Position pos, string? path = null, double? scale = null, bool macro = false) : this(
+				new BlockDataTarget(pos, path), scale, macro)
+			{
+			}
 
-			public Get(Position pos, string? path = null, double? scale = null, bool macro = false) : this(new BlockDataTarget(pos, path), scale, macro) { }
-			public Get(IEntityTarget target, string? path = null, double? scale = null, bool macro = false) : this(new EntityDataTarget(target, path), scale, macro) { }
-			public Get(Storage target, string? path = null, double? scale = null, bool macro = false) : this(new StorageTarget(target, path), scale, macro) { }
+			public Get(IEntityTarget target, string? path = null, double? scale = null, bool macro = false) : this(
+				new EntityDataTarget(target, path), scale, macro)
+			{
+			}
+
+			public Get(Storage target, string? path = null, double? scale = null, bool macro = false) : this(
+				new StorageTarget(target, path), scale, macro)
+			{
+			}
 
 			protected override string PreBuild()
 			{
@@ -28,11 +38,11 @@ namespace Datapack.Net.Function.Commands
 
 		public class Merge : DataCommand
 		{
-			public readonly Position? TargetPos;
 			public readonly IEntityTarget? EntityTarget;
-			public readonly Storage? StorageTarget;
 
 			public readonly NBTCompound NBT;
+			public readonly Storage? StorageTarget;
+			public readonly Position? TargetPos;
 
 			public Merge(Position pos, NBTCompound nbt, bool macro = false) : base(macro)
 			{
@@ -57,7 +67,7 @@ namespace Datapack.Net.Function.Commands
 				var target = "";
 				if (TargetPos != null)
 				{
-					target = "block " + TargetPos.ToString();
+					target = "block " + TargetPos;
 				}
 
 				if (EntityTarget != null)
@@ -67,7 +77,7 @@ namespace Datapack.Net.Function.Commands
 
 				if (StorageTarget != null)
 				{
-					target = "storage " + StorageTarget.ToString();
+					target = "storage " + StorageTarget;
 				}
 
 				return $"data merge {target} {NBT}";
@@ -77,18 +87,29 @@ namespace Datapack.Net.Function.Commands
 		public class Modify(IDataTarget target, bool macro = false) : DataCommand(macro)
 		{
 			public readonly IDataTarget Target = target;
+			public int? End;
+			public string? Modifier;
 			public IDataTarget? Source;
 
 			public int? Start;
-			public int? End;
-			public string? Val;
 
 			public string? Type;
-			public string? Modifier;
+			public string? Val;
 
-			public Modify(Position target, string targetPath, bool macro = false) : this(new BlockDataTarget(target, targetPath), macro) { }
-			public Modify(IEntityTarget target, string targetPath, bool macro = false) : this(new EntityDataTarget(target, targetPath), macro) { }
-			public Modify(Storage target, string targetPath, bool macro = false) : this(new StorageTarget(target, targetPath), macro) { }
+			public Modify(Position target, string targetPath, bool macro = false) : this(
+				new BlockDataTarget(target, targetPath), macro)
+			{
+			}
+
+			public Modify(IEntityTarget target, string targetPath, bool macro = false) : this(
+				new EntityDataTarget(target, targetPath), macro)
+			{
+			}
+
+			public Modify(Storage target, string targetPath, bool macro = false) : this(
+				new StorageTarget(target, targetPath), macro)
+			{
+			}
 
 			public Modify Append()
 			{
@@ -184,7 +205,7 @@ namespace Datapack.Net.Function.Commands
 
 			protected override string PreBuild()
 			{
-				var builder = new StringBuilder($"data modify ");
+				var builder = new StringBuilder("data modify ");
 
 				builder.Append($"{Target.GetTarget()} {Type} {Modifier} ");
 
@@ -203,11 +224,21 @@ namespace Datapack.Net.Function.Commands
 		public class Remove(IDataTarget target, bool macro = false) : DataCommand(macro)
 		{
 			public readonly IDataTarget Target = target;
-			public readonly string? TargetPath;
 
-			public Remove(Position target, string targetPath, bool macro = false) : this(new BlockDataTarget(target, targetPath), macro) { }
-			public Remove(IEntityTarget target, string targetPath, bool macro = false) : this(new EntityDataTarget(target, targetPath), macro) { }
-			public Remove(Storage target, string targetPath, bool macro = false) : this(new StorageTarget(target, targetPath), macro) { }
+			public Remove(Position target, string targetPath, bool macro = false) : this(
+				new BlockDataTarget(target, targetPath), macro)
+			{
+			}
+
+			public Remove(IEntityTarget target, string targetPath, bool macro = false) : this(
+				new EntityDataTarget(target, targetPath), macro)
+			{
+			}
+
+			public Remove(Storage target, string targetPath, bool macro = false) : this(
+				new StorageTarget(target, targetPath), macro)
+			{
+			}
 
 			protected override string PreBuild() => $"data remove {Target.GetTarget()}";
 		}

@@ -1,48 +1,48 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>net10.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-  </PropertyGroup>
+    <PropertyGroup>
+        <TargetFramework>net10.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
 
-  <ItemGroup>
-    <None Include="..\.editorconfig" Link=".editorconfig" />
-    <None Include="..\LICENSE">
-      <Pack>True</Pack>
-      <PackagePath>\</PackagePath>
-    </None>
-  </ItemGroup>
+    <ItemGroup>
+        <None Include="..\.editorconfig" Link=".editorconfig"/>
+        <None Include="..\LICENSE">
+            <Pack>True</Pack>
+            <PackagePath>\</PackagePath>
+        </None>
+    </ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-  </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="Newtonsoft.Json" Version="13.0.3"/>
+    </ItemGroup>
 
-  <!-- <ItemGroup>
-    <ProjectReference Include="..\Datapack.Net.SourceGenerator\Datapack.Net.SourceGenerator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
-  </ItemGroup> -->
+    <!-- <ItemGroup>
+      <ProjectReference Include="..\Datapack.Net.SourceGenerator\Datapack.Net.SourceGenerator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+    </ItemGroup> -->
 
-  <ItemGroup>
-    <None Update="README.md">
-      <Pack>True</Pack>
-      <PackagePath>\</PackagePath>
-    </None>
-  </ItemGroup>
+    <ItemGroup>
+        <None Update="README.md">
+            <Pack>True</Pack>
+            <PackagePath>\</PackagePath>
+        </None>
+    </ItemGroup>
 
-	<PropertyGroup>
-		<EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
-		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-		<Title>Datapack.Net</Title>
-		<Authors>kinderhead</Authors>
-		<Description>A library for generating Minecraft Datapacks</Description>
-		<Copyright>MIT</Copyright>
-		<PackageProjectUrl>https://github.com/kinderhead/Amethyst/Datapack.Net</PackageProjectUrl>
-		<PackageReadmeFile>README.md</PackageReadmeFile>
-		<RepositoryUrl>https://github.com/kinderhead/Amethyst/Datapack.Net</RepositoryUrl>
-		<PackageTags>minecraft,datapack</PackageTags>
-		<Version>0.4.0</Version>
-		<PackageLicenseFile>LICENSE</PackageLicenseFile>
-		<LangVersion>preview</LangVersion>
-	</PropertyGroup>
+    <PropertyGroup>
+        <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
+        <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+        <Title>Datapack.Net</Title>
+        <Authors>kinderhead</Authors>
+        <Description>A library for generating Minecraft Datapacks</Description>
+        <Copyright>MIT</Copyright>
+        <PackageProjectUrl>https://github.com/kinderhead/Amethyst/Datapack.Net</PackageProjectUrl>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+        <RepositoryUrl>https://github.com/kinderhead/Amethyst/Datapack.Net</RepositoryUrl>
+        <PackageTags>minecraft,datapack</PackageTags>
+        <Version>0.4.0</Version>
+        <PackageLicenseFile>LICENSE</PackageLicenseFile>
+        <LangVersion>preview</LangVersion>
+    </PropertyGroup>
 
 </Project>

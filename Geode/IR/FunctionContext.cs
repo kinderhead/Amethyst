@@ -1,4 +1,4 @@
-using System.Text;
+using Datapack.Net.Data;
 using Datapack.Net.Function;
 using Datapack.Net.Function.Commands;
 using Datapack.Net.Utils;
@@ -10,48 +10,37 @@ using Geode.Util;
 using Geode.Util.Algorithm;
 using Geode.Values;
 using Spectre.Console;
+using System.Text;
 
 namespace Geode.IR
 {
 	public class FunctionContext : Graph<Block>
 	{
+		private readonly Stack<Scope> activeScopes = [];
+		private readonly List<Block> blocks = [];
 		public readonly ICompiler Compiler;
 		public readonly FunctionValue Decl;
-		public readonly IEnumerable<NamespacedID> Tags;
+		private readonly List<MCFunction> dependencies = [];
+
+		public readonly Block ExitBlock;
+
+		private readonly List<IValue> extraLocals = [];
+		public readonly bool HasTagPriority;
+		public readonly bool IsMacroFunction;
+		private readonly Dictionary<string, int> labelCounters = [];
 		public readonly LocationRange Location;
 
 		public readonly Stack<LocationRange> LocationStack = [];
-
-		public readonly Block ExitBlock;
-		public Block CurrentBlock { get; private set; }
-
-		public bool IsFinished => CurrentBlock == ExitBlock;
-
-		// If there's more than one block, then stack[-1].returning is used
-		public bool UsesStack => AllLocals.Any(i => i is StorageValue) || registersInUse.Count != 0 || tmpStackVars != 0 || Blocks.Count > 1;
-		public readonly bool IsMacroFunction;
-		public readonly bool HasTagPriority;
-
-		public bool InForkingExecute { get; private set; } = false;
-
-		public IReadOnlyCollection<Block> Blocks => blocks;
-		public IReadOnlyCollection<MCFunction> Dependencies => dependencies;
-		private readonly List<MCFunction> dependencies = [];
-		private readonly List<Block> blocks = [];
-		private readonly List<Scope> totalScopes = [];
-		private readonly Stack<Scope> activeScopes = [];
-		private readonly Dictionary<string, int> labelCounters = [];
 		private readonly Stack<(Block loop, Action iter, Block end)> loopStack = [];
 
 		// Could just be the max register used, but who knows if one goes poof somewhere
 		private readonly HashSet<int> registersInUse = [];
-		private int tmpStackVars = 0;
+		public readonly IEnumerable<NamespacedID> Tags;
+		private readonly List<Scope> totalScopes = [];
+		private int tmpStackVars;
 
-		private readonly List<IValue> extraLocals = [];
-		public IEnumerable<IValue> AllLocals => [.. totalScopes.SelectMany(i => i.Locals.Values).Select(i => i.Value), .. extraLocals];
-		public IEnumerable<Variable> AllVariables => AllLocals.Where(i => i is Variable).Cast<Variable>();
-
-		public FunctionContext(ICompiler compiler, FunctionValue decl, IEnumerable<NamespacedID> tags, LocationRange loc, bool hasTagPriority = false)
+		public FunctionContext(ICompiler compiler, FunctionValue decl, IEnumerable<NamespacedID> tags,
+			LocationRange loc, bool hasTagPriority = false)
 		{
 			Compiler = compiler;
 			Decl = decl;
@@ -79,12 +68,36 @@ namespace Geode.IR
 				else
 				{
 					// Maybe make it so that if the stack isn't used by the function, then use -1 and don't push new frame
-					RegisterLocal(i.Name, new StackValue(-2, compiler.IR.RuntimeID, $"args.{i.Name}", i.Type), Location);
+					RegisterLocal(i.Name, new StackValue(-2, compiler.IR.RuntimeID, $"args.{i.Name}", i.Type),
+						Location);
 				}
 			}
 		}
 
-		public FunctionContext(ICompiler compiler, FunctionValue decl, LocationRange loc) : this(compiler, decl, [], loc) { }
+		public FunctionContext(ICompiler compiler, FunctionValue decl, LocationRange loc) : this(compiler, decl, [],
+			loc)
+		{
+		}
+
+		public Block CurrentBlock { get; private set; }
+
+		public bool IsFinished => CurrentBlock == ExitBlock;
+
+		// If there's more than one block, then stack[-1].returning is used
+		public bool UsesStack => AllLocals.Any(i => i is StorageValue) || registersInUse.Count != 0 ||
+		                         tmpStackVars != 0 || Blocks.Count > 1;
+
+		public bool InForkingExecute { get; private set; }
+
+		public IReadOnlyCollection<Block> Blocks => blocks;
+		public IReadOnlyCollection<MCFunction> Dependencies => dependencies;
+
+		public IEnumerable<IValue> AllLocals =>
+		[
+			.. totalScopes.SelectMany(i => i.Locals.Values).Select(i => i.Value), .. extraLocals
+		];
+
+		public IEnumerable<Variable> AllVariables => AllLocals.Where(i => i is Variable).Cast<Variable>();
 
 		public void PushScope()
 		{
@@ -109,22 +122,20 @@ namespace Geode.IR
 
 			if (name.Contains(':'))
 			{
-				if (GetGlobal(new NamespacedID(name)) is IValue v)
+				if (GetGlobal(new(name)) is { } v)
 				{
 					return v;
 				}
-
-				return null;
 			}
-			else if (GetGlobalWalk(Decl.ID.GetContainingFolder(), name) is IValue v2)
+			else if (GetGlobalWalk(Decl.ID.GetContainingFolder(), name) is { } v2)
 			{
 				return v2;
 			}
-			else if (GetGlobal(new("minecraft", name)) is IValue v3)
+			else if (GetGlobal(new("minecraft", name)) is { } v3)
 			{
 				return v3;
 			}
-			else if (GetGlobal(new("builtin", name)) is IValue v4)
+			else if (GetGlobal(new("builtin", name)) is { } v4)
 			{
 				return v4;
 			}
@@ -133,7 +144,9 @@ namespace Geode.IR
 		}
 
 		public IValue? GetGlobal(NamespacedID id) => Compiler.IR.GetGlobal(id);
-		public IValue? GetGlobalWalk(string baseNamespace, string name) => Compiler.IR.GetGlobalWalk(baseNamespace, name);
+
+		public IValue? GetGlobalWalk(string baseNamespace, string name) =>
+			Compiler.IR.GetGlobalWalk(baseNamespace, name);
 
 		public IValue? GetConstructorOrNull(TypeSpecifier type) => Compiler.IR.GetConstructorOrNull(type);
 
@@ -144,12 +157,12 @@ namespace Geode.IR
 			return val;
 		}
 
-		public void RegisterLocal(string name, IValue val, LocationRange loc) 
+		public void RegisterLocal(string name, IValue val, LocationRange loc)
 		{
 			if (activeScopes.Peek().Locals.TryGetValue(name, out var orig))
-            {
-                throw new RedefinedSymbolError(name, orig.Location);
-            }
+			{
+				throw new RedefinedSymbolError(name, orig.Location);
+			}
 
 			activeScopes.Peek().Locals[name] = new(name, val, loc);
 		}
@@ -178,7 +191,7 @@ namespace Geode.IR
 
 		public ValueRef ImplicitCast(ValueRef val, TypeSpecifier type)
 		{
-			if (TryImplicitCast(val, type) is ValueRef ret)
+			if (TryImplicitCast(val, type) is { } ret)
 			{
 				return ret;
 			}
@@ -192,19 +205,23 @@ namespace Geode.IR
 			{
 				return val;
 			}
-			else if (type is VarType)
+
+			if (type is VarType)
 			{
 				return val;
 			}
-			else if (val.Type.CastFromOverload(val, type, this) is ValueRef cast)
+
+			if (val.Type.CastFromOverload(val, type, this) is { } cast)
 			{
 				return cast.SetType(type);
 			}
-			else if (type.CastToOverload(val, this) is ValueRef cast2)
+
+			if (type.CastToOverload(val, this) is { } cast2)
 			{
 				return cast2.SetType(type);
 			}
-			else if (val.Type.Implements(type))
+
+			if (val.Type.Implements(type))
 			{
 				return val.SetType(type);
 			}
@@ -214,23 +231,27 @@ namespace Geode.IR
 
 		public ValueRef ExplicitCast(ValueRef val, TypeSpecifier type)
 		{
-			if (val.Type.ExplicitCastFromOverload(val, type, this) is ValueRef cast)
+			if (val.Type.ExplicitCastFromOverload(val, type, this) is { } cast)
 			{
 				return cast.SetType(type);
 			}
-			else if (type.ExplicitCastToOverload(val, this) is ValueRef cast2)
+
+			if (type.ExplicitCastToOverload(val, this) is { } cast2)
 			{
 				return cast2.SetType(type);
 			}
-			else if (type.Implements(val.Type))
+
+			if (type.Implements(val.Type))
 			{
 				return val.SetType(type);
 			}
-			else if (type.EffectiveType == Datapack.Net.Data.NBTType.Int)
+
+			if (type.EffectiveType == NBTType.Int)
 			{
 				return Add(new LoadInsn(val, type)).SetType(type);
 			}
-			else if (TryImplicitCast(val, type) is ValueRef ret)
+
+			if (TryImplicitCast(val, type) is { } ret)
 			{
 				return ret;
 			}
@@ -238,7 +259,8 @@ namespace Geode.IR
 			throw new InvalidTypeError(val.Type.ToString(), type.ToString());
 		}
 
-		public ValueRef Call(NamespacedID id, params ValueRef[] args) => (GetGlobal(id) as FunctionValue ?? throw new UndefinedSymbolError(id.ToString())).CallBehavior(this, args);
+		public ValueRef Call(NamespacedID id, params ValueRef[] args) =>
+			(GetGlobal(id) as FunctionValue ?? throw new UndefinedSymbolError(id.ToString())).CallBehavior(this, args);
 
 		public IEnumerable<ValueRef> PrepArgs(FunctionType type, params ValueRef[] args)
 		{
@@ -260,7 +282,8 @@ namespace Geode.IR
 
 		public void Finish()
 		{
-			if (CurrentBlock.Instructions.Count == 0 || !CurrentBlock.Instructions[CurrentBlock.Instructions.Count - 1].IsReturn)
+			if (CurrentBlock.Instructions.Count == 0 ||
+			    !CurrentBlock.Instructions[CurrentBlock.Instructions.Count - 1].IsReturn)
 			{
 				throw new InvalidOperationException("Last block in function must have a return instruction");
 			}
@@ -284,17 +307,16 @@ namespace Geode.IR
 		}
 
 		/// <summary>
-		/// Branch current block without an else statement.
+		///     Branch current block without an else statement.
 		/// </summary>
 		/// <param name="cond">Condition</param>
 		/// <param name="label">Label name</param>
 		/// <param name="ifTrue">If true action</param>
 		/// <returns>True block</returns>
-		public Block Branch(ExecuteChain cond, string label, Action ifTrue)
+		public void Branch(ExecuteChain cond, string label, Action ifTrue)
 		{
 			label = GetNewLabelName(label);
 
-			var startingBlock = CurrentBlock;
 			var trueBlock = new Block($"{label}.true", GetNewInternalID(), this);
 			var endBlock = new Block($"{label}.end", GetNewInternalID(), this);
 
@@ -310,7 +332,7 @@ namespace Geode.IR
 
 			CurrentBlock = trueBlock;
 
-			bool tmpFork = InForkingExecute;
+			var tmpFork = InForkingExecute;
 
 			if (cond.Forks)
 			{
@@ -329,20 +351,17 @@ namespace Geode.IR
 			}
 
 			CurrentBlock = endBlock;
-
-			return trueBlock;
 		}
 
-		public (Block trueBlock, Block falseBlock) Branch(ExecuteChain cond, string label, Action ifTrue, Action ifFalse)
+		public void Branch(ExecuteChain cond, string label, Action ifTrue, Action ifFalse)
 		{
 			if (cond.Forks)
-            {
-                throw new ForkedElseError();
-            }
+			{
+				throw new ForkedElseError();
+			}
 
 			label = GetNewLabelName(label);
 
-			var startingBlock = CurrentBlock;
 			var trueBlock = new Block($"{label}.true", GetNewInternalID(), this);
 			var falseBlock = new Block($"{label}.false", GetNewInternalID(), this);
 			var endBlock = new Block($"{label}.end", GetNewInternalID(), this);
@@ -367,15 +386,12 @@ namespace Geode.IR
 			Add(new JumpInsn(endBlock));
 
 			CurrentBlock = endBlock;
-
-			return (trueBlock, falseBlock);
 		}
 
-		public Block Loop(Func<ExecuteChain> cond, string label, Action loop, Action iter)
+		public void Loop(Func<ExecuteChain> cond, string label, Action loop, Action iter)
 		{
 			label = GetNewLabelName(label);
 
-			var startingBlock = CurrentBlock;
 			var loopBlock = new Block($"{label}.loop", GetNewInternalID(), this);
 			var endBlock = new Block($"{label}.end", GetNewInternalID(), this);
 
@@ -392,8 +408,6 @@ namespace Geode.IR
 			Add(new BranchInsn(cond(), loopBlock, endBlock));
 
 			CurrentBlock = endBlock;
-
-			return loopBlock;
 		}
 
 		public void LoopBreak()
@@ -444,10 +458,7 @@ namespace Geode.IR
 		// Uses "A Simple, Fast Dominance Algorithm" by Keith D. Cooper, et al.
 		public Dictionary<Block, Block> CalculateImmediateDominators()
 		{
-			var idoms = new Dictionary<Block, Block>
-			{
-				[Start] = Start
-			};
+			var idoms = new Dictionary<Block, Block> { [Start] = Start };
 
 			var indices = this.PostorderIndices();
 
@@ -477,7 +488,7 @@ namespace Geode.IR
 
 					if (newIdom == null || pickedPred == null)
 					{
-						throw new Exception("Something very silly happened when calculating immediate dominators");
+						throw new("Something very silly happened when calculating immediate dominators");
 					}
 
 					foreach (var pred in i.Previous)
@@ -516,8 +527,9 @@ namespace Geode.IR
 		}
 
 		public Dictionary<Block, HashSet<Block>> CalculateDominanceFrontiers()
-        {
-            var doms = new Dictionary<Block, HashSet<Block>>(blocks.Select(i => new KeyValuePair<Block, HashSet<Block>>(i, [])));
+		{
+			var doms = new Dictionary<Block, HashSet<Block>>(blocks.Select(i =>
+				new KeyValuePair<Block, HashSet<Block>>(i, [])));
 			var idoms = CalculateImmediateDominators();
 
 			foreach (var i in blocks)
@@ -532,7 +544,7 @@ namespace Geode.IR
 							doms[runner].Add(i);
 							runner = idoms[runner];
 						}
-			 		}
+					}
 				}
 			}
 
@@ -549,7 +561,8 @@ namespace Geode.IR
 
 			foreach (var i in registersInUse)
 			{
-				new StackValue(-1, builder.RuntimeID, $"reg_{i}", PrimitiveType.Int).Store(builder.Reg(i), firstBlockRenderer);
+				new StackValue(-1, builder.RuntimeID, $"reg_{i}", PrimitiveType.Int).Store(builder.Reg(i),
+					firstBlockRenderer);
 			}
 
 			foreach (var i in blocks)
@@ -561,7 +574,8 @@ namespace Geode.IR
 
 			foreach (var i in registersInUse)
 			{
-				builder.Reg(i).Store(new StackValue(-1, builder.RuntimeID, $"reg_{i}", PrimitiveType.Int), firstBlockRenderer);
+				builder.Reg(i).Store(new StackValue(-1, builder.RuntimeID, $"reg_{i}", PrimitiveType.Int),
+					firstBlockRenderer);
 			}
 
 			if (UsesStack)
@@ -607,21 +621,27 @@ namespace Geode.IR
 		}
 
 		public void FancyPrintCommands()
-        {
-            AnsiConsole.MarkupLineInterpolated($"[orange1]Compiled functions for[/] [bold green]{Decl.ID}[/]");
+		{
+			AnsiConsole.MarkupLineInterpolated($"[orange1]Compiled functions for[/] [bold green]{Decl.ID}[/]");
 
 			foreach (var i in dependencies)
 			{
 				AnsiConsole.MarkupLineInterpolated($"[aqua]{i.ID}[/]");
 				AnsiConsole.WriteLine(i.Build() + "\n");
 			}
-        }
+		}
 
-		public NamespacedID GetNewInternalID() => new(Decl.ID.Namespace, $"{GeodeBuilder.InternalPath}/{GeodeBuilder.UniqueString}");
+		public NamespacedID GetNewInternalID() =>
+			new(Decl.ID.Namespace, $"{GeodeBuilder.InternalPath}/{GeodeBuilder.UniqueString}");
 
-		public StackValue GetIsFunctionReturningValue() => new(-1, Compiler.IR.RuntimeID, "returning", PrimitiveType.Bool);
-		public StackValue GetFunctionReturnValue() => GetFunctionReturnValue(Decl.FuncType.ReturnType, UsesStack ? -2 : -1);
-		public StackValue GetFunctionReturnValue(TypeSpecifier type, int depth = -2) => new(depth, Compiler.IR.RuntimeID, "ret", type);
+		public StackValue GetIsFunctionReturningValue() =>
+			new(-1, Compiler.IR.RuntimeID, "returning", PrimitiveType.Bool);
+
+		public StackValue GetFunctionReturnValue() =>
+			GetFunctionReturnValue(Decl.FuncType.ReturnType, UsesStack ? -2 : -1);
+
+		public StackValue GetFunctionReturnValue(TypeSpecifier type, int depth = -2) =>
+			new(depth, Compiler.IR.RuntimeID, "ret", type);
 
 		private class Scope
 		{
@@ -629,5 +649,5 @@ namespace Geode.IR
 		}
 	}
 
-	public record class LocalSymbol(string Name, IValue Value, LocationRange Location);
+	public record LocalSymbol(string Name, IValue Value, LocationRange Location);
 }

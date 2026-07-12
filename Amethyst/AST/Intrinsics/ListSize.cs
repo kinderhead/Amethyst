@@ -6,12 +6,14 @@ using Geode.Types;
 
 namespace Amethyst.AST.Intrinsics
 {
-	public class ListSize(FunctionType? type = null) : Intrinsic("amethyst:list/size", type ?? new(FunctionModifiers.None, PrimitiveType.Int, [
+	public class ListSize(FunctionType? type = null) : Intrinsic("amethyst:list/size", type ?? new(
+		FunctionModifiers.None, PrimitiveType.Int, [
 			new(ParameterModifiers.None, new ReferenceType(PrimitiveType.List), "this")
 		]))
 	{
 		public override IFunctionLike CloneWithType(FunctionType type) => new ListSize(type);
 
-		public override ValueRef Execute(FunctionContext ctx, params ValueRef[] args) => ctx.Add(new ListSizeInsn(args[0]));
+		public override ValueRef Execute(FunctionContext ctx, params ValueRef[] args) =>
+			ctx.Add(new ListSizeInsn(args[0]));
 	}
 }

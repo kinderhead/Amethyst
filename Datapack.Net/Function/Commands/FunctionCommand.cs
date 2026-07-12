@@ -5,12 +5,12 @@ namespace Datapack.Net.Function.Commands
 {
 	public class FunctionCommand : Command
 	{
+		public readonly Position? BlockArguments;
+		public readonly IEntityTarget? EntityArguments;
 		public readonly NamespacedID Function;
 		public readonly NBTCompound? NBTArguments;
-		public readonly IEntityTarget? EntityArguments;
-		public readonly Storage? StorageArguments;
-		public readonly Position? BlockArguments;
 		public readonly string Path = "";
+		public readonly Storage? StorageArguments;
 
 		public FunctionCommand(NamespacedID func, bool macro = false) : base(macro)
 		{
@@ -23,7 +23,8 @@ namespace Datapack.Net.Function.Commands
 			NBTArguments = arguments;
 		}
 
-		public FunctionCommand(NamespacedID func, IEntityTarget arguments, string path = "", bool macro = false) : base(macro)
+		public FunctionCommand(NamespacedID func, IEntityTarget arguments, string path = "", bool macro = false) :
+			base(macro)
 		{
 			Function = func;
 			Path = path;
@@ -37,7 +38,8 @@ namespace Datapack.Net.Function.Commands
 			StorageArguments = arguments;
 		}
 
-		public FunctionCommand(NamespacedID func, Position arguments, string path = "", bool macro = false) : base(macro)
+		public FunctionCommand(NamespacedID func, Position arguments, string path = "", bool macro = false) :
+			base(macro)
 		{
 			Function = func;
 			Path = path;
@@ -50,7 +52,8 @@ namespace Datapack.Net.Function.Commands
 
 			if (!func.Partial && func.Macro)
 			{
-				throw new InvalidOperationException($"Function {func.ID} has macro arguments, but is not called with them");
+				throw new InvalidOperationException(
+					$"Function {func.ID} has macro arguments, but is not called with them");
 			}
 		}
 
@@ -61,11 +64,13 @@ namespace Datapack.Net.Function.Commands
 
 			if (!func.Partial && !func.Macro)
 			{
-				throw new InvalidOperationException($"Function {func.ID} does not has macro arguments, but is called with them");
+				throw new InvalidOperationException(
+					$"Function {func.ID} does not has macro arguments, but is called with them");
 			}
 		}
 
-		public FunctionCommand(MCFunction func, IEntityTarget arguments, string path = "", bool macro = false) : base(macro)
+		public FunctionCommand(MCFunction func, IEntityTarget arguments, string path = "", bool macro = false) :
+			base(macro)
 		{
 			Function = func.ID;
 			Path = path;
@@ -73,7 +78,8 @@ namespace Datapack.Net.Function.Commands
 
 			if (!func.Partial && !func.Macro)
 			{
-				throw new InvalidOperationException($"Function {func.ID} does not has macro arguments, but is called with them");
+				throw new InvalidOperationException(
+					$"Function {func.ID} does not has macro arguments, but is called with them");
 			}
 		}
 
@@ -85,7 +91,8 @@ namespace Datapack.Net.Function.Commands
 
 			if (!func.Partial && !func.Macro)
 			{
-				throw new InvalidOperationException($"Function {func.ID} does not has macro arguments, but is called with them");
+				throw new InvalidOperationException(
+					$"Function {func.ID} does not has macro arguments, but is called with them");
 			}
 		}
 
@@ -97,7 +104,8 @@ namespace Datapack.Net.Function.Commands
 
 			if (!func.Partial && !func.Macro)
 			{
-				throw new InvalidOperationException($"Function {func.ID} does not has macro arguments, but is called with them");
+				throw new InvalidOperationException(
+					$"Function {func.ID} does not has macro arguments, but is called with them");
 			}
 		}
 
@@ -107,22 +115,23 @@ namespace Datapack.Net.Function.Commands
 			{
 				return $"function {Function} {NBTArguments}";
 			}
-			else if (EntityArguments != null)
+
+			if (EntityArguments != null)
 			{
 				return $"function {Function} with entity {EntityArguments.Get()} {Path}".Trim();
 			}
-			else if (StorageArguments != null)
+
+			if (StorageArguments != null)
 			{
 				return $"function {Function} with storage {StorageArguments} {Path}".Trim();
 			}
-			else if (BlockArguments != null)
+
+			if (BlockArguments != null)
 			{
 				return $"function {Function} with block {BlockArguments} {Path}".Trim();
 			}
-			else
-			{
-				return $"function {Function}";
-			}
+
+			return $"function {Function}";
 		}
 	}
 }

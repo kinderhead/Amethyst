@@ -4,11 +4,11 @@ using Geode.Errors;
 using Geode.IR;
 using Geode.IR.Instructions;
 using Geode.Types;
-using Geode.Values;
 
 namespace Amethyst.AST.Expressions
 {
-	public class CompoundExpression(LocationRange loc, IEnumerable<KeyValuePair<string, Expression>> values) : Expression(loc)
+	public class CompoundExpression(LocationRange loc, IEnumerable<KeyValuePair<string, Expression>> values)
+		: Expression(loc)
 	{
 #pragma warning disable IDE0028 // Wait for C# 15
 		public readonly Dictionary<string, Expression> Values = new(values);
@@ -27,7 +27,7 @@ namespace Amethyst.AST.Expressions
 
 			foreach (var (k, v) in Values)
 			{
-				if (type.HasProperty(k, true) is not TypeSpecifier t)
+				if (type.HasProperty(k, true) is not { } t)
 				{
 					throw new PropertyError(type.ToString(), k);
 				}
@@ -37,7 +37,7 @@ namespace Amethyst.AST.Expressions
 
 			foreach (var (k, _) in type.Properties)
 			{
-				if (!vals.ContainsKey(k) && type.DefaultPropertyValue(k) is LiteralValue v)
+				if (!vals.ContainsKey(k) && type.DefaultPropertyValue(k) is { } v)
 				{
 					vals[k] = v;
 				}

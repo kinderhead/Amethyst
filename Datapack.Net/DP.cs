@@ -8,13 +8,14 @@ namespace Datapack.Net
 {
 	public class DP
 	{
+		public readonly string FilePath;
+
+		private readonly HashSet<string> FilesWriten = [];
+		public readonly MCMeta Meta;
 		protected readonly List<ResourceType> types = [];
 
 		private FileStream? fileStream;
 		private ZipArchive? zipFile;
-
-		public readonly string FilePath;
-		public readonly MCMeta Meta;
 
 		public DP(string filePath, MCMeta meta)
 		{
@@ -35,11 +36,14 @@ namespace Datapack.Net
 			Meta = meta;
 		}
 
+		public Functions Functions => GetResource<Functions>();
+		public Tags Tags => GetResource<Tags>();
+
 		public void Build()
 		{
-			using (fileStream = new FileStream(FilePath, FileMode.Create))
+			using (fileStream = new(FilePath, FileMode.Create))
 			{
-				using (zipFile = new ZipArchive(fileStream, ZipArchiveMode.Create))
+				using (zipFile = new(fileStream, ZipArchiveMode.Create))
 				{
 					foreach (var type in types)
 					{
@@ -50,9 +54,6 @@ namespace Datapack.Net
 				}
 			}
 		}
-
-		public Functions Functions => GetResource<Functions>();
-		public Tags Tags => GetResource<Tags>();
 
 		public T GetResource<T>() where T : ResourceType
 		{
@@ -69,7 +70,6 @@ namespace Datapack.Net
 		{
 			while (EmptyFunctions())
 			{
-				;
 			}
 		}
 
@@ -103,11 +103,13 @@ namespace Datapack.Net
 					{
 						remove = true;
 					}
-					else if (i.Commands[e] is ReturnCommand ret && ret.Cmd is FunctionCommand retfunc && toRemove.Select(i => i.ID).Contains(retfunc.Function))
+					else if (i.Commands[e] is ReturnCommand ret && ret.Cmd is FunctionCommand retfunc &&
+					         toRemove.Select(i => i.ID).Contains(retfunc.Function))
 					{
 						i.Commands[e] = new ReturnCommand();
 					}
-					else if (i.Commands[e] is Execute ex && ex.Get<Run>().Command is FunctionCommand exfunc && toRemove.Select(i => i.ID).Contains(exfunc.Function))
+					else if (i.Commands[e] is Execute ex && ex.Get<Run>().Command is FunctionCommand exfunc &&
+					         toRemove.Select(i => i.ID).Contains(exfunc.Function))
 					{
 						remove = true;
 					}
@@ -124,7 +126,7 @@ namespace Datapack.Net
 			{
 				for (var e = 0; e < i.Values.Count; e++)
 				{
-					if (toRemove.FindIndex((a) => a.ID == i.Values[e]) != -1)
+					if (toRemove.FindIndex(a => a.ID == i.Values[e]) != -1)
 					{
 						i.Values.RemoveAt(e);
 						e--;
@@ -135,7 +137,6 @@ namespace Datapack.Net
 			return toRemove.Count != 0;
 		}
 
-		private readonly HashSet<string> FilesWriten = [];
 		internal void WriteFile(string path, string content)
 		{
 //#if DEBUG
@@ -149,7 +150,7 @@ namespace Datapack.Net
 			{
 				if (FilesWriten.Contains(path))
 				{
-					throw new Exception($"Datapack has duplicate file: {path}");
+					throw new($"Datapack has duplicate file: {path}");
 				}
 
 				var entry = zipFile.CreateEntry(path);

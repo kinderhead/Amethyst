@@ -19,13 +19,15 @@ namespace Geode.IR.Instructions
 			ReturnValue.Expect<LValue>().Store(new LiteralValue(false), ctx);
 
 			var cmd = new Execute();
-			(Invert ? cmd.Unless : cmd.If).Score(left.Target, left.Score, Op, right.Target, right.Score).Run(ctx.WithFaux(ctx => ReturnValue.Expect<LValue>().Store(new LiteralValue(true), ctx)).Single());
+			(Invert ? cmd.Unless : cmd.If).Score(left.Target, left.Score, Op, right.Target, right.Score).Run(
+				ctx.WithFaux(ctx => ReturnValue.Expect<LValue>().Store(new LiteralValue(true), ctx)).Single());
 			ctx.Add(cmd);
 		}
 
-		public override void ConfigureLifetime(Func<ValueRef, ValueRef, bool> tryLink, Action<ValueRef, ValueRef> markOverlap)
-        {
-            markOverlap(ReturnValue, Arg<ValueRef>(0));
+		public override void ConfigureLifetime(Func<ValueRef, ValueRef, bool> tryLink,
+			Action<ValueRef, ValueRef> markOverlap)
+		{
+			markOverlap(ReturnValue, Arg<ValueRef>(0));
 			markOverlap(ReturnValue, Arg<ValueRef>(1));
 		}
 	}

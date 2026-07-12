@@ -14,7 +14,8 @@ namespace Geode.IR.Instructions.Utils
 		{
 			// TODO: do this in ComputeReturnValue so that more optimizations can occur
 			var id = ((NBTString)Arg<ValueRef>(0).Expect<LiteralValue>().Value).Value;
-			ReturnValue.Expect<LValue>().Store(new LiteralValue(ctx.Builder.Functions.Sum(i => i.Tags.Contains(new(id)) ? 1 : 0)), ctx);
+			ReturnValue.Expect<LValue>()
+				.Store(new LiteralValue(ctx.Builder.Functions.Sum(i => i.Tags.Contains(new(id)) ? 1 : 0)), ctx);
 		}
 
 		protected override IValue? ComputeReturnValue(FunctionContext ctx) => null;

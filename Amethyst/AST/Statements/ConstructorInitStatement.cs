@@ -2,21 +2,20 @@ using Amethyst.AST.Expressions;
 using Amethyst.IR;
 using Amethyst.IR.Instructions;
 using Amethyst.IR.Types;
-using Datapack.Net.Data;
 using Geode;
 using Geode.Errors;
 using Geode.IR;
 using Geode.IR.Instructions;
 using Geode.Types;
 using Geode.Values;
-using System.Xml.Linq;
 
 namespace Amethyst.AST.Statements
 {
-	public class ConstructorInitStatement(LocationRange loc, AbstractTypeSpecifier self, Expression? baseCall) : Statement(loc)
+	public class ConstructorInitStatement(LocationRange loc, AbstractTypeSpecifier self, Expression? baseCall)
+		: Statement(loc)
 	{
-		public readonly AbstractTypeSpecifier Self = self;
 		public readonly Expression? BaseCall = baseCall;
+		public readonly AbstractTypeSpecifier Self = self;
 
 		public override void Compile(FunctionContext ctx)
 		{
@@ -36,7 +35,9 @@ namespace Amethyst.AST.Statements
 				throw new InvalidTypeError(actualThisType.ToString(), "struct or class");
 			}
 
-			var self = actualThisType is StructType ? ctx.RegisterLocal("this", thisType, Location) : new ValueRef(ctx.GetVariable("this"));
+			var self = actualThisType is StructType
+				? ctx.RegisterLocal("this", thisType, Location)
+				: new ValueRef(ctx.GetVariable("this"));
 
 			ValueRef? def = null;
 
@@ -44,7 +45,7 @@ namespace Amethyst.AST.Statements
 			{
 				call.Args.Insert(0, new VariableExpression(call.Location, "this"));
 			}
-			
+
 			if (BaseCall is not null)
 			{
 				def = BaseCall?.Execute(ctx, null);
@@ -58,7 +59,8 @@ namespace Amethyst.AST.Statements
 				}
 				else
 				{
-					var typeIDProp = ctx.Add(new PropertyInsn(self, new LiteralValue(StructType.TypeIDProperty), PrimitiveType.String));
+					var typeIDProp = ctx.Add(new PropertyInsn(self, new LiteralValue(StructType.TypeIDProperty),
+						PrimitiveType.String));
 					typeIDProp.Type.AssignmentOverload(typeIDProp, new LiteralValue(thisType.ID.ToString()), ctx);
 				}
 			}

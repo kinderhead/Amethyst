@@ -1,64 +1,57 @@
-using Datapack.Net.Data;
-using Geode.Errors;
 using Geode.IR.Passes;
 using Geode.Values;
-using System;
 using System.Text;
-using static Datapack.Net.Function.Commands.Execute.Conditional.Subcommand;
 
 namespace Geode.IR.Instructions
 {
 	public class PhiInsn(Variable variable) : DynamicInstruction, IPhiLike
 	{
+		private readonly Dictionary<Block, ValueRef> values = [];
+
+		public readonly Variable Variable = variable;
+
+		private Block? processed;
 		public override string Name => "phi";
 		public override TypeSpecifier ReturnType => Variable.Type;
 		public override bool ArgumentsAliveAtInsn => false;
-
-        public readonly Variable Variable = variable;
-
-        private readonly Dictionary<Block, ValueRef> values = [];
-        public IReadOnlyDictionary<Block, ValueRef> Values => values;
+		public IReadOnlyDictionary<Block, ValueRef> Values => values;
 
 		public override IEnumerable<ValueRef> Dependencies => Values.Values;
+
+		public void Process(Block block)
+		{
+			processed = block;
+
+			foreach (var (from, val) in values)
+			{
+				block.Phi.Map(from, val, ReturnValue);
+			}
+		}
 
 		public override void Render(RenderContext ctx) { }
 		protected override IValue? ComputeReturnValue(FunctionContext ctx) => null;
 
-		private Block? processed = null;
+		public void Add(Block from, ValueRef val) => values[from] = val;
 
-        public void Add(Block from, ValueRef val)
-        {
-            values[from] = val;
-        }
-
-		public override void ConfigureLifetime(Func<ValueRef, ValueRef, bool> tryLink, Action<ValueRef, ValueRef> markOverlap)
-        {
-            foreach (var (_, val) in values)
-            {
-                tryLink(ReturnValue, val);
-            }
-        }
-
-        public void Process(Block block)
-        {
-			processed = block;
-
-            foreach (var (from, val) in values)
-            {
-                block.Phi.Map(from, val, ReturnValue);
-            }
-        }
+		public override void ConfigureLifetime(Func<ValueRef, ValueRef, bool> tryLink,
+			Action<ValueRef, ValueRef> markOverlap)
+		{
+			foreach (var (_, val) in values)
+			{
+				tryLink(ReturnValue, val);
+			}
+		}
 
 		public override void ReplaceValue(ValueRef val, ValueRef with)
-        {
-            foreach (var (k, v) in values)
-            {
-                if (v == val)
-                {
-                    values[k] = with;
-                }
-            }
-        }
+		{
+			foreach (var (k, v) in values)
+			{
+				if (v == val)
+				{
+					values[k] = with;
+				}
+			}
+		}
 
 		public override void Remove()
 		{
@@ -74,22 +67,22 @@ namespace Geode.IR.Instructions
 		}
 
 		public override string Dump()
-        {
-            var builder = new StringBuilder();
+		{
+			var builder = new StringBuilder();
 
-            builder.Append($"{ReturnValue} = {Name} ");
+			builder.Append($"{ReturnValue} = {Name} ");
 
-            foreach (var (block, val) in Values)
-            {
-                builder.Append($"[{block}: {val}], ");
-            } 
+			foreach (var (block, val) in Values)
+			{
+				builder.Append($"[{block}: {val}], ");
+			}
 
-            if (Values.Count > 0)
-            {
-                builder.Length -= 2;
-            }
+			if (Values.Count > 0)
+			{
+				builder.Length -= 2;
+			}
 
-            return builder.ToString();
-        }
+			return builder.ToString();
+		}
 	}
 }

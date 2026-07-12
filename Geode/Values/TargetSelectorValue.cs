@@ -1,107 +1,16 @@
 using Datapack.Net.Data;
 using Datapack.Net.Function;
-using Datapack.Net.Function.Commands;
 using Geode.Errors;
 using Geode.Types;
 using Geode.Util;
 
 namespace Geode.Values
 {
-	public class TargetSelectorValue(TargetType type, MultiDictionary<string, IValue> args) : Value(new TargetSelectorType()), IDataWritable, IAdvancedMacroValue
+	public class TargetSelectorValue(TargetType type, MultiDictionary<string, IValue> args)
+		: Value(new TargetSelectorType()), IDataWritable, IAdvancedMacroValue
 	{
-		public readonly TargetType TargetType = type;
 		public readonly MultiDictionary<string, IValue> Arguments = args;
-
-		public override ScoreValue AsScore(RenderContext ctx) => throw new InvalidTypeError(Type.ToString(), "int");
-
-		public override FormattedText Render(FormattedText text, RenderContext ctx) => throw new NotImplementedException();
-
-		public bool IsSingle()
-		{
-			int? limit = null;
-
-			foreach (var (k, v) in Arguments)
-			{
-				if (k == "limit")
-				{
-					if (v is LiteralValue l && l.Is<NBTInt>(out var nbt))
-					{
-						limit = nbt.Value;
-					}
-					break;
-				}
-			}
-
-			if (TargetType is TargetType.e or TargetType.a && limit == 1)
-			{
-				return true;
-			}
-			else if (TargetType is TargetType.s && limit is null)
-			{
-				return true;
-			}
-			else if (TargetType is TargetType.p or TargetType.r && limit is null or 1)
-			{
-				return true;
-			}
-
-			return false;
-		}
-
-		public override string ToString()
-		{
-			var target = new MultiDictionary<string, string>();
-
-			foreach (var (k, v) in Arguments)
-			{
-				var arg = k;
-				var negated = false;
-
-				if (k.StartsWith('!'))
-                {
-                    arg = k[1..];
-					negated = true;
-                }
-
-				if (v is LiteralValue literal && literal.Is<NBTString>(out var str) && str.Value.Contains('!'))
-				{
-					throw new TargetSelectorNegatedLiteralError(str.Value);
-				}
-
-				string val;
-
-				// Remove quotes if constant
-				if ((arg is "type" || v.Type is RangeType) && v is IConstantValue c && c.Value is NBTString str2)
-				{
-					val = str2.Value;
-				}
-				else
-				{
-					val = v.ToString() ?? "";
-				}
-
-				if (arg is "sort" && v is IConstantValue c2 && c2.Value is NBTString str3 && str3.Value is not "nearest" and not "furthest" and not "random" and not "arbituary")
-				{
-					throw new TargetSelectorInvalidSortError(str3.Value);
-				}
-
-				if (arg is "gamemode" && v is IConstantValue c3 && c3.Value is NBTString str4 && str4.Value is not "survival" and not "creative" and not "spectator" and not "adventure")
-				{
-					throw new TargetSelectorInvalidSortError(str4.Value);
-				}
-
-				if (negated)
-                {
-                    target.Add(arg, '!' + val);
-                }
-				else
-                {
-					target.Add(arg, val);
-				}
-			}
-
-			return $"{TargetSelector.GetTypeName(TargetType)}{(target.Count > 0 ? $"[{TargetSelector.CompileDict(target)}]" : "")}";
-		}
+		public readonly TargetType TargetType = type;
 
 		public IConstantValue Macroize(Func<IValue, IConstantValue> apply)
 		{
@@ -123,12 +32,17 @@ namespace Geode.Values
 			return new LiteralValue(new NBTRawString(new TargetSelectorValue(TargetType, newArgs).ToString()), Type);
 		}
 
+		public override ScoreValue AsScore(RenderContext ctx) => throw new InvalidTypeError(Type.ToString(), "int");
+
+		public override FormattedText Render(FormattedText text, RenderContext ctx) =>
+			throw new NotImplementedException();
+
 		public void StoreTo(DataTargetValue val, RenderContext ctx)
 		{
 			foreach (var i in Arguments["name"].Concat(Arguments["!name"]))
 			{
 				if (i is not IConstantValue)
-                {
+				{
 					throw new TargetSelectorMacroArgumentError("name");
 				}
 			}
@@ -146,6 +60,99 @@ namespace Geode.Values
 				// Macroize returns NBTRawString, so make it a regular string to add quotes
 				val.Store(new LiteralValue(args[0].Value.Build(), Type), ctx);
 			});
+		}
+
+		public bool IsSingle()
+		{
+			int? limit = null;
+
+			foreach (var (k, v) in Arguments)
+			{
+				if (k == "limit")
+				{
+					if (v is LiteralValue l && l.Is<NBTInt>(out var nbt))
+					{
+						limit = nbt.Value;
+					}
+
+					break;
+				}
+			}
+
+			if (TargetType is TargetType.e or TargetType.a && limit == 1)
+			{
+				return true;
+			}
+
+			if (TargetType is TargetType.s && limit is null)
+			{
+				return true;
+			}
+
+			if (TargetType is TargetType.p or TargetType.r && limit is null or 1)
+			{
+				return true;
+			}
+
+			return false;
+		}
+
+		public override string ToString()
+		{
+			var target = new MultiDictionary<string, string>();
+
+			foreach (var (k, v) in Arguments)
+			{
+				var arg = k;
+				var negated = false;
+
+				if (k.StartsWith('!'))
+				{
+					arg = k[1..];
+					negated = true;
+				}
+
+				if (v is LiteralValue literal && literal.Is<NBTString>(out var str) && str.Value.Contains('!'))
+				{
+					throw new TargetSelectorNegatedLiteralError(str.Value);
+				}
+
+				string val;
+
+				// Remove quotes if constant
+				if ((arg is "type" || v.Type is RangeType) && v is IConstantValue c && c.Value is NBTString str2)
+				{
+					val = str2.Value;
+				}
+				else
+				{
+					val = v.ToString() ?? "";
+				}
+
+				if (arg is "sort" && v is IConstantValue c2 && c2.Value is NBTString str3 &&
+				    str3.Value is not "nearest" and not "furthest" and not "random" and not "arbituary")
+				{
+					throw new TargetSelectorInvalidSortError(str3.Value);
+				}
+
+				if (arg is "gamemode" && v is IConstantValue c3 && c3.Value is NBTString str4 &&
+				    str4.Value is not "survival" and not "creative" and not "spectator" and not "adventure")
+				{
+					throw new TargetSelectorInvalidSortError(str4.Value);
+				}
+
+				if (negated)
+				{
+					target.Add(arg, '!' + val);
+				}
+				else
+				{
+					target.Add(arg, val);
+				}
+			}
+
+			return
+				$"{TargetSelector.GetTypeName(TargetType)}{(target.Count > 0 ? $"[{TargetSelector.CompileDict(target)}]" : "")}";
 		}
 	}
 }

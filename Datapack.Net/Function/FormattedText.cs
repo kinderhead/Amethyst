@@ -1,15 +1,15 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Datapack.Net.Function
 {
 	public class FormattedText
 	{
+		private readonly Stack<Modifiers> ModifierStack = [];
 		private readonly JArray Obj = [];
-		public bool HasHoverOrClickEvents = false;
+		public bool HasHoverOrClickEvents;
 		public bool Macro = false;
 		public int Count => Obj.Count;
-
-		private readonly Stack<Modifiers> ModifierStack = [];
 
 		public FormattedText PushModifiers(Modifiers mod)
 		{
@@ -32,7 +32,7 @@ namespace Datapack.Net.Function
 			}
 			else
 			{
-				Obj.Add(modifiers.Value.Process(new JObject(new JProperty("text", str)), this));
+				Obj.Add(modifiers.Value.Process(new(new JProperty("text", str)), this));
 			}
 
 			return this;
@@ -41,11 +41,15 @@ namespace Datapack.Net.Function
 		public FormattedText Score(IEntityTarget target, Score score, Modifiers? modifiers = null)
 		{
 			modifiers ??= ModifierStack.Count != 0 ? ModifierStack.Peek() : new();
-			Obj.Add(modifiers.Value.Process(new JObject(new JProperty("score", new JObject(new JProperty("name", target.RequireOne().Get()), new JProperty("objective", score.Name)))), this));
+			Obj.Add(modifiers.Value.Process(
+				new(new JProperty("score",
+					new JObject(new JProperty("name", target.RequireOne().Get()),
+						new JProperty("objective", score.Name)))), this));
 			return this;
 		}
 
-		public FormattedText NBT(IDataTarget target, bool interpret = false, bool plain = false, Modifiers? modifiers = null)
+		public FormattedText NBT(IDataTarget target, bool interpret = false, bool plain = false,
+			Modifiers? modifiers = null)
 		{
 			modifiers ??= ModifierStack.Count != 0 ? ModifierStack.Peek() : new();
 			var nbt = new JObject(new JProperty("nbt", target.Path), new JProperty(target.Type, target.Source));
@@ -67,7 +71,8 @@ namespace Datapack.Net.Function
 		public FormattedText Entity(IEntityTarget target, string sep = ", ", Modifiers? modifiers = null)
 		{
 			modifiers ??= ModifierStack.Count != 0 ? ModifierStack.Peek() : new();
-			Obj.Add(modifiers.Value.Process(new JObject(new JProperty("selector", target.Get()), new JProperty("separator", sep)), this));
+			Obj.Add(modifiers.Value.Process(
+				new(new JProperty("selector", target.Get()), new JProperty("separator", sep)), this));
 			return this;
 		}
 
@@ -77,7 +82,8 @@ namespace Datapack.Net.Function
 		{
 			for (var i = 1; i < Obj.Count; i++)
 			{
-				if (Obj[i - 1] is JValue v1 && v1.Type == JTokenType.String && Obj[i] is JValue v2 && v2.Type == JTokenType.String)
+				if (Obj[i - 1] is JValue v1 && v1.Type == JTokenType.String && Obj[i] is JValue v2 &&
+				    v2.Type == JTokenType.String)
 				{
 					v1.Value += (string?)v2.Value;
 					Obj.RemoveAt(i--);
@@ -87,7 +93,7 @@ namespace Datapack.Net.Function
 			return this;
 		}
 
-		public override string ToString() => ToJson().ToString(Newtonsoft.Json.Formatting.None);
+		public override string ToString() => ToJson().ToString(Formatting.None);
 		public JArray ToJson() => Obj;
 
 		public struct Modifiers()

@@ -16,7 +16,9 @@ namespace Amethyst.IR.Types
 		public readonly TypeSpecifier Inner = inner;
 		public readonly bool Mutable = mutable;
 
-		public override IEnumerable<TypeSpecifier> Subtypes => [Inner]; // Shouldn't need to unecessarily include the base subtypes here
+		public override IEnumerable<TypeSpecifier> Subtypes =>
+			[Inner]; // Shouldn't need to unecessarily include the base subtypes here
+
 		public override LiteralValue DefaultValue => new($"storage amethyst:runtime null.{Guid.NewGuid()}", this);
 		public override NBTType EffectiveType => NBTType.String;
 		public override TypeSpecifier BaseClass => this;
@@ -61,7 +63,8 @@ namespace Amethyst.IR.Types
 
 				return ctx.Add(new ReferenceInsn(val));
 			}
-			else if (val.Type is WeakReferenceType weak && weak.Inner.Implements(Inner))
+
+			if (val.Type is WeakReferenceType weak && weak.Inner.Implements(Inner))
 			{
 				return ctx.Add(new ResolveWeakRefInsn(val));
 			}
@@ -75,7 +78,8 @@ namespace Amethyst.IR.Types
 			{
 				return Deref(val, ctx);
 			}
-			else if (to is ReferenceType && Inner is VoidType)
+
+			if (to is ReferenceType && Inner is VoidType)
 			{
 				return val;
 			}
@@ -89,7 +93,8 @@ namespace Amethyst.IR.Types
 			{
 				return ctx.Add(new LoadInsn(Deref(val, ctx), to));
 			}
-			else if (to is ReferenceType r && r.Inner.Implements(Inner))
+
+			if (to is ReferenceType r && r.Inner.Implements(Inner))
 			{
 				return val;
 			}
@@ -97,13 +102,16 @@ namespace Amethyst.IR.Types
 			return null;
 		}
 
-		public override void ExecuteChainOverload(ValueRef val, ExecuteChain chain, FunctionContext ctx, bool invert = false) => chain.Add(new IfReferenceExists(val, invert));
+		public override void ExecuteChainOverload(ValueRef val, ExecuteChain chain, FunctionContext ctx,
+			bool invert = false) => chain.Add(new IfReferenceExists(val, invert));
 
 		protected override bool EqualsImpl(TypeSpecifier obj) => obj is ReferenceType p && p.Inner == Inner;
 		public override object Clone() => new ReferenceType((TypeSpecifier)Inner.Clone(), Mutable);
 
 		public virtual ValueRef Deref(ValueRef src, FunctionContext ctx) => ctx.Add(new DereferenceInsn(src));
-		public static LiteralValue From(DataTargetValue val) => new(val.Target.GetTarget(), new ReferenceType(val.Type));
+
+		public static LiteralValue From(DataTargetValue val) =>
+			new(val.Target.GetTarget(), new ReferenceType(val.Type));
 
 		public static ValueRef TryDeref(ValueRef src, FunctionContext ctx)
 		{

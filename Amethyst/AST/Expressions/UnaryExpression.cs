@@ -1,5 +1,4 @@
-﻿using Amethyst.IR.Instructions;
-using Amethyst.IR.Types;
+﻿using Amethyst.IR.Types;
 using Geode;
 using Geode.Errors;
 using Geode.IR;
@@ -49,7 +48,8 @@ namespace Amethyst.AST.Expressions
 					ctx.Add(new StoreInsn(val, dec));
 					return val;
 				case UnaryOperation.Negate:
-					return ctx.Add(new MulInsn(ctx.AddLoad(ctx.ImplicitCast(val, PrimitiveType.Int)), new LiteralValue(-1)));
+					return ctx.Add(new MulInsn(ctx.AddLoad(ctx.ImplicitCast(val, PrimitiveType.Int)),
+						new LiteralValue(-1)));
 				case UnaryOperation.Reference:
 					if (Value is IPropertyLikeExpression)
 					{
@@ -62,7 +62,7 @@ namespace Amethyst.AST.Expressions
 					{
 						return val;
 					}
-					
+
 					return ctx.ImplicitCast(val, new WeakReferenceType(val.Type));
 				case UnaryOperation.Dereference:
 					if (val.Type is not ReferenceType rt)

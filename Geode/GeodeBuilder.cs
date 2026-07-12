@@ -49,7 +49,8 @@ namespace Geode
 
 		public void AddFunctions(params IEnumerable<FunctionContext> funcs) => Functions.AddRange(funcs);
 
-		private bool failed = false;
+		private bool failed;
+
 		public bool Compile()
 		{
 			failed = false;
@@ -113,12 +114,13 @@ namespace Geode
 		}
 
 		public T ApplyPass<T>() where T : IPass, new() => ApplyPass(new T());
+
 		public T ApplyPass<T>(T pass) where T : IPass
 		{
 			if (pass.MinimumOptimizationLevel > Options.OptimizationLevel)
-            {
-                return pass;
-            }
+			{
+				return pass;
+			}
 
 			foreach (var i in Functions)
 			{
@@ -185,10 +187,8 @@ namespace Geode
 			{
 				throw new RedefinedSymbolError(sym.ID.ToString(), old.Location);
 			}
-			else
-			{
-				Symbols[sym.ID] = sym;
-			}
+
+			Symbols[sym.ID] = sym;
 		}
 
 		public void AddType(GlobalTypeSymbol sym)
@@ -197,13 +197,12 @@ namespace Geode
 			{
 				throw new RedefinedSymbolError(sym.ID.ToString(), old.Location);
 			}
-			else
-			{
-				Types[sym.ID] = sym;
-			}
+
+			Types[sym.ID] = sym;
 		}
 
-		public StorageValue AddGlobal(NamespacedID id, TypeSpecifier type, LocationRange loc, string context = "globals")
+		public StorageValue AddGlobal(NamespacedID id, TypeSpecifier type, LocationRange loc,
+			string context = "globals")
 		{
 			var val = new StorageValue(new NamespacedID(id.Namespace, context), id.Path.Replace('/', '.'), type);
 			AddSymbol(new(id, loc, val));
@@ -228,11 +227,12 @@ namespace Geode
 			return null;
 		}
 
-		public IValue? GetGlobalWalk(string baseNamespace, string name) => NamespaceWalk(baseNamespace, name, Symbols)?.Value;
+		public IValue? GetGlobalWalk(string baseNamespace, string name) =>
+			NamespaceWalk(baseNamespace, name, Symbols)?.Value;
 
 		public IValue? GetConstructorOrNull(TypeSpecifier type)
 		{
-			if (GetGlobal(type.ID) is IValue v && v.Type is FunctionType funcType && funcType.ReturnType == type)
+			if (GetGlobal(type.ID) is { } v && v.Type is FunctionType funcType && funcType.ReturnType == type)
 			{
 				return v;
 			}
@@ -288,7 +288,7 @@ namespace Geode
 
 // TODO: Remove this debugging measure
 #if true
-		private static int uniqueIndex = 0;
+		private static int uniqueIndex;
 		public static string UniqueString => $"{uniqueIndex++}";
 #else
 		public static string UniqueString => Guid.NewGuid().ToString();
@@ -301,20 +301,22 @@ namespace Geode
 			{
 				return v;
 			}
-			else if (baseNamespace.Contains('/'))
+
+			if (baseNamespace.Contains('/'))
 			{
 				return NamespaceWalk(baseNamespace[..baseNamespace.LastIndexOf('/')], name, syms);
 			}
-			else if (baseNamespace.Contains(':'))
+
+			if (baseNamespace.Contains(':'))
 			{
 				return NamespaceWalk(baseNamespace[..baseNamespace.LastIndexOf(':')], name, syms);
 			}
-			else
-			{
-				return default;
-			}
+
+			return default;
 		}
 
-		private static DP GetDP(IOptions opts) => new(opts.Output, new MCMeta().SetDescription("A project made with Amethyst").SetMinVersion(opts.PackVersion).SetMaxVersion(opts.PackVersion));
+		private static DP GetDP(IOptions opts) => new(opts.Output,
+			new MCMeta().SetDescription("A project made with Amethyst").SetMinVersion(opts.PackVersion)
+				.SetMaxVersion(opts.PackVersion));
 	}
 }

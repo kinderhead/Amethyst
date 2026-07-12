@@ -1,35 +1,35 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>net10.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-    <Title>Geode</Title>
-    <Authors>kinderhead</Authors>
-    <Description>An intermediate representation platform for creating Minecraft datapacks with high-level programming languages.</Description>
-    <Copyright>MIT</Copyright>
-    <PackageProjectUrl>https://github.com/kinderhead/Amethyst/Geode</PackageProjectUrl>
-    <PackageReadmeFile>README.md</PackageReadmeFile>
-    <RepositoryUrl>https://github.com/kinderhead/Amethyst/Geode</RepositoryUrl>
-    <PackageTags>minecraft,datapack</PackageTags>
-    <AssemblyVersion>0.1.0</AssemblyVersion>
-    <LangVersion>preview</LangVersion>
-  </PropertyGroup>
+    <PropertyGroup>
+        <TargetFramework>net10.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+        <Title>Geode</Title>
+        <Authors>kinderhead</Authors>
+        <Description>An intermediate representation platform for creating Minecraft datapacks with high-level programming languages.</Description>
+        <Copyright>MIT</Copyright>
+        <PackageProjectUrl>https://github.com/kinderhead/Amethyst/Geode</PackageProjectUrl>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+        <RepositoryUrl>https://github.com/kinderhead/Amethyst/Geode</RepositoryUrl>
+        <PackageTags>minecraft,datapack</PackageTags>
+        <AssemblyVersion>0.1.0</AssemblyVersion>
+        <LangVersion>preview</LangVersion>
+    </PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Spectre.Console" Version="0.51.1" />
-  </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="Spectre.Console" Version="0.51.1"/>
+    </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\Datapack.Net\Datapack.Net.csproj" />
-  </ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\Datapack.Net\Datapack.Net.csproj"/>
+    </ItemGroup>
 
-  <ItemGroup>
-    <None Update="README.md">
-      <Pack>True</Pack>
-      <PackagePath>\</PackagePath>
-    </None>
-  </ItemGroup>
+    <ItemGroup>
+        <None Update="README.md">
+            <Pack>True</Pack>
+            <PackagePath>\</PackagePath>
+        </None>
+    </ItemGroup>
 
 </Project>

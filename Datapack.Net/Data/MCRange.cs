@@ -2,8 +2,8 @@
 {
 	public class MCRange<T> where T : struct, IEquatable<T>, IConvertible
 	{
-		public T? Min;
 		public T? Max;
+		public T? Min;
 
 		public MCRange(T min, T max)
 		{
@@ -12,10 +12,10 @@
 		}
 
 		/// <summary>
-		/// Create a range from one number.
-		/// If gte is null, than only a single value is returned.
-		/// If gte is true, then the range will accept numbers greater than or equal to val.
-		/// If gte is false, then the range will accept numbers less than or equal to val.
+		///     Create a range from one number.
+		///     If gte is null, than only a single value is returned.
+		///     If gte is true, then the range will accept numbers greater than or equal to val.
+		///     If gte is false, then the range will accept numbers less than or equal to val.
 		/// </summary>
 		/// <param name="val">Value</param>
 		/// <param name="gte">Greater than or equal to</param>
@@ -45,19 +45,16 @@
 				{
 					return $"{Min}";
 				}
-				else
-				{
-					return $"{Min}..{Max}";
-				}
+
+				return $"{Min}..{Max}";
 			}
-			else if (Max == null)
+
+			if (Max == null)
 			{
 				return $"{Min}..";
 			}
-			else
-			{
-				return $"..{Max}";
-			}
+
+			return $"..{Max}";
 		}
 
 		public static implicit operator MCRange<T>(T val) => new(val);

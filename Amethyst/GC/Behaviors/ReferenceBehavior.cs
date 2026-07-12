@@ -2,9 +2,6 @@
 using Amethyst.IR.Types;
 using Geode;
 using Geode.IR;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Amethyst.GC.Behaviors
 {

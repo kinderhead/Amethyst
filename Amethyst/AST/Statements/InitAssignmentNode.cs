@@ -1,6 +1,4 @@
-﻿using Amethyst.AST.Expressions;
-using Amethyst.Errors;
-using Amethyst.IR.Types;
+﻿using Amethyst.Errors;
 using Geode;
 using Geode.IR;
 using Geode.IR.Instructions;
@@ -14,20 +12,29 @@ namespace Amethyst.AST.Statements
 	{
 		None = 0,
 		Const = 1,
-		Static = 2,
+		Static = 2
 	}
 
-	public class InitAssignmentNode(LocationRange loc, StorageModifiers mod, AbstractTypeSpecifier type, string name, Expression? expr) : Statement(loc)
+	public class InitAssignmentNode(
+		LocationRange loc,
+		StorageModifiers mod,
+		AbstractTypeSpecifier type,
+		string name,
+		Expression? expr) : Statement(loc)
 	{
-		public readonly StorageModifiers Modifiers = mod;
-		public readonly AbstractTypeSpecifier Type = type;
-		public readonly string Name = name;
 		public readonly Expression? Expression = expr;
+		public readonly StorageModifiers Modifiers = mod;
+		public readonly string Name = name;
+		public readonly AbstractTypeSpecifier Type = type;
 
 		public override void Compile(FunctionContext ctx)
 		{
 			var type = Type.Resolve(ctx, Expression is not null);
-			var val = Expression is null ? type.DefaultValue : Expression.Execute(Modifiers.HasFlag(StorageModifiers.Static) ? ((Compiler)ctx.Compiler).GlobalInitFunc : ctx, type is VarType ? null : type);
+			var val = Expression is null
+				? type.DefaultValue
+				: Expression.Execute(
+					Modifiers.HasFlag(StorageModifiers.Static) ? ((Compiler)ctx.Compiler).GlobalInitFunc : ctx,
+					type is VarType ? null : type);
 
 			if (type is VarType && Expression is not null)
 			{
@@ -52,7 +59,8 @@ namespace Amethyst.AST.Statements
 			}
 			else if (Modifiers.HasFlag(StorageModifiers.Static))
 			{
-				var dest = ctx.Compiler.IR.AddGlobal($"{ctx.Decl.ID}/{GeodeBuilder.InternalPath}/{Name}", type, Location, "static");
+				var dest = ctx.Compiler.IR.AddGlobal($"{ctx.Decl.ID}/{GeodeBuilder.InternalPath}/{Name}", type,
+					Location, "static");
 				ctx.RegisterLocal(Name, dest, Location);
 
 				if (Expression is not null)

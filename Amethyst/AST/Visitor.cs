@@ -13,15 +13,14 @@ using Geode.Chains;
 using Geode.Errors;
 using Geode.Types;
 using Geode.Util;
-using Geode.Values;
 using System.Text.RegularExpressions;
 
 namespace Amethyst.AST
 {
 	public partial class Visitor(string filename, Compiler compiler) : AmethystBaseVisitor<Node>
 	{
-		public readonly string Filename = filename;
 		public readonly Compiler Compiler = compiler;
+		public readonly string Filename = filename;
 
 		private string currentNamespace = "minecraft";
 
@@ -35,21 +34,23 @@ namespace Amethyst.AST
 				{
 					continue;
 				}
-				else if (i is AmethystParser.NamespaceContext ns)
+
+				switch (i)
 				{
-					currentNamespace = Visit(ns.id());
-				}
-				else if (i is AmethystParser.FunctionContext func)
-				{
-					root.Children.Add((FunctionNode)Visit(func));
-				}
-				else if (i is AmethystParser.InitAssignmentStatementContext init)
-				{
-					root.Children.Add(new GlobalVariableNode(Loc(init), Visit(init.type()), IdentifierToID(Visit(init.id())), init.expression() is null ? null : Visit(init.expression())));
-				}
-				else if (i is AmethystParser.StructContext type)
-				{
-					root.Children.Add((IRootChild)Visit(type));
+					case AmethystParser.NamespaceContext ns:
+						currentNamespace = Visit(ns.id());
+						break;
+					case AmethystParser.FunctionContext func:
+						root.Children.Add((FunctionNode)Visit(func));
+						break;
+					case AmethystParser.InitAssignmentStatementContext init:
+						root.Children.Add(new GlobalVariableNode(Loc(init), Visit(init.type()),
+							IdentifierToID(Visit(init.id())),
+							init.expression() is null ? null : Visit(init.expression())));
+						break;
+					case AmethystParser.StructContext type:
+						root.Children.Add((IRootChild)Visit(type));
+						break;
 				}
 			}
 
@@ -75,22 +76,23 @@ namespace Amethyst.AST
 				}
 			}
 
-			return new FunctionNode(Loc(context), [.. context.functionTag().Select(i =>
-			{
-				var text = Visit(i.id());
-				if (text.Contains(':'))
-				{
-					return new NamespacedID(text);
-				}
-				else if (text is "load" or "tick")
-				{
-					return new NamespacedID("minecraft", text);
-				}
-				else
-				{
-					return new NamespacedID(currentNamespace, text);
-				}
-			})],
+			return new FunctionNode(Loc(context), [
+					.. context.functionTag().Select(i =>
+					{
+						var text = Visit(i.id());
+						if (text.Contains(':'))
+						{
+							return new(text);
+						}
+
+						if (text is "load" or "tick")
+						{
+							return new("minecraft", text);
+						}
+
+						return new NamespacedID(currentNamespace, text);
+					})
+				],
 				mod, Visit(context.type()),
 				IdentifierToID(Visit(context.name)),
 				Visit(context.paramList()),
@@ -98,7 +100,8 @@ namespace Amethyst.AST
 			);
 		}
 
-		public override Node VisitStatement([NotNull] AmethystParser.StatementContext context) => Visit(context.children[0]);
+		public override Node VisitStatement([NotNull] AmethystParser.StatementContext context) =>
+			Visit(context.children[0]);
 
 		public override Node VisitBlock([NotNull] AmethystParser.BlockContext context)
 		{
@@ -143,13 +146,16 @@ namespace Amethyst.AST
 				type = ContainerType.Class;
 			}
 
-			return new StructNode(type, Loc(context), id, context.simpleType() is null ? null : Visit(context.simpleType()), props, methods);
+			return new StructNode(type, Loc(context), id,
+				context.simpleType() is null ? null : Visit(context.simpleType()), props, methods);
 		}
 
 		public override Node VisitMethod([NotNull] AmethystParser.MethodContext context)
 		{
 			var mod = FunctionModifiers.None;
-			foreach (var i in context.functionModifier().Length == 0 ? context.methodModifier().Select(i => i.GetText()) : context.functionModifier().Select(i => i.GetText()))
+			foreach (var i in context.functionModifier().Length == 0
+				         ? context.methodModifier().Select(i => i.GetText())
+				         : context.functionModifier().Select(i => i.GetText()))
 			{
 				if (i == "virtual")
 				{
@@ -173,13 +179,13 @@ namespace Amethyst.AST
 			{
 				return new MethodNode(Loc(context), [], mod, Visit(context.type()), id, args, block);
 			}
-			else
-			{
-				return new ConstructorNode(Loc(context), [], mod, id, args, context.expression() is null ? null : Visit(context.expression()), block);
-			}
+
+			return new ConstructorNode(Loc(context), [], mod, id, args,
+				context.expression() is null ? null : Visit(context.expression()), block);
 		}
 
-		public override Node VisitInitAssignmentStatement([NotNull] AmethystParser.InitAssignmentStatementContext context)
+		public override Node VisitInitAssignmentStatement(
+			[NotNull] AmethystParser.InitAssignmentStatementContext context)
 		{
 			var flags = StorageModifiers.None;
 
@@ -193,11 +199,18 @@ namespace Amethyst.AST
 				flags |= StorageModifiers.Static;
 			}
 
-			return new InitAssignmentNode(Loc(context), flags, Visit(context.type()), Visit(context.id()), context.expression() is null ? null : Visit(context.expression()));
+			return new InitAssignmentNode(Loc(context), flags, Visit(context.type()), Visit(context.id()),
+				context.expression() is null ? null : Visit(context.expression()));
 		}
-		
-		public override Node VisitExpressionStatement([NotNull] AmethystParser.ExpressionStatementContext context) => new ExpressionStatement(Loc(context), Visit(context.expression()));
-		public override Node VisitExecuteStatement([NotNull] AmethystParser.ExecuteStatementContext context) => new ExecuteStatement(Loc(context), context.executeSubcommand().Select(i => (ExecuteStatementSubcommand)Visit(i)), Visit(context.statement().First()), context.statement().Length == 2 ? Visit(context.statement().Last()) : null);
+
+		public override Node VisitExpressionStatement([NotNull] AmethystParser.ExpressionStatementContext context) =>
+			new ExpressionStatement(Loc(context), Visit(context.expression()));
+
+		public override Node VisitExecuteStatement([NotNull] AmethystParser.ExecuteStatementContext context) =>
+			new ExecuteStatement(Loc(context),
+				context.executeSubcommand().Select(i => (ExecuteStatementSubcommand)Visit(i)),
+				Visit(context.statement().First()),
+				context.statement().Length == 2 ? Visit(context.statement().Last()) : null);
 
 		public override Node VisitExecuteSubcommand([NotNull] AmethystParser.ExecuteSubcommandContext context)
 		{
@@ -205,29 +218,38 @@ namespace Amethyst.AST
 			{
 				return new IfSubcommand(Loc(context), Visit(context.expression()));
 			}
-			else if (context.As() is not null)
+
+			if (context.As() is not null)
 			{
 				return new AsSubcommand(Loc(context), Visit(context.expression()));
 			}
-			else if (context.At() is not null)
+
+			if (context.At() is not null)
 			{
 				return new AtSubcommand(Loc(context), Visit(context.expression()));
 			}
-			else
-			{
-				throw new NotImplementedException();
-			}
+
+			throw new NotImplementedException();
 		}
 
-		public override Node VisitForStatement([NotNull] AmethystParser.ForStatementContext context) => new ForStatement(Loc(context), context.initAssignmentStatement() is not null ? (Statement?)Visit(context.initAssignmentStatement()) : null, Visit(context.cond), Visit(context.it), Visit(context.statement()));
-		public override Node VisitReturnStatement([NotNull] AmethystParser.ReturnStatementContext context) => new ReturnStatement(Loc(context), context.expression() is null ? null : Visit(context.expression()));
-		public override Node VisitLoopControlStatement([NotNull] AmethystParser.LoopControlStatementContext context) => new LoopControlStatement(Loc(context), context.Continue() is not null ? LoopControlType.Continue : LoopControlType.Break);
+		public override Node VisitForStatement([NotNull] AmethystParser.ForStatementContext context) =>
+			new ForStatement(Loc(context),
+				context.initAssignmentStatement() is not null
+					? (Statement?)Visit(context.initAssignmentStatement())
+					: null, Visit(context.cond), Visit(context.it), Visit(context.statement()));
+
+		public override Node VisitReturnStatement([NotNull] AmethystParser.ReturnStatementContext context) =>
+			new ReturnStatement(Loc(context), context.expression() is null ? null : Visit(context.expression()));
+
+		public override Node VisitLoopControlStatement([NotNull] AmethystParser.LoopControlStatementContext context) =>
+			new LoopControlStatement(Loc(context),
+				context.Continue() is not null ? LoopControlType.Continue : LoopControlType.Break);
 
 		public override Node VisitCommandStatement([NotNull] AmethystParser.CommandStatementContext context)
 		{
 			var cmd = context.Command().GetText().Trim()[2..];
 			var loc = Loc(context);
-			
+
 			// Ignore new line
 			loc = new(loc.Start, new(loc.End.File, loc.End.Line, loc.End.Column - 1));
 
@@ -247,7 +269,8 @@ namespace Amethyst.AST
 				var lexer = new AmethystLexer(input);
 				var tokens = new CommonTokenStream(lexer);
 				var parser = new AmethystParser(tokens);
-				var visitor = new SubVisitor(this, new(loc.Start.File, loc.Start.Line, loc.Start.Column + 2 + match.Index));
+				var visitor = new SubVisitor(this,
+					new(loc.Start.File, loc.Start.Line, loc.Start.Column + 2 + match.Index));
 
 				var error = new ParserErrorHandler(Filename, Compiler.GetFile(Filename), visitor);
 				lexer.RemoveErrorListeners();
@@ -260,7 +283,7 @@ namespace Amethyst.AST
 
 				if (error.Errored)
 				{
-					throw new Exception(); // Do this later
+					throw new(); // Do this later
 				}
 			}
 
@@ -269,33 +292,37 @@ namespace Amethyst.AST
 
 		public override Node VisitType([NotNull] AmethystParser.TypeContext context)
 		{
-			if (context.simpleType() is AmethystParser.SimpleTypeContext simple)
+			if (context.simpleType() is { } simple)
 			{
 				return Visit(simple);
 			}
-			else if (context.LSquareBrak() is not null)
+
+			if (context.LSquareBrak() is not null)
 			{
 				return new AbstractListTypeSpecifier(Loc(context), Visit(context.type()));
 			}
-			else if (context.LBrak() is not null)
+
+			if (context.LBrak() is not null)
 			{
 				return new AbstractMapTypeSpecifier(Loc(context), Visit(context.type()));
 			}
-			else if (context.And() is not null)
+
+			if (context.And() is not null)
 			{
 				return new AbstractReferenceTypeSpecifier(Loc(context), Visit(context.type()));
 			}
-			else if (context.WeakRef() is not null)
+
+			if (context.WeakRef() is not null)
 			{
 				return new AbstractWeakReferenceTypeSpecifier(Loc(context), Visit(context.type()));
 			}
-			
+
 			throw new NotImplementedException();
 		}
 
 		public override Node VisitSimpleType([NotNull] AmethystParser.SimpleTypeContext context)
 		{
-			if (context.id() is AmethystParser.IdContext id)
+			if (context.id() is { } id)
 			{
 				return new SimpleAbstractTypeSpecifier(Loc(context), Visit(id));
 			}
@@ -303,7 +330,8 @@ namespace Amethyst.AST
 			throw new NotImplementedException();
 		}
 
-		public override Node VisitExpression([NotNull] AmethystParser.ExpressionContext context) => Visit(context.children.First());
+		public override Node VisitExpression([NotNull] AmethystParser.ExpressionContext context) =>
+			Visit(context.children.First());
 
 		public override Node VisitAssignmentExpression([NotNull] AmethystParser.AssignmentExpressionContext context)
 		{
@@ -311,29 +339,28 @@ namespace Amethyst.AST
 			{
 				return Visit(context.newExpression());
 			}
-			else
+
+			var type = AssignmentType.Normal;
+
+			if (context.PlusEq() is not null)
 			{
-				var type = AssignmentType.Normal;
-
-				if (context.PlusEq() is not null)
-				{
-					type = AssignmentType.Addition;
-				}
-				else if (context.MinusEq() is not null)
-				{
-					type = AssignmentType.Subtraction;
-				}
-				else if (context.StarEq() is not null)
-				{
-					type = AssignmentType.Multiplication;
-				}
-				else if (context.SlashEq() is not null)
-				{
-					type = AssignmentType.Division;
-				}
-
-				return new AssignmentExpression(Loc(context), (Expression)Visit(context.newExpression()), type, Visit(context.expression()));
+				type = AssignmentType.Addition;
 			}
+			else if (context.MinusEq() is not null)
+			{
+				type = AssignmentType.Subtraction;
+			}
+			else if (context.StarEq() is not null)
+			{
+				type = AssignmentType.Multiplication;
+			}
+			else if (context.SlashEq() is not null)
+			{
+				type = AssignmentType.Division;
+			}
+
+			return new AssignmentExpression(Loc(context), (Expression)Visit(context.newExpression()), type,
+				Visit(context.expression()));
 		}
 
 		public override Node VisitNewExpression([NotNull] AmethystParser.NewExpressionContext context)
@@ -380,7 +407,7 @@ namespace Amethyst.AST
 					">" => ComparisonOperator.Gt,
 					"<" => ComparisonOperator.Lt,
 					">=" => ComparisonOperator.Gte,
-					_ => ComparisonOperator.Lte,
+					_ => ComparisonOperator.Lte
 				};
 				node = new ComparisonExpression(Loc(context), node, op, (Expression)Visit(context.children[++i]));
 			}
@@ -400,7 +427,8 @@ namespace Amethyst.AST
 			return node;
 		}
 
-		public override Node VisitMultiplicativeExpression([NotNull] AmethystParser.MultiplicativeExpressionContext context)
+		public override Node VisitMultiplicativeExpression(
+			[NotNull] AmethystParser.MultiplicativeExpressionContext context)
 		{
 			var node = (Expression)Visit(context.children.First());
 			for (var i = 1; i < context.children.Count; i++)
@@ -422,7 +450,8 @@ namespace Amethyst.AST
 		{
 			if (context.type() is not null)
 			{
-				return new CastExpression(Loc(context), Visit(context.type()), (Expression)Visit(context.castExpression()));
+				return new CastExpression(Loc(context), Visit(context.type()),
+					(Expression)Visit(context.castExpression()));
 			}
 
 			return Visit(context.unaryExpression());
@@ -504,50 +533,50 @@ namespace Amethyst.AST
 			{
 				return new RangeExpression(Loc(context), null, (Expression)Visit(context.primaryExpression()[0]));
 			}
-			else
-			{
-				return new RangeExpression(Loc(context), (Expression)Visit(context.primaryExpression()[0]), context.primaryExpression().Length == 1 ? null : (Expression)Visit(context.primaryExpression()[1]));
-			}
+
+			return new RangeExpression(Loc(context), (Expression)Visit(context.primaryExpression()[0]),
+				context.primaryExpression().Length == 1 ? null : (Expression)Visit(context.primaryExpression()[1]));
 		}
 
 
 		public override Node VisitPrimaryExpression([NotNull] AmethystParser.PrimaryExpressionContext context)
 		{
-			if (context.id() is AmethystParser.IdContext id)
+			if (context.id() is { } id)
 			{
 				return new VariableExpression(Loc(context), Visit(id));
 			}
-			else if (context.String() is ITerminalNode str)
+
+			if (context.String() is { } str)
 			{
 				return new LiteralExpression(Loc(context), new NBTString(NBTString.Unescape(str.GetText()[1..^1])));
 			}
-			else if (context.Number() is ITerminalNode i)
+
+			if (context.Number() is { } i)
 			{
 				return new LiteralExpression(Loc(context), ParseNumber(i.GetText()));
 			}
-			else if (context.expression() is AmethystParser.ExpressionContext expr)
+
+			if (context.expression() is { } expr)
 			{
 				return Visit(expr);
 			}
-			else
-			{
-				return Visit(context.children[0]);
-			}
+
+			return Visit(context.children[0]);
 		}
 
-		public override Node VisitListLiteral([NotNull] AmethystParser.ListLiteralContext context) => new ListExpression(Loc(context), [.. context.expression().Select(Visit)]);
+		public override Node VisitListLiteral([NotNull] AmethystParser.ListLiteralContext context) =>
+			new ListExpression(Loc(context), [.. context.expression().Select(Visit)]);
 
-		public override Node VisitCompoundLiteral([NotNull] AmethystParser.CompoundLiteralContext context) => new CompoundExpression(Loc(context), context.compoundKeyPair().Select(i =>
-		{
-			if (i.RawIdentifier() is not null)
+		public override Node VisitCompoundLiteral([NotNull] AmethystParser.CompoundLiteralContext context) =>
+			new CompoundExpression(Loc(context), context.compoundKeyPair().Select(i =>
 			{
+				if (i.RawIdentifier() is not null)
+				{
+					return new(i.RawIdentifier().GetText(), Visit(i.expression()));
+				}
+
 				return new KeyValuePair<string, Expression>(i.RawIdentifier().GetText(), Visit(i.expression()));
-			}
-			else
-			{
-				return new KeyValuePair<string, Expression>(i.RawIdentifier().GetText(), Visit(i.expression()));
-			}
-		}));
+			}));
 
 		public override Node VisitTargetSelector([NotNull] AmethystParser.TargetSelectorContext context)
 		{
@@ -593,26 +622,36 @@ namespace Amethyst.AST
 			return new TargetSelectorExpression(Loc(context), type, args);
 		}
 
-		public AbstractTypeSpecifier Visit(AmethystParser.TypeContext context) => (AbstractTypeSpecifier)Visit((IParseTree)context);
-		public AbstractTypeSpecifier Visit(AmethystParser.SimpleTypeContext context) => (AbstractTypeSpecifier)Visit((IParseTree)context);
+		public AbstractTypeSpecifier Visit(AmethystParser.TypeContext context) =>
+			(AbstractTypeSpecifier)Visit((IParseTree)context);
+
+		public AbstractTypeSpecifier Visit(AmethystParser.SimpleTypeContext context) =>
+			(AbstractTypeSpecifier)Visit((IParseTree)context);
+
 		public BlockNode Visit(AmethystParser.BlockContext context) => (BlockNode)Visit((IParseTree)context);
 		public Statement Visit(AmethystParser.StatementContext context) => (Statement)Visit((IParseTree)context);
 		public Expression Visit(AmethystParser.ExpressionContext context) => (Expression)Visit((IParseTree)context);
-		public List<Expression> Visit(AmethystParser.ExpressionListContext context) => [.. context.expression().Select(Visit)];
 
-		public List<AbstractParameter> Visit(AmethystParser.ParamListContext context) => [..context.paramPair().Select(i => {
-			var mod = ParameterModifiers.None;
+		public List<Expression> Visit(AmethystParser.ExpressionListContext context) =>
+			[.. context.expression().Select(Visit)];
 
-			foreach (var e in i.paramModifier())
+		public List<AbstractParameter> Visit(AmethystParser.ParamListContext context) =>
+		[
+			..context.paramPair().Select(i =>
 			{
-				if (e.GetText() == "macro")
-				{
-					mod |= ParameterModifiers.Macro;
-				}
-			}
+				var mod = ParameterModifiers.None;
 
-			return new AbstractParameter(mod, Visit(i.type()), Visit(i.id()));
-		})];
+				foreach (var e in i.paramModifier())
+				{
+					if (e.GetText() == "macro")
+					{
+						mod |= ParameterModifiers.Macro;
+					}
+				}
+
+				return new AbstractParameter(mod, Visit(i.type()), Visit(i.id()));
+			})
+		];
 
 		public static string Visit(AmethystParser.IdContext context) => context.GetText();
 
@@ -627,10 +666,8 @@ namespace Amethyst.AST
 			{
 				return new(name);
 			}
-			else
-			{
-				return new(currentNamespace, name);
-			}
+
+			return new(currentNamespace, name);
 		}
 
 		public static NBTValue ParseNumber(string raw)

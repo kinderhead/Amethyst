@@ -1,26 +1,31 @@
 using Datapack.Net.Data;
 using Datapack.Net.Function;
-using Datapack.Net.Function.Commands;
 using Geode.Types;
 
 namespace Geode.Values
 {
-	public class LiteralValue(NBTValue val, TypeSpecifier? type = null) : Value(type ?? new PrimitiveType(val.Type)), IConstantValue
+	public class LiteralValue(NBTValue val, TypeSpecifier? type = null)
+		: Value(type ?? new PrimitiveType(val.Type)), IConstantValue
 	{
 		public NBTValue Value { get; } = val;
 
-		public override ScoreValue AsScore(RenderContext ctx) => Value is NBTInt n ? ctx.Builder.Constant(n) : throw new InvalidOperationException($"\"{Value}\" is not an integer");
+		public override ScoreValue AsScore(RenderContext ctx) => Value is NBTInt n
+			? ctx.Builder.Constant(n)
+			: throw new InvalidOperationException($"\"{Value}\" is not an integer");
+
+		public override FormattedText Render(FormattedText text, RenderContext ctx) =>
+			Value is NBTString str ? text.Text(str.Value) : text.Text(Value.ToString());
+
 		public override bool Equals(object? obj) => obj is LiteralValue l && l.Value == Value;
 		public override string ToString() => Value.ToString();
 		public override int GetHashCode() => Value.GetHashCode();
-		public override FormattedText Render(FormattedText text, RenderContext ctx) => Value is NBTString str ? text.Text(str.Value) : text.Text(Value.ToString());
 
 		public bool Is<T>(out T val) where T : NBTValue
 		{
 			if (Value is T ret)
 			{
 				val = ret;
-				return true; 
+				return true;
 			}
 
 			val = null!;

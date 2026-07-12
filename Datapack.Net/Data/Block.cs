@@ -17,27 +17,25 @@ namespace Datapack.Net.Data
 			{
 				return ID.ToString();
 			}
-			else
+
+			Dictionary<string, string> values = [];
+			foreach (var i in fields)
 			{
-				Dictionary<string, string> values = [];
-				foreach (var i in fields)
+				var value = i.GetValue(this);
+				if (value == null)
 				{
-					var value = i.GetValue(this);
-					if (value == null)
-					{
-						continue;
-					}
-
-					if (i.Name == "ID")
-					{
-						continue;
-					}
-
-					values.Add(i.Name.ToLower(), $"{value}".ToLower().Trim('_'));
+					continue;
 				}
 
-				return $"{ID}[{TargetSelector.CompileDict(values)}]";
+				if (i.Name == "ID")
+				{
+					continue;
+				}
+
+				values.Add(i.Name.ToLower(), $"{value}".ToLower().Trim('_'));
 			}
+
+			return $"{ID}[{TargetSelector.CompileDict(values)}]";
 		}
 	}
 }

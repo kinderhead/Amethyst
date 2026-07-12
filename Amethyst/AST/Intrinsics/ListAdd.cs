@@ -7,7 +7,8 @@ using Geode.Types;
 
 namespace Amethyst.AST.Intrinsics
 {
-	public class ListAdd(FunctionType? type = null) : Intrinsic("amethyst:list/add", type ?? new(FunctionModifiers.None, new VoidType(), [
+	public class ListAdd(FunctionType? type = null) : Intrinsic("amethyst:list/add", type ?? new(FunctionModifiers.None,
+		new VoidType(), [
 			new(ParameterModifiers.None, new ReferenceType(new ListType(new GenericType("T"))), "this"),
 			new(ParameterModifiers.None, new GenericType("T"), "val")
 		]))

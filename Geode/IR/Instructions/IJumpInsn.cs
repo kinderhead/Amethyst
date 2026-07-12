@@ -1,9 +1,7 @@
-using System;
-
 namespace Geode.IR.Instructions
 {
-    public interface IJumpInsn : IBlockCapstoneInsn
-    {
-        public Block DestBlock { get; }
-    }
+	public interface IJumpInsn : IBlockCapstoneInsn
+	{
+		Block DestBlock { get; }
+	}
 }

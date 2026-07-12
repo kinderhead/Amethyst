@@ -1,14 +1,21 @@
 ﻿using Amethyst.GC.Behaviors;
 using Geode;
 using Geode.IR;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Amethyst.GC
 {
 	public static class GCHelper
 	{
+		private static readonly List<IGCBehavior> behaviors = [];
+
+		static GCHelper()
+		{
+			Register<ReferenceBehavior>();
+			Register<ListBehavior>();
+		}
+
+		public static IReadOnlyCollection<IGCBehavior> Behaviors => behaviors;
+
 		public static void Mark(IValueLike val, FunctionContext ctx)
 		{
 			foreach (var i in behaviors)
@@ -33,15 +40,6 @@ namespace Amethyst.GC
 			return false;
 		}
 
-		static GCHelper()
-		{
-			Register<ReferenceBehavior>();
-			Register<ListBehavior>();
-		}
-
 		public static void Register<T>() where T : IGCBehavior, new() => behaviors.Add(new T());
-
-		private readonly static List<IGCBehavior> behaviors = [];
-		public static IReadOnlyCollection<IGCBehavior> Behaviors => behaviors;
 	}
 }

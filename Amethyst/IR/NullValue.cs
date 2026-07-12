@@ -1,12 +1,8 @@
 ﻿using Amethyst.IR.Types;
 using Datapack.Net.Function;
-using Datapack.Net.Function.Commands;
 using Geode;
 using Geode.Types;
 using Geode.Values;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Amethyst.IR
 {

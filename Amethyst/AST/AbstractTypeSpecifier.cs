@@ -4,17 +4,19 @@ using Geode;
 using Geode.Errors;
 using Geode.IR;
 using Geode.Types;
+using System.Diagnostics;
 
 namespace Amethyst.AST
 {
 	public abstract class AbstractTypeSpecifier(LocationRange loc) : Node(loc)
 	{
-		public TypeSpecifier Resolve(FunctionContext ctx, bool allowAuto = false) => Resolve((Compiler)ctx.Compiler, ctx.Decl.ID.GetContainingFolder(), allowAuto);
+		public TypeSpecifier Resolve(FunctionContext ctx, bool allowAuto = false) =>
+			Resolve((Compiler)ctx.Compiler, ctx.Decl.ID.GetContainingFolder(), allowAuto);
 
 		public TypeSpecifier Resolve(Compiler ctx, string baseNamespace, bool allowAuto = false)
 		{
 			TypeSpecifier? ret = null;
-			if (!ctx.WrapError(Location, [System.Diagnostics.DebuggerNonUserCode] () => ret = ResolveImpl(ctx, baseNamespace, allowAuto)))
+			if (!ctx.WrapError(Location, [DebuggerNonUserCode]() => ret = ResolveImpl(ctx, baseNamespace, allowAuto)))
 			{
 				throw new EmptyGeodeError();
 			}
@@ -40,10 +42,8 @@ namespace Amethyst.AST
 					{
 						return new VarType();
 					}
-					else
-					{
-						throw new InvalidTypeError(Type);
-					}
+
+					throw new InvalidTypeError(Type);
 				default:
 					if (Type.Contains(':'))
 					{
@@ -52,7 +52,7 @@ namespace Amethyst.AST
 							return ret.Type;
 						}
 					}
-					else if (GeodeBuilder.NamespaceWalk(baseNamespace, Type, ctx.IR.Types) is GlobalTypeSymbol sym)
+					else if (GeodeBuilder.NamespaceWalk(baseNamespace, Type, ctx.IR.Types) is { } sym)
 					{
 						return sym.Type;
 					}
@@ -76,7 +76,8 @@ namespace Amethyst.AST
 	{
 		public readonly AbstractTypeSpecifier Inner = inner;
 
-		protected override TypeSpecifier ResolveImpl(Compiler ctx, string baseNamespace, bool allowAuto = false) => new ListType(Inner.Resolve(ctx, baseNamespace));
+		protected override TypeSpecifier ResolveImpl(Compiler ctx, string baseNamespace, bool allowAuto = false) =>
+			new ListType(Inner.Resolve(ctx, baseNamespace));
 	}
 
 	public class AbstractMapTypeSpecifier(LocationRange loc, AbstractTypeSpecifier inner) : AbstractTypeSpecifier(loc)
@@ -89,24 +90,28 @@ namespace Amethyst.AST
 
 			if (inner is ReferenceType and not WeakReferenceType)
 			{
-				throw new ReferenceMapError(); 
+				throw new ReferenceMapError();
 			}
 
 			return new SimpleMapType(inner);
 		}
 	}
 
-	public class AbstractReferenceTypeSpecifier(LocationRange loc, AbstractTypeSpecifier inner) : AbstractTypeSpecifier(loc)
+	public class AbstractReferenceTypeSpecifier(LocationRange loc, AbstractTypeSpecifier inner)
+		: AbstractTypeSpecifier(loc)
 	{
 		public readonly AbstractTypeSpecifier Inner = inner;
 
-		protected override TypeSpecifier ResolveImpl(Compiler ctx, string baseNamespace, bool allowAuto = false) => new ReferenceType(Inner.Resolve(ctx, baseNamespace));
+		protected override TypeSpecifier ResolveImpl(Compiler ctx, string baseNamespace, bool allowAuto = false) =>
+			new ReferenceType(Inner.Resolve(ctx, baseNamespace));
 	}
 
-	public class AbstractWeakReferenceTypeSpecifier(LocationRange loc, AbstractTypeSpecifier inner) : AbstractTypeSpecifier(loc)
+	public class AbstractWeakReferenceTypeSpecifier(LocationRange loc, AbstractTypeSpecifier inner)
+		: AbstractTypeSpecifier(loc)
 	{
 		public readonly AbstractTypeSpecifier Inner = inner;
 
-		protected override TypeSpecifier ResolveImpl(Compiler ctx, string baseNamespace, bool allowAuto = false) => new WeakReferenceType(Inner.Resolve(ctx, baseNamespace));
+		protected override TypeSpecifier ResolveImpl(Compiler ctx, string baseNamespace, bool allowAuto = false) =>
+			new WeakReferenceType(Inner.Resolve(ctx, baseNamespace));
 	}
 }

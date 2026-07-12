@@ -1,6 +1,7 @@
 ﻿using Geode;
 using Geode.Errors;
 using Geode.IR;
+using System.Diagnostics;
 
 namespace Amethyst.AST
 {
@@ -9,7 +10,7 @@ namespace Amethyst.AST
 		public ValueRef Execute(FunctionContext ctx, TypeSpecifier? expected, bool autoCast = true)
 		{
 			ValueRef? ret = null;
-			if (!ctx.Compiler.WrapError(Location, ctx, [System.Diagnostics.DebuggerNonUserCode] () => ret = ExecuteImpl(ctx, expected)))
+			if (!ctx.Compiler.WrapError(Location, ctx, [DebuggerNonUserCode]() => ret = ExecuteImpl(ctx, expected)))
 			{
 				throw new EmptyGeodeError();
 			}
@@ -18,10 +19,8 @@ namespace Amethyst.AST
 			{
 				return ctx.ImplicitCast(ret!, expected);
 			}
-			else
-			{
-				return ret!;
-			}
+
+			return ret!;
 		}
 
 		public virtual void ExecuteChain(ExecuteChain chain, FunctionContext ctx, bool invert = false)

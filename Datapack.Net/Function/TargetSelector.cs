@@ -2,32 +2,56 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
 
+// ReSharper disable NotResolvedInText
+
 namespace Datapack.Net.Function
 {
 	// Not struct because this is chonky
 	[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicFields)]
-	public class TargetSelector(TargetType targetType, double? x = null, double? y = null, double? z = null, MCRange<float>? distance = null, double? dx = null, double? dy = null, double? dz = null, Dictionary<Score, MCRange<int>>? scores = null, List<Negatable<EntityTag>>? tag = null, Negatable<Team>? team = null, SortType? sort = null, int? limit = null, MCRange<int>? level = null, Gamemode? gamemode = null, string? name = null, MCRange<float>? x_rotation = null, MCRange<float>? y_rotation = null, EntityTypeSelector? type = null, Negatable<NBTCompound>? nbt = null) : IEntityTarget
+	public class TargetSelector(
+		TargetType targetType,
+		double? x = null,
+		double? y = null,
+		double? z = null,
+		MCRange<float>? distance = null,
+		double? dx = null,
+		double? dy = null,
+		double? dz = null,
+		Dictionary<Score, MCRange<int>>? scores = null,
+		List<Negatable<EntityTag>>? tag = null,
+		Negatable<Team>? team = null,
+		SortType? sort = null,
+		int? limit = null,
+		MCRange<int>? level = null,
+		Gamemode? gamemode = null,
+		string? name = null,
+		MCRange<float>? x_rotation = null,
+		MCRange<float>? y_rotation = null,
+		EntityTypeSelector? type = null,
+		Negatable<NBTCompound>? nbt = null) : IEntityTarget
 	{
-		public readonly TargetType TargetType = targetType;
-		public readonly double? X = x;
-		public readonly double? Y = y;
-		public readonly double? Z = z;
 		public readonly MCRange<float>? Distance = distance;
 		public readonly double? Dx = dx;
 		public readonly double? Dy = dy;
 		public readonly double? Dz = dz;
-		public readonly Dictionary<Score, MCRange<int>>? Scores = scores;
-		public readonly List<Negatable<EntityTag>>? Tag = tag;
-		public readonly Negatable<Team>? Team = team;
-		public readonly SortType? Sort = sort;
-		public readonly int? Limit = limit;
-		public readonly MCRange<int>? Level = level;
 		public readonly Gamemode? Gamemode = gamemode;
+		public readonly MCRange<int>? Level = level;
+		public readonly int? Limit = limit;
 		public readonly string? Name = name;
-		public readonly MCRange<float>? X_rotation = x_rotation;
-		public readonly MCRange<float>? Y_rotation = y_rotation;
-		public readonly EntityTypeSelector? Type = type;
 		public readonly Negatable<NBTCompound>? NBT = nbt;
+		public readonly Dictionary<Score, MCRange<int>>? Scores = scores;
+		public readonly SortType? Sort = sort;
+		public readonly List<Negatable<EntityTag>>? Tag = tag;
+		public readonly TargetType TargetType = targetType;
+		public readonly Negatable<Team>? Team = team;
+		public readonly EntityTypeSelector? Type = type;
+		public readonly double? X = x;
+		public readonly MCRange<float>? X_rotation = x_rotation;
+		public readonly double? Y = y;
+		public readonly MCRange<float>? Y_rotation = y_rotation;
+		public readonly double? Z = z;
+
+		public static TargetSelector Self => new(TargetType.s);
 
 		public string Get()
 		{
@@ -141,7 +165,8 @@ namespace Datapack.Net.Function
 
 				if (nonNegated && Type.Count >= 2)
 				{
-					throw new ArgumentException("Type parameter is invalid. It contains a negated and non negated values", "type");
+					throw new ArgumentException(
+						"Type parameter is invalid. It contains a negated and non negated values", "type");
 				}
 			}
 
@@ -158,6 +183,27 @@ namespace Datapack.Net.Function
 			return GetTypeName(TargetType);
 		}
 
+		public bool IsOne()
+		{
+			if (TargetType == TargetType.a || (TargetType == TargetType.e && Limit == 1))
+			{
+				return true;
+			}
+
+			if (TargetType == TargetType.s && Limit == null)
+			{
+				return true;
+			}
+
+			if (TargetType == TargetType.p || TargetType == TargetType.n ||
+			    (TargetType == TargetType.r && (Limit == null || Limit == 1)))
+			{
+				return true;
+			}
+
+			return false;
+		}
+
 		public static string GetTypeName(TargetType type)
 		{
 			var s = Enum.GetName(type) ?? throw new MissingFieldException($"Missing type {type}");
@@ -169,9 +215,9 @@ namespace Datapack.Net.Function
 			StringBuilder sb = new();
 			foreach (var i in dict)
 			{
-				sb.Append(i.Key.ToString());
+				sb.Append(i.Key);
 				sb.Append('=');
-				sb.Append(i.Value.ToString());
+				sb.Append(i.Value);
 				sb.Append(',');
 			}
 
@@ -182,26 +228,6 @@ namespace Datapack.Net.Function
 
 			return sb.ToString();
 		}
-
-		public bool IsOne()
-		{
-			if (TargetType == TargetType.a || (TargetType == TargetType.e && Limit == 1))
-			{
-				return true;
-			}
-			else if (TargetType == TargetType.s && Limit == null)
-			{
-				return true;
-			}
-			else if (TargetType == TargetType.p || TargetType == TargetType.n || (TargetType == TargetType.r && (Limit == null || Limit == 1)))
-			{
-				return true;
-			}
-
-			return false;
-		}
-
-		public static TargetSelector Self => new(TargetType.s);
 	}
 
 	public enum TargetType

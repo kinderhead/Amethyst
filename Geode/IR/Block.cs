@@ -1,30 +1,31 @@
-using System.Text;
 using Datapack.Net.Function;
 using Datapack.Net.Function.Commands;
 using Datapack.Net.Utils;
 using Geode.Errors;
 using Geode.IR.Instructions;
-using Geode.IR.Passes;
 using Geode.Util;
 using Geode.Values;
+using System.Diagnostics;
+using System.Text;
 
 namespace Geode.IR
 {
 	public class Block(string name, NamespacedID funcID, FunctionContext ctx) : GraphNode<Block>, IInstructionArg
 	{
-		public string Name => name;
 		public readonly FunctionContext Ctx = ctx;
-		public readonly PhiContext Phi = new();
-
-		private readonly List<Instruction> instructions = [];
-		public IReadOnlyList<Instruction> Instructions => instructions;
-		public IEnumerable<PhiInsn> PhiInsns => Instructions.Where(i => i is PhiInsn).Cast<PhiInsn>();
 
 		public readonly MCFunction Function = new(funcID, true);
 
+		private readonly List<Instruction> instructions = [];
+		public readonly PhiContext Phi = new();
+		public IReadOnlyList<Instruction> Instructions => instructions;
+		public IEnumerable<PhiInsn> PhiInsns => Instructions.Where(i => i is PhiInsn).Cast<PhiInsn>();
+
 		public bool ForkGuard { get; private set; }
+		public string Name => name;
 
 		public IReadOnlySet<ValueRef> Dependencies { get; } = new HashSet<ValueRef>();
+		public void ReplaceValue(ValueRef value, ValueRef with) { }
 
 		public ValueRef Prepend(Instruction insn, string? customName = null)
 		{
@@ -77,13 +78,13 @@ namespace Geode.IR
 			}
 
 			var renderer = GetRenderCtx(builder, ctx);
-			
+
 			foreach (var i in Instructions)
 			{
-				if (!ctx.Compiler.WrapError(i.Location, ctx, [System.Diagnostics.DebuggerNonUserCode] () =>
-				{
-					i.Render(renderer);
-				}))
+				if (!ctx.Compiler.WrapError(i.Location, ctx, [DebuggerNonUserCode]() =>
+				    {
+					    i.Render(renderer);
+				    }))
 				{
 					throw new EmptyGeodeError();
 				}
@@ -111,7 +112,7 @@ namespace Geode.IR
 		{
 			List<Instruction> insns = [];
 			List<Variable> variables = [];
-			Dictionary <ValueRef, ValueRef> valueMap = [];
+			Dictionary<ValueRef, ValueRef> valueMap = [];
 
 			ValueRef map(ValueRef val)
 			{
@@ -124,7 +125,8 @@ namespace Geode.IR
 
 				if (newValue.Value is Variable v)
 				{
-					var newVariable = new Variable(v.Name, Ctx.Compiler.IR.RuntimeID, newVariableBaseLoc, v.Frame, v.Type);
+					var newVariable = new Variable(v.Name, Ctx.Compiler.IR.RuntimeID, newVariableBaseLoc, v.Frame,
+						v.Type);
 					newValue.SetValue(newVariable);
 					variables.Add(newVariable);
 				}
@@ -141,7 +143,8 @@ namespace Geode.IR
 				{
 					if (i.Arguments[j] is not ValueRef val)
 					{
-						throw new NotImplementedException("This block cannot be copied. Try not inlining this function.");
+						throw new NotImplementedException(
+							"This block cannot be copied. Try not inlining this function.");
 					}
 
 					newInsn.Arguments[j] = map(val);
@@ -160,7 +163,7 @@ namespace Geode.IR
 
 		public override string ToString() => Name;
 
-		public RenderContext GetRenderCtx(GeodeBuilder builder, FunctionContext ctx) => new(Function, this, builder, ctx);
-		public void ReplaceValue(ValueRef value, ValueRef with) { }
+		public RenderContext GetRenderCtx(GeodeBuilder builder, FunctionContext ctx) =>
+			new(Function, this, builder, ctx);
 	}
 }

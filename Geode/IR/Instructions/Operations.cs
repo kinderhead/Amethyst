@@ -8,24 +8,25 @@ namespace Geode.IR.Instructions
 {
 	public abstract class OpInsn : Simple2IntInsn<NBTInt>
 	{
+		protected OpInsn(ValueRef left, ValueRef right) : base(left, right)
+		{
+			foreach (var i in new[] { left, right })
+			{
+				if (i.Value is not null and not IConstantValue and not ScoreValue)
+				{
+					throw new InvalidTypeError(i.Value.GetType().Name.ToLower(), "score");
+				}
+			}
+		}
+
 		public override TypeSpecifier ReturnType => PrimitiveType.Int;
 		public override bool AlwaysUseScore => true;
 
 		public abstract bool IsCommunitive { get; }
 		public abstract ScoreOperation Op { get; }
 
-		public OpInsn(ValueRef left, ValueRef right) : base(left, right)
-        {
-            foreach (var i in new ValueRef[] { left, right })
-			{
-				if (i.Value is not null and not IConstantValue and not ScoreValue)
-                {
-                    throw new InvalidTypeError(i.Value.GetType().Name.ToLower(), "score");
-                }
-			}
-        }
-
-		public override void ConfigureLifetime(Func<ValueRef, ValueRef, bool> tryLink, Action<ValueRef, ValueRef> markOverlap)
+		public override void ConfigureLifetime(Func<ValueRef, ValueRef, bool> tryLink,
+			Action<ValueRef, ValueRef> markOverlap)
 		{
 			if (!(Arguments[0] is ValueRef v0 && tryLink(ReturnValue, v0)))
 			{
@@ -87,7 +88,9 @@ namespace Geode.IR.Instructions
 		public override string Name => "div";
 		public override bool IsCommunitive => false;
 		public override ScoreOperation Op => ScoreOperation.Div;
-		public override NBTInt Compute(NBTInt left, NBTInt right) => new((int)Math.Floor((float)left.Value / right.Value)); // Minecraft handles division differently
+
+		public override NBTInt Compute(NBTInt left, NBTInt right) =>
+			new((int)Math.Floor((float)left.Value / right.Value)); // Minecraft handles division differently
 	}
 
 	public class ModInsn(ValueRef left, ValueRef right) : OpInsn(left, right)

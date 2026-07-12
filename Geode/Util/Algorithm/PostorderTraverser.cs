@@ -1,11 +1,23 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Geode.Util.Algorithm
+﻿namespace Geode.Util.Algorithm
 {
 	public static class PostorderTraverser
 	{
+		private static IEnumerable<T> TraverseNode<T>(T node, HashSet<T> visited) where T : GraphNode<T>
+		{
+			if (visited.Add(node))
+			{
+				foreach (var i in node.Next)
+				{
+					foreach (var e in TraverseNode(i, visited))
+					{
+						yield return e;
+					}
+				}
+
+				yield return node;
+			}
+		}
+
 		extension<T>(Graph<T> tree) where T : GraphNode<T>
 		{
 			public IEnumerable<T> PostorderTraversal()
@@ -21,7 +33,7 @@ namespace Geode.Util.Algorithm
 			public Dictionary<T, int> PostorderIndices()
 			{
 				var indices = new Dictionary<T, int>();
-				int idex = 0;
+				var idex = 0;
 
 				foreach (var i in tree.PostorderTraversal())
 				{
@@ -29,23 +41,6 @@ namespace Geode.Util.Algorithm
 				}
 
 				return indices;
-
-			}
-		}
-
-		private static IEnumerable<T> TraverseNode<T>(T node, HashSet<T> visited) where T : GraphNode<T>
-		{
-			if (visited.Add(node))
-			{
-				foreach (var i in node.Next)
-				{
-					foreach (var e in TraverseNode(i, visited))
-					{
-						yield return e;
-					}
-				}
-
-				yield return node;
 			}
 		}
 	}

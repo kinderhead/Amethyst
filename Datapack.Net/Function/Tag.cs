@@ -6,13 +6,10 @@ namespace Datapack.Net.Function
 {
 	public class Tag(NamespacedID id, string type) : JsonResource(id)
 	{
-		[JsonProperty("replace")]
-		public bool Replace = false;
+		[JsonProperty("replace")] public bool Replace;
 
-		[JsonProperty("values")]
-		public List<NamespacedID> Values = [];
+		[JsonIgnore] public string TagType = type;
 
-		[JsonIgnore]
-		public string TagType = type;
+		[JsonProperty("values")] public List<NamespacedID> Values = [];
 	}
 }

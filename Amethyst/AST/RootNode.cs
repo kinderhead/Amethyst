@@ -1,13 +1,14 @@
 ﻿using Geode;
 using Geode.Errors;
 using Geode.IR;
+using System.Diagnostics;
 
 namespace Amethyst.AST
 {
 	public class RootNode(LocationRange loc, Compiler ctx) : Node(loc)
 	{
-		public readonly Compiler Ctx = ctx;
 		public readonly List<IRootChild> Children = [];
+		public readonly Compiler Ctx = ctx;
 		public readonly List<FunctionNode> Functions = [];
 
 		public bool BuildSymbols()
@@ -16,10 +17,10 @@ namespace Amethyst.AST
 
 			foreach (var i in Children)
 			{
-				if (!Ctx.WrapError(i.Location, [System.Diagnostics.DebuggerNonUserCode] () =>
-				{
-					i.Process(Ctx, this);
-				}))
+				if (!Ctx.WrapError(i.Location, [DebuggerNonUserCode]() =>
+				    {
+					    i.Process(Ctx, this);
+				    }))
 				{
 					success = false;
 				}

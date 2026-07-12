@@ -1,4 +1,3 @@
-using Amethyst.IR.Types;
 using Datapack.Net.Data;
 using Geode;
 using Geode.IR;
@@ -31,6 +30,6 @@ namespace Amethyst.IR.Instructions
 			}
 		}
 
-		protected override IValue? ComputeReturnValue(FunctionContext ctx) => new VoidValue();
+		protected override IValue ComputeReturnValue(FunctionContext ctx) => new VoidValue();
 	}
 }

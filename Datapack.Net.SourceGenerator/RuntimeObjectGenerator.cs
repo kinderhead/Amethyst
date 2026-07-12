@@ -12,8 +12,9 @@ namespace Datapack.Net.SourceGenerator
 	{
 		public void Initialize(IncrementalGeneratorInitializationContext context)
 		{
-			var projects = context.SyntaxProvider.ForAttributeWithMetadataName<RuntimeObject?>("Datapack.Net.CubeLib.RuntimeObjectAttribute",
-				static (s, _) => true,
+			var projects = context.SyntaxProvider.ForAttributeWithMetadataName<RuntimeObject?>(
+				"Datapack.Net.CubeLib.RuntimeObjectAttribute",
+				static (_, _) => true,
 				static (ctx, _) =>
 				{
 					//if (!Debugger.IsAttached)
@@ -32,7 +33,8 @@ namespace Datapack.Net.SourceGenerator
 								continue;
 							}
 
-							if (attribute.ContainingType.ToDisplayString() == "Datapack.Net.CubeLib.RuntimeObjectAttribute")
+							if (attribute.ContainingType.ToDisplayString() ==
+							    "Datapack.Net.CubeLib.RuntimeObjectAttribute")
 							{
 								if (ctx.SemanticModel.GetDeclaredSymbol(cls) is not INamedTypeSymbol clsSymbol)
 								{
@@ -44,7 +46,11 @@ namespace Datapack.Net.SourceGenerator
 
 								foreach (var sym in clsSymbol.GetMembers())
 								{
-									if (sym is IMethodSymbol method && method.GetAttributes().Where(i => i.AttributeClass.ToDisplayString().Contains("Datapack.Net.CubeLib.DeclareMC")).Count() != 0 && sym.IsStatic)
+									if (sym is IMethodSymbol method &&
+									    method.GetAttributes().Where(i =>
+										    i.AttributeClass.ToDisplayString()
+											    .Contains("Datapack.Net.CubeLib.DeclareMC")).Count() != 0 &&
+									    sym.IsStatic)
 									{
 										funcs.Add(Utils.GetMCFunction(method));
 									}
@@ -53,10 +59,17 @@ namespace Datapack.Net.SourceGenerator
 									{
 										foreach (var propSym in propCls.GetMembers())
 										{
-											if (propSym is IPropertySymbol prop && prop.HasAttribute("Datapack.Net.CubeLib.RuntimePropertyAttribute"))
+											if (propSym is IPropertySymbol prop &&
+											    prop.HasAttribute("Datapack.Net.CubeLib.RuntimePropertyAttribute"))
 											{
-												var internalName = prop.FindAttribute("Datapack.Net.CubeLib.RuntimePropertyAttribute").ConstructorArguments.FirstOrDefault().Value.ToString();
-												props.Add(new(prop.Name, internalName, prop.Type.ToDisplayString(), prop.Type.AllInterfaces.Where(i => i.ToDisplayString().Contains("Datapack.Net.CubeLib.IRuntimeProperty")).Count() != 0));
+												var internalName = prop
+													.FindAttribute("Datapack.Net.CubeLib.RuntimePropertyAttribute")
+													.ConstructorArguments.FirstOrDefault().Value.ToString();
+												props.Add(new(prop.Name, internalName, prop.Type.ToDisplayString(),
+													prop.Type.AllInterfaces.Where(i =>
+															i.ToDisplayString()
+																.Contains("Datapack.Net.CubeLib.IRuntimeProperty"))
+														.Count() != 0));
 											}
 										}
 									}
@@ -75,7 +88,10 @@ namespace Datapack.Net.SourceGenerator
 									name.Append(">");
 								}
 
-								return new RuntimeObject(name.ToString(), clsSymbol.ContainingNamespace.ToDisplayString(), !(e.ArgumentList.Arguments.Count == 2 && e.ArgumentList.Arguments[1].Expression.ToString() == "false"), funcs, props);
+								return new RuntimeObject(name.ToString(),
+									clsSymbol.ContainingNamespace.ToDisplayString(),
+									!(e.ArgumentList.Arguments.Count == 2 &&
+									  e.ArgumentList.Arguments[1].Expression.ToString() == "false"), funcs, props);
 							}
 						}
 					}
@@ -102,7 +118,8 @@ namespace Datapack.Net.SourceGenerator
 				var postfix = i.IsObj ? "Obj" : "Prop";
 
 				things.AppendLine($"        /// <inheritdoc cref=\"{obj.Namespace}.{obj.Name}.Props.{i.Name}\"/>");
-				things.AppendLine($"        public {type} {i.Name} {{ get => new(this.Get{postfix}<{i.Type}>(\"{i.InternalName}\"){(i.IsObj ? ".Pointer" : "")}); set => this.SetProp(\"{i.InternalName}\", value); }}");
+				things.AppendLine(
+					$"        public {type} {i.Name} {{ get => new(this.Get{postfix}<{i.Type}>(\"{i.InternalName}\"){(i.IsObj ? ".Pointer" : "")}); set => this.SetProp(\"{i.InternalName}\", value); }}");
 			}
 
 			foreach (var i in obj.Methods)
@@ -131,7 +148,8 @@ namespace Datapack.Net.SourceGenerator
 
 			if (obj.ImplementCleanup)
 			{
-				things.Append($"\n\n        [global::Datapack.Net.CubeLib.DeclareMC(\"deinit\")]\n        private static void _FreePointers({obj.Name} self)\n        {{\n");
+				things.Append(
+					$"\n\n        [global::Datapack.Net.CubeLib.DeclareMC(\"deinit\")]\n        private static void _FreePointers({obj.Name} self)\n        {{\n");
 
 				if (obj.Properties.Length > 0)
 				{
@@ -139,7 +157,8 @@ namespace Datapack.Net.SourceGenerator
 					{
 						if (i.IsObj)
 						{
-							things.Append($"            global::Datapack.Net.CubeLib.Project.ActiveProject.If(self.{i.Name}.Pointer.Exists(), ((global::Datapack.Net.CubeLib.Builtins.RuntimePointer<{i.Type}>)self.{i.Name}.Pointer).RemoveOneReference);\n");
+							things.Append(
+								$"            global::Datapack.Net.CubeLib.Project.ActiveProject.If(self.{i.Name}.Pointer.Exists(), ((global::Datapack.Net.CubeLib.Builtins.RuntimePointer<{i.Type}>)self.{i.Name}.Pointer).RemoveOneReference);\n");
 						}
 					}
 				}

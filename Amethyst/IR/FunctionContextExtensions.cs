@@ -1,6 +1,5 @@
 ﻿using Amethyst.IR.Instructions;
 using Amethyst.IR.Types;
-using Datapack.Net.Data;
 using Geode;
 using Geode.Errors;
 using Geode.IR;
@@ -14,15 +13,17 @@ namespace Amethyst.IR
 		{
 			public ValueRef GetProperty(ValueRef val, string name)
 			{
-				if (val.Type.HasProperty(name) is TypeSpecifier t)
+				if (val.Type.HasProperty(name) is { } t)
 				{
 					return ctx.Add(new PropertyInsn(val, LiteralValue.Raw(name), t));
 				}
-				else if (ctx.GetMethodOrNull(val, name) is ValueRef method)
+
+				if (ctx.GetMethodOrNull(val, name) is { } method)
 				{
 					return method;
 				}
-				else if (val.Type.DefaultPropertyType is TypeSpecifier t2)
+
+				if (val.Type.DefaultPropertyType is { } t2)
 				{
 					return ctx.Add(new PropertyInsn(val, LiteralValue.Raw(name), t2));
 				}
@@ -38,7 +39,9 @@ namespace Amethyst.IR
 				if (global is IFunctionLike func && func.FuncType.Parameters.Length >= 1)
 				{
 					// With references
-					var genericFunc = func.CloneWithType(func.FuncType.ApplyGenericWithParams([new ReferenceType(effectiveMethodType)]));
+					var genericFunc =
+						func.CloneWithType(
+							func.FuncType.ApplyGenericWithParams([new ReferenceType(effectiveMethodType)]));
 					var firstArgType = genericFunc.FuncType.Parameters[0].Type;
 
 					if (firstArgType is ReferenceType r2 && effectiveMethodType.Implements(r2.Inner))
@@ -64,10 +67,8 @@ namespace Amethyst.IR
 				{
 					return ctx.GetMethodOrNull(val, name, effectiveMethodType.BaseClass);
 				}
-				else
-				{
-					return null;
-				}
+
+				return null;
 			}
 		}
 	}

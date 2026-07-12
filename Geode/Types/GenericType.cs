@@ -21,7 +21,9 @@ namespace Geode.Types
 		// Also kinda does the GetHashCode as well because I did a silly for that
 		public override string ToString() => Resolved ? Constraint.ToString() : Name;
 
-		public override bool ConstraintSatisfiedBy(TypeSpecifier other) => Constraint is VarType || other.Implements(Constraint);
+		public override bool ConstraintSatisfiedBy(TypeSpecifier other) =>
+			Constraint is VarType || other.Implements(Constraint);
+
 		public override bool Implements(TypeSpecifier other) => Constraint.Implements(other);
 
 		public void Set(TypeSpecifier type)
@@ -50,9 +52,11 @@ namespace Geode.Types
 			base.ApplyGeneric(other, typeMap);
 		}
 
-		protected override bool EqualsImpl(TypeSpecifier obj) => obj is GenericType other && other.Name == Name && other.Constraint == Constraint;
+		protected override bool EqualsImpl(TypeSpecifier obj) =>
+			obj is GenericType other && other.Name == Name && other.Constraint == Constraint;
+
 		public override TypeSpecifier GetEquatableType() => Resolved ? Constraint.GetEquatableType() : this;
-		public override int GetHashCode() => HashCode.Combine(Name, Constraint);
+		public override int GetHashCode() => HashCode.Combine(Name, 7);
 		public override object Clone() => new GenericType(Name, Constraint, Resolved);
 	}
 }

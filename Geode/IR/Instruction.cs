@@ -1,53 +1,60 @@
-using System.Text;
 using Datapack.Net.Data;
 using Geode.Errors;
 using Geode.Types;
 using Geode.Values;
+using System.Diagnostics.CodeAnalysis;
+using System.Text;
 
 namespace Geode.IR
 {
 	public interface IBasicInsn
 	{
-		public IInstructionArg[] Arguments { get; }
-		public ValueRef ReturnValue { get; }
-		public string Name { get; }
-		public TypeSpecifier ReturnType { get; }
+		IInstructionArg[] Arguments { get; }
+		ValueRef ReturnValue { get; }
+		string Name { get; }
+		TypeSpecifier ReturnType { get; }
 
-		public void Remove();
+		void Remove();
 	}
 
 	public abstract class Instruction : IBasicInsn
 	{
-		public virtual IInstructionArg[] Arguments { get; private set; }
-
-		// Includes arguments through self-dependencies. Kind of dark and evil, but it works.
-		public virtual IEnumerable<ValueRef> Dependencies => Arguments.SelectMany(i => i.Dependencies);
-		public ValueRef ReturnValue { get; private init; }
-
 		public LocationRange Location = LocationRange.None;
 
-		public abstract string Name { get; }
-		public abstract NBTType?[] ArgTypes { get; }
-		public abstract TypeSpecifier ReturnType { get; }
-
-		public bool MarkedForRemoval { get; private set; } = false;
-		public Instruction[] ToReplaceWith { get; private set; } = [];
-
-		public virtual bool IsReturn => false;
-		public virtual bool AlwaysUseScore => false; // Tee hee I love band aid fixes for band aid fixes (but it's actually clean!)
-		public virtual bool ArgumentsAliveAtInsn => true;
-
-		/// <summary>
-		/// Affects values outside of the return value
-		/// </summary>
-		public virtual bool HasSideEffects { get; }
-
-		public Instruction(IEnumerable<IInstructionArg> args)
+		[SuppressMessage("ReSharper", "VirtualMemberCallInConstructor")]
+		protected Instruction(IEnumerable<IInstructionArg> args)
 		{
 			Arguments = [.. args];
 			ReturnValue = new(ReturnType, this);
 			CheckArguments();
 		}
+
+		// Includes arguments through self-dependencies. Kind of dark and evil, but it works.
+		public virtual IEnumerable<ValueRef> Dependencies => Arguments.SelectMany(i => i.Dependencies);
+		public abstract NBTType?[] ArgTypes { get; }
+
+		public bool MarkedForRemoval { get; private set; }
+		public Instruction[] ToReplaceWith { get; private set; } = [];
+
+		public virtual bool IsReturn => false;
+
+		public virtual bool AlwaysUseScore =>
+			false; // Tee hee I love band aid fixes for band aid fixes (but it's actually clean!)
+
+		public virtual bool ArgumentsAliveAtInsn => true;
+
+		/// <summary>
+		///     Affects values outside the return value
+		/// </summary>
+		public virtual bool HasSideEffects => false;
+
+		public virtual IInstructionArg[] Arguments { get; private set; }
+		public ValueRef ReturnValue { get; }
+
+		public abstract string Name { get; }
+		public abstract TypeSpecifier ReturnType { get; }
+
+		public virtual void Remove() => MarkedForRemoval = true;
 
 		public virtual void OnAdd(Block block) { }
 
@@ -67,7 +74,8 @@ namespace Geode.IR
 				{
 					if (!(ArgTypes[i] == NBTType.Int && (v.NeedsScoreReg || v.Value is ScoreValue)))
 					{
-						throw new InvalidTypeError(v.Type.ToString(), $"{ArgTypes[i]}".ToLower()); // Use string interpolation to handle the null case
+						throw new InvalidTypeError(v.Type.ToString(),
+							$"{ArgTypes[i]}".ToLower()); // Use string interpolation to handle the null case
 					}
 				}
 
@@ -105,7 +113,11 @@ namespace Geode.IR
 		}
 
 		public abstract void Render(RenderContext ctx);
-		public virtual void ConfigureLifetime(Func<ValueRef, ValueRef, bool> tryLink, Action<ValueRef, ValueRef> markOverlap) { }
+
+		public virtual void ConfigureLifetime(Func<ValueRef, ValueRef, bool> tryLink,
+			Action<ValueRef, ValueRef> markOverlap)
+		{
+		}
 
 		public virtual string Dump()
 		{
@@ -141,7 +153,7 @@ namespace Geode.IR
 		public virtual void ReplaceValue(ValueRef val, ValueRef with)
 		{
 			// There's got to be a better way to do this
-			for (int i = 0; i < Arguments.Length; i++)
+			for (var i = 0; i < Arguments.Length; i++)
 			{
 				if (Arguments[i] == val)
 				{
@@ -160,6 +172,7 @@ namespace Geode.IR
 		{
 			args = [.. Arguments.Select(a => ((a as ValueRef)?.Value as LiteralValue)!)];
 
+			// ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract
 			return args.All(v => v is not null);
 		}
 
@@ -177,7 +190,7 @@ namespace Geode.IR
 				return false;
 			}
 
-			if (NBTValue.IsNumberType(args[0].Type.EffectiveType) && NBTValue.IsNumberType<T1>() is NBTNumberType t1)
+			if (NBTValue.IsNumberType(args[0].Type.EffectiveType) && NBTValue.IsNumberType<T1>() is { } t1)
 			{
 				arg1 = (T1)args[0].Value.Cast(t1);
 			}
@@ -186,7 +199,7 @@ namespace Geode.IR
 				arg1 = args[0].Value as T1 ?? throw new InvalidCastException($"Expected {typeof(T1)}");
 			}
 
-			if (NBTValue.IsNumberType(args[1].Type.EffectiveType) && NBTValue.IsNumberType<T2>() is NBTNumberType t2)
+			if (NBTValue.IsNumberType(args[1].Type.EffectiveType) && NBTValue.IsNumberType<T2>() is { } t2)
 			{
 				arg2 = (T2)args[1].Value.Cast(t2);
 			}
@@ -198,12 +211,10 @@ namespace Geode.IR
 			return true;
 		}
 
-		public virtual void Remove() => MarkedForRemoval = true;
-
 		public void ReplaceWith(params Instruction[] insns) => ToReplaceWith = insns;
 
 		/// <summary>
-		/// Compute return value. Return null to allow Geode to allocate automatically.
+		///     Compute return value. Return null to allow Geode to allocate automatically.
 		/// </summary>
 		/// <returns>Value or null</returns>
 		protected abstract IValue? ComputeReturnValue(FunctionContext ctx);
@@ -212,8 +223,11 @@ namespace Geode.IR
 	public abstract class DynamicInstruction() : Instruction([])
 	{
 		public sealed override NBTType?[] ArgTypes => [];
-		public override IInstructionArg[] Arguments => throw new InvalidOperationException($"{Name} handles arguments manually");
-		public override abstract IEnumerable<ValueRef> Dependencies { get; }
+
+		public override IInstructionArg[] Arguments =>
+			throw new InvalidOperationException($"{Name} handles arguments manually");
+
+		public abstract override IEnumerable<ValueRef> Dependencies { get; }
 
 		public override void CheckArguments() { }
 

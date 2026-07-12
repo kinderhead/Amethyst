@@ -1,22 +1,23 @@
 using Geode.Errors;
+using System.Diagnostics;
 
 namespace Geode.IR
 {
 	public interface IPass
 	{
-		public int MinimumOptimizationLevel { get; }
+		int MinimumOptimizationLevel { get; }
 
-		public void Apply(FunctionContext ctx);
+		void Apply(FunctionContext ctx);
 	}
 
 	public abstract class Pass<T> : IPass
 	{
-		public virtual int MinimumOptimizationLevel => 0;
+		private HashSet<Block> toVisit = [];
 
 		protected virtual bool SkipBlocks => false;
 		protected virtual bool SkipInsns => false;
 		protected virtual bool Reversed => false;
-		private HashSet<Block> toVisit = [];
+		public virtual int MinimumOptimizationLevel => 0;
 
 		public void Apply(FunctionContext ctx)
 		{
@@ -81,10 +82,10 @@ namespace Geode.IR
 			{
 				foreach (var i in Reversed ? b.Instructions.AsEnumerable().Reverse() : b.Instructions)
 				{
-					if (!ctx.Compiler.WrapError(i.Location, [System.Diagnostics.DebuggerNonUserCode] () =>
-					{
-						OnInsn(ctx, b, i, state);
-					}))
+					if (!ctx.Compiler.WrapError(i.Location, [DebuggerNonUserCode]() =>
+					    {
+						    OnInsn(ctx, b, i, state);
+					    }))
 					{
 						throw new EmptyGeodeError();
 					}
@@ -122,7 +123,9 @@ namespace Geode.IR
 		protected override void OnBlock(FunctionContext ctx, Block block, object state) => OnBlock(ctx, block);
 		protected virtual void OnBlock(FunctionContext ctx, Block block) { }
 
-		protected override void OnInsn(FunctionContext ctx, Block block, Instruction insn, object state) => OnInsn(ctx, block, insn);
+		protected override void OnInsn(FunctionContext ctx, Block block, Instruction insn, object state) =>
+			OnInsn(ctx, block, insn);
+
 		protected virtual void OnInsn(FunctionContext ctx, Block block, Instruction insn) { }
 	}
 }

@@ -1,10 +1,8 @@
-using System;
-
 namespace Geode.IR.Instructions
 {
-    public interface IStoreInsn : IBasicInsn
-    {
-        public ValueRef Value { get; }
-        public ValueRef Variable { get; }
-    }
+	public interface IStoreInsn : IBasicInsn
+	{
+		ValueRef Value { get; }
+		ValueRef Variable { get; }
+	}
 }

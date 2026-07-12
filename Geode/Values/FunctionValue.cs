@@ -9,16 +9,19 @@ using Geode.Types;
 
 namespace Geode.Values
 {
-	public class FunctionValue(NamespacedID id, FunctionType type, LocationRange loc) : LiteralValue(new NBTString(id.ToString()), type), IFunctionLike
+	public class FunctionValue(NamespacedID id, FunctionType type, LocationRange loc)
+		: LiteralValue(new NBTString(id.ToString()), type), IFunctionLike
 	{
 		public readonly NamespacedID ID = id;
 		public readonly LocationRange Location = loc;
-		public override string ToString() => ID.ToString();
 		public FunctionType FuncType => (FunctionType)Type;
-
-		public virtual ValueRef CallBehavior(FunctionContext ctx, params ValueRef[] args) => ctx.Add(new CallInsn(this, ctx.PrepArgs(FuncType, args)));
-		public virtual void Call(RenderContext ctx, IValueLike[] args) => Call(ctx, ID, FuncType, args);
 		public virtual IFunctionLike CloneWithType(FunctionType type) => new FunctionValue(ID, type, Location);
+		public override string ToString() => ID.ToString();
+
+		public virtual ValueRef CallBehavior(FunctionContext ctx, params ValueRef[] args) =>
+			ctx.Add(new CallInsn(this, ctx.PrepArgs(FuncType, args)));
+
+		public virtual void Call(RenderContext ctx, IValueLike[] args) => Call(ctx, ID, FuncType, args);
 
 		public static void Call(RenderContext ctx, NamespacedID id, FunctionType funcType, IValueLike[] args)
 		{
@@ -28,9 +31,13 @@ namespace Geode.Values
 			{
 				ctx.PossibleErrorChecker(new FunctionCommand(id, s.Storage, s.Path),
 					text => text
-						.Text($": Failed to run function ")
-						.Text(id.ToString(), new FormattedText.Modifiers { Color = "red", SuggestCommand = $"/function {id}", Underlined = true })
-						.Text($" with macro arguments: "),
+						.Text(": Failed to run function ")
+						.Text(id.ToString(),
+							new FormattedText.Modifiers
+							{
+								Color = "red", SuggestCommand = $"/function {id}", Underlined = true
+							})
+						.Text(" with macro arguments: "),
 					s
 				);
 			}
@@ -38,9 +45,13 @@ namespace Geode.Values
 			{
 				ctx.PossibleErrorChecker(new FunctionCommand(id, (NBTCompound)l.Value),
 					text => text
-						.Text($": Failed to run function ")
-						.Text(id.ToString(), new FormattedText.Modifiers { Color = "red", SuggestCommand = $"/function {id} {l.Value}", Underlined = true })
-						.Text($" with macro arguments: "),
+						.Text(": Failed to run function ")
+						.Text(id.ToString(),
+							new FormattedText.Modifiers
+							{
+								Color = "red", SuggestCommand = $"/function {id} {l.Value}", Underlined = true
+							})
+						.Text(" with macro arguments: "),
 					l
 				);
 			}
@@ -63,7 +74,7 @@ namespace Geode.Values
 			{
 				var processedArgs = new Dictionary<string, IValueLike>();
 				var macros = new Dictionary<string, IValueLike>();
-				var macroStorageLocation = new StackValue(-1, ctx.Builder.RuntimeID, $"macros", PrimitiveType.Compound);
+				var macroStorageLocation = new StackValue(-1, ctx.Builder.RuntimeID, "macros", PrimitiveType.Compound);
 
 				foreach (var (param, val) in funcType.Parameters.Zip(args))
 				{
@@ -76,11 +87,9 @@ namespace Geode.Values
 							{
 								throw new MacroStringError();
 							}
-							else
-							{
-								// Escape string
-								macros.Add(param.Name, new LiteralValue(l.Value.ToString()));
-							}
+
+							// Escape string
+							macros.Add(param.Name, new LiteralValue(l.Value.ToString()));
 						}
 						else
 						{
@@ -102,12 +111,13 @@ namespace Geode.Values
 
 				if (processedArgs.Count != 0)
 				{
-					ctx.StoreCompound(new StackValue(-1, ctx.Builder.RuntimeID, "args", PrimitiveType.Compound), processedArgs, setEmpty: false);
+					ctx.StoreCompound(new StackValue(-1, ctx.Builder.RuntimeID, "args", PrimitiveType.Compound),
+						processedArgs, false);
 				}
 
 				if (macros.Count != 0)
 				{
-					processedMacros = ctx.StoreCompoundOrReturnConstant(macroStorageLocation, macros, setEmpty: false);
+					processedMacros = ctx.StoreCompoundOrReturnConstant(macroStorageLocation, macros, false);
 				}
 			}
 

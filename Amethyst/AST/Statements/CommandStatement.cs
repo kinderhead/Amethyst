@@ -1,8 +1,6 @@
 ﻿using Geode;
 using Geode.IR;
 using Geode.IR.Instructions;
-using Geode.Types;
-using System.Text;
 
 namespace Amethyst.AST.Statements
 {
@@ -10,6 +8,7 @@ namespace Amethyst.AST.Statements
 	{
 		public readonly Expression[] Fragments = [.. cmd];
 
-		public override void Compile(FunctionContext ctx) => ctx.Add(new CommandInsn(Fragments.Select(i => i.Execute(ctx, null))));
+		public override void Compile(FunctionContext ctx) =>
+			ctx.Add(new CommandInsn(Fragments.Select(i => i.Execute(ctx, null))));
 	}
 }

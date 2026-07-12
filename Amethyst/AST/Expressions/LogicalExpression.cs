@@ -9,12 +9,14 @@ namespace Amethyst.AST.Expressions
 		Or
 	}
 
-	public class LogicalExpression(LocationRange loc, Expression left, LogicalOperation op, Expression right) : Expression(loc)
+	public class LogicalExpression(LocationRange loc, Expression left, LogicalOperation op, Expression right)
+		: Expression(loc)
 	{
 		public readonly Expression Left = left;
 		public readonly LogicalOperation Op = op;
 		public readonly Expression Right = right;
 
-		protected override ValueRef ExecuteImpl(FunctionContext ctx, TypeSpecifier? expected) => throw new NotImplementedException();
+		protected override ValueRef ExecuteImpl(FunctionContext ctx, TypeSpecifier? expected) =>
+			throw new NotImplementedException();
 	}
 }

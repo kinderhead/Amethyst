@@ -1,9 +1,7 @@
-﻿using System.Reflection;
-using System.Runtime.ExceptionServices;
-using Amethyst.Cli;
+﻿using Amethyst.Cli;
 using Spectre.Console;
 using Spectre.Console.Cli;
-using Spectre.Console.Cli.Help;
+using System.Runtime.ExceptionServices;
 using Tmds.Utils;
 
 namespace Amethyst
@@ -21,7 +19,8 @@ namespace Amethyst
 			Console.Clear(); // Thanks Visual Studio for being sad
 #endif
 
-			AnsiConsole.MarkupLine("[yellow]Amethyst is currently in development. Report issues at [aqua underline]https://github.com/kinderhead/Amethyst/issues[/].[/]\n");
+			AnsiConsole.MarkupLine(
+				"[yellow]Amethyst is currently in development. Report issues at [aqua underline]https://github.com/kinderhead/Amethyst/issues[/].[/]\n");
 
 #pragma warning disable IL3050
 			var app = new CommandApp();
@@ -29,7 +28,7 @@ namespace Amethyst
 
 			app.SetDefaultCommand<DefaultCommand>();
 			app.Configure(config =>
-            {
+			{
 				config.SetApplicationName("amethyst");
 				config.Settings.MaximumIndirectExamples = 100;
 				config.Settings.HelpProviderStyles?.Description?.Header = "default";
@@ -41,8 +40,8 @@ namespace Amethyst
 				config.Settings.HelpProviderStyles?.Options?.Header = "default";
 				config.Settings.HelpProviderStyles?.Commands?.Header = "default";
 
-				config.SetExceptionHandler((ex, resolver) =>
-                {
+				config.SetExceptionHandler((ex, _) =>
+				{
 					if (ex is CommandRuntimeException cre)
 					{
 						AnsiConsole.MarkupLineInterpolated($"[red]Error:[/] {cre.Message}");
@@ -52,8 +51,8 @@ namespace Amethyst
 						ExceptionDispatchInfo.Capture(ex).Throw();
 					}
 					// AnsiConsole.MarkupLineInterpolated($"[red]{ex.GetType().Name}: {ex.Message}[/]");
-                    // return 1;
-                });
+					// return 1;
+				});
 
 				config.AddCommand<BuildProjectCommand>("build")
 					.WithDescription("Build shard project.")
@@ -67,7 +66,7 @@ namespace Amethyst
 
 				config.AddBranch("shard", cmd =>
 				{
-                    cmd.SetDescription("Project subcommands.");
+					cmd.SetDescription("Project subcommands.");
 					cmd.AddCommand<ProjectInitCommand>("init")
 						.WithDescription("Initialize a project.")
 						.WithExample("shard init");

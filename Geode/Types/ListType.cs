@@ -1,6 +1,5 @@
 ﻿using Datapack.Net.Data;
 using Datapack.Net.Utils;
-using Geode.IR;
 using Geode.Values;
 
 namespace Geode.Types

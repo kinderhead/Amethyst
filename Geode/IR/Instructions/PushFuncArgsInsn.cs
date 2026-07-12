@@ -9,7 +9,12 @@ namespace Geode.IR.Instructions
 		public readonly FunctionType FuncType = type;
 
 		public override string Name => "push_args";
-		public override NBTType?[] ArgTypes => [.. FuncType.Parameters.Select(i => i.Type is VarType ? (NBTType?)null : i.Type.EffectiveType)];
+
+		public override NBTType?[] ArgTypes =>
+		[
+			.. FuncType.Parameters.Select(i => i.Type is VarType ? (NBTType?)null : i.Type.EffectiveType)
+		];
+
 		public override TypeSpecifier ReturnType => new VoidType();
 
 		public override void Render(RenderContext ctx)
@@ -18,10 +23,10 @@ namespace Geode.IR.Instructions
 
 			if (macros is LiteralValue)
 			{
-				new StackValue(-1, ctx.Builder.RuntimeID, $"macros", PrimitiveType.Compound).Store(macros, ctx);
+				new StackValue(-1, ctx.Builder.RuntimeID, "macros", PrimitiveType.Compound).Store(macros, ctx);
 			}
 		}
 
-		protected override IValue? ComputeReturnValue(FunctionContext ctx) => new VoidValue();
+		protected override IValue ComputeReturnValue(FunctionContext ctx) => new VoidValue();
 	}
 }

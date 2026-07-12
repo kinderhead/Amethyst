@@ -6,7 +6,8 @@ using Geode.Types;
 
 namespace Amethyst.AST.Expressions
 {
-	public class ArithmeticExpression(LocationRange loc, Expression left, ScoreOperation op, Expression right) : Expression(loc)
+	public class ArithmeticExpression(LocationRange loc, Expression left, ScoreOperation op, Expression right)
+		: Expression(loc)
 	{
 		public readonly Expression Left = left;
 		public readonly ScoreOperation Op = op;
@@ -24,7 +25,7 @@ namespace Amethyst.AST.Expressions
 				ScoreOperation.Mul => ctx.Add(new MulInsn(left, right)),
 				ScoreOperation.Div => ctx.Add(new DivInsn(left, right)),
 				ScoreOperation.Mod => ctx.Add(new ModInsn(left, right)),
-				_ => throw new NotImplementedException(),
+				_ => throw new NotImplementedException()
 			};
 		}
 	}

@@ -19,17 +19,25 @@ namespace Amethyst.AST
 		Entity
 	}
 
-	public class StructNode(ContainerType type, LocationRange loc, NamespacedID id, AbstractTypeSpecifier? baseClass, Dictionary<string, AbstractTypeSpecifier> props, List<MethodNode> methods) : Node(loc), IRootChild
+	public class StructNode(
+		ContainerType type,
+		LocationRange loc,
+		NamespacedID id,
+		AbstractTypeSpecifier? baseClass,
+		Dictionary<string, AbstractTypeSpecifier> props,
+		List<MethodNode> methods) : Node(loc), IRootChild
 	{
-		public readonly ContainerType Type = type;
-		public readonly NamespacedID ID = id;
-		public readonly Dictionary<string, AbstractTypeSpecifier> Properties = props;
-		public readonly List<MethodNode> Methods = methods;
+		public static readonly ReadOnlySet<string> ReservedProperties = [StructType.TypeIDProperty];
 		public readonly AbstractTypeSpecifier? BaseClass = baseClass;
+		public readonly NamespacedID ID = id;
+		public readonly List<MethodNode> Methods = methods;
+		public readonly Dictionary<string, AbstractTypeSpecifier> Properties = props;
+		public readonly ContainerType Type = type;
 
 		public void Process(Compiler ctx, RootNode root)
 		{
-			var actualBaseClass = BaseClass?.Resolve(ctx, ID.GetContainingFolder()) ?? (Type == ContainerType.Entity ? EntityType.Dummy : PrimitiveType.Compound);
+			var actualBaseClass = BaseClass?.Resolve(ctx, ID.GetContainingFolder()) ??
+			                      (Type == ContainerType.Entity ? EntityType.Dummy : PrimitiveType.Compound);
 			var baseClass = actualBaseClass;
 
 			if (baseClass is ReferenceType r)
@@ -47,7 +55,8 @@ namespace Amethyst.AST
 
 			var selfType = Type switch
 			{
-				ContainerType.Struct or ContainerType.Class => new StructType(ID, baseClass, props, methods, Type == ContainerType.Class),
+				ContainerType.Struct or ContainerType.Class => new StructType(ID, baseClass, props, methods,
+					Type == ContainerType.Class),
 				ContainerType.Entity => new EntityType(ID, baseClass, props, methods),
 				_ => throw new NotImplementedException()
 			};
@@ -70,7 +79,8 @@ namespace Amethyst.AST
 				{
 					throw new ReferencePropertyError(k);
 				}
-				else if (ReservedProperties.Contains(k))
+
+				if (ReservedProperties.Contains(k))
 				{
 					throw new ReservedNameError(k);
 				}
@@ -89,7 +99,8 @@ namespace Amethyst.AST
 				else
 				{
 					var type = i.GetFunctionType(ctx);
-					methods[i.ID.GetFile()] = (FunctionValue?)ctx.IR.GetGlobal(i.ID) ?? throw new UndefinedSymbolError(i.ID.ToString());
+					methods[i.ID.GetFile()] = (FunctionValue?)ctx.IR.GetGlobal(i.ID) ??
+					                          throw new UndefinedSymbolError(i.ID.ToString());
 
 					var thisIsVirtual = i.Modifiers.HasFlag(FunctionModifiers.Virtual);
 
@@ -106,11 +117,14 @@ namespace Amethyst.AST
 						{
 							throw new MissingVirtualError(i.ID.GetFile());
 						}
-						else if (!otherIsVirtual)
+
+						if (!otherIsVirtual)
 						{
 							throw new CannotOverrideError(i.ID.GetFile());
 						}
-						else if (other.ReturnType != type.ReturnType || other.Parameters.Length != type.Parameters.Length || !other.Parameters.Skip(1).Zip(type.Parameters.Skip(1)).All(i => i.First == i.Second))
+
+						if (other.ReturnType != type.ReturnType || other.Parameters.Length != type.Parameters.Length ||
+						    !other.Parameters.Skip(1).Zip(type.Parameters.Skip(1)).All(i => i.First == i.Second))
 						{
 							throw new InvalidOverrideSignatureError(i.ID.GetFile());
 						}
@@ -120,11 +134,16 @@ namespace Amethyst.AST
 
 			if (constructor is null && Type == ContainerType.Class)
 			{
-				constructor = new(Location, [], FunctionModifiers.Inline, $"{ID}/{ID.GetFile()}", [], actualBaseClass is ReferenceType cls ? new CallExpression(Location, new VariableExpression(Location, cls.Inner.ID.ToString()), [new VariableExpression(Location, "this")]) : null, new(Location));
+				constructor = new(Location, [], FunctionModifiers.Inline, $"{ID}/{ID.GetFile()}", [],
+					actualBaseClass is ReferenceType cls
+						? new CallExpression(Location, new VariableExpression(Location, cls.Inner.ID.ToString()),
+							[new VariableExpression(Location, "this")])
+						: null, new(Location));
 				constructor.Process(ctx, root);
 			}
 
-			if (ctx.IR.GetConstructorOrNull(selfType.BaseClass) is not null && (constructor is null || constructor.BaseCall is null))
+			if (ctx.IR.GetConstructorOrNull(selfType.BaseClass) is not null &&
+			    (constructor is null || constructor.BaseCall is null))
 			{
 				throw new MissingConstructorError(selfType.BaseClass.ToString());
 			}
@@ -140,10 +159,8 @@ namespace Amethyst.AST
 			}
 		}
 
-		private void GenerateMetaMethods(Compiler ctx, RootNode root, Dictionary<string, FunctionValue> methods)
-		{
+		private void GenerateMetaMethods(Compiler ctx, RootNode root, Dictionary<string, FunctionValue> methods) =>
 			GenerateGCMark(ctx, root, methods);
-		}
 
 		private void GenerateGCMark(Compiler ctx, RootNode root, Dictionary<string, FunctionValue> methods)
 		{
@@ -152,10 +169,10 @@ namespace Amethyst.AST
 
 			body.Add(new GCMarkStatement(Location));
 
-			new FunctionNode(Location, [], FunctionModifiers.Virtual, new SimpleAbstractTypeSpecifier(Location, "void"), id, [new AbstractParameter(ParameterModifiers.Macro, new SimpleAbstractTypeSpecifier(Location, ID.ToString()), "this")], body).Process(ctx, root);
+			new FunctionNode(Location, [], FunctionModifiers.Virtual, new SimpleAbstractTypeSpecifier(Location, "void"),
+				id, [new(ParameterModifiers.Macro, new SimpleAbstractTypeSpecifier(Location, ID.ToString()), "this")],
+				body).Process(ctx, root);
 			methods["@mark"] = (FunctionValue?)ctx.IR.GetGlobal(id) ?? throw new UndefinedSymbolError(id.ToString());
 		}
-
-		public static readonly ReadOnlySet<string> ReservedProperties = [StructType.TypeIDProperty];
 	}
 }

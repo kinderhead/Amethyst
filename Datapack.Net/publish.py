@@ -1,6 +1,5 @@
-from glob import glob
 import os
-
+from glob import glob
 
 path = os.path.expanduser("~/.nuget/nuget.exe")
 

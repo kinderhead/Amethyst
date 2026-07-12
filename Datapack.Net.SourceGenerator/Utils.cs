@@ -106,7 +106,8 @@ namespace Datapack.Net.SourceGenerator
 				builder.Append(", tmp");
 			}
 
-			builder.Append($");\n        public Datapack.Net.Function.MCFunction {func.Name.Substring(1)}_Function() => {state}FindFunction({func.Name}) ?? throw new Exception(\"Project not built yet\");");
+			builder.Append(
+				$");\n        public Datapack.Net.Function.MCFunction {func.Name.Substring(1)}_Function() => {state}FindFunction({func.Name}) ?? throw new Exception(\"Project not built yet\");");
 
 			return builder.ToString();
 		}
@@ -119,9 +120,14 @@ namespace Datapack.Net.SourceGenerator
 				args.Add((arg.Type.ToDisplayString(), arg.Name));
 			}
 
-			var attr = method.GetAttributes().Where(i => i.AttributeClass.ToDisplayString().Contains("Datapack.Net.CubeLib.DeclareMC")).FirstOrDefault();
+			var attr = method.GetAttributes()
+				.Where(i => i.AttributeClass.ToDisplayString().Contains("Datapack.Net.CubeLib.DeclareMC"))
+				.FirstOrDefault();
 
-			return new(method.Name, method.ToDisplayString(), attr.AttributeClass.IsGenericType ? attr.AttributeClass.TypeArguments.FirstOrDefault().ToDisplayString() : "void", args, attr.AttributeConstructor.Parameters.Length == 2);
+			return new(method.Name, method.ToDisplayString(),
+				attr.AttributeClass.IsGenericType
+					? attr.AttributeClass.TypeArguments.FirstOrDefault().ToDisplayString()
+					: "void", args, attr.AttributeConstructor.Parameters.Length == 2);
 		}
 
 		public static string ProcessRuntimePropertyType(string type)

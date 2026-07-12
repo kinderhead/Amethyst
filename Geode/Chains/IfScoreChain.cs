@@ -17,7 +17,8 @@ namespace Geode.Chains
 	{
 		public readonly ComparisonOperator Op;
 
-		public IfScoreChain(ValueRef left, ComparisonOperator op, ValueRef right, bool invert = false) : base([left, right], invert)
+		public IfScoreChain(ValueRef left, ComparisonOperator op, ValueRef right, bool invert = false) : base(
+			[left, right], invert)
 		{
 			Op = op;
 

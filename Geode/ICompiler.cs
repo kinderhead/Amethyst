@@ -16,19 +16,19 @@ namespace Geode
 		string MapToPath(string mappedPath);
 
 		string GetFile(string path);
-		
+
 		bool GetFileOrNull(string path, out string file)
-        {
-            try
-            {
-                file = GetFile(path);
+		{
+			try
+			{
+				file = GetFile(path);
 				return true;
-            }
+			}
 			catch
-            {
+			{
 				file = "";
-                return false;
-            }
-        }
+				return false;
+			}
+		}
 	}
 }

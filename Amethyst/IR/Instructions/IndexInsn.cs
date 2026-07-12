@@ -24,7 +24,8 @@ namespace Amethyst.IR.Instructions
 				{
 					return rl.Inner;
 				}
-				else if (type is ListType l)
+
+				if (type is ListType l)
 				{
 					return l.Inner;
 				}
@@ -32,7 +33,10 @@ namespace Amethyst.IR.Instructions
 				throw new InvalidTypeError(dest.Type.ToString(), "list");
 			}
 		}
-		public override TypeSpecifier ReturnType => Arg<ValueRef>(0).Type is ReferenceType and not WeakReferenceType ? new ReferenceType(ActualReturnType) : new WeakReferenceType(ActualReturnType);
+
+		public override TypeSpecifier ReturnType => Arg<ValueRef>(0).Type is ReferenceType and not WeakReferenceType
+			? new ReferenceType(ActualReturnType)
+			: new WeakReferenceType(ActualReturnType);
 
 		public override void Render(RenderContext ctx)
 		{
@@ -46,7 +50,7 @@ namespace Amethyst.IR.Instructions
 				.Add("]");
 		}
 
-		protected override IValue? ComputeReturnValue(FunctionContext ctx)
+		protected override IValue ComputeReturnValue(FunctionContext ctx)
 		{
 			var val = Arg<ValueRef>(0);
 			var index = Arg<ValueRef>(1);

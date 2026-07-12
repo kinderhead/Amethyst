@@ -16,7 +16,8 @@ namespace Amethyst.IR.Instructions
 		public override void Render(RenderContext ctx)
 		{
 			var val = (NBTString)Arg<ValueRef>(0).Expect<LiteralValue>().Value;
-			ctx.Call("amethyst:core/ref/get-stack-ref", new LiteralValue(val.Value.Split("[-1].")[^1]), new LiteralValue(-1));
+			ctx.Call("amethyst:core/ref/get-stack-ref", new LiteralValue(val.Value.Split("[-1].")[^1]),
+				new LiteralValue(-1));
 			ReturnValue.Expect<LValue>().Store(ctx.Func.GetFunctionReturnValue(ReturnType, -1), ctx);
 		}
 
@@ -27,18 +28,18 @@ namespace Amethyst.IR.Instructions
 			{
 				throw new WeakReferenceError();
 			}
-			else if (ptr.Value.Contains("stack[-1]."))
+
+			if (ptr.Value.Contains("stack[-1]."))
 			{
 				return null;
 			}
-			else if (ptr.Value.Contains("stack[-2]."))
+
+			if (ptr.Value.Contains("stack[-2]."))
 			{
 				throw new NotImplementedException();
 			}
-			else
-			{
-				return new LiteralValue(ptr, ReturnType);
-			}
+
+			return new LiteralValue(ptr, ReturnType);
 		}
 	}
 }

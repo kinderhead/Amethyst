@@ -4,7 +4,6 @@ using Geode;
 using Geode.IR;
 using Geode.IR.Instructions;
 using Geode.Types;
-using Geode.Values;
 
 namespace Amethyst.AST.Intrinsics
 {

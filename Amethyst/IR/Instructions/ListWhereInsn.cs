@@ -1,13 +1,9 @@
 ﻿using Amethyst.IR.Types;
 using Datapack.Net.Data;
 using Geode;
-using Geode.Errors;
 using Geode.IR;
 using Geode.Types;
 using Geode.Values;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Amethyst.IR.Instructions
 {
@@ -15,7 +11,9 @@ namespace Amethyst.IR.Instructions
 	{
 		public override string Name => "where";
 		public override NBTType?[] ArgTypes => [null, NBTType.Compound];
-		public override TypeSpecifier ReturnType => Arg<ValueRef>(0).Type is ReferenceType r ? r.Inner : Arg<ValueRef>(0).Type;
+
+		public override TypeSpecifier ReturnType =>
+			Arg<ValueRef>(0).Type is ReferenceType r ? r.Inner : Arg<ValueRef>(0).Type;
 
 		public override void Render(RenderContext ctx)
 		{

@@ -3,10 +3,11 @@ namespace Geode.IR
 	public interface IInstructionArg
 	{
 		/// <summary>
-		/// Empty string if no name
+		///     Empty string if no name
 		/// </summary>
-		public string Name { get; }
-		public IReadOnlySet<ValueRef> Dependencies { get; }
-		public void ReplaceValue(ValueRef value, ValueRef with);
+		string Name { get; }
+
+		IReadOnlySet<ValueRef> Dependencies { get; }
+		void ReplaceValue(ValueRef value, ValueRef with);
 	}
 }

@@ -5,10 +5,9 @@ namespace Datapack.Net.Data
 {
 	public class NBTList<T>(string prefix = "") : NBTValue, IList<T> where T : NBTValue
 	{
-		public override NBTType Type => NBTType.List;
-		public List<T> Values = [];
-
 		protected readonly string Prefix = prefix;
+		public List<T> Values = [];
+		public override NBTType Type => NBTType.List;
 
 		public T this[int index] { get => Values[index]; set => Values[index] = value; }
 
@@ -17,26 +16,6 @@ namespace Datapack.Net.Data
 		public bool IsReadOnly => false;
 
 		public void Add(T item) => Values.Add(item);
-
-		public override NBTValue Cast(NBTNumberType type) => throw new InvalidOperationException("Cannot cast list to number");
-
-		public override void Build(StringBuilder sb)
-		{
-			sb.Append('[');
-			sb.Append(Prefix);
-			foreach (var i in Values)
-			{
-				i.Build(sb);
-				sb.Append(',');
-			}
-
-			if (Values.Count > 0)
-			{
-				sb.Length--;
-			}
-
-			sb.Append(']');
-		}
 
 		public void Clear() => Values.Clear();
 
@@ -55,9 +34,32 @@ namespace Datapack.Net.Data
 		public void RemoveAt(int index) => Values.RemoveAt(index);
 
 		IEnumerator IEnumerable.GetEnumerator() => Values.GetEnumerator();
+
+		public override NBTValue Cast(NBTNumberType type) =>
+			throw new InvalidOperationException("Cannot cast list to number");
+
+		public override void Build(StringBuilder sb)
+		{
+			sb.Append('[');
+			sb.Append(Prefix);
+			foreach (var i in Values)
+			{
+				i.Build(sb);
+				sb.Append(',');
+			}
+
+			if (Values.Count > 0)
+			{
+				sb.Length--;
+			}
+
+			sb.Append(']');
+		}
 	}
 
-	public class NBTList : NBTList<NBTValue> { }
+	public class NBTList : NBTList<NBTValue>
+	{
+	}
 
 	public class NBTIntArray() : NBTList<NBTInt>("I;")
 	{

@@ -12,9 +12,11 @@ namespace Amethyst.AST
 			var stopToken = ctx.Stop;
 
 			// Might have to fix if there are multiline tokens, but I don't think there are any
-			var endColumn = stopToken is not null ? stopToken.Column + stopToken.StopIndex - stopToken.StartIndex + 1 : 0;
+			var endColumn = stopToken is not null
+				? stopToken.Column + stopToken.StopIndex - stopToken.StartIndex + 1
+				: 0;
 			var end = new Location(path, stopToken?.Line ?? 0, endColumn);
-			return new LocationRange(From(path, ctx.Start), end);
+			return new(From(path, ctx.Start), end);
 		}
 	}
 }

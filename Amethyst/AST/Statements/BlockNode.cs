@@ -1,6 +1,7 @@
 ﻿using Geode;
 using Geode.Errors;
 using Geode.IR;
+using System.Diagnostics;
 
 namespace Amethyst.AST.Statements
 {
@@ -26,11 +27,12 @@ namespace Amethyst.AST.Statements
 			ctx.PushScope();
 			foreach (var i in Statements)
 			{
-				if (!ctx.Compiler.WrapError(i.Location, ctx, [System.Diagnostics.DebuggerNonUserCode] () => i.Compile(ctx)))
+				if (!ctx.Compiler.WrapError(i.Location, ctx, [DebuggerNonUserCode]() => i.Compile(ctx)))
 				{
 					success = false;
 				}
 			}
+
 			ctx.PopScope();
 
 			return success;

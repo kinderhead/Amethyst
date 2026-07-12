@@ -1,14 +1,9 @@
-﻿using Amethyst.Errors;
-using Amethyst.IR.Types;
+﻿using Amethyst.IR.Types;
 using Datapack.Net.Data;
 using Datapack.Net.Function;
 using Geode;
 using Geode.IR;
 using Geode.Types;
-using Geode.Values;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Amethyst.IR.Instructions
 {
@@ -28,7 +23,9 @@ namespace Amethyst.IR.Instructions
 			{
 				ctx.Macroize([val, prop], (args, ctx) =>
 				{
-					ctx.Add(ret.StoreExecute(false).Run(new RawCommand($"data get entity @e[scores={{amethyst_id={args[0].Value}}}] {args[1].Value}")));
+					ctx.Add(ret.StoreExecute(false)
+						.Run(new RawCommand(
+							$"data get entity @e[scores={{amethyst_id={args[0].Value}}}] {args[1].Value}")));
 				});
 
 				return;

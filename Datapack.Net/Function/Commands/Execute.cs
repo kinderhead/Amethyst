@@ -5,15 +5,25 @@ namespace Datapack.Net.Function.Commands
 {
 	public class Execute : Command, ICloneable
 	{
-		public readonly List<Subcommand> Subcommands = [];
-
 		public readonly Conditional If;
+		public readonly List<Subcommand> Subcommands = [];
 		public readonly Conditional Unless;
 
 		public Execute(bool macro = false) : base(macro)
 		{
 			If = new(this, Conditional.Type.If);
 			Unless = new(this, Conditional.Type.Unless);
+		}
+
+		public object Clone()
+		{
+			var other = new Execute(Macro);
+			foreach (var i in Subcommands)
+			{
+				other.Subcommands.Add((Subcommand)i.Clone());
+			}
+
+			return other;
 		}
 
 		protected override string PreBuild()
@@ -34,7 +44,7 @@ namespace Datapack.Net.Function.Commands
 					continue;
 				}
 
-				sb.Append(i.ToString());
+				sb.Append(i);
 				sb.Append(' ');
 			}
 
@@ -45,7 +55,7 @@ namespace Datapack.Net.Function.Commands
 					return run.Command.Build();
 				}
 
-				sb.Append(run.ToString());
+				sb.Append(run);
 			}
 
 			return sb.ToString().TrimEnd();
@@ -66,6 +76,7 @@ namespace Datapack.Net.Function.Commands
 
 			return Add(new Subcommand.Run(cmd));
 		}
+
 		public Execute Align(Swizzle axes) => Add(new Subcommand.Align(axes));
 		public Execute Anchored(bool eyes) => Add(new Subcommand.Anchored(eyes));
 		public Execute As(IEntityTarget target) => Add(new Subcommand.As(target));
@@ -80,12 +91,33 @@ namespace Datapack.Net.Function.Commands
 		public Execute Rotated(Rotation rotation) => Add(new Subcommand.Rotated(rotation));
 		public Execute Rotated(IEntityTarget target) => Add(new Subcommand.Rotated(target));
 		public Execute Summon(EntityData target) => Add(new Subcommand.Summon(target));
-		public Execute Store(IDataTarget target, NBTNumberType type, double scale, bool result = true) => Add(new Subcommand.Store { Target = target, DataType = type, Scale = scale, Result = result });
-		public Execute Store(Position pos, string path, NBTNumberType type, double scale, bool result = true) => Add(new Subcommand.Store { Target = new BlockDataTarget(pos, path), DataType = type, Scale = scale, Result = result });
-		public Execute Store(Bossbar id, BossbarValueType type, bool result = true) => Add(new Subcommand.Store { BossbarID = id, BossbarType = type, Result = result });
-		public Execute Store(IEntityTarget target, string path, NBTNumberType type, double scale, bool result = true) => Add(new Subcommand.Store { Target = new EntityDataTarget(target, path), DataType = type, Scale = scale, Result = result });
-		public Execute Store(IEntityTarget target, Score objective, bool result = true) => Add(new Subcommand.Store { EntityTarget = target, Objective = objective, Result = result });
-		public Execute Store(Storage target, string path, NBTNumberType type, double scale, bool result = true) => Add(new Subcommand.Store { Target = new StorageTarget(target, path), DataType = type, Scale = scale, Result = result });
+
+		public Execute Store(IDataTarget target, NBTNumberType type, double scale, bool result = true) =>
+			Add(new Subcommand.Store { Target = target, DataType = type, Scale = scale, Result = result });
+
+		public Execute Store(Position pos, string path, NBTNumberType type, double scale, bool result = true) => Add(
+			new Subcommand.Store
+			{
+				Target = new BlockDataTarget(pos, path), DataType = type, Scale = scale, Result = result
+			});
+
+		public Execute Store(Bossbar id, BossbarValueType type, bool result = true) =>
+			Add(new Subcommand.Store { BossbarID = id, BossbarType = type, Result = result });
+
+		public Execute Store(IEntityTarget target, string path, NBTNumberType type, double scale, bool result = true) =>
+			Add(new Subcommand.Store
+			{
+				Target = new EntityDataTarget(target, path), DataType = type, Scale = scale, Result = result
+			});
+
+		public Execute Store(IEntityTarget target, Score objective, bool result = true) =>
+			Add(new Subcommand.Store { EntityTarget = target, Objective = objective, Result = result });
+
+		public Execute Store(Storage target, string path, NBTNumberType type, double scale, bool result = true) => Add(
+			new Subcommand.Store
+			{
+				Target = new StorageTarget(target, path), DataType = type, Scale = scale, Result = result
+			});
 
 		public Execute Add(Subcommand sbc)
 		{
@@ -103,12 +135,12 @@ namespace Datapack.Net.Function.Commands
 				}
 			}
 
-			throw new Exception("Execute command does not have the requested subcommand");
+			throw new("Execute command does not have the requested subcommand");
 		}
 
 		public IEnumerable<T> GetAll<T>() where T : Subcommand => Subcommands.Where(i => i is T).Cast<T>();
 
-		public void RemoveAll<T>() where T : Subcommand => Subcommands.RemoveAll((i) => i is T);
+		public void RemoveAll<T>() where T : Subcommand => Subcommands.RemoveAll(i => i is T);
 
 		public bool Contains<T>() where T : Subcommand
 		{
@@ -123,23 +155,18 @@ namespace Datapack.Net.Function.Commands
 			return false;
 		}
 
-		public object Clone()
-		{
-			var other = new Execute(Macro);
-			foreach (var i in Subcommands)
-			{
-				other.Subcommands.Add((Subcommand)i.Clone());
-			}
-
-			return other;
-		}
-
 		public Execute Copy() => (Execute)Clone();
 
 		public class Conditional(Execute execute, Conditional.Type type)
 		{
-			private readonly Execute Execute = execute;
+			public enum Type
+			{
+				If,
+				Unless
+			}
+
 			public readonly Type ConditionalType = type;
+			private readonly Execute Execute = execute;
 
 			public Execute Add(Subcommand sbc)
 			{
@@ -149,7 +176,10 @@ namespace Datapack.Net.Function.Commands
 
 			public Execute Biome(Position pos, Biome biome) => Add(new Subcommand.Biome(pos, biome));
 			public Execute Block(Position pos, Block block) => Add(new Subcommand.Block(pos, block));
-			public Execute Blocks(Position start, Position end, Position destination, bool masked = false) => Add(new Subcommand.Blocks(start, end, destination, masked));
+
+			public Execute Blocks(Position start, Position end, Position destination, bool masked = false) =>
+				Add(new Subcommand.Blocks(start, end, destination, masked));
+
 			public Execute Data(Position pos, string path) => Add(new Subcommand.Data(pos, path));
 			public Execute Data(IEntityTarget target, string path) => Add(new Subcommand.Data(target, path));
 			public Execute Data(Storage source, string path) => Add(new Subcommand.Data(source, path));
@@ -158,14 +188,13 @@ namespace Datapack.Net.Function.Commands
 			public Execute Entity(IEntityTarget entities) => Add(new Subcommand.Entity(entities));
 			public Execute Function(MCFunction function) => Add(new Subcommand.Function(function));
 			public Execute Loaded(Position pos) => Add(new Subcommand.Loaded(pos));
-			public Execute Score(IEntityTarget target, Score targetObjective, Comparison op, IEntityTarget source, Score sourceObjective) => Add(new Subcommand.Score(target, targetObjective, op, source, sourceObjective));
-			public Execute Score(IEntityTarget target, Score targetObjective, MCRange<int> range) => Add(new Subcommand.Score(target, targetObjective, range));
 
-			public enum Type
-			{
-				If,
-				Unless
-			}
+			public Execute Score(IEntityTarget target, Score targetObjective, Comparison op, IEntityTarget source,
+				Score sourceObjective) =>
+				Add(new Subcommand.Score(target, targetObjective, op, source, sourceObjective));
+
+			public Execute Score(IEntityTarget target, Score targetObjective, MCRange<int> range) =>
+				Add(new Subcommand.Score(target, targetObjective, range));
 
 			public abstract class Subcommand : Execute.Subcommand
 			{
@@ -177,26 +206,26 @@ namespace Datapack.Net.Function.Commands
 
 				public class Biome(Position position, Net.Data.Biome biome) : Subcommand
 				{
-					public readonly Position Position = position;
 					public readonly Net.Data.Biome BiomeTag = biome;
+					public readonly Position Position = position;
 
 					public override string Get() => $"biome {Position} {BiomeTag}";
 				}
 
 				public class Block(Position position, Net.Data.Block block) : Subcommand
 				{
-					public readonly Position Position = position;
 					public readonly Net.Data.Block BlockTag = block;
+					public readonly Position Position = position;
 
 					public override string Get() => $"block {Position} {BlockTag}";
 				}
 
 				public class Blocks(Position start, Position end, Position destination, bool masked) : Subcommand
 				{
-					public readonly Position Start = start;
-					public readonly Position End = end;
 					public readonly Position Destination = destination;
+					public readonly Position End = end;
 					public readonly bool Masked = masked;
+					public readonly Position Start = start;
 
 					public override string Get() => $"blocks {Start} {End} {Destination} {(Masked ? "masked" : "all")}";
 				}
@@ -205,10 +234,25 @@ namespace Datapack.Net.Function.Commands
 				{
 					public readonly IDataTarget Target;
 
-					public Data(Position pos, string path) => Target = new BlockDataTarget(pos, path);
-					public Data(IEntityTarget target, string path) => Target = new EntityDataTarget(target, path);
-					public Data(Storage source, string path) => Target = new StorageTarget(source, path);
-					public Data(IDataTarget target) => Target = target;
+					public Data(Position pos, string path)
+					{
+						Target = new BlockDataTarget(pos, path);
+					}
+
+					public Data(IEntityTarget target, string path)
+					{
+						Target = new EntityDataTarget(target, path);
+					}
+
+					public Data(Storage source, string path)
+					{
+						Target = new StorageTarget(source, path);
+					}
+
+					public Data(IDataTarget target)
+					{
+						Target = target;
+					}
 
 					public override string Get() => "data " + Target.GetTarget();
 				}
@@ -243,14 +287,15 @@ namespace Datapack.Net.Function.Commands
 
 				public class Score : Subcommand
 				{
-					public readonly IEntityTarget Target;
-					public readonly Net.Function.Score TargetObjective;
 					public readonly Comparison? Operator;
+					public readonly MCRange<int>? Range;
 					public readonly IEntityTarget? Source;
 					public readonly Net.Function.Score? SourceObjective;
-					public readonly MCRange<int>? Range;
+					public readonly IEntityTarget Target;
+					public readonly Net.Function.Score TargetObjective;
 
-					public Score(IEntityTarget target, Net.Function.Score targetObjective, Comparison op, IEntityTarget source, Net.Function.Score sourceObjective)
+					public Score(IEntityTarget target, Net.Function.Score targetObjective, Comparison op,
+						IEntityTarget source, Net.Function.Score sourceObjective)
 					{
 						Target = target;
 						TargetObjective = targetObjective;
@@ -270,12 +315,11 @@ namespace Datapack.Net.Function.Commands
 					{
 						if (Operator != null)
 						{
-							return $"score {Target.Get()} {TargetObjective} {GetOperator((Comparison)Operator)} {Source?.Get()} {SourceObjective}";
+							return
+								$"score {Target.Get()} {TargetObjective} {GetOperator((Comparison)Operator)} {Source?.Get()} {SourceObjective}";
 						}
-						else
-						{
-							return $"score {Target.Get()} {TargetObjective} matches {Range}";
-						}
+
+						return $"score {Target.Get()} {TargetObjective} matches {Range}";
 					}
 
 					public static string GetOperator(Comparison op) => op switch
@@ -285,7 +329,7 @@ namespace Datapack.Net.Function.Commands
 						Comparison.LessThanOrEqual => "<=",
 						Comparison.GreaterThanOrEqual => ">=",
 						Comparison.Equal => "=",
-						_ => "",
+						_ => ""
 					};
 				}
 			}
@@ -332,9 +376,9 @@ namespace Datapack.Net.Function.Commands
 
 			public class Facing : Subcommand
 			{
+				public readonly bool Eyes;
 				public readonly Position? Position;
 				public readonly IEntityTarget? Target;
-				public readonly bool Eyes;
 
 				public Facing(Position pos)
 				{
@@ -353,10 +397,8 @@ namespace Datapack.Net.Function.Commands
 					{
 						return $"facing {Position}";
 					}
-					else
-					{
-						return $"facing {Target?.Get()} {(Eyes ? "eyes" : "feet")}";
-					}
+
+					return $"facing {Target?.Get()} {(Eyes ? "eyes" : "feet")}";
 				}
 			}
 
@@ -376,9 +418,9 @@ namespace Datapack.Net.Function.Commands
 
 			public class Positioned : Subcommand
 			{
+				public readonly Heightmap Heightmap;
 				public readonly Position? Position;
 				public readonly IEntityTarget? Target;
-				public readonly Heightmap Heightmap;
 
 				public Positioned(Position pos)
 				{
@@ -401,14 +443,13 @@ namespace Datapack.Net.Function.Commands
 					{
 						return $"positioned {Position}";
 					}
-					else if (Target != null)
+
+					if (Target != null)
 					{
 						return $"positioned as {Target?.Get()}";
 					}
-					else
-					{
-						return $"positioned over {Enum.GetName(Heightmap)?.ToLower()}";
-					}
+
+					return $"positioned over {Enum.GetName(Heightmap)?.ToLower()}";
 				}
 			}
 
@@ -433,10 +474,8 @@ namespace Datapack.Net.Function.Commands
 					{
 						return $"rotated {Rotation}";
 					}
-					else
-					{
-						return $"rotated as {Target?.Get()}";
-					}
+
+					return $"rotated as {Target?.Get()}";
 				}
 			}
 
@@ -449,17 +488,16 @@ namespace Datapack.Net.Function.Commands
 
 			public class Store : Subcommand
 			{
-				public bool Result;
-
-				public IDataTarget? Target;
-				public NBTNumberType DataType;
-				public double? Scale;
-
 				public Bossbar? BossbarID;
 				public BossbarValueType BossbarType;
+				public NBTNumberType DataType;
 
 				public IEntityTarget? EntityTarget;
 				public Score? Objective;
+				public bool Result;
+				public double? Scale;
+
+				public IDataTarget? Target;
 
 				public override string ToString()
 				{
@@ -489,7 +527,8 @@ namespace Datapack.Net.Function.Commands
 						return "byte";
 					}
 
-					return Enum.GetName(type)?.ToLower() ?? throw new InvalidOperationException($"Unknown NBTNumberType: {type}");
+					return Enum.GetName(type)?.ToLower() ??
+					       throw new InvalidOperationException($"Unknown NBTNumberType: {type}");
 				}
 			}
 		}

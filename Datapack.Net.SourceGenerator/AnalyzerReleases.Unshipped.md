@@ -3,6 +3,6 @@
 
 ### New Rules
 
-Rule ID | Category | Severity | Notes
---------|----------|----------|-------
-MC0001 | Datapack | Error | ProjectGenerator
+ Rule ID | Category | Severity | Notes            
+---------|----------|----------|------------------
+ MC0001  | Datapack | Error    | ProjectGenerator 

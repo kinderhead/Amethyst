@@ -12,9 +12,15 @@ namespace Geode.IR.Passes
 
 		protected override void OnBlock(FunctionContext ctx, Block block)
 		{
-			Outs[block] = [.. block.Next.SelectMany(i => {
-				if (Ins.TryGetValue(i, out var ins)) { return ins; } return [];
-			})];
+			Outs[block] =
+			[
+				.. block.Next.SelectMany(i =>
+				{
+					if (Ins.TryGetValue(i, out var ins)) { return ins; }
+
+					return [];
+				})
+			];
 
 			HashSet<ValueRef> ins = [.. Outs[block]];
 
@@ -31,7 +37,7 @@ namespace Geode.IR.Passes
 
 						foreach (var dep in arg.Dependencies)
 						{
-							if (dep is ValueRef d && d.NeedsScoreReg)
+							if (dep is { } d && d.NeedsScoreReg)
 							{
 								ins.Add(d);
 							}
@@ -94,7 +100,8 @@ namespace Geode.IR.Passes
 
 			foreach (var insn in block.Instructions.AsEnumerable().Reverse())
 			{
-				if (!alive.Remove(insn.ReturnValue) && insn.ReturnValue.NeedsScoreReg && insn.ReturnType is not VoidType && !insn.HasSideEffects)
+				if (!alive.Remove(insn.ReturnValue) && insn.ReturnValue.NeedsScoreReg &&
+				    insn.ReturnType is not VoidType && !insn.HasSideEffects)
 				{
 					insn.Remove();
 				}
@@ -123,19 +130,19 @@ namespace Geode.IR.Passes
 				}
 
 				insn.ConfigureLifetime((val1, val2) =>
-				{
-					if (Graphs[ctx].DoConnect(val1, val2) || val1.Value is not null || val2.Value is not null)
 					{
-						return false;
-					}
+						if (Graphs[ctx].DoConnect(val1, val2) || val1.Value is not null || val2.Value is not null)
+						{
+							return false;
+						}
 
-					Graphs[ctx].Link(val1, val2);
-					return true;
-				},
-				(val1, val2) =>
-				{
-					Graphs[ctx].Connect(val1, val2);
-				});
+						Graphs[ctx].Link(val1, val2);
+						return true;
+					},
+					(val1, val2) =>
+					{
+						Graphs[ctx].Connect(val1, val2);
+					});
 			}
 		}
 	}
@@ -154,8 +161,13 @@ namespace Geode.IR.Passes
 			return valNode;
 		}
 
-		public void Connect(ValueRef val, params IEnumerable<ValueRef> vals) => Connect(val).Connect(vals.Select(Connect));
-		public bool DoConnect(ValueRef val1, ValueRef val2) => Graph.TryGetValue(val1, out var val1Node) && Graph.TryGetValue(val2, out var val2Node) && val1Node.Edges.Contains(val2Node);
+		public void Connect(ValueRef val, params IEnumerable<ValueRef> vals) =>
+			Connect(val).Connect(vals.Select(Connect));
+
+		public bool DoConnect(ValueRef val1, ValueRef val2) => Graph.TryGetValue(val1, out var val1Node) &&
+		                                                       Graph.TryGetValue(val2, out var val2Node) &&
+		                                                       val1Node.Edges.Contains(val2Node);
+
 		public void Link(ValueRef val1, ValueRef val2)
 		{
 			if (Graph.TryGetValue(val1, out var val1Node) && Graph.TryGetValue(val2, out var val2Node))
@@ -192,7 +204,7 @@ namespace Geode.IR.Passes
 
 			nodes.Sort();
 
-		loop:
+			loop:
 			while (nodes.Count > 0)
 			{
 				var colors = new bool[Graph.Count]; // Apparently this is cheaper than Array.Clear for reasonable sizes
@@ -214,7 +226,8 @@ namespace Geode.IR.Passes
 					{
 						if (colors[i.Color])
 						{
-							throw new InvalidOperationException("Error allocating registers. Report this issue to Github");
+							throw new InvalidOperationException(
+								"Error allocating registers. Report this issue to Github");
 						}
 
 						node.SetColor(i.Color);
@@ -242,12 +255,11 @@ namespace Geode.IR.Passes
 
 	public class LifetimeGraphNode(ValueRef val) : IComparable<LifetimeGraphNode>
 	{
-		public readonly ValueRef Value = val;
-
 		private readonly HashSet<LifetimeGraphNode> edges = [];
-		public IReadOnlyCollection<LifetimeGraphNode> Edges => edges;
 
 		private readonly HashSet<LifetimeGraphNode> links = [];
+		public readonly ValueRef Value = val;
+		public IReadOnlyCollection<LifetimeGraphNode> Edges => edges;
 		public IReadOnlyCollection<LifetimeGraphNode> Links => links;
 
 		public int Degree { get; private set; }
@@ -260,18 +272,18 @@ namespace Geode.IR.Passes
 			{
 				return -1;
 			}
-			else if (Saturation != other.Saturation)
+
+			if (Saturation != other.Saturation)
 			{
 				return other.Saturation - Saturation;
 			}
-			else if (Degree != other.Degree)
+
+			if (Degree != other.Degree)
 			{
 				return other.Degree - Degree;
 			}
-			else
-			{
-				return GetHashCode() - other.GetHashCode(); // idk
-			}
+
+			return GetHashCode() - other.GetHashCode(); // idk
 		}
 
 		public void Link(LifetimeGraphNode other)

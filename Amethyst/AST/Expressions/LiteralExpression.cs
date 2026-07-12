@@ -9,6 +9,7 @@ namespace Amethyst.AST.Expressions
 	{
 		public readonly NBTValue Value = val;
 
-		protected override ValueRef ExecuteImpl(FunctionContext ctx, TypeSpecifier? expected) => new LiteralValue(Value);
+		protected override ValueRef ExecuteImpl(FunctionContext ctx, TypeSpecifier? expected) =>
+			new LiteralValue(Value);
 	}
 }

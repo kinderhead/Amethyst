@@ -13,24 +13,22 @@ namespace Geode.IR.Instructions
 		public override TypeSpecifier ReturnType => new VoidType();
 		public override bool HasSideEffects => true;
 
-		public override void Render(RenderContext ctx)
-		{
+		public override void Render(RenderContext ctx) =>
 			//ctx.PossibleErrorChecker(new RawCommand(Command), text => text.Text(": Inline command failed: ").Text(Command, new FormattedText.Modifiers { Color = "red", Underlined = true, SuggestCommand = $"/{Command}" }));
-			
-			ctx.Macroize([.. Arguments.Where(i => i is ValueRef).Cast<ValueRef>().Select(i => i.Expect())], (args, ctx) =>
-			{
-				var builder = new StringBuilder();
-
-				foreach (var i in args)
+			ctx.Macroize([.. Arguments.Where(i => i is ValueRef).Cast<ValueRef>().Select(i => i.Expect())],
+				(args, ctx) =>
 				{
-					builder.Append(i.Value.ToString());
-				}
+					var builder = new StringBuilder();
 
-				ctx.Add(new RawCommand(builder.ToString()));
-			});
-		}
+					foreach (var i in args)
+					{
+						builder.Append(i.Value);
+					}
+
+					ctx.Add(new RawCommand(builder.ToString()));
+				});
 
 		public override void CheckArguments() { }
-		protected override IValue? ComputeReturnValue(FunctionContext ctx) => new VoidValue();
+		protected override IValue ComputeReturnValue(FunctionContext ctx) => new VoidValue();
 	}
 }

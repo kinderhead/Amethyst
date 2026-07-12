@@ -4,21 +4,21 @@ namespace Datapack.Net.Data
 {
 	public class NBTBool(bool val) : NBTValue
 	{
-		public override NBTType Type => NBTType.Boolean;
 		public readonly bool Value = val;
+		public override NBTType Type => NBTType.Boolean;
 
 		public override void Build(StringBuilder sb) => sb.Append(Value ? "true" : "false");
 
 		public override NBTValue Cast(NBTNumberType type) => type switch
 		{
 			NBTNumberType.Boolean => this,
-			NBTNumberType.Byte => (NBTValue)Convert.ToSByte(Value),
-			NBTNumberType.Short => (NBTValue)Convert.ToInt16(Value),
-			NBTNumberType.Int => (NBTValue)Convert.ToInt32(Value),
-			NBTNumberType.Long => (NBTValue)Convert.ToInt64(Value),
-			NBTNumberType.Float => (NBTValue)Convert.ToSingle(Value),
-			NBTNumberType.Double => (NBTValue)Convert.ToDouble(Value),
-			_ => throw new NotImplementedException(),
+			NBTNumberType.Byte => Convert.ToSByte(Value),
+			NBTNumberType.Short => Convert.ToInt16(Value),
+			NBTNumberType.Int => Convert.ToInt32(Value),
+			NBTNumberType.Long => Convert.ToInt64(Value),
+			NBTNumberType.Float => Convert.ToSingle(Value),
+			NBTNumberType.Double => Convert.ToDouble(Value),
+			_ => throw new NotImplementedException()
 		};
 
 		public static implicit operator NBTBool(bool val) => new(val);

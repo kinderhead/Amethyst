@@ -6,20 +6,25 @@ using Geode.IR.Instructions;
 using Geode.IR.Passes;
 using Geode.Types;
 using Geode.Values;
+using System.Diagnostics.CodeAnalysis;
 using Block = Geode.IR.Block;
 
 namespace Datapack.Net.Tests
 {
+	[SuppressMessage("ReSharper", "UnusedVariable")]
 	public class GeodeTests : Mem2RegPass
 	{
-		private static FunctionContext GetCtx(TypeSpecifier returnType) => new(new Compiler(new CompileOptions() { Inputs = [], Output = "" }), new("test:main", new(FunctionModifiers.None, returnType, []), LocationRange.None), [], LocationRange.None);
+		private static FunctionContext GetCtx(TypeSpecifier returnType) => new(
+			new Compiler(new CompileOptions { Inputs = [], Output = "" }),
+			new("test:main", new(FunctionModifiers.None, returnType, []), LocationRange.None), [], LocationRange.None);
 
 		// Uses the example graph from https://longfangsong.github.io/en/mem2reg-made-simple/. Block 4 may or may not be wrong since the article didn't mention its dominance frontier set.
-		private static FunctionContext GetMem2RegCtx(out Variable a, out Block b1, out Block b2, out Block b3, out Block b4, out Block b5, out Block b6, out Block b7, out Block b8)
+		private static FunctionContext GetMem2RegCtx(out Variable a, out Block b1, out Block b2, out Block b3,
+			out Block b4, out Block b5, out Block b6, out Block b7, out Block b8)
 		{
 			var ctx = GetCtx(PrimitiveType.Int);
 
-			Block block(string name)
+			Block MakeBlock(string name)
 			{
 				var b = new Block(name, ctx.GetNewInternalID(), ctx);
 				ctx.Add(b);
@@ -31,29 +36,29 @@ namespace Datapack.Net.Tests
 			b1 = ctx.Start;
 			b1.Add(new StoreInsn(a, new(new LiteralValue(1))));
 
-			b2 = block("b2");
+			b2 = MakeBlock("b2");
 			var a0 = b2.Add(new LoadInsn(a), "a0");
 			var t0 = b2.Add(new AddInsn(a0, new LiteralValue(1)), "t0");
 			b2.Add(new StoreInsn(a, t0));
 
-			b3 = block("b3");
+			b3 = MakeBlock("b3");
 			var a1 = b3.Add(new LoadInsn(a), "a1");
 			var t1 = b3.Add(new AddInsn(a1, a1), "t1");
 			b3.Add(new StoreInsn(a, t1));
 
-			b4 = block("b4");
-			b5 = block("b5");
+			b4 = MakeBlock("b4");
+			b5 = MakeBlock("b5");
 			var a2 = b5.Add(new LoadInsn(a), "a2");
 			b5.Add(new StoreInsn(a, new LiteralValue(2)));
 
-			b6 = block("b6");
+			b6 = MakeBlock("b6");
 			var a3 = b6.Add(new LoadInsn(a), "a3");
 			b6.Add(new StoreInsn(a, new LiteralValue(3)));
 
-			b7 = block("b7");
+			b7 = MakeBlock("b7");
 			var a4 = b7.Add(new LoadInsn(a), "a4");
 
-			b8 = block("b8");
+			b8 = MakeBlock("b8");
 			var a5 = b8.Add(new LoadInsn(a), "a5");
 			b8.Add(new ReturnInsn(a5));
 
@@ -76,7 +81,8 @@ namespace Datapack.Net.Tests
 		[Test]
 		public void TestDominanceFrontier()
 		{
-			var ctx = GetMem2RegCtx(out Variable a, out Block b1, out Block b2, out Block b3, out Block b4, out Block b5, out Block b6, out Block b7, out Block b8);
+			var ctx = GetMem2RegCtx(out var a, out var b1, out var b2, out var b3, out var b4, out var b5, out var b6,
+				out var b7, out var b8);
 
 			var doms = ctx.CalculateDominanceFrontiers();
 
@@ -93,7 +99,8 @@ namespace Datapack.Net.Tests
 		[Test]
 		public void TestPhiAllocation()
 		{
-			var ctx = GetMem2RegCtx(out Variable a, out Block b1, out Block b2, out Block b3, out Block b4, out Block b5, out Block b6, out Block b7, out Block b8);
+			var ctx = GetMem2RegCtx(out var a, out var b1, out var b2, out var b3, out var b4, out var b5, out var b6,
+				out var b7, out var b8);
 
 			State state = new();
 			OnFunction(ctx, ref state);

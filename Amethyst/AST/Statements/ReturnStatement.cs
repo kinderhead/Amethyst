@@ -19,7 +19,8 @@ namespace Amethyst.AST.Statements
 			{
 				throw new InvalidTypeError(val.Type.ToString(), "void");
 			}
-			else if (val is not null)
+
+			if (val is not null)
 			{
 				ctx.Add(new ReturnInsn(val));
 			}

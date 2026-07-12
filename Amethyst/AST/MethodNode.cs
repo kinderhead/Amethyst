@@ -1,32 +1,47 @@
 using Amethyst.AST.Expressions;
 using Amethyst.AST.Statements;
 using Amethyst.IR.Types;
-using Datapack.Net.Data;
 using Datapack.Net.Utils;
 using Geode;
 using Geode.Types;
 
 namespace Amethyst.AST
 {
-	public class MethodNode(LocationRange loc, List<NamespacedID> tags, FunctionModifiers modifiers, AbstractTypeSpecifier ret, NamespacedID id, List<AbstractParameter> parameters, BlockNode body) : FunctionNode(loc, tags, modifiers, ret, id, parameters, body)
+	public class MethodNode(
+		LocationRange loc,
+		List<NamespacedID> tags,
+		FunctionModifiers modifiers,
+		AbstractTypeSpecifier ret,
+		NamespacedID id,
+		List<AbstractParameter> parameters,
+		BlockNode body) : FunctionNode(loc, tags, modifiers, ret, id, parameters, body)
 	{
 		public override void Process(Compiler ctx, RootNode root)
 		{
-			AbstractTypeSpecifier selfType = new SimpleAbstractTypeSpecifier(Location, string.Join('/', ID.ToString().Split('/')[..^1]));
+			AbstractTypeSpecifier selfType =
+				new SimpleAbstractTypeSpecifier(Location, string.Join('/', ID.ToString().Split('/')[..^1]));
 
 			if (ctx.IR.Types[((SimpleAbstractTypeSpecifier)selfType).Type].Type is StructType)
 			{
 				selfType = new AbstractReferenceTypeSpecifier(Location, selfType);
 			}
 
-			Parameters.Insert(0, new AbstractParameter(ParameterModifiers.Macro, selfType, "this"));
+			Parameters.Insert(0, new(ParameterModifiers.Macro, selfType, "this"));
 			base.Process(ctx, root);
 		}
 
 		protected override NamespacedID Mangle(TypeArray args) => base.Mangle(new(args.Types.Skip(1)));
 	}
 
-	public class ConstructorNode(LocationRange loc, List<NamespacedID> tags, FunctionModifiers modifiers, NamespacedID id, List<AbstractParameter> parameters, Expression? baseCall, BlockNode body) : MethodNode(loc, tags, modifiers, new SimpleAbstractTypeSpecifier(loc, id.ToString()), id, parameters, body)
+	public class ConstructorNode(
+		LocationRange loc,
+		List<NamespacedID> tags,
+		FunctionModifiers modifiers,
+		NamespacedID id,
+		List<AbstractParameter> parameters,
+		Expression? baseCall,
+		BlockNode body) : MethodNode(loc, tags, modifiers, new SimpleAbstractTypeSpecifier(loc, id.ToString()), id,
+		parameters, body)
 	{
 		public readonly Expression? BaseCall = baseCall;
 
@@ -35,15 +50,16 @@ namespace Amethyst.AST
 			var selfId = new NamespacedID(string.Join('/', ID.ToString().Split('/')[..^1]));
 			var self = new SimpleAbstractTypeSpecifier(Location, selfId.ToString());
 
-			bool isClass = false;
+			var isClass = false;
 
 			if (ctx.IR.Types[self.Type].Type is ReferenceType)
 			{
 				isClass = true;
-				Parameters.Insert(0, new AbstractParameter(ParameterModifiers.Macro, self, "this"));
+				Parameters.Insert(0, new(ParameterModifiers.Macro, self, "this"));
 			}
 
-			var constructor = new FunctionNode(Location, Tags, Modifiers, isClass ? new SimpleAbstractTypeSpecifier(Location, "void") : self, selfId, Parameters, Body);
+			var constructor = new FunctionNode(Location, Tags, Modifiers, isClass ? new(Location, "void") : self,
+				selfId, Parameters, Body);
 
 			constructor.Body.Prepend(new ConstructorInitStatement(Location, self, BaseCall));
 

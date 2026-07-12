@@ -8,10 +8,31 @@ namespace Datapack.Net.Data
 		object RawValue { get; }
 	}
 
-	public abstract class NBTNumber<T, TSelf>(T val, string postfix) : NBTValue, INBTNumber, IComparisonOperators<TSelf, TSelf, bool> where T : INumber<T> where TSelf : NBTNumber<T, TSelf>
+	public abstract class NBTNumber<T, TSelf>(T val, string postfix)
+		: NBTValue, INBTNumber, IComparisonOperators<TSelf, TSelf, bool>
+		where T : INumber<T> where TSelf : NBTNumber<T, TSelf>
 	{
-		public readonly T Value = val;
 		protected readonly string Postfix = postfix;
+		public readonly T Value = val;
+
+		static bool IEqualityOperators<TSelf, TSelf, bool>.operator ==(TSelf? left, TSelf? right) =>
+			left is not null && right is not null && left.Value == right.Value;
+
+		static bool IEqualityOperators<TSelf, TSelf, bool>.operator !=(TSelf? left, TSelf? right) =>
+			!(left is not null && right is not null && left.Value == right.Value);
+
+		static bool IComparisonOperators<TSelf, TSelf, bool>.operator <(TSelf left, TSelf right) =>
+			left.Value < right.Value;
+
+		static bool IComparisonOperators<TSelf, TSelf, bool>.operator >(TSelf left, TSelf right) =>
+			left.Value > right.Value;
+
+		static bool IComparisonOperators<TSelf, TSelf, bool>.operator <=(TSelf left, TSelf right) =>
+			left.Value <= right.Value;
+
+		static bool IComparisonOperators<TSelf, TSelf, bool>.operator >=(TSelf left, TSelf right) =>
+			left.Value >= right.Value;
+
 		public object RawValue => Value;
 
 		public override void Build(StringBuilder sb)
@@ -29,7 +50,7 @@ namespace Datapack.Net.Data
 			NBTNumberType.Long => Convert.ToInt64(RawValue),
 			NBTNumberType.Float => Convert.ToSingle(RawValue),
 			NBTNumberType.Double => Convert.ToDouble(RawValue),
-			_ => throw new NotImplementedException(),
+			_ => throw new NotImplementedException()
 		};
 
 		public override bool Equals(object? obj)
@@ -44,19 +65,20 @@ namespace Datapack.Net.Data
 
 		public override int GetHashCode() => Value.GetHashCode() * 1061;
 
-		static bool IEqualityOperators<TSelf, TSelf, bool>.operator ==(TSelf? left, TSelf? right) => left is not null && right is not null && left.Value == right.Value;
-		static bool IEqualityOperators<TSelf, TSelf, bool>.operator !=(TSelf? left, TSelf? right) => !(left is not null && right is not null && left.Value == right.Value);
-		static bool IComparisonOperators<TSelf, TSelf, bool>.operator <(TSelf left, TSelf right) => left.Value < right.Value;
-		static bool IComparisonOperators<TSelf, TSelf, bool>.operator >(TSelf left, TSelf right) => left.Value > right.Value;
-		static bool IComparisonOperators<TSelf, TSelf, bool>.operator <=(TSelf left, TSelf right) => left.Value <= right.Value;
-		static bool IComparisonOperators<TSelf, TSelf, bool>.operator >=(TSelf left, TSelf right) => left.Value >= right.Value;
+		public static bool operator ==(NBTNumber<T, TSelf> left, NBTNumber<T, TSelf> right) =>
+			left.Value == right.Value;
 
-		public static bool operator ==(NBTNumber<T, TSelf> left, NBTNumber<T, TSelf> right) => left.Value == right.Value;
-		public static bool operator !=(NBTNumber<T, TSelf> left, NBTNumber<T, TSelf> right) => !(left.Value == right.Value);
+		public static bool operator !=(NBTNumber<T, TSelf> left, NBTNumber<T, TSelf> right) =>
+			!(left.Value == right.Value);
+
 		public static bool operator <(NBTNumber<T, TSelf> left, NBTNumber<T, TSelf> right) => left.Value < right.Value;
 		public static bool operator >(NBTNumber<T, TSelf> left, NBTNumber<T, TSelf> right) => left.Value > right.Value;
-		public static bool operator <=(NBTNumber<T, TSelf> left, NBTNumber<T, TSelf> right) => left.Value <= right.Value;
-		public static bool operator >=(NBTNumber<T, TSelf> left, NBTNumber<T, TSelf> right) => left.Value >= right.Value;
+
+		public static bool operator <=(NBTNumber<T, TSelf> left, NBTNumber<T, TSelf> right) =>
+			left.Value <= right.Value;
+
+		public static bool operator >=(NBTNumber<T, TSelf> left, NBTNumber<T, TSelf> right) =>
+			left.Value >= right.Value;
 	}
 
 	public class NBTInt(int val) : NBTNumber<int, NBTInt>(val, "")

@@ -2,9 +2,9 @@
 {
 	public class ReturnCommand : Command
 	{
-		public readonly int? Value;
-		public readonly bool Fail = false;
 		public readonly Command? Cmd;
+		public readonly bool Fail;
+		public readonly int? Value;
 
 		public ReturnCommand(int value, bool macro = false) : base(macro)
 		{
@@ -12,7 +12,7 @@
 		}
 
 		/// <summary>
-		/// <c>return fail</c>
+		///     <c>return fail</c>
 		/// </summary>
 		/// <param name="macro"></param>
 		public ReturnCommand(bool macro = false) : base(macro)

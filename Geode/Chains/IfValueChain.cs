@@ -1,7 +1,6 @@
 using Datapack.Net.Function.Commands;
 using Geode.Errors;
 using Geode.IR;
-using Geode.IR.Instructions;
 using Geode.Types;
 using Geode.Values;
 
@@ -20,12 +19,11 @@ namespace Geode.Chains
 				{
 					return false;
 				}
-				else
-				{
-					return true;
-				}
+
+				return true;
 			}
-			else if (val is ScoreValue score)
+
+			if (val is ScoreValue score)
 			{
 				cmd.Score(score.Target, score.Score, 0);
 				return null;
@@ -36,6 +34,7 @@ namespace Geode.Chains
 
 		protected override string StringPart() => $"{Values[0]}";
 
-		public static IfValueChain With(ValueRef val, FunctionContext ctx, bool invert = false) => new(ctx.AddLoad(ctx.ImplicitCast(val, PrimitiveType.Bool)), invert);
+		public static IfValueChain With(ValueRef val, FunctionContext ctx, bool invert = false) =>
+			new(ctx.AddLoad(ctx.ImplicitCast(val, PrimitiveType.Bool)), invert);
 	}
 }

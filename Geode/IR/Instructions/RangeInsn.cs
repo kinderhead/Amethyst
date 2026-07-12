@@ -1,6 +1,5 @@
 using Datapack.Net.Data;
 using Geode.Values;
-using System;
 
 namespace Geode.IR.Instructions
 {
@@ -12,6 +11,7 @@ namespace Geode.IR.Instructions
 
 		public override void Render(RenderContext ctx) { }
 
-		protected override IValue? ComputeReturnValue(FunctionContext ctx) => new RangeValue(Arg<ValueRef>(0), Arg<ValueRef>(1), ReturnType);
+		protected override IValue ComputeReturnValue(FunctionContext ctx) =>
+			new RangeValue(Arg<ValueRef>(0), Arg<ValueRef>(1), ReturnType);
 	}
 }

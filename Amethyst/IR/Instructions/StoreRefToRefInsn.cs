@@ -3,9 +3,6 @@ using Geode;
 using Geode.IR;
 using Geode.Types;
 using Geode.Values;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Amethyst.IR.Instructions
 {
@@ -23,10 +20,11 @@ namespace Amethyst.IR.Instructions
 
 			ctx.Macroize([dest, src], (args, ctx) =>
 			{
-				new RawDataTargetValue(args[0].Value.ToString(), args[0].Type).Store(new RawDataTargetValue(args[1].Value.ToString(), args[1].Type), ctx);
+				new RawDataTargetValue(args[0].Value.ToString(), args[0].Type).Store(
+					new RawDataTargetValue(args[1].Value.ToString(), args[1].Type), ctx);
 			});
 		}
 
-		protected override IValue? ComputeReturnValue(FunctionContext ctx) => new VoidValue();
+		protected override IValue ComputeReturnValue(FunctionContext ctx) => new VoidValue();
 	}
 }

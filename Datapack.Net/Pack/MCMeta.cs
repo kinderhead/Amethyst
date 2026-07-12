@@ -6,8 +6,8 @@ namespace Datapack.Net.Pack
 	public class MCMeta
 	{
 		public FormattedText Description = new FormattedText().Text("A data pack built with Datapack.Net");
-		public PackFormat MinVersion = PackFormat.Latest;
 		public PackFormat MaxVersion = PackFormat.Latest;
+		public PackFormat MinVersion = PackFormat.Latest;
 
 		public MCMeta SetMinVersion(PackFormat min)
 		{
@@ -42,10 +42,7 @@ namespace Datapack.Net.Pack
 
 			var ret = new JObject();
 
-			var pack = new JObject
-			{
-				["description"] = Description.Optimize().ToJson()
-			};
+			var pack = new JObject { ["description"] = Description.Optimize().ToJson() };
 
 			if (MaxVersion.IsNewStyle)
 			{

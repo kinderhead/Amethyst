@@ -4,11 +4,11 @@
 	{
 		public readonly MCFunction Function;
 		public bool Clear;
-		public int Ticks;
 		public bool Replace;
+		public int Ticks;
 
 		/// <summary>
-		/// <c><![CDATA[schedule function <function> <time> [append|replace]]]></c>
+		///     <c><![CDATA[schedule function <function> <time> [append|replace]]]></c>
 		/// </summary>
 		/// <param name="function"></param>
 		/// <param name="ticks"></param>
@@ -22,7 +22,7 @@
 		}
 
 		/// <summary>
-		/// <c><![CDATA[schedule clear <function>]]></c>
+		///     <c><![CDATA[schedule clear <function>]]></c>
 		/// </summary>
 		/// <param name="function"></param>
 		/// <param name="macro"></param>

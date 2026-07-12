@@ -4,13 +4,14 @@ namespace Datapack.Net.SourceGenerator
 {
 	public readonly record struct RuntimeObject
 	{
-		public readonly string Name;
-		public readonly string Namespace;
 		public readonly bool ImplementCleanup;
 		public readonly MCFunction[] Methods;
+		public readonly string Name;
+		public readonly string Namespace;
 		public readonly RuntimeObjectProperty[] Properties;
 
-		public RuntimeObject(string name, string ns, bool implClean, List<MCFunction> methods, List<RuntimeObjectProperty> props)
+		public RuntimeObject(string name, string ns, bool implClean, List<MCFunction> methods,
+			List<RuntimeObjectProperty> props)
 		{
 			Name = name;
 			Namespace = ns;
@@ -22,10 +23,10 @@ namespace Datapack.Net.SourceGenerator
 
 	public readonly record struct RuntimeObjectProperty
 	{
-		public readonly string Name;
 		public readonly string InternalName;
-		public readonly string Type;
 		public readonly bool IsObj;
+		public readonly string Name;
+		public readonly string Type;
 
 		public RuntimeObjectProperty(string name, string internalName, string type, bool isObj)
 		{

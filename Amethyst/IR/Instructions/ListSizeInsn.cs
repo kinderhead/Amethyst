@@ -17,7 +17,8 @@ namespace Amethyst.IR.Instructions
 		public override void Render(RenderContext ctx)
 		{
 			var arg = Arg<ValueRef>(0).Expect();
-			var ret = ReturnValue.Expect<ScoreValue>(); // Make sure the return value is a score so that /data get is called
+			var ret = ReturnValue
+				.Expect<ScoreValue>(); // Make sure the return value is a score so that /data get is called
 
 			if (arg.Type is ReferenceType)
 			{

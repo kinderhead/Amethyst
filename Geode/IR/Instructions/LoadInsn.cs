@@ -6,10 +6,10 @@ namespace Geode.IR.Instructions
 {
 	public class LoadInsn(ValueRef val, TypeSpecifier? type = null) : Instruction([val]), ILoadInsn
 	{
-		public override string Name => "load";
 		public override NBTType?[] ArgTypes => [null];
-		public override TypeSpecifier ReturnType => type ?? PrimitiveType.Int;
 		public override bool AlwaysUseScore => true;
+		public override string Name => "load";
+		public override TypeSpecifier ReturnType => type ?? PrimitiveType.Int;
 
 		public ValueRef Variable => Arg<ValueRef>(0);
 
@@ -26,10 +26,8 @@ namespace Geode.IR.Instructions
 			ret.Store(val, ctx);
 		}
 
-		public override void ConfigureLifetime(Func<ValueRef, ValueRef, bool> tryLink, Action<ValueRef, ValueRef> markOverlap)
-        {
-            tryLink(Arg<ValueRef>(0), ReturnValue);
-        }
+		public override void ConfigureLifetime(Func<ValueRef, ValueRef, bool> tryLink,
+			Action<ValueRef, ValueRef> markOverlap) => tryLink(Arg<ValueRef>(0), ReturnValue);
 
 
 		protected override IValue? ComputeReturnValue(FunctionContext ctx)
@@ -40,7 +38,8 @@ namespace Geode.IR.Instructions
 				Remove();
 				return score;
 			}
-			else if (val.Value is LiteralValue literal && val.Type is PrimitiveType)
+
+			if (val.Value is LiteralValue literal && val.Type is PrimitiveType)
 			{
 				return literal;
 			}

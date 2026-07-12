@@ -5,13 +5,11 @@ using Geode.Errors;
 using Geode.IR;
 using Geode.Types;
 using Geode.Values;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Amethyst.AST.Intrinsics
 {
-	public class ListPop(FunctionType? type = null) : Intrinsic("amethyst:list/pop", type ?? new(FunctionModifiers.None, new GenericType("T"), [
+	public class ListPop(FunctionType? type = null) : Intrinsic("amethyst:list/pop", type ?? new(FunctionModifiers.None,
+		new GenericType("T"), [
 			new(ParameterModifiers.None, new ReferenceType(new ListType(new GenericType("T"))), "this")
 		]))
 	{

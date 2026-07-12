@@ -5,13 +5,16 @@ using Geode.Types;
 
 namespace Geode.Values
 {
-	public class ScoreValue(IEntityTarget target, Score score, TypeSpecifier? type = null) : DataLValue(type ?? PrimitiveType.Int)
+	public class ScoreValue(IEntityTarget target, Score score, TypeSpecifier? type = null)
+		: DataLValue(type ?? PrimitiveType.Int)
 	{
-		public readonly IEntityTarget Target = target;
 		public readonly Score Score = score;
+		public readonly IEntityTarget Target = target;
 		public override string ToString() => $"@{Target.Get()}.{Score}";
 
-		public override void Store(ScoreValue score, RenderContext ctx) => ctx.Add(new Scoreboard.Players.Operation(Target, Score, ScoreOperation.Assign, score.Target, score.Score));
+		public override void Store(ScoreValue score, RenderContext ctx) => ctx.Add(
+			new Scoreboard.Players.Operation(Target, Score, ScoreOperation.Assign, score.Target, score.Score));
+
 		public override void Store(LiteralValue literal, RenderContext ctx)
 		{
 			var val = literal.Value.ToString();
@@ -27,17 +30,25 @@ namespace Geode.Values
 
 			ctx.Add(new Scoreboard.Players.Set(Target, Score, val));
 		}
-		public override void Store(DataTargetValue nbt, RenderContext ctx) => ctx.Add(StoreExecute().Run(new DataCommand.Get(nbt.Target)));
+
+		public override void Store(DataTargetValue nbt, RenderContext ctx) =>
+			ctx.Add(StoreExecute().Run(new DataCommand.Get(nbt.Target)));
+
 		public override Execute StoreExecute(bool result = true) => new Execute().Store(Target, Score, result);
 
 		public override ScoreValue AsScore(RenderContext ctx) => this;
 
 		public override FormattedText Render(FormattedText text, RenderContext ctx) => text.Score(Target, Score);
-		public override bool Equals(object? obj) => obj is ScoreValue s && s.Score == Score && s.Target.Get() == Target.Get();
+
+		public override bool Equals(object? obj) =>
+			obj is ScoreValue s && s.Score == Score && s.Target.Get() == Target.Get();
 
 		public override int GetHashCode() => HashCode.Combine(Target, Score);
 
-		public override void ListAdd(LiteralValue literal, RenderContext ctx) => throw new InvalidTypeError("int", "list");
-		public override void ListAdd(DataTargetValue nbt, RenderContext ctx) => throw new InvalidTypeError("int", "list");
+		public override void ListAdd(LiteralValue literal, RenderContext ctx) =>
+			throw new InvalidTypeError("int", "list");
+
+		public override void ListAdd(DataTargetValue nbt, RenderContext ctx) =>
+			throw new InvalidTypeError("int", "list");
 	}
 }

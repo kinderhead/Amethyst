@@ -7,7 +7,8 @@ using Geode.Values;
 
 namespace Amethyst.AST
 {
-	public abstract class Intrinsic(NamespacedID id, FunctionType? type) : LiteralValue(new NBTString(id.ToString()), type ?? new(FunctionModifiers.None, new VoidType(), [])), IFunctionLike
+	public abstract class Intrinsic(NamespacedID id, FunctionType? type) : LiteralValue(new NBTString(id.ToString()),
+		type ?? new(FunctionModifiers.None, new VoidType(), [])), IFunctionLike
 	{
 		public NamespacedID ID => id;
 

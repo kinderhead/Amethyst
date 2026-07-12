@@ -19,43 +19,45 @@ namespace Geode.Types
 		protected override bool EqualsImpl(TypeSpecifier obj) => obj is UnsafeStringType;
 
 		public override ValueRef? CastToOverload(ValueRef val, FunctionContext ctx)
-        {
-            if (val.Type == PrimitiveType.String && val.Value is IConstantValue c && c.Value is NBTString str)
-            {
-                if (InvalidUnsafeString().IsMatch(str.Value))
-                {
-                    throw new UnsafeStringError();
-                }
+		{
+			if (val.Type == PrimitiveType.String && val.Value is IConstantValue c && c.Value is NBTString str)
+			{
+				if (InvalidUnsafeString().IsMatch(str.Value))
+				{
+					throw new UnsafeStringError();
+				}
 
-                return LiteralValue.Raw(str.Value);
-            }
+				return LiteralValue.Raw(str.Value);
+			}
 
-            return null;
-        }
+			return null;
+		}
 
 		public override ValueRef? ExplicitCastFromOverload(ValueRef val, TypeSpecifier to, FunctionContext ctx)
-        {
-            if (to == PrimitiveType.String)
-            {
-                return val;
-            }
+		{
+			if (to == PrimitiveType.String)
+			{
+				return val;
+			}
 
-            return null;
-        }
+			return null;
+		}
 
 		public override ValueRef? ExplicitCastToOverload(ValueRef val, FunctionContext ctx)
-        {
-			if (val.Type == PrimitiveType.String && val.Value is IConstantValue c && c.Value is NBTString str && !InvalidUnsafeString().IsMatch(str.Value))
+		{
+			if (val.Type == PrimitiveType.String && val.Value is IConstantValue c && c.Value is NBTString str &&
+			    !InvalidUnsafeString().IsMatch(str.Value))
 			{
 				return LiteralValue.Raw(str.Value);
 			}
-			else if (val.Type == PrimitiveType.String)
-            {
-                return val;
-            }
 
-            return null;
-        }
+			if (val.Type == PrimitiveType.String)
+			{
+				return val;
+			}
+
+			return null;
+		}
 
 		[GeneratedRegex(@"[^a-zA-Z0-9\-_\+\.]")]
 		private static partial Regex InvalidUnsafeString();

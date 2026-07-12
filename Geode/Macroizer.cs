@@ -17,7 +17,7 @@ namespace Geode
 			var propagatedMacroList = new List<MacroValue>();
 			var applied = new Dictionary<IValue, IConstantValue>();
 
-			int macroIdx = 0;
+			var macroIdx = 0;
 
 			IConstantValue apply(IValue val)
 			{
@@ -51,13 +51,16 @@ namespace Geode
 				{
 					propagatedMacroList.Add(m);
 					// TODO: refactor how string macros are handled.
-					toMacro.Add(m.Name, new LiteralValue(m.Type.WrapInQuotesForMacro ? new NBTString(m.GetMacro()) : new NBTRawString(m.GetMacro()), m.Type));
+					toMacro.Add(m.Name,
+						new LiteralValue(
+							m.Type.WrapInQuotesForMacro ? new NBTString(m.GetMacro()) : new NBTRawString(m.GetMacro()),
+							m.Type));
 					ret = m;
 					goto end;
 				}
 
 				// Allow existing macros to keep their name
-				string macroName = $"arg{macroIdx++}";
+				var macroName = $"arg{macroIdx++}";
 
 				while (toMacro.ContainsKey(macroName))
 				{
@@ -67,7 +70,7 @@ namespace Geode
 				var macro = new MacroValue(macroName, val.Type);
 				toMacro.Add(macro.Name, val);
 				ret = macro;
-			end:
+				end:
 				applied[val] = ret;
 				return ret;
 			}
@@ -89,7 +92,8 @@ namespace Geode
 					return i;
 				});
 
-				var mcFunc = new MCFunction($"{Builder.Namespace}:{GeodeBuilder.InternalPath}/{GeodeBuilder.UniqueString}");
+				var mcFunc =
+					new MCFunction($"{Builder.Namespace}:{GeodeBuilder.InternalPath}/{GeodeBuilder.UniqueString}");
 				mcFunc.Add(faux);
 				var compiled = mcFunc.Build();
 
@@ -105,28 +109,40 @@ namespace Geode
 
 				ctx.Func.AddDependency(mcFunc);
 
-				FunctionValue.Call(ctx, mcFunc.ID, new FunctionType(FunctionModifiers.None, new VoidType(), toMacro.Select(i => new Parameter(ParameterModifiers.Macro, i.Value.Type, i.Key))), [.. toMacro.Values.Select(i => new ValueRef(i))]);
+				FunctionValue.Call(ctx, mcFunc.ID,
+					new(FunctionModifiers.None, new VoidType(),
+						toMacro.Select(i => new Parameter(ParameterModifiers.Macro, i.Value.Type, i.Key))),
+					[.. toMacro.Values.Select(i => new ValueRef(i))]);
 			}
 		}
 
-		public void RunAndPropagateMacros(RenderContext ctx, IValueLike[] dependencies, Action<IConstantValue[], NBTCompound, RenderContext> func) => Run(ctx, [.. dependencies, .. ctx.Func.Decl.FuncType.MacroParameters], (args, ctx) =>
-		{
-			IConstantValue[] realArgs = [.. args.Take(dependencies.Length)];
-			IConstantValue[] propagated;
-
-			if (args.Length == 0)
+		public void RunAndPropagateMacros(RenderContext ctx, IValueLike[] dependencies,
+			Action<IConstantValue[], NBTCompound, RenderContext> func) => Run(ctx,
+			[.. dependencies, .. ctx.Func.Decl.FuncType.MacroParameters], (args, ctx) =>
 			{
-				propagated = [.. ctx.Func.Decl.FuncType.MacroParameters];
-			}
-			else
-			{
-				propagated = [.. args.Skip(dependencies.Length)];
-			}
+				IConstantValue[] realArgs = [.. args.Take(dependencies.Length)];
+				IConstantValue[] propagated;
 
-			func(realArgs, [.. ctx.Func.Decl.FuncType.MacroParameters.Zip(propagated).Select(i => {
-				if (i.First.Type.WrapInQuotesForMacro && i.Second.Value.GetType() != typeof(NBTString)) return new KeyValuePair<string, NBTValue>(i.First.Name, new NBTString(i.Second.Value.ToString()));
-				else return new KeyValuePair<string, NBTValue>(i.First.Name, i.Second.Value);
-			})], ctx);
-		});
+				if (args.Length == 0)
+				{
+					propagated = [.. ctx.Func.Decl.FuncType.MacroParameters];
+				}
+				else
+				{
+					propagated = [.. args.Skip(dependencies.Length)];
+				}
+
+				func(realArgs, [
+					.. ctx.Func.Decl.FuncType.MacroParameters.Zip(propagated).Select(i =>
+					{
+						if (i.First.Type.WrapInQuotesForMacro && i.Second.Value.GetType() != typeof(NBTString))
+						{
+							return new(i.First.Name, new NBTString(i.Second.Value.ToString()));
+						}
+
+						return new KeyValuePair<string, NBTValue>(i.First.Name, i.Second.Value);
+					})
+				], ctx);
+			});
 	}
 }

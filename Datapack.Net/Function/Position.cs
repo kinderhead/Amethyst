@@ -8,7 +8,8 @@
 
 		public override string ToString() => $"{X} {Y} {Z}";
 
-		public static Position Current => new(new(0, CoordType.Relative), new(0, CoordType.Relative), new(0, CoordType.Relative));
+		public static Position Current =>
+			new(new(0, CoordType.Relative), new(0, CoordType.Relative), new(0, CoordType.Relative));
 	}
 
 	public readonly struct Coord(double val, CoordType type = CoordType.Global)
@@ -20,10 +21,11 @@
 		{
 			CoordType.Relative => $"~{Value}",
 			CoordType.Local => $"^{Value}",
-			_ => $"{Value}",
+			_ => $"{Value}"
 		};
 
 		public static implicit operator Coord(double val) => new(val);
+
 		public static implicit operator Coord(string val)
 		{
 			if (val == "~")
@@ -48,6 +50,7 @@
 
 			return new(float.Parse(val));
 		}
+
 		public static Coord operator ~(Coord coord) => new(coord.Value, CoordType.Relative);
 		public static Coord operator !(Coord coord) => new(coord.Value, CoordType.Local);
 	}

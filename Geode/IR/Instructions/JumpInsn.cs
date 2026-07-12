@@ -6,8 +6,8 @@ namespace Geode.IR.Instructions
 {
 	public class JumpInsn(Block dest) : Instruction([dest]), IBranchInsn
 	{
-		public override string Name => "jump";
 		public override NBTType?[] ArgTypes => [null];
+		public override string Name => "jump";
 		public override TypeSpecifier ReturnType => new VoidType();
 
 		public Block[] Destinations => [Arg<Block>(0)];
@@ -19,11 +19,11 @@ namespace Geode.IR.Instructions
 		}
 
 		public override void OnAdd(Block block)
-        {
+		{
 			var next = Arg<Block>(0);
 			block.LinkNext(next);
 		}
 
-		protected override IValue? ComputeReturnValue(FunctionContext ctx) => new VoidValue();
+		protected override IValue ComputeReturnValue(FunctionContext ctx) => new VoidValue();
 	}
 }

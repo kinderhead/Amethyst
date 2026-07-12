@@ -14,11 +14,12 @@ namespace Amethyst.AST.Expressions
 		Division
 	}
 
-	public class AssignmentExpression(LocationRange loc, Expression dest, AssignmentType type, Expression expr) : Expression(loc)
+	public class AssignmentExpression(LocationRange loc, Expression dest, AssignmentType type, Expression expr)
+		: Expression(loc)
 	{
 		public readonly Expression Dest = dest;
-		public readonly AssignmentType Type = type;
 		public readonly Expression Expression = expr;
+		public readonly AssignmentType Type = type;
 
 		protected override ValueRef ExecuteImpl(FunctionContext ctx, TypeSpecifier? expected)
 		{
@@ -28,18 +29,20 @@ namespace Amethyst.AST.Expressions
 			switch (Type)
 			{
 				case AssignmentType.Addition:
-					val = ctx.Add(new AddInsn(ctx.AddLoad(ctx.ImplicitCast(dest, PrimitiveType.Int)), ctx.AddLoad(ctx.ImplicitCast(val, PrimitiveType.Int))));
+					val = ctx.Add(new AddInsn(ctx.AddLoad(ctx.ImplicitCast(dest, PrimitiveType.Int)),
+						ctx.AddLoad(ctx.ImplicitCast(val, PrimitiveType.Int))));
 					break;
 				case AssignmentType.Subtraction:
-					val = ctx.Add(new SubInsn(ctx.AddLoad(ctx.ImplicitCast(dest, PrimitiveType.Int)), ctx.AddLoad(ctx.ImplicitCast(val, PrimitiveType.Int))));
+					val = ctx.Add(new SubInsn(ctx.AddLoad(ctx.ImplicitCast(dest, PrimitiveType.Int)),
+						ctx.AddLoad(ctx.ImplicitCast(val, PrimitiveType.Int))));
 					break;
 				case AssignmentType.Multiplication:
-					val = ctx.Add(new MulInsn(ctx.AddLoad(ctx.ImplicitCast(dest, PrimitiveType.Int)), ctx.AddLoad(ctx.ImplicitCast(val, PrimitiveType.Int))));
+					val = ctx.Add(new MulInsn(ctx.AddLoad(ctx.ImplicitCast(dest, PrimitiveType.Int)),
+						ctx.AddLoad(ctx.ImplicitCast(val, PrimitiveType.Int))));
 					break;
 				case AssignmentType.Division:
-					val = ctx.Add(new DivInsn(ctx.AddLoad(ctx.ImplicitCast(dest, PrimitiveType.Int)), ctx.AddLoad(ctx.ImplicitCast(val, PrimitiveType.Int))));
-					break;
-				default:
+					val = ctx.Add(new DivInsn(ctx.AddLoad(ctx.ImplicitCast(dest, PrimitiveType.Int)),
+						ctx.AddLoad(ctx.ImplicitCast(val, PrimitiveType.Int))));
 					break;
 			}
 

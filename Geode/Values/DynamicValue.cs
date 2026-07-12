@@ -1,8 +1,4 @@
-﻿using Datapack.Net.Data;
-using Datapack.Net.Function;
-using Datapack.Net.Function.Commands;
-using System;
-using System.Collections.Generic;
+﻿using Datapack.Net.Function;
 using System.Text;
 
 namespace Geode.Values
@@ -10,26 +6,6 @@ namespace Geode.Values
 	public class DynamicValue(TypeSpecifier type) : Value(type), IDataWritable, IAdvancedMacroValue
 	{
 		private readonly List<IValue> parts = [];
-
-		public DynamicValue Add(IValue val)
-		{
-			parts.Add(val);
-			return this;
-		}
-
-		public DynamicValue Add(string str) => Add(LiteralValue.Raw(str));
-
-		public override ScoreValue AsScore(RenderContext ctx) => throw new InvalidOperationException();
-		public override FormattedText Render(FormattedText text, RenderContext ctx) => throw new NotImplementedException();
-
-		public void StoreTo(DataTargetValue val, RenderContext ctx)
-		{
-			ctx.Macroize([this], (args, ctx) =>
-			{
-				// Macroize returns NBTRawString, so make it a regular string to add quotes
-				val.Store(new LiteralValue(args[0].Value.Build(), Type), ctx);
-			});
-		}
 
 		public IConstantValue Macroize(Func<IValue, IConstantValue> apply)
 		{
@@ -42,5 +18,25 @@ namespace Geode.Values
 
 			return LiteralValue.Raw(builder.ToString());
 		}
+
+		public override ScoreValue AsScore(RenderContext ctx) => throw new InvalidOperationException();
+
+		public override FormattedText Render(FormattedText text, RenderContext ctx) =>
+			throw new NotImplementedException();
+
+		public void StoreTo(DataTargetValue val, RenderContext ctx) =>
+			ctx.Macroize([this], (args, ctx) =>
+			{
+				// Macroize returns NBTRawString, so make it a regular string to add quotes
+				val.Store(new LiteralValue(args[0].Value.Build(), Type), ctx);
+			});
+
+		public DynamicValue Add(IValue val)
+		{
+			parts.Add(val);
+			return this;
+		}
+
+		public DynamicValue Add(string str) => Add(LiteralValue.Raw(str));
 	}
 }

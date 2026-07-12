@@ -9,12 +9,15 @@ namespace Datapack.Net.SourceGenerator
 	[Generator]
 	public class ProjectGenerator : IIncrementalGenerator
 	{
-		public static readonly DiagnosticDescriptor InvalidFunctionFormat = new("MC0001", "Invalid Function", "Function {0} is not a valid Datapack function, and it must be private and its name must start with an underscore", "Datapack", DiagnosticSeverity.Error, true);
+		public static readonly DiagnosticDescriptor InvalidFunctionFormat = new("MC0001", "Invalid Function",
+			"Function {0} is not a valid Datapack function, and it must be private and its name must start with an underscore",
+			"Datapack", DiagnosticSeverity.Error, true);
 
 		public void Initialize(IncrementalGeneratorInitializationContext context)
 		{
-			var projects = context.SyntaxProvider.ForAttributeWithMetadataName<Project?>("Datapack.Net.CubeLib.ProjectAttribute",
-				static (s, _) => true,
+			var projects = context.SyntaxProvider.ForAttributeWithMetadataName<Project?>(
+				"Datapack.Net.CubeLib.ProjectAttribute",
+				static (_, _) => true,
 				static (ctx, _) =>
 				{
 					//if (!Debugger.IsAttached)
@@ -43,13 +46,16 @@ namespace Datapack.Net.SourceGenerator
 								List<MCFunction> funcs = [];
 								foreach (var sym in clsSymbol.GetMembers())
 								{
-									if (sym is IMethodSymbol method && sym.GetAttributes().Where(i => i.AttributeClass.ToDisplayString().Contains("Datapack.Net.CubeLib.DeclareMC")).Count() != 0)
+									if (sym is IMethodSymbol method && sym.GetAttributes().Where(i =>
+										    i.AttributeClass.ToDisplayString()
+											    .Contains("Datapack.Net.CubeLib.DeclareMC")).Count() != 0)
 									{
 										funcs.Add(Utils.GetMCFunction(method));
 									}
 								}
 
-								return new Project(clsSymbol.Name, clsSymbol.ContainingNamespace.ToDisplayString(), funcs);
+								return new Project(clsSymbol.Name, clsSymbol.ContainingNamespace.ToDisplayString(),
+									funcs);
 							}
 						}
 					}

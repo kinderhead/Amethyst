@@ -8,11 +8,14 @@ namespace Datapack.Net.Utils
 		public readonly string Namespace;
 		public readonly string Path;
 
-		public NamespacedID(string @namespace, string path) : this($"{@namespace}{(@namespace.Contains(':') ? '/' : ':')}{path}") { }
+		public NamespacedID(string @namespace, string path) : this(
+			$"{@namespace}{(@namespace.Contains(':') ? '/' : ':')}{path}")
+		{
+		}
 
 		public NamespacedID(string id)
 		{
-			if (!id.Any(c => c == ':'))
+			if (id.All(c => c != ':'))
 			{
 				throw new FormatException($"Invalid namespaced id: {id}");
 			}
@@ -42,26 +45,28 @@ namespace Datapack.Net.Utils
 			{
 				return $"{Namespace}:{string.Join('/', Path.Split('/')[..^1])}";
 			}
-			else
-			{
-				return Namespace;
-			}
+
+			return Namespace;
 		}
 
 		public string GetFile() => Path.Split('/')[^1];
 
-		public static bool operator ==(NamespacedID left, NamespacedID right) => left.Namespace == right.Namespace && left.Path == right.Path;
-		public static bool operator !=(NamespacedID left, NamespacedID right) => left.Namespace != right.Namespace || left.Path != right.Path;
+		public static bool operator ==(NamespacedID left, NamespacedID right) =>
+			left.Namespace == right.Namespace && left.Path == right.Path;
+
+		public static bool operator !=(NamespacedID left, NamespacedID right) =>
+			left.Namespace != right.Namespace || left.Path != right.Path;
 
 		public static implicit operator NamespacedID(string id) => new(id);
 
-		[GeneratedRegex(@"/+")]
+		[GeneratedRegex("/+")]
 		private static partial Regex DuplicateSlashRegex();
 	}
 
 	public class NamespacedIDSerializer : JsonConverter<NamespacedID>
 	{
-		public override NamespacedID ReadJson(JsonReader reader, Type objectType, NamespacedID existingValue, bool hasExistingValue, JsonSerializer serializer)
+		public override NamespacedID ReadJson(JsonReader reader, Type objectType, NamespacedID existingValue,
+			bool hasExistingValue, JsonSerializer serializer)
 		{
 			if (reader.Value is string s)
 			{
@@ -71,6 +76,7 @@ namespace Datapack.Net.Utils
 			throw new JsonReaderException("Invalid format for namespaced id");
 		}
 
-		public override void WriteJson(JsonWriter writer, NamespacedID value, JsonSerializer serializer) => writer.WriteValue(value.ToString());
+		public override void WriteJson(JsonWriter writer, NamespacedID value, JsonSerializer serializer) =>
+			writer.WriteValue(value.ToString());
 	}
 }

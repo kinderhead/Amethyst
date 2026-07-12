@@ -7,10 +7,10 @@ namespace Datapack.Net.Function
 {
 	public class MCFunction(NamespacedID id, bool partial = false) : Resource(id)
 	{
-		public bool Macro { get; protected set; }
 		public readonly bool Partial = partial;
 
 		internal List<Command> Commands = [];
+		public bool Macro { get; protected set; }
 
 		public int Length => Commands.Count;
 

@@ -1,11 +1,10 @@
 using Geode;
-using System;
 
 namespace Amethyst
 {
-    public interface IAmethystOptions : IOptions
-    {
-        public bool DumpCommands { get; set; }
-        public string[] Inputs { get; set; }
-    }
+	public interface IAmethystOptions : IOptions
+	{
+		bool DumpCommands { get; set; }
+		string[] Inputs { get; set; }
+	}
 }

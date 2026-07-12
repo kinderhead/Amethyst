@@ -7,7 +7,6 @@ namespace Datapack.Net.Pack
 	{
 		public Tags() : base("tags", ".json")
 		{
-
 		}
 
 		public Tag AddTag(Tag tag)
@@ -16,7 +15,8 @@ namespace Datapack.Net.Pack
 			return tag;
 		}
 
-		public Tag GetTag(NamespacedID id, string type) => (Tag?)Resources.Find(i => i.ID == id) ?? AddTag(new(id, type));
+		public Tag GetTag(NamespacedID id, string type) =>
+			(Tag?)Resources.Find(i => i.ID == id) ?? AddTag(new(id, type));
 
 		public override void Build(DP pack)
 		{

@@ -1,22 +1,16 @@
 ﻿using Geode;
 using Geode.IR;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Amethyst.GC
 {
 	public interface IGCBehavior
 	{
-		public bool TryMark(IValueLike val, FunctionContext ctx);
-		public bool CanMark(TypeSpecifier type);
+		bool TryMark(IValueLike val, FunctionContext ctx);
+		bool CanMark(TypeSpecifier type);
 	}
 
 	public abstract class GCBehavior<T> : IGCBehavior where T : TypeSpecifier
 	{
-		public abstract void Mark(T type, ValueRef val, FunctionContext ctx);
-		public abstract bool CanMark(T type);
-
 		public bool CanMark(TypeSpecifier type)
 		{
 			if (type is T t)
@@ -37,5 +31,8 @@ namespace Amethyst.GC
 
 			return false;
 		}
+
+		public abstract void Mark(T type, ValueRef val, FunctionContext ctx);
+		public abstract bool CanMark(T type);
 	}
 }

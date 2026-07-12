@@ -9,10 +9,11 @@ using Geode.Util;
 
 namespace Amethyst.AST.Expressions
 {
-	public class TargetSelectorExpression(LocationRange loc, TargetType type, MultiDictionary<string, Expression> args) : Expression(loc)
+	public class TargetSelectorExpression(LocationRange loc, TargetType type, MultiDictionary<string, Expression> args)
+		: Expression(loc)
 	{
-		public readonly TargetType Type = type;
 		public readonly MultiDictionary<string, Expression> Arguments = args;
+		public readonly TargetType Type = type;
 
 		protected override ValueRef ExecuteImpl(FunctionContext ctx, TypeSpecifier? expected)
 		{
@@ -24,17 +25,17 @@ namespace Amethyst.AST.Expressions
 				var effectiveValue = v;
 
 				if (v is NotExpression n)
-                {
-                    if (k is "tag" or "team" or "gamemode" or "name" or "type" or "family" or "nbt" or "predicate")
-                    {
-                        effectiveName = '!' + k;
+				{
+					if (k is "tag" or "team" or "gamemode" or "name" or "type" or "family" or "nbt" or "predicate")
+					{
+						effectiveName = '!' + k;
 						effectiveValue = n.Value;
-                    }
+					}
 					else
-                    {
-                        throw new CannotNegateArgumentError(k);
-                    }
-                }
+					{
+						throw new CannotNegateArgumentError(k);
+					}
+				}
 
 				// Maybe change this to switch on the desired type
 				var val = k switch
@@ -46,7 +47,7 @@ namespace Amethyst.AST.Expressions
 					"distance" or "x_rotation" or "y_rotation" => effectiveValue.Execute(ctx, new FloatRangeType()),
 					"level" => effectiveValue.Execute(ctx, new IntRangeType()),
 					"nbt" => effectiveValue.Execute(ctx, PrimitiveType.Compound),
-					_ => throw new TargetSelectorArgumentError(k),
+					_ => throw new TargetSelectorArgumentError(k)
 				};
 
 				args.Add(new(effectiveName, val));

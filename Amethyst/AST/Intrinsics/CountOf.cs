@@ -8,7 +8,9 @@ using Geode.Values;
 
 namespace Amethyst.AST.Intrinsics
 {
-	public class CountOf(FunctionType? type = null) : Intrinsic("builtin:count_of", type ?? new FunctionType(FunctionModifiers.None, PrimitiveType.Int, [new(ParameterModifiers.None, PrimitiveType.String, "id")]))
+	public class CountOf(FunctionType? type = null) : Intrinsic("builtin:count_of",
+		type ?? new FunctionType(FunctionModifiers.None, PrimitiveType.Int,
+			[new(ParameterModifiers.None, PrimitiveType.String, "id")]))
 	{
 		public override IFunctionLike CloneWithType(FunctionType type) => new CountOf(type);
 

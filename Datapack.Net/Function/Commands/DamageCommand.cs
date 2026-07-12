@@ -5,21 +5,23 @@ namespace Datapack.Net.Function.Commands
 {
 	public class DamageCommand : Command
 	{
-		public readonly IEntityTarget Target;
 		public readonly int Amount;
-		public readonly NamespacedID? DamageType;
-		public readonly Position? Position;
 		public readonly IEntityTarget? By;
 		public readonly IEntityTarget? Cause;
+		public readonly NamespacedID? DamageType;
+		public readonly Position? Position;
+		public readonly IEntityTarget Target;
 
-		public DamageCommand(IEntityTarget target, int amount, NamespacedID? damageType = null, bool macro = false) : base(macro)
+		public DamageCommand(IEntityTarget target, int amount, NamespacedID? damageType = null, bool macro = false) :
+			base(macro)
 		{
 			Target = target.RequireOne();
 			Amount = amount;
 			DamageType = damageType;
 		}
 
-		public DamageCommand(IEntityTarget target, int amount, NamespacedID damageType, Position pos, bool macro = false) : base(macro)
+		public DamageCommand(IEntityTarget target, int amount, NamespacedID damageType, Position pos,
+			bool macro = false) : base(macro)
 		{
 			Target = target.RequireOne();
 			Amount = amount;
@@ -27,7 +29,8 @@ namespace Datapack.Net.Function.Commands
 			Position = pos;
 		}
 
-		public DamageCommand(IEntityTarget target, int amount, NamespacedID damageType, IEntityTarget by, IEntityTarget? cause = null, bool macro = false) : base(macro)
+		public DamageCommand(IEntityTarget target, int amount, NamespacedID damageType, IEntityTarget by,
+			IEntityTarget? cause = null, bool macro = false) : base(macro)
 		{
 			Target = target.RequireOne();
 			Amount = amount;
@@ -41,7 +44,6 @@ namespace Datapack.Net.Function.Commands
 			var cmd = new StringBuilder($"damage {Target.Get()} {Amount} {DamageType?.ToString() ?? ""}");
 			if (Position is null && By is null)
 			{
-				return cmd.ToString();
 			}
 			else if (Position is not null)
 			{

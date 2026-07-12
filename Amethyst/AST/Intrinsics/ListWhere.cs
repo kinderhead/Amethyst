@@ -4,13 +4,11 @@ using Geode;
 using Geode.Errors;
 using Geode.IR;
 using Geode.Types;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Amethyst.AST.Intrinsics
 {
-	public class ListWhere(FunctionType? type = null) : Intrinsic("amethyst:list/where", type ?? new(FunctionModifiers.None, new ListType(new GenericType("T")), [
+	public class ListWhere(FunctionType? type = null) : Intrinsic("amethyst:list/where", type ?? new(
+		FunctionModifiers.None, new ListType(new GenericType("T")), [
 			new(ParameterModifiers.None, new ReferenceType(new ListType(new GenericType("T"))), "this"),
 			new(ParameterModifiers.None, PrimitiveType.Compound, "predicate")
 		]))

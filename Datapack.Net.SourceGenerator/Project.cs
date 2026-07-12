@@ -4,9 +4,9 @@ namespace Datapack.Net.SourceGenerator
 {
 	public readonly record struct Project
 	{
+		public readonly MCFunction[] Functions;
 		public readonly string Name;
 		public readonly string Namespace;
-		public readonly MCFunction[] Functions;
 
 		public Project(string name, string ns, List<MCFunction> functions)
 		{
@@ -15,6 +15,7 @@ namespace Datapack.Net.SourceGenerator
 			Namespace = ns;
 		}
 
-		public override int GetHashCode() => unchecked(Name.GetHashCode() + Namespace.GetHashCode() + Functions.GetHashCode());
+		public override int GetHashCode() =>
+			unchecked(Name.GetHashCode() + Namespace.GetHashCode() + Functions.GetHashCode());
 	}
 }

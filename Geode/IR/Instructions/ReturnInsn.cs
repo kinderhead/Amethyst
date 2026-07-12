@@ -9,11 +9,11 @@ namespace Geode.IR.Instructions
 	{
 		public ReturnInsn(ValueRef ret) : base([ret]) { }
 		public ReturnInsn() : base([]) { }
+		public override NBTType?[] ArgTypes => [null];
+		public override bool IsReturn => true;
 
 		public override string Name => "ret";
-		public override NBTType?[] ArgTypes => [null];
 		public override TypeSpecifier ReturnType => new VoidType();
-		public override bool IsReturn => true;
 
 		public override void Render(RenderContext ctx)
 		{
@@ -43,7 +43,7 @@ namespace Geode.IR.Instructions
 			}
 		}
 
-		protected override IValue? ComputeReturnValue(FunctionContext ctx) => new VoidValue();
+		protected override IValue ComputeReturnValue(FunctionContext ctx) => new VoidValue();
 
 		public override void CheckArguments()
 		{
@@ -51,8 +51,6 @@ namespace Geode.IR.Instructions
 			{
 				throw new MismatchedArgumentCountError(1, Arguments.Length);
 			}
-
-			return;
 		}
 	}
 }

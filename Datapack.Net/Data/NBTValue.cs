@@ -4,17 +4,13 @@ namespace Datapack.Net.Data
 {
 	public abstract class NBTValue
 	{
+		public static readonly Type[] RawNBTTypes =
+		[
+			typeof(string), typeof(int), typeof(byte), typeof(short), typeof(long), typeof(float), typeof(double),
+			typeof(bool), typeof(int[]), typeof(byte[]), typeof(long[])
+		];
+
 		public abstract NBTType Type { get; }
-		public abstract void Build(StringBuilder sb);
-
-		public virtual string Build()
-		{
-			StringBuilder sb = new();
-			Build(sb);
-			return sb.ToString();
-		}
-
-		public override string ToString() => Build();
 
 		public NBTNumberType? NumberType
 		{
@@ -58,6 +54,17 @@ namespace Datapack.Net.Data
 				return null;
 			}
 		}
+
+		public abstract void Build(StringBuilder sb);
+
+		public virtual string Build()
+		{
+			StringBuilder sb = new();
+			Build(sb);
+			return sb.ToString();
+		}
+
+		public override string ToString() => Build();
 
 		public abstract NBTValue Cast(NBTNumberType type);
 
@@ -152,8 +159,6 @@ namespace Datapack.Net.Data
 
 			return RawNBTTypes.Contains(typeof(T));
 		}
-
-		public static readonly Type[] RawNBTTypes = [typeof(string), typeof(int), typeof(byte), typeof(short), typeof(long), typeof(float), typeof(double), typeof(bool), typeof(int[]), typeof(byte[]), typeof(long[])];
 	}
 
 	public enum NBTType

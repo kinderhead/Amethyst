@@ -7,7 +7,12 @@ namespace Geode.IR.Instructions
 	public class CallInsn(ValueRef func, IEnumerable<ValueRef> args) : Instruction([func, .. args])
 	{
 		public override string Name => "call";
-		public override NBTType?[] ArgTypes => [null, .. FuncType.Parameters.Select(i => i.Type is VarType ? (NBTType?)null : i.Type.EffectiveType)];
+
+		public override NBTType?[] ArgTypes =>
+		[
+			null, .. FuncType.Parameters.Select(i => i.Type is VarType ? (NBTType?)null : i.Type.EffectiveType)
+		];
+
 		public override TypeSpecifier ReturnType => FuncType.ReturnType;
 		public override bool HasSideEffects => true;
 		public FunctionType FuncType => (FunctionType)Arg<ValueRef>(0).Type;

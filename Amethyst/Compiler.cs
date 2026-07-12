@@ -1,14 +1,11 @@
 ﻿using Amethyst.Antlr;
 using Amethyst.AST;
-using Amethyst.AST.Expressions;
 using Amethyst.AST.Intrinsics;
-using Amethyst.Cli;
 using Amethyst.GC;
 using Amethyst.IR;
 using Amethyst.IR.Instructions;
 using Amethyst.IR.Types;
 using Antlr4.Runtime;
-using Datapack.Net.Data;
 using Datapack.Net.Function;
 using Datapack.Net.Utils;
 using Geode;
@@ -19,21 +16,18 @@ using Geode.Types;
 using Geode.Values;
 using GlobExpressions;
 using Spectre.Console;
+using System.Diagnostics;
 using System.Runtime.InteropServices;
+using Random = Amethyst.AST.Intrinsics.Random;
 
 namespace Amethyst
 {
 	public class Compiler : ICompiler, IFileHandler
 	{
+		public const string SHARD_PROJECT = "shard.json";
+		public readonly FunctionContext GlobalInitFunc;
 		public readonly IAmethystOptions Options;
 		public readonly Dictionary<string, RootNode> Roots = [];
-		public readonly FunctionContext GlobalInitFunc;
-
-		public string CoreLibPath { get; private set; }
-
-		public GeodeBuilder IR { get; }
-
-		private Dictionary<string, string> Files { get; } = [];
 		private readonly Dictionary<NamespacedID, StructType> typeInfo = [];
 
 		public Compiler(IAmethystOptions opts)
@@ -45,6 +39,73 @@ namespace Amethyst
 			RegisterGlobals();
 		}
 
+		public string CoreLibPath { get; private set; }
+
+		private Dictionary<string, string> Files { get; } = [];
+
+		public GeodeBuilder IR { get; }
+
+		[DebuggerNonUserCode] // Hide this on the call stack
+		public bool WrapError(LocationRange loc, Action cb)
+		{
+			try
+			{
+				cb();
+			}
+			catch (GeodeError e)
+			{
+				e.Display(this, loc);
+				return false;
+			}
+
+			return true;
+		}
+
+		[DebuggerNonUserCode] // Hide this on the call stack
+		public bool WrapError(LocationRange loc, FunctionContext ctx, Action cb)
+		{
+			ctx.LocationStack.Push(loc);
+
+			try
+			{
+				cb();
+			}
+			catch (GeodeError e)
+			{
+				e.Display(this, loc);
+				return false;
+			}
+			finally
+			{
+				ctx.LocationStack.Pop();
+			}
+
+			return true;
+		}
+
+		public string GetFile(string path)
+		{
+			if (Files.TryGetValue(path, out var file))
+			{
+				return file;
+			}
+
+			file = File.ReadAllText(path);
+			Files[path] = file;
+			return file;
+		}
+
+		public string PathToMap(string path) =>
+			path.StartsWith(CoreLibPath)
+				?
+				// Includes a slash probably
+				$"@std{path[CoreLibPath.Length..]}"
+				: path;
+
+		public string MapToPath(string mappedPath) => mappedPath.StartsWith("@std")
+			? Path.Combine(CoreLibPath, mappedPath["@std".Length..])
+			: mappedPath;
+
 		public bool Compile(StatusContext? ctx = null)
 		{
 			var errored = false;
@@ -53,7 +114,7 @@ namespace Amethyst
 
 			foreach (var (k, v) in Files)
 			{
-                ctx?.Status = $"[darkviolet]Parsing {k}...[/]";
+				ctx?.Status = $"[darkviolet]Parsing {k}...[/]";
 				if (!ParseFile(k, v))
 				{
 					errored = true;
@@ -68,8 +129,8 @@ namespace Amethyst
 			// Do class decls before functions
 			foreach (var i in Roots)
 			{
-                ctx?.Status = $"[darkviolet]Processing {i.Key}...[/]";
-                if (!i.Value.BuildSymbols())
+				ctx?.Status = $"[darkviolet]Processing {i.Key}...[/]";
+				if (!i.Value.BuildSymbols())
 				{
 					errored = true;
 				}
@@ -80,8 +141,8 @@ namespace Amethyst
 
 			foreach (var i in Roots)
 			{
-                ctx?.Status = $"[darkviolet]Compiling {i.Key}...[/]";
-                if (!i.Value.CompileFunctions(out var funcs))
+				ctx?.Status = $"[darkviolet]Compiling {i.Key}...[/]";
+				if (!i.Value.CompileFunctions(out var funcs))
 				{
 					errored = true;
 				}
@@ -98,9 +159,9 @@ namespace Amethyst
 				IR.AddFunctions(GlobalInitFunc);
 			}
 
-            ctx?.Status = $"[darkviolet]Generating commands...[/]";
+			ctx?.Status = "[darkviolet]Generating commands...[/]";
 
-            if (errored || !IR.Compile())
+			if (errored || !IR.Compile())
 			{
 				return false;
 			}
@@ -111,22 +172,22 @@ namespace Amethyst
 				{
 					if (i.Decl.ID.Namespace != "amethyst"
 #if DEBUG
-						|| i.Tags.Any(i => i.ToString().Contains("debug"))
+					    || i.Tags.Any(i => i.ToString().Contains("debug"))
 #endif
-					)
-                    {
-                        i.FancyPrintCommands();
-                    }
+					   )
+					{
+						i.FancyPrintCommands();
+					}
 				}
 			}
 
-            ctx?.Status = $"[darkviolet]Done![/]";
+			ctx?.Status = "[darkviolet]Done![/]";
 
-            return true;
+			return true;
 		}
 
 		public void LoadFiles()
-        {
+		{
 			List<string> inputs = [];
 
 			foreach (var glob in Options.Inputs.Select(i => i.Replace('\\', '/')))
@@ -154,18 +215,11 @@ namespace Amethyst
 					continue;
 				}
 
-				IEnumerable<string> globToCheck;
+				string[] globToCheck = lastSlash == 0
+					? [..Glob.Files(Directory.GetCurrentDirectory(), glob)]
+					: [..Glob.Files(glob[..lastSlash], glob[(lastSlash + 1)..])];
 
-				if (lastSlash == 0)
-				{
-					globToCheck = Glob.Files(Directory.GetCurrentDirectory(), glob);
-				}
-				else
-				{
-					globToCheck = Glob.Files(glob[..lastSlash], glob[(lastSlash + 1)..]);
-				}
-
-				if (!globToCheck.Any())
+				if (globToCheck.Length == 0)
 				{
 					AnsiConsole.MarkupInterpolated($"[bold yellow]Warning:[/] No files found for glob \"{glob}\"\n");
 				}
@@ -184,18 +238,6 @@ namespace Amethyst
 		public void LoadFile(string path) => LoadFile(path, File.ReadAllText(path));
 		public void LoadFile(string path, string file) => Files[path] = file;
 
-		public string GetFile(string path)
-        {
-            if (Files.TryGetValue(path, out var file))
-            {
-                return file;
-            }
-
-			file = File.ReadAllText(path);
-			Files[path] = file;
-			return file;
-        }
-
 		public bool ParseFile(string filename, string file)
 		{
 			var input = new AntlrInputStream(file);
@@ -213,7 +255,7 @@ namespace Amethyst
 			try
 			{
 				var root = parser.root();
-				
+
 				if (error.Errored)
 				{
 					return false;
@@ -237,65 +279,6 @@ namespace Amethyst
 			return true;
 		}
 
-		[System.Diagnostics.DebuggerNonUserCode] // Hide this on the call stack
-		public bool WrapError(LocationRange loc, Action cb)
-		{
-			try
-			{
-				cb();
-			}
-			catch (GeodeError e)
-			{
-				e.Display(this, loc);
-				return false;
-			}
-
-			return true;
-		}
-
-		[System.Diagnostics.DebuggerNonUserCode] // Hide this on the call stack
-		public bool WrapError(LocationRange loc, FunctionContext ctx, Action cb)
-		{
-			ctx.LocationStack.Push(loc);
-
-			try
-			{
-				cb();
-			}
-			catch (GeodeError e)
-			{
-				e.Display(this, loc);
-				return false;
-			}
-			finally
-			{
-				ctx.LocationStack.Pop();
-			}
-
-			return true;
-		}
-
-		public string PathToMap(string path)
-        {
-			if (path.StartsWith(CoreLibPath))
-            {
-				// Includes a slash probably
-                return $"@std{path[CoreLibPath.Length..]}";
-            }
-
-            return path;
-        }
-
-		public string MapToPath(string mappedPath)
-        {
-            if (mappedPath.StartsWith("@std"))
-            {
-                return Path.Combine(CoreLibPath, mappedPath["@std".Length..]);
-            }
-
-			return mappedPath;
-        }
-
 		public void RegisterTypeInfo(StructType type) => typeInfo[type.ID] = type;
 
 		private void GenerateTypeInfo()
@@ -304,25 +287,31 @@ namespace Amethyst
 
 			foreach (var (id, val) in typeInfo)
 			{
-				GlobalInitFunc.Add(new StoreRefInsn(GlobalInitFunc.Add(new PropertyInsn(info, new LiteralValue(id.ToString()), PrimitiveType.Compound)), new LiteralValue(val.GetTypeInfo())));
+				GlobalInitFunc.Add(new StoreRefInsn(
+					GlobalInitFunc.Add(new PropertyInsn(info, new LiteralValue(id.ToString()), PrimitiveType.Compound)),
+					new LiteralValue(val.GetTypeInfo())));
 			}
 		}
 
 		private void GenerateGCMarkFunction()
 		{
-			var ctx = new FunctionContext(this, new(new("amethyst", GeodeBuilder.InternalPath + "/" + GeodeBuilder.UniqueString), FunctionType.VoidFunc, LocationRange.None), ["amethyst:gc/mark"], LocationRange.None, hasTagPriority: true);
+			var ctx = new FunctionContext(this,
+				new(new("amethyst", GeodeBuilder.InternalPath + "/" + GeodeBuilder.UniqueString), FunctionType.VoidFunc,
+					LocationRange.None), ["amethyst:gc/mark"], LocationRange.None, true);
 
 			foreach (var (_, val) in IR.Symbols)
 			{
 				GCHelper.Mark(val.Value, ctx);
 			}
 
-			if (ctx.Start.Instructions.Count != 0)
+			if (ctx.Start.Instructions.Count == 0)
 			{
-				ctx.Add(new ReturnInsn());
-				ctx.Finish();
-				IR.AddFunctions(ctx);
+				return;
 			}
+
+			ctx.Add(new ReturnInsn());
+			ctx.Finish();
+			IR.AddFunctions(ctx);
 		}
 
 		private void RegisterGlobals()
@@ -356,52 +345,57 @@ namespace Amethyst
 			Register(new StringLength());
 			Register(new Summon());
 			Register(new Kill());
-			Register(new AST.Intrinsics.Random());
+			Register(new Random());
 			Register(new Contains());
 
 			IR.AddSymbol(new("builtin:true", LocationRange.None, new LiteralValue(true)));
 			IR.AddSymbol(new("builtin:false", LocationRange.None, new LiteralValue(false)));
 			IR.AddSymbol(new("builtin:null", LocationRange.None, new NullValue()));
-			IR.AddSymbol(new("amethyst:stack", LocationRange.None, new StorageValue(IR.RuntimeID, "stack", new ListType(PrimitiveType.Compound))));
-			IR.AddSymbol(new("amethyst:type_info", LocationRange.None, new StorageValue(IR.RuntimeID, "type_info", new SimpleMapType(PrimitiveType.Compound))));
+			IR.AddSymbol(new("amethyst:stack", LocationRange.None,
+				new StorageValue(IR.RuntimeID, "stack", new ListType(PrimitiveType.Compound))));
+			IR.AddSymbol(new("amethyst:type_info", LocationRange.None,
+				new StorageValue(IR.RuntimeID, "type_info", new SimpleMapType(PrimitiveType.Compound))));
 
 			IR.Register(new Score("amethyst_id", "dummy"));
 		}
 
-		protected FunctionContext GetGlobalInitFunc() => new(this, new(new("amethyst", GeodeBuilder.InternalPath + "/" + GeodeBuilder.UniqueString), FunctionType.VoidFunc, LocationRange.None), ["minecraft:load"], LocationRange.None, hasTagPriority: true);
+		protected FunctionContext GetGlobalInitFunc() => new(this,
+			new(new("amethyst", GeodeBuilder.InternalPath + "/" + GeodeBuilder.UniqueString), FunctionType.VoidFunc,
+				LocationRange.None), ["minecraft:load"], LocationRange.None, true);
 
 		public void Register(Intrinsic func) => IR.Symbols[func.ID] = new(func.ID, LocationRange.None, func);
 		public void Register(TypeSpecifier type) => IR.Types[type.ID] = new(type.ID, LocationRange.None, type);
 
 		public IEnumerable<string> GetCoreLib()
-        {
+		{
 			if (AttemptCoreLibLoad(Path.Join(AppContext.BaseDirectory, "std"), out var normal))
-            {
-                return normal;
-            }
-			else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux) && AttemptCoreLibLoad("/usr/share/amethyst/std", out var linux))
-            {
-                return linux;
-            }
+			{
+				return normal;
+			}
+
+			if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux) &&
+			    AttemptCoreLibLoad("/usr/share/amethyst/std", out var linux))
+			{
+				return linux;
+			}
 
 			throw new FileNotFoundException("The standard library could not be loaded. Try reinstalling Amethyst");
 		}
 
 		private bool AttemptCoreLibLoad(string path, out IEnumerable<string> files)
-        {
-            files = GetAllAmethystFilesFromDirectory(path);
+		{
+			files = GetAllAmethystFilesFromDirectory(path);
 
 			if (files.Any())
-            {
-                CoreLibPath = path;
+			{
+				CoreLibPath = path;
 				return true;
-            }
+			}
 
 			return false;
 		}
 
-		public static IEnumerable<string> GetAllAmethystFilesFromDirectory(string dir) => Glob.Files(dir, "**/*.ame").Select(i => Path.Join(dir, i));
-
-		public const string SHARD_PROJECT = "shard.json";
+		public static IEnumerable<string> GetAllAmethystFilesFromDirectory(string dir) =>
+			Glob.Files(dir, "**/*.ame").Select(i => Path.Join(dir, i));
 	}
 }

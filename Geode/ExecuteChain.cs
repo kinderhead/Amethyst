@@ -4,21 +4,29 @@ using Datapack.Net.Function.Commands;
 using Geode.IR;
 using Geode.Values;
 using System.Collections.Immutable;
-using System.Text;
 
 namespace Geode
 {
 	public class ExecuteChain : IInstructionArg
 	{
 		public readonly List<ExecuteChainSubcommand> Chain = [];
+
+		public bool Forks => Chain.Any(i => i.Forks);
 		public string Name => "chain";
 		public IReadOnlySet<ValueRef> Dependencies => ImmutableHashSet.Create([.. Chain.SelectMany(i => i.Values)]);
 
-		public bool Forks => Chain.Any(i => i.Forks);
+		public void ReplaceValue(ValueRef value, ValueRef with)
+		{
+			foreach (var i in Chain)
+			{
+				i.ReplaceValue(value, with);
+			}
+		}
 
 		public void Add(ExecuteChainSubcommand cmd) => Chain.Add(cmd);
 
 		public void Run(Command ifTrue, RenderContext ctx) => Run([ifTrue], ctx);
+
 		public void Run(Command[] ifTrue, RenderContext ctx)
 		{
 			var cmd = new Execute();
@@ -29,7 +37,9 @@ namespace Geode
 			});
 		}
 
-		public void RunWithPropagate(Func<NBTCompound, Command> ifTrue, RenderContext ctx) => RunWithPropagate(i => [ifTrue(i)], ctx);
+		public void RunWithPropagate(Func<NBTCompound, Command> ifTrue, RenderContext ctx) =>
+			RunWithPropagate(i => [ifTrue(i)], ctx);
+
 		public void RunWithPropagate(Func<NBTCompound, Command[]> ifTrue, RenderContext ctx)
 		{
 			var cmd = new Execute();
@@ -40,14 +50,14 @@ namespace Geode
 			});
 		}
 
-		private IValue[] GetDependencies()
-		{
-			return [.. Chain.Where(i => i.RequireLiteral).SelectMany(i => i.Values.Select(i => i.Expect()))];
-		}
+		private IValue[] GetDependencies() =>
+		[
+			.. Chain.Where(i => i.RequireLiteral).SelectMany(i => i.Values.Select(i => i.Expect()))
+		];
 
 		private void Compute(Execute cmd, Func<Command[]> ifTrue, IConstantValue[] args, RenderContext ctx)
 		{
-			int idex = 0;
+			var idex = 0;
 
 			bool? ret = null;
 
@@ -83,29 +93,23 @@ namespace Geode
 			ctx.Add(ifTrue().Select(i => cmd.Copy().Run(i)));
 		}
 
-		public void ReplaceValue(ValueRef value, ValueRef with)
-		{
-			foreach (var i in Chain)
-			{
-				i.ReplaceValue(value, with);
-			}
-		}
-
 		public override string ToString() => string.Join(' ', Chain);
 	}
 
 	public abstract class ExecuteChainSubcommand(IEnumerable<ValueRef> vals)
 	{
-		public ValueRef[] Values = [.. vals];
+		public readonly ValueRef[] Values = [.. vals];
 
 		public virtual bool RequireLiteral => false;
 		public virtual bool Forks => false;
 
 		/// <summary>
-		/// Process the execute chain subcommand
+		///     Process the execute chain subcommand
 		/// </summary>
-		/// <param name="processedArgs"><see cref="Values"> processed in accordance with <see cref="RequireLiteral"></param>
-		/// <param name="ctx"/>Render context</param>
+		/// <param name="processedArgs">
+		///     <see cref="Values" /> processed in accordance with <see cref="RequireLiteral" />
+		/// </param>
+		/// <param name="ctx">Render context</param>
 		/// <param name="cmd">Execute command</param>
 		/// <returns>True if the result is always true, false if the result is always false, null otherwise</returns>
 		public abstract bool? Build(IValue[] processedArgs, RenderContext ctx, Execute cmd);
@@ -114,7 +118,7 @@ namespace Geode
 
 		public void ReplaceValue(ValueRef value, ValueRef with)
 		{
-			for (int i = 0; i < Values.Length; i++)
+			for (var i = 0; i < Values.Length; i++)
 			{
 				if (Values[i] == value)
 				{
@@ -124,11 +128,14 @@ namespace Geode
 		}
 	}
 
-	public abstract class ExecuteChainConditional(IEnumerable<ValueRef> vals, bool invert) : ExecuteChainSubcommand(vals)
+	public abstract class ExecuteChainConditional(IEnumerable<ValueRef> vals, bool invert)
+		: ExecuteChainSubcommand(vals)
 	{
 		public bool Invert = invert;
 
-		public override bool? Build(IValue[] processedArgs, RenderContext ctx, Execute cmd) => Build(processedArgs, ctx, Invert ? cmd.Unless : cmd.If);
+		public override bool? Build(IValue[] processedArgs, RenderContext ctx, Execute cmd) =>
+			Build(processedArgs, ctx, Invert ? cmd.Unless : cmd.If);
+
 		protected abstract bool? Build(IValue[] processedArgs, RenderContext ctx, Execute.Conditional cmd);
 
 		public sealed override string ToString() => (Invert ? "unless " : "if ") + StringPart();

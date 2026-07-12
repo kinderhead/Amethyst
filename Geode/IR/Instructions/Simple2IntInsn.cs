@@ -3,7 +3,8 @@ using Geode.Values;
 
 namespace Geode.IR.Instructions
 {
-	public abstract class Simple2IntInsn<TOut>(ValueRef left, ValueRef right) : Instruction([left, right]) where TOut : NBTValue
+	public abstract class Simple2IntInsn<TOut>(ValueRef left, ValueRef right)
+		: Instruction([left, right]) where TOut : NBTValue
 	{
 		public override NBTType?[] ArgTypes => [NBTType.Int, NBTType.Int];
 		public abstract TOut Compute(NBTInt left, NBTInt right);

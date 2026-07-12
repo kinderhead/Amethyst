@@ -1,8 +1,5 @@
 ﻿using Geode;
 using Geode.IR;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Amethyst.AST.Statements
 {

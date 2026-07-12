@@ -5,8 +5,7 @@ namespace Datapack.Net.Pack
 {
 	public abstract class Resource(NamespacedID id)
 	{
-		[JsonIgnore]
-		public readonly NamespacedID ID = id;
+		[JsonIgnore] public readonly NamespacedID ID = id;
 
 		public abstract string Build(DP pack);
 	}

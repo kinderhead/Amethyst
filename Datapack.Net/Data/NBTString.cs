@@ -4,8 +4,8 @@ namespace Datapack.Net.Data
 {
 	public class NBTString(string val) : NBTValue
 	{
-		public override NBTType Type => NBTType.String;
 		public readonly string Value = val;
+		public override NBTType Type => NBTType.String;
 
 		public override void Build(StringBuilder sb) => sb.Append($"\"{Escape(Value)}\"");
 
@@ -21,7 +21,8 @@ namespace Datapack.Net.Data
 			return val.Replace("\\\\", "\\");
 		}
 
-		public override NBTValue Cast(NBTNumberType type) => throw new InvalidOperationException($"Cannot cast string to number");
+		public override NBTValue Cast(NBTNumberType type) =>
+			throw new InvalidOperationException("Cannot cast string to number");
 
 		public static implicit operator NBTString(string val) => new(val);
 		public static implicit operator string(NBTString val) => val.Value;
