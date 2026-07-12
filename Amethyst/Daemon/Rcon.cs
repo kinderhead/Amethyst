@@ -59,7 +59,9 @@ namespace Amethyst.Daemon
 		public bool Send(Message msg)
 		{
 			stream.Write(msg.Serialize());
-			stream.ReadExactly(buffer);
+#pragma warning disable CA2022
+			stream.Read(buffer);
+#pragma warning restore CA2022
 
 			// TODO: responses
 			return true;

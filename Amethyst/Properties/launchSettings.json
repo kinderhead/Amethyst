@@ -2,11 +2,11 @@
   "profiles": {
     "Amethyst": {
       "commandName": "Project",
-      "commandLineArgs": "build examples/test.ame -o output.zip -c\r\n"
+      "commandLineArgs": "compile examples/test.ame -o output.zip --run"
     },
     "Test Suite": {
       "commandName": "Project",
-      "commandLineArgs": "build tests/*.ame -c -o output.zip"
+      "commandLineArgs": "compile tests/*.ame -o output.zip --run"
     },
     "Amethyst Random": {
       "commandName": "Project",
