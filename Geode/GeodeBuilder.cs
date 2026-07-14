@@ -11,312 +11,270 @@ using Geode.Values;
 
 namespace Geode
 {
-	public class GeodeBuilder
-	{
-		public readonly IOptions Options;
-		public readonly ICompiler Compiler;
-		public readonly IFileHandler FileHandler;
-		public readonly DP Datapack;
-		public readonly Macroizer Macroizer;
+    public class GeodeBuilder
+    {
+        public readonly IOptions Options;
+        public readonly ICompiler Compiler;
+        public readonly IFileHandler FileHandler;
+        public readonly DP Datapack;
+        public readonly Macroizer Macroizer;
 
-		public readonly string Namespace;
-		public readonly NamespacedID RuntimeID;
-		public readonly IEntityTarget RuntimeEntity;
+        public readonly string Namespace;
+        public readonly NamespacedID RuntimeID;
+        public readonly IEntityTarget RuntimeEntity;
 
-		public readonly Dictionary<NamespacedID, GlobalSymbol> Symbols = [];
-		public readonly Dictionary<NamespacedID, GlobalTypeSymbol> Types = [];
+        public readonly Dictionary<NamespacedID, GlobalSymbol> Symbols = [];
+        public readonly Dictionary<NamespacedID, GlobalTypeSymbol> Types = [];
 
-		public readonly List<FunctionContext> Functions = [];
+        public readonly List<FunctionContext> Functions = [];
 
-		public readonly List<Command> UserInitCommands = [];
+        public readonly List<Command> UserInitCommands = [];
 
-		private readonly SortedSet<Score> registeredScores = [];
-		private readonly SortedDictionary<int, ScoreValue> constants = [];
-		private readonly List<MCFunction> functionsToRemove = [];
+        private readonly SortedSet<Score> registeredScores = [];
+        private readonly SortedDictionary<int, ScoreValue> constants = [];
+        private readonly List<MCFunction> functionsToRemove = [];
 
-		public GeodeBuilder(IOptions opts, ICompiler compiler, IFileHandler handler, string baseNamespace)
-		{
-			Namespace = baseNamespace;
-			RuntimeID = new(baseNamespace, "runtime");
-			RuntimeEntity = new NamedTarget(baseNamespace);
+        public GeodeBuilder(IOptions opts, ICompiler compiler, IFileHandler handler, string baseNamespace)
+        {
+            Namespace = baseNamespace;
+            RuntimeID = new(baseNamespace, "runtime");
+            RuntimeEntity = new NamedTarget(baseNamespace);
 
-			Options = opts;
-			Datapack = GetDP(Options);
-			Compiler = compiler;
-			FileHandler = handler;
-			Macroizer = new(this);
-		}
+            Options = opts;
+            Datapack = GetDP(Options);
+            Compiler = compiler;
+            FileHandler = handler;
+            Macroizer = new(this);
+        }
 
-		public void AddFunctions(params IEnumerable<FunctionContext> funcs) => Functions.AddRange(funcs);
+        public void AddFunctions(params IEnumerable<FunctionContext> funcs) => Functions.AddRange(funcs);
 
-		private bool failed;
+        private bool failed;
 
-		public bool Compile()
-		{
-			failed = false;
+        public bool Compile()
+        {
+            failed = false;
 
-			// ApplyPass<InlinePass>();
-			ApplyPass<Mem2RegPass>();
-			ApplyPass<ResolvePass>();
-			ApplyPass<PhiPass>();
+            // ApplyPass<InlinePass>();
+            ApplyPass<Mem2RegPass>();
+            ApplyPass<ResolvePass>();
+            ApplyPass<PhiPass>();
 
-			if (failed)
-			{
-				return false;
-			}
+            if (failed) return false;
 
-			AllocateRegisters();
+            AllocateRegisters();
 
-			if (Options.DumpIR)
-			{
-				DumpIR();
-			}
+            if (Options.DumpIR) DumpIR();
 
-			if (failed)
-			{
-				return false;
-			}
+            if (failed) return false;
 
-			foreach (var i in Functions)
-			{
-				try
-				{
-					i.Render(this);
-				}
-				catch (EmptyGeodeError)
-				{
-					failed = true;
-				}
-			}
+            foreach (var i in Functions)
+            {
+                try
+                {
+                    i.Render(this);
+                }
+                catch (EmptyGeodeError)
+                {
+                    failed = true;
+                }
+            }
 
-			if (failed)
-			{
-				return false;
-			}
+            if (failed) return false;
 
-			foreach (var i in functionsToRemove)
-			{
-				Datapack.Functions.Remove(i);
-			}
+            foreach (var i in functionsToRemove)
+            {
+                Datapack.Functions.Remove(i);
+            }
 
-			var init = GetInitFunc();
-			Register(init);
-			Datapack.Tags.GetTag(new("minecraft", "load"), "function").Values.Insert(0, init.ID);
+            var init = GetInitFunc();
+            Register(init);
+            Datapack.Tags.GetTag(new("minecraft", "load"), "function").Values.Insert(0, init.ID);
 
-			var cleanup = GetCleanupFunc();
-			Register(cleanup);
-			Datapack.Tags.GetTag(new("amethyst", "cleanup"), "function").Values.Insert(0, cleanup.ID);
+            var cleanup = GetCleanupFunc();
+            Register(cleanup);
+            Datapack.Tags.GetTag(new("amethyst", "cleanup"), "function").Values.Insert(0, cleanup.ID);
 
-			Datapack.Optimize();
-			Datapack.Build();
+            Datapack.Optimize();
+            Datapack.Build();
 
-			return true;
-		}
+            return true;
+        }
 
-		public T ApplyPass<T>() where T : IPass, new() => ApplyPass(new T());
+        public T ApplyPass<T>() where T : IPass, new() => ApplyPass(new T());
 
-		public T ApplyPass<T>(T pass) where T : IPass
-		{
-			if (pass.MinimumOptimizationLevel > Options.OptimizationLevel)
-			{
-				return pass;
-			}
+        public T ApplyPass<T>(T pass) where T : IPass
+        {
+            if (pass.MinimumOptimizationLevel > Options.OptimizationLevel) return pass;
 
-			foreach (var i in Functions)
-			{
-				try
-				{
-					pass.Apply(i);
-				}
-				catch (EmptyGeodeError)
-				{
-					failed = true;
-				}
-			}
+            foreach (var i in Functions)
+            {
+                try
+                {
+                    pass.Apply(i);
+                }
+                catch (EmptyGeodeError)
+                {
+                    failed = true;
+                }
+            }
 
-			return pass;
-		}
+            return pass;
+        }
 
-		public void AllocateRegisters()
-		{
-			var inout = ApplyPass<InOutPass>();
-			var graph = ApplyPass(new LifetimePass(inout));
+        public void AllocateRegisters()
+        {
+            var inout = ApplyPass<InOutPass>();
+            var graph = ApplyPass(new LifetimePass(inout));
 
-			foreach (var func in Functions)
-			{
-				func.AllocateRegisters(this, graph.Graphs[func]);
-			}
-		}
+            foreach (var func in Functions)
+            {
+                func.AllocateRegisters(this, graph.Graphs[func]);
+            }
+        }
 
-		public void DumpIR()
-		{
-			foreach (var i in Functions)
-			{
-				if (!i.Decl.ID.ToString().StartsWith("amethyst:core"))
-				{
-					Console.WriteLine(i.Dump() + '\n');
-				}
-			}
-		}
+        public void DumpIR()
+        {
+            foreach (var i in Functions)
+            {
+                if (!i.Decl.ID.ToString().StartsWith("amethyst:core")) Console.WriteLine(i.Dump() + '\n');
+            }
+        }
 
-		public ScoreValue Score(string name, TypeSpecifier? type = null)
-		{
-			var score = new Score(name, "dummy");
-			Register(score);
-			return new(RuntimeEntity, score, type);
-		}
+        public ScoreValue Score(string name, TypeSpecifier? type = null)
+        {
+            var score = new Score(name, "dummy");
+            Register(score);
+            return new(RuntimeEntity, score, type);
+        }
 
-		public ScoreValue Reg(int num, TypeSpecifier? type = null) => Score($"reg_{num}", type);
-		public ScoreValue Temp(int num, TypeSpecifier? type = null) => Score($"tmp_{num}", type);
+        public ScoreValue Reg(int num, TypeSpecifier? type = null) => Score($"reg_{num}", type);
+        public ScoreValue Temp(int num, TypeSpecifier? type = null) => Score($"tmp_{num}", type);
 
-		public ScoreValue Constant(int num)
-		{
-			if (!constants.TryGetValue(num, out var score))
-			{
-				constants[num] = score = Score($"_{num}");
-			}
+        public ScoreValue Constant(int num)
+        {
+            if (!constants.TryGetValue(num, out var score)) constants[num] = score = Score($"_{num}");
 
-			return score;
-		}
+            return score;
+        }
 
-		public StorageValue TempStorage(TypeSpecifier type) => new(RuntimeID, $"tmp.{UniqueString}", type);
+        public StorageValue TempStorage(TypeSpecifier type) => new(RuntimeID, $"tmp.{UniqueString}", type);
 
-		public void AddSymbol(GlobalSymbol sym)
-		{
-			if (Symbols.TryGetValue(sym.ID, out var old))
-			{
-				throw new RedefinedSymbolError(sym.ID.ToString(), old.Location);
-			}
+        public void AddSymbol(GlobalSymbol sym)
+        {
+            if (Symbols.TryGetValue(sym.ID, out var old)) throw new RedefinedSymbolError(sym.ID.ToString(), old.Location);
 
-			Symbols[sym.ID] = sym;
-		}
+            Symbols[sym.ID] = sym;
+        }
 
-		public void AddType(GlobalTypeSymbol sym)
-		{
-			if (Types.TryGetValue(sym.ID, out var old))
-			{
-				throw new RedefinedSymbolError(sym.ID.ToString(), old.Location);
-			}
+        public void AddType(GlobalTypeSymbol sym)
+        {
+            if (Types.TryGetValue(sym.ID, out var old)) throw new RedefinedSymbolError(sym.ID.ToString(), old.Location);
 
-			Types[sym.ID] = sym;
-		}
+            Types[sym.ID] = sym;
+        }
 
-		public StorageValue AddGlobal(NamespacedID id, TypeSpecifier type, LocationRange loc,
-			string context = "globals")
-		{
-			var val = new StorageValue(new NamespacedID(id.Namespace, context), id.Path.Replace('/', '.'), type);
-			AddSymbol(new(id, loc, val));
-			return val;
-		}
+        public StorageValue AddGlobal(NamespacedID id, TypeSpecifier type, LocationRange loc,
+                                      string context = "globals")
+        {
+            var val = new StorageValue(new NamespacedID(id.Namespace, context), id.Path.Replace('/', '.'), type);
+            AddSymbol(new(id, loc, val));
+            return val;
+        }
 
-		public (FunctionContext ctx, FunctionValue func) AnonymousFunction(FunctionType type)
-		{
-			var func = new FunctionValue(new("amethyst", InternalPath + "/" + UniqueString), type, LocationRange.None);
-			var ctx = new FunctionContext(Compiler, func, [], LocationRange.None);
-			AddFunctions(ctx);
-			return (ctx, func);
-		}
+        public (FunctionContext ctx, FunctionValue func) AnonymousFunction(FunctionType type)
+        {
+            var func = new FunctionValue(new("amethyst", INTERNAL_PATH + "/" + UniqueString), type, LocationRange.None);
+            var ctx = new FunctionContext(Compiler, func, [], LocationRange.None);
+            AddFunctions(ctx);
+            return (ctx, func);
+        }
 
-		public IValue? GetGlobal(NamespacedID id)
-		{
-			if (Symbols.TryGetValue(id, out var sym))
-			{
-				return sym.Value;
-			}
+        public IValue? GetGlobal(NamespacedID id)
+        {
+            if (Symbols.TryGetValue(id, out var sym)) return sym.Value;
 
-			return null;
-		}
+            return null;
+        }
 
-		public IValue? GetGlobalWalk(string baseNamespace, string name) =>
-			NamespaceWalk(baseNamespace, name, Symbols)?.Value;
+        public IValue? GetGlobalWalk(string baseNamespace, string name) =>
+            NamespaceWalk(baseNamespace, name, Symbols)?.Value;
 
-		public IValue? GetConstructorOrNull(TypeSpecifier type)
-		{
-			if (GetGlobal(type.ID) is { } v && v.Type is FunctionType funcType && funcType.ReturnType == type)
-			{
-				return v;
-			}
+        public IValue? GetConstructorOrNull(TypeSpecifier type)
+        {
+            if (GetGlobal(type.ID) is { Type: FunctionType funcType } v && funcType.ReturnType == type) return v;
 
-			return null;
-		}
+            return null;
+        }
 
-		public void Register(MCFunction func) => Datapack.Functions.Add(func);
-		public void Register(Score score) => registeredScores.Add(score);
+        public void Register(MCFunction func) => Datapack.Functions.Add(func);
+        public void Register(Score score) => registeredScores.Add(score);
 
-		public void Unregister(MCFunction func) => functionsToRemove.Add(func);
+        public void Unregister(MCFunction func) => functionsToRemove.Add(func);
 
-		private MCFunction GetInitFunc()
-		{
-			var func = new MCFunction(new("amethyst", $"{InternalPath}/{UniqueString}"));
+        private MCFunction GetInitFunc()
+        {
+            var func = new MCFunction(new("amethyst", $"{INTERNAL_PATH}/{UniqueString}"));
 
-			func.Add(new DataCommand.Modify(new Storage(new("amethyst", "runtime")), "stack").Set().Value("[{}]"));
-			func.Add(new DataCommand.Remove(new Storage(new("amethyst", "runtime")), "null"));
+            func.Add(new DataCommand.Modify(new Storage(new("amethyst", "runtime")), "stack").Set().Value("[{}]"));
+            func.Add(new DataCommand.Remove(new Storage(new("amethyst", "runtime")), "null"));
 
-			foreach (var i in registeredScores)
-			{
-				func.Add(new Scoreboard.Objectives.Add(i));
-			}
+            foreach (var i in registeredScores)
+            {
+                func.Add(new Scoreboard.Objectives.Add(i));
+            }
 
-			foreach (var i in constants)
-			{
-				func.Add(new Scoreboard.Players.Set(i.Value.Target, i.Value.Score, i.Key));
-			}
+            foreach (var i in constants)
+            {
+                func.Add(new Scoreboard.Players.Set(i.Value.Target, i.Value.Score, i.Key));
+            }
 
-			func.Add([.. UserInitCommands]);
+            func.Add([.. UserInitCommands]);
 
-			return func;
-		}
+            return func;
+        }
 
-		private MCFunction GetCleanupFunc()
-		{
-			var func = new MCFunction(new("amethyst", $"{InternalPath}/{UniqueString}"));
+        private MCFunction GetCleanupFunc()
+        {
+            var func = new MCFunction(new("amethyst", $"{INTERNAL_PATH}/{UniqueString}"));
 
-			foreach (var i in RuntimeStorageUsed)
-			{
-				func.Add(new DataCommand.Remove(RuntimeID, i));
-			}
+            foreach (var i in RuntimeStorageUsed)
+            {
+                func.Add(new DataCommand.Remove(RuntimeID, i));
+            }
 
-			foreach (var i in registeredScores)
-			{
-				func.Add(new Scoreboard.Objectives.Remove(i));
-			}
+            foreach (var i in registeredScores)
+            {
+                func.Add(new Scoreboard.Objectives.Remove(i));
+            }
 
-			return func;
-		}
+            return func;
+        }
 
-		public const string InternalPath = "zz_internal";
+        public const string INTERNAL_PATH = "zz_internal";
 
 // TODO: Remove this debugging measure
 #if true
-		private static int uniqueIndex;
-		public static string UniqueString => $"{uniqueIndex++}";
+        private static int uniqueIndex;
+        public static string UniqueString => $"{uniqueIndex++}";
 #else
 		public static string UniqueString => Guid.NewGuid().ToString();
 #endif
-		public static readonly string[] RuntimeStorageUsed = ["stack", "tmp"];
+        public static readonly string[] RuntimeStorageUsed = ["stack", "tmp"];
 
-		public static T? NamespaceWalk<T>(string baseNamespace, string name, Dictionary<NamespacedID, T> syms)
-		{
-			if (syms.TryGetValue(new(baseNamespace, name), out var v))
-			{
-				return v;
-			}
+        public static T? NamespaceWalk<T>(string baseNamespace, string name, Dictionary<NamespacedID, T> syms)
+        {
+            if (syms.TryGetValue(new(baseNamespace, name), out var v)) return v;
 
-			if (baseNamespace.Contains('/'))
-			{
-				return NamespaceWalk(baseNamespace[..baseNamespace.LastIndexOf('/')], name, syms);
-			}
+            if (baseNamespace.Contains('/')) return NamespaceWalk(baseNamespace[..baseNamespace.LastIndexOf('/')], name, syms);
 
-			if (baseNamespace.Contains(':'))
-			{
-				return NamespaceWalk(baseNamespace[..baseNamespace.LastIndexOf(':')], name, syms);
-			}
+            if (baseNamespace.Contains(':')) return NamespaceWalk(baseNamespace[..baseNamespace.LastIndexOf(':')], name, syms);
 
-			return default;
-		}
+            return default;
+        }
 
-		private static DP GetDP(IOptions opts) => new(opts.Output,
-			new MCMeta().SetDescription("A project made with Amethyst").SetMinVersion(opts.PackVersion)
-				.SetMaxVersion(opts.PackVersion));
-	}
+        private static DP GetDP(IOptions opts) => new(opts.Output,
+            new MCMeta().SetDescription("A project made with Amethyst").SetMinVersion(opts.PackVersion)
+                        .SetMaxVersion(opts.PackVersion));
+    }
 }

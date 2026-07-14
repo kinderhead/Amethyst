@@ -1,3 +1,4 @@
+using System.Text;
 using Datapack.Net.Data;
 using Datapack.Net.Function;
 using Datapack.Net.Function.Commands;
@@ -10,644 +11,540 @@ using Geode.Util;
 using Geode.Util.Algorithm;
 using Geode.Values;
 using Spectre.Console;
-using System.Text;
 
 namespace Geode.IR
 {
-	public class FunctionContext : Graph<Block>
-	{
-		private readonly Stack<Scope> activeScopes = [];
-		private readonly List<Block> blocks = [];
-		public readonly ICompiler Compiler;
-		public readonly FunctionValue Decl;
-		private readonly List<MCFunction> dependencies = [];
-
-		public readonly Block ExitBlock;
-
-		private readonly List<IValue> extraLocals = [];
-		public readonly bool HasTagPriority;
-		public readonly bool IsMacroFunction;
-		private readonly Dictionary<string, int> labelCounters = [];
-		public readonly LocationRange Location;
-
-		public readonly Stack<LocationRange> LocationStack = [];
-		private readonly Stack<(Block loop, Action iter, Block end)> loopStack = [];
-
-		// Could just be the max register used, but who knows if one goes poof somewhere
-		private readonly HashSet<int> registersInUse = [];
-		public readonly IEnumerable<NamespacedID> Tags;
-		private readonly List<Scope> totalScopes = [];
-		private int tmpStackVars;
-
-		public FunctionContext(ICompiler compiler, FunctionValue decl, IEnumerable<NamespacedID> tags,
-			LocationRange loc, bool hasTagPriority = false)
-		{
-			Compiler = compiler;
-			Decl = decl;
-			Location = loc;
-			Tags = tags;
-			IsMacroFunction = Decl.FuncType.IsMacroFunction;
-			HasTagPriority = hasTagPriority;
-
-			LocationStack.Push(LocationRange.None);
-
-			PushScope();
-
-			Start = new("entry", Decl.ID, this);
-			blocks.Add(Start);
-			CurrentBlock = blocks.Last();
-
-			ExitBlock = new("exit", GetNewInternalID(), this);
-
-			foreach (var i in Decl.FuncType.Parameters)
-			{
-				if (i.Modifiers.HasFlag(ParameterModifiers.Macro))
-				{
-					RegisterLocal(i.Name, new MacroValue(i.Name, i.Type), Location);
-				}
-				else
-				{
-					// Maybe make it so that if the stack isn't used by the function, then use -1 and don't push new frame
-					RegisterLocal(i.Name, new StackValue(-2, compiler.IR.RuntimeID, $"args.{i.Name}", i.Type),
-						Location);
-				}
-			}
-		}
-
-		public FunctionContext(ICompiler compiler, FunctionValue decl, LocationRange loc) : this(compiler, decl, [],
-			loc)
-		{
-		}
-
-		public Block CurrentBlock { get; private set; }
-
-		public bool IsFinished => CurrentBlock == ExitBlock;
-
-		// If there's more than one block, then stack[-1].returning is used
-		public bool UsesStack => AllLocals.Any(i => i is StorageValue) || registersInUse.Count != 0 ||
-		                         tmpStackVars != 0 || Blocks.Count > 1;
-
-		public bool InForkingExecute { get; private set; }
-
-		public IReadOnlyCollection<Block> Blocks => blocks;
-		public IReadOnlyCollection<MCFunction> Dependencies => dependencies;
-
-		public IEnumerable<IValue> AllLocals =>
-		[
-			.. totalScopes.SelectMany(i => i.Locals.Values).Select(i => i.Value), .. extraLocals
-		];
-
-		public IEnumerable<Variable> AllVariables => AllLocals.Where(i => i is Variable).Cast<Variable>();
-
-		public void PushScope()
-		{
-			var scope = new Scope();
-			totalScopes.Add(scope);
-			activeScopes.Push(scope);
-		}
-
-		public void PopScope() => activeScopes.Pop();
-
-		public IValue GetVariable(string name) => GetVariableOrNull(name) ?? throw new UndefinedSymbolError(name);
-
-		public IValue? GetVariableOrNull(string name)
-		{
-			foreach (var i in activeScopes.Reverse())
-			{
-				if (i.Locals.TryGetValue(name, out var variable))
-				{
-					return variable.Value;
-				}
-			}
-
-			if (name.Contains(':'))
-			{
-				if (GetGlobal(new(name)) is { } v)
-				{
-					return v;
-				}
-			}
-			else if (GetGlobalWalk(Decl.ID.GetContainingFolder(), name) is { } v2)
-			{
-				return v2;
-			}
-			else if (GetGlobal(new("minecraft", name)) is { } v3)
-			{
-				return v3;
-			}
-			else if (GetGlobal(new("builtin", name)) is { } v4)
-			{
-				return v4;
-			}
-
-			return null;
-		}
-
-		public IValue? GetGlobal(NamespacedID id) => Compiler.IR.GetGlobal(id);
-
-		public IValue? GetGlobalWalk(string baseNamespace, string name) =>
-			Compiler.IR.GetGlobalWalk(baseNamespace, name);
-
-		public IValue? GetConstructorOrNull(TypeSpecifier type) => Compiler.IR.GetConstructorOrNull(type);
-
-		public Variable RegisterLocal(string name, TypeSpecifier type, LocationRange loc)
-		{
-			var val = new Variable(name, Compiler.IR.RuntimeID, "frame", activeScopes.Count - 1, type);
-			RegisterLocal(name, val, loc);
-			return val;
-		}
-
-		public void RegisterLocal(string name, IValue val, LocationRange loc)
-		{
-			if (activeScopes.Peek().Locals.TryGetValue(name, out var orig))
-			{
-				throw new RedefinedSymbolError(name, orig.Location);
-			}
-
-			activeScopes.Peek().Locals[name] = new(name, val, loc);
-		}
-
-		public void RegisterExtraLocal(IValue val) => extraLocals.Add(val);
-
-		public StackValue Temp(TypeSpecifier type) => new(-1, Compiler.IR.RuntimeID, $"tmp{tmpStackVars++}", type);
-
-		public ValueRef AddLoad(ValueRef val) => Add(new LoadInsn(val));
-
-		public ValueRef Add(Instruction insn, string? customName = null)
-		{
-			if (IsFinished)
-			{
-				throw new InvalidOperationException("Function is finished");
-			}
-
-			return CurrentBlock.Add(insn, customName);
-		}
-
-		public void Add(Block block)
-		{
-			CurrentBlock = block;
-			blocks.Add(block);
-		}
-
-		public ValueRef ImplicitCast(ValueRef val, TypeSpecifier type)
-		{
-			if (TryImplicitCast(val, type) is { } ret)
-			{
-				return ret;
-			}
-
-			throw new InvalidTypeError(val.Type.ToString(), type.ToString());
-		}
-
-		public ValueRef? TryImplicitCast(ValueRef val, TypeSpecifier type)
-		{
-			if (val.Type == type)
-			{
-				return val;
-			}
-
-			if (type is VarType)
-			{
-				return val;
-			}
-
-			if (val.Type.CastFromOverload(val, type, this) is { } cast)
-			{
-				return cast.SetType(type);
-			}
-
-			if (type.CastToOverload(val, this) is { } cast2)
-			{
-				return cast2.SetType(type);
-			}
-
-			if (val.Type.Implements(type))
-			{
-				return val.SetType(type);
-			}
-
-			return null;
-		}
-
-		public ValueRef ExplicitCast(ValueRef val, TypeSpecifier type)
-		{
-			if (val.Type.ExplicitCastFromOverload(val, type, this) is { } cast)
-			{
-				return cast.SetType(type);
-			}
-
-			if (type.ExplicitCastToOverload(val, this) is { } cast2)
-			{
-				return cast2.SetType(type);
-			}
-
-			if (type.Implements(val.Type))
-			{
-				return val.SetType(type);
-			}
-
-			if (type.EffectiveType == NBTType.Int)
-			{
-				return Add(new LoadInsn(val, type)).SetType(type);
-			}
-
-			if (TryImplicitCast(val, type) is { } ret)
-			{
-				return ret;
-			}
-
-			throw new InvalidTypeError(val.Type.ToString(), type.ToString());
-		}
-
-		public ValueRef Call(NamespacedID id, params ValueRef[] args) =>
-			(GetGlobal(id) as FunctionValue ?? throw new UndefinedSymbolError(id.ToString())).CallBehavior(this, args);
-
-		public IEnumerable<ValueRef> PrepArgs(FunctionType type, params ValueRef[] args)
-		{
-			if (type.Parameters.Length != args.Length)
-			{
-				throw new MismatchedArgumentCountError(type.Parameters.Length, args.Length);
-			}
-
-			return args.Zip(type.Parameters).Select(i => ImplicitCast(i.First, i.Second.Type));
-		}
-
-		public void AddDependency(MCFunction func)
-		{
-			if (!dependencies.Contains(func))
-			{
-				dependencies.Add(func);
-			}
-		}
-
-		public void Finish()
-		{
-			if (CurrentBlock.Instructions.Count == 0 ||
-			    !CurrentBlock.Instructions[CurrentBlock.Instructions.Count - 1].IsReturn)
-			{
-				throw new InvalidOperationException("Last block in function must have a return instruction");
-			}
-
-			CurrentBlock.LinkNext(ExitBlock);
-			CurrentBlock = ExitBlock;
-
-			dependencies.AddRange(blocks.Select(i => i.Function));
-		}
-
-		public string GetNewLabelName(string label)
-		{
-			if (!labelCounters.TryGetValue(label, out var count))
-			{
-				labelCounters[label] = 1;
-				return label;
-			}
-
-			labelCounters[label] = count + 1;
-			return $"{label}{count}";
-		}
-
-		/// <summary>
-		///     Branch current block without an else statement.
-		/// </summary>
-		/// <param name="cond">Condition</param>
-		/// <param name="label">Label name</param>
-		/// <param name="ifTrue">If true action</param>
-		/// <returns>True block</returns>
-		public void Branch(ExecuteChain cond, string label, Action ifTrue)
-		{
-			label = GetNewLabelName(label);
-
-			var trueBlock = new Block($"{label}.true", GetNewInternalID(), this);
-			var endBlock = new Block($"{label}.end", GetNewInternalID(), this);
-
-			if (cond.Forks)
-			{
-				trueBlock.EnableForkGuard();
-			}
-
-			blocks.Add(trueBlock);
-			blocks.Add(endBlock);
-
-			Add(new BranchInsn(cond, trueBlock, endBlock));
-
-			CurrentBlock = trueBlock;
-
-			var tmpFork = InForkingExecute;
-
-			if (cond.Forks)
-			{
-				InForkingExecute = true;
-			}
-
-			ifTrue();
-
-			if (!cond.Forks)
-			{
-				Add(new JumpInsn(endBlock));
-			}
-			else
-			{
-				InForkingExecute = tmpFork;
-			}
-
-			CurrentBlock = endBlock;
-		}
-
-		public void Branch(ExecuteChain cond, string label, Action ifTrue, Action ifFalse)
-		{
-			if (cond.Forks)
-			{
-				throw new ForkedElseError();
-			}
-
-			label = GetNewLabelName(label);
-
-			var trueBlock = new Block($"{label}.true", GetNewInternalID(), this);
-			var falseBlock = new Block($"{label}.false", GetNewInternalID(), this);
-			var endBlock = new Block($"{label}.end", GetNewInternalID(), this);
-
-			if (cond.Forks)
-			{
-				trueBlock.EnableForkGuard();
-			}
-
-			blocks.Add(trueBlock);
-			blocks.Add(falseBlock);
-			blocks.Add(endBlock);
-
-			Add(new BranchInsn(cond, trueBlock, falseBlock));
-
-			CurrentBlock = trueBlock;
-			ifTrue();
-			Add(new JumpInsn(endBlock));
-
-			CurrentBlock = falseBlock;
-			ifFalse();
-			Add(new JumpInsn(endBlock));
-
-			CurrentBlock = endBlock;
-		}
-
-		public void Loop(Func<ExecuteChain> cond, string label, Action loop, Action iter)
-		{
-			label = GetNewLabelName(label);
-
-			var loopBlock = new Block($"{label}.loop", GetNewInternalID(), this);
-			var endBlock = new Block($"{label}.end", GetNewInternalID(), this);
-
-			blocks.Add(loopBlock);
-			blocks.Add(endBlock);
-
-			Add(new BranchInsn(cond(), loopBlock, endBlock));
-
-			CurrentBlock = loopBlock;
-			loopStack.Push((loopBlock, iter, endBlock));
-			loop();
-			iter();
-			loopStack.Pop();
-			Add(new BranchInsn(cond(), loopBlock, endBlock));
-
-			CurrentBlock = endBlock;
-		}
-
-		public void LoopBreak()
-		{
-			if (!loopStack.TryPeek(out var res))
-			{
-				throw new NotInLoopError();
-			}
-
-			Add(new JumpInsn(res.end));
-		}
-
-		public void LoopContinue()
-		{
-			if (!loopStack.TryPeek(out var res))
-			{
-				throw new NotInLoopError();
-			}
-
-			res.iter();
-			Add(new JumpInsn(res.loop));
-		}
-
-		public void ReplaceValue(ValueRef val, ValueRef with)
-		{
-			foreach (var b in blocks)
-			{
-				foreach (var i in b.Instructions)
-				{
-					i.ReplaceValue(val, with);
-				}
-			}
-		}
-
-		public void AllocateRegisters(GeodeBuilder builder, LifetimeGraph graph)
-		{
-			var colors = graph.CalculateDSatur();
-			foreach (var kv in colors)
-			{
-				if (kv.Key.NeedsScoreReg)
-				{
-					registersInUse.Add(kv.Value);
-					kv.Key.SetValue(builder.Reg(kv.Value, kv.Key.Type));
-				}
-			}
-		}
-
-		// Uses "A Simple, Fast Dominance Algorithm" by Keith D. Cooper, et al.
-		public Dictionary<Block, Block> CalculateImmediateDominators()
-		{
-			var idoms = new Dictionary<Block, Block> { [Start] = Start };
-
-			var indices = this.PostorderIndices();
-
-			var changed = true;
-			while (changed)
-			{
-				changed = false;
-				foreach (var i in this.PostorderTraversal().Reverse())
-				{
-					if (i == Start)
-					{
-						continue;
-					}
-
-					Block? newIdom = null;
-					Block? pickedPred = null;
-
-					foreach (var pred in i.Previous)
-					{
-						if (idoms.ContainsKey(pred))
-						{
-							newIdom = pred;
-							pickedPred = pred;
-							break;
-						}
-					}
-
-					if (newIdom == null || pickedPred == null)
-					{
-						throw new("Something very silly happened when calculating immediate dominators");
-					}
-
-					foreach (var pred in i.Previous)
-					{
-						if (pred != pickedPred && idoms.ContainsKey(pred))
-						{
-							var finger1 = pred;
-							var finger2 = newIdom;
-
-							while (finger1 != finger2)
-							{
-								while (indices[finger1] < indices[finger2])
-								{
-									finger1 = idoms[finger1];
-								}
-
-								while (indices[finger2] < indices[finger1])
-								{
-									finger2 = idoms[finger2];
-								}
-							}
-
-							newIdom = finger1;
-						}
-					}
-
-					if (!idoms.TryGetValue(i, out var value) || value != newIdom)
-					{
-						idoms[i] = newIdom;
-						changed = true;
-					}
-				}
-			}
-
-			return idoms;
-		}
-
-		public Dictionary<Block, HashSet<Block>> CalculateDominanceFrontiers()
-		{
-			var doms = new Dictionary<Block, HashSet<Block>>(blocks.Select(i =>
-				new KeyValuePair<Block, HashSet<Block>>(i, [])));
-			var idoms = CalculateImmediateDominators();
-
-			foreach (var i in blocks)
-			{
-				if (i.Previous.Count >= 2)
-				{
-					foreach (var pred in i.Previous)
-					{
-						var runner = pred;
-						while (runner != idoms[i])
-						{
-							doms[runner].Add(i);
-							runner = idoms[runner];
-						}
-					}
-				}
-			}
-
-			return doms;
-		}
-
-		public void Render(GeodeBuilder builder)
-		{
-			var firstBlockRenderer = Start.GetRenderCtx(builder, this);
-			if (UsesStack)
-			{
-				firstBlockRenderer.Add(new DataCommand.Modify(builder.RuntimeID, "stack").Append().Value("{}"));
-			}
-
-			foreach (var i in registersInUse)
-			{
-				new StackValue(-1, builder.RuntimeID, $"reg_{i}", PrimitiveType.Int).Store(builder.Reg(i),
-					firstBlockRenderer);
-			}
-
-			foreach (var i in blocks)
-			{
-				i.Render(builder, this);
-			}
-
-			builder.Unregister(ExitBlock.Function);
-
-			foreach (var i in registersInUse)
-			{
-				builder.Reg(i).Store(new StackValue(-1, builder.RuntimeID, $"reg_{i}", PrimitiveType.Int),
-					firstBlockRenderer);
-			}
-
-			if (UsesStack)
-			{
-				firstBlockRenderer.Add(new DataCommand.Remove(builder.RuntimeID, "stack[-1]"));
-			}
-
-			foreach (var i in Tags)
-			{
-				var tags = builder.Datapack.Tags.GetTag(i, "function").Values;
-
-				if (HasTagPriority)
-				{
-					tags.Insert(0, Decl.ID);
-				}
-				else
-				{
-					tags.Add(Decl.ID);
-				}
-			}
-		}
-
-		public string Dump()
-		{
-			var builder = new StringBuilder();
-
-			builder.AppendLine(((FunctionType)Decl.Type).ToString(Decl.ID.ToString()) + " {");
-
-			foreach (var i in blocks)
-			{
-				if (i.Instructions.Count == 0)
-				{
-					continue;
-				}
-
-				builder.AppendLine(i.Dump());
-			}
-
-			builder.Length--;
-			builder.Append("}\n");
-
-			return builder.ToString();
-		}
-
-		public void FancyPrintCommands()
-		{
-			AnsiConsole.MarkupLineInterpolated($"[orange1]Compiled functions for[/] [bold green]{Decl.ID}[/]");
-
-			foreach (var i in dependencies)
-			{
-				AnsiConsole.MarkupLineInterpolated($"[aqua]{i.ID}[/]");
-				AnsiConsole.WriteLine(i.Build() + "\n");
-			}
-		}
-
-		public NamespacedID GetNewInternalID() =>
-			new(Decl.ID.Namespace, $"{GeodeBuilder.InternalPath}/{GeodeBuilder.UniqueString}");
-
-		public StackValue GetIsFunctionReturningValue() =>
-			new(-1, Compiler.IR.RuntimeID, "returning", PrimitiveType.Bool);
-
-		public StackValue GetFunctionReturnValue() =>
-			GetFunctionReturnValue(Decl.FuncType.ReturnType, UsesStack ? -2 : -1);
-
-		public StackValue GetFunctionReturnValue(TypeSpecifier type, int depth = -2) =>
-			new(depth, Compiler.IR.RuntimeID, "ret", type);
-
-		private class Scope
-		{
-			public readonly Dictionary<string, LocalSymbol> Locals = [];
-		}
-	}
-
-	public record LocalSymbol(string Name, IValue Value, LocationRange Location);
+    public class FunctionContext : Graph<Block>
+    {
+        private readonly Stack<Scope> activeScopes = [];
+        private readonly List<Block> blocks = [];
+        public readonly ICompiler Compiler;
+        public readonly FunctionValue Decl;
+        private readonly List<MCFunction> dependencies = [];
+
+        public readonly Block ExitBlock;
+
+        private readonly List<IValue> extraLocals = [];
+        public readonly bool HasTagPriority;
+        public readonly bool IsMacroFunction;
+        private readonly Dictionary<string, int> labelCounters = [];
+        public readonly LocationRange Location;
+
+        public readonly Stack<LocationRange> LocationStack = [];
+        private readonly Stack<(Block loop, Action iter, Block end)> loopStack = [];
+
+        // Could just be the max register used, but who knows if one goes poof somewhere
+        private readonly HashSet<int> registersInUse = [];
+        public readonly IEnumerable<NamespacedID> Tags;
+        private readonly List<Scope> totalScopes = [];
+        private int tmpStackVars;
+
+        public FunctionContext(ICompiler compiler, FunctionValue decl, IEnumerable<NamespacedID> tags,
+                               LocationRange loc, bool hasTagPriority = false)
+        {
+            Compiler = compiler;
+            Decl = decl;
+            Location = loc;
+            Tags = tags;
+            IsMacroFunction = Decl.FuncType.IsMacroFunction;
+            HasTagPriority = hasTagPriority;
+
+            LocationStack.Push(LocationRange.None);
+
+            PushScope();
+
+            Start = new("entry", Decl.ID, this);
+            blocks.Add(Start);
+            CurrentBlock = blocks.Last();
+
+            ExitBlock = new("exit", GetNewInternalID(), this);
+
+            foreach (var i in Decl.FuncType.Parameters)
+            {
+                if (i.Modifiers.HasFlag(ParameterModifiers.Macro))
+                    RegisterLocal(i.Name, new MacroValue(i.Name, i.Type), Location);
+                else
+                {
+                    // Maybe make it so that if the stack isn't used by the function, then use -1 and don't push new frame
+                    RegisterLocal(i.Name, new StackValue(-2, compiler.IR.RuntimeID, $"args.{i.Name}", i.Type),
+                        Location);
+                }
+            }
+        }
+
+        public FunctionContext(ICompiler compiler, FunctionValue decl, LocationRange loc) : this(compiler, decl, [],
+            loc)
+        {
+        }
+
+        public Block CurrentBlock { get; private set; }
+
+        public bool IsFinished => CurrentBlock == ExitBlock;
+
+        // If there's more than one block, then stack[-1].returning is used
+        public bool UsesStack => AllLocals.Any(i => i is StorageValue) || registersInUse.Count != 0 ||
+                                 tmpStackVars != 0 || Blocks.Count > 1;
+
+        public bool InForkingExecute { get; private set; }
+
+        public IReadOnlyCollection<Block> Blocks => blocks;
+        public IReadOnlyCollection<MCFunction> Dependencies => dependencies;
+
+        public IEnumerable<IValue> AllLocals =>
+        [
+            .. totalScopes.SelectMany(i => i.Locals.Values).Select(i => i.Value), .. extraLocals
+        ];
+
+        public IEnumerable<Variable> AllVariables => AllLocals.Where(i => i is Variable).Cast<Variable>();
+
+        public void PushScope()
+        {
+            var scope = new Scope();
+            totalScopes.Add(scope);
+            activeScopes.Push(scope);
+        }
+
+        public void PopScope() => activeScopes.Pop();
+
+        public IValue GetVariable(string name) => GetVariableOrNull(name) ?? throw new UndefinedSymbolError(name);
+
+        public IValue? GetVariableOrNull(string name)
+        {
+            foreach (var i in activeScopes.Reverse())
+            {
+                if (i.Locals.TryGetValue(name, out var variable)) return variable.Value;
+            }
+
+            if (name.Contains(':'))
+            {
+                if (GetGlobal(new(name)) is { } v) return v;
+            }
+            else if (GetGlobalWalk(Decl.ID.GetContainingFolder(), name) is { } v2)
+                return v2;
+            else if (GetGlobal(new("minecraft", name)) is { } v3)
+                return v3;
+            else if (GetGlobal(new("builtin", name)) is { } v4) return v4;
+
+            return null;
+        }
+
+        public IValue? GetGlobal(NamespacedID id) => Compiler.IR.GetGlobal(id);
+
+        public IValue? GetGlobalWalk(string baseNamespace, string name) =>
+            Compiler.IR.GetGlobalWalk(baseNamespace, name);
+
+        public IValue? GetConstructorOrNull(TypeSpecifier type) => Compiler.IR.GetConstructorOrNull(type);
+
+        public Variable RegisterLocal(string name, TypeSpecifier type, LocationRange loc)
+        {
+            var val = new Variable(name, Compiler.IR.RuntimeID, "frame", activeScopes.Count - 1, type);
+            RegisterLocal(name, val, loc);
+            return val;
+        }
+
+        public void RegisterLocal(string name, IValue val, LocationRange loc)
+        {
+            if (activeScopes.Peek().Locals.TryGetValue(name, out var orig)) throw new RedefinedSymbolError(name, orig.Location);
+
+            activeScopes.Peek().Locals[name] = new(name, val, loc);
+        }
+
+        public void RegisterExtraLocal(IValue val) => extraLocals.Add(val);
+
+        public StackValue Temp(TypeSpecifier type) => new(-1, Compiler.IR.RuntimeID, $"tmp{tmpStackVars++}", type);
+
+        public ValueRef AddLoad(ValueRef val) => Add(new LoadInsn(val));
+
+        public ValueRef Add(Instruction insn, string? customName = null)
+        {
+            if (IsFinished) throw new InvalidOperationException("Function is finished");
+
+            return CurrentBlock.Add(insn, customName);
+        }
+
+        public void Add(Block block)
+        {
+            CurrentBlock = block;
+            blocks.Add(block);
+        }
+
+        public ValueRef ImplicitCast(ValueRef val, TypeSpecifier type)
+        {
+            if (TryImplicitCast(val, type) is { } ret) return ret;
+
+            throw new InvalidTypeError(val.Type.ToString(), type.ToString());
+        }
+
+        public ValueRef? TryImplicitCast(ValueRef val, TypeSpecifier type)
+        {
+            if (val.Type == type) return val;
+
+            if (type is VarType) return val;
+
+            if (val.Type.CastFromOverload(val, type, this) is { } cast) return cast.SetType(type);
+
+            if (type.CastToOverload(val, this) is { } cast2) return cast2.SetType(type);
+
+            if (val.Type.Implements(type)) return val.SetType(type);
+
+            return null;
+        }
+
+        public ValueRef ExplicitCast(ValueRef val, TypeSpecifier type)
+        {
+            if (val.Type.ExplicitCastFromOverload(val, type, this) is { } cast) return cast.SetType(type);
+
+            if (type.ExplicitCastToOverload(val, this) is { } cast2) return cast2.SetType(type);
+
+            if (type.Implements(val.Type)) return val.SetType(type);
+
+            if (type.EffectiveType == NBTType.Int) return Add(new LoadInsn(val, type)).SetType(type);
+
+            if (TryImplicitCast(val, type) is { } ret) return ret;
+
+            throw new InvalidTypeError(val.Type.ToString(), type.ToString());
+        }
+
+        public ValueRef Call(NamespacedID id, params ValueRef[] args) =>
+            (GetGlobal(id) as FunctionValue ?? throw new UndefinedSymbolError(id.ToString())).CallBehavior(this, args);
+
+        public IEnumerable<ValueRef> PrepArgs(FunctionType type, params ValueRef[] args)
+        {
+            if (type.Parameters.Length != args.Length) throw new MismatchedArgumentCountError(type.Parameters.Length, args.Length);
+
+            return args.Zip(type.Parameters).Select(i => ImplicitCast(i.First, i.Second.Type));
+        }
+
+        public void AddDependency(MCFunction func)
+        {
+            if (!dependencies.Contains(func)) dependencies.Add(func);
+        }
+
+        public void Finish()
+        {
+            if (CurrentBlock.Instructions.Count == 0 ||
+                !CurrentBlock.Instructions[CurrentBlock.Instructions.Count - 1].IsReturn)
+                throw new InvalidOperationException("Last block in function must have a return instruction");
+
+            CurrentBlock.LinkNext(ExitBlock);
+            CurrentBlock = ExitBlock;
+
+            dependencies.AddRange(blocks.Select(i => i.Function));
+        }
+
+        public string GetNewLabelName(string label)
+        {
+            if (!labelCounters.TryGetValue(label, out var count))
+            {
+                labelCounters[label] = 1;
+                return label;
+            }
+
+            labelCounters[label] = count + 1;
+            return $"{label}{count}";
+        }
+
+        /// <summary>
+        ///     Branch current block without an else statement.
+        /// </summary>
+        /// <param name="cond">Condition</param>
+        /// <param name="label">Label name</param>
+        /// <param name="ifTrue">If true action</param>
+        /// <returns>True block</returns>
+        public void Branch(ExecuteChain cond, string label, Action ifTrue)
+        {
+            label = GetNewLabelName(label);
+
+            var trueBlock = new Block($"{label}.true", GetNewInternalID(), this);
+            var endBlock = new Block($"{label}.end", GetNewInternalID(), this);
+
+            if (cond.Forks) trueBlock.EnableForkGuard();
+
+            blocks.Add(trueBlock);
+            blocks.Add(endBlock);
+
+            Add(new BranchInsn(cond, trueBlock, endBlock));
+
+            CurrentBlock = trueBlock;
+
+            var tmpFork = InForkingExecute;
+
+            if (cond.Forks) InForkingExecute = true;
+
+            ifTrue();
+
+            if (!cond.Forks)
+                Add(new JumpInsn(endBlock));
+            else
+                InForkingExecute = tmpFork;
+
+            CurrentBlock = endBlock;
+        }
+
+        public void Branch(ExecuteChain cond, string label, Action ifTrue, Action ifFalse)
+        {
+            if (cond.Forks) throw new ForkedElseError();
+
+            label = GetNewLabelName(label);
+
+            var trueBlock = new Block($"{label}.true", GetNewInternalID(), this);
+            var falseBlock = new Block($"{label}.false", GetNewInternalID(), this);
+            var endBlock = new Block($"{label}.end", GetNewInternalID(), this);
+
+            if (cond.Forks) trueBlock.EnableForkGuard();
+
+            blocks.Add(trueBlock);
+            blocks.Add(falseBlock);
+            blocks.Add(endBlock);
+
+            Add(new BranchInsn(cond, trueBlock, falseBlock));
+
+            CurrentBlock = trueBlock;
+            ifTrue();
+            Add(new JumpInsn(endBlock));
+
+            CurrentBlock = falseBlock;
+            ifFalse();
+            Add(new JumpInsn(endBlock));
+
+            CurrentBlock = endBlock;
+        }
+
+        public void Loop(Func<ExecuteChain> cond, string label, Action loop, Action iter)
+        {
+            label = GetNewLabelName(label);
+
+            var loopBlock = new Block($"{label}.loop", GetNewInternalID(), this);
+            var endBlock = new Block($"{label}.end", GetNewInternalID(), this);
+
+            blocks.Add(loopBlock);
+            blocks.Add(endBlock);
+
+            Add(new BranchInsn(cond(), loopBlock, endBlock));
+
+            CurrentBlock = loopBlock;
+            loopStack.Push((loopBlock, iter, endBlock));
+            loop();
+            iter();
+            loopStack.Pop();
+            Add(new BranchInsn(cond(), loopBlock, endBlock));
+
+            CurrentBlock = endBlock;
+        }
+
+        public void LoopBreak()
+        {
+            if (!loopStack.TryPeek(out var res)) throw new NotInLoopError();
+
+            Add(new JumpInsn(res.end));
+        }
+
+        public void LoopContinue()
+        {
+            if (!loopStack.TryPeek(out var res)) throw new NotInLoopError();
+
+            res.iter();
+            Add(new JumpInsn(res.loop));
+        }
+
+        public void ReplaceValue(ValueRef val, ValueRef with)
+        {
+            foreach (var b in blocks)
+            {
+                foreach (var i in b.Instructions)
+                {
+                    i.ReplaceValue(val, with);
+                }
+            }
+        }
+
+        public void AllocateRegisters(GeodeBuilder builder, LifetimeGraph graph)
+        {
+            var colors = graph.CalculateDSatur();
+            foreach (var kv in colors)
+            {
+                if (kv.Key.NeedsScoreReg)
+                {
+                    registersInUse.Add(kv.Value);
+                    kv.Key.SetValue(builder.Reg(kv.Value, kv.Key.Type));
+                }
+            }
+        }
+
+        // Uses "A Simple, Fast Dominance Algorithm" by Keith D. Cooper, et al.
+        public Dictionary<Block, Block> CalculateImmediateDominators()
+        {
+            var idoms = new Dictionary<Block, Block> { [Start] = Start };
+
+            var indices = this.PostorderIndices();
+
+            var changed = true;
+            while (changed)
+            {
+                changed = false;
+                foreach (var i in this.PostorderTraversal().Reverse())
+                {
+                    if (i == Start) continue;
+
+                    Block? newIdom = null;
+                    Block? pickedPred = null;
+
+                    foreach (var pred in i.Previous)
+                    {
+                        if (idoms.ContainsKey(pred))
+                        {
+                            newIdom = pred;
+                            pickedPred = pred;
+                            break;
+                        }
+                    }
+
+                    if (newIdom == null || pickedPred == null) throw new("Something very silly happened when calculating immediate dominators");
+
+                    foreach (var pred in i.Previous)
+                    {
+                        if (pred != pickedPred && idoms.ContainsKey(pred))
+                        {
+                            var finger1 = pred;
+                            var finger2 = newIdom;
+
+                            while (finger1 != finger2)
+                            {
+                                while (indices[finger1] < indices[finger2])
+                                {
+                                    finger1 = idoms[finger1];
+                                }
+
+                                while (indices[finger2] < indices[finger1])
+                                {
+                                    finger2 = idoms[finger2];
+                                }
+                            }
+
+                            newIdom = finger1;
+                        }
+                    }
+
+                    if (!idoms.TryGetValue(i, out var value) || value != newIdom)
+                    {
+                        idoms[i] = newIdom;
+                        changed = true;
+                    }
+                }
+            }
+
+            return idoms;
+        }
+
+        public Dictionary<Block, HashSet<Block>> CalculateDominanceFrontiers()
+        {
+            var doms = new Dictionary<Block, HashSet<Block>>(blocks.Select(i =>
+                new KeyValuePair<Block, HashSet<Block>>(i, [])));
+            var idoms = CalculateImmediateDominators();
+
+            foreach (var i in blocks)
+            {
+                if (i.Previous.Count >= 2)
+                {
+                    foreach (var pred in i.Previous)
+                    {
+                        var runner = pred;
+                        while (runner != idoms[i])
+                        {
+                            doms[runner].Add(i);
+                            runner = idoms[runner];
+                        }
+                    }
+                }
+            }
+
+            return doms;
+        }
+
+        public void Render(GeodeBuilder builder)
+        {
+            var firstBlockRenderer = Start.GetRenderCtx(builder, this);
+            if (UsesStack) firstBlockRenderer.Add(new DataCommand.Modify(builder.RuntimeID, "stack").Append().Value("{}"));
+
+            foreach (var i in registersInUse)
+            {
+                new StackValue(-1, builder.RuntimeID, $"reg_{i}", PrimitiveType.Int).Store(builder.Reg(i),
+                    firstBlockRenderer);
+            }
+
+            foreach (var i in blocks)
+            {
+                i.Render(builder, this);
+            }
+
+            builder.Unregister(ExitBlock.Function);
+
+            foreach (var i in registersInUse)
+            {
+                builder.Reg(i).Store(new StackValue(-1, builder.RuntimeID, $"reg_{i}", PrimitiveType.Int),
+                    firstBlockRenderer);
+            }
+
+            if (UsesStack) firstBlockRenderer.Add(new DataCommand.Remove(builder.RuntimeID, "stack[-1]"));
+
+            foreach (var i in Tags)
+            {
+                var tags = builder.Datapack.Tags.GetTag(i, "function").Values;
+
+                if (HasTagPriority)
+                    tags.Insert(0, Decl.ID);
+                else
+                    tags.Add(Decl.ID);
+            }
+        }
+
+        public string Dump()
+        {
+            var builder = new StringBuilder();
+
+            builder.AppendLine(((FunctionType)Decl.Type).ToString(Decl.ID.ToString()) + " {");
+
+            foreach (var i in blocks)
+            {
+                if (i.Instructions.Count == 0) continue;
+
+                builder.AppendLine(i.Dump());
+            }
+
+            builder.Length--;
+            builder.Append("}\n");
+
+            return builder.ToString();
+        }
+
+        public void FancyPrintCommands()
+        {
+            AnsiConsole.MarkupLineInterpolated($"[orange1]Compiled functions for[/] [bold green]{Decl.ID}[/]");
+
+            foreach (var i in dependencies)
+            {
+                AnsiConsole.MarkupLineInterpolated($"[aqua]{i.ID}[/]");
+                AnsiConsole.WriteLine(i.Build() + "\n");
+            }
+        }
+
+        public NamespacedID GetNewInternalID() =>
+            new(Decl.ID.Namespace, $"{GeodeBuilder.INTERNAL_PATH}/{GeodeBuilder.UniqueString}");
+
+        public StackValue GetIsFunctionReturningValue() =>
+            new(-1, Compiler.IR.RuntimeID, "returning", PrimitiveType.Bool);
+
+        public StackValue GetFunctionReturnValue() =>
+            GetFunctionReturnValue(Decl.FuncType.ReturnType, UsesStack ? -2 : -1);
+
+        public StackValue GetFunctionReturnValue(TypeSpecifier type, int depth = -2) =>
+            new(depth, Compiler.IR.RuntimeID, "ret", type);
+
+        private class Scope
+        {
+            public readonly Dictionary<string, LocalSymbol> Locals = [];
+        }
+    }
+
+    public record LocalSymbol(string Name, IValue Value, LocationRange Location);
 }

@@ -7,72 +7,62 @@ using Geode.Values;
 
 namespace Amethyst.AST.Statements
 {
-	[Flags]
-	public enum StorageModifiers
-	{
-		None = 0,
-		Const = 1,
-		Static = 2
-	}
+    [Flags]
+    public enum StorageModifiers
+    {
+        None = 0,
+        Const = 1,
+        Static = 2
+    }
 
-	public class InitAssignmentNode(
-		LocationRange loc,
-		StorageModifiers mod,
-		AbstractTypeSpecifier type,
-		string name,
-		Expression? expr) : Statement(loc)
-	{
-		public readonly Expression? Expression = expr;
-		public readonly StorageModifiers Modifiers = mod;
-		public readonly string Name = name;
-		public readonly AbstractTypeSpecifier Type = type;
+    public class InitAssignmentNode(
+        LocationRange loc,
+        StorageModifiers mod,
+        AbstractTypeSpecifier type,
+        string name,
+        Expression? expr) : Statement(loc)
+    {
+        public readonly Expression? Expression = expr;
+        public readonly StorageModifiers Modifiers = mod;
+        public readonly string Name = name;
+        public readonly AbstractTypeSpecifier Type = type;
 
-		public override void Compile(FunctionContext ctx)
-		{
-			var type = Type.Resolve(ctx, Expression is not null);
-			var val = Expression is null
-				? type.DefaultValue
-				: Expression.Execute(
-					Modifiers.HasFlag(StorageModifiers.Static) ? ((Compiler)ctx.Compiler).GlobalInitFunc : ctx,
-					type is VarType ? null : type);
+        public override void Compile(FunctionContext ctx)
+        {
+            var type = Type.Resolve(ctx, Expression is not null);
+            var val = Expression is null
+                ? type.DefaultValue
+                : Expression.Execute(
+                    Modifiers.HasFlag(StorageModifiers.Static) ? ((Compiler)ctx.Compiler).GlobalInitFunc : ctx,
+                    type is VarType ? null : type);
 
-			if (type is VarType && Expression is not null)
-			{
-				type = val.Type;
-			}
-			else if (Expression is null)
-			{
-				if (ctx.GetConstructorOrNull(type) is not null)
-				{
-					throw new MissingConstructorError(type.ToString());
-				}
-			}
+            if (type is VarType && Expression is not null)
+                type = val.Type;
+            else if (Expression is null)
+            {
+                if (ctx.GetConstructorOrNull(type) is not null)
+                    throw new MissingConstructorError(type.ToString());
+            }
 
-			if (Modifiers.HasFlag(StorageModifiers.Const))
-			{
-				if (Expression is null || val.Value is not IConstantValue c)
-				{
-					throw new ConstantValueError();
-				}
+            if (Modifiers.HasFlag(StorageModifiers.Const))
+            {
+                if (Expression is null || val.Value is not IConstantValue c) throw new ConstantValueError();
 
-				ctx.RegisterLocal(Name, c, Location);
-			}
-			else if (Modifiers.HasFlag(StorageModifiers.Static))
-			{
-				var dest = ctx.Compiler.IR.AddGlobal($"{ctx.Decl.ID}/{GeodeBuilder.InternalPath}/{Name}", type,
-					Location, "static");
-				ctx.RegisterLocal(Name, dest, Location);
+                ctx.RegisterLocal(Name, c, Location);
+            }
+            else if (Modifiers.HasFlag(StorageModifiers.Static))
+            {
+                var dest = ctx.Compiler.IR.AddGlobal($"{ctx.Decl.ID}/{GeodeBuilder.INTERNAL_PATH}/{Name}", type,
+                    Location, "static");
+                ctx.RegisterLocal(Name, dest, Location);
 
-				if (Expression is not null)
-				{
-					((Compiler)ctx.Compiler).GlobalInitFunc.Add(new StoreInsn(dest, val));
-				}
-			}
-			else
-			{
-				var dest = ctx.RegisterLocal(Name, type, Location);
-				ctx.Add(new StoreInsn(dest, val));
-			}
-		}
-	}
+                if (Expression is not null) ((Compiler)ctx.Compiler).GlobalInitFunc.Add(new StoreInsn(dest, val));
+            }
+            else
+            {
+                var dest = ctx.RegisterLocal(Name, type, Location);
+                ctx.Add(new StoreInsn(dest, val));
+            }
+        }
+    }
 }

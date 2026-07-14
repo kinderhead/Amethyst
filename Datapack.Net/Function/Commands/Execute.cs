@@ -1,565 +1,499 @@
-﻿using Datapack.Net.Data;
+﻿using System.Diagnostics.CodeAnalysis;
 using System.Text;
+using Datapack.Net.Data;
 
 namespace Datapack.Net.Function.Commands
 {
-	public class Execute : Command, ICloneable
-	{
-		public readonly Conditional If;
-		public readonly List<Subcommand> Subcommands = [];
-		public readonly Conditional Unless;
-
-		public Execute(bool macro = false) : base(macro)
-		{
-			If = new(this, Conditional.Type.If);
-			Unless = new(this, Conditional.Type.Unless);
-		}
-
-		public object Clone()
-		{
-			var other = new Execute(Macro);
-			foreach (var i in Subcommands)
-			{
-				other.Subcommands.Add((Subcommand)i.Clone());
-			}
-
-			return other;
-		}
-
-		protected override string PreBuild()
-		{
-			StringBuilder sb = new("execute ");
-
-			Subcommand.Run? run = null;
-			foreach (var i in Subcommands)
-			{
-				if (i is Subcommand.Run r)
-				{
-					if (run is not null)
-					{
-						throw new ArgumentException($"Execute command (incomplete) {sb} has multiple runs");
-					}
-
-					run = r;
-					continue;
-				}
-
-				sb.Append(i);
-				sb.Append(' ');
-			}
-
-			if (run is not null)
-			{
-				if (Subcommands.Count == 1)
-				{
-					return run.Command.Build();
-				}
-
-				sb.Append(run);
-			}
-
-			return sb.ToString().TrimEnd();
-		}
-
-		public Execute Run(Command cmd)
-		{
-			if (Subcommands.Any(i => i is Subcommand.Run))
-			{
-				throw new InvalidOperationException("Execute command already has a run subcommand");
-			}
-
-			if (cmd.Macro)
-			{
-				Macro = true;
-				cmd.Macro = false;
-			}
-
-			return Add(new Subcommand.Run(cmd));
-		}
-
-		public Execute Align(Swizzle axes) => Add(new Subcommand.Align(axes));
-		public Execute Anchored(bool eyes) => Add(new Subcommand.Anchored(eyes));
-		public Execute As(IEntityTarget target) => Add(new Subcommand.As(target));
-		public Execute At(IEntityTarget target) => Add(new Subcommand.At(target));
-		public Execute Facing(Position pos) => Add(new Subcommand.Facing(pos));
-		public Execute Facing(IEntityTarget target, bool eyes = false) => Add(new Subcommand.Facing(target, eyes));
-		public Execute In(Dimension dimension) => Add(new Subcommand.In(dimension));
-		public Execute On(OnRelation relation) => Add(new Subcommand.On(relation));
-		public Execute Positioned(Position pos) => Add(new Subcommand.Positioned(pos));
-		public Execute Positioned(IEntityTarget target) => Add(new Subcommand.Positioned(target));
-		public Execute Positioned(Heightmap heightmap) => Add(new Subcommand.Positioned(heightmap));
-		public Execute Rotated(Rotation rotation) => Add(new Subcommand.Rotated(rotation));
-		public Execute Rotated(IEntityTarget target) => Add(new Subcommand.Rotated(target));
-		public Execute Summon(EntityData target) => Add(new Subcommand.Summon(target));
-
-		public Execute Store(IDataTarget target, NBTNumberType type, double scale, bool result = true) =>
-			Add(new Subcommand.Store { Target = target, DataType = type, Scale = scale, Result = result });
-
-		public Execute Store(Position pos, string path, NBTNumberType type, double scale, bool result = true) => Add(
-			new Subcommand.Store
-			{
-				Target = new BlockDataTarget(pos, path), DataType = type, Scale = scale, Result = result
-			});
-
-		public Execute Store(Bossbar id, BossbarValueType type, bool result = true) =>
-			Add(new Subcommand.Store { BossbarID = id, BossbarType = type, Result = result });
-
-		public Execute Store(IEntityTarget target, string path, NBTNumberType type, double scale, bool result = true) =>
-			Add(new Subcommand.Store
-			{
-				Target = new EntityDataTarget(target, path), DataType = type, Scale = scale, Result = result
-			});
-
-		public Execute Store(IEntityTarget target, Score objective, bool result = true) =>
-			Add(new Subcommand.Store { EntityTarget = target, Objective = objective, Result = result });
-
-		public Execute Store(Storage target, string path, NBTNumberType type, double scale, bool result = true) => Add(
-			new Subcommand.Store
-			{
-				Target = new StorageTarget(target, path), DataType = type, Scale = scale, Result = result
-			});
-
-		public Execute Add(Subcommand sbc)
-		{
-			Subcommands.Add(sbc);
-			return this;
-		}
-
-		public T Get<T>() where T : Subcommand
-		{
-			foreach (var i in Subcommands)
-			{
-				if (i is T t)
-				{
-					return t;
-				}
-			}
-
-			throw new("Execute command does not have the requested subcommand");
-		}
-
-		public IEnumerable<T> GetAll<T>() where T : Subcommand => Subcommands.Where(i => i is T).Cast<T>();
-
-		public void RemoveAll<T>() where T : Subcommand => Subcommands.RemoveAll(i => i is T);
-
-		public bool Contains<T>() where T : Subcommand
-		{
-			foreach (var i in Subcommands)
-			{
-				if (i is T)
-				{
-					return true;
-				}
-			}
-
-			return false;
-		}
-
-		public Execute Copy() => (Execute)Clone();
-
-		public class Conditional(Execute execute, Conditional.Type type)
-		{
-			public enum Type
-			{
-				If,
-				Unless
-			}
-
-			public readonly Type ConditionalType = type;
-			private readonly Execute Execute = execute;
-
-			public Execute Add(Subcommand sbc)
-			{
-				sbc.Type = ConditionalType;
-				return Execute.Add(sbc);
-			}
-
-			public Execute Biome(Position pos, Biome biome) => Add(new Subcommand.Biome(pos, biome));
-			public Execute Block(Position pos, Block block) => Add(new Subcommand.Block(pos, block));
-
-			public Execute Blocks(Position start, Position end, Position destination, bool masked = false) =>
-				Add(new Subcommand.Blocks(start, end, destination, masked));
-
-			public Execute Data(Position pos, string path) => Add(new Subcommand.Data(pos, path));
-			public Execute Data(IEntityTarget target, string path) => Add(new Subcommand.Data(target, path));
-			public Execute Data(Storage source, string path) => Add(new Subcommand.Data(source, path));
-			public Execute Data(IDataTarget target) => Add(new Subcommand.Data(target));
-			public Execute Dimension(Dimension dimension) => Add(new Subcommand.Dimension(dimension));
-			public Execute Entity(IEntityTarget entities) => Add(new Subcommand.Entity(entities));
-			public Execute Function(MCFunction function) => Add(new Subcommand.Function(function));
-			public Execute Loaded(Position pos) => Add(new Subcommand.Loaded(pos));
-
-			public Execute Score(IEntityTarget target, Score targetObjective, Comparison op, IEntityTarget source,
-				Score sourceObjective) =>
-				Add(new Subcommand.Score(target, targetObjective, op, source, sourceObjective));
-
-			public Execute Score(IEntityTarget target, Score targetObjective, MCRange<int> range) =>
-				Add(new Subcommand.Score(target, targetObjective, range));
-
-			public abstract class Subcommand : Execute.Subcommand
-			{
-				public Type Type;
-
-				public abstract string Get();
-
-				public override string ToString() => $"{Enum.GetName(Type)?.ToLower()} {Get()}";
-
-				public class Biome(Position position, Net.Data.Biome biome) : Subcommand
-				{
-					public readonly Net.Data.Biome BiomeTag = biome;
-					public readonly Position Position = position;
-
-					public override string Get() => $"biome {Position} {BiomeTag}";
-				}
-
-				public class Block(Position position, Net.Data.Block block) : Subcommand
-				{
-					public readonly Net.Data.Block BlockTag = block;
-					public readonly Position Position = position;
-
-					public override string Get() => $"block {Position} {BlockTag}";
-				}
-
-				public class Blocks(Position start, Position end, Position destination, bool masked) : Subcommand
-				{
-					public readonly Position Destination = destination;
-					public readonly Position End = end;
-					public readonly bool Masked = masked;
-					public readonly Position Start = start;
-
-					public override string Get() => $"blocks {Start} {End} {Destination} {(Masked ? "masked" : "all")}";
-				}
-
-				public class Data : Subcommand
-				{
-					public readonly IDataTarget Target;
-
-					public Data(Position pos, string path)
-					{
-						Target = new BlockDataTarget(pos, path);
-					}
-
-					public Data(IEntityTarget target, string path)
-					{
-						Target = new EntityDataTarget(target, path);
-					}
-
-					public Data(Storage source, string path)
-					{
-						Target = new StorageTarget(source, path);
-					}
-
-					public Data(IDataTarget target)
-					{
-						Target = target;
-					}
-
-					public override string Get() => "data " + Target.GetTarget();
-				}
-
-				public class Dimension(Net.Data.Dimension dimension) : Subcommand
-				{
-					public readonly Net.Data.Dimension DimensionTag = dimension;
-
-					public override string Get() => $"dimension {DimensionTag}";
-				}
-
-				public class Entity(IEntityTarget entities) : Subcommand
-				{
-					public readonly IEntityTarget Entities = entities;
-
-					public override string Get() => $"entity {Entities.Get()}";
-				}
-
-				public class Function(MCFunction function) : Subcommand
-				{
-					public readonly MCFunction MCFunction = function;
-
-					public override string Get() => $"function {MCFunction.ID}";
-				}
-
-				public class Loaded(Position pos) : Subcommand
-				{
-					public readonly Position Position = pos;
-
-					public override string Get() => $"loaded {Position}";
-				}
-
-				public class Score : Subcommand
-				{
-					public readonly Comparison? Operator;
-					public readonly MCRange<int>? Range;
-					public readonly IEntityTarget? Source;
-					public readonly Net.Function.Score? SourceObjective;
-					public readonly IEntityTarget Target;
-					public readonly Net.Function.Score TargetObjective;
-
-					public Score(IEntityTarget target, Net.Function.Score targetObjective, Comparison op,
-						IEntityTarget source, Net.Function.Score sourceObjective)
-					{
-						Target = target;
-						TargetObjective = targetObjective;
-						Operator = op;
-						Source = source;
-						SourceObjective = sourceObjective;
-					}
-
-					public Score(IEntityTarget target, Net.Function.Score targetObjective, MCRange<int> range)
-					{
-						Target = target;
-						TargetObjective = targetObjective;
-						Range = range;
-					}
-
-					public override string Get()
-					{
-						if (Operator != null)
-						{
-							return
-								$"score {Target.Get()} {TargetObjective} {GetOperator((Comparison)Operator)} {Source?.Get()} {SourceObjective}";
-						}
-
-						return $"score {Target.Get()} {TargetObjective} matches {Range}";
-					}
-
-					public static string GetOperator(Comparison op) => op switch
-					{
-						Comparison.LessThan => "<",
-						Comparison.GreaterThan => ">",
-						Comparison.LessThanOrEqual => "<=",
-						Comparison.GreaterThanOrEqual => ">=",
-						Comparison.Equal => "=",
-						_ => ""
-					};
-				}
-			}
-		}
-
-		public class Subcommand : ICloneable
-		{
-			public object Clone() => MemberwiseClone();
-
-			public class Run(Command cmd) : Subcommand
-			{
-				public readonly Command Command = cmd;
-
-				public override string ToString() => $"run {Command.Build()}";
-			}
-
-			public class Align(Swizzle axes) : Subcommand
-			{
-				public readonly Swizzle Axes = axes;
-
-				public override string ToString() => $"align {Axes}";
-			}
-
-			public class Anchored(bool eyes) : Subcommand
-			{
-				public readonly bool Eyes = eyes;
-
-				public override string ToString() => $"anchored {(Eyes ? "eyes" : "feet")}";
-			}
-
-			public class As(IEntityTarget target) : Subcommand
-			{
-				public readonly IEntityTarget Target = target;
-
-				public override string ToString() => $"as {Target.Get()}";
-			}
-
-			public class At(IEntityTarget target) : Subcommand
-			{
-				public readonly IEntityTarget Target = target;
-
-				public override string ToString() => $"at {Target.Get()}";
-			}
-
-			public class Facing : Subcommand
-			{
-				public readonly bool Eyes;
-				public readonly Position? Position;
-				public readonly IEntityTarget? Target;
-
-				public Facing(Position pos)
-				{
-					Position = pos;
-				}
-
-				public Facing(IEntityTarget target, bool eyes = false)
-				{
-					Target = target;
-					Eyes = eyes;
-				}
-
-				public override string ToString()
-				{
-					if (Position != null)
-					{
-						return $"facing {Position}";
-					}
-
-					return $"facing {Target?.Get()} {(Eyes ? "eyes" : "feet")}";
-				}
-			}
-
-			public class In(Dimension dimension) : Subcommand
-			{
-				public readonly Dimension Dimension = dimension;
-
-				public override string ToString() => $"in {Dimension}";
-			}
-
-			public class On(OnRelation relation) : Subcommand
-			{
-				public readonly OnRelation Relation = relation;
-
-				public override string ToString() => $"on {Enum.GetName(Relation)?.ToLower()}";
-			}
-
-			public class Positioned : Subcommand
-			{
-				public readonly Heightmap Heightmap;
-				public readonly Position? Position;
-				public readonly IEntityTarget? Target;
-
-				public Positioned(Position pos)
-				{
-					Position = pos;
-				}
-
-				public Positioned(IEntityTarget target)
-				{
-					Target = target;
-				}
-
-				public Positioned(Heightmap heightmap)
-				{
-					Heightmap = heightmap;
-				}
-
-				public override string ToString()
-				{
-					if (Position != null)
-					{
-						return $"positioned {Position}";
-					}
-
-					if (Target != null)
-					{
-						return $"positioned as {Target?.Get()}";
-					}
-
-					return $"positioned over {Enum.GetName(Heightmap)?.ToLower()}";
-				}
-			}
-
-			public class Rotated : Subcommand
-			{
-				public readonly Rotation? Rotation;
-				public readonly IEntityTarget? Target;
-
-				public Rotated(Rotation rot)
-				{
-					Rotation = rot;
-				}
-
-				public Rotated(IEntityTarget target)
-				{
-					Target = target;
-				}
-
-				public override string ToString()
-				{
-					if (Rotation != null)
-					{
-						return $"rotated {Rotation}";
-					}
-
-					return $"rotated as {Target?.Get()}";
-				}
-			}
-
-			public class Summon(EntityData target) : Subcommand
-			{
-				public readonly EntityData Target = target;
-
-				public override string ToString() => $"summon {Target}";
-			}
-
-			public class Store : Subcommand
-			{
-				public Bossbar? BossbarID;
-				public BossbarValueType BossbarType;
-				public NBTNumberType DataType;
-
-				public IEntityTarget? EntityTarget;
-				public Score? Objective;
-				public bool Result;
-				public double? Scale;
-
-				public IDataTarget? Target;
-
-				public override string ToString()
-				{
-					var prefix = $"store {(Result ? "result" : "success")} ";
-					var postfix = "";
-
-					if (Target is not null)
-					{
-						postfix = $"{Target.GetTarget()} {GetDataTypeName(DataType)} {Scale}";
-					}
-					else if (BossbarID != null)
-					{
-						postfix = $"bossbar {BossbarID} {Enum.GetName(BossbarType)?.ToLower()}";
-					}
-					else if (Objective != null)
-					{
-						postfix = $"score {EntityTarget?.Get()} {Objective}";
-					}
-
-					return prefix + postfix;
-				}
-
-				public static string GetDataTypeName(NBTNumberType type)
-				{
-					if (type == NBTNumberType.Boolean)
-					{
-						return "byte";
-					}
-
-					return Enum.GetName(type)?.ToLower() ??
-					       throw new InvalidOperationException($"Unknown NBTNumberType: {type}");
-				}
-			}
-		}
-	}
-
-	public enum OnRelation
-	{
-		Attacker,
-		Controller,
-		Leasher,
-		Origin,
-		Owner,
-		Passengers,
-		Target,
-		Vehicle
-	}
-
-	public enum Heightmap
-	{
-		World_Surface,
-		Motion_Blocking,
-		Motion_Blocking_No_Leaves,
-		Ocean_Floor
-	}
-
-	public enum Comparison
-	{
-		Equal,
-		LessThan,
-		LessThanOrEqual,
-		GreaterThan,
-		GreaterThanOrEqual
-	}
+    public class Execute : Command, ICloneable
+    {
+        public readonly Conditional If;
+        public readonly List<Subcommand> Subcommands = [];
+        public readonly Conditional Unless;
+
+        public Execute(bool macro = false) : base(macro)
+        {
+            If = new(this, Conditional.Type.If);
+            Unless = new(this, Conditional.Type.Unless);
+        }
+
+        public object Clone()
+        {
+            var other = new Execute(Macro);
+            foreach (var i in Subcommands)
+            {
+                other.Subcommands.Add((Subcommand)i.Clone());
+            }
+
+            return other;
+        }
+
+        protected override string PreBuild()
+        {
+            StringBuilder sb = new("execute ");
+
+            Subcommand.Run? run = null;
+            foreach (var i in Subcommands)
+            {
+                if (i is Subcommand.Run r)
+                {
+                    if (run is not null) throw new ArgumentException($"Execute command (incomplete) {sb} has multiple runs");
+
+                    run = r;
+                    continue;
+                }
+
+                sb.Append(i);
+                sb.Append(' ');
+            }
+
+            if (run is not null)
+            {
+                if (Subcommands.Count == 1) return run.Command.Build();
+
+                sb.Append(run);
+            }
+
+            return sb.ToString().TrimEnd();
+        }
+
+        public Execute Run(Command cmd)
+        {
+            if (Subcommands.Any(i => i is Subcommand.Run)) throw new InvalidOperationException("Execute command already has a run subcommand");
+
+            if (cmd.Macro)
+            {
+                Macro = true;
+                cmd.Macro = false;
+            }
+
+            return Add(new Subcommand.Run(cmd));
+        }
+
+        public Execute Align(Swizzle axes) => Add(new Subcommand.Align(axes));
+        public Execute Anchored(bool eyes) => Add(new Subcommand.Anchored(eyes));
+        public Execute As(IEntityTarget target) => Add(new Subcommand.As(target));
+        public Execute At(IEntityTarget target) => Add(new Subcommand.At(target));
+        public Execute Facing(Position pos) => Add(new Subcommand.Facing(pos));
+        public Execute Facing(IEntityTarget target, bool eyes = false) => Add(new Subcommand.Facing(target, eyes));
+        public Execute In(Dimension dimension) => Add(new Subcommand.In(dimension));
+        public Execute On(OnRelation relation) => Add(new Subcommand.On(relation));
+        public Execute Positioned(Position pos) => Add(new Subcommand.Positioned(pos));
+        public Execute Positioned(IEntityTarget target) => Add(new Subcommand.Positioned(target));
+        public Execute Positioned(Heightmap heightmap) => Add(new Subcommand.Positioned(heightmap));
+        public Execute Rotated(Rotation rotation) => Add(new Subcommand.Rotated(rotation));
+        public Execute Rotated(IEntityTarget target) => Add(new Subcommand.Rotated(target));
+        public Execute Summon(EntityData target) => Add(new Subcommand.Summon(target));
+
+        public Execute Store(IDataTarget target, NBTNumberType type, double scale, bool result = true) =>
+            Add(new Subcommand.Store { Target = target, DataType = type, Scale = scale, Result = result });
+
+        public Execute Store(Position pos, string path, NBTNumberType type, double scale, bool result = true) => Add(
+            new Subcommand.Store
+            {
+                Target = new BlockDataTarget(pos, path), DataType = type, Scale = scale, Result = result
+            });
+
+        public Execute Store(Bossbar id, BossbarValueType type, bool result = true) =>
+            Add(new Subcommand.Store { BossbarID = id, BossbarType = type, Result = result });
+
+        public Execute Store(IEntityTarget target, string path, NBTNumberType type, double scale, bool result = true) =>
+            Add(new Subcommand.Store
+            {
+                Target = new EntityDataTarget(target, path), DataType = type, Scale = scale, Result = result
+            });
+
+        public Execute Store(IEntityTarget target, Score objective, bool result = true) =>
+            Add(new Subcommand.Store { EntityTarget = target, Objective = objective, Result = result });
+
+        public Execute Store(Storage target, string path, NBTNumberType type, double scale, bool result = true) => Add(
+            new Subcommand.Store
+            {
+                Target = new StorageTarget(target, path), DataType = type, Scale = scale, Result = result
+            });
+
+        public Execute Add(Subcommand sbc)
+        {
+            Subcommands.Add(sbc);
+            return this;
+        }
+
+        public T Get<T>() where T : Subcommand
+        {
+            foreach (var i in Subcommands)
+            {
+                if (i is T t) return t;
+            }
+
+            throw new("Execute command does not have the requested subcommand");
+        }
+
+        public IEnumerable<T> GetAll<T>() where T : Subcommand => Subcommands.Where(i => i is T).Cast<T>();
+
+        public void RemoveAll<T>() where T : Subcommand => Subcommands.RemoveAll(i => i is T);
+
+        public bool Contains<T>() where T : Subcommand
+        {
+            foreach (var i in Subcommands)
+            {
+                if (i is T) return true;
+            }
+
+            return false;
+        }
+
+        public Execute Copy() => (Execute)Clone();
+
+        public class Conditional(Execute execute, Conditional.Type type)
+        {
+            public enum Type
+            {
+                If,
+                Unless
+            }
+
+            public readonly Type ConditionalType = type;
+
+            public Execute Add(Subcommand sbc)
+            {
+                sbc.Type = ConditionalType;
+                return execute.Add(sbc);
+            }
+
+            public Execute Biome(Position pos, Biome biome) => Add(new Subcommand.Biome(pos, biome));
+            public Execute Block(Position pos, Block block) => Add(new Subcommand.Block(pos, block));
+
+            public Execute Blocks(Position start, Position end, Position destination, bool masked = false) =>
+                Add(new Subcommand.Blocks(start, end, destination, masked));
+
+            public Execute Data(Position pos, string path) => Add(new Subcommand.Data(pos, path));
+            public Execute Data(IEntityTarget target, string path) => Add(new Subcommand.Data(target, path));
+            public Execute Data(Storage source, string path) => Add(new Subcommand.Data(source, path));
+            public Execute Data(IDataTarget target) => Add(new Subcommand.Data(target));
+            public Execute Dimension(Dimension dimension) => Add(new Subcommand.Dimension(dimension));
+            public Execute Entity(IEntityTarget entities) => Add(new Subcommand.Entity(entities));
+            public Execute Function(MCFunction function) => Add(new Subcommand.Function(function));
+            public Execute Loaded(Position pos) => Add(new Subcommand.Loaded(pos));
+
+            public Execute Score(IEntityTarget target, Score targetObjective, Comparison op, IEntityTarget source,
+                                 Score sourceObjective) =>
+                Add(new Subcommand.Score(target, targetObjective, op, source, sourceObjective));
+
+            public Execute Score(IEntityTarget target, Score targetObjective, MCRange<int> range) =>
+                Add(new Subcommand.Score(target, targetObjective, range));
+
+            public abstract class Subcommand : Execute.Subcommand
+            {
+                public Type Type;
+
+                public abstract string Get();
+
+                public override string ToString() => $"{Enum.GetName(Type)?.ToLower()} {Get()}";
+
+                public class Biome(Position position, Net.Data.Biome biome) : Subcommand
+                {
+                    public readonly Net.Data.Biome BiomeTag = biome;
+                    public readonly Position Position = position;
+
+                    public override string Get() => $"biome {Position} {BiomeTag}";
+                }
+
+                public class Block(Position position, Net.Data.Block block) : Subcommand
+                {
+                    public readonly Net.Data.Block BlockTag = block;
+                    public readonly Position Position = position;
+
+                    public override string Get() => $"block {Position} {BlockTag}";
+                }
+
+                public class Blocks(Position start, Position end, Position destination, bool masked) : Subcommand
+                {
+                    public readonly Position Destination = destination;
+                    public readonly Position End = end;
+                    public readonly bool Masked = masked;
+                    public readonly Position Start = start;
+
+                    public override string Get() => $"blocks {Start} {End} {Destination} {(Masked ? "masked" : "all")}";
+                }
+
+                public class Data : Subcommand
+                {
+                    public readonly IDataTarget Target;
+
+                    public Data(Position pos, string path) => Target = new BlockDataTarget(pos, path);
+
+                    public Data(IEntityTarget target, string path) => Target = new EntityDataTarget(target, path);
+
+                    public Data(Storage source, string path) => Target = new StorageTarget(source, path);
+
+                    public Data(IDataTarget target) => Target = target;
+
+                    public override string Get() => "data " + Target.GetTarget();
+                }
+
+                public class Dimension(Net.Data.Dimension dimension) : Subcommand
+                {
+                    public readonly Net.Data.Dimension DimensionTag = dimension;
+
+                    public override string Get() => $"dimension {DimensionTag}";
+                }
+
+                public class Entity(IEntityTarget entities) : Subcommand
+                {
+                    public readonly IEntityTarget Entities = entities;
+
+                    public override string Get() => $"entity {Entities.Get()}";
+                }
+
+                public class Function(MCFunction function) : Subcommand
+                {
+                    public readonly MCFunction MCFunction = function;
+
+                    public override string Get() => $"function {MCFunction.ID}";
+                }
+
+                public class Loaded(Position pos) : Subcommand
+                {
+                    public readonly Position Position = pos;
+
+                    public override string Get() => $"loaded {Position}";
+                }
+
+                public class Score : Subcommand
+                {
+                    public readonly Comparison? Operator;
+                    public readonly MCRange<int>? Range;
+                    public readonly IEntityTarget? Source;
+                    public readonly Net.Function.Score? SourceObjective;
+                    public readonly IEntityTarget Target;
+                    public readonly Net.Function.Score TargetObjective;
+
+                    public Score(IEntityTarget target, Net.Function.Score targetObjective, Comparison op,
+                                 IEntityTarget source, Net.Function.Score sourceObjective)
+                    {
+                        Target = target;
+                        TargetObjective = targetObjective;
+                        Operator = op;
+                        Source = source;
+                        SourceObjective = sourceObjective;
+                    }
+
+                    public Score(IEntityTarget target, Net.Function.Score targetObjective, MCRange<int> range)
+                    {
+                        Target = target;
+                        TargetObjective = targetObjective;
+                        Range = range;
+                    }
+
+                    public override string Get()
+                    {
+                        if (Operator != null)
+                        {
+                            return
+                                $"score {Target.Get()} {TargetObjective} {GetOperator((Comparison)Operator)} {Source?.Get()} {SourceObjective}";
+                        }
+
+                        return $"score {Target.Get()} {TargetObjective} matches {Range}";
+                    }
+
+                    public static string GetOperator(Comparison op) => op switch
+                    {
+                        Comparison.LessThan => "<",
+                        Comparison.GreaterThan => ">",
+                        Comparison.LessThanOrEqual => "<=",
+                        Comparison.GreaterThanOrEqual => ">=",
+                        Comparison.Equal => "=",
+                        _ => ""
+                    };
+                }
+            }
+        }
+
+        public class Subcommand : ICloneable
+        {
+            public object Clone() => MemberwiseClone();
+
+            public class Run(Command cmd) : Subcommand
+            {
+                public readonly Command Command = cmd;
+
+                public override string ToString() => $"run {Command.Build()}";
+            }
+
+            public class Align(Swizzle axes) : Subcommand
+            {
+                public readonly Swizzle Axes = axes;
+
+                public override string ToString() => $"align {Axes}";
+            }
+
+            public class Anchored(bool eyes) : Subcommand
+            {
+                public readonly bool Eyes = eyes;
+
+                public override string ToString() => $"anchored {(Eyes ? "eyes" : "feet")}";
+            }
+
+            public class As(IEntityTarget target) : Subcommand
+            {
+                public readonly IEntityTarget Target = target;
+
+                public override string ToString() => $"as {Target.Get()}";
+            }
+
+            public class At(IEntityTarget target) : Subcommand
+            {
+                public readonly IEntityTarget Target = target;
+
+                public override string ToString() => $"at {Target.Get()}";
+            }
+
+            public class Facing : Subcommand
+            {
+                public readonly bool Eyes;
+                public readonly Position? Position;
+                public readonly IEntityTarget? Target;
+
+                public Facing(Position pos) => Position = pos;
+
+                public Facing(IEntityTarget target, bool eyes = false)
+                {
+                    Target = target;
+                    Eyes = eyes;
+                }
+
+                public override string ToString()
+                {
+                    if (Position != null) return $"facing {Position}";
+
+                    return $"facing {Target?.Get()} {(Eyes ? "eyes" : "feet")}";
+                }
+            }
+
+            public class In(Dimension dimension) : Subcommand
+            {
+                public readonly Dimension Dimension = dimension;
+
+                public override string ToString() => $"in {Dimension}";
+            }
+
+            public class On(OnRelation relation) : Subcommand
+            {
+                public readonly OnRelation Relation = relation;
+
+                public override string ToString() => $"on {Enum.GetName(Relation)?.ToLower()}";
+            }
+
+            public class Positioned : Subcommand
+            {
+                public readonly Heightmap Heightmap;
+                public readonly Position? Position;
+                public readonly IEntityTarget? Target;
+
+                public Positioned(Position pos) => Position = pos;
+
+                public Positioned(IEntityTarget target) => Target = target;
+
+                public Positioned(Heightmap heightmap) => Heightmap = heightmap;
+
+                public override string ToString()
+                {
+                    if (Position != null) return $"positioned {Position}";
+
+                    if (Target != null) return $"positioned as {Target?.Get()}";
+
+                    return $"positioned over {Enum.GetName(Heightmap)?.ToLower()}";
+                }
+            }
+
+            public class Rotated : Subcommand
+            {
+                public readonly Rotation? Rotation;
+                public readonly IEntityTarget? Target;
+
+                public Rotated(Rotation rot) => Rotation = rot;
+
+                public Rotated(IEntityTarget target) => Target = target;
+
+                public override string ToString()
+                {
+                    if (Rotation != null) return $"rotated {Rotation}";
+
+                    return $"rotated as {Target?.Get()}";
+                }
+            }
+
+            public class Summon(EntityData target) : Subcommand
+            {
+                public readonly EntityData Target = target;
+
+                public override string ToString() => $"summon {Target}";
+            }
+
+            public class Store : Subcommand
+            {
+                public Bossbar? BossbarID;
+                public BossbarValueType BossbarType;
+                public NBTNumberType DataType;
+
+                public IEntityTarget? EntityTarget;
+                public Score? Objective;
+                public bool Result;
+                public double? Scale;
+
+                public IDataTarget? Target;
+
+                public override string ToString()
+                {
+                    var prefix = $"store {(Result ? "result" : "success")} ";
+                    var postfix = "";
+
+                    if (Target is not null)
+                        postfix = $"{Target.GetTarget()} {GetDataTypeName(DataType)} {Scale}";
+                    else if (BossbarID != null)
+                        postfix = $"bossbar {BossbarID} {Enum.GetName(BossbarType)?.ToLower()}";
+                    else if (Objective != null) postfix = $"score {EntityTarget?.Get()} {Objective}";
+
+                    return prefix + postfix;
+                }
+
+                public static string GetDataTypeName(NBTNumberType type)
+                {
+                    if (type == NBTNumberType.Boolean) return "byte";
+
+                    return Enum.GetName(type)?.ToLower() ??
+                           throw new InvalidOperationException($"Unknown NBTNumberType: {type}");
+                }
+            }
+        }
+    }
+
+    public enum OnRelation
+    {
+        Attacker,
+        Controller,
+        Leasher,
+        Origin,
+        Owner,
+        Passengers,
+        Target,
+        Vehicle
+    }
+
+    [SuppressMessage("ReSharper", "InconsistentNaming")]
+    public enum Heightmap
+    {
+        World_Surface,
+        Motion_Blocking,
+        Motion_Blocking_No_Leaves,
+        Ocean_Floor
+    }
+
+    public enum Comparison
+    {
+        Equal,
+        LessThan,
+        LessThanOrEqual,
+        GreaterThan,
+        GreaterThanOrEqual
+    }
 }

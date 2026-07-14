@@ -1,27 +1,22 @@
 ﻿namespace Datapack.Net.Function
 {
-	public interface IEntityTarget
-	{
-		string Get();
+    public interface IEntityTarget
+    {
+        string Get();
 
-		bool IsOne();
+        bool IsOne();
 
-		IEntityTarget RequireOne()
-		{
-			if (!IsOne())
-			{
-				throw new ArgumentException($"Entity target is not singular: {Get()}");
-			}
+        IEntityTarget RequireOne()
+        {
+            if (!IsOne()) throw new ArgumentException($"Entity target is not singular: {Get()}");
 
-			return this;
-		}
-	}
+            return this;
+        }
+    }
 
-	public readonly record struct NamedTarget(string name) : IEntityTarget
-	{
-		public readonly string Name = name;
-
-		public string Get() => Name;
-		public bool IsOne() => true;
-	}
+    public readonly record struct NamedTarget(string Name) : IEntityTarget
+    {
+        public string Get() => Name;
+        public bool IsOne() => true;
+    }
 }

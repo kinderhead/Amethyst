@@ -1,92 +1,79 @@
-﻿using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace Datapack.Net.SourceGenerator
 {
-	[Generator]
-	public class ProjectGenerator : IIncrementalGenerator
-	{
-		public static readonly DiagnosticDescriptor InvalidFunctionFormat = new("MC0001", "Invalid Function",
-			"Function {0} is not a valid Datapack function, and it must be private and its name must start with an underscore",
-			"Datapack", DiagnosticSeverity.Error, true);
+    [Generator]
+    public class ProjectGenerator : IIncrementalGenerator
+    {
+        public static readonly DiagnosticDescriptor InvalidFunctionFormat = new("MC0001", "Invalid Function",
+            "Function {0} is not a valid Datapack function, and it must be private and its name must start with an underscore",
+            "Datapack", DiagnosticSeverity.Error, true);
 
-		public void Initialize(IncrementalGeneratorInitializationContext context)
-		{
-			var projects = context.SyntaxProvider.ForAttributeWithMetadataName<Project?>(
-				"Datapack.Net.CubeLib.ProjectAttribute",
-				static (_, _) => true,
-				static (ctx, _) =>
-				{
-					//if (!Debugger.IsAttached)
-					//{
-					//    Debugger.Launch();
-					//}
+        public void Initialize(IncrementalGeneratorInitializationContext context)
+        {
+            var projects = context.SyntaxProvider.ForAttributeWithMetadataName<Project?>(
+                "Datapack.Net.CubeLib.ProjectAttribute",
+                static (_, _) => true,
+                static (ctx, _) =>
+                {
+                    //if (!Debugger.IsAttached)
+                    //{
+                    //    Debugger.Launch();
+                    //}
 
-					var cls = (ClassDeclarationSyntax)ctx.TargetNode;
+                    var cls = (ClassDeclarationSyntax)ctx.TargetNode;
 
-					foreach (var i in cls.AttributeLists)
-					{
-						foreach (var e in i.Attributes)
-						{
-							if (ctx.SemanticModel.GetSymbolInfo(e).Symbol is not IMethodSymbol attribute)
-							{
-								continue;
-							}
+                    foreach (var i in cls.AttributeLists)
+                    {
+                        foreach (var e in i.Attributes)
+                        {
+                            if (ctx.SemanticModel.GetSymbolInfo(e).Symbol is not IMethodSymbol attribute) continue;
 
-							if (attribute.ContainingType.ToDisplayString() == "Datapack.Net.CubeLib.ProjectAttribute")
-							{
-								if (ctx.SemanticModel.GetDeclaredSymbol(cls) is not INamedTypeSymbol clsSymbol)
-								{
-									return null;
-								}
+                            if (attribute.ContainingType.ToDisplayString() == "Datapack.Net.CubeLib.ProjectAttribute")
+                            {
+                                if (ctx.SemanticModel.GetDeclaredSymbol(cls) is not INamedTypeSymbol clsSymbol)
+                                    return null;
 
-								List<MCFunction> funcs = [];
-								foreach (var sym in clsSymbol.GetMembers())
-								{
-									if (sym is IMethodSymbol method && sym.GetAttributes().Where(i =>
-										    i.AttributeClass.ToDisplayString()
-											    .Contains("Datapack.Net.CubeLib.DeclareMC")).Count() != 0)
-									{
-										funcs.Add(Utils.GetMCFunction(method));
-									}
-								}
+                                List<MCFunction> funcs = [];
+                                foreach (var sym in clsSymbol.GetMembers())
+                                {
+                                    if (sym is IMethodSymbol method && sym.GetAttributes().Count(i => i.AttributeClass
+                                                                                                       ?.ToDisplayString()
+                                                                                                       .Contains("Datapack.Net.CubeLib.DeclareMC") ?? false) != 0)
+                                        funcs.Add(Utils.GetMCFunction(method));
+                                }
 
-								return new Project(clsSymbol.Name, clsSymbol.ContainingNamespace.ToDisplayString(),
-									funcs);
-							}
-						}
-					}
+                                return new Project(clsSymbol.Name, clsSymbol.ContainingNamespace.ToDisplayString(),
+                                    funcs);
+                            }
+                        }
+                    }
 
-					return null;
-				}
-			).Where(static m => m is not null);
+                    return null;
+                }
+            ).Where(static m => m is not null);
 
-			context.RegisterSourceOutput(projects, static (spc, source) => Execute(source, spc));
-		}
+            context.RegisterSourceOutput(projects, static (spc, source) => Execute(source, spc));
+        }
 
-		private static void Execute(Project? _project, SourceProductionContext context)
-		{
-			if (_project is not { } project)
-			{
-				return;
-			}
+        private static void Execute(Project? _project, SourceProductionContext context)
+        {
+            if (_project is not { } project) return;
 
-			var funcs = new StringBuilder();
+            var funcs = new StringBuilder();
 
-			foreach (var i in project.Functions)
-			{
-				funcs.AppendLine(Utils.GenerateWrapper(i));
-			}
+            foreach (var i in project.Functions)
+            {
+                funcs.AppendLine(Utils.GenerateWrapper(i));
+            }
 
-			if (funcs.Length > 0)
-			{
-				funcs.Length--;
-			}
+            if (funcs.Length > 0) funcs.Length--;
 
-			var source = $@"/// <auto-generated/>
+            var source = $@"/// <auto-generated/>
 namespace {project.Namespace}
 {{
     public partial class {project.Name}
@@ -94,7 +81,7 @@ namespace {project.Namespace}
 {funcs}
     }}
 }}";
-			context.AddSource($"{project.Name}.g.cs", source);
-		}
-	}
+            context.AddSource($"{project.Name}.g.cs", source);
+        }
+    }
 }

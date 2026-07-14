@@ -3,108 +3,108 @@ using Geode.Values;
 
 namespace Geode
 {
-	public class ValueRef : IInstructionArg, IValueLike, ICloneable
-	{
-		private static int _valueCounter;
+    public class ValueRef : IInstructionArg, IValueLike, ICloneable
+    {
+        private static int valueCounter;
 
-		private readonly HashSet<ValueRef> dependencies;
+        private readonly HashSet<ValueRef> dependencies;
 
-		public readonly int ID = _valueCounter++;
+        public readonly int ID = valueCounter++;
 
-		// Used for debugging
-		public readonly Instruction? SourceInsn;
+        // Used for debugging
+        public readonly Instruction? SourceInsn;
 
-		public bool ForceScoreReg = false;
-		private TypeSpecifier type;
+        public bool ForceScoreReg = false;
+        private TypeSpecifier type;
 
-		public ValueRef(IValue val)
-		{
-			Value = val;
-			Type = val.Type;
-			dependencies = [this];
-		}
+        public ValueRef(IValue val)
+        {
+            Value = val;
+            type = val.Type;
+            dependencies = [this];
+        }
 
-		public ValueRef(TypeSpecifier type, Instruction? insn = null)
-		{
-			Type = type;
-			dependencies = [this];
-			SourceInsn = insn;
-		}
+        public ValueRef(TypeSpecifier type, Instruction? insn = null)
+        {
+            this.type = type;
+            dependencies = [this];
+            SourceInsn = insn;
+        }
 
-		public bool IsLiteral => Value is not null && Value.IsLiteral;
-		public bool NeedsScoreReg => Value is null && (Type.ShouldStoreInScore || ForceScoreReg);
-		public bool NeedsStackVar => Value is null && !(Type.ShouldStoreInScore || ForceScoreReg);
-		object ICloneable.Clone() => Clone();
+        public bool IsLiteral => Value is not null && Value.IsLiteral;
+        public bool NeedsScoreReg => Value is null && (Type.ShouldStoreInScore || ForceScoreReg);
+        public bool NeedsStackVar => Value is null && !(Type.ShouldStoreInScore || ForceScoreReg);
+        object ICloneable.Clone() => Clone();
 
-		public string Name
-		{
-			get => field is null
-				? Value is not null ? $"{(Value.IsLiteral || Value is DataTargetValue ? "" : "%")}{Value}" : ""
-				: field;
-			set;
-		}
+        public string Name
+        {
+            get => field is null
+                ? Value is not null ? $"{(Value.IsLiteral || Value is DataTargetValue ? "" : "%")}{Value}" : ""
+                : field;
+            set;
+        }
 
-		public IReadOnlySet<ValueRef> Dependencies => dependencies;
+        public IReadOnlySet<ValueRef> Dependencies => dependencies;
 
-		public void ReplaceValue(ValueRef value, ValueRef with)
-		{
-			if (value == this)
-			{
-				throw new InvalidOperationException("Cannot replace self");
-			}
+        public void ReplaceValue(ValueRef value, ValueRef with)
+        {
+            if (value == this) throw new InvalidOperationException("Cannot replace self");
 
-			if (dependencies.Remove(value))
-			{
-				dependencies.Add(with);
-			}
-		}
+            if (dependencies.Remove(value)) dependencies.Add(with);
+        }
 
-		public IValue? Value { get; private set; }
-		public TypeSpecifier Type { get => type; set => SetType(value); }
+        public IValue? Value { get; private set; }
 
-		public ValueRef ToValueRef() => this;
+        public TypeSpecifier Type
+        {
+            get => type;
+            set => SetType(value);
+        }
 
-		public void SetValue(IValue val)
-		{
-			Value = val;
-			Type = val.Type;
-		}
+        public ValueRef ToValueRef() => this;
 
-		public ValueRef SetType(TypeSpecifier type)
-		{
-			this.type = type;
-			//Value?.Type = type;
-			return this;
-		}
+        public void SetValue(IValue val)
+        {
+            Value = val;
+            Type = val.Type;
+        }
 
-		public ValueRef Clone() => Value is null ? new(Type) : new(Value);
+        public ValueRef SetType(TypeSpecifier type)
+        {
+            this.type = type;
+            //Value?.Type = type;
+            return this;
+        }
 
-		public void AddDependency(ValueRef dep)
-		{
-			if (dependencies.Add(dep))
-			{
-				foreach (var i in dep.Dependencies)
-				{
-					AddDependency(i);
-				}
-			}
-		}
+        public ValueRef Clone() => Value is null ? new(Type) : new(Value);
 
-		public override string ToString()
-		{
-			if (!string.IsNullOrEmpty(Name))
-			{
+        public void AddDependency(ValueRef dep)
+        {
+            if (dependencies.Add(dep))
+            {
+                foreach (var i in dep.Dependencies)
+                {
+                    AddDependency(i);
+                }
+            }
+        }
+
+        public override string ToString()
+        {
+            // ReSharper disable once ConvertIfStatementToReturnStatement
+            if (!string.IsNullOrEmpty(Name))
+            {
 #if DEBUG
-				return $"#{ID}<{Name}>";
+                return $"#{ID}<{Name}>";
 #else
 				return Name;
 #endif
-			}
+            }
 
-			return $"#{ID}";
-		}
+            return $"#{ID}";
+        }
 
 
-		public static implicit operator ValueRef(Value val) => new(val);
-	}
+        public static implicit operator ValueRef(Value val) => new(val);
+    }
 }

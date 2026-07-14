@@ -1,4 +1,5 @@
-﻿using Amethyst.AST.Expressions;
+﻿using System.Collections.ObjectModel;
+using Amethyst.AST.Expressions;
 using Amethyst.AST.Statements;
 using Amethyst.Errors;
 using Amethyst.IR.Types;
@@ -8,171 +9,135 @@ using Geode;
 using Geode.Errors;
 using Geode.Types;
 using Geode.Values;
-using System.Collections.ObjectModel;
 
 namespace Amethyst.AST
 {
-	public enum ContainerType
-	{
-		Struct,
-		Class,
-		Entity
-	}
+    public enum ContainerType
+    {
+        Struct,
+        Class,
+        Entity
+    }
 
-	public class StructNode(
-		ContainerType type,
-		LocationRange loc,
-		NamespacedID id,
-		AbstractTypeSpecifier? baseClass,
-		Dictionary<string, AbstractTypeSpecifier> props,
-		List<MethodNode> methods) : Node(loc), IRootChild
-	{
-		public static readonly ReadOnlySet<string> ReservedProperties = [StructType.TypeIDProperty];
-		public readonly AbstractTypeSpecifier? BaseClass = baseClass;
-		public readonly NamespacedID ID = id;
-		public readonly List<MethodNode> Methods = methods;
-		public readonly Dictionary<string, AbstractTypeSpecifier> Properties = props;
-		public readonly ContainerType Type = type;
+    public class StructNode(
+        ContainerType type,
+        LocationRange loc,
+        NamespacedID id,
+        AbstractTypeSpecifier? baseClass,
+        Dictionary<string, AbstractTypeSpecifier> props,
+        List<MethodNode> methods) : Node(loc), IRootChild
+    {
+        public static readonly ReadOnlySet<string> ReservedProperties = [StructType.TypeIDProperty];
+        public readonly AbstractTypeSpecifier? BaseClass = baseClass;
+        public readonly NamespacedID ID = id;
+        public readonly List<MethodNode> Methods = methods;
+        public readonly Dictionary<string, AbstractTypeSpecifier> Properties = props;
+        public readonly ContainerType Type = type;
 
-		public void Process(Compiler ctx, RootNode root)
-		{
-			var actualBaseClass = BaseClass?.Resolve(ctx, ID.GetContainingFolder()) ??
-			                      (Type == ContainerType.Entity ? EntityType.Dummy : PrimitiveType.Compound);
-			var baseClass = actualBaseClass;
+        public void Process(Compiler ctx, RootNode root)
+        {
+            var actualBaseClass = BaseClass?.Resolve(ctx, ID.GetContainingFolder()) ??
+                                  (Type == ContainerType.Entity ? EntityType.Dummy : PrimitiveType.Compound);
+            var baseClass = actualBaseClass;
 
-			if (baseClass is ReferenceType r)
-			{
-				baseClass = r.Inner;
-			}
+            if (baseClass is ReferenceType r) baseClass = r.Inner;
 
-			if (Type == ContainerType.Class && !(baseClass is StructType || baseClass == PrimitiveType.Compound))
-			{
-				throw new InvalidBaseClassError(baseClass.ToString());
-			}
+            if (Type == ContainerType.Class && !(baseClass is StructType || baseClass == PrimitiveType.Compound)) throw new InvalidBaseClassError(baseClass.ToString());
 
-			var props = new Dictionary<string, TypeSpecifier>();
-			var methods = new Dictionary<string, FunctionValue>();
+            var props = new Dictionary<string, TypeSpecifier>();
+            var methods = new Dictionary<string, FunctionValue>();
 
-			var selfType = Type switch
-			{
-				ContainerType.Struct or ContainerType.Class => new StructType(ID, baseClass, props, methods,
-					Type == ContainerType.Class),
-				ContainerType.Entity => new EntityType(ID, baseClass, props, methods),
-				_ => throw new NotImplementedException()
-			};
+            var selfType = Type switch
+            {
+                ContainerType.Struct or ContainerType.Class => new StructType(ID, baseClass, props, methods,
+                    Type == ContainerType.Class),
+                ContainerType.Entity => new EntityType(ID, baseClass, props, methods),
+                _ => throw new NotImplementedException()
+            };
 
-			if (Type == ContainerType.Class)
-			{
-				ctx.IR.AddType(new(ID, Location, new ReferenceType(selfType, false)));
-				ctx.RegisterTypeInfo(selfType);
-			}
-			else
-			{
-				ctx.IR.AddType(new(ID, Location, selfType));
-			}
+            if (Type == ContainerType.Class)
+            {
+                ctx.IR.AddType(new(ID, Location, new ReferenceType(selfType, false)));
+                ctx.RegisterTypeInfo(selfType);
+            }
+            else
+                ctx.IR.AddType(new(ID, Location, selfType));
 
-			foreach (var (k, v) in Properties)
-			{
-				props[k] = v.Resolve(ctx, ID.GetContainingFolder());
+            foreach (var (k, v) in Properties)
+            {
+                props[k] = v.Resolve(ctx, ID.GetContainingFolder());
 
-				if (Type != ContainerType.Class && props[k] is ReferenceType && props[k] is not WeakReferenceType)
-				{
-					throw new ReferencePropertyError(k);
-				}
+                if (Type != ContainerType.Class && props[k] is ReferenceType && props[k] is not WeakReferenceType) throw new ReferencePropertyError(k);
 
-				if (ReservedProperties.Contains(k))
-				{
-					throw new ReservedNameError(k);
-				}
-			}
+                if (ReservedProperties.Contains(k)) throw new ReservedNameError(k);
+            }
 
-			ConstructorNode? constructor = null;
+            ConstructorNode? constructor = null;
 
-			foreach (var i in Methods)
-			{
-				i.Process(ctx, root);
+            foreach (var i in Methods)
+            {
+                i.Process(ctx, root);
 
-				if (i is ConstructorNode c)
-				{
-					constructor = c;
-				}
-				else
-				{
-					var type = i.GetFunctionType(ctx);
-					methods[i.ID.GetFile()] = (FunctionValue?)ctx.IR.GetGlobal(i.ID) ??
-					                          throw new UndefinedSymbolError(i.ID.ToString());
+                if (i is ConstructorNode c)
+                    constructor = c;
+                else
+                {
+                    var type = i.GetFunctionType(ctx);
+                    methods[i.ID.GetFile()] = (FunctionValue?)ctx.IR.GetGlobal(i.ID) ??
+                                              throw new UndefinedSymbolError(i.ID.ToString());
 
-					var thisIsVirtual = i.Modifiers.HasFlag(FunctionModifiers.Virtual);
+                    var thisIsVirtual = i.Modifiers.HasFlag(FunctionModifiers.Virtual);
 
-					if (thisIsVirtual && Type != ContainerType.Class)
-					{
-						throw new VirtualMethodError();
-					}
+                    if (thisIsVirtual && Type != ContainerType.Class) throw new VirtualMethodError();
 
-					if (selfType.HierarchyMethod(i.ID.GetFile())?.Function.Type is FunctionType other)
-					{
-						var otherIsVirtual = other.Modifiers.HasFlag(FunctionModifiers.Virtual);
+                    if (selfType.HierarchyMethod(i.ID.GetFile())?.Function.Type is FunctionType other)
+                    {
+                        var otherIsVirtual = other.Modifiers.HasFlag(FunctionModifiers.Virtual);
 
-						if (otherIsVirtual && !thisIsVirtual)
-						{
-							throw new MissingVirtualError(i.ID.GetFile());
-						}
+                        if (otherIsVirtual && !thisIsVirtual) throw new MissingVirtualError(i.ID.GetFile());
 
-						if (!otherIsVirtual)
-						{
-							throw new CannotOverrideError(i.ID.GetFile());
-						}
+                        if (!otherIsVirtual) throw new CannotOverrideError(i.ID.GetFile());
 
-						if (other.ReturnType != type.ReturnType || other.Parameters.Length != type.Parameters.Length ||
-						    !other.Parameters.Skip(1).Zip(type.Parameters.Skip(1)).All(i => i.First == i.Second))
-						{
-							throw new InvalidOverrideSignatureError(i.ID.GetFile());
-						}
-					}
-				}
-			}
+                        if (other.ReturnType != type.ReturnType || other.Parameters.Length != type.Parameters.Length ||
+                            !other.Parameters.Skip(1).Zip(type.Parameters.Skip(1)).All(i => i.First == i.Second))
+                            throw new InvalidOverrideSignatureError(i.ID.GetFile());
+                    }
+                }
+            }
 
-			if (constructor is null && Type == ContainerType.Class)
-			{
-				constructor = new(Location, [], FunctionModifiers.Inline, $"{ID}/{ID.GetFile()}", [],
-					actualBaseClass is ReferenceType cls
-						? new CallExpression(Location, new VariableExpression(Location, cls.Inner.ID.ToString()),
-							[new VariableExpression(Location, "this")])
-						: null, new(Location));
-				constructor.Process(ctx, root);
-			}
+            if (constructor is null && Type == ContainerType.Class)
+            {
+                constructor = new(Location, [], FunctionModifiers.Inline, $"{ID}/{ID.GetFile()}", [],
+                    actualBaseClass is ReferenceType cls
+                        ? new CallExpression(Location, new VariableExpression(Location, cls.Inner.ID.ToString()),
+                            [new VariableExpression(Location, "this")])
+                        : null, new(Location));
+                constructor.Process(ctx, root);
+            }
 
-			if (ctx.IR.GetConstructorOrNull(selfType.BaseClass) is not null &&
-			    (constructor is null || constructor.BaseCall is null))
-			{
-				throw new MissingConstructorError(selfType.BaseClass.ToString());
-			}
+            if (ctx.IR.GetConstructorOrNull(selfType.BaseClass) is not null &&
+                (constructor is null || constructor.BaseCall is null))
+                throw new MissingConstructorError(selfType.BaseClass.ToString());
 
-			if (Properties.Count != 0 && Type == ContainerType.Struct && selfType.EffectiveType != NBTType.Compound)
-			{
-				throw new PropertyError(selfType.ToString());
-			}
+            if (Properties.Count != 0 && Type == ContainerType.Struct && selfType.EffectiveType != NBTType.Compound) throw new PropertyError(selfType.ToString());
 
-			if (Type == ContainerType.Class)
-			{
-				GenerateMetaMethods(ctx, root, methods);
-			}
-		}
+            if (Type == ContainerType.Class) GenerateMetaMethods(ctx, root, methods);
+        }
 
-		private void GenerateMetaMethods(Compiler ctx, RootNode root, Dictionary<string, FunctionValue> methods) =>
-			GenerateGCMark(ctx, root, methods);
+        private void GenerateMetaMethods(Compiler ctx, RootNode root, Dictionary<string, FunctionValue> methods) =>
+            GenerateGCMark(ctx, root, methods);
 
-		private void GenerateGCMark(Compiler ctx, RootNode root, Dictionary<string, FunctionValue> methods)
-		{
-			var id = new NamespacedID($"{ID}/{GeodeBuilder.InternalPath}/mark".ToLower());
-			var body = new BlockNode(Location);
+        private void GenerateGCMark(Compiler ctx, RootNode root, Dictionary<string, FunctionValue> methods)
+        {
+            var id = new NamespacedID($"{ID}/{GeodeBuilder.INTERNAL_PATH}/mark".ToLower());
+            var body = new BlockNode(Location);
 
-			body.Add(new GCMarkStatement(Location));
+            body.Add(new GCMarkStatement(Location));
 
-			new FunctionNode(Location, [], FunctionModifiers.Virtual, new SimpleAbstractTypeSpecifier(Location, "void"),
-				id, [new(ParameterModifiers.Macro, new SimpleAbstractTypeSpecifier(Location, ID.ToString()), "this")],
-				body).Process(ctx, root);
-			methods["@mark"] = (FunctionValue?)ctx.IR.GetGlobal(id) ?? throw new UndefinedSymbolError(id.ToString());
-		}
-	}
+            new FunctionNode(Location, [], FunctionModifiers.Virtual, new SimpleAbstractTypeSpecifier(Location, "void"),
+                id, [new(ParameterModifiers.Macro, new SimpleAbstractTypeSpecifier(Location, ID.ToString()), "this")],
+                body).Process(ctx, root);
+            methods["@mark"] = (FunctionValue?)ctx.IR.GetGlobal(id) ?? throw new UndefinedSymbolError(id.ToString());
+        }
+    }
 }

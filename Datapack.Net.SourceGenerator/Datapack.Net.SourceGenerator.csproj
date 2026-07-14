@@ -6,7 +6,7 @@
         <LangVersion>preview</LangVersion>
         <IsRoslynComponent>true</IsRoslynComponent>
         <EnforceExtendedAnalyzerRules>true</EnforceExtendedAnalyzerRules>
-        <NoWarn>NU5128</NoWarn>
+        <NoWarn>NU5128;RS2007</NoWarn>
     </PropertyGroup>
 
     <ItemGroup>

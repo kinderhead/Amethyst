@@ -14,6 +14,7 @@
         <TrimMode>partial</TrimMode>
         <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
         <LangVersion>preview</LangVersion>
+        <NoWarn>CS3021</NoWarn>
     </PropertyGroup>
 
     <PropertyGroup Condition="'$(Configuration)'=='Release'">
