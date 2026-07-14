@@ -14,8 +14,12 @@ updates:
     groups:
       js-updates:
         applies-to: version-updates
+        patterns:
+          - "*"
       js-security:
         applies-to: security-updates
+        patterns:
+          - "*"
   - package-ecosystem: "nuget"
     directories:
       - "**/*"
@@ -25,5 +29,9 @@ updates:
     groups:
       cs-updates:
         applies-to: version-updates
+        patterns:
+          - "*"
       cs-security:
         applies-to: security-updates
+        patterns:
+          - "*"
