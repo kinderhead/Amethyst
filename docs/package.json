@@ -16,7 +16,7 @@
     "update": "node version_incrementer.js"
   },
   "dependencies": {
-    "@docusaurus/core": "3.10.0",
+    "@docusaurus/core": "3.10.2",
     "@docusaurus/plugin-sitemap": "^3.10.0",
     "@docusaurus/preset-classic": "3.10.0",
     "@mdx-js/react": "^3.1.1",
