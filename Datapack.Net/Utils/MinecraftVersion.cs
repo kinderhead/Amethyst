@@ -1,6 +1,8 @@
-﻿using Newtonsoft.Json;
+﻿using System.Text.RegularExpressions;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using System.Text.RegularExpressions;
+
+// ReSharper disable ConvertIfStatementToReturnStatement
 
 namespace Datapack.Net.Utils
 {
@@ -122,14 +124,12 @@ namespace Datapack.Net.Utils
 
 	public class MinecraftVersionJsonConverter : JsonConverter<MinecraftVersion>
 	{
-		public override MinecraftVersion ReadJson(JsonReader reader, Type objectType, MinecraftVersion existingValue,
-			bool hasExistingValue, JsonSerializer serializer)
+		public override MinecraftVersion ReadJson(JsonReader reader, Type objectType, MinecraftVersion existingValue, bool hasExistingValue, JsonSerializer serializer)
 		{
 			var data = JToken.Load(reader);
 			return new((string?)data ?? throw new FormatException("Expected string for SemVer."));
 		}
 
-		public override void WriteJson(JsonWriter writer, MinecraftVersion value, JsonSerializer serializer) =>
-			serializer.Serialize(writer, value.ToString());
+		public override void WriteJson(JsonWriter writer, MinecraftVersion value, JsonSerializer serializer) => serializer.Serialize(writer, value.ToString());
 	}
 }

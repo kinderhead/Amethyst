@@ -17,10 +17,14 @@ namespace Amethyst.Cli
         [Description("Zipped datapack, defaults to first input file's name.")]
         public required string Output { get; set; }
 
+        [CommandOption("--data")]
+        [Description("Path to a folder to include in final data pack.")]
+        public string? Data { get; set; }
+
         [CommandOption("-p|--pack-version")]
         [Description("Data pack version to support.")]
         [DefaultValue("107.1")]
-        public PackFormat PackVersion { get; set; }
+        public PackFormat PackFormat { get; set; }
 
         [CommandOption("-d|--debug")]
         [Description("Enable debug checks.")]

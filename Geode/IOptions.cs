@@ -2,12 +2,13 @@
 
 namespace Geode
 {
-	public interface IOptions
-	{
-		string Output { get; set; }
-		PackFormat PackVersion { get; set; }
-		bool DumpIR { get; set; }
-		bool Debug { get; set; }
-		int OptimizationLevel { get; set; }
-	}
+    public interface IOptions
+    {
+        string Output { get; set; }
+        string? Data { get; set; }
+        PackFormat PackFormat { get; set; }
+        bool DumpIR { get; set; }
+        bool Debug { get; set; }
+        int OptimizationLevel { get; set; }
+    }
 }

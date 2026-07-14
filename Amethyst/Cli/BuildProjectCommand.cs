@@ -41,7 +41,8 @@ namespace Amethyst.Cli
 
         // IAmethystOptions settings
         public string Output { get; set; }
-        public PackFormat PackVersion { get; set; }
+        public string? Data { get; set; }
+        public PackFormat PackFormat { get; set; }
         public string[] Inputs { get; set; }
     }
 
@@ -54,8 +55,9 @@ namespace Amethyst.Cli
                                            throw new FormatException($"Invalid path {settings.ShardFile}");
 
             settings.Output = Path.Join(Environment.CurrentDirectory, "build", $"{project.Name}-{project.Version}.zip");
-            settings.PackVersion = project.PackFormat;
+            settings.PackFormat = project.PackFormat;
             settings.Inputs = [Path.Join(project.SourceDir, "**/*.ame")];
+            settings.Data = project.DataDir;
 
             Directory.CreateDirectory(Path.Join(Environment.CurrentDirectory, "build"));
 
