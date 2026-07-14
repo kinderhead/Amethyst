@@ -11,9 +11,13 @@ updates:
     schedule:
       interval: "weekly"
     labels: [ dependabot ]
+    groups:
+      js-updates:
   - package-ecosystem: "nuget"
     directories:
       - "**/*"
     schedule:
       interval: "weekly"
     labels: [ dependabot ]
+    groups:
+      cs-updates:
