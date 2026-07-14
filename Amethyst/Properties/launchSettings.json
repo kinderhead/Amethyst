@@ -4,6 +4,10 @@
       "commandName": "Project",
       "commandLineArgs": "compile examples/test.ame -o output.zip --run"
     },
+    "Shard": {
+      "commandName": "Project",
+      "commandLineArgs": "build -f examples/shard/shard.json --run"
+    },
     "Test Suite": {
       "commandName": "Project",
       "commandLineArgs": "compile tests/*.ame -o output.zip --run"

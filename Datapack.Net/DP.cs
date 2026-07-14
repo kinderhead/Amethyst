@@ -8,6 +8,7 @@ namespace Datapack.Net
 {
     public class DP
     {
+        private readonly Dictionary<string, string> extraFiles = [];
         public readonly string FilePath;
 
         private readonly HashSet<string> filesWriten = [];
@@ -50,6 +51,11 @@ namespace Datapack.Net
                         type.Build(this);
                     }
 
+                    foreach (var (k, v) in extraFiles)
+                    {
+                        zipFile.CreateEntryFromFile(k, v.Replace('\\', '/'));
+                    }
+
                     WriteFile("pack.mcmeta", Meta.Build().ToString());
                 }
             }
@@ -63,6 +69,8 @@ namespace Datapack.Net
             throw new FileNotFoundException("Resource was not found");
         }
 
+        public void AddExtraFile(string externalPath, string zipPath) => extraFiles[externalPath] = zipPath;
+
         public void Optimize()
         {
             while (EmptyFunctions())
@@ -72,17 +80,11 @@ namespace Datapack.Net
 
         private bool EmptyFunctions()
         {
-            var toRemove = new List<MCFunction>();
-
-            foreach (var i in GetResource<Functions>().Resources.Cast<MCFunction>())
-            {
-                if (i.Length == 0) toRemove.Add(i);
-            }
+            var toRemove = GetResource<Functions>().Resources.Cast<MCFunction>().Where(i => i.Length == 0).ToList();
 
             foreach (var i in toRemove)
             {
                 GetResource<Functions>().Resources.Remove(i);
-
 #if DEBUG
                 Console.WriteLine($"Removing empty function: {i.ID}");
 #endif
@@ -93,14 +95,18 @@ namespace Datapack.Net
                 for (var e = 0; e < i.Length; e++)
                 {
                     var remove = false;
-                    if (i.Commands[e] is FunctionCommand cmd && toRemove.Select(i => i.ID).Contains(cmd.Function))
-                        remove = true;
-                    else if (i.Commands[e] is ReturnCommand ret && ret.Cmd is FunctionCommand retfunc &&
-                             toRemove.Select(i => i.ID).Contains(retfunc.Function))
-                        i.Commands[e] = new ReturnCommand();
-                    else if (i.Commands[e] is Execute ex && ex.Get<Run>().Command is FunctionCommand exfunc &&
-                             toRemove.Select(i => i.ID).Contains(exfunc.Function))
-                        remove = true;
+                    switch (i.Commands[e])
+                    {
+                        case FunctionCommand cmd when toRemove.Select(i => i.ID).Contains(cmd.Function):
+                            remove = true;
+                            break;
+                        case ReturnCommand { Cmd: FunctionCommand retfunc } when toRemove.Select(i => i.ID).Contains(retfunc.Function):
+                            i.Commands[e] = new ReturnCommand();
+                            break;
+                        case Execute ex when ex.Get<Run>().Command is FunctionCommand exfunc && toRemove.Select(i => i.ID).Contains(exfunc.Function):
+                            remove = true;
+                            break;
+                    }
 
                     if (remove)
                     {
@@ -127,13 +133,6 @@ namespace Datapack.Net
 
         internal void WriteFile(string path, string content)
         {
-//#if DEBUG
-//			if (path.EndsWith(".mcfunction"))
-//			{
-//				Console.WriteLine($"Writing to file \"{path}\":\n{content}\n");
-//			}
-//#endif
-
             if (zipFile != null)
             {
                 if (filesWriten.Contains(path)) throw new($"Datapack has duplicate file: {path}");
@@ -144,8 +143,7 @@ namespace Datapack.Net
                 stream.Write(content);
                 filesWriten.Add(path);
             }
-            else
-                throw new FileNotFoundException("Not generating datapack yet");
+            else throw new FileNotFoundException("Not generating datapack yet");
         }
     }
 }

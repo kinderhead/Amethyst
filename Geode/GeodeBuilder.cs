@@ -55,19 +55,35 @@ namespace Geode
         {
             failed = false;
 
-            // ApplyPass<InlinePass>();
-            ApplyPass<Mem2RegPass>();
-            ApplyPass<ResolvePass>();
-            ApplyPass<PhiPass>();
-
+            ApplyPasses();
             if (failed) return false;
 
             AllocateRegisters();
 
             if (Options.DumpIR) DumpIR();
-
             if (failed) return false;
+            if (!RenderFunctions()) return false;
 
+            CleanFunctions();
+            SetupDefaultFunctions();
+            AddDataFiles();
+
+            Datapack.Optimize();
+            Datapack.Build();
+
+            return true;
+        }
+
+        private void ApplyPasses()
+        {
+            // ApplyPass<InlinePass>();
+            ApplyPass<Mem2RegPass>();
+            ApplyPass<ResolvePass>();
+            ApplyPass<PhiPass>();
+        }
+
+        private bool RenderFunctions()
+        {
             foreach (var i in Functions)
             {
                 try
@@ -76,17 +92,23 @@ namespace Geode
                 }
                 catch (EmptyGeodeError)
                 {
-                    failed = true;
+                    return false;
                 }
             }
 
-            if (failed) return false;
+            return true;
+        }
 
+        private void CleanFunctions()
+        {
             foreach (var i in functionsToRemove)
             {
                 Datapack.Functions.Remove(i);
             }
+        }
 
+        private void SetupDefaultFunctions()
+        {
             var init = GetInitFunc();
             Register(init);
             Datapack.Tags.GetTag(new("minecraft", "load"), "function").Values.Insert(0, init.ID);
@@ -94,11 +116,17 @@ namespace Geode
             var cleanup = GetCleanupFunc();
             Register(cleanup);
             Datapack.Tags.GetTag(new("amethyst", "cleanup"), "function").Values.Insert(0, cleanup.ID);
+        }
 
-            Datapack.Optimize();
-            Datapack.Build();
-
-            return true;
+        private void AddDataFiles()
+        {
+            if (Options.Data is not null)
+            {
+                foreach (var i in Directory.EnumerateFiles(Options.Data, "*", SearchOption.AllDirectories))
+                {
+                    Datapack.AddExtraFile(i, Path.Join("data", Path.GetRelativePath(Options.Data, i)));
+                }
+            }
         }
 
         public T ApplyPass<T>() where T : IPass, new() => ApplyPass(new T());
@@ -267,14 +295,13 @@ namespace Geode
             if (syms.TryGetValue(new(baseNamespace, name), out var v)) return v;
 
             if (baseNamespace.Contains('/')) return NamespaceWalk(baseNamespace[..baseNamespace.LastIndexOf('/')], name, syms);
-
             if (baseNamespace.Contains(':')) return NamespaceWalk(baseNamespace[..baseNamespace.LastIndexOf(':')], name, syms);
 
             return default;
         }
 
         private static DP GetDP(IOptions opts) => new(opts.Output,
-            new MCMeta().SetDescription("A project made with Amethyst").SetMinVersion(opts.PackVersion)
-                        .SetMaxVersion(opts.PackVersion));
+            new MCMeta().SetDescription("A project made with Amethyst").SetMinVersion(opts.PackFormat)
+                        .SetMaxVersion(opts.PackFormat));
     }
 }

@@ -25,7 +25,7 @@ description: Shard definition reference
 
 * `name`: Name of the shard. Only lowercase alphanumeric characters, `-`, and `_` are allowed for this field.
 * `description`: Description of the shard. Included in `pack.mcmeta`.
-* `version`: Shard version. Follows a simplified semver format that supports Minecraft's versions.
+* `version`: Shard version. Follows a simplified semver format that supports Minecraft's versions. Note that due to a quirk with Minecraft versions, versions like `x.y.0` may be truncated to `x.y`. This may change in the future.
 * `pack_format`: Target pack format. Does not support format ranges. Multiple `shard.json` files can be used to compile for different pack formats.
 
 ## Dependencies
