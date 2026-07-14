@@ -239,9 +239,7 @@ namespace Amethyst
                 if (!error.Errored) throw;
             }
 
-            if (error.Errored) return false;
-
-            return true;
+            return !error.Errored;
         }
 
         public void RegisterTypeInfo(StructType type) => typeInfo[type.ID] = type;

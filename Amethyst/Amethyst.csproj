@@ -44,9 +44,11 @@
     <ItemGroup>
         <PackageReference Include="Antlr4.Runtime.Standard" Version="4.13.1"/>
         <PackageReference Include="Glob" Version="1.1.9"/>
-        <PackageReference Include="Spectre.Console" Version="0.54.0"/>
-        <PackageReference Include="Spectre.Console.Cli" Version="0.53.1"/>
+        <PackageReference Include="Spectre.Console" Version="0.57.2"/>
+        <PackageReference Include="Spectre.Console.Cli" Version="0.55.0"/>
         <PackageReference Include="Tmds.ExecFunction" Version="0.8.0"/>
+        <PackageReference Remove="EnvDTE"/>
+        <PackageReference Remove="EnvDTE"/>
     </ItemGroup>
 
     <ItemGroup>

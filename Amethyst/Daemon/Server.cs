@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using Amethyst.Cli;
 using Newtonsoft.Json;
@@ -142,6 +143,11 @@ namespace Amethyst.Daemon
             return proc.ExitCode == 0;
         }
 
+        [UnconditionalSuppressMessage("Trimming",
+            "IL2026:Members annotated with 'RequiresUnreferencedCodeAttribute' require dynamic access otherwise can break functionality when trimming application code",
+            Justification = "Should be fine")]
+        [UnconditionalSuppressMessage("AOT", "IL3050:Calling members annotated with 'RequiresDynamicCodeAttribute' may break functionality when AOT compiling.",
+            Justification = "Should be fine")]
         public static Config? GetConfig()
         {
             if (!File.Exists(ConfigLocation) || !File.Exists(MinecraftServerLocation))
@@ -154,6 +160,11 @@ namespace Amethyst.Daemon
             return JsonConvert.DeserializeObject<Config>(File.ReadAllText(ConfigLocation));
         }
 
+        [UnconditionalSuppressMessage("Trimming",
+            "IL2026:Members annotated with 'RequiresUnreferencedCodeAttribute' require dynamic access otherwise can break functionality when trimming application code",
+            Justification = "Should be fine")]
+        [UnconditionalSuppressMessage("AOT", "IL3050:Calling members annotated with 'RequiresDynamicCodeAttribute' may break functionality when AOT compiling.",
+            Justification = "Should be fine")]
         public static Config UpdateConfig(DaemonSetupOptions baseSettings)
         {
             Directory.CreateDirectory(ServerFolder);

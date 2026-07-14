@@ -7,8 +7,7 @@ using Spectre.Console.Cli;
 
 namespace Amethyst.Cli
 {
-    [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.AllFields |
-                                DynamicallyAccessedMemberTypes.AllProperties)]
+    [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.AllFields | DynamicallyAccessedMemberTypes.AllProperties)]
     public class DaemonSetupOptions : CommandSettings
     {
         [CommandOption("--eula")]
@@ -43,7 +42,6 @@ namespace Amethyst.Cli
 
     public class DaemonSetupCommand : Command<DaemonSetupOptions>
     {
-        public override int Execute(CommandContext context, DaemonSetupOptions settings,
-                                    CancellationToken cancellationToken) => Server.Setup(settings).Result;
+        protected override int Execute(CommandContext context, DaemonSetupOptions settings, CancellationToken cancellationToken) => Server.Setup(settings).Result;
     }
 }

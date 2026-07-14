@@ -86,14 +86,17 @@ namespace Datapack.Net.Tests
 
             var doms = ctx.CalculateDominanceFrontiers();
 
-            CollectionAssert.AreEquivalent(new HashSet<Block>([]), doms[b1]);
-            CollectionAssert.AreEquivalent(new HashSet<Block>([b2, b8]), doms[b2]);
-            CollectionAssert.AreEquivalent(new HashSet<Block>([b2, b8]), doms[b3]);
-            CollectionAssert.AreEquivalent(new HashSet<Block>([b8]), doms[b4]);
-            CollectionAssert.AreEquivalent(new HashSet<Block>([b7]), doms[b5]);
-            CollectionAssert.AreEquivalent(new HashSet<Block>([b7]), doms[b6]);
-            CollectionAssert.AreEquivalent(new HashSet<Block>([b8]), doms[b7]);
-            CollectionAssert.AreEquivalent(new HashSet<Block>([]), doms[b8]);
+            using (Assert.EnterMultipleScope())
+            {
+                Assert.That(doms[b1], Is.EquivalentTo(new HashSet<Block>([])));
+                Assert.That(doms[b2], Is.EquivalentTo(new HashSet<Block>([b2, b8])));
+                Assert.That(doms[b3], Is.EquivalentTo(new HashSet<Block>([b2, b8])));
+                Assert.That(doms[b4], Is.EquivalentTo(new HashSet<Block>([b8])));
+                Assert.That(doms[b5], Is.EquivalentTo(new HashSet<Block>([b7])));
+                Assert.That(doms[b6], Is.EquivalentTo(new HashSet<Block>([b7])));
+                Assert.That(doms[b7], Is.EquivalentTo(new HashSet<Block>([b8])));
+                Assert.That(doms[b8], Is.EquivalentTo(new HashSet<Block>([])));
+            }
         }
 
         [Test]
@@ -106,7 +109,7 @@ namespace Datapack.Net.Tests
             OnFunction(ctx, ref state);
 
             Assert.That(state, Is.Not.Null);
-            CollectionAssert.AreEquivalent(new HashSet<Block>([b2, b7, b8]), state.PhiLocations[a]);
+            Assert.That(state.PhiLocations[a], Is.EquivalentTo(new HashSet<Block>([b2, b7, b8])));
         }
     }
 }

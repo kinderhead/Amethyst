@@ -1,4 +1,5 @@
 using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Text.RegularExpressions;
 using Datapack.Net.Pack;
 using Datapack.Net.Utils;
@@ -6,6 +7,7 @@ using Newtonsoft.Json;
 
 namespace Amethyst
 {
+    [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.AllFields | DynamicallyAccessedMemberTypes.AllProperties)]
     [JsonObject(MemberSerialization.OptIn)]
     public partial struct ProjectDefinition()
     {
@@ -32,6 +34,11 @@ namespace Amethyst
         [DefaultValue("data")]
         public string DataDir = "data";
 
+        [UnconditionalSuppressMessage("Trimming",
+            "IL2026:Members annotated with 'RequiresUnreferencedCodeAttribute' require dynamic access otherwise can break functionality when trimming application code",
+            Justification = "Should be fine")]
+        [UnconditionalSuppressMessage("AOT", "IL3050:Calling members annotated with 'RequiresDynamicCodeAttribute' may break functionality when AOT compiling.",
+            Justification = "Should be fine")]
         public readonly string Serialize()
         {
             using var text = new StringWriter();
@@ -43,6 +50,11 @@ namespace Amethyst
             return JsonConvert.SerializeObject(this, jsonSettings);
         }
 
+        [UnconditionalSuppressMessage("Trimming",
+            "IL2026:Members annotated with 'RequiresUnreferencedCodeAttribute' require dynamic access otherwise can break functionality when trimming application code",
+            Justification = "Should be fine")]
+        [UnconditionalSuppressMessage("AOT", "IL3050:Calling members annotated with 'RequiresDynamicCodeAttribute' may break functionality when AOT compiling.",
+            Justification = "Should be fine")]
         public static ProjectDefinition Deserialize(string path)
         {
             var project = JsonConvert.DeserializeObject<ProjectDefinition>(File.ReadAllText(path), jsonSettings);
