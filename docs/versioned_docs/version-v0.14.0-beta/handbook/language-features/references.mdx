@@ -56,6 +56,21 @@ Passing references into inline commands does not dereference them and instead us
 Pass references as macros (`macro T& ptr`) to allow Amethyst to emit more efficient commands.
 :::
 
+References can also be checked to see if they are valid:
+
+<Highlight code={`\
+    if (ptr) { }
+`}/>
+
+The following pattern can be used to check the existence of properties of objects or elements in an array:
+
+<Highlight code={`\
+    if (^obj.prop) { }
+    if (^array[7]) { }
+`}/>
+
+This works because while accessing a member of an object normally dereferences it, adding a [reference operator](#reference-operators) turns it back into a reference.
+
 ## Weak References
 
 Weak references work the same as normal references except it is not guaranteed that they will still be valid if passed into functions. This is because stack variables are addressed by the compiler internally using `stack[-1]...` which means "Access the last stack". As such, accessing a variable depends on the current stack frame. Regular references resolve this `-1` into the correct index, but this operation is redundant in cases where the reference is not passed into a function.
@@ -116,3 +131,7 @@ Dereferencing can be performed with `*` and works on all reference types.
     int^ ptr = x;
     @/say $(*ptr)
 `}/>
+
+## Null
+
+References, and by extension [class](./classes.mdx) instances, can be set to null. `null` is a special reserved variable that can set any reference to null. References that are not initialized default to null. Null is essentially a random location in NBT storage. Due to a quirk with `execute unless data`, only storage locations can be used for null.

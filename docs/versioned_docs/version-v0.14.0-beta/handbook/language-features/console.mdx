@@ -1,0 +1,29 @@
+---
+sidebar_position: 5
+description: Console interactions
+---
+
+import Highlight from "@site/src/components/highlight";
+
+# Console
+
+Amethyst comes with a `print` function that compiles to `/tellraw @a` which can take any number of arguments and concatenates them together with no spacing.
+
+Colors and styling are not implemented but are planned features.
+
+:::warning
+On Minecraft 26.1 and above, text component NBT rendering changed to allow pretty printing NBT. As a consequence, `string`s by default are now rendered with quotes. Amethyst mitigates this by setting the `interpret` flag to `true` when it detects that it is printing a `string`. If a `string` is casted to something else like `nbt`, then it will have quotes around it in chat.
+:::
+
+## Examples
+
+<Highlight code={`\
+    print("Hello world!");
+    // Hello world!
+`}/>
+
+<Highlight code={`\
+    int x = 7;
+    print("Variable: ", x);
+    // Variable: 7
+`}/>

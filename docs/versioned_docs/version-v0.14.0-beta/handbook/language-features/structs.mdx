@@ -24,7 +24,7 @@ Structs are special objects that can hold properties. They are implemented as NB
 Structs without a constructor are instantiated like typeless `nbt` compounds.
 
 :::note
-Properties are set to their default values if not explicitly set.
+Properties are set to their default values if not explicitly set. Additionally, structs cannot contain strong reference properties (i.e. `int&` or [classes](./classes.mdx)) due to a lack of garbage collection capabilities.
 :::
 
 ## Methods
@@ -107,32 +107,3 @@ The expression after the colon can be anything as long as it can be assigned to 
 `}/>
 
 Non-nbt compound types obviosly cannot have properties.
-
-## Virtual Methods
-
-Structs can have virtual methods that can be overridden by subclasses. Virtual methods are defined using the `virtual` function modifier like so:
-
-<Highlight code={`\
-    struct vec {
-        int x;
-        int y;
-
-        virtual int sum() {
-            return this.x + this.y;
-        }
-    }
-
-    struct subvec implements vec {
-        // Must also declare as virtual
-        // Signature must be identical to the original method
-        virtual int sum() {
-            return 7;
-        }
-    }
-`}/>
-
-Internally, they are stored as properties in each instance of the object and act like dynamic functions. Abstract methods will be added in the future.
-
-:::warning
-Printing an object with virtual methods will also display the method handles. A solution will be provided in the future.
-:::

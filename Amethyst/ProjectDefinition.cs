@@ -61,8 +61,7 @@ namespace Amethyst
 
             if (!ValidNameRegex().IsMatch(project.Name))
             {
-                throw new FormatException(
-                    $"{project.Name} is not a valid package name. Only lowercase alphanumeric characters, -, and _ are allowed.");
+                throw new FormatException($"{project.Name} is not a valid package name. Only lowercase alphanumeric characters, -, and _ are allowed.");
             }
 
             return project;
