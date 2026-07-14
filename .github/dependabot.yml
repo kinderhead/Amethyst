@@ -6,12 +6,14 @@
 version: 2
 updates:
   - package-ecosystem: "npm"
-    directories: "**/*"
+    directories:
+      - "**/*"
     schedule:
       interval: "weekly"
     labels: [ dependabot ]
   - package-ecosystem: "nuget"
-    directories: "**/*"
+    directories:
+      - "**/*"
     schedule:
       interval: "weekly"
     labels: [ dependabot ]
