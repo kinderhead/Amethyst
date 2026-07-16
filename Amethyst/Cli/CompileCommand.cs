@@ -21,6 +21,10 @@ namespace Amethyst.Cli
         [Description("Path to a folder to include in final data pack.")]
         public string? Data { get; set; }
 
+        [CommandOption("--description")]
+        [Description("Data pack description.")]
+        public string? Description { get; set; }
+
         [CommandOption("-p|--pack-version")]
         [Description("Data pack version to support.")]
         [DefaultValue("107.1")]

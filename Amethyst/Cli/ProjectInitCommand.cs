@@ -46,11 +46,10 @@ namespace Amethyst.Cli
             var project = new ProjectDefinition
             {
                 Name = settings.Name ?? AnsiConsole.Ask("[aqua]Project name[/]:", Path.GetFileName(Path.GetFullPath(output)).ToLower()),
-                Description = settings.Description ?? AnsiConsole.Ask("[aqua]Data pack description[/]:", "A project made with Amethyst")
+                Description = settings.Description ?? AnsiConsole.Ask("[aqua]Data pack description[/]:", "A project made with Amethyst.")
             };
 
-            if (settings.PackFormat is not null)
-                project.PackFormat = settings.PackFormat.Value;
+            if (settings.PackFormat is not null) project.PackFormat = settings.PackFormat.Value;
             else
             {
                 var version = AnsiConsole.Prompt(new SelectionPrompt<MinecraftVersion>()
@@ -85,8 +84,7 @@ void main() {{
 ");
             }
 
-            AnsiConsole.MarkupLine(
-                "\n[green]Successfully created project![/]\nRun [darkviolet]amethyst build --run[/] to get started.");
+            AnsiConsole.MarkupLine("\n[green]Successfully created project![/]\nRun [darkviolet]amethyst build --run[/] to get started.");
             return 0;
         }
     }

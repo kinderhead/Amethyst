@@ -6,6 +6,7 @@ namespace Geode
     {
         string Output { get; set; }
         string? Data { get; set; }
+        string? Description { get; set; }
         PackFormat PackFormat { get; set; }
         bool DumpIR { get; set; }
         bool Debug { get; set; }

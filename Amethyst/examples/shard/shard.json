@@ -1,6 +1,6 @@
 {
   "name": "example",
-  "description": "A project made with Amethyst",
+  "description": "An example Amethyst project.",
   "version": "1.0.0",
   "pack_format": "107.1",
   "dependencies": {

@@ -1,0 +1,21 @@
+{
+	"folders": [
+        {
+            "name": ".github",
+            "path": ".github"
+        },
+        {
+            "name": "examples",
+            "path": "Amethyst/examples"
+        },
+        {
+            "name": "docs",
+            "path": "docs"
+        },
+        {
+            "name": "scripts",
+            "path": "scripts"
+        }
+    ],
+    "settings": {}
+}
