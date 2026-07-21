@@ -20,7 +20,7 @@ The latest releases are found [here](https://github.com/kinderhead/Amethyst/rele
 
 Nightly builds can be accessed through Github Actions or here:
 
-| OS | Builds |
+| OS | Nightly Builds |
 | -- | ------ |
 | Windows | [x86-64](https://nightly.link/kinderhead/Amethyst/workflows/amethyst/master/amethyst-windows.zip) ([installer](https://nightly.link/kinderhead/Amethyst/workflows/amethyst/master/amethyst-windows-installer.zip)) <br/> [Arm](https://nightly.link/kinderhead/Amethyst/workflows/amethyst/master/amethyst-windows-arm.zip) ([installer](https://nightly.link/kinderhead/Amethyst/workflows/amethyst/master/amethyst-windows-arm-installer.zip))|
 | Linux | [x86-64](https://nightly.link/kinderhead/Amethyst/workflows/amethyst/master/amethyst-linux.zip) ([.deb, .pkg.tar.zst](https://nightly.link/kinderhead/Amethyst/workflows/amethyst/master/amethyst-linux-pkgs.zip)) |
