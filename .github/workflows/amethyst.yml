@@ -22,28 +22,28 @@ on:
 
 jobs:
   build-linux:
-    name: "Build Linux"
+    name: "Linux"
     uses: ./.github/workflows/build.yml
     with:
       name: linux
       os: ubuntu-latest
 
   build-windows:
-    name: "Build Windows"
+    name: "Windows"
     uses: ./.github/workflows/build.yml
     with:
       name: windows
       os: windows-latest
 
   build-windows-arm:
-    name: "Build Windows 11 Arm"
+    name: "Windows 11 Arm"
     uses: ./.github/workflows/build.yml
     with:
       name: windows-arm
       os: windows-11-arm
 
   build-mac:
-    name: "Build Mac"
+    name: "Mac"
     uses: ./.github/workflows/build.yml
     with:
       name: mac
@@ -53,14 +53,6 @@ jobs:
     name: "Build Linux packages"
     runs-on: ubuntu-latest
     needs: [build-linux]
-    
-    # strategy:
-    #   matrix:
-    #     type: [
-    #       { os: "ubuntu-latest", name: "linux", arch: ""},
-    #       # { os: "ubuntu-24.04-arm", artifact: "linux-arm", arch: "--platform=linux/arm64 ogarcia/"}
-    #     ]
-    #   fail-fast: false
 
     steps:
       - uses: actions/checkout@v6
@@ -100,58 +92,27 @@ jobs:
             *.pkg.tar.zst
   
   windows-installer:
-    name: "Build ${{ matrix.type.name }} installer"
-    runs-on: "windows-latest"
-    needs: [build-windows, build-windows-arm]
+    name: "Build Windows installer"
+    needs: [build-windows]
+    uses: ./.github/workflows/installer.yml
+    with:
+      name: windows
+      os: windows-latest
+      iss: x64
 
-    strategy:
-      matrix:
-        type: [
-          {os: windows-latest, name: windows, iss: "x64"},
-          {os: windows-11-arm, name: windows-arm, iss: "arm"}
-        ]
-      fail-fast: false
-    
-    steps:
-      - uses: actions/checkout@v6
-
-      - name: Download Artifact
-        uses: actions/download-artifact@v8
-        with:
-          name: "amethyst-${{ matrix.type.name }}"
-          path: ./Amethyst/dist
-
-      - name: Prep Installer
-        run: |
-          choco install innosetup --ignore-http-cache
-          choco upgrade innosetup --ignore-http-cache -y
-          python -u scripts/make_metadata_ini.py
-      
-      - name: Build Installer
-        uses: Minionguyjpro/Inno-Setup-Action@v1.2.8
-        with:
-          path: Amethyst/${{ matrix.type.iss }}-installer.iss
-          options: /O+
-
-      - name: Setup Installer
-        run: copy Amethyst/Output/*.exe installer.exe
-      
-      - name: Run Installer
-        run: .\installer.exe /SUPPRESSMSGBOXES
-      
-      - name: Test
-        run: '"C:\Program Files\Amethyst\amethyst.exe"'
-
-      - name: Upload Windows Installer
-        uses: actions/upload-artifact@v7
-        with:
-          name: amethyst-${{ matrix.type.name }}-installer
-          path: 'Amethyst/Output/*.exe'
+  windows-arm-installer:
+    name: "Build Windows 11 Arm installer"
+    needs: [build-windows-arm]
+    uses: ./.github/workflows/installer.yml
+    with:
+      name: windows-arm
+      os: windows-11-arm
+      iss: arm
 
   success:
     name: "Amethyst Test"
     runs-on: ubuntu-latest
-    needs: [build-linux, build-windows, build-windows-arm, build-mac, windows-installer, linux-pkgs]
+    needs: [build-mac, windows-installer, windows-arm-installer, linux-pkgs]
 
     steps:
       - name: Nothing

@@ -8,7 +8,7 @@ on:
         required: true
         type: string
       os:
-        description: "Name"
+        description: "OS"
         required: true
         type: string
 
@@ -46,7 +46,7 @@ jobs:
             !**/tests/**/*.ame
 
   test:
-    name: "Test ${{ matrix.script.name }} ${{ matrix.version }} on ${{ inputs.name }} with args \"${{ matrix.args }}\""
+    name: "Test ${{ matrix.script.name }} on ${{ matrix.version }} with args \"${{ matrix.args }}\""
     runs-on: ${{ inputs.os }}
     needs: [build]
 
