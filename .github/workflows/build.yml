@@ -14,7 +14,7 @@ on:
 
 jobs:
   build:
-    name: "Build ${{ inputs.name }}"
+    name: "Build"
     runs-on: ${{ inputs.os }}
     steps:
       - uses: actions/checkout@v6
@@ -44,3 +44,49 @@ jobs:
             !**/*.pdb
             !**/*.dbg
             !**/tests/**/*.ame
+
+  test:
+    name: "Test ${{ matrix.script.name }} ${{ matrix.version }} on ${{ inputs.name }} with args \"${{ matrix.args }}\""
+    runs-on: ${{ inputs.os }}
+    needs: [build]
+
+    strategy:
+      matrix:
+        version: ["1.21.10", "1.21.11", "26.1.2", "26.2"]
+        args: ["-O 0", "-d", "-O 1"]
+        script: [
+          {path: "scripts/test_mc.py", name: suite},
+          {path: "scripts/test_shard.py", name: shard}
+        ]
+      fail-fast: false
+    
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Download Artifact
+        uses: actions/download-artifact@v8
+        with:
+          name: amethyst-${{ matrix.type.name }}
+          path: ./Amethyst/dist
+
+      - name: "Mark file as executable"
+        if: runner.os != 'Windows'
+        run: chmod +x ./Amethyst/dist/amethyst
+
+      - name: Setup Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: '3.13'
+
+      - name: Setup Java
+        uses: actions/setup-java@v5
+        with:
+          distribution: 'zulu'
+          java-version: '25'
+      
+      - name: Test
+        uses: nick-fields/retry@v4
+        with:
+          timeout_minutes: 5
+          max_attempts: 3
+          command: python -u ${{ matrix.script.path }} ${{ matrix.version }} "${{ matrix.args }}"
