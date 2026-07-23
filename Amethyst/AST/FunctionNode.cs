@@ -40,16 +40,13 @@ namespace Amethyst.AST
 
             if (Modifiers.HasFlag(FunctionModifiers.Overload))
             {
-                if (ctx.IR.GetGlobal(ID) is OverloadedFunctionValue overload)
-                    overload.Add(func);
-                else
-                    ctx.IR.AddSymbol(new(ID, Location, new OverloadedFunctionValue(ID).Add(func)));
+                if (ctx.IR.GetGlobal(ID) is OverloadedFunctionValue overload) overload.Add(func);
+                else ctx.IR.AddSymbol(new(ID, Location, new OverloadedFunctionValue(ID).Add(func)));
 
                 ctx.IR.AddSymbol(new(realID, Location, func));
                 ID = realID;
             }
-            else
-                ctx.IR.AddSymbol(new(ID, Location, func));
+            else ctx.IR.AddSymbol(new(ID, Location, func));
 
             root.Functions.Add(this);
         }
@@ -76,8 +73,7 @@ namespace Amethyst.AST
 
             if (Body.Statements.Count == 0 || Body.Statements.Last() is not ReturnStatement)
             {
-                if (type.ReturnType is VoidType)
-                    Body.Add(new ReturnStatement(Location, null));
+                if (type.ReturnType is VoidType) Body.Add(new ReturnStatement(Location, null));
                 else
                 {
                     new MissingReturnError().Display(compiler, Location);
@@ -95,8 +91,5 @@ namespace Amethyst.AST
         protected virtual NamespacedID Mangle(TypeArray args) => args.Mangle(ID);
     }
 
-    public readonly record struct AbstractParameter(
-        ParameterModifiers Modifiers,
-        AbstractTypeSpecifier Type,
-        string Name);
+    public readonly record struct AbstractParameter(ParameterModifiers Modifiers, AbstractTypeSpecifier Type, string Name);
 }
