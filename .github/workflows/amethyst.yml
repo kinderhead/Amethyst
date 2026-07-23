@@ -139,7 +139,7 @@ jobs:
           path: ./Amethyst/dist
 
       - name: Install Dependencies
-        run: gem install fpm && \
+        run: sudo gem install fpm && \
              apt-get update && \
              apt-get install -y libarchive-tools
 
