@@ -12,45 +12,21 @@ entitydef test_entity implements minecraft:base {
     float Health;
 }
 
-class Node {
-    int val;
-    Node next;
-
-    Node(int x) {
-        this.val = x;
-    }
+overload void test() {
+    print("hi");
 }
 
-Node save = null;
-Node[] saves = [];
+overload void test(int a) {
+    print(a);
+}
 
-int test() {
-    return 2;
+overload void test(string s) {
+    print(s);
 }
 
 #load
 void main() {
-    amethyst:gc/heap = {};
-    amethyst:gc/heap_info = [];
-
-    // var n1 = new Node(1);
-    // var n2 = new Node(2);
-
-    // save = n1;
-    // amethyst:gc/collect();
-
-    // if (save) print(true);
-    // else print(false);
-
-    // if (n1) print(true);
-    // else print(false);
-
-    // if (n2) print(false);
-    // else print(true);
-
-    for (int i = 0; i < test(); ++i) {
-        print(i);
-    }
+    print("Yay");
 
     amethyst:exit();
 }
