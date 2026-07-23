@@ -36,33 +36,9 @@ jobs:
       fail-fast: false
 
     steps:
-    - uses: actions/checkout@v6
-
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v5
+    - uses: ./.github/actions/build
       with:
-        dotnet-version: 10
-
-    - name: Restore Dependencies
-      run: dotnet restore
-    - name: Build
-      run: dotnet build --no-restore
-    - name: Datapack.Net Test
-      run: dotnet test --no-build --verbosity normal
-      
-    - name: Publish
-      working-directory: ./Amethyst
-      run: dotnet publish --configuration Release --output dist
-
-    - name: Upload Build
-      uses: actions/upload-artifact@v7
-      with:
-        name: amethyst-${{ matrix.type.name }}
-        path: |
-          Amethyst/dist/
-          !**/*.pdb
-          !**/*.dbg
-          !**/tests/**/*.ame
+        matrix: ${{ matrix }}
 
   test:
     name: "Test ${{ matrix.script.name }} ${{ matrix.version }} on ${{ matrix.type.name }} with args \"${{ matrix.args }}\""

@@ -1,0 +1,37 @@
+name: "Amethyst Build"
+description: "Build and upload artifact"
+inputs:
+  matrix:
+    description: "Matrix"
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - uses: actions/checkout@v6
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v5
+      with:
+        dotnet-version: 10
+
+    - name: Restore Dependencies
+      run: dotnet restore
+    - name: Build
+      run: dotnet build --no-restore
+    - name: Datapack.Net Test
+      run: dotnet test --no-build --verbosity normal
+      
+    - name: Publish
+      working-directory: ./Amethyst
+      run: dotnet publish --configuration Release --output dist
+
+    - name: Upload Build
+      uses: actions/upload-artifact@v7
+      with:
+        name: amethyst-${{ inputs.matrix.type.name }}
+        path: |
+          Amethyst/dist/
+          !**/*.pdb
+          !**/*.dbg
+          !**/tests/**/*.ame
