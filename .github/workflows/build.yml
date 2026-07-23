@@ -1,0 +1,46 @@
+name: "Amethyst Build"
+
+on:
+  workflow_call:
+    inputs:
+      name:
+        description: "Name"
+        required: true
+        type: string
+      os:
+        description: "Name"
+        required: true
+        type: string
+
+jobs:
+  build:
+    name: "Build ${{ inputs.name }}"
+    runs-on: ${{ inputs.os }}
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: 10
+
+      - name: Restore Dependencies
+        run: dotnet restore
+      - name: Build
+        run: dotnet build --no-restore
+      - name: Datapack.Net Test
+        run: dotnet test --no-build --verbosity normal
+        
+      - name: Publish
+        working-directory: ./Amethyst
+        run: dotnet publish --configuration Release --output dist
+
+      - name: Upload Build
+        uses: actions/upload-artifact@v7
+        with:
+          name: amethyst-${{ inputs.name }}
+          path: |
+            Amethyst/dist/
+            !**/*.pdb
+            !**/*.dbg
+            !**/tests/**/*.ame
