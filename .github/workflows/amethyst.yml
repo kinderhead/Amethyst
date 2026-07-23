@@ -140,8 +140,8 @@ jobs:
 
       - name: Install Dependencies
         run: sudo gem install fpm && \
-             apt-get update && \
-             apt-get install -y libarchive-tools
+             sudo apt-get update && \
+             sudo apt-get install -y libarchive-tools
 
       - name: Build Linux Packages
         run: python -u scripts/linux_package.py
@@ -149,7 +149,7 @@ jobs:
       - name: Test Ubuntu
         run:
              |
-              apt-get install -y ./*.deb && \
+              sudo apt-get install -y ./*.deb && \
               amethyst -v
     
       - name: Run Arch Container
