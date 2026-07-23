@@ -138,10 +138,13 @@ jobs:
           name: amethyst-${{ matrix.type.name }}
           path: ./Amethyst/dist
 
+      - name: Install FPM
+        run: sudo gem install fpm
+
       - name: Install Dependencies
-        run: sudo gem install fpm && \
-             sudo apt-get update && \
-             sudo apt-get install -y libarchive-tools
+        run: |
+              sudo apt-get update
+              sudo apt-get install -y libarchive-tools
 
       - name: Build Linux Packages
         run: python -u scripts/linux_package.py
@@ -149,7 +152,7 @@ jobs:
       - name: Test Ubuntu
         run:
              |
-              sudo apt-get install -y ./*.deb && \
+              sudo apt-get install -y ./*.deb
               amethyst -v
     
       - name: Run Arch Container
