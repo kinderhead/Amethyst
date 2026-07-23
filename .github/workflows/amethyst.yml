@@ -21,113 +21,38 @@ on:
   #     - '**'
 
 jobs:
-  build:
-    name: "Build ${{ matrix.type.name }}"
-    runs-on: ${{ matrix.type.os }}
+  build-linux:
+    name: "Linux"
+    uses: ./.github/workflows/build.yml
+    with:
+      name: linux
+      os: ubuntu-latest
 
-    strategy:
-      matrix:
-        type: [
-          {os: ubuntu-latest, name: linux},
-          {os: windows-latest, name: windows},
-          {os: windows-11-arm, name: windows-arm},
-          {os: macos-latest, name: "mac"}
-        ]
-      fail-fast: false
+  build-windows:
+    name: "Windows"
+    uses: ./.github/workflows/build.yml
+    with:
+      name: windows
+      os: windows-latest
 
-    steps:
-    - uses: actions/checkout@v6
+  build-windows-arm:
+    name: "Windows 11 Arm"
+    uses: ./.github/workflows/build.yml
+    with:
+      name: windows-arm
+      os: windows-11-arm
 
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v5
-      with:
-        dotnet-version: 10
-
-    - name: Restore Dependencies
-      run: dotnet restore
-    - name: Build
-      run: dotnet build --no-restore
-    - name: Datapack.Net Test
-      run: dotnet test --no-build --verbosity normal
-      
-    - name: Publish
-      working-directory: ./Amethyst
-      run: dotnet publish --configuration Release --output dist
-
-    - name: Upload Build
-      uses: actions/upload-artifact@v7
-      with:
-        name: amethyst-${{ matrix.type.name }}
-        path: |
-          Amethyst/dist/
-          !**/*.pdb
-          !**/*.dbg
-          !**/tests/**/*.ame
-
-  test:
-    name: "Test ${{ matrix.script.name }} ${{ matrix.version }} on ${{ matrix.type.name }} with args \"${{ matrix.args }}\""
-    runs-on: ${{ matrix.type.os }}
-    needs: [build]
-
-    strategy:
-      matrix:
-        type: [
-          {os: ubuntu-latest, name: linux},
-          {os: windows-latest, name: windows},
-          {os: windows-11-arm, name: windows-arm},
-          {os: macos-latest, name: "mac"}
-        ]
-        version: ["1.21.10", "1.21.11", "26.1.2", "26.2"]
-        args: ["-O 0", "-d", "-O 1"]
-        script: [
-          {path: "scripts/test_mc.py", name: suite},
-          {path: "scripts/test_shard.py", name: shard}
-        ]
-      fail-fast: false
-    
-    steps:
-      - uses: actions/checkout@v6
-
-      - name: Download Artifact
-        uses: actions/download-artifact@v8
-        with:
-          name: amethyst-${{ matrix.type.name }}
-          path: ./Amethyst/dist
-
-      - name: "Mark file as executable"
-        if: runner.os != 'Windows'
-        run: chmod +x ./Amethyst/dist/amethyst
-
-      - name: Setup Python
-        uses: actions/setup-python@v6
-        with:
-          python-version: '3.13'
-
-      - name: Setup Java
-        uses: actions/setup-java@v5
-        with:
-          distribution: 'zulu'
-          java-version: '25'
-      
-      - name: Test
-        uses: nick-fields/retry@v4
-        with:
-          timeout_minutes: 5
-          max_attempts: 3
-          command: python -u ${{ matrix.script.path }} ${{ matrix.version }} "${{ matrix.args }}"
+  build-mac:
+    name: "Mac"
+    uses: ./.github/workflows/build.yml
+    with:
+      name: mac
+      os: macos-latest
   
   linux-pkgs:
-    name: "Build ${{ matrix.type.name }} packages"
-    runs-on: ${{ matrix.type.os }}
-    needs: [build]
-    
-    strategy:
-      matrix:
-        type: [
-          { os: "ubuntu-latest", name: "linux", arch: ""},
-          # { os: "ubuntu-24.04-arm", artifact: "linux-arm", arch: "--platform=linux/arm64 ogarcia/"}
-        ]
-      fail-fast: false
+    name: "Build Linux packages"
+    runs-on: ubuntu-latest
+    needs: [build-linux]
 
     steps:
       - uses: actions/checkout@v6
@@ -135,85 +60,59 @@ jobs:
       - name: Download Artifact
         uses: actions/download-artifact@v8
         with:
-          name: amethyst-${{ matrix.type.name }}
+          name: amethyst-linux
           path: ./Amethyst/dist
 
-      - name: Build Linux Packages
+      - name: Install FPM
+        run: sudo gem install fpm
+
+      - name: Install Dependencies
         run: |
-              sudo gem install fpm && \
-              sudo apt-get install -y libarchive-tools && \
-              python -u scripts/linux_package.py
+              sudo apt-get update
+              sudo apt-get install -y libarchive-tools
+
+      - name: Build Linux Packages
+        run: python -u scripts/linux_package.py
 
       - name: Test Ubuntu
         run:
              |
-              sudo apt-get install -y ./*.deb && \
+              sudo apt-get install -y ./*.deb
               amethyst -v
     
       - name: Run Arch Container
-        run: docker run --rm -v ".:/mnt" ${{ matrix.type.arch }}archlinux /bin/sh -c "pacman-key --init && pacman -Sy && pacman -U --noconfirm ./mnt/*.pkg.tar.zst && /usr/bin/amethyst -v"
+        run: docker run --rm -v ".:/mnt" archlinux /bin/sh -c "pacman-key --init && pacman -Sy && pacman -U --noconfirm ./mnt/*.pkg.tar.zst && /usr/bin/amethyst -v"
 
       - name: Upload Linux Packages
         uses: actions/upload-artifact@v7
         with:
-          name: amethyst-${{ matrix.type.name }}-pkgs
+          name: amethyst-linux-pkgs
           path: |
             *.deb
             *.pkg.tar.zst
   
   windows-installer:
-    name: "Build ${{ matrix.type.name }} installer"
-    runs-on: "windows-latest"
-    needs: [build]
+    name: "Build Windows installer"
+    needs: [build-windows]
+    uses: ./.github/workflows/installer.yml
+    with:
+      name: windows
+      os: windows-latest
+      iss: x64
 
-    strategy:
-      matrix:
-        type: [
-          {os: windows-latest, name: windows, iss: "x64"},
-          {os: windows-11-arm, name: windows-arm, iss: "arm"}
-        ]
-      fail-fast: false
-    
-    steps:
-      - uses: actions/checkout@v6
-
-      - name: Download Artifact
-        uses: actions/download-artifact@v8
-        with:
-          name: "amethyst-${{ matrix.type.name }}"
-          path: ./Amethyst/dist
-
-      - name: Prep Installer
-        run: |
-          choco install innosetup --ignore-http-cache
-          choco upgrade innosetup --ignore-http-cache -y
-          python -u scripts/make_metadata_ini.py
-      
-      - name: Build Installer
-        uses: Minionguyjpro/Inno-Setup-Action@v1.2.8
-        with:
-          path: Amethyst/${{ matrix.type.iss }}-installer.iss
-          options: /O+
-
-      - name: Setup Installer
-        run: copy Amethyst/Output/*.exe installer.exe
-      
-      - name: Run Installer
-        run: .\installer.exe /SUPPRESSMSGBOXES
-      
-      - name: Test
-        run: '"C:\Program Files\Amethyst\amethyst.exe"'
-
-      - name: Upload Windows Installer
-        uses: actions/upload-artifact@v7
-        with:
-          name: amethyst-${{ matrix.type.name }}-installer
-          path: 'Amethyst/Output/*.exe'
+  windows-arm-installer:
+    name: "Build Windows 11 Arm installer"
+    needs: [build-windows-arm]
+    uses: ./.github/workflows/installer.yml
+    with:
+      name: windows-arm
+      os: windows-11-arm
+      iss: arm
 
   success:
     name: "Amethyst Test"
     runs-on: ubuntu-latest
-    needs: [test, windows-installer, linux-pkgs]
+    needs: [build-mac, windows-installer, windows-arm-installer, linux-pkgs]
 
     steps:
       - name: Nothing

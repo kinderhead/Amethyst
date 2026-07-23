@@ -280,14 +280,8 @@ namespace Geode
         }
 
         public const string INTERNAL_PATH = "zz_internal";
-
-// TODO: Remove this debugging measure
-#if true
-        private static int uniqueIndex;
-        public static string UniqueString => $"{uniqueIndex++}";
-#else
+        
 		public static string UniqueString => Guid.NewGuid().ToString();
-#endif
         public static readonly string[] RuntimeStorageUsed = ["stack", "tmp"];
 
         public static T? NamespaceWalk<T>(string baseNamespace, string name, Dictionary<NamespacedID, T> syms)
