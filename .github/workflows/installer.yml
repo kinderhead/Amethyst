@@ -1,0 +1,57 @@
+name: "Windows Installer"
+
+on:
+  workflow_call:
+    inputs:
+      name:
+        description: "Name"
+        required: true
+        type: string
+      os:
+        description: "OS"
+        required: true
+        type: string
+      iss:
+        description: "ISS"
+        required: true
+        type: string
+
+jobs:
+  build:
+    name: "Build"
+    runs-on: ${{ inputs.os }}
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Download Artifact
+        uses: actions/download-artifact@v8
+        with:
+          name: "amethyst-${{ inputs.name }}"
+          path: ./Amethyst/dist
+
+      - name: Prep Installer
+        run: |
+          choco install innosetup --ignore-http-cache
+          choco upgrade innosetup --ignore-http-cache -y
+          python -u scripts/make_metadata_ini.py
+      
+      - name: Build Installer
+        uses: Minionguyjpro/Inno-Setup-Action@v1.2.8
+        with:
+          path: Amethyst/${{ inputs.iss }}-installer.iss
+          options: /O+
+
+      - name: Setup Installer
+        run: copy Amethyst/Output/*.exe installer.exe
+      
+      - name: Run Installer
+        run: .\installer.exe /SUPPRESSMSGBOXES
+      
+      - name: Test
+        run: '"C:\Program Files\Amethyst\amethyst.exe"'
+
+      - name: Upload Windows Installer
+        uses: actions/upload-artifact@v7
+        with:
+          name: amethyst-${{ inputs.name }}-installer
+          path: 'Amethyst/Output/*.exe'

@@ -8,7 +8,7 @@ permissions:
 jobs:
   dependabot:
     runs-on: ubuntu-latest
-    if: github.event.pull_request.user.login == 'dependabot[bot]' && github.repository == 'kinderhead/Amethyst'
+    if: github.event.pull_request.user.login == 'dependabot[bot]' && github.repository == 'kinderhead/Amethyst' && !github.event.pull_request.auto_merge
     steps:
       - name: Dependabot metadata
         id: metadata
