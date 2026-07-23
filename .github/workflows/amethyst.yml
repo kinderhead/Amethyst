@@ -138,11 +138,13 @@ jobs:
           name: amethyst-${{ matrix.type.name }}
           path: ./Amethyst/dist
 
+      - name: Install Dependencies
+        run: sudo gem install fpm && \
+             sudo apt-get update && \
+             sudo apt-get install -y libarchive-tools
+
       - name: Build Linux Packages
-        run: |
-              sudo gem install fpm && \
-              sudo apt-get install -y libarchive-tools && \
-              python -u scripts/linux_package.py
+        run: python -u scripts/linux_package.py
 
       - name: Test Ubuntu
         run:
