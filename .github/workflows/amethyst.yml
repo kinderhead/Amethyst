@@ -50,17 +50,17 @@ jobs:
       os: macos-latest
   
   linux-pkgs:
-    name: "Build ${{ matrix.type.name }} packages"
-    runs-on: ${{ matrix.type.os }}
+    name: "Build Linux packages"
+    runs-on: ubuntu-latest
     needs: [build-linux]
     
-    strategy:
-      matrix:
-        type: [
-          { os: "ubuntu-latest", name: "linux", arch: ""},
-          # { os: "ubuntu-24.04-arm", artifact: "linux-arm", arch: "--platform=linux/arm64 ogarcia/"}
-        ]
-      fail-fast: false
+    # strategy:
+    #   matrix:
+    #     type: [
+    #       { os: "ubuntu-latest", name: "linux", arch: ""},
+    #       # { os: "ubuntu-24.04-arm", artifact: "linux-arm", arch: "--platform=linux/arm64 ogarcia/"}
+    #     ]
+    #   fail-fast: false
 
     steps:
       - uses: actions/checkout@v6
@@ -68,7 +68,7 @@ jobs:
       - name: Download Artifact
         uses: actions/download-artifact@v8
         with:
-          name: amethyst-${{ matrix.type.name }}
+          name: amethyst-linux
           path: ./Amethyst/dist
 
       - name: Install FPM
@@ -89,12 +89,12 @@ jobs:
               amethyst -v
     
       - name: Run Arch Container
-        run: docker run --rm -v ".:/mnt" ${{ matrix.type.arch }}archlinux /bin/sh -c "pacman-key --init && pacman -Sy && pacman -U --noconfirm ./mnt/*.pkg.tar.zst && /usr/bin/amethyst -v"
+        run: docker run --rm -v ".:/mnt" archlinux /bin/sh -c "pacman-key --init && pacman -Sy && pacman -U --noconfirm ./mnt/*.pkg.tar.zst && /usr/bin/amethyst -v"
 
       - name: Upload Linux Packages
         uses: actions/upload-artifact@v7
         with:
-          name: amethyst-${{ matrix.type.name }}-pkgs
+          name: amethyst-linux-pkgs
           path: |
             *.deb
             *.pkg.tar.zst
