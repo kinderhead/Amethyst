@@ -32,7 +32,7 @@
     "@docusaurus/tsconfig": "3.10.2",
     "@docusaurus/types": "3.10.2",
     "@shikijs/colorized-brackets": "^4.3.1",
-    "@types/node": "^26.1.1",
+    "@types/node": "^26.1.2",
     "@types/xml2js": "^0.4.14",
     "shiki": "^4.0.2",
     "typescript": "~7.0.2",
