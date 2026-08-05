@@ -9,6 +9,10 @@
             "path": "Amethyst/examples"
         },
         {
+            "name": "std",
+            "path": "Amethyst/std"
+        },
+        {
             "name": "AmethystLanguageServer",
             "path": "AmethystLanguageServer"
         },
