@@ -34,9 +34,10 @@ namespace Amethyst.AST
 
             if (Modifiers.HasFlag(FunctionModifiers.Overload)) realID = Mangle(type.ParameterTypes);
 
+            // Keep the function's internal ID unchanged if it has no parameters.
             var func = Modifiers.HasFlag(FunctionModifiers.Virtual)
-                ? new VirtualFunctionValue(realID, type, Location)
-                : new FunctionValue(realID, type, Location);
+                ? new VirtualFunctionValue(type.Parameters.Length == 0 ? ID : realID, type, Location)
+                : new FunctionValue(type.Parameters.Length == 0 ? ID : realID, type, Location);
 
             if (Modifiers.HasFlag(FunctionModifiers.Overload))
             {
