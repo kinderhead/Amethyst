@@ -27,6 +27,7 @@ namespace Geode.IR
 
         public readonly Stack<LocationRange> LocationStack = [];
         public readonly IEnumerable<NamespacedID> Tags;
+        
         private readonly Stack<Scope> activeScopes = [];
         private readonly List<Block> blocks = [];
         private readonly List<MCFunction> dependencies = [];
