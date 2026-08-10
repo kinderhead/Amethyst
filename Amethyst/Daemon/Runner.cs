@@ -56,10 +56,9 @@ namespace Amethyst.Daemon
 
                                         AppDomain.CurrentDomain.ProcessExit += (_, _) => Rcon.StopServer();
                                     }
-                                    else
-                                        ExecFunction.Start(() => Server.StartServer(timeout: true));
+                                    else ExecFunction.Start(() => Server.StartServer(timeout: true));
 
-                                    var delay = 100; // Wait for 15 seconds
+                                    const int delay = 100; // Wait for 15 seconds
                                     for (var i = 0; i < 15000 / delay; i++)
                                     {
                                         if (Rcon.IsServerRunning()) return true;
@@ -155,8 +154,7 @@ namespace Amethyst.Daemon
 
                             for (var i = 0; i < line; i++)
                             {
-                                if (mcfunction[i].StartsWith('#'))
-                                    mapLoc = LocationRange.From(mcfunction[i][1..], handler);
+                                if (mcfunction[i].StartsWith('#')) mapLoc = LocationRange.From(mcfunction[i][1..], handler);
                             }
 
                             if (mapLoc is null)
@@ -186,6 +184,11 @@ namespace Amethyst.Daemon
                             throw;
                         }
                     }
+                }
+                else
+                {
+                    Thread.Sleep(100);
+                    log.Position = stream.BaseStream.Position;
                 }
             }
 
