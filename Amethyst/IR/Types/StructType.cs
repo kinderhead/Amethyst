@@ -5,102 +5,91 @@ using Geode.Values;
 
 namespace Amethyst.IR.Types
 {
-	public class StructType(
-		NamespacedID id,
-		TypeSpecifier? baseClass,
-		Dictionary<string, TypeSpecifier> props,
-		Dictionary<string, FunctionValue> methods,
-		bool isClass) : TypeSpecifier
-	{
-		public static readonly string TypeIDProperty = "@type";
-		public readonly bool IsClass = isClass;
+    public class StructType(
+        NamespacedID id,
+        TypeSpecifier? baseClass,
+        Dictionary<string, TypeSpecifier> props,
+        Dictionary<string, FunctionValue> methods,
+        bool isClass) : TypeSpecifier
+    {
+        public const string TYPE_ID_PROPERTY = "@type";
+        public readonly bool IsClass = isClass;
 
-		public readonly Dictionary<string, FunctionValue> Methods = methods;
+        public readonly Dictionary<string, FunctionValue> Methods = methods;
 
-		public override IReadOnlyDictionary<string, TypeSpecifier> Properties => new Dictionary<string, TypeSpecifier>([
-			.. props, .. BaseClass == this ? new Dictionary<string, TypeSpecifier>() : BaseClass.Properties
-		]);
+        public override IReadOnlyDictionary<string, TypeSpecifier> Properties => new Dictionary<string, TypeSpecifier>([
+            .. props, .. BaseClass == this ? new Dictionary<string, TypeSpecifier>() : BaseClass.Properties
+        ]);
 
-		public override NBTType EffectiveType => BaseClass.EffectiveType;
+        public override NBTType EffectiveType => BaseClass.EffectiveType;
 
-		public override LiteralValue DefaultValue =>
-			new(
-				new NBTCompound(Properties.Select(i =>
-					new KeyValuePair<string, NBTValue>(i.Key,
-						DefaultPropertyValue(i.Key)?.Value ?? i.Value.DefaultValue.Value))), this);
+        public override LiteralValue DefaultValue =>
+            new(new NBTCompound(Properties.Select(i => new KeyValuePair<string, NBTValue>(i.Key, DefaultPropertyValue(i.Key)?.Value ?? i.Value.DefaultValue.Value))), this);
 
-		public override IEnumerable<TypeSpecifier> Subtypes => Properties.Select(i => i.Value);
-		public override TypeSpecifier BaseClass => baseClass ?? this;
+        public override IEnumerable<TypeSpecifier> Subtypes => Properties.Select(i => i.Value);
+        public override TypeSpecifier BaseClass => baseClass ?? this;
 
-		public override NamespacedID ID => id;
+        public override NamespacedID ID => id;
 
-		public (StructType Source, FunctionValue Function)? HierarchyMethod(string name)
-		{
-			if (BaseClass is StructType s && BaseClass != this)
-			{
-				if (s.Methods.TryGetValue(name, out var type))
-				{
-					return (this, type);
-				}
+        public (StructType Source, FunctionValue Function)? HierarchyMethod(string name)
+        {
+            if (BaseClass is StructType s && BaseClass != this)
+            {
+                if (s.Methods.TryGetValue(name, out var type)) return (this, type);
 
-				return s.HierarchyMethod(name);
-			}
+                return s.HierarchyMethod(name);
+            }
 
-			return null;
-		}
+            return null;
+        }
 
-		public override LiteralValue? DefaultPropertyValue(string name)
-		{
-			if (BaseClass is StructType && BaseClass.DefaultPropertyValue(name) is { } b)
-			{
-				return b;
-			}
+        public override LiteralValue? DefaultPropertyValue(string name)
+        {
+            if (BaseClass is StructType && BaseClass.DefaultPropertyValue(name) is { } b) return b;
 
-			if (base.DefaultPropertyValue(name) is { } val)
-			{
-				return val;
-			}
+            if (base.DefaultPropertyValue(name) is { } val) return val;
 
-			return null;
-		}
+            return null;
+        }
 #pragma warning disable IDE0028 // Simplify collection initialization
 
-		public NBTCompound GetTypeInfo() =>
-			new([
-				new("methods",
-					new NBTCompound([
-						.. Methods.Select(i => new KeyValuePair<string, NBTValue>(i.Key, i.Value.ID.ToString()))
-					])),
-				new("properties",
-					new NBTCompound([
-						.. Properties.Select(i => new KeyValuePair<string, NBTValue>(i.Key, i.Value.ToString()))
-					])),
-				new("base", BaseClass.ID.ToString())
-			]);
+        public NBTCompound GetTypeInfo() =>
+            new([
+                new("methods",
+                    new NBTCompound([
+                        .. Methods.Select(i => new KeyValuePair<string, NBTValue>(i.Key, i.Value.ID.ToString()))
+                    ])),
+                new("properties",
+                    new NBTCompound([
+                        .. Properties.Select(i => new KeyValuePair<string, NBTValue>(i.Key, i.Value.ToString()))
+                    ])),
+                new("base", BaseClass.ID.ToString())
+            ]);
 
-		public LiteralValue DefaultValueWithMetadata => new(
-			new NBTCompound([
-				.. Properties.Select(i =>
-					new KeyValuePair<string, NBTValue>(i.Key,
-						DefaultPropertyValue(i.Key)?.Value ?? i.Value.DefaultValue.Value)),
-				new(TypeIDProperty, ID.ToString())
-			]), this);
+        public LiteralValue DefaultValueWithMetadata => new(
+            new NBTCompound([
+                .. Properties.Select(i =>
+                    new KeyValuePair<string, NBTValue>(i.Key,
+                        DefaultPropertyValue(i.Key)?.Value ?? i.Value.DefaultValue.Value)),
+                new(TYPE_ID_PROPERTY, ID.ToString())
+            ]), this);
 
-		// TODO: Recursive generics
-		public override bool ConstraintSatisfiedBy(TypeSpecifier other) => other == this;
+        // TODO: Recursive generics
+        public override bool ConstraintSatisfiedBy(TypeSpecifier other) => other == this;
 
-		// TODO: This
-		protected override void ApplyGeneric(TypeSpecifier other, Dictionary<string, TypeSpecifier> typeMap) { }
+        // TODO: This
+        protected override void ApplyGeneric(TypeSpecifier other, Dictionary<string, TypeSpecifier> typeMap)
+        {
+        }
 
-		protected override bool EqualsImpl(TypeSpecifier obj) =>
-			obj is StructType other &&
-			other.ID == ID; // && Properties.Count == other.Properties.Count && Properties.All(kv => other.Properties.TryGetValue(kv.Key, out var prop) && prop.Equals(kv.Value));
+        protected override bool EqualsImpl(TypeSpecifier obj) =>
+            obj is StructType other &&
+            other.ID == ID; // && Properties.Count == other.Properties.Count && Properties.All(kv => other.Properties.TryGetValue(kv.Key, out var prop) && prop.Equals(kv.Value));
 
-		public override string ToString() => ID.ToString();
+        public override string ToString() => ID.ToString();
 
-		public override object Clone() => new StructType(ID, BaseClass,
-			new(props.Select(i => new KeyValuePair<string, TypeSpecifier>(i.Key, i.Value))), Methods, IsClass);
+        public override object Clone() => new StructType(ID, BaseClass, new(props.Select(i => new KeyValuePair<string, TypeSpecifier>(i.Key, i.Value))), Methods, IsClass);
 
 #pragma warning restore IDE0028 // Simplify collection initialization
-	}
+    }
 }

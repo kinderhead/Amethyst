@@ -3,7 +3,6 @@ name: Amethyst Bug Report
 about: Create a report to help us improve
 title: ''
 labels: amethyst, bug
-assignees: kinderhead
 
 ---
 

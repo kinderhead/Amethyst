@@ -27,7 +27,7 @@ namespace Amethyst.AST
         Dictionary<string, AbstractTypeSpecifier> props,
         List<MethodNode> methods) : Node(loc), IRootChild
     {
-        public static readonly ReadOnlySet<string> ReservedProperties = [StructType.TypeIDProperty];
+        public static readonly ReadOnlySet<string> ReservedProperties = [StructType.TYPE_ID_PROPERTY];
         public readonly AbstractTypeSpecifier? BaseClass = baseClass;
         public readonly NamespacedID ID = id;
         public readonly List<MethodNode> Methods = methods;

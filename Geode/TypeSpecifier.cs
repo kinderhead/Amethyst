@@ -1,13 +1,13 @@
-﻿using Datapack.Net.Data;
+﻿using System.Collections.Immutable;
+using System.Text;
+using System.Text.RegularExpressions;
+using Datapack.Net.Data;
 using Datapack.Net.Utils;
 using Geode.Chains;
 using Geode.IR;
 using Geode.IR.Instructions;
 using Geode.Types;
 using Geode.Values;
-using System.Collections.Immutable;
-using System.Text;
-using System.Text.RegularExpressions;
 
 namespace Geode
 {
@@ -24,8 +24,7 @@ namespace Geode
 
         public bool ShouldStoreInScore => EffectiveType is NBTType.Int or NBTType.Boolean;
 
-        public NBTNumberType? EffectiveNumberType =>
-            Enum.IsDefined((NBTNumberType)EffectiveType) ? (NBTNumberType)EffectiveType : null;
+        public NBTNumberType? EffectiveNumberType => Enum.IsDefined((NBTNumberType)EffectiveType) ? (NBTNumberType)EffectiveType : null;
 
         public virtual TypeSpecifier? DefaultPropertyType => null;
         public virtual IReadOnlyDictionary<string, TypeSpecifier> Properties => new Dictionary<string, TypeSpecifier>();
@@ -35,10 +34,7 @@ namespace Geode
 
         public TypeSpecifier? HasProperty(string name, bool allowDefault = false)
         {
-            if (Properties.TryGetValue(name, out var type))
-            {
-                return type;
-            }
+            if (Properties.TryGetValue(name, out var type)) return type;
 
             return allowDefault ? DefaultPropertyType : null;
         }
@@ -47,54 +43,34 @@ namespace Geode
 
         public override bool Equals(object? obj)
         {
-            if (obj is not TypeSpecifier other)
-            {
-                return false;
-            }
+            if (obj is not TypeSpecifier other) return false;
 
             var a = GetEquatableType();
             var b = other.GetEquatableType();
-            if (a.GetType() != b.GetType())
-            {
-                return false; // Handle inheritance
-            }
+            if (a.GetType() != b.GetType()) return false; // Handle inheritance
 
             return a.EqualsImpl(b);
         }
 
         public virtual bool Implements(TypeSpecifier other)
         {
-            if (this == other)
-            {
-                return true;
-            }
+            if (this == other) return true;
 
-            if (other.GetType() == GetType() && other.EffectiveType == EffectiveType &&
-                Subtypes.Count() == other.Subtypes.Count() &&
+            if (other.GetType() == GetType() && other.EffectiveType == EffectiveType && Subtypes.Count() == other.Subtypes.Count() &&
                 Subtypes.Zip(other.Subtypes).All(i => i.First.Implements(i.Second)))
-            {
                 return true;
-            }
 
-            if (this == BaseClass)
-            {
-                return false;
-            }
+            if (this == BaseClass) return false;
 
             return BaseClass.Implements(other);
         }
 
-        public virtual bool ConstraintSatisfiedBy(TypeSpecifier other) => other.GetType() == GetType()
-                                                                          && Subtypes.Count() == other.Subtypes.Count()
-                                                                          && Subtypes.Zip(other.Subtypes).All(i =>
-                                                                              i.First.ConstraintSatisfiedBy(i.Second));
+        public virtual bool ConstraintSatisfiedBy(TypeSpecifier other) => other.GetType() == GetType() && Subtypes.Count() == other.Subtypes.Count() &&
+                                                                          Subtypes.Zip(other.Subtypes).All(i => i.First.ConstraintSatisfiedBy(i.Second));
 
         public TypeSpecifier ApplyGeneric(TypeSpecifier other)
         {
-            if (!ConstraintSatisfiedBy(other))
-            {
-                return this;
-            }
+            if (!ConstraintSatisfiedBy(other)) return this;
 
             var type = (TypeSpecifier)Clone();
             var typeMap = new Dictionary<string, TypeSpecifier>();
@@ -114,10 +90,21 @@ namespace Geode
 
         public virtual void AssignmentOverload(ValueRef dest, ValueRef val, FunctionContext ctx) => ctx.Add(new StoreInsn(dest, ctx.ImplicitCast(val, this)));
 
-        public virtual ValueRef? ExplicitCastFromOverload(ValueRef val, TypeSpecifier to, FunctionContext ctx) => null;
-        public virtual ValueRef? ExplicitCastToOverload(ValueRef val, FunctionContext ctx) => null;
-        public virtual ValueRef? CastFromOverload(ValueRef val, TypeSpecifier to, FunctionContext ctx) => null;
-        public virtual ValueRef? CastToOverload(ValueRef val, FunctionContext ctx) => null;
+        public virtual void ExplicitCastFromOverload(ValueRef val, TypeSpecifier to, FunctionContextRecorder recorder)
+        {
+        }
+
+        public virtual void ExplicitCastToOverload(ValueRef val, FunctionContextRecorder recorder)
+        {
+        }
+
+        public virtual void CastFromOverload(ValueRef val, TypeSpecifier to, FunctionContextRecorder recorder)
+        {
+        }
+
+        public virtual void CastToOverload(ValueRef val, FunctionContextRecorder recorder)
+        {
+        }
 
         public virtual void ExecuteChainOverload(ValueRef val, ExecuteChain chain, FunctionContext ctx, bool invert = false) => chain.Add(IfValueChain.With(val, ctx, invert));
 
@@ -137,11 +124,7 @@ namespace Geode
         public int Length => Types.Length;
         public TypeSpecifier this[int i] => Types[i];
 
-        public NamespacedID Mangle(NamespacedID id)
-        {
-            //if (Types.Length == 0) return id;
-            return $"{id.GetContainingFolder()}:/_{id.GetFile()}-{ResourceLocationRegex().Replace(ToString(), "_")}";
-        }
+        public NamespacedID Mangle(NamespacedID id) => $"{id.GetContainingFolder()}:/_{id.GetFile()}-{ResourceLocationRegex().Replace(ToString(), "_")}";
 
         public override bool Equals(object? obj) => obj is TypeArray other && Types.SequenceEqual(other.Types);
 
@@ -166,10 +149,7 @@ namespace Geode
                 sb.Append($"{i}, ");
             }
 
-            if (Length != 0)
-            {
-                sb.Length -= 2;
-            }
+            if (Length != 0) sb.Length -= 2;
 
             return sb.ToString();
         }

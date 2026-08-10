@@ -159,6 +159,13 @@ namespace Geode.IR
             blocks.Add(block);
         }
 
+        public static bool CanImplicitCast(ValueRef val, TypeSpecifier type)
+        {
+            var recorder = new FunctionContextRecorder();
+            TryImplicitCast(val, type, recorder);
+            return recorder.Recorded;
+        }
+
         public ValueRef ImplicitCast(ValueRef val, TypeSpecifier type)
         {
             if (TryImplicitCast(val, type) is { } ret) return ret;
@@ -168,22 +175,67 @@ namespace Geode.IR
 
         public ValueRef? TryImplicitCast(ValueRef val, TypeSpecifier type)
         {
-            if (val.Type == type || type is VarType) return val;
-            if (val.Type.CastFromOverload(val, type, this) is { } cast) return cast.SetType(type);
-            if (type.CastToOverload(val, this) is { } cast2) return cast2.SetType(type);
-
-            return val.Type.Implements(type) ? val.SetType(type) : null;
+            var recorder = new FunctionContextRecorder();
+            TryImplicitCast(val, type, recorder);
+            return recorder.Execute(this)?.ToValueRef().SetType(type);
         }
 
+        public static void TryImplicitCast(ValueRef val, TypeSpecifier type, FunctionContextRecorder recorder)
+        {
+            if (val.Type == type || type is VarType)
+            {
+                recorder.Record(val);
+                return;
+            }
+
+            val.Type.CastFromOverload(val, type, recorder);
+            if (recorder.Recorded) return;
+
+            type.CastToOverload(val, recorder);
+            if (recorder.Recorded) return;
+
+            if (val.Type.Implements(type)) recorder.Record(val);
+        }
+
+        public static bool CanExplicitCast(ValueRef val, TypeSpecifier type)
+        {
+            var recorder = new FunctionContextRecorder();
+            TryExplicitCast(val, type, recorder);
+            return recorder.Recorded;
+        }
+        
         public ValueRef ExplicitCast(ValueRef val, TypeSpecifier type)
         {
-            if (val.Type.ExplicitCastFromOverload(val, type, this) is { } cast) return cast.SetType(type);
-            if (type.ExplicitCastToOverload(val, this) is { } cast2) return cast2.SetType(type);
-            if (type.Implements(val.Type)) return val.SetType(type);
-            if (type.EffectiveType == NBTType.Int) return Add(new LoadInsn(val, type)).SetType(type);
-            if (TryImplicitCast(val, type) is { } ret) return ret;
+            if (TryExplicitCast(val, type) is { } ret) return ret;
 
             throw new InvalidTypeError(val.Type.ToString(), type.ToString());
+        }
+
+        public ValueRef? TryExplicitCast(ValueRef val, TypeSpecifier type)
+        {
+            var recorder = new FunctionContextRecorder();
+            TryExplicitCast(val, type, recorder);
+            return recorder.Execute(this)?.ToValueRef().SetType(type);
+        }
+
+        public static void TryExplicitCast(ValueRef val, TypeSpecifier type, FunctionContextRecorder recorder)
+        {
+            val.Type.ExplicitCastFromOverload(val, type, recorder);
+            if (recorder.Recorded) return;
+
+            type.ExplicitCastToOverload(val, recorder);
+            if (recorder.Recorded) return;
+
+            if (type.Implements(val.Type))
+            {
+                recorder.Record(val);
+                return;
+            }
+
+            TryImplicitCast(val, type, recorder);
+            if (recorder.Recorded) return;
+
+            if (type.EffectiveType == NBTType.Int) recorder.Record(new LoadInsn(val, type));
         }
 
         public ValueRef Call(NamespacedID id, params ValueRef[] args) =>

@@ -1,5 +1,5 @@
 {
-	"folders": [
+    "folders": [
         {
             "name": ".github",
             "path": ".github"
@@ -11,6 +11,10 @@
         {
             "name": "std",
             "path": "Amethyst/std"
+        },
+        {
+            "name": "tests",
+            "path": "Amethyst/tests"
         },
         {
             "name": "AmethystLanguageServer",

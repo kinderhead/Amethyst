@@ -1,4 +1,5 @@
 using Geode.IR;
+using Geode.Types;
 using Geode.Values;
 
 namespace Geode
@@ -71,6 +72,9 @@ namespace Geode
 
         public ValueRef SetType(TypeSpecifier type)
         {
+            // Kind of evil, but I suppose it's fine
+            if (type is VarType) return this;
+            
             this.type = type;
             //Value?.Type = type;
             return this;

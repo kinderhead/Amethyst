@@ -7,40 +7,27 @@ using Geode.Values;
 
 namespace Amethyst.IR.Types
 {
-	public class WeakReferenceType(TypeSpecifier inner) : ReferenceType(inner)
-	{
-		public override string Postfix => "^";
-		public override NamespacedID ID => "amethyst:weak_ref";
+    public class WeakReferenceType(TypeSpecifier inner) : ReferenceType(inner)
+    {
+        public override string Postfix => "^";
+        public override NamespacedID ID => "amethyst:weak_ref";
 
-		public override ValueRef? CastToOverload(ValueRef val, FunctionContext ctx)
-		{
-			if (val.Type.Implements(Inner))
-			{
-				if (val.IsLiteral)
-				{
-					throw new ReferenceError(val.Name);
-				}
+        public override void CastToOverload(ValueRef val, FunctionContextRecorder recorder)
+        {
+            if (val.Type.Implements(Inner))
+            {
+                if (val.IsLiteral) throw new ReferenceError(val.Name);
+                if (val.Value is Variable v) v.HasReference = true;
 
-				if (val.Value is Variable v)
-				{
-					v.HasReference = true;
-				}
+                recorder.Record(new WeakReferenceInsn(val));
+            }
+            else if (val.Type is ReferenceType r && r.Inner.Implements(Inner)) recorder.Record(val);
+            else base.CastToOverload(val, recorder);
+        }
 
-				return ctx.Add(new WeakReferenceInsn(val));
-			}
+        protected override bool EqualsImpl(TypeSpecifier obj) => obj is WeakReferenceType p && p.Inner == Inner;
+        public override object Clone() => new WeakReferenceType((TypeSpecifier)Inner.Clone());
 
-			if (val.Type is ReferenceType r && r.Inner.Implements(Inner))
-			{
-				return val;
-			}
-
-			return base.CastToOverload(val, ctx);
-		}
-
-		protected override bool EqualsImpl(TypeSpecifier obj) => obj is WeakReferenceType p && p.Inner == Inner;
-		public override object Clone() => new WeakReferenceType((TypeSpecifier)Inner.Clone());
-
-		public static new LiteralValue From(DataTargetValue val) =>
-			new(val.Target.GetTarget(), new WeakReferenceType(val.Type));
-	}
+        public new static LiteralValue From(DataTargetValue val) => new(val.Target.GetTarget(), new WeakReferenceType(val.Type));
+    }
 }

@@ -7,28 +7,22 @@ using Geode.Values;
 
 namespace Geode.Types
 {
-	public class TargetSelectorType : TypeSpecifier
-	{
-		public override LiteralValue DefaultValue => new("@r", this);
-		public override NamespacedID ID => "minecraft:target";
-		public override NBTType EffectiveType => NBTType.String;
-		public override TypeSpecifier BaseClass => PrimitiveType.String;
+    public class TargetSelectorType : TypeSpecifier
+    {
+        public override LiteralValue DefaultValue => new("@r", this);
+        public override NamespacedID ID => "minecraft:target";
+        public override NBTType EffectiveType => NBTType.String;
+        public override TypeSpecifier BaseClass => PrimitiveType.String;
 
-		public override object Clone() => new TargetSelectorType();
-		public override string ToString() => ID.ToString();
-		protected override bool EqualsImpl(TypeSpecifier obj) => obj is TargetSelectorType;
+        public override object Clone() => new TargetSelectorType();
+        public override string ToString() => ID.ToString();
+        protected override bool EqualsImpl(TypeSpecifier obj) => obj is TargetSelectorType;
 
-		public override ValueRef? CastFromOverload(ValueRef val, TypeSpecifier to, FunctionContext ctx)
-		{
-			if (to == PrimitiveType.Bool)
-			{
-				return ctx.Add(new TargetExistsInsn(val));
-			}
+        public override void CastFromOverload(ValueRef val, TypeSpecifier to, FunctionContextRecorder recorder)
+        {
+            if (to == PrimitiveType.Bool) recorder.Record(new TargetExistsInsn(val));
+        }
 
-			return null;
-		}
-
-		public override void ExecuteChainOverload(ValueRef val, ExecuteChain chain, FunctionContext ctx,
-			bool invert = false) => chain.Add(new IfEntityChain(val, invert));
-	}
+        public override void ExecuteChainOverload(ValueRef val, ExecuteChain chain, FunctionContext ctx, bool invert = false) => chain.Add(new IfEntityChain(val, invert));
+    }
 }
