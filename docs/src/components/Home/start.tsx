@@ -9,6 +9,7 @@ export default function Start() {
             <div className={styles.buttonGroup}>
                 <Link className="button button--success button--lg" to="/docs/tutorial/installing/">Tutorial</Link>
                 <Link className="button button--primary button--lg" to="/docs/category/language-features/">Handbook</Link>
+                <Link className="button button--warning button--lg" to="https://discord.gg/TTmZSHgSSq">Discord</Link>
             </div>
         </div>
     );

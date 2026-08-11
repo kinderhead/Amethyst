@@ -60,6 +60,8 @@ void main() {
 }
 ```
 
+Join the [Discord server](https://discord.gg/TTmZSHgSSq) for more.
+
 ## Planned Features
 
 See the [1.0 release project](https://github.com/users/kinderhead/projects/3) for more details.
