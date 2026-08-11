@@ -13,26 +13,30 @@ namespace Geode
 {
     public class GeodeBuilder
     {
-        public readonly IOptions Options;
+        public const string INTERNAL_PATH = "zz_internal";
+        public static readonly string[] RuntimeStorageUsed = ["stack", "tmp"];
         public readonly ICompiler Compiler;
-        public readonly IFileHandler FileHandler;
         public readonly DP Datapack;
+        public readonly IFileHandler FileHandler;
+
+        public readonly List<FunctionContext> Functions = [];
         public readonly Macroizer Macroizer;
 
         public readonly string Namespace;
-        public readonly NamespacedID RuntimeID;
+        public readonly IOptions Options;
         public readonly IEntityTarget RuntimeEntity;
+        public readonly NamespacedID RuntimeID;
 
         public readonly Dictionary<NamespacedID, GlobalSymbol> Symbols = [];
         public readonly Dictionary<NamespacedID, GlobalTypeSymbol> Types = [];
 
-        public readonly List<FunctionContext> Functions = [];
-
         public readonly List<Command> UserInitCommands = [];
-
-        private readonly SortedSet<Score> registeredScores = [];
         private readonly SortedDictionary<int, ScoreValue> constants = [];
         private readonly List<MCFunction> functionsToRemove = [];
+
+        private readonly SortedSet<Score> registeredScores = [];
+
+        private bool failed;
 
         public GeodeBuilder(IOptions opts, ICompiler compiler, IFileHandler handler, string baseNamespace)
         {
@@ -47,9 +51,9 @@ namespace Geode
             Macroizer = new(this);
         }
 
-        public void AddFunctions(params IEnumerable<FunctionContext> funcs) => Functions.AddRange(funcs);
+        public static string UniqueString => Guid.NewGuid().ToString();
 
-        private bool failed;
+        public void AddFunctions(params IEnumerable<FunctionContext> funcs) => Functions.AddRange(funcs);
 
         public bool Compile()
         {
@@ -210,9 +214,9 @@ namespace Geode
             return val;
         }
 
-        public (FunctionContext ctx, FunctionValue func) AnonymousFunction(FunctionType type)
+        public (FunctionContext ctx, RawFunctionValue func) AnonymousFunction(FunctionType type)
         {
-            var func = new FunctionValue(new("amethyst", INTERNAL_PATH + "/" + UniqueString), type, LocationRange.None);
+            var func = new RawFunctionValue(new("amethyst", INTERNAL_PATH + "/" + UniqueString), type, LocationRange.None);
             var ctx = new FunctionContext(Compiler, func, [], LocationRange.None);
             AddFunctions(ctx);
             return (ctx, func);
@@ -278,11 +282,6 @@ namespace Geode
 
             return func;
         }
-
-        public const string INTERNAL_PATH = "zz_internal";
-        
-		public static string UniqueString => Guid.NewGuid().ToString();
-        public static readonly string[] RuntimeStorageUsed = ["stack", "tmp"];
 
         public static T? NamespaceWalk<T>(string baseNamespace, string name, Dictionary<NamespacedID, T> syms)
         {

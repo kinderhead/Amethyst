@@ -124,7 +124,7 @@ namespace Geode
         public int Length => Types.Length;
         public TypeSpecifier this[int i] => Types[i];
 
-        public NamespacedID Mangle(NamespacedID id) => $"{id.GetContainingFolder()}:/_{id.GetFile()}-{ResourceLocationRegex().Replace(ToString(), "_")}";
+        public NamespacedID Mangle(NamespacedID id) => id.WithFile($"_{id.GetFile()}-{ResourceLocationRegex().Replace(ToString(), "_")}").ToLower();
 
         public override bool Equals(object? obj) => obj is TypeArray other && Types.SequenceEqual(other.Types);
 

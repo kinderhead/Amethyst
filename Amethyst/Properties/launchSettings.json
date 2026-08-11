@@ -2,19 +2,23 @@
   "profiles": {
     "Amethyst": {
       "commandName": "Project",
-      "commandLineArgs": "compile examples/test.ame -c -o output.zip --run"
+      "commandLineArgs": "compile examples/test.ame --dump-ir -c -o output.zip --run",
+      "workingDirectory": "$(ProjectDir)"
     },
     "Shard": {
       "commandName": "Project",
-      "commandLineArgs": "build -f examples/shard/shard.json --run"
+      "commandLineArgs": "build -f examples/shard/shard.json --run",
+      "workingDirectory": "$(ProjectDir)"
     },
     "Test Suite": {
       "commandName": "Project",
-      "commandLineArgs": "compile tests/*.ame -o output.zip --run"
+      "commandLineArgs": "compile tests/*.ame -o output.zip --run",
+      "workingDirectory": "$(ProjectDir)"
     },
     "Amethyst Random": {
       "commandName": "Project",
-      "commandLineArgs": "setup --eula"
+      "commandLineArgs": "setup --eula",
+      "workingDirectory": "$(ProjectDir)"
     }
   }
 }

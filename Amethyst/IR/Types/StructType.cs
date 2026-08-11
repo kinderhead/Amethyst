@@ -9,13 +9,13 @@ namespace Amethyst.IR.Types
         NamespacedID id,
         TypeSpecifier? baseClass,
         Dictionary<string, TypeSpecifier> props,
-        Dictionary<string, FunctionValue> methods,
+        Dictionary<string, RawFunctionValue> methods,
         bool isClass) : TypeSpecifier
     {
         public const string TYPE_ID_PROPERTY = "@type";
         public readonly bool IsClass = isClass;
 
-        public readonly Dictionary<string, FunctionValue> Methods = methods;
+        public readonly Dictionary<string, RawFunctionValue> Methods = methods;
 
         public override IReadOnlyDictionary<string, TypeSpecifier> Properties => new Dictionary<string, TypeSpecifier>([
             .. props, .. BaseClass == this ? new Dictionary<string, TypeSpecifier>() : BaseClass.Properties
@@ -31,7 +31,7 @@ namespace Amethyst.IR.Types
 
         public override NamespacedID ID => id;
 
-        public (StructType Source, FunctionValue Function)? HierarchyMethod(string name)
+        public (StructType Source, RawFunctionValue Function)? HierarchyMethod(string name)
         {
             if (BaseClass is StructType s && BaseClass != this)
             {

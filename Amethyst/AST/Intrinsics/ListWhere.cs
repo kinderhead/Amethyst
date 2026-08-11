@@ -7,25 +7,22 @@ using Geode.Types;
 
 namespace Amethyst.AST.Intrinsics
 {
-	public class ListWhere(FunctionType? type = null) : Intrinsic("amethyst:list/where", type ?? new(
-		FunctionModifiers.None, new ListType(new GenericType("T")), [
-			new(ParameterModifiers.None, new ReferenceType(new ListType(new GenericType("T"))), "this"),
-			new(ParameterModifiers.None, PrimitiveType.Compound, "predicate")
-		]))
-	{
-		public override IFunctionLike CloneWithType(FunctionType type) => new ListWhere(type);
+    public class ListWhere(FunctionType? type = null) : Intrinsic("amethyst:list/where", type ?? new(
+        FunctionModifiers.None, new ListType(new GenericType("T")), [
+            new(ParameterModifiers.None, new ReferenceType(new ListType(new GenericType("T"))), "this"),
+            new(ParameterModifiers.None, PrimitiveType.Compound, "predicate")
+        ]))
+    {
+        public override IFunctionLike CloneWithType(FunctionType type) => new ListWhere(type);
 
-		public override ValueRef Execute(FunctionContext ctx, params ValueRef[] args)
-		{
-			if (args.Length != 2)
-			{
-				throw new MismatchedArgumentCountError(2, args.Length);
-			}
+        public override ValueRef CallBehavior(FunctionContext ctx, params ValueRef[] args)
+        {
+            if (args.Length != 2) throw new MismatchedArgumentCountError(2, args.Length);
 
-			var list = args[0];
-			var predicate = args[1];
+            var list = args[0];
+            var predicate = args[1];
 
-			return ctx.Add(new ListWhereInsn(list, ctx.ImplicitCast(predicate, PrimitiveType.Compound)));
-		}
-	}
+            return ctx.Add(new ListWhereInsn(list, ctx.ImplicitCast(predicate, PrimitiveType.Compound)));
+        }
+    }
 }

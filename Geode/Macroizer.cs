@@ -102,7 +102,7 @@ namespace Geode
 
                 ctx.Func.AddDependency(mcFunc);
 
-                FunctionValue.Call(ctx, mcFunc.ID,
+                RawFunctionValue.Call(ctx, mcFunc.ID,
                     new(FunctionModifiers.None, new VoidType(),
                         toMacro.Select(i => new Parameter(ParameterModifiers.Macro, i.Value.Type, i.Key))),
                     [.. toMacro.Values.Select(i => new ValueRef(i))]);

@@ -10,11 +10,8 @@ using Geode.Values;
 namespace Amethyst.IR.Types
 {
 #pragma warning disable CS9107
-    public class EntityType(
-        NamespacedID id,
-        TypeSpecifier? baseClass,
-        Dictionary<string, TypeSpecifier> props,
-        Dictionary<string, FunctionValue> methods) : StructType(id, baseClass, props, methods, false)
+    public class EntityType(NamespacedID id, TypeSpecifier? baseClass, Dictionary<string, TypeSpecifier> props, Dictionary<string, RawFunctionValue> methods)
+        : StructType(id, baseClass, props, methods, false)
 #pragma warning restore CS9107
     {
         public static readonly EntityType Dummy = new("amethyst:dummy", null, [], []);

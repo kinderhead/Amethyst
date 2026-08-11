@@ -5,11 +5,11 @@ struct vec {
     int y;
     int z;
 
-    overload int sum() {
+    int sum() {
         return this.x + this.y + this.z;
     }
 
-    overload int sum(int mod) {
+    int sum(int mod) {
         return this.x + this.y + this.z + mod;
     }
 }
@@ -33,11 +33,11 @@ struct vec2 {
         return this.x;
     }
 
-    overload int get-x2() {
+    int get-x2() {
         return this.x;
     }
 
-    overload int get-x2(int y) {
+    int get-x2(int y) {
         return this.x + y;
     }
 }
@@ -57,11 +57,11 @@ class clsvec {
     int y;
     int z;
 
-    overload int sum() {
+    int sum() {
         return this.x + this.y + this.z;
     }
 
-    overload int sum(int mod) {
+    int sum(int mod) {
         return this.x + this.y + this.z + mod;
     }
 }
@@ -85,11 +85,11 @@ class clsvec2 {
         return this.x;
     }
 
-    overload virtual int get-x2() {
+    virtual int get-x2() {
         return this.x;
     }
 
-    overload virtual int get-x2(int y) {
+    virtual int get-x2(int y) {
         return this.x + y;
     }
 }
@@ -101,11 +101,11 @@ class clssubvec implements clsvec2 {
         return this.x * 2;
     }
 
-    overload virtual int get-x2() {
+    virtual int get-x2() {
         return this.x + 1;
     }
 
-    overload virtual int get-x2(int y) {
+    virtual int get-x2(int y) {
         return this.x + y + 1;
     }
 }

@@ -1,19 +1,6 @@
 namespace test;
 
 #test
-void test_dyn_call() {
-    start("dyn call");
-
-    var f1 = dyn_func1;
-    var f2 = dyn_func2;
-
-    assert_eq(f1(6), 8);
-    assert_eq(f2(6), 4);
-
-    complete();
-}
-
-#test
 void test_inline_simple() {
     start("inline simple");
 
@@ -39,18 +26,12 @@ void test_macro_propagation() {
 void test_overload() {
     start("overload");
     
+    assert_eq(overload_test(), 234);
     assert_eq(overload_test(5), 5);
+    assert_eq(overload_test(7s), 14);
     assert_eq(overload_test("hi"), 7);
 
     complete();
-}
-
-int dyn_func1(int x) {
-    return x + 2;
-}
-
-int dyn_func2(macro int x) {
-    return x - 2;
 }
 
 inline void simple_inline() {
@@ -68,10 +49,18 @@ int propagate(macro int x) {
     return 0; // I'll have to make it smarter at some point
 }
 
-overload int overload_test(int x) {
+int overload_test() {
+    return 234;
+}
+
+int overload_test(int x) {
     return x;
 }
 
-overload int overload_test(string str) {
+int overload_test(short x) {
+    return x * 2;
+}
+
+int overload_test(string str) {
     return 7;
 }

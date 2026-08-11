@@ -27,29 +27,27 @@ namespace Amethyst.AST
         private FunctionType? funcType;
         public NamespacedID ID { get; private set; } = id;
 
-        public virtual void Process(Compiler ctx, RootNode root)
-        {
-            var realID = new NamespacedID(ID.ToString().ToLower());
-            var type = GetFunctionType(ctx, true);
+        public virtual void Process(Compiler ctx, RootNode root) => ProcessAndGetFunc(ctx, root);
 
-            if (Modifiers.HasFlag(FunctionModifiers.Overload)) realID = Mangle(type.ParameterTypes);
+        public RawFunctionValue ProcessAndGetFunc(Compiler ctx, RootNode root)
+        {
+            var type = GetFunctionType(ctx, true);
+            var realID = Mangle(type.ParameterTypes);
 
             // Keep the function's internal ID unchanged if it has no parameters.
             var func = Modifiers.HasFlag(FunctionModifiers.Virtual)
-                ? new VirtualFunctionValue(type.Parameters.Length == 0 ? ID : realID, type, Location)
-                : new FunctionValue(type.Parameters.Length == 0 ? ID : realID, type, Location);
+                ? new VirtualMethodValue(type.Parameters.Length == 0 ? ID : realID, type, Location)
+                : new RawFunctionValue(type.Parameters.Length == 0 ? ID : realID, type, Location);
 
-            if (Modifiers.HasFlag(FunctionModifiers.Overload))
-            {
-                if (ctx.IR.GetGlobal(ID) is OverloadedFunctionValue overload) overload.Add(func);
-                else ctx.IR.AddSymbol(new(ID, Location, new OverloadedFunctionValue(ID).Add(func)));
+            if (ctx.IR.GetGlobal(ID) is OverloadedFunctionValue overload) overload.Add(func);
+            else ctx.IR.AddSymbol(new(ID, Location, new OverloadedFunctionValue(ID).Add(func)));
 
-                ctx.IR.AddSymbol(new(realID, Location, func));
-                ID = realID;
-            }
-            else ctx.IR.AddSymbol(new(ID, Location, func));
+            ctx.IR.AddSymbol(new(realID, Location, func));
+            ID = realID;
 
             root.Functions.Add(this);
+
+            return func;
         }
 
         public FunctionType GetFunctionType(Compiler ctx, bool recompute = false)
@@ -70,7 +68,7 @@ namespace Amethyst.AST
 
             var type = GetFunctionType(compiler);
 
-            ctx = new(compiler, (FunctionValue)compiler.IR.Symbols[ID].Value, Tags, Location);
+            ctx = new(compiler, (RawFunctionValue)compiler.IR.Symbols[ID].Value, Tags, Location);
 
             if (Body.Statements.Count == 0 || Body.Statements.Last() is not ReturnStatement)
             {

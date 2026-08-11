@@ -7,69 +7,47 @@ using Geode.Values;
 
 namespace Amethyst.IR
 {
-	public static class FunctionContextExtensions
-	{
-		extension(FunctionContext ctx)
-		{
-			public ValueRef GetProperty(ValueRef val, string name)
-			{
-				if (val.Type.HasProperty(name) is { } t)
-				{
-					return ctx.Add(new PropertyInsn(val, LiteralValue.Raw(name), t));
-				}
+    public static class FunctionContextExtensions
+    {
+        extension(FunctionContext ctx)
+        {
+            public ValueRef GetProperty(ValueRef val, string name)
+            {
+                if (val.Type.HasProperty(name) is { } t) return ctx.Add(new PropertyInsn(val, LiteralValue.Raw(name), t));
+                if (ctx.GetMethodOrNull(val, name) is { } method) return method;
+                if (val.Type.DefaultPropertyType is { } t2) return ctx.Add(new PropertyInsn(val, LiteralValue.Raw(name), t2));
+                throw new PropertyError(val.Type.ToString(), name);
+            }
 
-				if (ctx.GetMethodOrNull(val, name) is { } method)
-				{
-					return method;
-				}
+            public ValueRef? GetMethodOrNull(ValueRef val, string name, TypeSpecifier? effectiveMethodType = null)
+            {
+                effectiveMethodType ??= val.Type is ReferenceType r1 ? r1.Inner : val.Type;
+                var global = ctx.GetGlobal($"{effectiveMethodType.ID}/{name}");
 
-				if (val.Type.DefaultPropertyType is { } t2)
-				{
-					return ctx.Add(new PropertyInsn(val, LiteralValue.Raw(name), t2));
-				}
+                switch (global)
+                {
+                    case IFunctionLike { FuncType.Parameters.Length: >= 1 } func:
+                    {
+                        // With references
+                        var genericFunc = func.CloneWithType(func.FuncType.ApplyGenericWithParams([new ReferenceType(effectiveMethodType)]));
+                        var firstArgType = genericFunc.FuncType.Parameters[0].Type;
 
-				throw new PropertyError(val.Type.ToString(), name);
-			}
+                        if (firstArgType is ReferenceType r2 && effectiveMethodType.Implements(r2.Inner)) return new(genericFunc);
 
-			public ValueRef? GetMethodOrNull(ValueRef val, string name, TypeSpecifier? effectiveMethodType = null)
-			{
-				effectiveMethodType ??= val.Type is ReferenceType r1 ? r1.Inner : val.Type;
-				var global = ctx.GetGlobal($"{effectiveMethodType.ID}/{name}");
+                        // Without references
+                        genericFunc = func.CloneWithType(func.FuncType.ApplyGenericWithParams([effectiveMethodType]));
+                        firstArgType = genericFunc.FuncType.Parameters[0].Type;
 
-				if (global is IFunctionLike func && func.FuncType.Parameters.Length >= 1)
-				{
-					// With references
-					var genericFunc =
-						func.CloneWithType(
-							func.FuncType.ApplyGenericWithParams([new ReferenceType(effectiveMethodType)]));
-					var firstArgType = genericFunc.FuncType.Parameters[0].Type;
+                        if (effectiveMethodType.Implements(firstArgType)) return new(genericFunc);
 
-					if (firstArgType is ReferenceType r2 && effectiveMethodType.Implements(r2.Inner))
-					{
-						return new(genericFunc);
-					}
+                        break;
+                    }
+                    case OverloadedFunctionValue:
+                        return new(global);
+                }
 
-					// Without references
-					genericFunc = func.CloneWithType(func.FuncType.ApplyGenericWithParams([effectiveMethodType]));
-					firstArgType = genericFunc.FuncType.Parameters[0].Type;
-
-					if (effectiveMethodType.Implements(firstArgType))
-					{
-						return new(genericFunc);
-					}
-				}
-				else if (global is OverloadedFunctionValue)
-				{
-					return new(global);
-				}
-
-				if (effectiveMethodType.BaseClass != effectiveMethodType)
-				{
-					return ctx.GetMethodOrNull(val, name, effectiveMethodType.BaseClass);
-				}
-
-				return null;
-			}
-		}
-	}
+                return effectiveMethodType.BaseClass != effectiveMethodType ? ctx.GetMethodOrNull(val, name, effectiveMethodType.BaseClass) : null;
+            }
+        }
+    }
 }

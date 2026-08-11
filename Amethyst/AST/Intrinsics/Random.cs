@@ -6,23 +6,20 @@ using Geode.Types;
 
 namespace Amethyst.AST.Intrinsics
 {
-	public class Random(FunctionType? type = null) : Intrinsic("minecraft:random", type ?? new(FunctionModifiers.None,
-		PrimitiveType.Int, [
-			new(ParameterModifiers.None, PrimitiveType.Int, "min"),
-			new(ParameterModifiers.None, PrimitiveType.Int, "max")
-		]))
-	{
-		public override IFunctionLike CloneWithType(FunctionType type) => new Random(type);
+    public class Random(FunctionType? type = null) : Intrinsic("minecraft:random", type ?? new(FunctionModifiers.None,
+        PrimitiveType.Int, [
+            new(ParameterModifiers.None, PrimitiveType.Int, "min"),
+            new(ParameterModifiers.None, PrimitiveType.Int, "max")
+        ]))
+    {
+        public override IFunctionLike CloneWithType(FunctionType type) => new Random(type);
 
-		public override ValueRef Execute(FunctionContext ctx, params ValueRef[] args)
-		{
-			if (args.Length != 2)
-			{
-				throw new MismatchedArgumentCountError(2, args.Length);
-			}
+        public override ValueRef CallBehavior(FunctionContext ctx, params ValueRef[] args)
+        {
+            if (args.Length != 2) throw new MismatchedArgumentCountError(2, args.Length);
 
-			return ctx.Add(new RandomInsn(ctx.ImplicitCast(args[0], PrimitiveType.Int),
-				ctx.ImplicitCast(args[1], PrimitiveType.Int)));
-		}
-	}
+            return ctx.Add(new RandomInsn(ctx.ImplicitCast(args[0], PrimitiveType.Int),
+                ctx.ImplicitCast(args[1], PrimitiveType.Int)));
+        }
+    }
 }

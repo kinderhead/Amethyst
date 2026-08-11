@@ -18,7 +18,7 @@ namespace Geode.IR
     public class FunctionContext : Graph<Block>
     {
         public readonly ICompiler Compiler;
-        public readonly FunctionValue Decl;
+        public readonly RawFunctionValue Decl;
 
         public readonly Block ExitBlock;
         public readonly bool HasTagPriority;
@@ -27,7 +27,7 @@ namespace Geode.IR
 
         public readonly Stack<LocationRange> LocationStack = [];
         public readonly IEnumerable<NamespacedID> Tags;
-        
+
         private readonly Stack<Scope> activeScopes = [];
         private readonly List<Block> blocks = [];
         private readonly List<MCFunction> dependencies = [];
@@ -41,7 +41,7 @@ namespace Geode.IR
         private readonly List<Scope> totalScopes = [];
         private int tmpStackVars;
 
-        public FunctionContext(ICompiler compiler, FunctionValue decl, IEnumerable<NamespacedID> tags, LocationRange loc, bool hasTagPriority = false)
+        public FunctionContext(ICompiler compiler, RawFunctionValue decl, IEnumerable<NamespacedID> tags, LocationRange loc, bool hasTagPriority = false)
         {
             Compiler = compiler;
             Decl = decl;
@@ -72,7 +72,7 @@ namespace Geode.IR
             }
         }
 
-        public FunctionContext(ICompiler compiler, FunctionValue decl, LocationRange loc) : this(compiler, decl, [], loc)
+        public FunctionContext(ICompiler compiler, RawFunctionValue decl, LocationRange loc) : this(compiler, decl, [], loc)
         {
         }
 
@@ -126,8 +126,10 @@ namespace Geode.IR
 
         public IValue? GetGlobal(NamespacedID id) => Compiler.IR.GetGlobal(id);
 
-        public IValue? GetGlobalWalk(string baseNamespace, string name) => Compiler.IR.GetGlobalWalk(baseNamespace, name);
+        public IValue GetGlobalOrThrow(NamespacedID id) => GetGlobalOrThrow<IValue>(id);
+        public T GetGlobalOrThrow<T>(NamespacedID id) where T : class, IValue => Compiler.IR.GetGlobal(id) as T ?? throw new UndefinedSymbolError(id.ToString());
 
+        public IValue? GetGlobalWalk(string baseNamespace, string name) => Compiler.IR.GetGlobalWalk(baseNamespace, name);
         public IValue? GetConstructorOrNull(TypeSpecifier type) => Compiler.IR.GetConstructorOrNull(type);
 
         public Variable RegisterLocal(string name, TypeSpecifier type, LocationRange loc)
@@ -203,7 +205,7 @@ namespace Geode.IR
             TryExplicitCast(val, type, recorder);
             return recorder.Recorded;
         }
-        
+
         public ValueRef ExplicitCast(ValueRef val, TypeSpecifier type)
         {
             if (TryExplicitCast(val, type) is { } ret) return ret;
@@ -239,7 +241,7 @@ namespace Geode.IR
         }
 
         public ValueRef Call(NamespacedID id, params ValueRef[] args) =>
-            (GetGlobal(id) as FunctionValue ?? throw new UndefinedSymbolError(id.ToString())).CallBehavior(this, args);
+            (GetGlobal(id) as IMinimalFunction ?? throw new UndefinedSymbolError(id.ToString())).CallBehavior(this, args);
 
         public IEnumerable<ValueRef> PrepArgs(FunctionType type, params ValueRef[] args)
         {

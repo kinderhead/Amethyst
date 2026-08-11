@@ -6,8 +6,7 @@ using Geode.Types;
 
 namespace Amethyst.AST.Expressions
 {
-	public class ComparisonExpression(LocationRange loc, Expression left, ComparisonOperator op, Expression right)
-		: Expression(loc)
+	public class ComparisonExpression(LocationRange loc, Expression left, ComparisonOperator op, Expression right) : Expression(loc)
 	{
 		public readonly Expression Left = left;
 		public readonly ComparisonOperator Op = op;

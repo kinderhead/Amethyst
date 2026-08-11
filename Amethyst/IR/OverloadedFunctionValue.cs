@@ -1,56 +1,70 @@
-using Amethyst.IR.Types;
+using Amethyst.Errors;
 using Datapack.Net.Data;
 using Datapack.Net.Utils;
 using Geode;
 using Geode.Errors;
+using Geode.IR;
 using Geode.Values;
 
 namespace Amethyst.IR
 {
-	public class OverloadedFunctionValue(NamespacedID id) : LiteralValue(new NBTString(id.ToString()))
-	{
-		private readonly Dictionary<TypeArray, (LocationRange loc, NamespacedID id)> funcs = [];
-		public readonly NamespacedID ID = id;
+    public class OverloadedFunctionValue(NamespacedID id) : LiteralValue(new NBTString(id.ToString())), IMinimalFunction
+    {
+        public readonly NamespacedID ID = id;
+        private readonly Dictionary<TypeArray, RawFunctionValue> funcs = [];
 
-		public OverloadedFunctionValue Add(FunctionValue val)
-		{
-			var existing = Get(val.FuncType.ParameterTypes);
-			if (existing.Length != 0)
-			{
-				throw new RedefinedSymbolError(val.ID.ToString(), existing[0].loc);
-			}
+        public ValueRef CallBehavior(FunctionContext ctx, params ValueRef[] args) => Get(args).CallBehavior(ctx, args);
 
-			funcs[val.FuncType.ParameterTypes] = (val.Location, val.ID);
+        public RawFunctionValue Get(TypeArray types) => funcs.GetValueOrDefault(types) ?? throw new NoOverloadError(ID, types);
 
-			return this;
-		}
+        public OverloadedFunctionValue Add(RawFunctionValue val)
+        {
+            if (funcs.TryGetValue(val.FuncType.ParameterTypes, out var existing)) throw new RedefinedSymbolError(val.FuncType.ToString(ID.ToString()), existing.Location);
 
-		public (LocationRange loc, NamespacedID id)[] Get(TypeArray args)
-		{
-			List<(LocationRange loc, NamespacedID id)> ret = [];
+            funcs[val.FuncType.ParameterTypes] = val;
 
-			foreach (var (k, v) in funcs)
-			{
-				if (k.Length == args.Length)
-				{
-					for (var i = 0; i < args.Length; i++)
-					{
-						// TODO: Make this check implicit casting compatability somehow instead
-						if (!args[i].Implements(k[i]) &&
-						    !(args[i] is ReferenceType ptr && ptr.Inner.Implements(k[i])) &&
-						    !(k[i] is ReferenceType ptr2 && args[i].Implements(ptr2.Inner)))
-						{
-							goto end;
-						}
-					}
+            return this;
+        }
 
-					ret.Add(v);
-				}
+        public RawFunctionValue[] GetAll(ValueRef[] args)
+        {
+            List<RawFunctionValue> ret = [];
 
-				end: ;
-			}
+            foreach (var (k, v) in funcs)
+            {
+                if (k.Length == args.Length)
+                {
+                    for (var i = 0; i < args.Length; i++)
+                    {
+                        if (!FunctionContext.CanImplicitCast(args[i], k[i])) goto end;
+                    }
 
-			return [.. ret];
-		}
-	}
+                    ret.Add(v);
+                }
+
+                end: ;
+            }
+
+            return [.. ret];
+        }
+
+        public RawFunctionValue Get(ValueRef[] args)
+        {
+            var types = TypeArray.From(args);
+            var options = GetAll(args);
+
+            if (options.Length == 0) throw new NoOverloadError(ID, types);
+
+            var option = options[0];
+
+            if (options.Length > 1)
+            {
+                // Prioritize exact type matches
+                if (funcs.GetValueOrDefault(types) is not { } option1) throw new AmbiguousOverloadError(ID, types);
+                option = option1;
+            }
+
+            return option;
+        }
+    }
 }

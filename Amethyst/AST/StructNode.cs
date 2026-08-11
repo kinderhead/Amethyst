@@ -36,8 +36,7 @@ namespace Amethyst.AST
 
         public void Process(Compiler ctx, RootNode root)
         {
-            var actualBaseClass = BaseClass?.Resolve(ctx, ID.GetContainingFolder()) ??
-                                  (Type == ContainerType.Entity ? EntityType.Dummy : PrimitiveType.Compound);
+            var actualBaseClass = BaseClass?.Resolve(ctx, ID.GetContainingFolder()) ?? (Type == ContainerType.Entity ? EntityType.Dummy : PrimitiveType.Compound);
             var baseClass = actualBaseClass;
 
             if (baseClass is ReferenceType r) baseClass = r.Inner;
@@ -45,12 +44,11 @@ namespace Amethyst.AST
             if (Type == ContainerType.Class && !(baseClass is StructType || baseClass == PrimitiveType.Compound)) throw new InvalidBaseClassError(baseClass.ToString());
 
             var props = new Dictionary<string, TypeSpecifier>();
-            var methods = new Dictionary<string, FunctionValue>();
+            var methods = new Dictionary<string, RawFunctionValue>();
 
             var selfType = Type switch
             {
-                ContainerType.Struct or ContainerType.Class => new StructType(ID, baseClass, props, methods,
-                    Type == ContainerType.Class),
+                ContainerType.Struct or ContainerType.Class => new StructType(ID, baseClass, props, methods, Type == ContainerType.Class),
                 ContainerType.Entity => new EntityType(ID, baseClass, props, methods),
                 _ => throw new NotImplementedException()
             };
@@ -60,15 +58,13 @@ namespace Amethyst.AST
                 ctx.IR.AddType(new(ID, Location, new ReferenceType(selfType, false)));
                 ctx.RegisterTypeInfo(selfType);
             }
-            else
-                ctx.IR.AddType(new(ID, Location, selfType));
+            else ctx.IR.AddType(new(ID, Location, selfType));
 
             foreach (var (k, v) in Properties)
             {
                 props[k] = v.Resolve(ctx, ID.GetContainingFolder());
 
                 if (Type != ContainerType.Class && props[k] is ReferenceType && props[k] is not WeakReferenceType) throw new ReferencePropertyError(k);
-
                 if (ReservedProperties.Contains(k)) throw new ReservedNameError(k);
             }
 
@@ -78,28 +74,29 @@ namespace Amethyst.AST
             {
                 i.Process(ctx, root);
 
-                if (i is ConstructorNode c)
-                    constructor = c;
+                if (i is ConstructorNode c) constructor = c;
                 else
                 {
                     var type = i.GetFunctionType(ctx);
-                    methods[i.ID.GetFile()] = (FunctionValue?)ctx.IR.GetGlobal(i.ID) ??
-                                              throw new UndefinedSymbolError(i.ID.ToString());
+                    methods[i.ID.GetFile()] = (RawFunctionValue?)ctx.IR.GetGlobal(i.ID) ?? throw new UndefinedSymbolError(i.ID.ToString());
 
                     var thisIsVirtual = i.Modifiers.HasFlag(FunctionModifiers.Virtual);
 
                     if (thisIsVirtual && Type != ContainerType.Class) throw new VirtualMethodError();
-
                     if (selfType.HierarchyMethod(i.ID.GetFile())?.Function.Type is FunctionType other)
                     {
                         var otherIsVirtual = other.Modifiers.HasFlag(FunctionModifiers.Virtual);
 
-                        if (otherIsVirtual && !thisIsVirtual) throw new MissingVirtualError(i.ID.GetFile());
-
-                        if (!otherIsVirtual) throw new CannotOverrideError(i.ID.GetFile());
+                        switch (otherIsVirtual)
+                        {
+                            case true when !thisIsVirtual:
+                                throw new MissingVirtualError(i.ID.GetFile());
+                            case false:
+                                throw new CannotOverrideError(i.ID.GetFile());
+                        }
 
                         if (other.ReturnType != type.ReturnType || other.Parameters.Length != type.Parameters.Length ||
-                            !other.Parameters.Skip(1).Zip(type.Parameters.Skip(1)).All(i => i.First == i.Second))
+                            other.Parameters.Skip(1).Zip(type.Parameters.Skip(1)).Any(i => i.First != i.Second))
                             throw new InvalidOverrideSignatureError(i.ID.GetFile());
                     }
                 }
@@ -115,29 +112,23 @@ namespace Amethyst.AST
                 constructor.Process(ctx, root);
             }
 
-            if (ctx.IR.GetConstructorOrNull(selfType.BaseClass) is not null &&
-                (constructor is null || constructor.BaseCall is null))
-                throw new MissingConstructorError(selfType.BaseClass.ToString());
-
+            if (ctx.IR.GetConstructorOrNull(selfType.BaseClass) is not null && constructor?.BaseCall is null) throw new MissingConstructorError(selfType.BaseClass.ToString());
             if (Properties.Count != 0 && Type == ContainerType.Struct && selfType.EffectiveType != NBTType.Compound) throw new PropertyError(selfType.ToString());
-
             if (Type == ContainerType.Class) GenerateMetaMethods(ctx, root, methods);
         }
 
-        private void GenerateMetaMethods(Compiler ctx, RootNode root, Dictionary<string, FunctionValue> methods) =>
-            GenerateGCMark(ctx, root, methods);
+        private void GenerateMetaMethods(Compiler ctx, RootNode root, Dictionary<string, RawFunctionValue> methods) => GenerateGCMark(ctx, root, methods);
 
-        private void GenerateGCMark(Compiler ctx, RootNode root, Dictionary<string, FunctionValue> methods)
+        private void GenerateGCMark(Compiler ctx, RootNode root, Dictionary<string, RawFunctionValue> methods)
         {
             var id = new NamespacedID($"{ID}/{GeodeBuilder.INTERNAL_PATH}/mark".ToLower());
             var body = new BlockNode(Location);
 
             body.Add(new GCMarkStatement(Location));
 
-            new FunctionNode(Location, [], FunctionModifiers.Virtual, new SimpleAbstractTypeSpecifier(Location, "void"),
+            methods["@mark"] = new FunctionNode(Location, [], FunctionModifiers.Virtual, new SimpleAbstractTypeSpecifier(Location, "void"),
                 id, [new(ParameterModifiers.Macro, new SimpleAbstractTypeSpecifier(Location, ID.ToString()), "this")],
-                body).Process(ctx, root);
-            methods["@mark"] = (FunctionValue?)ctx.IR.GetGlobal(id) ?? throw new UndefinedSymbolError(id.ToString());
+                body).ProcessAndGetFunc(ctx, root);
         }
     }
 }

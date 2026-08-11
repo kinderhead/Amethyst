@@ -6,29 +6,27 @@ using Geode.Types;
 
 namespace Amethyst.AST.Expressions
 {
-	public class PropertyExpression(LocationRange loc, Expression expression, string prop)
-		: Expression(loc), IPropertyLikeExpression
-	{
-		public readonly Expression Expression = expression;
-		public readonly string Property = prop;
+    public class PropertyExpression(LocationRange loc, Expression expression, string prop) : Expression(loc), IPropertyLikeExpression, IMethodHolder
+    {
+        public readonly Expression Expression = expression;
+        public readonly string Property = prop;
 
-		protected override ValueRef ExecuteImpl(FunctionContext ctx, TypeSpecifier? expected)
-		{
-			var val = Expression.Execute(ctx, new VarType());
+        private ValueRef? expr;
 
-			if (val.Type is ReferenceType r && r.Inner is EntityType e)
-			{
-				val = ctx.ImplicitCast(val, e);
-			}
+        public Expression GetThis(FunctionContext ctx) => new ValueRefExpression(Expression.Location, GetExpr(ctx));
+        private ValueRef GetExpr(FunctionContext ctx) => expr ??= Expression.Execute(ctx, new VarType());
 
-			var ret = ctx.GetProperty(val, Property);
+        protected override ValueRef ExecuteImpl(FunctionContext ctx, TypeSpecifier? expected)
+        {
+            var val = GetExpr(ctx);
 
-			if (expected is null && ret.Type is ReferenceType ptr)
-			{
-				ret = ctx.ImplicitCast(ret, ptr.Inner);
-			}
+            if (val.Type is ReferenceType { Inner: EntityType e }) val = ctx.ImplicitCast(val, e);
 
-			return ret;
-		}
-	}
+            var ret = ctx.GetProperty(val, Property);
+
+            if (expected is null && ret.Type is ReferenceType ptr) ret = ctx.ImplicitCast(ret, ptr.Inner);
+
+            return ret;
+        }
+    }
 }

@@ -10,268 +10,217 @@ using Block = Geode.IR.Block;
 
 namespace Geode
 {
-	public record RenderContext(MCFunction MCFunction, Block Block, GeodeBuilder Builder, FunctionContext Func)
-	{
-		private LocationRange lastLocation = LocationRange.None;
-		public ScoreValue SuccessScore => Builder.Score("func_success");
+    public record RenderContext(MCFunction MCFunction, Block Block, GeodeBuilder Builder, FunctionContext Func)
+    {
+        private LocationRange lastLocation = LocationRange.None;
+        public ScoreValue SuccessScore => Builder.Score("func_success");
 
-		public virtual void Add(params IEnumerable<Command> cmds)
-		{
-			var loc = Block.Ctx.LocationStack.Peek();
+        public virtual void Add(params IEnumerable<Command> cmds)
+        {
+            var loc = Block.Ctx.LocationStack.Peek();
 
-			if (loc != lastLocation)
-			{
-				MCFunction.Add(new Comment(loc.MapFile(Builder.FileHandler).ToString()));
-				lastLocation = loc;
-			}
+            if (loc != lastLocation)
+            {
+                MCFunction.Add(new Comment(loc.MapFile(Builder.FileHandler).ToString()));
+                lastLocation = loc;
+            }
 
-			if (Func.IsMacroFunction)
-			{
-				MCFunction.Add(cmds.Select(i =>
-				{
-					i.Macro = true;
-					return i;
-				}));
-			}
-			else
-			{
-				MCFunction.Add(cmds);
-			}
-		}
+            if (Func.IsMacroFunction)
+            {
+                MCFunction.Add(cmds.Select(i =>
+                {
+                    i.Macro = true;
+                    return i;
+                }));
+            }
+            else
+                MCFunction.Add(cmds);
+        }
 
-		public void StoreCompound(DataTargetValue dest, Dictionary<string, IValueLike> dict, bool setEmpty = true)
-		{
-			var ret = StoreCompoundOrReturnConstant(dest, dict, setEmpty);
-			if (ret is LiteralValue l)
-			{
-				dest.Store(l, this);
-			}
-		}
+        public void StoreCompound(DataTargetValue dest, Dictionary<string, IValueLike> dict, bool setEmpty = true)
+        {
+            var ret = StoreCompoundOrReturnConstant(dest, dict, setEmpty);
+            if (ret is LiteralValue l) dest.Store(l, this);
+        }
 
-		public IValue StoreCompoundOrReturnConstant(DataTargetValue dest, Dictionary<string, IValueLike> dict,
-			bool setEmpty = true)
-		{
-			var nbt = new NBTCompound();
-			var runtime = new Dictionary<string, IValue>();
-			var forceUseStorage = false;
+        public IValue StoreCompoundOrReturnConstant(DataTargetValue dest, Dictionary<string, IValueLike> dict,
+                                                    bool setEmpty = true)
+        {
+            var nbt = new NBTCompound();
+            var runtime = new Dictionary<string, IValue>();
+            var forceUseStorage = false;
 
-			foreach (var (key, val) in dict.Select(i => (i.Key, i.Value.Expect())))
-			{
-				if (val is VoidValue)
-				{
-					forceUseStorage = true;
-				}
-				else if (val is MacroValue m && m.Type.EffectiveType == NBTType.String)
-				{
-					nbt[key] = new NBTString(m.GetMacro());
-				}
-				else if (val is IConstantValue l)
-				{
-					nbt[key] = l.Value;
-				}
-				else
-				{
-					runtime[key] = val;
-				}
-			}
+            foreach (var (key, val) in dict.Select(i => (i.Key, i.Value.Expect())))
+            {
+                if (val is VoidValue)
+                    forceUseStorage = true;
+                else if (val is MacroValue m && m.Type.EffectiveType == NBTType.String)
+                    nbt[key] = new NBTString(m.GetMacro());
+                else if (val is IConstantValue l)
+                    nbt[key] = l.Value;
+                else
+                    runtime[key] = val;
+            }
 
-			if (!forceUseStorage && nbt.Count == dict.Count)
-			{
-				return new LiteralValue(nbt);
-			}
+            if (!forceUseStorage && nbt.Count == dict.Count) return new LiteralValue(nbt);
 
-			if (setEmpty || nbt.Count != 0)
-			{
-				dest.Store(new LiteralValue(nbt), this);
-			}
+            if (setEmpty || nbt.Count != 0) dest.Store(new LiteralValue(nbt), this);
 
-			foreach (var (key, value) in runtime)
-			{
-				dest.Property(key, value.Type).Store(value, this);
-			}
+            foreach (var (key, value) in runtime)
+            {
+                dest.Property(key, value.Type).Store(value, this);
+            }
 
-			return dest;
-		}
+            return dest;
+        }
 
-		public void StoreList(DataTargetValue dest, List<ValueRef> list, bool setEmpty = true)
-		{
-			var ret = StoreListOrReturnConstant(dest, list, setEmpty);
-			if (ret is LiteralValue l)
-			{
-				dest.Store(l, this);
-			}
-		}
+        public void StoreList(DataTargetValue dest, List<ValueRef> list, bool setEmpty = true)
+        {
+            var ret = StoreListOrReturnConstant(dest, list, setEmpty);
+            if (ret is LiteralValue l) dest.Store(l, this);
+        }
 
-		public IValue StoreListOrReturnConstant(DataTargetValue dest, List<ValueRef> list, bool setEmpty = true)
-		{
-			var nbt = new NBTList();
-			var runtime = new List<IValue>();
-			var isStillConstant = true;
+        public IValue StoreListOrReturnConstant(DataTargetValue dest, List<ValueRef> list, bool setEmpty = true)
+        {
+            var nbt = new NBTList();
+            var runtime = new List<IValue>();
+            var isStillConstant = true;
 
-			foreach (var i in list.Select(i => i.Expect()))
-			{
-				if (isStillConstant && i is MacroValue m && m.Type.EffectiveType == NBTType.String)
-				{
-					nbt.Add(new NBTString(m.GetMacro()));
-				}
-				else if (isStillConstant && i is IConstantValue l)
-				{
-					nbt.Add(l.Value);
-				}
-				else
-				{
-					isStillConstant = false;
-					runtime.Add(i);
-				}
-			}
+            foreach (var i in list.Select(i => i.Expect()))
+            {
+                if (isStillConstant && i is MacroValue m && m.Type.EffectiveType == NBTType.String)
+                    nbt.Add(new NBTString(m.GetMacro()));
+                else if (isStillConstant && i is IConstantValue l)
+                    nbt.Add(l.Value);
+                else
+                {
+                    isStillConstant = false;
+                    runtime.Add(i);
+                }
+            }
 
-			if (nbt.Count == list.Count)
-			{
-				return new LiteralValue(nbt);
-			}
+            if (nbt.Count == list.Count) return new LiteralValue(nbt);
 
-			if (setEmpty || nbt.Count != 0)
-			{
-				dest.Store(new LiteralValue(nbt), this);
-			}
+            if (setEmpty || nbt.Count != 0) dest.Store(new LiteralValue(nbt), this);
 
-			foreach (var item in runtime)
-			{
-				dest.ListAdd(item, this);
-			}
+            foreach (var item in runtime)
+            {
+                dest.ListAdd(item, this);
+            }
 
-			return dest;
-		}
+            return dest;
+        }
 
-		public Command[] GetOnJumpCommands(Block dest) =>
-			// Mayhaps make this more efficient
-			[.. WithFaux(ctx => dest.Phi.JumpToBlockCommands(Block, ctx))];
+        public Command[] GetOnJumpCommands(Block dest) =>
+            // Mayhaps make this more efficient
+            [.. WithFaux(ctx => dest.Phi.JumpToBlockCommands(Block, ctx))];
 
-		// TODO: Refactor this into a call to the other JumpTo method
-		public Command[] JumpTo(Block block)
-		{
-			if (Func.IsMacroFunction)
-			{
-				return
-				[
-					.. GetOnJumpCommands(block), new FunctionCommand(block.Function, [
-						.. Func.Decl.FuncType.MacroParameters.Select(i =>
-						{
-							if (i.Type == PrimitiveType.String)
-							{
-								throw new MacroStringSubFunctionError();
-							}
+        // TODO: Refactor this into a call to the other JumpTo method
+        public Command[] JumpTo(Block block)
+        {
+            if (Func.IsMacroFunction)
+            {
+                return
+                [
+                    .. GetOnJumpCommands(block), new FunctionCommand(block.Function, [
+                        .. Func.Decl.FuncType.MacroParameters.Select(i =>
+                        {
+                            if (i.Type == PrimitiveType.String) throw new MacroStringSubFunctionError();
 
-							if (i.Type.WrapInQuotesForMacro)
-							{
-								return new(i.Name, new NBTString(i.GetMacro()));
-							}
+                            if (i.Type.WrapInQuotesForMacro) return new(i.Name, new NBTString(i.GetMacro()));
 
-							return new KeyValuePair<string, NBTValue>(i.Name, new NBTRawString(i.GetMacro()));
-						})
-					])
-				];
-			}
+                            return new KeyValuePair<string, NBTValue>(i.Name, new NBTRawString(i.GetMacro()));
+                        })
+                    ])
+                ];
+            }
 
-			return [.. GetOnJumpCommands(block), new FunctionCommand(block.Function)];
-		}
+            return [.. GetOnJumpCommands(block), new FunctionCommand(block.Function)];
+        }
 
-		public Command[] JumpTo(Block block, NBTCompound args)
-		{
-			if (args.Count > 0)
-			{
-				foreach (var i in Func.Decl.FuncType.MacroParameters)
-				{
-					if (i.Type == PrimitiveType.String)
-					{
-						throw new MacroStringSubFunctionError();
-					}
-				}
+        public Command[] JumpTo(Block block, NBTCompound args)
+        {
+            if (args.Count > 0)
+            {
+                foreach (var i in Func.Decl.FuncType.MacroParameters)
+                {
+                    if (i.Type == PrimitiveType.String) throw new MacroStringSubFunctionError();
+                }
 
-				return [.. GetOnJumpCommands(block), new FunctionCommand(block.Function, args)];
-			}
+                return [.. GetOnJumpCommands(block), new FunctionCommand(block.Function, args)];
+            }
 
-			return [.. GetOnJumpCommands(block), new FunctionCommand(block.Function)];
-		}
+            return [.. GetOnJumpCommands(block), new FunctionCommand(block.Function)];
+        }
 
-		public void Call(NamespacedID id, params IValueLike[] args)
-		{
-			if (Func.GetGlobal(id) is not FunctionValue func)
-			{
-				throw new UndefinedSymbolError(id.ToString());
-			}
+        public void Call(NamespacedID id, params IValueLike[] args)
+        {
+            if (Func.GetGlobal(id) is not RawFunctionValue func) throw new UndefinedSymbolError(id.ToString());
 
-			func.Call(this, args);
-		}
+            func.Call(this, args);
+        }
 
-		public void Macroize(IValueLike[] dependencies, Action<IConstantValue[], RenderContext> func) =>
-			Builder.Macroizer.Run(this, dependencies, func);
+        public void Macroize(IValueLike[] dependencies, Action<IConstantValue[], RenderContext> func) =>
+            Builder.Macroizer.Run(this, dependencies, func);
 
-		public List<Command> WithFaux(Action<FauxRenderContext> func)
-		{
-			var ctx = new FauxRenderContext(MCFunction, Block, Builder, Func);
-			func(ctx);
-			return ctx.Commands;
-		}
+        public List<Command> WithFaux(Action<FauxRenderContext> func)
+        {
+            var ctx = new FauxRenderContext(MCFunction, Block, Builder, Func);
+            func(ctx);
+            return ctx.Commands;
+        }
 
-		public void PossibleErrorChecker(Command cmd, string msg, params ValueRef[] extras) =>
-			PossibleErrorChecker(cmd, text => text.Text($": {msg} "), extras);
+        public void PossibleErrorChecker(Command cmd, string msg, params ValueRef[] extras) =>
+            PossibleErrorChecker(cmd, text => text.Text($": {msg} "), extras);
 
-		public void PossibleErrorChecker(Command cmd, Action<FormattedText> msg, params ValueRef[] extras)
-		{
-			if (Builder.Options.Debug)
-			{
-				var success = SuccessScore;
-				success.Store(new LiteralValue(1), this);
-				Add(new Execute().Store(success.Target, success.Score, false).Run(cmd));
+        public void PossibleErrorChecker(Command cmd, Action<FormattedText> msg, params ValueRef[] extras)
+        {
+            if (Builder.Options.Debug)
+            {
+                var success = SuccessScore;
+                success.Store(new LiteralValue(1), this);
+                Add(new Execute().Store(success.Target, success.Score, false).Run(cmd));
 
-				var text = new FormattedText()
-					.PushModifiers(new() { Color = "red" })
-					.Text("Error at ")
-					.Text(Func.LocationStack.Peek().ToString(), new FormattedText.Modifiers { Color = "#9A5CC6" });
+                var text = new FormattedText()
+                           .PushModifiers(new() { Color = "red" })
+                           .Text("Error at ")
+                           .Text(Func.LocationStack.Peek().ToString(), new FormattedText.Modifiers { Color = "#9A5CC6" });
 
-				msg(text);
+                msg(text);
 
-				if (extras.Length > 0)
-				{
-					text.PushModifiers(new() { Color = "dark_aqua" });
+                if (extras.Length > 0)
+                {
+                    text.PushModifiers(new() { Color = "dark_aqua" });
 
-					foreach (var i in extras)
-					{
-						i.Expect().Render(text, this);
-						text.Text(", ", new FormattedText.Modifiers { Color = "red" });
-					}
+                    foreach (var i in extras)
+                    {
+                        i.Expect().Render(text, this);
+                        text.Text(", ", new FormattedText.Modifiers { Color = "red" });
+                    }
 
-					text.RemoveLast();
-				}
+                    text.RemoveLast();
+                }
 
-				Add(new Execute().If.Score(success.Target, success.Score, 0).Run(new TellrawCommand(
-					new TargetSelector(TargetType.a),
-					text
-				)));
+                Add(new Execute().If.Score(success.Target, success.Score, 0).Run(new TellrawCommand(
+                    new TargetSelector(TargetType.a),
+                    text
+                )));
 
-				if (Block != Func.Start)
-				{
-					Add(new Execute().If.Score(success.Target, success.Score, 0).Run(WithFaux(ctx =>
-					{
-						Func.GetIsFunctionReturningValue().Store(success, ctx);
-					}).Single()));
-				}
+                if (Block != Func.Start)
+                    Add(new Execute().If.Score(success.Target, success.Score, 0).Run(WithFaux(ctx => { Func.GetIsFunctionReturningValue().Store(success, ctx); }).Single()));
 
-				Add(new Execute().If.Score(success.Target, success.Score, 0)
-					.Run(new ReturnCommand(0))); // Purposeful not fail, maybe check it
-			}
-			else
-			{
-				Add(cmd);
-			}
-		}
-	}
+                Add(new Execute().If.Score(success.Target, success.Score, 0)
+                                 .Run(new ReturnCommand(0))); // Purposeful not fail, maybe check it
+            }
+            else
+                Add(cmd);
+        }
+    }
 
-	public record FauxRenderContext(MCFunction MCFunction, Block Block, GeodeBuilder Builder, FunctionContext Func)
-		: RenderContext(MCFunction, Block, Builder, Func)
-	{
-		public readonly List<Command> Commands = [];
-		public override void Add(params IEnumerable<Command> cmds) => Commands.AddRange(cmds);
-	}
+    public record FauxRenderContext(MCFunction MCFunction, Block Block, GeodeBuilder Builder, FunctionContext Func)
+        : RenderContext(MCFunction, Block, Builder, Func)
+    {
+        public readonly List<Command> Commands = [];
+        public override void Add(params IEnumerable<Command> cmds) => Commands.AddRange(cmds);
+    }
 }
