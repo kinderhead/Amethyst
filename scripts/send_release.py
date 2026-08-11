@@ -14,6 +14,8 @@ os.chdir("..")
 call("git add .")
 call("git commit -m \"Publish documentation for release\"")
 call("git push")
+
+sleep(1)
 call("gh workflow run Release")
 
 # Just in case idk
