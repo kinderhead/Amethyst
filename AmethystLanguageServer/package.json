@@ -2,7 +2,7 @@
   "name": "amethyst-language",
   "displayName": "Amethyst Language Support",
   "description": "Syntax highlighting for the Amethyst programming language",
-  "version": "0.1.16",
+  "version": "0.1.17",
   "publisher": "kinderhead",
   "repository": {
     "type": "git",
