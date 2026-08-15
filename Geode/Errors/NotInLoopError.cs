@@ -1,6 +1,4 @@
 ﻿namespace Geode.Errors
 {
-	public class NotInLoopError() : GeodeError("Cannot use this statement outside of a loop")
-	{
-	}
+    public class NotInLoopError() : GeodeError("Cannot use this statement outside of a loop");
 }

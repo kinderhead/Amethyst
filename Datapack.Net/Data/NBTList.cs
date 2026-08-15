@@ -3,76 +3,75 @@ using System.Text;
 
 namespace Datapack.Net.Data
 {
-	public class NBTList<T>(string prefix = "") : NBTValue, IList<T> where T : NBTValue
-	{
-		protected readonly string Prefix = prefix;
-		public List<T> Values = [];
-		public override NBTType Type => NBTType.List;
+    public class NBTList<T>(string prefix = "") : NBTValue, IList<T> where T : NBTValue
+    {
+        protected readonly string Prefix = prefix;
+        public List<T> Values = [];
+        public override NBTType Type => NBTType.List;
 
-		public T this[int index] { get => Values[index]; set => Values[index] = value; }
+        public T this[int index]
+        {
+            get => Values[index];
+            set => Values[index] = value;
+        }
 
-		public int Count => Values.Count;
+        public int Count => Values.Count;
 
-		public bool IsReadOnly => false;
+        public bool IsReadOnly => false;
 
-		public void Add(T item) => Values.Add(item);
+        public void Add(T item) => Values.Add(item);
 
-		public void Clear() => Values.Clear();
+        public void Clear() => Values.Clear();
 
-		public bool Contains(T item) => Values.Contains(item);
+        public bool Contains(T item) => Values.Contains(item);
 
-		public void CopyTo(T[] array, int arrayIndex) => Values.CopyTo(array, arrayIndex);
+        public void CopyTo(T[] array, int arrayIndex) => Values.CopyTo(array, arrayIndex);
 
-		public IEnumerator<T> GetEnumerator() => Values.GetEnumerator();
+        public IEnumerator<T> GetEnumerator() => Values.GetEnumerator();
 
-		public int IndexOf(T item) => Values.IndexOf(item);
+        public int IndexOf(T item) => Values.IndexOf(item);
 
-		public void Insert(int index, T item) => Values.Insert(index, item);
+        public void Insert(int index, T item) => Values.Insert(index, item);
 
-		public bool Remove(T item) => Values.Remove(item);
+        public bool Remove(T item) => Values.Remove(item);
 
-		public void RemoveAt(int index) => Values.RemoveAt(index);
+        public void RemoveAt(int index) => Values.RemoveAt(index);
 
-		IEnumerator IEnumerable.GetEnumerator() => Values.GetEnumerator();
+        IEnumerator IEnumerable.GetEnumerator() => Values.GetEnumerator();
 
-		public override NBTValue Cast(NBTNumberType type) =>
-			throw new InvalidOperationException("Cannot cast list to number");
+        public override NBTValue Cast(NBTNumberType type) =>
+            throw new InvalidOperationException("Cannot cast list to number");
 
-		public override void Build(StringBuilder sb)
-		{
-			sb.Append('[');
-			sb.Append(Prefix);
-			foreach (var i in Values)
-			{
-				i.Build(sb);
-				sb.Append(',');
-			}
+        public override void Build(StringBuilder sb)
+        {
+            sb.Append('[');
+            sb.Append(Prefix);
+            foreach (var i in Values)
+            {
+                i.Build(sb);
+                sb.Append(',');
+            }
 
-			if (Values.Count > 0)
-			{
-				sb.Length--;
-			}
+            if (Values.Count > 0) sb.Length--;
 
-			sb.Append(']');
-		}
-	}
+            sb.Append(']');
+        }
+    }
 
-	public class NBTList : NBTList<NBTValue>
-	{
-	}
+    public class NBTList : NBTList<NBTValue>;
 
-	public class NBTIntArray() : NBTList<NBTInt>("I;")
-	{
-		public override NBTType Type => NBTType.IntArray;
-	}
+    public class NBTIntArray() : NBTList<NBTInt>("I;")
+    {
+        public override NBTType Type => NBTType.IntArray;
+    }
 
-	public class NBTByteArray() : NBTList<NBTByte>("B;")
-	{
-		public override NBTType Type => NBTType.ByteArray;
-	}
+    public class NBTByteArray() : NBTList<NBTByte>("B;")
+    {
+        public override NBTType Type => NBTType.ByteArray;
+    }
 
-	public class NBTLongArray() : NBTList<NBTLong>("L;")
-	{
-		public override NBTType Type => NBTType.LongArray;
-	}
+    public class NBTLongArray() : NBTList<NBTLong>("L;")
+    {
+        public override NBTType Type => NBTType.LongArray;
+    }
 }

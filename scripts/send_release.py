@@ -14,6 +14,7 @@ os.chdir("..")
 call("git add .")
 call("git commit -m \"Publish documentation for release\"")
 call("git push")
+print("Pushed update")
 
 sleep(1)
 call("gh workflow run Release")
@@ -29,7 +30,7 @@ call(f"gh run watch {runId}")
 call(f"gh run view {runId} --exit-status")
 
 with open("CHANGELOG.md", "w+") as f:
-    f.write("")
+    f.write("# Changes\n\n\n# Bug Fixes\n\n\n")
 
 csproj = ET.parse("Amethyst/Amethyst.csproj")
 data = csproj.getroot()

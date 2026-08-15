@@ -2,7 +2,5 @@
 
 namespace Amethyst.Errors
 {
-	public class CallError() : GeodeError("value is not callable")
-	{
-	}
+    public class CallError() : GeodeError("Value is not callable");
 }

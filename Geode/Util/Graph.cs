@@ -5,6 +5,17 @@ namespace Geode.Util
         public T Start = null!;
     }
 
+    public class UnconnectedGraph<T> where T : GraphNode<T>
+    {
+        private readonly List<T> nodes = [];
+        public IReadOnlyList<T> Nodes => nodes;
+
+        // Probably an actual way to do this
+        public IEnumerable<T> Roots => nodes.Where(i => i.Previous.Count == 0);
+
+        public void Add(T node) => nodes.Add(node);
+    }
+
     public class GraphNode<TSelf> where TSelf : GraphNode<TSelf>
     {
         public readonly HashSet<TSelf> Next = [];

@@ -2,8 +2,6 @@
 
 namespace Amethyst.Errors
 {
-	public class ReferenceMapError()
-		: GeodeError("Native maps do not support garbage collection and cannot store references")
-	{
-	}
+    public class ReferenceMapError()
+        : GeodeError("Native maps do not support garbage collection and cannot store references");
 }

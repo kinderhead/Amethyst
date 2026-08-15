@@ -1,117 +1,116 @@
-﻿using Amethyst.Errors;
+﻿using System.Diagnostics;
+using System.Numerics;
+using Amethyst.Errors;
 using Amethyst.IR.Types;
+using Datapack.Net.Utils;
 using Geode;
 using Geode.Errors;
 using Geode.IR;
 using Geode.Types;
-using System.Diagnostics;
 
 namespace Amethyst.AST
 {
-	public abstract class AbstractTypeSpecifier(LocationRange loc) : Node(loc)
-	{
-		public TypeSpecifier Resolve(FunctionContext ctx, bool allowAuto = false) =>
-			Resolve((Compiler)ctx.Compiler, ctx.Decl.ID.GetContainingFolder(), allowAuto);
+    public abstract class AbstractTypeSpecifier(LocationRange loc)
+        : Node(loc), IEquatable<AbstractTypeSpecifier>, IEqualityOperators<AbstractTypeSpecifier, AbstractTypeSpecifier, bool>
+    {
+        public static bool operator ==(AbstractTypeSpecifier? left, AbstractTypeSpecifier? right) => left?.Equals(right) ?? false;
+        public static bool operator !=(AbstractTypeSpecifier? left, AbstractTypeSpecifier? right) => !left?.Equals(right) ?? true;
+        public abstract bool Equals(AbstractTypeSpecifier? other);
 
-		public TypeSpecifier Resolve(Compiler ctx, string baseNamespace, bool allowAuto = false)
-		{
-			TypeSpecifier? ret = null;
-			if (!ctx.WrapError(Location, [DebuggerNonUserCode]() => ret = ResolveImpl(ctx, baseNamespace, allowAuto)))
-			{
-				throw new EmptyGeodeError();
-			}
+        public TypeSpecifier Resolve(FunctionContext ctx, bool allowAuto = false) => Resolve((Compiler)ctx.Compiler, ctx.Decl.ID.GetContainingFolder(), allowAuto);
 
-			return ret!;
-		}
+        public TypeSpecifier Resolve(Compiler ctx, string baseNamespace, bool allowAuto = false)
+        {
+            TypeSpecifier? ret = null;
+            return !ctx.WrapError(Location, [DebuggerNonUserCode]() => ret = ResolveImpl(ctx, baseNamespace, allowAuto)) ? throw new EmptyGeodeError() : ret!;
+        }
 
-		protected abstract TypeSpecifier ResolveImpl(Compiler ctx, string baseNamespace, bool allowAuto = false);
-	}
+        protected abstract TypeSpecifier ResolveImpl(Compiler ctx, string baseNamespace, bool allowAuto = false);
+        public abstract IEnumerable<NamespacedID> SoftResolve(Compiler ctx, string baseNamespace, bool allowAuto = false);
 
-	public class SimpleAbstractTypeSpecifier(LocationRange loc, string type) : AbstractTypeSpecifier(loc)
-	{
-		public readonly string Type = type;
+        public override bool Equals(object? obj)
+        {
+            if (obj is null) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            return obj is AbstractTypeSpecifier t && Equals(t);
+        }
 
-		protected override TypeSpecifier ResolveImpl(Compiler ctx, string baseNamespace, bool allowAuto = false)
-		{
-			switch (Type)
-			{
-				case "void":
-					return new VoidType();
-				case "var":
-					if (allowAuto)
-					{
-						return new VarType();
-					}
+        public abstract override int GetHashCode();
+    }
 
-					throw new InvalidTypeError(Type);
-				default:
-					if (Type.Contains(':'))
-					{
-						if (ctx.IR.Types.TryGetValue(Type, out var ret))
-						{
-							return ret.Type;
-						}
-					}
-					else if (GeodeBuilder.NamespaceWalk(baseNamespace, Type, ctx.IR.Types) is { } sym)
-					{
-						return sym.Type;
-					}
-					else if (ctx.IR.Types.TryGetValue($"minecraft:{Type}", out var mc))
-					{
-						return mc.Type;
-					}
-					else if (ctx.IR.Types.TryGetValue($"builtin:{Type}", out var bt))
-					{
-						return bt.Type;
-					}
+    public class SimpleAbstractTypeSpecifier(LocationRange loc, string type) : AbstractTypeSpecifier(loc)
+    {
+        public readonly string Type = type;
 
-					break;
-			}
+        public override bool Equals(AbstractTypeSpecifier? other) => other is SimpleAbstractTypeSpecifier t && t.Type == Type;
 
-			throw new UnknownTypeError(Type);
-		}
-	}
+        protected override TypeSpecifier ResolveImpl(Compiler ctx, string baseNamespace, bool allowAuto = false)
+        {
+            return Type switch
+            {
+                "var" => allowAuto ? new VarType() : throw new InvalidTypeError(Type),
+                _ => ctx.TypeHandler.Find(baseNamespace, Type)
+            };
+        }
 
-	public class AbstractListTypeSpecifier(LocationRange loc, AbstractTypeSpecifier inner) : AbstractTypeSpecifier(loc)
-	{
-		public readonly AbstractTypeSpecifier Inner = inner;
+        public override IEnumerable<NamespacedID> SoftResolve(Compiler ctx, string baseNamespace, bool allowAuto = false)
+        {
+            return Type switch
+            {
+                "var" => allowAuto ? ["amethyst:var"] : throw new InvalidTypeError(Type),
+                _ => [ctx.TypeHandler.FindSoft(baseNamespace, Type)]
+            };
+        }
 
-		protected override TypeSpecifier ResolveImpl(Compiler ctx, string baseNamespace, bool allowAuto = false) =>
-			new ListType(Inner.Resolve(ctx, baseNamespace));
-	}
+        public override int GetHashCode() => HashCode.Combine(Type, GetType());
+    }
 
-	public class AbstractMapTypeSpecifier(LocationRange loc, AbstractTypeSpecifier inner) : AbstractTypeSpecifier(loc)
-	{
-		public readonly AbstractTypeSpecifier Inner = inner;
+    public class AbstractListTypeSpecifier(LocationRange loc, AbstractTypeSpecifier inner) : AbstractTypeSpecifier(loc)
+    {
+        public readonly AbstractTypeSpecifier Inner = inner;
 
-		protected override TypeSpecifier ResolveImpl(Compiler ctx, string baseNamespace, bool allowAuto = false)
-		{
-			var inner = Inner.Resolve(ctx, baseNamespace);
+        public override bool Equals(AbstractTypeSpecifier? other) => other is AbstractListTypeSpecifier t && t.Inner == Inner;
+        public override int GetHashCode() => HashCode.Combine(Inner, GetType());
 
-			if (inner is ReferenceType and not WeakReferenceType)
-			{
-				throw new ReferenceMapError();
-			}
+        protected override TypeSpecifier ResolveImpl(Compiler ctx, string baseNamespace, bool allowAuto = false) => new ListType(Inner.Resolve(ctx, baseNamespace));
+        public override IEnumerable<NamespacedID> SoftResolve(Compiler ctx, string baseNamespace, bool allowAuto = false) => Inner.SoftResolve(ctx, baseNamespace, allowAuto);
+    }
 
-			return new SimpleMapType(inner);
-		}
-	}
+    public class AbstractMapTypeSpecifier(LocationRange loc, AbstractTypeSpecifier inner) : AbstractTypeSpecifier(loc)
+    {
+        public readonly AbstractTypeSpecifier Inner = inner;
 
-	public class AbstractReferenceTypeSpecifier(LocationRange loc, AbstractTypeSpecifier inner)
-		: AbstractTypeSpecifier(loc)
-	{
-		public readonly AbstractTypeSpecifier Inner = inner;
+        public override bool Equals(AbstractTypeSpecifier? other) => other is AbstractMapTypeSpecifier t && t.Inner == Inner;
+        public override int GetHashCode() => HashCode.Combine(Inner, GetType());
 
-		protected override TypeSpecifier ResolveImpl(Compiler ctx, string baseNamespace, bool allowAuto = false) =>
-			new ReferenceType(Inner.Resolve(ctx, baseNamespace));
-	}
+        protected override TypeSpecifier ResolveImpl(Compiler ctx, string baseNamespace, bool allowAuto = false)
+        {
+            var inner = Inner.Resolve(ctx, baseNamespace);
+            return inner is ReferenceType and not WeakReferenceType ? throw new ReferenceMapError() : new SimpleMapType(inner);
+        }
 
-	public class AbstractWeakReferenceTypeSpecifier(LocationRange loc, AbstractTypeSpecifier inner)
-		: AbstractTypeSpecifier(loc)
-	{
-		public readonly AbstractTypeSpecifier Inner = inner;
+        public override IEnumerable<NamespacedID> SoftResolve(Compiler ctx, string baseNamespace, bool allowAuto = false) => Inner.SoftResolve(ctx, baseNamespace, allowAuto);
+    }
 
-		protected override TypeSpecifier ResolveImpl(Compiler ctx, string baseNamespace, bool allowAuto = false) =>
-			new WeakReferenceType(Inner.Resolve(ctx, baseNamespace));
-	}
+    public class AbstractReferenceTypeSpecifier(LocationRange loc, AbstractTypeSpecifier inner) : AbstractTypeSpecifier(loc)
+    {
+        public readonly AbstractTypeSpecifier Inner = inner;
+
+        public override bool Equals(AbstractTypeSpecifier? other) => other is AbstractReferenceTypeSpecifier t && t.Inner == Inner;
+        public override int GetHashCode() => HashCode.Combine(Inner, GetType());
+
+        protected override TypeSpecifier ResolveImpl(Compiler ctx, string baseNamespace, bool allowAuto = false) => new ReferenceType(Inner.Resolve(ctx, baseNamespace));
+        public override IEnumerable<NamespacedID> SoftResolve(Compiler ctx, string baseNamespace, bool allowAuto = false) => Inner.SoftResolve(ctx, baseNamespace, allowAuto);
+    }
+
+    public class AbstractWeakReferenceTypeSpecifier(LocationRange loc, AbstractTypeSpecifier inner) : AbstractTypeSpecifier(loc)
+    {
+        public readonly AbstractTypeSpecifier Inner = inner;
+
+        public override bool Equals(AbstractTypeSpecifier? other) => other is AbstractWeakReferenceTypeSpecifier t && t.Inner == Inner;
+        public override int GetHashCode() => HashCode.Combine(Inner, GetType());
+
+        protected override TypeSpecifier ResolveImpl(Compiler ctx, string baseNamespace, bool allowAuto = false) => new WeakReferenceType(Inner.Resolve(ctx, baseNamespace));
+        public override IEnumerable<NamespacedID> SoftResolve(Compiler ctx, string baseNamespace, bool allowAuto = false) => Inner.SoftResolve(ctx, baseNamespace, allowAuto);
+    }
 }

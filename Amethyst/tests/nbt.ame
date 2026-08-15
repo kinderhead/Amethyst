@@ -66,6 +66,23 @@ class clsvec {
     }
 }
 
+// Put clssubvec definition before clsvec2 to test type depency graph generation
+class clssubvec implements clsvec2 {
+    clssubvec(int x, int y, int z) : clsvec2(x * 2, y * 2, z * 2) { }
+
+    virtual int get-x() {
+        return this.x * 2;
+    }
+
+    virtual int get-x2() {
+        return this.x + 1;
+    }
+
+    virtual int get-x2(int y) {
+        return this.x + y + 1;
+    }
+}
+
 class clsvec2 {
     int x;
     int y;
@@ -91,22 +108,6 @@ class clsvec2 {
 
     virtual int get-x2(int y) {
         return this.x + y;
-    }
-}
-
-class clssubvec implements clsvec2 {
-    clssubvec(int x, int y, int z) : clsvec2(x * 2, y * 2, z * 2) { }
-
-    virtual int get-x() {
-        return this.x * 2;
-    }
-
-    virtual int get-x2() {
-        return this.x + 1;
-    }
-
-    virtual int get-x2(int y) {
-        return this.x + y + 1;
     }
 }
 

@@ -2,7 +2,5 @@
 
 namespace Amethyst.Errors
 {
-	public class ConstantValueError() : GeodeError("Value is not constant")
-	{
-	}
+    public class ConstantValueError() : GeodeError("Value is not constant");
 }

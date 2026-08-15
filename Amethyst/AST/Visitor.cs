@@ -23,6 +23,7 @@ namespace Amethyst.AST
         public readonly string Filename = filename;
 
         private string currentNamespace = "minecraft";
+        private NamespacedID currentStructID = "builtin:void";
 
         public override Node VisitRoot([NotNull] AmethystParser.RootContext context)
         {
@@ -104,6 +105,8 @@ namespace Amethyst.AST
             }
 
             var id = IdentifierToID(Visit(context.id()));
+            var oldSID = currentStructID;
+            currentStructID = id;
 
             var oldNs = currentNamespace;
             currentNamespace = id.ToString();
@@ -116,7 +119,9 @@ namespace Amethyst.AST
             else if (context.EntityDef() is not null) type = ContainerType.Entity;
             else type = ContainerType.Class;
 
-            return new StructNode(type, Loc(context), id, context.simpleType() is null ? null : Visit(context.simpleType()), props, methods);
+            var ret = new StructNode(type, Loc(context), id, context.simpleType() is null ? null : Visit(context.simpleType()), props, methods);
+            currentStructID = oldSID;
+            return ret;
         }
 
         public override Node VisitMethod([NotNull] AmethystParser.MethodContext context)
@@ -139,17 +144,14 @@ namespace Amethyst.AST
             var args = Visit(context.paramList());
             var block = Visit(context.block());
 
-            if (context.type() is not null) return new MethodNode(Loc(context), [], mod, Visit(context.type()), id, args, block);
-
-            return new ConstructorNode(Loc(context), [], mod, id, args, context.expression() is null ? null : Visit(context.expression()), block);
+            if (context.type() is not null) return new MethodNode(Loc(context), [], mod, Visit(context.type()), id, currentStructID, args, block);
+            return new ConstructorNode(Loc(context), [], mod, currentStructID, args, context.expression() is null ? null : Visit(context.expression()), block);
         }
 
         public override Node VisitInitAssignmentStatement([NotNull] AmethystParser.InitAssignmentStatementContext context)
         {
             var flags = StorageModifiers.None;
-
             if (context.Const().Length > 0) flags |= StorageModifiers.Const;
-
             if (context.Static().Length > 0) flags |= StorageModifiers.Static;
 
             return new InitAssignmentNode(Loc(context), flags, Visit(context.type()), Visit(context.id()), context.expression() is null ? null : Visit(context.expression()));

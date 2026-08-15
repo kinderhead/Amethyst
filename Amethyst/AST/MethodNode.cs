@@ -13,14 +13,17 @@ namespace Amethyst.AST
         FunctionModifiers modifiers,
         AbstractTypeSpecifier ret,
         NamespacedID id,
+        NamespacedID selfID,
         List<AbstractParameter> parameters,
         BlockNode body) : FunctionNode(loc, tags, modifiers, ret, id, parameters, body)
     {
+        public readonly NamespacedID SelfID = selfID;
+
         public override void Process(Compiler ctx, RootNode root)
         {
-            AbstractTypeSpecifier selfType = new SimpleAbstractTypeSpecifier(Location, string.Join('/', ID.ToString().Split('/')[..^1]));
+            AbstractTypeSpecifier selfType = new SimpleAbstractTypeSpecifier(Location, SelfID.ToString());
 
-            if (ctx.IR.Types[((SimpleAbstractTypeSpecifier)selfType).Type].Type is StructType) selfType = new AbstractReferenceTypeSpecifier(Location, selfType);
+            if (ctx.TypeHandler[SelfID].Type is StructType) selfType = new AbstractReferenceTypeSpecifier(Location, selfType);
 
             Parameters.Insert(0, new(ParameterModifiers.Macro, selfType, "this"));
             base.Process(ctx, root);
@@ -36,25 +39,22 @@ namespace Amethyst.AST
         NamespacedID id,
         List<AbstractParameter> parameters,
         Expression? baseCall,
-        BlockNode body) : MethodNode(loc, tags, modifiers, new SimpleAbstractTypeSpecifier(loc, id.ToString()), id, parameters, body)
+        BlockNode body) : MethodNode(loc, tags, modifiers, new SimpleAbstractTypeSpecifier(loc, id.ToString()), id, id, parameters, body)
     {
         public readonly Expression? BaseCall = baseCall;
 
         public override void Process(Compiler ctx, RootNode root)
         {
-            var selfId = new NamespacedID(string.Join('/', ID.ToString().Split('/')[..^1]));
-            var self = new SimpleAbstractTypeSpecifier(Location, selfId.ToString());
-
+            var self = new SimpleAbstractTypeSpecifier(Location, SelfID.ToString());
             var isClass = false;
 
-            if (ctx.IR.Types[self.Type].Type is ReferenceType)
+            if (ctx.TypeHandler[SelfID].Type is ReferenceType)
             {
                 isClass = true;
                 Parameters.Insert(0, new(ParameterModifiers.Macro, self, "this"));
             }
 
-            var constructor = new FunctionNode(Location, Tags, Modifiers, isClass ? new(Location, "void") : self, selfId, Parameters, Body);
-
+            var constructor = new FunctionNode(Location, Tags, Modifiers, isClass ? new(Location, "builtin:void") : self, ID, Parameters, Body);
             constructor.Body.Prepend(new ConstructorInitStatement(Location, self, BaseCall));
 
             if (!isClass) constructor.Body.Add(new ReturnStatement(Location, new VariableExpression(Location, "this")));

@@ -2,7 +2,5 @@
 
 namespace Amethyst.Errors
 {
-	public class MissingReturnError() : GeodeError("Missing return statement")
-	{
-	}
+    public class MissingReturnError() : GeodeError("Missing return statement");
 }

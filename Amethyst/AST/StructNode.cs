@@ -2,6 +2,7 @@
 using Amethyst.AST.Expressions;
 using Amethyst.AST.Statements;
 using Amethyst.Errors;
+using Amethyst.IR;
 using Amethyst.IR.Types;
 using Datapack.Net.Data;
 using Datapack.Net.Utils;
@@ -34,19 +35,27 @@ namespace Amethyst.AST
         public readonly Dictionary<string, AbstractTypeSpecifier> Properties = props;
         public readonly ContainerType Type = type;
 
+        private readonly Dictionary<string, RawFunctionValue> methods = [];
+        private readonly Dictionary<string, TypeSpecifier> props = [];
+        private TypeSpecifier? actualBaseClass;
+        private StructType? selfType;
+
+        public NamespacedID? Provides => ID;
+
+        public IEnumerable<NamespacedID> GetTypeDependencies(Compiler ctx) => BaseClass is not null ? BaseClass.SoftResolve(ctx, ID.GetContainingFolder()) : [];
+
         public void Process(Compiler ctx, RootNode root)
         {
-            var actualBaseClass = BaseClass?.Resolve(ctx, ID.GetContainingFolder()) ?? (Type == ContainerType.Entity ? EntityType.Dummy : PrimitiveType.Compound);
+            if (selfType is not null) throw new InvalidOperationException("Called first pass twice");
+
+            actualBaseClass = BaseClass?.Resolve(ctx, ID.GetContainingFolder()) ?? (Type == ContainerType.Entity ? EntityType.Dummy : PrimitiveType.Compound);
             var baseClass = actualBaseClass;
 
             if (baseClass is ReferenceType r) baseClass = r.Inner;
 
             if (Type == ContainerType.Class && !(baseClass is StructType || baseClass == PrimitiveType.Compound)) throw new InvalidBaseClassError(baseClass.ToString());
 
-            var props = new Dictionary<string, TypeSpecifier>();
-            var methods = new Dictionary<string, RawFunctionValue>();
-
-            var selfType = Type switch
+            selfType = Type switch
             {
                 ContainerType.Struct or ContainerType.Class => new StructType(ID, baseClass, props, methods, Type == ContainerType.Class),
                 ContainerType.Entity => new EntityType(ID, baseClass, props, methods),
@@ -55,14 +64,20 @@ namespace Amethyst.AST
 
             if (Type == ContainerType.Class)
             {
-                ctx.IR.AddType(new(ID, Location, new ReferenceType(selfType, false)));
-                ctx.RegisterTypeInfo(selfType);
+                ctx.TypeHandler.Register((GlobalTypeSymbol)new(ID, Location, new ReferenceType(selfType, false)));
+                ctx.TypeHandler.RegisterTypeInfo(selfType);
             }
-            else ctx.IR.AddType(new(ID, Location, selfType));
+            else ctx.TypeHandler.Register((GlobalTypeSymbol)new(ID, Location, selfType));
+        }
+
+        public void SecondPass(Compiler ctx, RootNode root)
+        {
+            if (selfType is null || actualBaseClass is null) throw new InvalidOperationException("Called second pass before first pass");
 
             foreach (var (k, v) in Properties)
             {
                 props[k] = v.Resolve(ctx, ID.GetContainingFolder());
+                RecursePropertyType(ctx, props[k], selfType);
 
                 if (Type != ContainerType.Class && props[k] is ReferenceType && props[k] is not WeakReferenceType) throw new ReferencePropertyError(k);
                 if (ReservedProperties.Contains(k)) throw new ReservedNameError(k);
@@ -104,17 +119,32 @@ namespace Amethyst.AST
 
             if (constructor is null && Type == ContainerType.Class)
             {
-                constructor = new(Location, [], FunctionModifiers.Inline, $"{ID}/{ID.GetFile()}", [],
-                    actualBaseClass is ReferenceType cls
-                        ? new CallExpression(Location, new VariableExpression(Location, cls.Inner.ID.ToString()),
-                            [new VariableExpression(Location, "this")])
-                        : null, new(Location));
+                constructor = new(Location, [], FunctionModifiers.Inline, ID.ToString(), [], actualBaseClass is ReferenceType cls
+                    ? new CallExpression(Location, new VariableExpression(Location, cls.Inner.ID.ToString()), [new VariableExpression(Location, "this")])
+                    : null, new(Location));
                 constructor.Process(ctx, root);
             }
 
             if (ctx.IR.GetConstructorOrNull(selfType.BaseClass) is not null && constructor?.BaseCall is null) throw new MissingConstructorError(selfType.BaseClass.ToString());
             if (Properties.Count != 0 && Type == ContainerType.Struct && selfType.EffectiveType != NBTType.Compound) throw new PropertyError(selfType.ToString());
             if (Type == ContainerType.Class) GenerateMetaMethods(ctx, root, methods);
+        }
+
+        private void RecursePropertyType(Compiler ctx, TypeSpecifier type, TypeSpecifier parent)
+        {
+            if (type is ReferenceType) return;
+            if (type == selfType!)
+            {
+                // Remove type so that the compilation can continue
+                ctx.TypeHandler.Remove(ID);
+                ctx.TypeHandler.Remove(parent.ID); // SecondPass is ordered so this is needed
+                throw new CircularDependencyError(ID.ToString());
+            }
+
+            foreach (var i in type.Properties.Values)
+            {
+                RecursePropertyType(ctx, i, type);
+            }
         }
 
         private void GenerateMetaMethods(Compiler ctx, RootNode root, Dictionary<string, RawFunctionValue> methods) => GenerateGCMark(ctx, root, methods);
@@ -126,7 +156,7 @@ namespace Amethyst.AST
 
             body.Add(new GCMarkStatement(Location));
 
-            methods["@mark"] = new FunctionNode(Location, [], FunctionModifiers.Virtual, new SimpleAbstractTypeSpecifier(Location, "void"),
+            methods["@mark"] = new FunctionNode(Location, [], FunctionModifiers.Virtual, new SimpleAbstractTypeSpecifier(Location, "builtin:void"),
                 id, [new(ParameterModifiers.Macro, new SimpleAbstractTypeSpecifier(Location, ID.ToString()), "this")],
                 body).ProcessAndGetFunc(ctx, root);
         }

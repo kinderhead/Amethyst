@@ -1,6 +1,4 @@
 ﻿namespace Geode.IR.Instructions
 {
-	public interface IBlockCapstoneInsn : IBasicInsn
-	{
-	}
+    public interface IBlockCapstoneInsn : IBasicInsn;
 }

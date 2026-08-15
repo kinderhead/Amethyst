@@ -27,7 +27,16 @@ namespace Amethyst.AST
         private FunctionType? funcType;
         public NamespacedID ID { get; private set; } = id;
 
+        public NamespacedID? Provides => null;
+
+        public IEnumerable<NamespacedID> GetTypeDependencies(Compiler ctx) =>
+            ReturnType.SoftResolve(ctx, ID.GetContainingFolder()).Concat(Parameters.SelectMany(i => i.Type.SoftResolve(ctx, ID.GetContainingFolder())));
+
         public virtual void Process(Compiler ctx, RootNode root) => ProcessAndGetFunc(ctx, root);
+
+        public void SecondPass(Compiler ctx, RootNode root)
+        {
+        }
 
         public RawFunctionValue ProcessAndGetFunc(Compiler ctx, RootNode root)
         {

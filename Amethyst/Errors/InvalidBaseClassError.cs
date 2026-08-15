@@ -2,8 +2,5 @@
 
 namespace Amethyst.Errors
 {
-	public class InvalidBaseClassError(string type)
-		: GeodeError($"Type {type} is not a valid base class in this context")
-	{
-	}
+    public class InvalidBaseClassError(string type) : GeodeError($"Type {type} is not a valid base class in this context");
 }

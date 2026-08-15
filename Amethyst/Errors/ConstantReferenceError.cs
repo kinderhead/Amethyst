@@ -2,7 +2,5 @@
 
 namespace Amethyst.Errors
 {
-	public class ConstantReferenceError() : GeodeError("Cannot assign to a constant reference")
-	{
-	}
+    public class ConstantReferenceError() : GeodeError("Cannot assign to a constant reference");
 }

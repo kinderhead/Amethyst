@@ -28,7 +28,6 @@ namespace Geode
         public readonly NamespacedID RuntimeID;
 
         public readonly Dictionary<NamespacedID, GlobalSymbol> Symbols = [];
-        public readonly Dictionary<NamespacedID, GlobalTypeSymbol> Types = [];
 
         public readonly List<Command> UserInitCommands = [];
         private readonly SortedDictionary<int, ScoreValue> constants = [];
@@ -199,15 +198,7 @@ namespace Geode
             Symbols[sym.ID] = sym;
         }
 
-        public void AddType(GlobalTypeSymbol sym)
-        {
-            if (Types.TryGetValue(sym.ID, out var old)) throw new RedefinedSymbolError(sym.ID.ToString(), old.Location);
-
-            Types[sym.ID] = sym;
-        }
-
-        public StorageValue AddGlobal(NamespacedID id, TypeSpecifier type, LocationRange loc,
-                                      string context = "globals")
+        public StorageValue AddGlobal(NamespacedID id, TypeSpecifier type, LocationRange loc, string context = "globals")
         {
             var val = new StorageValue(new NamespacedID(id.Namespace, context), id.Path.Replace('/', '.'), type);
             AddSymbol(new(id, loc, val));
@@ -222,12 +213,7 @@ namespace Geode
             return (ctx, func);
         }
 
-        public IValue? GetGlobal(NamespacedID id)
-        {
-            if (Symbols.TryGetValue(id, out var sym)) return sym.Value;
-
-            return null;
-        }
+        public IValue? GetGlobal(NamespacedID id) => Symbols.TryGetValue(id, out var sym) ? sym.Value : null;
 
         public IValue? GetGlobalWalk(string baseNamespace, string name) =>
             NamespaceWalk(baseNamespace, name, Symbols)?.Value;
@@ -235,7 +221,6 @@ namespace Geode
         public IValue? GetConstructorOrNull(TypeSpecifier type)
         {
             if (GetGlobal(type.ID) is { Type: FunctionType funcType } v && funcType.ReturnType == type) return v;
-
             return null;
         }
 
@@ -293,8 +278,7 @@ namespace Geode
             return default;
         }
 
-        private static DP GetDP(IOptions opts) => new(opts.Output, new MCMeta().SetDescription(opts.Description ?? "A project made with Amethyst.")
-                                                                               .SetMinVersion(opts.PackFormat)
-                                                                               .SetMaxVersion(opts.PackFormat));
+        private static DP GetDP(IOptions opts) => new(opts.Output,
+            new MCMeta().SetDescription(opts.Description ?? "A project made with Amethyst.").SetMinVersion(opts.PackFormat).SetMaxVersion(opts.PackFormat));
     }
 }
