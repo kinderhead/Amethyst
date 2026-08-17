@@ -1,6 +1,7 @@
 # Changes
 
 * Standardized capitalization in error messages.
+* Added implicit casting from `entity&` and `entity^` to `target`.
 
 # Bug Fixes
 

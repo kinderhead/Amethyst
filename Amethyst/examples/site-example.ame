@@ -1,28 +1,43 @@
 namespace example;
 
+entitydef minecraft:base {
+    bool Invulnerable;
+    string CustomName;
+    unsafe_string[] Tags;
+    double[] Pos;
+}
+
+entitydef minecraft:sheep implements minecraft:base {
+    float Health;
+}
+
+struct vec {
+    int x;
+    int y;
+    int z;
+}
+
+vec platform = { x: 0, y: 100, z: 0 };
+
+void place_self(macro int x, macro int z) {
+    @/tp @s $(platform.x + x) $(platform.y) $(platform.z + z)
+}
+
+void place_all(sheep[] mobs) {
+    for (int i = 0; i < mobs.size(); ++i) {
+        as (mobs[i]) {
+            place_self(i % 4, i / 4);
+        }
+    }
+}
+
 #load
 void main() {
-    var entity = "sheep";
-    var targets = @e[type=entity,limit=10];
-    var arr = [1, 2, 3, 4];
+    sheep[] mobs = [];
 
-    if (sum(arr) > 3) as (targets) {
-        move-to(7, 7);
-    }
-}
-
-int sum(int[] arr) {
-    int sum = 0;
-
-    for (int i = 0; i < arr.size(); ++i) {
-        sum += arr[i];
+    as (@e[type="sheep",limit=16]) {
+        mobs.add(@s);
     }
 
-    return sum;
-}
-
-int default_height = 6;
-
-void move-to(int x, int z) {
-    @/tp @s $(x) $(default_height + 2) $(z)
+    place_all(mobs);
 }

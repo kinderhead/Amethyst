@@ -16,8 +16,7 @@ namespace Amethyst.IR.Types
         public readonly TypeSpecifier Inner = inner;
         public readonly bool Mutable = mutable;
 
-        public override IEnumerable<TypeSpecifier> Subtypes =>
-            [Inner]; // Shouldn't need to unnecessarily include the base subtypes here
+        public override IEnumerable<TypeSpecifier> Subtypes => [Inner]; // Shouldn't need to unnecessarily include the base subtypes here
 
         public override LiteralValue DefaultValue => new($"storage amethyst:runtime null.{Guid.NewGuid()}", this);
         public override NBTType EffectiveType => NBTType.String;
@@ -33,12 +32,9 @@ namespace Amethyst.IR.Types
 
         public override void AssignmentOverload(ValueRef dest, ValueRef val, FunctionContext ctx)
         {
-            if (!Mutable || val.Value is NullValue)
-                base.AssignmentOverload(dest, val, ctx);
-            else if (val.Type is ReferenceType)
-                ctx.Add(new StoreRefToRefInsn(dest, ctx.ImplicitCast(val, this)));
-            else
-                ctx.Add(new StoreRefInsn(dest, ctx.ImplicitCast(val, Inner)));
+            if (!Mutable || val.Value is NullValue) base.AssignmentOverload(dest, val, ctx);
+            else if (val.Type is ReferenceType) ctx.Add(new StoreRefToRefInsn(dest, ctx.ImplicitCast(val, this)));
+            else ctx.Add(new StoreRefInsn(dest, ctx.ImplicitCast(val, Inner)));
         }
 
         public override void CastToOverload(ValueRef val, FunctionContextRecorder recorder)
@@ -55,6 +51,7 @@ namespace Amethyst.IR.Types
         public override void CastFromOverload(ValueRef val, TypeSpecifier to, FunctionContextRecorder recorder)
         {
             if (Inner.Implements(to)) recorder.Record(ctx => Deref(val, ctx));
+            else if (Inner is EntityType && to is TargetSelectorType) recorder.Record(ctx => ctx.Add(new EntityToTargetInsn(Deref(val, ctx))));
             else if (to is ReferenceType && Inner is VoidType) recorder.Record(val);
         }
 
@@ -70,21 +67,12 @@ namespace Amethyst.IR.Types
         public override object Clone() => new ReferenceType((TypeSpecifier)Inner.Clone(), Mutable);
 
         public static ValueRef Deref(ValueRef src, FunctionContext ctx) => ctx.Add(new DereferenceInsn(src));
-
-        public static LiteralValue From(DataTargetValue val) =>
-            new(val.Target.GetTarget(), new ReferenceType(val.Type));
-
-        public static ValueRef TryDeref(ValueRef src, FunctionContext ctx)
-        {
-            if (src.Type is ReferenceType r) return Deref(src, ctx);
-
-            return src;
-        }
+        public static LiteralValue From(DataTargetValue val) => new(val.Target.GetTarget(), new ReferenceType(val.Type));
+        public static ValueRef TryDeref(ValueRef src, FunctionContext ctx) => src.Type is ReferenceType ? Deref(src, ctx) : src;
 
         public override string ToString()
         {
             if (Inner is StructType { IsClass: true } s) return s.ToString();
-
             return $"{Inner}{Postfix}";
         }
     }

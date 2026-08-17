@@ -7,19 +7,58 @@
 
 .codeHolder {
     display: flex;
-    flex-direction: row;
     align-items: center;
-    justify-content: space-evenly;
+    justify-content: center;
+    gap: 4rem;
     width: 100%;
+    margin-bottom: 3rem;
+}
+
+.firstCode {
+    height: 100%;
+}
+
+.lastCode {
+    height: 62rem;
+    width: 40vw;
+}
+
+.codeBubble {
+    border: solid var(--ifm-color-primary-darkest);
+    border-width: 2px;
+    border-radius: 1rem;
+    overflow: hidden;
 }
 
 .codeBubble pre {
+    --amethyst-bg: #1e1025;
+    font-size: 1.25rem;
+    overflow: auto;
+    width: 100%;
+    height: 100%;
+    border-radius: 1rem;
+    margin: 0;
+}
+
+.codeBubbleMC {
+    border-radius: 1rem;
     border: solid var(--ifm-color-primary-darkest);
     border-width: 2px;
-    --amethyst-bg: #1e1025;
+    overflow: hidden;
+}
+
+.codeBubbleMC pre {
+    --amethyst-bg: #0e0e0e;
+    font-size: .75rem;
+    overflow: auto;
+    width: 100%;
+    height: 100%;
     border-radius: 1rem;
+    margin: 0;
+}
+
+.bigCodeBubbleMC pre {
     font-size: 1.25rem;
-    max-width: 95vw;
 }
 
 .extraCodeBubble pre {
@@ -36,17 +75,22 @@
     border-width: 2rem;
     border: solid var(--ifm-color-primary-darkest);
     background-color: #101010 !important;
-    
+
     padding: 2rem;
-
     font-size: 1.25rem;
-
     max-width: 95vw;
 }
 
 .heading {
     text-align: center;
     font-size: 3rem;
+    margin-bottom: 3rem;
+    max-width: 60%;
+}
+
+.headingSmall {
+    text-align: center;
+    font-size: 2rem;
     margin-bottom: 3rem;
     max-width: 60%;
 }
@@ -63,13 +107,36 @@
 }
 
 @media screen and (max-width: 996px) {
-    .codeBubble pre {
+    .codeHolder {
+        flex-direction: column;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .codeBubble {
         font-size: inherit;
+    }
+
+    .codeBubbleMC {
+        font-size: inherit;
+    }
+
+    .firstCode {
+        width: 95vw;
+    }
+
+    .lastCode {
+        width: 95vw;
     }
 
     .heading {
         max-width: 80%;
         font-size: 2rem;
+    }
+
+    .headingSmall {
+        max-width: 80%;
+        font-size: 1.5rem;
     }
 
     .terminalBubble {
@@ -84,5 +151,13 @@
 @media screen and (max-width: 500px) {
     .codeBubble pre {
         font-size: 0.75rem;
+    }
+
+    .codeBubbleMC pre {
+        font-size: 0.75rem;
+    }
+
+    .lastCode {
+        height: 38rem;
     }
 }

@@ -1,21 +1,23 @@
 import { transformerColorizedBrackets } from '@shikijs/colorized-brackets';
 import darkPlus from "@shikijs/themes/dark-plus";
 import amethyst from "@site/../AmethystLanguageServer/syntaxes/amethyst.tmLanguage.json";
+import mcfunction from "@site/mcfunction.tmLanguage.json";
 import React from 'react';
 import { createJavaScriptRegexEngine } from "shiki";
 import { createHighlighterCoreSync } from "shiki/core";
 
 const highlighter = createHighlighterCoreSync({
-    langs: [amethyst],
+    langs: [amethyst, mcfunction],
     themes: [darkPlus],
     engine: createJavaScriptRegexEngine()
 });
 
 interface HighlightCodeProps extends React.HTMLAttributes<HTMLElement> {
     code: string;
+    lang?: string;
 }
 
-export default function HighlightCode({ code, ...props }: HighlightCodeProps) {
+export default function HighlightCode({ code, lang, ...props }: HighlightCodeProps) {
     var lines = code.split("\n");
     
     if (lines.length > 0) {
@@ -39,6 +41,6 @@ export default function HighlightCode({ code, ...props }: HighlightCodeProps) {
     code = lines.join("\n");
 
     return (
-        <div {...props} dangerouslySetInnerHTML={{ __html: highlighter.codeToHtml(code, { lang: "Amethyst", theme: "dark-plus", transformers: [transformerColorizedBrackets()] }) }}></div>
+        <div {...props} dangerouslySetInnerHTML={{ __html: highlighter.codeToHtml(code, { lang: lang || "Amethyst", theme: "dark-plus", transformers: [transformerColorizedBrackets()] }) }}></div>
     );
 }

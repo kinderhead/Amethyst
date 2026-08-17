@@ -6,33 +6,20 @@ entitydef minecraft:base {
     bool Invulnerable;
     string CustomName;
     unsafe_string[] Tags;
+    double[] Pos;
 }
 
-entitydef test_entity implements minecraft:base {
+entitydef minecraft:sheep implements minecraft:base {
     float Health;
 }
 
-class A {
-    A next;
-}
-
-struct obj {
-    obj2 x;
-}
-
-struct obj2 {
-    obj x;
+int add(macro int arg) {
+    return arg + 7;
 }
 
 #load
 void main() {
-    obj y;
-
-    A x = new A();
-    x.next = new A();
-
-    print(x);
-    print("Heap size: ", amethyst:gc/heap_info.size());
+    print(add(-8));
 
     amethyst:exit();
 }
