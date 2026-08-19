@@ -15,9 +15,9 @@
       "commandLineArgs": "compile tests/*.ame -o output.zip --run",
       "workingDirectory": "$(ProjectDir)"
     },
-    "Amethyst Random": {
+    "Random": {
       "commandName": "Project",
-      "commandLineArgs": "setup --eula",
+      "commandLineArgs": "--help",
       "workingDirectory": "$(ProjectDir)"
     }
   }

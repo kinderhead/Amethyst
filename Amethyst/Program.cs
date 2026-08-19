@@ -1,7 +1,7 @@
-﻿using Amethyst.Cli;
+﻿using System.Runtime.ExceptionServices;
+using Amethyst.Cli;
 using Spectre.Console;
 using Spectre.Console.Cli;
-using System.Runtime.ExceptionServices;
 using Tmds.Utils;
 
 namespace Amethyst
@@ -31,14 +31,14 @@ namespace Amethyst
 			{
 				config.SetApplicationName("amethyst");
 				config.Settings.MaximumIndirectExamples = 100;
-				config.Settings.HelpProviderStyles?.Description?.Header = "default";
-				config.Settings.HelpProviderStyles?.Usage?.Header = "default";
-				config.Settings.HelpProviderStyles?.Examples?.Header = "default";
-				config.Settings.HelpProviderStyles?.Arguments?.Header = "default";
-				config.Settings.HelpProviderStyles?.Arguments?.RequiredArgument = "aqua";
-				config.Settings.HelpProviderStyles?.Arguments?.OptionalArgument = "silver";
-				config.Settings.HelpProviderStyles?.Options?.Header = "default";
-				config.Settings.HelpProviderStyles?.Commands?.Header = "default";
+				// config.Settings.HelpProviderStyles?.Description?.Header = "default";
+				// config.Settings.HelpProviderStyles?.Usage?.Header = "default";
+				// config.Settings.HelpProviderStyles?.Examples?.Header = "default";
+				// config.Settings.HelpProviderStyles?.Arguments?.Header = "default";
+				// config.Settings.HelpProviderStyles?.Arguments?.RequiredArgument = "aqua";
+				// config.Settings.HelpProviderStyles?.Arguments?.OptionalArgument = "silver";
+				// config.Settings.HelpProviderStyles?.Options?.Header = "default";
+				// config.Settings.HelpProviderStyles?.Commands?.Header = "default";
 
 				config.SetExceptionHandler((ex, _) =>
 				{
