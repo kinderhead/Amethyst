@@ -38,6 +38,8 @@ def format_from_version(version: str):
         packver = "101.1"
     elif version == "26.2":
         packver = "107.1"
+    elif version == "26.3":
+        packver = "121.0"
     else:
         raise Exception(f"Version {version} not supported yet")\
             

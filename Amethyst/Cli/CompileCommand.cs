@@ -27,7 +27,7 @@ namespace Amethyst.Cli
 
         [CommandOption("-p|--pack-version")]
         [Description("Data pack version to support.")]
-        [DefaultValue("107.1")]
+        [DefaultValue("121.0")]
         public PackFormat PackFormat { get; set; }
 
         [CommandOption("-d|--debug")]

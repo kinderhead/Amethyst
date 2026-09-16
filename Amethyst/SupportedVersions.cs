@@ -15,6 +15,7 @@ namespace Amethyst
 					Comparer<MinecraftVersion>.Create((x, y) => y.CompareTo(x)));
 
 			builder.Add(new(26, 2, 0), new(107, 1));
+			builder.Add(new(26, 3, 0), new(121, 0));
 			builder.Add(new(26, 1, 2), new(101, 1));
 			builder.Add(new(26, 1, 1), new(101, 1));
 			builder.Add(new(26, 1, 0), new(101, 1));

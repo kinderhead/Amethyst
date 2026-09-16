@@ -26,7 +26,7 @@ namespace Amethyst.Cli
 
         [CommandOption("-v|--version")]
         [Description("Minecraft server version.")]
-        [DefaultValue("26.2")]
+        [DefaultValue("26.3")]
         public string MinecraftVersion { get; set; }
 
         [CommandOption("-p|--port")]

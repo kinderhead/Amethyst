@@ -7,12 +7,10 @@ namespace Datapack.Net.Pack
 {
 	public class PackVersionJsonConverter : JsonConverter<PackFormat>
 	{
-		public override PackFormat ReadJson(JsonReader reader, Type objectType, PackFormat existingValue,
-			bool hasExistingValue, JsonSerializer serializer)
+		public override PackFormat ReadJson(JsonReader reader, Type objectType, PackFormat existingValue, bool hasExistingValue, JsonSerializer serializer)
 		{
 			var data = JToken.Load(reader);
-			return new((string?)data ??
-			           throw new FormatException($"Invalid pack version: \"{data}\". Expected \"Major.Minor\""));
+			return new((string?)data ?? throw new FormatException($"Invalid pack version: \"{data}\". Expected \"Major.Minor\""));
 		}
 
 		public override void WriteJson(JsonWriter writer, PackFormat value, JsonSerializer serializer) =>
@@ -46,13 +44,12 @@ namespace Datapack.Net.Pack
 	[TypeConverter(typeof(PackVersionConverter))]
 	public readonly record struct PackFormat(int Major, int Minor) : IComparable<PackFormat>
 	{
-		public static readonly PackFormat Latest = new(107, 1);
+		public static readonly PackFormat Latest = new(121, 0);
 		public PackFormat(string version) : this(int.Parse(version.Split('.')[0]), int.Parse(version.Split('.')[1])) { }
 
 		public bool IsNewStyle => Major >= 82;
 
-		public int CompareTo(PackFormat other) =>
-			Major == other.Major ? Major.CompareTo(other.Major) : Minor.CompareTo(other.Minor);
+		public int CompareTo(PackFormat other) => Major == other.Major ? Major.CompareTo(other.Major) : Minor.CompareTo(other.Minor);
 
 		public JToken Get(bool newStyle = false)
 		{
