@@ -49,7 +49,7 @@ namespace Amethyst.Cli
 
     public class BuildProjectCommand : Command<BuildProjectSettings>
     {
-        protected override int Execute(CommandContext context, BuildProjectSettings settings, CancellationToken cancellationToken)
+        public override int Execute(CommandContext context, BuildProjectSettings settings, CancellationToken cancellationToken)
         {
             var project = ProjectDefinition.Deserialize(settings.ShardFile);
             Environment.CurrentDirectory = Path.GetDirectoryName(Path.GetFullPath(settings.ShardFile)) ??

@@ -21,7 +21,7 @@ namespace Amethyst.Cli
 
     public class DaemonLaunchCommand : Command<DaemonLaunchOptions>
     {
-        protected override int Execute(CommandContext context, DaemonLaunchOptions settings, CancellationToken cancellationToken)
+        public override int Execute(CommandContext context, DaemonLaunchOptions settings, CancellationToken cancellationToken)
         {
             if (settings.Command is null)
                 return Server.StartServer(watchOutput: true, timeout: settings.Timeout) ? 0 : 1;

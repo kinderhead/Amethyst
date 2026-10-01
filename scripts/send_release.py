@@ -30,7 +30,7 @@ call(f"gh run watch {runId}")
 call(f"gh run view {runId} --exit-status")
 
 with open("CHANGELOG.md", "w+") as f:
-    f.write("# Changes\n\n\n# Bug Fixes\n\n\n")
+    f.write("# Changes\n\n\n\n# Bug Fixes\n\n\n")
 
 csproj = ET.parse("Amethyst/Amethyst.csproj")
 data = csproj.getroot()

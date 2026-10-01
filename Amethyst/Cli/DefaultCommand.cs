@@ -15,7 +15,7 @@ namespace Amethyst.Cli
 
     public class DefaultCommand : Command<DefaultCommandOptions>
     {
-        protected override int Execute(CommandContext context, DefaultCommandOptions settings, CancellationToken cancellationToken)
+        public override int Execute(CommandContext context, DefaultCommandOptions settings, CancellationToken cancellationToken)
         {
             if (settings.Version)
             {

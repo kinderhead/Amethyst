@@ -6,87 +6,90 @@ using Tmds.Utils;
 
 namespace Amethyst
 {
-	internal class Program
-	{
-		private static int Main(string[] args)
-		{
-			if (ExecFunction.IsExecFunctionCommand(args))
-			{
-				return ExecFunction.Program.Main(args);
-			}
+    internal class Program
+    {
+        private static int Main(string[] args)
+        {
+            if (ExecFunction.IsExecFunctionCommand(args)) return ExecFunction.Program.Main(args);
 
 #if DEBUG
-			Console.Clear(); // Thanks Visual Studio for being sad
+            Console.Clear(); // Thanks Visual Studio for being sad
 #endif
 
-			AnsiConsole.MarkupLine(
-				"[yellow]Amethyst is currently in development. Report issues at [aqua underline]https://github.com/kinderhead/Amethyst/issues[/].[/]\n");
+            AnsiConsole.MarkupLine(
+                "[yellow]Amethyst is currently in development. Report issues at [aqua underline]https://github.com/kinderhead/Amethyst/issues[/].[/]\n");
 
 #pragma warning disable IL3050
-			var app = new CommandApp();
+            var app = new CommandApp();
 #pragma warning restore IL3050
 
-			app.SetDefaultCommand<DefaultCommand>();
-			app.Configure(config =>
-			{
-				config.SetApplicationName("amethyst");
-				config.Settings.MaximumIndirectExamples = 100;
-				// config.Settings.HelpProviderStyles?.Description?.Header = "default";
-				// config.Settings.HelpProviderStyles?.Usage?.Header = "default";
-				// config.Settings.HelpProviderStyles?.Examples?.Header = "default";
-				// config.Settings.HelpProviderStyles?.Arguments?.Header = "default";
-				// config.Settings.HelpProviderStyles?.Arguments?.RequiredArgument = "aqua";
-				// config.Settings.HelpProviderStyles?.Arguments?.OptionalArgument = "silver";
-				// config.Settings.HelpProviderStyles?.Options?.Header = "default";
-				// config.Settings.HelpProviderStyles?.Commands?.Header = "default";
+            app.SetDefaultCommand<DefaultCommand>();
+            app.Configure(config =>
+            {
+                config.SetApplicationName("amethyst");
+                config.Settings.MaximumIndirectExamples = 100;
+                // config.Settings.HelpProviderStyles?.Description?.Header = "default";
+                // config.Settings.HelpProviderStyles?.Usage?.Header = "default";
+                // config.Settings.HelpProviderStyles?.Examples?.Header = "default";
+                // config.Settings.HelpProviderStyles?.Arguments?.Header = "default";
+                // config.Settings.HelpProviderStyles?.Arguments?.RequiredArgument = "aqua";
+                // config.Settings.HelpProviderStyles?.Arguments?.OptionalArgument = "silver";
+                // config.Settings.HelpProviderStyles?.Options?.Header = "default";
+                // config.Settings.HelpProviderStyles?.Commands?.Header = "default";
 
-				config.SetExceptionHandler((ex, _) =>
-				{
-					if (ex is CommandRuntimeException cre)
-					{
-						AnsiConsole.MarkupLineInterpolated($"[red]Error:[/] {cre.Message}");
-					}
-					else
-					{
-						ExceptionDispatchInfo.Capture(ex).Throw();
-					}
-					// AnsiConsole.MarkupLineInterpolated($"[red]{ex.GetType().Name}: {ex.Message}[/]");
-					// return 1;
-				});
+                var errored = false;
 
-				config.AddCommand<BuildProjectCommand>("build")
-					.WithDescription("Build shard project.")
-					.WithExample("build")
-					.WithExample("build", "-d", "--run");
+                config.SetExceptionHandler((ex, _) =>
+                {
+                    if (ex is CommandRuntimeException cre)
+                        AnsiConsole.MarkupLineInterpolated($"[red]Error:[/] {cre.Message}");
+                    else
+                    {
+                        if (!errored)
+                        {
+                            AnsiConsole.MarkupLine("[red]An unexpected error has occured. Please create an issue on Github.[/] ");
+                            errored = true;
+                        }
 
-				config.AddCommand<CompileCommand>("compile")
-					.WithDescription("Amethyst compiler. For use with individual files outside of a project.")
-					.WithExample("compile", "examples/test.ame", "-o", "datapack.zip")
-					.WithExample("compile", "tests/*.ame", "-o", "tests.zip");
+                        ExceptionDispatchInfo.Capture(ex).Throw();
+                    }
+                    // AnsiConsole.MarkupLineInterpolated($"[red]{ex.GetType().Name}: {ex.Message}[/]");
+                    // return 1;
+                });
 
-				config.AddBranch("shard", cmd =>
-				{
-					cmd.SetDescription("Project subcommands.");
-					cmd.AddCommand<ProjectInitCommand>("init")
-						.WithDescription("Initialize a project.")
-						.WithExample("shard init");
-				});
+                config.AddCommand<BuildProjectCommand>("build")
+                      .WithDescription("Build shard project.")
+                      .WithExample("build")
+                      .WithExample("build", "-d", "--run");
 
-				config.AddCommand<DaemonSetupCommand>("setup")
-					.WithDescription("Amethyst runtime Minecraft server setup.")
-					.WithExample("setup", "--eula");
+                config.AddCommand<CompileCommand>("compile")
+                      .WithDescription("Amethyst compiler. For use with individual files outside of a project.")
+                      .WithExample("compile", "examples/test.ame", "-o", "datapack.zip")
+                      .WithExample("compile", "tests/*.ame", "-o", "tests.zip");
 
-				config.AddCommand<DaemonRunCommand>("run")
-					.WithDescription("Run a datapack.")
-					.WithExample("run", "test.zip");
+                config.AddBranch("shard", cmd =>
+                {
+                    cmd.SetDescription("Project subcommands.");
+                    cmd.AddCommand<ProjectInitCommand>("init")
+                       .WithDescription("Initialize a project.")
+                       .WithExample("shard init");
+                });
 
-				config.AddCommand<DaemonLaunchCommand>("daemon")
-					.WithDescription("Run the Amethyst runtime Minecraft server without a timeout.")
-					.WithExample("daemon")
-					.WithExample("daemon", "-c", "\"op steve\"");
-			});
+                config.AddCommand<DaemonSetupCommand>("setup")
+                      .WithDescription("Amethyst runtime Minecraft server setup.")
+                      .WithExample("setup", "--eula");
 
-			return app.Run(args);
-		}
-	}
+                config.AddCommand<DaemonRunCommand>("run")
+                      .WithDescription("Run a datapack.")
+                      .WithExample("run", "test.zip");
+
+                config.AddCommand<DaemonLaunchCommand>("daemon")
+                      .WithDescription("Run the Amethyst runtime Minecraft server without a timeout.")
+                      .WithExample("daemon")
+                      .WithExample("daemon", "-c", "\"op steve\"");
+            });
+
+            return app.Run(args);
+        }
+    }
 }

@@ -15,7 +15,7 @@ namespace Amethyst.Cli
 
     public class DaemonRunCommand : Command<DaemonRunOptions>
     {
-        protected override int Execute(CommandContext context, DaemonRunOptions settings, CancellationToken cancellationToken)
+        public override int Execute(CommandContext context, DaemonRunOptions settings, CancellationToken cancellationToken)
         {
             var compiler = new Compiler(new CompileOptions { Inputs = [], Output = "" });
             compiler.GetCoreLib(); // Find an std path

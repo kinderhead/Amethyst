@@ -19,7 +19,11 @@ int add(macro int arg) {
 
 #load
 void main() {
-    print(add(-8));
+    int foo = 5;
+
+    for (int i = foo; i > 0; i -= 1) {
+        print(i);
+    }
 
     amethyst:exit();
 }
