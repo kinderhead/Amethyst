@@ -51,8 +51,8 @@ namespace Amethyst.IR.Types
 
             return null;
         }
-#pragma warning disable IDE0028 // Simplify collection initialization
 
+#pragma warning disable IDE0028 // Simplify collection initialization
         public NBTCompound GetTypeInfo() =>
             new([
                 new("methods",
@@ -89,7 +89,6 @@ namespace Amethyst.IR.Types
         public override string ToString() => ID.ToString();
 
         public override object Clone() => new StructType(ID, BaseClass, new(props.Select(i => new KeyValuePair<string, TypeSpecifier>(i.Key, i.Value))), Methods, IsClass);
-
 #pragma warning restore IDE0028 // Simplify collection initialization
     }
 }

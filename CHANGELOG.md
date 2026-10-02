@@ -4,4 +4,4 @@
 
 # Bug Fixes
 
-
+* Fixed issue with converting parameter weak references into strong references (#131).

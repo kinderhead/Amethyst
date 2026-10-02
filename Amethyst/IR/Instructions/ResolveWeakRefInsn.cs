@@ -17,8 +17,18 @@ namespace Amethyst.IR.Instructions
         public override void Render(RenderContext ctx)
         {
             var val = (NBTString)Arg<ValueRef>(0).Expect<LiteralValue>().Value;
-            ctx.Call(ctx.Func.GetGlobalOrThrow<IMinimalFunction>("amethyst:core/ref/get-stack-ref").Get(new([new UnsafeStringType(), PrimitiveType.Int])).ID,
-                new LiteralValue(val.Value.Split("[-1].")[^1]), new LiteralValue(-1));
+
+            if (val.Value.Contains("stack[-1]."))
+            {
+                ctx.Call(ctx.Func.GetGlobalOrThrow<IMinimalFunction>("amethyst:core/ref/get-stack-ref").Get(new([new UnsafeStringType(), PrimitiveType.Int])).ID,
+                    new LiteralValue(val.Value.Split("[-1].")[^1]), new LiteralValue(-1));
+            }
+            else if (val.Value.Contains("stack[-2]."))
+            {
+                ctx.Call(ctx.Func.GetGlobalOrThrow<IMinimalFunction>("amethyst:core/ref/get-stack-ref").Get(new([new UnsafeStringType(), PrimitiveType.Int])).ID,
+                    new LiteralValue(val.Value.Split("[-2].")[^1]), new LiteralValue(-2));
+            }
+
             ReturnValue.Expect<LValue>().Store(ctx.Func.GetFunctionReturnValue(ReturnType, -1), ctx);
         }
 
@@ -27,9 +37,7 @@ namespace Amethyst.IR.Instructions
             var val = Arg<ValueRef>(0).Expect();
             if (val is not LiteralValue { Value: NBTString ptr }) throw new WeakReferenceError();
 
-            if (ptr.Value.Contains("stack[-1].")) return null;
-
-            if (ptr.Value.Contains("stack[-2].")) throw new NotImplementedException();
+            if (ptr.Value.Contains("stack[-1].") || ptr.Value.Contains("stack[-2].")) return null;
 
             return new LiteralValue(ptr, ReturnType);
         }
