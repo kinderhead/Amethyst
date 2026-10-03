@@ -1,5 +1,6 @@
 import json
 import os
+import requests
 import shlex
 import shutil
 import subprocess
@@ -19,7 +20,7 @@ print("Pushed update")
 sleep(1)
 call("gh workflow run Release")
 
-# Just in case idk
+# Just in case idk it doesn't matter
 sleep(5)
 
 print("Searching for releases...")
@@ -28,6 +29,10 @@ runId = str(json.loads(call('gh run list -L 1 -w "Release" --json databaseId'))[
 print(f"Waiting for release {runId}...")
 call(f"gh run watch {runId}")
 call(f"gh run view {runId} --exit-status")
+
+changelog = ""
+with open("CHANGELOG.md", "r") as f:
+    changelog = f.read()
 
 with open("CHANGELOG.md", "w+") as f:
     f.write("# Changes\n\n\n\n# Bug Fixes\n\n\n")
@@ -44,3 +49,17 @@ csproj.write("Amethyst/Amethyst.csproj")
 call("git add .")
 call("git commit -m \"Bump version\"")
 call("git push")
+
+url = ""
+with open("webhook.txt", "r") as f:
+    url = f.read().strip()
+    
+res = requests.post(url, json={
+    "embeds": [{
+        "description": f"# [v{version.text}](https://github.com/kinderhead/Amethyst/releases/tag/v{version.text}])\n\n" + changelog.replace("## ", "### ").replace("# ", "## ").replace("\n\n", "\n") # type: ignore
+    }],
+    "content": "<@&1536599453086257163>"
+})
+
+if res.status_code != 204:
+    raise Exception(res.json())

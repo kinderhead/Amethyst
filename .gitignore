@@ -373,6 +373,7 @@ metadata.ini
 .VSCodeCounter/
 Output/
 tmp/
+webhook.txt
 
 *.deb
 *.apk
