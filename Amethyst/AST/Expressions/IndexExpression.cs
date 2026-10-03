@@ -16,7 +16,7 @@ namespace Amethyst.AST.Expressions
 
 		protected override ValueRef ExecuteImpl(FunctionContext ctx, TypeSpecifier? expected)
 		{
-			var val = Value.Execute(ctx, null);
+			var val = Value.Execute(ctx, new VarType());
 			ValueRef ret;
 
 			if (val.IsTypeOrRef<ListType>())

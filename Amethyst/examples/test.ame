@@ -17,28 +17,36 @@ int add(macro int arg) {
     return arg + 7;
 }
 
-struct mystruct {
-    int x;
+struct foo {
 
-    void foo(mystruct other) {
-        this.x = other.x;
+    int[] elements;
+
+    foo() {
+        this.elements = [0];
+    }
+
+    void bar(int value) {
+        this.elements[0] = value;
     }
 }
 
+
 #load
 void main() {
-    // int foo = 5;
-
-    // for (int i = foo; i > 0; i -= 1) {
-    //     print(i);
-    // }
-
-    mystruct x;
-    x.x = 4;
-    mystruct y;
-    y.x = 123;
-    x.foo(y);
-    print(x);
+    foo x = foo();
+    x.bar(50);
+    print(x.elements);
 
     amethyst:exit();
 }
+
+// #load
+// void main() {
+//     int foo = 5;
+
+//     for (int i = foo; i > 0; i -= 1) {
+//         print(i);
+//     }
+
+//     amethyst:exit();
+// }
