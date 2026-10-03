@@ -15,7 +15,7 @@ namespace Geode.IR.Passes
 
 			var dominanceFrontiers = ctx.CalculateDominanceFrontiers();
 
-			foreach (var variable in ctx.AllVariables.Where(i => !i.ForceStack && i.Type.ShouldStoreInScore))
+			foreach (var variable in ctx.AllVariables.Where(i => i is { ForceStack: false, Type.ShouldStoreInScore: true }))
 			{
 				HashSet<Block> hasStore = [..ctx.Blocks.Where(i => i.ContainsStoreFor(variable))];
 				Stack<Block> stack = new(hasStore.Reverse());
@@ -57,8 +57,7 @@ namespace Geode.IR.Passes
 					}
 				}
 
-				throw new InvalidOperationException(
-					"Error picking variable for Mem2Reg. Report the issue and turn off optimizations.");
+				throw new InvalidOperationException("Error picking variable for Mem2Reg. Report the issue and turn off optimizations.");
 			}
 
 			bool usesVariable(Variable variable) => state.PhiLocations.ContainsKey(variable);
@@ -77,18 +76,33 @@ namespace Geode.IR.Passes
 
 			foreach (var i in block.Instructions)
 			{
-				if (i is ILoadInsn load && load.Variable.Value is Variable v1 && usesVariable(v1))
+				switch (i)
 				{
-					var val = decide(v1);
-					load.Remove();
-					ctx.ReplaceValue(load.ReturnValue, val);
+					case ILoadInsn { Variable.Value: Variable v1 } load when usesVariable(v1):
+					{
+						var val = decide(v1);
+						load.Remove();
+						ctx.ReplaceValue(load.ReturnValue, val);
+						break;
+					}
+					case IStoreInsn { Variable.Value: Variable v2 } store when usesVariable(v2):
+						state.ValueStack.Peek()[v2] = store.Value;
+						store.Remove();
+						break;
+					default:
+					{
+						// Iterate with ValueRefs instead of Variables to keep references correct
+						foreach (var variable in i.Dependencies.Where(i => i.Value is Variable v && usesVariable(v)))
+						{
+							var val = decide((Variable?)variable.Value!);
+							i.ReplaceValue(variable, val);
+						}
+
+						break;
+					}
 				}
-				else if (i is IStoreInsn store && store.Variable.Value is Variable v2 && usesVariable(v2))
-				{
-					state.ValueStack.Peek()[v2] = store.Value;
-					store.Remove();
-				}
-				else if (i is IBranchInsn branch)
+
+				if (i is IBranchInsn branch)
 				{
 					foreach (var dest in branch.Destinations)
 					{
@@ -103,23 +117,12 @@ namespace Geode.IR.Passes
 						state.ValueStack.Pop();
 					}
 				}
-				else
-				{
-					// Iterate with ValueRefs instead of Variables to keep references correct
-					foreach (var variable in i.Dependencies.Where(i => i.Value is Variable v && usesVariable(v)))
-					{
-						var val = decide((Variable?)variable.Value!);
-						i.ReplaceValue(variable, val);
-					}
-				}
 			}
 		}
 
 		public class State
 		{
-			public readonly Dictionary<Variable, HashSet<Block>>
-				PhiLocations = []; // I suppose keep this around for the unit tests
-
+			public readonly Dictionary<Variable, HashSet<Block>> PhiLocations = []; // I suppose keep this around for the unit tests
 			public readonly Stack<Dictionary<Variable, ValueRef>> ValueStack = new([[]]);
 		}
 	}

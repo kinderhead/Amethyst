@@ -15,7 +15,7 @@ void test_for() {
 
 #test
 void test_for_break() {
-    start("for");
+    start("for break");
     
     int x = 0;
 
@@ -33,7 +33,7 @@ void test_for_break() {
 
 #test
 void test_for_continue() {
-    start("for");
+    start("for continue");
     
     int x = 0;
 
@@ -45,6 +45,22 @@ void test_for_continue() {
     }
 
     assert_eq(x, 9);
+
+    complete();
+}
+
+#test
+void test_for_non_constant() {
+    start("for non constant");
+
+    int foo = 5;
+    int count = 0;
+
+    for (int i = foo; i > 0; i -= 1) {
+        ++count;
+    }
+
+    assert_eq(count, 5);
 
     complete();
 }

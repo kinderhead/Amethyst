@@ -92,6 +92,9 @@ void test_assign_math() {
 
     x /= 2;
     assert_eq(x, -9);
+
+    x %= 3;
+    assert_eq(x, 0);
     
     complete();
 }

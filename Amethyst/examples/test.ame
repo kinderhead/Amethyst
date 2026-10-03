@@ -13,40 +13,13 @@ entitydef minecraft:sheep implements minecraft:base {
     float Health;
 }
 
-int add(macro int arg) {
-    return arg + 7;
-}
-
-struct foo {
-
-    int[] elements;
-
-    foo() {
-        this.elements = [0];
-    }
-
-    void bar(int value) {
-        this.elements[0] = value;
-    }
-}
-
-
 #load
 void main() {
-    foo x = foo();
-    x.bar(50);
-    print(x.elements);
+    int foo = 5;
+
+    for (int i = foo; i > 0; i -= 1) {
+        print(i);
+    }
 
     amethyst:exit();
 }
-
-// #load
-// void main() {
-//     int foo = 5;
-
-//     for (int i = foo; i > 0; i -= 1) {
-//         print(i);
-//     }
-
-//     amethyst:exit();
-// }

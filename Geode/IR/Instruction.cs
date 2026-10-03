@@ -1,9 +1,9 @@
+using System.Diagnostics.CodeAnalysis;
+using System.Text;
 using Datapack.Net.Data;
 using Geode.Errors;
 using Geode.Types;
 using Geode.Values;
-using System.Diagnostics.CodeAnalysis;
-using System.Text;
 
 namespace Geode.IR
 {
@@ -114,8 +114,7 @@ namespace Geode.IR
 
 		public abstract void Render(RenderContext ctx);
 
-		public virtual void ConfigureLifetime(Func<ValueRef, ValueRef, bool> tryLink,
-			Action<ValueRef, ValueRef> markOverlap)
+		public virtual void ConfigureLifetime(Func<ValueRef, ValueRef, bool> tryLink, Action<ValueRef, ValueRef> markOverlap)
 		{
 		}
 
