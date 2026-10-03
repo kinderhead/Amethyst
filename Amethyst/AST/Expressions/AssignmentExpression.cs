@@ -11,7 +11,8 @@ namespace Amethyst.AST.Expressions
 		Addition,
 		Subtraction,
 		Multiplication,
-		Division
+		Division,
+		Modulus
 	}
 
 	public class AssignmentExpression(LocationRange loc, Expression dest, AssignmentType type, Expression expr)
@@ -44,7 +45,11 @@ namespace Amethyst.AST.Expressions
 					val = ctx.Add(new DivInsn(ctx.AddLoad(ctx.ImplicitCast(dest, PrimitiveType.Int)),
 						ctx.AddLoad(ctx.ImplicitCast(val, PrimitiveType.Int))));
 					break;
-			}
+				case AssignmentType.Modulus:
+                    val = ctx.Add(new ModInsn(ctx.AddLoad(ctx.ImplicitCast(dest, PrimitiveType.Int)),
+                        ctx.AddLoad(ctx.ImplicitCast(val, PrimitiveType.Int))));
+                    break;
+            }
 
 			dest.Type.AssignmentOverload(dest, val, ctx);
 

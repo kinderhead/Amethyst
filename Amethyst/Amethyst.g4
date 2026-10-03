@@ -93,7 +93,7 @@ expression
     ;
 
 assignmentExpression
-    : newExpression ((Eq | PlusEq | MinusEq | StarEq | SlashEq) expression)?
+    : newExpression ((Eq | PlusEq | MinusEq | StarEq | SlashEq | PercentEq) expression)?
     ;
 
 newExpression
@@ -255,6 +255,7 @@ PlusEq: '+=';
 MinusEq: '-=';
 StarEq: '*=';
 SlashEq: '/=';
+PercentEq: '%=';
 Hash: '#';
 EqEq: '==';
 Neq: '!=';
