@@ -258,6 +258,7 @@ namespace Amethyst.AST
             else if (context.MinusEq() is not null) type = AssignmentType.Subtraction;
             else if (context.StarEq() is not null) type = AssignmentType.Multiplication;
             else if (context.SlashEq() is not null) type = AssignmentType.Division;
+            else if (context.PercentEq() is not null) type = AssignmentType.Modulus;
 
             return new AssignmentExpression(Loc(context), (Expression)Visit(context.newExpression()), type, Visit(context.expression()));
         }

@@ -11,8 +11,6 @@
 // Generated from Amethyst.g4 by ANTLR 4.13.2
 
 // Unreachable code detected
-// ReSharper disable All
-// ReSharper disable InvalidXmlDocComment
 #pragma warning disable 0162
 // The variable '...' is assigned but its value is never used
 #pragma warning disable 0219
