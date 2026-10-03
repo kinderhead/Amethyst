@@ -1,144 +1,126 @@
+using System.Collections.Immutable;
 using Datapack.Net.Data;
 using Datapack.Net.Function;
 using Datapack.Net.Function.Commands;
 using Geode.IR;
 using Geode.Values;
-using System.Collections.Immutable;
 
 namespace Geode
 {
-	public class ExecuteChain : IInstructionArg
-	{
-		public readonly List<ExecuteChainSubcommand> Chain = [];
+    public class ExecuteChain : IInstructionArg
+    {
+        public readonly List<ExecuteChainSubcommand> Chain = [];
 
-		public bool Forks => Chain.Any(i => i.Forks);
-		public string Name => "chain";
-		public IReadOnlySet<ValueRef> Dependencies => ImmutableHashSet.Create([.. Chain.SelectMany(i => i.Values)]);
+        public bool Forks => Chain.Any(i => i.Forks);
+        public string Name => "chain";
+        public IReadOnlySet<ValueRef> Dependencies => ImmutableHashSet.Create([.. Chain.SelectMany(i => i.Values)]);
 
-		public void ReplaceValue(ValueRef value, ValueRef with)
-		{
-			foreach (var i in Chain)
-			{
-				i.ReplaceValue(value, with);
-			}
-		}
+        public void ReplaceValue(ValueRef value, ValueRef with)
+        {
+            foreach (var i in Chain)
+            {
+                i.ReplaceValue(value, with);
+            }
+        }
 
-		public void Add(ExecuteChainSubcommand cmd) => Chain.Add(cmd);
+        public void Add(ExecuteChainSubcommand cmd) => Chain.Add(cmd);
 
-		public void Run(Command ifTrue, RenderContext ctx) => Run([ifTrue], ctx);
+        public void Run(Command ifTrue, RenderContext ctx) => Run([ifTrue], ctx);
 
-		public void Run(Command[] ifTrue, RenderContext ctx)
-		{
-			var cmd = new Execute();
+        public void Run(Command[] ifTrue, RenderContext ctx)
+        {
+            var cmd = new Execute();
 
-			ctx.Macroize(GetDependencies(), (args, ctx) =>
-			{
-				Compute(cmd, () => ifTrue, args, ctx);
-			});
-		}
+            ctx.Macroize(GetDependencies(), (args, ctx) => { Compute(cmd, () => ifTrue, args, ctx); });
+        }
 
-		public void RunWithPropagate(Func<NBTCompound, Command> ifTrue, RenderContext ctx) =>
-			RunWithPropagate(i => [ifTrue(i)], ctx);
+        public void RunWithPropagate(Func<NBTCompound, Command> ifTrue, RenderContext ctx) =>
+            RunWithPropagate(i => [ifTrue(i)], ctx);
 
-		public void RunWithPropagate(Func<NBTCompound, Command[]> ifTrue, RenderContext ctx)
-		{
-			var cmd = new Execute();
+        public void RunWithPropagate(Func<NBTCompound, Command[]> ifTrue, RenderContext ctx)
+        {
+            var cmd = new Execute();
 
-			ctx.Builder.Macroizer.RunAndPropagateMacros(ctx, GetDependencies(), (args, macros, ctx) =>
-			{
-				Compute(cmd, () => ifTrue(macros), args, ctx);
-			});
-		}
+            ctx.Builder.Macroizer.RunAndPropagateMacros(ctx, GetDependencies(), (args, macros, ctx) => { Compute(cmd, () => ifTrue(macros), args, ctx); });
+        }
 
-		private IValue[] GetDependencies() =>
-		[
-			.. Chain.Where(i => i.RequireLiteral).SelectMany(i => i.Values.Select(i => i.Expect()))
-		];
+        private IValue[] GetDependencies() =>
+        [
+            .. Chain.Where(i => i.RequireLiteral).SelectMany(i => i.Values.Select(i => i.Expect()))
+        ];
 
-		private void Compute(Execute cmd, Func<Command[]> ifTrue, IConstantValue[] args, RenderContext ctx)
-		{
-			var idex = 0;
+        private void Compute(Execute cmd, Func<Command[]> ifTrue, IConstantValue[] args, RenderContext ctx)
+        {
+            var idex = 0;
 
-			bool? ret = null;
+            bool? ret = null;
 
-			foreach (var i in Chain)
-			{
-				if (i.RequireLiteral)
-				{
-					ret = i.Build(args[idex..(idex + i.Values.Length)], ctx, cmd);
-					idex += i.Values.Length;
-				}
-				else
-				{
-					ret = i.Build([.. i.Values.Select(i => i.Expect())], ctx, cmd);
-				}
+            foreach (var i in Chain)
+            {
+                if (i.RequireLiteral)
+                {
+                    ret = i.Build(args[idex..(idex + i.Values.Length)], ctx, cmd);
+                    idex += i.Values.Length;
+                }
+                else
+                    ret = i.Build([.. i.Values.Select(i => i.Expect())], ctx, cmd);
 
-				if (ret is not null)
-				{
-					break;
-				}
-			}
+                if (ret is not null) break;
+            }
 
-			if (ret.HasValue)
-			{
-				if (ret.Value)
-				{
-					ctx.Add(ifTrue());
-				}
+            if (ret.HasValue)
+            {
+                if (ret.Value) ctx.Add(ifTrue());
 
-				return;
-			}
+                return;
+            }
 
-			// Realistically, only Phi node variables would be updated in execute run which are marked alive through branch instructions, so no conflicts should occur.
-			ctx.Add(ifTrue().Select(i => cmd.Copy().Run(i)));
-		}
+            // Realistically, only Phi node variables would be updated in execute run which are marked alive through branch instructions, so no conflicts should occur.
+            ctx.Add(ifTrue().Select(i => cmd.Copy().Run(i)));
+        }
 
-		public override string ToString() => string.Join(' ', Chain);
-	}
+        public override string ToString() => string.Join(' ', Chain);
+    }
 
-	public abstract class ExecuteChainSubcommand(IEnumerable<ValueRef> vals)
-	{
-		public readonly ValueRef[] Values = [.. vals];
+    public abstract class ExecuteChainSubcommand(IEnumerable<ValueRef> vals)
+    {
+        public readonly ValueRef[] Values = [.. vals];
 
-		public virtual bool RequireLiteral => false;
-		public virtual bool Forks => false;
+        public virtual bool RequireLiteral => false;
+        public virtual bool Forks => false;
 
-		/// <summary>
-		///     Process the execute chain subcommand
-		/// </summary>
-		/// <param name="processedArgs">
-		///     <see cref="Values" /> processed in accordance with <see cref="RequireLiteral" />
-		/// </param>
-		/// <param name="ctx">Render context</param>
-		/// <param name="cmd">Execute command</param>
-		/// <returns>True if the result is always true, false if the result is always false, null otherwise</returns>
-		public abstract bool? Build(IValue[] processedArgs, RenderContext ctx, Execute cmd);
+        /// <summary>
+        ///     Process the execute chain subcommand
+        /// </summary>
+        /// <param name="processedArgs">
+        ///     <see cref="Values" /> processed in accordance with <see cref="RequireLiteral" />
+        /// </param>
+        /// <param name="ctx">Render context</param>
+        /// <param name="cmd">Execute command</param>
+        /// <returns>True if the result is always true, false if the result is always false, null otherwise</returns>
+        public abstract bool? Build(IValue[] processedArgs, RenderContext ctx, Execute cmd);
 
-		public abstract override string ToString();
+        public abstract override string ToString();
 
-		public void ReplaceValue(ValueRef value, ValueRef with)
-		{
-			for (var i = 0; i < Values.Length; i++)
-			{
-				if (Values[i] == value)
-				{
-					Values[i] = with;
-				}
-			}
-		}
-	}
+        public void ReplaceValue(ValueRef value, ValueRef with)
+        {
+            for (var i = 0; i < Values.Length; i++)
+            {
+                if (Values[i] == value) Values[i] = with;
+            }
+        }
+    }
 
-	public abstract class ExecuteChainConditional(IEnumerable<ValueRef> vals, bool invert)
-		: ExecuteChainSubcommand(vals)
-	{
-		public bool Invert = invert;
+    public abstract class ExecuteChainConditional(IEnumerable<ValueRef> vals, bool invert) : ExecuteChainSubcommand(vals)
+    {
+        public bool Invert = invert;
 
-		public override bool? Build(IValue[] processedArgs, RenderContext ctx, Execute cmd) =>
-			Build(processedArgs, ctx, Invert ? cmd.Unless : cmd.If);
+        public override bool? Build(IValue[] processedArgs, RenderContext ctx, Execute cmd) =>
+            Build(processedArgs, ctx, Invert ? cmd.Unless : cmd.If);
 
-		protected abstract bool? Build(IValue[] processedArgs, RenderContext ctx, Execute.Conditional cmd);
+        protected abstract bool? Build(IValue[] processedArgs, RenderContext ctx, Execute.Conditional cmd);
 
-		public sealed override string ToString() => (Invert ? "unless " : "if ") + StringPart();
-		protected abstract string StringPart();
-	}
+        public sealed override string ToString() => (Invert ? "unless " : "if ") + StringPart();
+        protected abstract string StringPart();
+    }
 }

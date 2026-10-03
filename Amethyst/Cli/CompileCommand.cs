@@ -54,7 +54,7 @@ namespace Amethyst.Cli
 
     public class CompileCommand : Command<CompileOptions>
     {
-        protected override int Execute(CommandContext context, CompileOptions settings, CancellationToken cancellationToken)
+        public override int Execute(CommandContext context, CompileOptions settings, CancellationToken cancellationToken)
         {
             // ReSharper disable once NullCoalescingConditionIsAlwaysNotNullAccordingToAPIContract
             settings.Output ??= Path.GetFileName(settings.Inputs[0]) + ".zip";

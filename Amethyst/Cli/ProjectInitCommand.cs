@@ -32,7 +32,7 @@ namespace Amethyst.Cli
 
     public class ProjectInitCommand : Command<ProjectInitCommandOptions>
     {
-        protected override int Execute(CommandContext context, ProjectInitCommandOptions settings, CancellationToken cancellationToken)
+        public override int Execute(CommandContext context, ProjectInitCommandOptions settings, CancellationToken cancellationToken)
         {
             var output = settings.Output ?? Environment.CurrentDirectory;
             var path = Path.Join(output, Compiler.SHARD_PROJECT);

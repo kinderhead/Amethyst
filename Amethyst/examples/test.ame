@@ -17,9 +17,36 @@ int add(macro int arg) {
     return arg + 7;
 }
 
+struct foo {
+
+    int[] elements;
+
+    foo() {
+        this.elements = [0];
+    }
+
+    void bar(int value) {
+        this.elements[0] = value;
+    }
+}
+
+
 #load
 void main() {
-    print(add(-8));
+    foo x = foo();
+    x.bar(50);
+    print(x.elements);
 
     amethyst:exit();
 }
+
+// #load
+// void main() {
+//     int foo = 5;
+
+//     for (int i = foo; i > 0; i -= 1) {
+//         print(i);
+//     }
+
+//     amethyst:exit();
+// }

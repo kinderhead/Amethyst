@@ -15,6 +15,13 @@ namespace Geode.Values
             throw new InvalidOperationException(
                 "Cannot implicitly convert an NBT value to a score"); //// No type checking because this acts like a cast to int//var val = ctx.Builder.Temp(tmp);//val.Store(this, ctx);//return val;
 
+        public override ScoreValue AsScore(RenderContext ctx, int tmp)
+        {
+            var val = ctx.Builder.Temp(tmp);
+            val.Store(this, ctx);
+            return val;
+        }
+
         public override FormattedText Render(FormattedText text, RenderContext ctx) => text.NBT(Target,
             Type.EffectiveType == NBTType.String && ctx.Builder.Options.PackFormat >= new PackFormat(101, 0));
 
@@ -22,29 +29,18 @@ namespace Geode.Values
 
         public override void Store(IValue val, RenderContext ctx)
         {
-            if (val is IDataWritable data)
-                data.StoreTo(this, ctx);
-            else
-                base.Store(val, ctx);
+            if (val is IDataWritable data) data.StoreTo(this, ctx);
+            else base.Store(val, ctx);
         }
 
         public override void Store(ScoreValue score, RenderContext ctx) => ctx.Add(new Execute()
                                                                                    .Store(Target, Type.EffectiveNumberType ?? NBTNumberType.Int, 1)
                                                                                    .Run(new Scoreboard.Players.Get(score.Target, score.Score)));
 
-        public override void Store(LiteralValue literal, RenderContext ctx) =>
-            ctx.Add(new DataCommand.Modify(Target).Set().Value(literal.Value.ToString()));
-
-        public override void Store(DataTargetValue nbt, RenderContext ctx) =>
-            ctx.Add(new DataCommand.Modify(Target).Set().From(nbt.Target));
-
-        public override Execute StoreExecute(bool result = true) =>
-            new Execute().Store(Target, Type.EffectiveNumberType ?? NBTNumberType.Int, 1, result);
-
-        public override void ListAdd(LiteralValue literal, RenderContext ctx) =>
-            ctx.Add(new DataCommand.Modify(Target).Append().Value(literal.Value.ToString()));
-
-        public override void ListAdd(DataTargetValue nbt, RenderContext ctx) =>
-            ctx.Add(new DataCommand.Modify(Target).Append().From(nbt.Target));
+        public override void Store(LiteralValue literal, RenderContext ctx) => ctx.Add(new DataCommand.Modify(Target).Set().Value(literal.Value.ToString()));
+        public override void Store(DataTargetValue nbt, RenderContext ctx) => ctx.Add(new DataCommand.Modify(Target).Set().From(nbt.Target));
+        public override Execute StoreExecute(bool result = true) => new Execute().Store(Target, Type.EffectiveNumberType ?? NBTNumberType.Int, 1, result);
+        public override void ListAdd(LiteralValue literal, RenderContext ctx) => ctx.Add(new DataCommand.Modify(Target).Append().Value(literal.Value.ToString()));
+        public override void ListAdd(DataTargetValue nbt, RenderContext ctx) => ctx.Add(new DataCommand.Modify(Target).Append().From(nbt.Target));
     }
 }

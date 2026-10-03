@@ -33,8 +33,7 @@ namespace Geode
                     return i;
                 }));
             }
-            else
-                MCFunction.Add(cmds);
+            else MCFunction.Add(cmds);
         }
 
         public void StoreCompound(DataTargetValue dest, Dictionary<string, IValueLike> dict, bool setEmpty = true)
@@ -43,8 +42,7 @@ namespace Geode
             if (ret is LiteralValue l) dest.Store(l, this);
         }
 
-        public IValue StoreCompoundOrReturnConstant(DataTargetValue dest, Dictionary<string, IValueLike> dict,
-                                                    bool setEmpty = true)
+        public IValue StoreCompoundOrReturnConstant(DataTargetValue dest, Dictionary<string, IValueLike> dict, bool setEmpty = true)
         {
             var nbt = new NBTCompound();
             var runtime = new Dictionary<string, IValue>();
@@ -52,18 +50,24 @@ namespace Geode
 
             foreach (var (key, val) in dict.Select(i => (i.Key, i.Value.Expect())))
             {
-                if (val is VoidValue)
-                    forceUseStorage = true;
-                else if (val is MacroValue m && m.Type.EffectiveType == NBTType.String)
-                    nbt[key] = new NBTString(m.GetMacro());
-                else if (val is IConstantValue l)
-                    nbt[key] = l.Value;
-                else
-                    runtime[key] = val;
+                switch (val)
+                {
+                    case VoidValue:
+                        forceUseStorage = true;
+                        break;
+                    case MacroValue { Type.EffectiveType: NBTType.String } m:
+                        nbt[key] = new NBTString(m.GetMacro());
+                        break;
+                    case IConstantValue l:
+                        nbt[key] = l.Value;
+                        break;
+                    default:
+                        runtime[key] = val;
+                        break;
+                }
             }
 
             if (!forceUseStorage && nbt.Count == dict.Count) return new LiteralValue(nbt);
-
             if (setEmpty || nbt.Count != 0) dest.Store(new LiteralValue(nbt), this);
 
             foreach (var (key, value) in runtime)
@@ -88,19 +92,22 @@ namespace Geode
 
             foreach (var i in list.Select(i => i.Expect()))
             {
-                if (isStillConstant && i is MacroValue m && m.Type.EffectiveType == NBTType.String)
-                    nbt.Add(new NBTString(m.GetMacro()));
-                else if (isStillConstant && i is IConstantValue l)
-                    nbt.Add(l.Value);
-                else
+                switch (isStillConstant)
                 {
-                    isStillConstant = false;
-                    runtime.Add(i);
+                    case true when i is MacroValue { Type.EffectiveType: NBTType.String } m:
+                        nbt.Add(new NBTString(m.GetMacro()));
+                        break;
+                    case true when i is IConstantValue l:
+                        nbt.Add(l.Value);
+                        break;
+                    default:
+                        isStillConstant = false;
+                        runtime.Add(i);
+                        break;
                 }
             }
 
             if (nbt.Count == list.Count) return new LiteralValue(nbt);
-
             if (setEmpty || nbt.Count != 0) dest.Store(new LiteralValue(nbt), this);
 
             foreach (var item in runtime)
@@ -111,9 +118,8 @@ namespace Geode
             return dest;
         }
 
-        public Command[] GetOnJumpCommands(Block dest) =>
-            // Mayhaps make this more efficient
-            [.. WithFaux(ctx => dest.Phi.JumpToBlockCommands(Block, ctx))];
+        // Mayhaps make this more efficient
+        public Command[] GetOnJumpCommands(Block dest) => [.. WithFaux(ctx => dest.Phi.JumpToBlockCommands(Block, ctx))];
 
         // TODO: Refactor this into a call to the other JumpTo method
         public Command[] JumpTo(Block block)
@@ -126,7 +132,6 @@ namespace Geode
                         .. Func.Decl.FuncType.MacroParameters.Select(i =>
                         {
                             if (i.Type == PrimitiveType.String) throw new MacroStringSubFunctionError();
-
                             if (i.Type.WrapInQuotesForMacro) return new(i.Name, new NBTString(i.GetMacro()));
 
                             return new KeyValuePair<string, NBTValue>(i.Name, new NBTRawString(i.GetMacro()));
@@ -156,12 +161,10 @@ namespace Geode
         public void Call(NamespacedID id, params IValueLike[] args)
         {
             if (Func.GetGlobal(id) is not RawFunctionValue func) throw new UndefinedSymbolError(id.ToString());
-
             func.Call(this, args);
         }
 
-        public void Macroize(IValueLike[] dependencies, Action<IConstantValue[], RenderContext> func) =>
-            Builder.Macroizer.Run(this, dependencies, func);
+        public void Macroize(IValueLike[] dependencies, Action<IConstantValue[], RenderContext> func) => Builder.Macroizer.Run(this, dependencies, func);
 
         public List<Command> WithFaux(Action<FauxRenderContext> func)
         {
@@ -170,8 +173,7 @@ namespace Geode
             return ctx.Commands;
         }
 
-        public void PossibleErrorChecker(Command cmd, string msg, params ValueRef[] extras) =>
-            PossibleErrorChecker(cmd, text => text.Text($": {msg} "), extras);
+        public void PossibleErrorChecker(Command cmd, string msg, params ValueRef[] extras) => PossibleErrorChecker(cmd, text => text.Text($": {msg} "), extras);
 
         public void PossibleErrorChecker(Command cmd, Action<FormattedText> msg, params ValueRef[] extras)
         {
@@ -201,10 +203,7 @@ namespace Geode
                     text.RemoveLast();
                 }
 
-                Add(new Execute().If.Score(success.Target, success.Score, 0).Run(new TellrawCommand(
-                    new TargetSelector(TargetType.a),
-                    text
-                )));
+                Add(new Execute().If.Score(success.Target, success.Score, 0).Run(new TellrawCommand(new TargetSelector(TargetType.a), text)));
 
                 if (Block != Func.Start)
                     Add(new Execute().If.Score(success.Target, success.Score, 0).Run(WithFaux(ctx => { Func.GetIsFunctionReturningValue().Store(success, ctx); }).Single()));
@@ -212,13 +211,11 @@ namespace Geode
                 Add(new Execute().If.Score(success.Target, success.Score, 0)
                                  .Run(new ReturnCommand(0))); // Purposeful not fail, maybe check it
             }
-            else
-                Add(cmd);
+            else Add(cmd);
         }
     }
 
-    public record FauxRenderContext(MCFunction MCFunction, Block Block, GeodeBuilder Builder, FunctionContext Func)
-        : RenderContext(MCFunction, Block, Builder, Func)
+    public record FauxRenderContext(MCFunction MCFunction, Block Block, GeodeBuilder Builder, FunctionContext Func) : RenderContext(MCFunction, Block, Builder, Func)
     {
         public readonly List<Command> Commands = [];
         public override void Add(params IEnumerable<Command> cmds) => Commands.AddRange(cmds);
