@@ -8,12 +8,12 @@ namespace Datapack.Net
 {
     public class DP
     {
-        private readonly Dictionary<string, string> extraFiles = [];
         public readonly string FilePath;
-
-        private readonly HashSet<string> filesWriten = [];
         public readonly MCMeta Meta;
         protected readonly List<ResourceType> Types = [];
+        private readonly Dictionary<string, string> extraFiles = [];
+
+        private readonly HashSet<string> filesWriten = [];
 
         private FileStream? fileStream;
         private ZipArchive? zipFile;
@@ -32,6 +32,8 @@ namespace Datapack.Net
             Types.Add(new DimensionResource());
             Types.Add(new DimensionType());
             Types.Add(new Functions());
+            Types.Add(new ContextFloatProvider());
+            Types.Add(new ContextIntProvider());
 
             FilePath = filePath;
             Meta = meta;
@@ -39,6 +41,7 @@ namespace Datapack.Net
 
         public Functions Functions => GetResource<Functions>();
         public Tags Tags => GetResource<Tags>();
+        public ContextIntProvider IntProviders => GetResource<ContextIntProvider>();
 
         public void Build()
         {

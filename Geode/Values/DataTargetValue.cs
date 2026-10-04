@@ -1,7 +1,9 @@
 ﻿using Datapack.Net.Data;
 using Datapack.Net.Function;
 using Datapack.Net.Function.Commands;
+using Datapack.Net.NumberProviders;
 using Datapack.Net.Pack;
+using Geode.Errors;
 
 namespace Geode.Values
 {
@@ -11,9 +13,7 @@ namespace Geode.Values
 
         public abstract DataTargetValue Property(string member, TypeSpecifier type);
 
-        public override ScoreValue AsScore(RenderContext ctx) =>
-            throw new InvalidOperationException(
-                "Cannot implicitly convert an NBT value to a score"); //// No type checking because this acts like a cast to int//var val = ctx.Builder.Temp(tmp);//val.Store(this, ctx);//return val;
+        public override ScoreValue AsScore(RenderContext ctx) => throw new InvalidOperationException("Cannot implicitly convert an NBT value to a score");
 
         public override ScoreValue AsScore(RenderContext ctx, int tmp)
         {
@@ -24,6 +24,9 @@ namespace Geode.Values
 
         public override FormattedText Render(FormattedText text, RenderContext ctx) => text.NBT(Target,
             Type.EffectiveType == NBTType.String && ctx.Builder.Options.PackFormat >= new PackFormat(101, 0));
+
+        public override NumberProvider ToCompute(RenderContext ctx) =>
+            Target.Type != "storage" ? throw new ComputeError(this) : new StorageProvider(Target, ctx.Builder.RandomID);
 
         public abstract DataTargetValue Index(int index, TypeSpecifier type);
 
@@ -42,5 +45,9 @@ namespace Geode.Values
         public override Execute StoreExecute(bool result = true) => new Execute().Store(Target, Type.EffectiveNumberType ?? NBTNumberType.Int, 1, result);
         public override void ListAdd(LiteralValue literal, RenderContext ctx) => ctx.Add(new DataCommand.Modify(Target).Append().Value(literal.Value.ToString()));
         public override void ListAdd(DataTargetValue nbt, RenderContext ctx) => ctx.Add(new DataCommand.Modify(Target).Append().From(nbt.Target));
+
+        public override void Store(NumberProvider provider, RenderContext ctx) => ctx.Add(new DataCommand.Modify(Target).Set().Compute(provider));
+
+        public override string ToString() => Target.GetTarget();
     }
 }

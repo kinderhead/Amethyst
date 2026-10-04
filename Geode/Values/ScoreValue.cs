@@ -1,54 +1,47 @@
 using Datapack.Net.Function;
 using Datapack.Net.Function.Commands;
+using Datapack.Net.NumberProviders;
 using Geode.Errors;
 using Geode.Types;
 
 namespace Geode.Values
 {
-	public class ScoreValue(IEntityTarget target, Score score, TypeSpecifier? type = null)
-		: DataLValue(type ?? PrimitiveType.Int)
-	{
-		public readonly Score Score = score;
-		public readonly IEntityTarget Target = target;
-		public override string ToString() => $"@{Target.Get()}.{Score}";
+    public class ScoreValue(IEntityTarget target, Score score, TypeSpecifier? type = null) : DataLValue(type ?? PrimitiveType.Int)
+    {
+        public readonly Score Score = score;
+        public readonly IEntityTarget Target = target;
+        public override string ToString() => $"@{Target.Get()}.{Score}";
 
-		public override void Store(ScoreValue score, RenderContext ctx) => ctx.Add(
-			new Scoreboard.Players.Operation(Target, Score, ScoreOperation.Assign, score.Target, score.Score));
+        public override void Store(ScoreValue score, RenderContext ctx) =>
+            ctx.Add(new Scoreboard.Players.Operation(Target, Score, ScoreOperation.Assign, score.Target, score.Score));
 
-		public override void Store(LiteralValue literal, RenderContext ctx)
-		{
-			var val = literal.Value.ToString();
+        public override void Store(LiteralValue literal, RenderContext ctx)
+        {
+            var val = literal.Value.ToString();
 
-			if (val is "true")
-			{
-				val = "1";
-			}
-			else if (val is "false")
-			{
-				val = "0";
-			}
+            val = val switch
+            {
+                "true" => "1",
+                "false" => "0",
+                _ => val
+            };
 
-			ctx.Add(new Scoreboard.Players.Set(Target, Score, val));
-		}
+            ctx.Add(new Scoreboard.Players.Set(Target, Score, val));
+        }
 
-		public override void Store(DataTargetValue nbt, RenderContext ctx) =>
-			ctx.Add(StoreExecute().Run(new DataCommand.Get(nbt.Target)));
+        public override void Store(DataTargetValue nbt, RenderContext ctx) => ctx.Add(StoreExecute().Run(new DataCommand.Get(nbt.Target)));
+        public override void Store(NumberProvider provider, RenderContext ctx) => ctx.Add(StoreExecute().Run(new ComputeCommand(provider)));
 
-		public override Execute StoreExecute(bool result = true) => new Execute().Store(Target, Score, result);
+        public override Execute StoreExecute(bool result = true) => new Execute().Store(Target, Score, result);
+        public override ScoreValue AsScore(RenderContext ctx) => this;
 
-		public override ScoreValue AsScore(RenderContext ctx) => this;
+        public override FormattedText Render(FormattedText text, RenderContext ctx) => text.Score(Target, Score);
+        public override NumberProvider ToCompute(RenderContext ctx) => new ScoreProvider(Target, Score, ctx.Builder.RandomID);
 
-		public override FormattedText Render(FormattedText text, RenderContext ctx) => text.Score(Target, Score);
+        public override bool Equals(object? obj) => obj is ScoreValue s && s.Score == Score && s.Target.Get() == Target.Get();
+        public override int GetHashCode() => HashCode.Combine(Target, Score);
 
-		public override bool Equals(object? obj) =>
-			obj is ScoreValue s && s.Score == Score && s.Target.Get() == Target.Get();
-
-		public override int GetHashCode() => HashCode.Combine(Target, Score);
-
-		public override void ListAdd(LiteralValue literal, RenderContext ctx) =>
-			throw new InvalidTypeError("int", "list");
-
-		public override void ListAdd(DataTargetValue nbt, RenderContext ctx) =>
-			throw new InvalidTypeError("int", "list");
-	}
+        public override void ListAdd(LiteralValue literal, RenderContext ctx) => throw new InvalidTypeError("int", "list");
+        public override void ListAdd(DataTargetValue nbt, RenderContext ctx) => throw new InvalidTypeError("int", "list");
+    }
 }

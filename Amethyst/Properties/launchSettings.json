@@ -17,7 +17,7 @@
     },
     "Random": {
       "commandName": "Project",
-      "commandLineArgs": "--help",
+      "commandLineArgs": "setup --eula",
       "workingDirectory": "$(ProjectDir)"
     }
   }

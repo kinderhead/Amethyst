@@ -2,30 +2,20 @@
 
 namespace example;
 
-int x = 0;
+entitydef minecraft:base {
+    bool Invulnerable;
+    string CustomName;
+    unsafe_string[] Tags;
+    double[] Pos;
+}
 
-
-class myclass {
-    int x;
-
-    void foo() {
-        bar();
-    }
-
-    void bar() {
-        x = 15;
-    }
+entitydef minecraft:sheep implements minecraft:base {
+    float Health;
 }
 
 #load
 void main() {
- 
-    myclass a;
-
-    a.foo();
-
-    print(x);   // global x = 0
-    print(a.x); // property x = 15
+    print("yay");
 
     amethyst:exit();
 }

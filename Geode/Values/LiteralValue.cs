@@ -1,37 +1,47 @@
 using Datapack.Net.Data;
 using Datapack.Net.Function;
+using Datapack.Net.NumberProviders;
+using Geode.Errors;
 using Geode.Types;
 
 namespace Geode.Values
 {
-	public class LiteralValue(NBTValue val, TypeSpecifier? type = null)
-		: Value(type ?? new PrimitiveType(val.Type)), IConstantValue
-	{
-		public NBTValue Value { get; } = val;
+    public class LiteralValue(NBTValue val, TypeSpecifier? type = null) : Value(type ?? new PrimitiveType(val.Type)), IConstantValue
+    {
+        public NBTValue Value { get; } = val;
 
-		public override ScoreValue AsScore(RenderContext ctx) => Value is NBTInt n
-			? ctx.Builder.Constant(n)
-			: throw new InvalidOperationException($"\"{Value}\" is not an integer");
+        public override ScoreValue AsScore(RenderContext ctx) => Value is NBTInt n
+            ? ctx.Builder.Constant(n)
+            : throw new InvalidOperationException($"\"{Value}\" is not an integer");
 
-		public override FormattedText Render(FormattedText text, RenderContext ctx) =>
-			Value is NBTString str ? text.Text(str.Value) : text.Text(Value.ToString());
+        public override FormattedText Render(FormattedText text, RenderContext ctx) => Value is NBTString str ? text.Text(str.Value) : text.Text(Value.ToString());
 
-		public override bool Equals(object? obj) => obj is LiteralValue l && l.Value == Value;
-		public override string ToString() => Value.ToString();
-		public override int GetHashCode() => Value.GetHashCode();
+        public override NumberProvider ToCompute(RenderContext ctx)
+        {
+            return Value switch
+            {
+                NBTInt i => new ConstantProvider(i, ctx.Builder.RandomID),
+                NBTFloat => throw new NotImplementedException("Float arithmetic WIP"),
+                _ => throw new ComputeError(this)
+            };
+        }
 
-		public bool Is<T>(out T val) where T : NBTValue
-		{
-			if (Value is T ret)
-			{
-				val = ret;
-				return true;
-			}
+        public override bool Equals(object? obj) => obj is LiteralValue l && l.Value == Value;
+        public override string ToString() => Value.ToString();
+        public override int GetHashCode() => Value.GetHashCode();
 
-			val = null!;
-			return false;
-		}
+        public bool Is<T>(out T val) where T : NBTValue
+        {
+            if (Value is T ret)
+            {
+                val = ret;
+                return true;
+            }
 
-		public static LiteralValue Raw(string val) => new(new NBTRawString(val));
-	}
+            val = null!;
+            return false;
+        }
+
+        public static LiteralValue Raw(string val) => new(new NBTRawString(val));
+    }
 }

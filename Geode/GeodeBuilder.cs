@@ -28,11 +28,10 @@ namespace Geode
         public readonly NamespacedID RuntimeID;
 
         public readonly Dictionary<NamespacedID, GlobalSymbol> Symbols = [];
-
         public readonly List<Command> UserInitCommands = [];
+
         private readonly SortedDictionary<int, ScoreValue> constants = [];
         private readonly List<MCFunction> functionsToRemove = [];
-
         private readonly SortedSet<Score> registeredScores = [];
 
         private bool failed;
@@ -50,6 +49,8 @@ namespace Geode
             Macroizer = new(this);
         }
 
+        public bool CanUseCompute => !Options.DisableCompute && Options.PackFormat >= new PackFormat(121, 0);
+        public NamespacedID RandomID => new(Namespace, UniqueString);
         public static string UniqueString => Guid.NewGuid().ToString();
 
         public void AddFunctions(params IEnumerable<FunctionContext> funcs) => Functions.AddRange(funcs);

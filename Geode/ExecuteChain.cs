@@ -34,8 +34,7 @@ namespace Geode
             ctx.Macroize(GetDependencies(), (args, ctx) => { Compute(cmd, () => ifTrue, args, ctx); });
         }
 
-        public void RunWithPropagate(Func<NBTCompound, Command> ifTrue, RenderContext ctx) =>
-            RunWithPropagate(i => [ifTrue(i)], ctx);
+        public void RunWithPropagate(Func<NBTCompound, Command> ifTrue, RenderContext ctx) => RunWithPropagate(i => [ifTrue(i)], ctx);
 
         public void RunWithPropagate(Func<NBTCompound, Command[]> ifTrue, RenderContext ctx)
         {
@@ -51,7 +50,7 @@ namespace Geode
 
         private void Compute(Execute cmd, Func<Command[]> ifTrue, IConstantValue[] args, RenderContext ctx)
         {
-            var idex = 0;
+            var index = 0;
 
             bool? ret = null;
 
@@ -59,8 +58,8 @@ namespace Geode
             {
                 if (i.RequireLiteral)
                 {
-                    ret = i.Build(args[idex..(idex + i.Values.Length)], ctx, cmd);
-                    idex += i.Values.Length;
+                    ret = i.Build(args[index..(index + i.Values.Length)], ctx, cmd);
+                    index += i.Values.Length;
                 }
                 else
                     ret = i.Build([.. i.Values.Select(i => i.Expect())], ctx, cmd);

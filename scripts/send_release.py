@@ -4,10 +4,10 @@ import requests
 import shlex
 import shutil
 import subprocess
-from time import sleep
 import xml.etree.ElementTree as ET
-from tester import call
+from time import sleep
 
+from tester import call
 
 os.chdir("docs")
 call("npm run update")
@@ -41,6 +41,7 @@ csproj = ET.parse("Amethyst/Amethyst.csproj")
 data = csproj.getroot()
 version = data.find("PropertyGroup").find("Version")  # type: ignore
 semver = version.text.split(".") # type: ignore
+old_ver = version.text  # type: ignore
 
 semver[-1] = "-".join([str(int(semver[-1].split("-")[0]) + 1), *semver[-1].split("-")[1:]])
 version.text = ".".join(semver) # type: ignore
@@ -56,7 +57,8 @@ with open("webhook.txt", "r") as f:
     
 res = requests.post(url, json={
     "embeds": [{
-        "description": f"# [v{version.text}](https://github.com/kinderhead/Amethyst/releases/tag/v{version.text}])\n\n" + changelog.replace("## ", "### ").replace("# ", "## ").replace("\n\n", "\n") # type: ignore
+        "description": f"# [v{old_ver}](https://github.com/kinderhead/Amethyst/releases/tag/v{old_ver}])\n\n" + changelog.replace("## ", "### ").replace("# ", "## ").replace(
+            "\n\n", "\n")
     }],
     "content": "<@&1536599453086257163>"
 })

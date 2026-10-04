@@ -39,6 +39,10 @@ namespace Amethyst.Cli
         [Description("Dump non-std functions to console.")]
         public bool DumpCommands { get; set; }
 
+        [CommandOption("--disable-compute")]
+        [Description("Disable generating and using number providers and /compute.")]
+        public bool DisableCompute { get; set; }
+
         // IAmethystOptions settings
         public string Output { get; set; }
         public string? Data { get; set; }

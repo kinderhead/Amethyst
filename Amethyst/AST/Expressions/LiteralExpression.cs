@@ -5,11 +5,10 @@ using Geode.Values;
 
 namespace Amethyst.AST.Expressions
 {
-	public class LiteralExpression(LocationRange loc, NBTValue val) : Expression(loc)
-	{
-		public readonly NBTValue Value = val;
+    public class LiteralExpression(LocationRange loc, NBTValue val) : Expression(loc)
+    {
+        public readonly NBTValue Value = val;
 
-		protected override ValueRef ExecuteImpl(FunctionContext ctx, TypeSpecifier? expected) =>
-			new LiteralValue(Value);
-	}
+        protected override ValueRef ExecuteImpl(FunctionContext ctx, TypeSpecifier? expected) => new LiteralValue(Value);
+    }
 }

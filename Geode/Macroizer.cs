@@ -12,7 +12,6 @@ namespace Geode
 
         public void Run(RenderContext ctx, IValueLike[] dependencies, Action<IConstantValue[], RenderContext> func)
         {
-            var args = new List<IConstantValue>();
             var toMacro = new Dictionary<string, IValue>();
             var propagatedMacroList = new List<MacroValue>();
             var applied = new Dictionary<IValue, IConstantValue>();
@@ -72,13 +71,9 @@ namespace Geode
                 return ret;
             }
 
-            foreach (var i in dependencies)
-            {
-                args.Add(apply(i.Expect()));
-            }
+            var args = dependencies.Select(i => apply(i.Expect())).ToList();
 
-            if (toMacro.Count == propagatedMacroList.Count)
-                func([.. args], ctx);
+            if (toMacro.Count == propagatedMacroList.Count) func([.. args], ctx);
             else
             {
                 var faux = ctx.WithFaux(i => func([.. args], i)).Select(i =>
@@ -87,8 +82,7 @@ namespace Geode
                     return i;
                 });
 
-                var mcFunc =
-                    new MCFunction($"{Builder.Namespace}:{GeodeBuilder.INTERNAL_PATH}/{GeodeBuilder.UniqueString}");
+                var mcFunc = new MCFunction($"{Builder.Namespace}:{GeodeBuilder.INTERNAL_PATH}/{GeodeBuilder.UniqueString}");
                 mcFunc.Add(faux);
                 var compiled = mcFunc.Build();
 

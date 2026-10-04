@@ -8,100 +8,91 @@ using Geode.Values;
 
 namespace Amethyst.IR.Instructions
 {
-	public class PropertyInsn(ValueRef val, ValueRef prop, TypeSpecifier destType, bool addQuotes = false)
-		: Instruction([val, prop])
-	{
-		public readonly bool AddQuotes = addQuotes;
-		public override string Name => "prop";
-		public override NBTType?[] ArgTypes => [null, NBTType.String];
-		public TypeSpecifier ActualReturnType => destType;
+    public class PropertyInsn(ValueRef val, ValueRef prop, TypeSpecifier destType, bool addQuotes = false)
+        : Instruction([val, prop])
+    {
+        public readonly bool AddQuotes = addQuotes;
+        public override string Name => "prop";
+        public override NBTType?[] ArgTypes => [null, NBTType.String];
+        public TypeSpecifier ActualReturnType => destType;
 
-		public override TypeSpecifier ReturnType => Arg<ValueRef>(0).Type is ReferenceType and not WeakReferenceType
-			? new ReferenceType(ActualReturnType)
-			: new WeakReferenceType(ActualReturnType);
+        public override TypeSpecifier ReturnType => Arg<ValueRef>(0).Type is ReferenceType and not WeakReferenceType
+            ? new ReferenceType(ActualReturnType)
+            : new WeakReferenceType(ActualReturnType);
 
-		public override void Render(RenderContext ctx)
-		{
-			var val = Arg<ValueRef>(0).Expect();
-			var prop = Arg<ValueRef>(1).Expect();
+        public override void Render(RenderContext ctx)
+        {
+            var val = Arg<ValueRef>(0).Expect();
+            var prop = Arg<ValueRef>(1).Expect();
 
-			if (val.Type is EntityType)
-			{
-				if (AddQuotes)
-				{
-					ReturnValue.Expect<DynamicValue>()
-						.Add("entity @e[scores={amethyst_id=")
-						.Add(val)
-						.Add("},limit=1] \"")
-						.Add(prop)
-						.Add("\"");
-				}
-				else
-				{
-					ReturnValue.Expect<DynamicValue>()
-						.Add("entity @e[scores={amethyst_id=")
-						.Add(val)
-						.Add("},limit=1] ")
-						.Add(prop);
-				}
+            if (val.Type is EntityType)
+            {
+                if (AddQuotes)
+                {
+                    ReturnValue.Expect<DynamicValue>()
+                               .Add("entity @e[scores={amethyst_id=")
+                               .Add(val)
+                               .Add("},limit=1] \"")
+                               .Add(prop)
+                               .Add("\"");
+                }
+                else
+                {
+                    ReturnValue.Expect<DynamicValue>()
+                               .Add("entity @e[scores={amethyst_id=")
+                               .Add(val)
+                               .Add("},limit=1] ")
+                               .Add(prop);
+                }
 
-				return;
-			}
+                return;
+            }
 
-			val = val.AsRef();
+            val = val.AsRef();
 
-			if (AddQuotes)
-			{
-				ReturnValue.Expect<DynamicValue>()
-					.Add(val)
-					.Add(".\"")
-					.Add(prop)
-					.Add("\"");
-			}
-			else
-			{
-				ReturnValue.Expect<DynamicValue>()
-					.Add(val)
-					.Add(".")
-					.Add(prop);
-			}
-		}
+            if (AddQuotes)
+            {
+                ReturnValue.Expect<DynamicValue>()
+                           .Add(val)
+                           .Add(".\"")
+                           .Add(prop)
+                           .Add("\"");
+            }
+            else
+            {
+                ReturnValue.Expect<DynamicValue>()
+                           .Add(val)
+                           .Add(".")
+                           .Add(prop);
+            }
+        }
 
-		protected override IValue ComputeReturnValue(FunctionContext ctx)
-		{
-			var val = Arg<ValueRef>(0);
-			var prop = Arg<ValueRef>(1);
+        protected override IValue ComputeReturnValue(FunctionContext ctx)
+        {
+            var val = Arg<ValueRef>(0);
+            var prop = Arg<ValueRef>(1);
 
-			ReturnValue.AddDependency(val);
-			ReturnValue.AddDependency(prop);
+            ReturnValue.AddDependency(val);
+            ReturnValue.AddDependency(prop);
 
-			// I don't want to deal with nested Macroizer stuff yet
-			if (val.Type is ReferenceType r && r.Inner is EntityType e)
-			{
-				throw new InvalidTypeError(prop.Type.ToString(), e.ToString());
-			}
+            // I don't want to deal with nested Macroizer stuff yet
+            if (val.Type is ReferenceType { Inner: EntityType e }) throw new InvalidTypeError(prop.Type.ToString(), e.ToString());
 
-			if (prop.Value is LiteralValue l && val.Type is not EntityType)
-			{
-				if (l.Value is not NBTString name)
-				{
-					throw new InvalidTypeError(prop.Type.ToString(), "string");
-				}
+            if (prop.Value is LiteralValue l && val.Type is not EntityType)
+            {
+                if (l.Value is not NBTString name) throw new InvalidTypeError(prop.Type.ToString(), "string");
 
-				// TODO: Probably should clean this up at some point
-				if (val.Type is not ReferenceType && val.Value is DataTargetValue nbt)
-				{
-					Remove();
-					return WeakReferenceType.From(nbt.Property(name, ActualReturnType));
-				}
+                // TODO: Probably should clean this up at some point
+                if (val.Type is not ReferenceType && val.Value is DataTargetValue nbt)
+                {
+                    Remove();
+                    return WeakReferenceType.From(nbt.Property(name, ActualReturnType));
+                }
 
-				if (val.Value is MacroValue && val.Type is not ReferenceType)
-				{
-					throw new MacroPropertyError();
-				}
-			}
+                if (val is { Value: MacroValue, Type: not ReferenceType }) throw new MacroPropertyError();
+            }
 
-			return new DynamicValue(ReturnType);
-		}
-	}
+            return new DynamicValue(ReturnType);
+        }
+    }
 }

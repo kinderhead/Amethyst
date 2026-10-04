@@ -1,5 +1,6 @@
 ﻿using System.Text.RegularExpressions;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Datapack.Net.Utils
 {
@@ -45,6 +46,7 @@ namespace Datapack.Net.Utils
         public static bool operator !=(NamespacedID left, NamespacedID right) => left.Namespace != right.Namespace || left.Path != right.Path;
 
         public static implicit operator NamespacedID(string id) => new(id);
+        public static implicit operator JToken(NamespacedID id) => id.ToString();
 
         [GeneratedRegex("/+")]
         private static partial Regex DuplicateSlashRegex();

@@ -11,5 +11,6 @@ namespace Geode
         bool DumpIR { get; set; }
         bool Debug { get; set; }
         int OptimizationLevel { get; set; }
+        bool DisableCompute { get; set; }
     }
 }
