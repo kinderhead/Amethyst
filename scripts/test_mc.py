@@ -33,6 +33,6 @@ print(f"Setting up Minecraft version {version}")
 call(f"{amethyst} setup --eula -v {version}")
 
 print("Running tests...")
-call(f"{amethyst} compile tests/*.ame {arg} -o test.zip")
+call(f"{amethyst} compile tests/*.ame {arg} -p {packver} -o test.zip")
 
 run_test(f"{amethyst} run test.zip", tester)

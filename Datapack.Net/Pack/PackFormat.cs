@@ -1,7 +1,7 @@
-﻿using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.Globalization;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Datapack.Net.Pack
 {
@@ -49,7 +49,7 @@ namespace Datapack.Net.Pack
 
 		public bool IsNewStyle => Major >= 82;
 
-		public int CompareTo(PackFormat other) => Major == other.Major ? Major.CompareTo(other.Major) : Minor.CompareTo(other.Minor);
+		public int CompareTo(PackFormat other) => Major == other.Major ? Minor.CompareTo(other.Minor) : Major.CompareTo(other.Major);
 
 		public JToken Get(bool newStyle = false)
 		{
