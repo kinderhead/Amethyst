@@ -53,8 +53,12 @@ namespace Geode.Types
 
         protected override bool EqualsImpl(TypeSpecifier obj) => obj is PrimitiveType p && p.Type == Type;
 
-        public override string ToString() => Type == NBTType.Compound ? "nbt" :
-            Type == NBTType.Boolean ? "bool" : Enum.GetName(Type)?.ToLower() ?? throw new InvalidOperationException();
+        public override string ToString() => Type switch
+        {
+            NBTType.Compound => "nbt",
+            NBTType.Boolean => "bool",
+            _ => Enum.GetName(Type)?.ToLower() ?? throw new InvalidOperationException()
+        };
 
         public override object Clone() => new PrimitiveType(Type);
 
@@ -62,8 +66,7 @@ namespace Geode.Types
         {
             if (val.Value is LiteralValue literal)
             {
-                if (literal.Value.NumberType is not null && EffectiveNumberType is { } destType)
-                    recorder.Record(new LiteralValue(literal.Value.Cast(destType)));
+                if (literal.Value.NumberType is not null && EffectiveNumberType is { } destType) recorder.Record(new LiteralValue(literal.Value.Cast(destType)));
             }
             // What was I on about? If something breaks then I'll fix it then
             // else if (Type is NBTType.Double or NBTType.Float && recorder.TryImplicitCast(val, Int) is { } toFloat) return toFloat;

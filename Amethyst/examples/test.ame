@@ -21,7 +21,9 @@ float sanitize(float x) {
 
 #load
 void main() {
-    print(sanitize(3.4) + 12);
+    float x = 5.4;
+    x += 7.43234;
+    print(x);
 
     amethyst:exit();
 }
