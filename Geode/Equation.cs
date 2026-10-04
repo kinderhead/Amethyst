@@ -12,6 +12,8 @@ namespace Geode
         public readonly Equation[] Children = [.. children];
 
         public readonly ValueRef[] Values = [.. vals];
+
+        public abstract ProviderNumberType Type { get; }
         public string Name => "equation";
         public IReadOnlySet<ValueRef> Dependencies => ImmutableHashSet.Create([.. Values, .. Children.SelectMany(i => i.Dependencies)]);
 

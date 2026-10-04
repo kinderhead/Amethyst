@@ -42,6 +42,7 @@ namespace Datapack.Net
         public Functions Functions => GetResource<Functions>();
         public Tags Tags => GetResource<Tags>();
         public ContextIntProvider IntProviders => GetResource<ContextIntProvider>();
+        public ContextFloatProvider FloatProviders => GetResource<ContextFloatProvider>();
 
         public void Build()
         {

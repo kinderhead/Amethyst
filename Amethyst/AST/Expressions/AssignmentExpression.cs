@@ -5,55 +5,54 @@ using Geode.Types;
 
 namespace Amethyst.AST.Expressions
 {
-	public enum AssignmentType
-	{
-		Normal,
-		Addition,
-		Subtraction,
-		Multiplication,
-		Division,
-		Modulus
-	}
+    public enum AssignmentType
+    {
+        Normal,
+        Addition,
+        Subtraction,
+        Multiplication,
+        Division,
+        Modulus
+    }
 
-	public class AssignmentExpression(LocationRange loc, Expression dest, AssignmentType type, Expression expr)
-		: Expression(loc)
-	{
-		public readonly Expression Dest = dest;
-		public readonly Expression Expression = expr;
-		public readonly AssignmentType Type = type;
+    public class AssignmentExpression(LocationRange loc, Expression dest, AssignmentType type, Expression expr) : Expression(loc)
+    {
+        public readonly Expression Dest = dest;
+        public readonly Expression Expression = expr;
+        public readonly AssignmentType Type = type;
 
-		protected override ValueRef ExecuteImpl(FunctionContext ctx, TypeSpecifier? expected)
-		{
-			var dest = Dest.Execute(ctx, new VarType());
-			var val = Expression.Execute(ctx, dest.Type.AssignmentOverloadType, false);
+        protected override ValueRef ExecuteImpl(FunctionContext ctx, TypeSpecifier? expected)
+        {
+            var dest = Dest.Execute(ctx, new VarType());
+            var val = Expression.Execute(ctx, dest.Type.AssignmentOverloadType, false);
 
-			switch (Type)
-			{
-				case AssignmentType.Addition:
-					val = ctx.Add(new AddInsn(ctx.AddLoad(ctx.ImplicitCast(dest, PrimitiveType.Int)),
-						ctx.AddLoad(ctx.ImplicitCast(val, PrimitiveType.Int))));
-					break;
-				case AssignmentType.Subtraction:
-					val = ctx.Add(new SubInsn(ctx.AddLoad(ctx.ImplicitCast(dest, PrimitiveType.Int)),
-						ctx.AddLoad(ctx.ImplicitCast(val, PrimitiveType.Int))));
-					break;
-				case AssignmentType.Multiplication:
-					val = ctx.Add(new MulInsn(ctx.AddLoad(ctx.ImplicitCast(dest, PrimitiveType.Int)),
-						ctx.AddLoad(ctx.ImplicitCast(val, PrimitiveType.Int))));
-					break;
-				case AssignmentType.Division:
-					val = ctx.Add(new DivInsn(ctx.AddLoad(ctx.ImplicitCast(dest, PrimitiveType.Int)),
-						ctx.AddLoad(ctx.ImplicitCast(val, PrimitiveType.Int))));
-					break;
-				case AssignmentType.Modulus:
+            switch (Type)
+            {
+                case AssignmentType.Addition:
+                    val = ctx.Add(new AddInsn(ctx.AddLoad(ctx.ImplicitCast(dest, PrimitiveType.Int)),
+                        ctx.AddLoad(ctx.ImplicitCast(val, PrimitiveType.Int))));
+                    break;
+                case AssignmentType.Subtraction:
+                    val = ctx.Add(new SubInsn(ctx.AddLoad(ctx.ImplicitCast(dest, PrimitiveType.Int)),
+                        ctx.AddLoad(ctx.ImplicitCast(val, PrimitiveType.Int))));
+                    break;
+                case AssignmentType.Multiplication:
+                    val = ctx.Add(new MulInsn(ctx.AddLoad(ctx.ImplicitCast(dest, PrimitiveType.Int)),
+                        ctx.AddLoad(ctx.ImplicitCast(val, PrimitiveType.Int))));
+                    break;
+                case AssignmentType.Division:
+                    val = ctx.Add(new DivInsn(ctx.AddLoad(ctx.ImplicitCast(dest, PrimitiveType.Int)),
+                        ctx.AddLoad(ctx.ImplicitCast(val, PrimitiveType.Int))));
+                    break;
+                case AssignmentType.Modulus:
                     val = ctx.Add(new ModInsn(ctx.AddLoad(ctx.ImplicitCast(dest, PrimitiveType.Int)),
                         ctx.AddLoad(ctx.ImplicitCast(val, PrimitiveType.Int))));
                     break;
             }
 
-			dest.Type.AssignmentOverload(dest, val, ctx);
+            dest.Type.AssignmentOverload(dest, val, ctx);
 
-			return val;
-		}
-	}
+            return val;
+        }
+    }
 }

@@ -7,7 +7,10 @@ namespace Datapack.Net.NumberProviders
     {
         public readonly NumberProvider Left = left;
         public readonly NumberProvider Right = right;
-        public override ProviderNumberType NumberType => ProviderNumberType.Int;
+
+        public override ProviderNumberType NumberType => Left.NumberType == ProviderNumberType.Float || Right.NumberType == ProviderNumberType.Float
+            ? ProviderNumberType.Float
+            : ProviderNumberType.Int;
 
         public abstract bool Associative { get; }
 

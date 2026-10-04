@@ -8,6 +8,10 @@ namespace Geode.Equations
     {
         public readonly ScoreOperation Op = op;
 
+        public override ProviderNumberType Type => Children[0].Type == ProviderNumberType.Float || Children[1].Type == ProviderNumberType.Float
+            ? ProviderNumberType.Float
+            : ProviderNumberType.Int;
+
         public override NumberProvider Render(RenderContext ctx) => Op switch
         {
             ScoreOperation.Add => new AddProvider(Children[0].Render(ctx), Children[1].Render(ctx), ctx.Builder.RandomID),

@@ -1,4 +1,5 @@
 using Datapack.Net.Data;
+using Datapack.Net.NumberProviders;
 using Geode.Types;
 using Geode.Values;
 
@@ -8,12 +9,13 @@ namespace Geode.IR.Instructions
     {
         public override NBTType?[] ArgTypes => [null];
         public override string Name => "compute";
-        public override TypeSpecifier ReturnType => PrimitiveType.Int;
+        public override TypeSpecifier ReturnType => Arg<Equation>(0).Type == ProviderNumberType.Int ? PrimitiveType.Int : PrimitiveType.Float;
 
         public override void Render(RenderContext ctx)
         {
             var eq = Arg<Equation>(0).Render(ctx);
-            ctx.Builder.Datapack.IntProviders.Add(eq);
+            if (eq.NumberType == ProviderNumberType.Int) ctx.Builder.Datapack.IntProviders.Add(eq);
+            else ctx.Builder.Datapack.FloatProviders.Add(eq);
             ReturnValue.Expect<LValue>().Store(eq, ctx);
         }
 

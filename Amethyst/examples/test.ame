@@ -15,9 +15,13 @@ entitydef minecraft:sheep implements minecraft:base {
 }
 /* The rest can be modified */
 
+float sanitize(float x) {
+    return x;
+}
+
 #load
 void main() {
-    print(2 + 3);
+    print(sanitize(3.4) + 12);
 
     amethyst:exit();
 }

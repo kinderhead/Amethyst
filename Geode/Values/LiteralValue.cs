@@ -16,15 +16,7 @@ namespace Geode.Values
 
         public override FormattedText Render(FormattedText text, RenderContext ctx) => Value is NBTString str ? text.Text(str.Value) : text.Text(Value.ToString());
 
-        public override NumberProvider ToCompute(RenderContext ctx)
-        {
-            return Value switch
-            {
-                NBTInt i => new ConstantProvider(i, ctx.Builder.RandomID),
-                NBTFloat => throw new NotImplementedException("Float arithmetic WIP"),
-                _ => throw new ComputeError(this)
-            };
-        }
+        public override NumberProvider ToCompute(RenderContext ctx) => Value is INBTNumber n ? n.ToProvider(ctx.Builder.RandomID) : throw new ComputeError(this);
 
         public override bool Equals(object? obj) => obj is LiteralValue l && l.Value == Value;
         public override string ToString() => Value.ToString();

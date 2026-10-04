@@ -1,8 +1,10 @@
 ﻿using System.Diagnostics;
+using Datapack.Net.NumberProviders;
 using Geode;
 using Geode.Equations;
 using Geode.Errors;
 using Geode.IR;
+using Geode.Types;
 
 namespace Amethyst.AST
 {
@@ -33,6 +35,16 @@ namespace Amethyst.AST
         }
 
         protected abstract ValueRef ExecuteImpl(FunctionContext ctx, TypeSpecifier? expected);
-        protected virtual Equation ComputeImpl(FunctionContext ctx) => new ValueRefEquation(Execute(ctx, null));
+
+        protected virtual Equation ComputeImpl(FunctionContext ctx)
+        {
+            var val = Execute(ctx, null);
+            var eq = new ValueRefEquation(val);
+
+            // Make sure casting is done
+            return eq.Type == ProviderNumberType.Int
+                ? new ValueRefEquation(ctx.ImplicitCast(val, PrimitiveType.Int))
+                : new ValueRefEquation(ctx.ImplicitCast(val, PrimitiveType.Float));
+        }
     }
 }

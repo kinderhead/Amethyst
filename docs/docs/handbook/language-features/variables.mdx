@@ -70,7 +70,15 @@ Explicit casting is mainly used for casting down an inheritance tree. However so
 
 ## Math
 
-All the normal operators work as expected.
+All the normal operators work as expected:
+
+* `x + y`
+* `x - y`
+* `x * y`
+* `x / y`
+* `x % y`
+
+As well as compound assignment (`x += y`);
 
 Amethyst also provides the following unary operators:
 
@@ -78,6 +86,8 @@ Amethyst also provides the following unary operators:
 * `--x`
 * `!x`
 * `-x`
+
+Floating point arithmetic is limited and only available on 26.3+ with `/compute`. Floats are not supported in comparison operations. Including floats in an equation automatically promotes integers into floats.
 
 :::note
 Postfix increment and decrement (`x++`) does not exist due to clarity concerns. This may change in the future.

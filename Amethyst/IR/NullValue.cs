@@ -12,7 +12,7 @@ namespace Amethyst.IR
         public override ScoreValue AsScore(RenderContext ctx) => ctx.Builder.Constant(0);
         public override IValue AsStoreable() => Type.DefaultValue;
         public override FormattedText Render(FormattedText text, RenderContext ctx) => text.Text("null");
-        public override NumberProvider ToCompute(RenderContext ctx) => new ConstantProvider(0, ctx.Builder.RandomID);
+        public override NumberProvider ToCompute(RenderContext ctx) => new ConstantIntProvider(0, ctx.Builder.RandomID);
 
         public override string ToString() => "null";
     }

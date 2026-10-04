@@ -26,7 +26,11 @@ namespace Geode.Values
             Type.EffectiveType == NBTType.String && ctx.Builder.Options.PackFormat >= new PackFormat(101, 0));
 
         public override NumberProvider ToCompute(RenderContext ctx) =>
-            Target.Type != "storage" ? throw new ComputeError(this) : new StorageProvider(Target, ctx.Builder.RandomID);
+            Target.Type != "storage"
+                ? throw new ComputeError(this)
+                : new StorageProvider(Target, ctx.Builder.RandomID, Type.EffectiveNumberType is NBTNumberType.Float or NBTNumberType.Double
+                    ? ProviderNumberType.Float
+                    : ProviderNumberType.Int);
 
         public abstract DataTargetValue Index(int index, TypeSpecifier type);
 
