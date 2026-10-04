@@ -28,7 +28,7 @@ namespace Amethyst.AST.Expressions
 
             if (Type != AssignmentType.Normal)
             {
-                val = new ArithmeticExpression(Location, new ValueRefExpression(Location, val), (ScoreOperation)Type, new ValueRefExpression(Location, dest))
+                val = new ArithmeticExpression(Location, new ValueRefExpression(Location, dest), (ScoreOperation)Type, new ValueRefExpression(Location, val))
                     .Execute(ctx, dest.Type);
             }
 
