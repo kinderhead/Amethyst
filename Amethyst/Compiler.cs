@@ -297,8 +297,6 @@ namespace Amethyst
             Register(new Random());
             Register(new Contains());
 
-            IR.AddSymbol(new("builtin:true", LocationRange.None, new LiteralValue(true)));
-            IR.AddSymbol(new("builtin:false", LocationRange.None, new LiteralValue(false)));
             IR.AddSymbol(new("builtin:null", LocationRange.None, new NullValue()));
             IR.AddSymbol(new("amethyst:stack", LocationRange.None, new StorageValue(IR.RuntimeID, "stack", new ListType(PrimitiveType.Compound))));
             IR.AddSymbol(new("amethyst:type_info", LocationRange.None, new StorageValue(IR.RuntimeID, "type_info", new SimpleMapType(PrimitiveType.Compound))));

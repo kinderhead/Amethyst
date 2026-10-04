@@ -400,7 +400,7 @@ namespace Amethyst.AST
 
         public override Node VisitPrimaryExpression([NotNull] AmethystParser.PrimaryExpressionContext context)
         {
-            if (context.Boolean() is { } b) return new LiteralExpression(Loc(context), new NBTByte(b.GetText() == "true" ? (sbyte)1 : (sbyte)0));
+            if (context.Boolean() is { } b) return new LiteralExpression(Loc(context), new NBTBool(b.GetText() == "true"));
             if (context.id() is { } id) return new VariableExpression(Loc(context), Visit(id));
             if (context.String() is { } str) return new LiteralExpression(Loc(context), new NBTString(NBTString.Unescape(str.GetText()[1..^1])));
             if (context.Number() is { } i) return new LiteralExpression(Loc(context), ParseNumber(i.GetText()));
