@@ -32,8 +32,8 @@ namespace Amethyst.AST.Expressions
 					return method;
 				}
 
-				if (Name is not ("true" or "false") && self.Type.DefaultPropertyType is not null) return GetImplicitProperty(ctx, selfRef, expected);
-			}
+                if (self.Type.DefaultPropertyType is not null) return GetImplicitProperty(ctx, selfRef, expected);
+            }
 
 			val ??= ctx.GetVariable(Name);
 			

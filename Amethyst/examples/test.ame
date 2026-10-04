@@ -1,21 +1,22 @@
-// Rolling test file. Feel free to edit when testing forks. Any changes to this file in a PR will likely be accepted.
 
-namespace example;
 
-entitydef minecraft:base {
-    bool Invulnerable;
-    string CustomName;
-    unsafe_string[] Tags;
-    double[] Pos;
-}
-
-entitydef minecraft:sheep implements minecraft:base {
-    float Health;
-}
 
 #load
 void main() {
-    print("yay");
+	
+	bool a = true;
+	bool b = false;
 
-    amethyst:exit();
+	if (a) {
+		print("a is true");
+	} else {
+		print("a is false");
+	}
+
+	if (b) {
+		print("b is true");
+	} else {
+		print("b is false");
+	}
+
 }
