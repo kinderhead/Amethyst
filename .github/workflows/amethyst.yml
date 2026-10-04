@@ -6,7 +6,7 @@ permissions:
 on:
   push:
     branches:
-      - '**'
+      - master
     tags-ignore:
       - '**'
     # paths:
@@ -16,9 +16,9 @@ on:
     #   - Datapack.Net.Tests/**
     #   - .github/workflows/amethyst.yml
     #   - scripts/test_mc.py
-  # pull_request:
-  #   branches:
-  #     - '**'
+  pull_request:
+    branches:
+      - '**'
 
 jobs:
   build-linux:
