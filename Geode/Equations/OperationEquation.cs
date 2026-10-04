@@ -1,3 +1,4 @@
+using Datapack.Net.Data;
 using Datapack.Net.Function.Commands;
 using Datapack.Net.NumberProviders;
 
@@ -16,5 +17,17 @@ namespace Geode.Equations
             ScoreOperation.Mod => new ModProvider(Children[0].Render(ctx), Children[1].Render(ctx), ctx.Builder.RandomID),
             _ => throw new NotImplementedException("Operation not supported for compute yet")
         };
+
+        public override NBTValue Execute(NBTValue[] args) => Op switch
+        {
+            ScoreOperation.Add => args[0].CastInt() + args[1].CastInt(),
+            ScoreOperation.Sub => args[0].CastInt() - args[1].CastInt(),
+            ScoreOperation.Mul => args[0].CastInt() * args[1].CastInt(),
+            ScoreOperation.Div => args[0].CastInt() / args[1].CastInt(),
+            ScoreOperation.Mod => args[0].CastInt() % args[1].CastInt(),
+            _ => throw new NotImplementedException("Operation not supported for compute yet")
+        };
+
+        public override NBTValue? IsConstant() => null;
     }
 }

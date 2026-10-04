@@ -1,6 +1,9 @@
 using System.Collections.Immutable;
+using Datapack.Net.Data;
 using Datapack.Net.NumberProviders;
+using Geode.Equations;
 using Geode.IR;
+using Geode.Values;
 
 namespace Geode
 {
@@ -25,6 +28,25 @@ namespace Geode
             }
         }
 
+        public virtual Equation Simplify()
+        {
+            for (var i = 0; i < Children.Length; i++)
+            {
+                Children[i] = Children[i].Simplify();
+            }
+
+            var args = new List<NBTValue>();
+            foreach (var i in Children)
+            {
+                if (i.IsConstant() is { } val) args.Add(val);
+                else return this;
+            }
+
+            return new ValueRefEquation(new LiteralValue(Execute([.. args])));
+        }
+
         public abstract NumberProvider Render(RenderContext ctx);
+        public abstract NBTValue Execute(NBTValue[] args);
+        public abstract NBTValue? IsConstant();
     }
 }

@@ -1,5 +1,6 @@
 using Datapack.Net.Data;
 using Geode.Types;
+using Geode.Values;
 
 namespace Geode.IR.Instructions
 {
@@ -16,6 +17,13 @@ namespace Geode.IR.Instructions
             ReturnValue.Expect<LValue>().Store(eq, ctx);
         }
 
-        protected override IValue? ComputeReturnValue(FunctionContext ctx) => null;
+        protected override IValue? ComputeReturnValue(FunctionContext ctx)
+        {
+            var eq = Arg<Equation>(0).Simplify();
+            Arguments[0] = eq;
+
+            if (eq.IsConstant() is { } val) return new LiteralValue(val);
+            return null;
+        }
     }
 }
