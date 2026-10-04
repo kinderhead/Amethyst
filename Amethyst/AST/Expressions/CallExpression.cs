@@ -12,7 +12,7 @@ namespace Amethyst.AST.Expressions
 {
     public interface IMethodHolder
     {
-        public Expression GetThis(FunctionContext ctx);
+        public Expression? GetThis(FunctionContext ctx);
     }
 
     public class CallExpression(LocationRange loc, Expression func, List<Expression> args) : Expression(loc)
@@ -25,10 +25,10 @@ namespace Amethyst.AST.Expressions
             var func = ReferenceType.TryDeref(Function.Execute(ctx, null), ctx);
             Expression[] newArgs;
 
-            if (Function is IMethodHolder prop)
+            if (Function is IMethodHolder prop && prop.GetThis(ctx) is { } self)
             {
                 // Make sure the `this` parameter isn't dereferenced
-                newArgs = [prop.GetThis(ctx), .. Args];
+                newArgs = [self, .. Args];
             }
             else newArgs = [.. Args];
 
