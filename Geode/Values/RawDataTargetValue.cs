@@ -1,6 +1,4 @@
 ﻿using Datapack.Net.Function;
-using Datapack.Net.NumberProviders;
-using Geode.Errors;
 
 namespace Geode.Values
 {
@@ -14,6 +12,5 @@ namespace Geode.Values
 
         public override DataTargetValue Index(int index, TypeSpecifier type) => new RawDataTargetValue($"{RawTarget}[{index}]", type);
         public override DataTargetValue Property(string member, TypeSpecifier type) => new RawDataTargetValue($"{RawTarget}.{member}", type);
-        public override NumberProvider ToCompute(RenderContext ctx) => throw new ComputeError(this);
     }
 }

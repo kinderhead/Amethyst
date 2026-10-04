@@ -3,7 +3,6 @@ using Datapack.Net.Function;
 using Datapack.Net.Function.Commands;
 using Datapack.Net.NumberProviders;
 using Datapack.Net.Pack;
-using Geode.Errors;
 
 namespace Geode.Values
 {
@@ -25,12 +24,19 @@ namespace Geode.Values
         public override FormattedText Render(FormattedText text, RenderContext ctx) => text.NBT(Target,
             Type.EffectiveType == NBTType.String && ctx.Builder.Options.PackFormat >= new PackFormat(101, 0));
 
-        public override NumberProvider ToCompute(RenderContext ctx) =>
-            Target.Type != "storage"
-                ? throw new ComputeError(this)
-                : new StorageProvider(Target, ctx.Builder.RandomID, Type.EffectiveNumberType is NBTNumberType.Float or NBTNumberType.Double
+        public override NumberProvider ToCompute(RenderContext ctx)
+        {
+            if (Target.Type == "storage")
+            {
+                return new StorageProvider(Target, ctx.Builder.RandomID, Type.EffectiveNumberType is NBTNumberType.Float or NBTNumberType.Double
                     ? ProviderNumberType.Float
                     : ProviderNumberType.Int);
+            }
+
+            var val = ctx.Builder.TempStorage(Type);
+            val.Store(this, ctx);
+            return val.ToCompute(ctx);
+        }
 
         public abstract DataTargetValue Index(int index, TypeSpecifier type);
 
