@@ -1,3 +1,4 @@
+using System.Linq.Expressions;
 using System.Text;
 using Datapack.Net.Data;
 using Datapack.Net.Function;
@@ -106,12 +107,19 @@ namespace Geode.IR
 
         public IValue GetVariable(string name) => GetVariableOrNull(name) ?? throw new UndefinedSymbolError(name);
 
-        public IValue? GetVariableOrNull(string name)
+        public IValue? GetLocalVariableOrNull(string name)
         {
             foreach (var i in activeScopes.Reverse())
             {
                 if (i.Locals.TryGetValue(name, out var variable)) return variable.Value;
             }
+
+            return null;
+        }
+
+        public IValue? GetVariableOrNull(string name)
+        {
+            if (GetLocalVariableOrNull(name) is { } local) return local;
 
             if (name.Contains(':'))
             {

@@ -2,24 +2,38 @@
 
 namespace example;
 
-entitydef minecraft:base {
-    bool Invulnerable;
-    string CustomName;
-    unsafe_string[] Tags;
-    double[] Pos;
+int x = 0;
+int y = 0;
+
+struct mystruct {
+    int x;
+
+    void foo() {
+        x = 5;
+    }
 }
 
-entitydef minecraft:sheep implements minecraft:base {
-    float Health;
+class myclass {
+    int y;
+
+    void bar() {
+        y = 15;
+    }
 }
 
 #load
 void main() {
-    int foo = 5;
+ 
+    mystruct a;
+    myclass b;
 
-    for (int i = foo; i > 0; i -= 1) {
-        print(i);
-    }
+    a.foo();
+    b.bar();
+
+    print(x);   // global x = 0
+    print(a.x); // property x = 5
+    print(y);   // global y = 0
+    print(b.y); // property y = 15
 
     amethyst:exit();
 }
