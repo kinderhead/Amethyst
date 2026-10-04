@@ -150,7 +150,8 @@ rangeExpression
     ;
 
 primaryExpression
-    : id
+    : Boolean
+    | id
     | String
     | Number
     | listLiteral
@@ -272,6 +273,7 @@ RangeOp: '..';
 Dot: '.';
 WeakRef: '^';
 
+Boolean: 'true' | 'false';
 RawIdentifier: ([a-z] | [A-Z] | '_' ) ([a-z] | [A-Z] | [0-9] | '_' | '-' | '/')*;
 //Identifier: ([a-z] | [A-Z] | [0-9] | '_' | '-')* ':' ([a-z] | [A-Z] | [0-9] | '_' | '-' | '/')*;
 String: '"' ( ~[\\"\n\r] | '\\' [\\"] )* '"';

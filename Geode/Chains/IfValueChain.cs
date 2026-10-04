@@ -15,7 +15,7 @@ namespace Geode.Chains
 
 			if (val is LiteralValue l)
 			{
-				if (l.Value.ToString() is "0" or "[]" or "{}" or "" or "\"\"" or "''")
+				if (l.Value.ToString() is "false" or "0" or "[]" or "{}" or "" or "\"\"" or "''")
 				{
 					return false;
 				}
