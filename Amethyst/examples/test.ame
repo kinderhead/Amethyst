@@ -3,37 +3,29 @@
 namespace example;
 
 int x = 0;
-int y = 0;
 
-struct mystruct {
+
+class myclass {
     int x;
 
     void foo() {
-        x = 5;
+        bar();
     }
-}
-
-class myclass {
-    int y;
 
     void bar() {
-        y = 15;
+        x = 15;
     }
 }
 
 #load
 void main() {
  
-    mystruct a;
-    myclass b;
+    myclass a;
 
     a.foo();
-    b.bar();
 
     print(x);   // global x = 0
-    print(a.x); // property x = 5
-    print(y);   // global y = 0
-    print(b.y); // property y = 15
+    print(a.x); // property x = 15
 
     amethyst:exit();
 }
