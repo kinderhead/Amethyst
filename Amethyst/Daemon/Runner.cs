@@ -139,6 +139,13 @@ namespace Amethyst.Daemon
                         continue;
                     }
 
+                    var limitMatch = ExecutionLimitErrorLookup().Match(msg);
+                    if (limitMatch.Success)
+                    {
+                        AnsiConsole.MarkupLine("[red]Command execution limit reached[/]");
+                        continue;
+                    }
+
                     var parseErrorMatch = ParseErrorLookup().Match(msg);
                     if (parseErrorMatch.Success)
                     {
@@ -201,8 +208,10 @@ namespace Amethyst.Daemon
         [GeneratedRegex(@"(?:\[\d+:\d+:\d+\] \[Server thread/ERROR\] \(Minecraft\) )([^\n]*)")]
         private static partial Regex GenericErrorLookup();
 
-        [GeneratedRegex(
-            @"java\.util\.concurrent\.CompletionException: java\.lang\.IllegalArgumentException:.*?line (\d+).*?position (\d+)")]
+        [GeneratedRegex(@"\[\d+:\d+:\d+\] \[Server thread/INFO\] \(Minecraft\) Command execution stopped due to limit ([^\n]*)")]
+        private static partial Regex ExecutionLimitErrorLookup();
+
+        [GeneratedRegex(@"java\.util\.concurrent\.CompletionException: java\.lang\.IllegalArgumentException:.*?line (\d+).*?position (\d+)")]
         private static partial Regex ParseErrorLookup();
 
         [GeneratedRegex(@"Failed to load function (.*)")]
