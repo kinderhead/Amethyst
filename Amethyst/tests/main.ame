@@ -30,7 +30,6 @@ void run_tests() {
     var total = count_of("test:test");
 
     print("Tests passed: ", successfulTests, "/", total);
-    //@/say Tests passed: $(successfulTests)/$(total)
 
     amethyst:exit();
 }
@@ -48,6 +47,13 @@ void assert(bool condition) {
 }
 
 void assert_eq(int value, int expected) {
+    if (value != expected) {
+        print("--> Expected ", expected, " but got ", value);
+        currentTestFailed = true;
+    }
+}
+
+void assert_eq(float value, float expected) {
     if (value != expected) {
         print("--> Expected ", expected, " but got ", value);
         currentTestFailed = true;

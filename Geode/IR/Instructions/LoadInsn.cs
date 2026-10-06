@@ -26,25 +26,21 @@ namespace Geode.IR.Instructions
 			ret.Store(val, ctx);
 		}
 
-		public override void ConfigureLifetime(Func<ValueRef, ValueRef, bool> tryLink,
-			Action<ValueRef, ValueRef> markOverlap) => tryLink(Arg<ValueRef>(0), ReturnValue);
-
-
+		public override void ConfigureLifetime(Func<ValueRef, ValueRef, bool> tryLink, Action<ValueRef, ValueRef> markOverlap) => tryLink(Arg<ValueRef>(0), ReturnValue);
+		
 		protected override IValue? ComputeReturnValue(FunctionContext ctx)
 		{
 			var val = Arg<ValueRef>(0);
-			if (val.Value is ScoreValue score)
+			switch (val.Value)
 			{
-				Remove();
-				return score;
+				case ScoreValue score:
+					Remove();
+					return score;
+				case LiteralValue literal when val.Type is PrimitiveType:
+					return new LiteralValue(literal.Value.CastInt());
+				default:
+					return null;
 			}
-
-			if (val.Value is LiteralValue literal && val.Type is PrimitiveType)
-			{
-				return literal;
-			}
-
-			return null;
 		}
 	}
 }

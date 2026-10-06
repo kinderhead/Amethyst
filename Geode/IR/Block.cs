@@ -1,3 +1,5 @@
+using System.Diagnostics;
+using System.Text;
 using Datapack.Net.Function;
 using Datapack.Net.Function.Commands;
 using Datapack.Net.Utils;
@@ -5,165 +7,149 @@ using Geode.Errors;
 using Geode.IR.Instructions;
 using Geode.Util;
 using Geode.Values;
-using System.Diagnostics;
-using System.Text;
 
 namespace Geode.IR
 {
-	public class Block(string name, NamespacedID funcID, FunctionContext ctx) : GraphNode<Block>, IInstructionArg
-	{
-		public readonly FunctionContext Ctx = ctx;
+    public class Block(string name, NamespacedID funcID, FunctionContext ctx) : GraphNode<Block>, IInstructionArg
+    {
+        public readonly FunctionContext Ctx = ctx;
 
-		public readonly MCFunction Function = new(funcID, true);
+        public readonly MCFunction Function = new(funcID, true);
+        public readonly PhiContext Phi = new();
 
-		private readonly List<Instruction> instructions = [];
-		public readonly PhiContext Phi = new();
-		public IReadOnlyList<Instruction> Instructions => instructions;
-		public IEnumerable<PhiInsn> PhiInsns => Instructions.Where(i => i is PhiInsn).Cast<PhiInsn>();
+        private readonly List<Instruction> instructions = [];
+        public IReadOnlyList<Instruction> Instructions => instructions;
+        public IEnumerable<PhiInsn> PhiInsns => Instructions.Where(i => i is PhiInsn).Cast<PhiInsn>();
 
-		public bool ForkGuard { get; private set; }
-		public string Name => name;
+        public bool ForkGuard { get; private set; }
+        public string Name => name;
 
-		public IReadOnlySet<ValueRef> Dependencies { get; } = new HashSet<ValueRef>();
-		public void ReplaceValue(ValueRef value, ValueRef with) { }
+        public IReadOnlySet<ValueRef> Dependencies { get; } = new HashSet<ValueRef>();
 
-		public ValueRef Prepend(Instruction insn, string? customName = null)
-		{
-			instructions.Insert(0, insn);
-			return ProcessInsn(insn, customName);
-		}
+        public void ReplaceValue(ValueRef value, ValueRef with)
+        {
+        }
 
-		public ValueRef Add(Instruction insn, string? customName = null)
-		{
-			if (instructions.Count == 0 || instructions.Last() is not IBlockCapstoneInsn)
-			{
-				instructions.Add(insn);
-				insn.OnAdd(this);
-			}
+        public ValueRef Prepend(Instruction insn, string? customName = null)
+        {
+            instructions.Insert(0, insn);
+            return ProcessInsn(insn, customName);
+        }
 
-			return ProcessInsn(insn, customName);
-		}
+        public ValueRef Add(Instruction insn, string? customName = null)
+        {
+            if (instructions.Count == 0 || instructions.Last() is not IBlockCapstoneInsn)
+            {
+                instructions.Add(insn);
+                insn.OnAdd(this);
+            }
 
-		private ValueRef ProcessInsn(Instruction insn, string? customName)
-		{
-			if (Ctx.LocationStack.Count != 0)
-			{
-				insn.Location = Ctx.LocationStack.Peek();
-			}
+            return ProcessInsn(insn, customName);
+        }
 
-			insn.ReturnValue.Name = customName!;
+        private ValueRef ProcessInsn(Instruction insn, string? customName)
+        {
+            if (Ctx.LocationStack.Count != 0) insn.Location = Ctx.LocationStack.Peek();
 
-			return insn.ReturnValue;
-		}
+            insn.ReturnValue.Name = customName!;
 
-		public string Dump()
-		{
-			var builder = new StringBuilder();
+            return insn.ReturnValue;
+        }
 
-			builder.AppendLine($"{Name}:");
-			foreach (var i in Instructions)
-			{
-				builder.AppendLine($"    {i.Dump()}");
-			}
+        public string Dump()
+        {
+            var builder = new StringBuilder();
 
-			return builder.ToString();
-		}
+            builder.AppendLine($"{Name}:");
+            foreach (var i in Instructions)
+            {
+                builder.AppendLine($"    {i.Dump()}");
+            }
 
-		public void Render(GeodeBuilder builder, FunctionContext ctx)
-		{
-			if (ForkGuard)
-			{
-				var returning = ctx.GetIsFunctionReturningValue();
-				Function.Add(new Execute().If.Data(returning.Storage, returning.Path).Run(new ReturnCommand(0)));
-			}
+            return builder.ToString();
+        }
 
-			var renderer = GetRenderCtx(builder, ctx);
+        public void Render(GeodeBuilder builder, FunctionContext ctx)
+        {
+            if (ForkGuard)
+            {
+                var returning = ctx.GetIsFunctionReturningValue();
+                Function.Add(new Execute().If.Data(returning.Storage, returning.Path).Run(new ReturnCommand(0)));
+            }
 
-			foreach (var i in Instructions)
-			{
-				if (!ctx.Compiler.WrapError(i.Location, ctx, [DebuggerNonUserCode]() =>
-				    {
-					    i.Render(renderer);
-				    }))
-				{
-					throw new EmptyGeodeError();
-				}
-			}
+            // Function.Add(new TellrawCommand(new TargetSelector(TargetType.a), new FormattedText().Text($"Running {Function.ID}")));
 
-			builder.Register(Function);
-		}
+            var renderer = GetRenderCtx(builder, ctx);
 
-		public void Cleanse()
-		{
-			instructions.RemoveAll(x => x.MarkedForRemoval);
+            if (Instructions.Any(i => !ctx.Compiler.WrapError(i.Location, ctx, [DebuggerNonUserCode]() => { i.Render(renderer); })))
+                throw new EmptyGeodeError();
 
-			for (var i = 0; i < instructions.Count; i++)
-			{
-				if (instructions[i].ToReplaceWith.Length != 0)
-				{
-					instructions.InsertRange(i + 1, instructions[i].ToReplaceWith);
-					instructions.RemoveAt(i);
-					i--;
-				}
-			}
-		}
+            builder.Register(Function);
+        }
 
-		public (List<Instruction> insns, List<Variable> variables) Copy(string newVariableBaseLoc)
-		{
-			List<Instruction> insns = [];
-			List<Variable> variables = [];
-			Dictionary<ValueRef, ValueRef> valueMap = [];
+        public void Cleanse()
+        {
+            instructions.RemoveAll(x => x.MarkedForRemoval);
 
-			ValueRef map(ValueRef val)
-			{
-				if (valueMap.TryGetValue(val, out var ret))
-				{
-					return ret;
-				}
+            for (var i = 0; i < instructions.Count; i++)
+            {
+                if (instructions[i].ToReplaceWith.Length != 0)
+                {
+                    instructions.InsertRange(i + 1, instructions[i].ToReplaceWith);
+                    instructions.RemoveAt(i);
+                    i--;
+                }
+            }
+        }
 
-				var newValue = val.Clone();
+        public (List<Instruction> insns, List<Variable> variables) Copy(string newVariableBaseLoc)
+        {
+            List<Instruction> insns = [];
+            List<Variable> variables = [];
+            Dictionary<ValueRef, ValueRef> valueMap = [];
 
-				if (newValue.Value is Variable v)
-				{
-					var newVariable = new Variable(v.Name, Ctx.Compiler.IR.RuntimeID, newVariableBaseLoc, v.Frame,
-						v.Type);
-					newValue.SetValue(newVariable);
-					variables.Add(newVariable);
-				}
+            ValueRef map(ValueRef val)
+            {
+                if (valueMap.TryGetValue(val, out var ret)) return ret;
 
-				valueMap[val] = newValue;
-				return newValue;
-			}
+                var newValue = val.Clone();
 
-			foreach (var i in Instructions)
-			{
-				var newInsn = i.Clone();
+                if (newValue.Value is Variable v)
+                {
+                    var newVariable = new Variable(v.Name, Ctx.Compiler.IR.RuntimeID, newVariableBaseLoc, v.Frame,
+                        v.Type);
+                    newValue.SetValue(newVariable);
+                    variables.Add(newVariable);
+                }
 
-				for (var j = 0; j < i.Arguments.Length; j++)
-				{
-					if (i.Arguments[j] is not ValueRef val)
-					{
-						throw new NotImplementedException(
-							"This block cannot be copied. Try not inlining this function.");
-					}
+                valueMap[val] = newValue;
+                return newValue;
+            }
 
-					newInsn.Arguments[j] = map(val);
-					valueMap[i.ReturnValue] = newInsn.ReturnValue;
-				}
+            foreach (var i in Instructions)
+            {
+                var newInsn = i.Clone();
 
-				insns.Add(newInsn);
-			}
+                for (var j = 0; j < i.Arguments.Length; j++)
+                {
+                    if (i.Arguments[j] is not ValueRef val) throw new NotImplementedException("This block cannot be copied. Try not inlining this function.");
 
-			return (insns, variables);
-		}
+                    newInsn.Arguments[j] = map(val);
+                    valueMap[i.ReturnValue] = newInsn.ReturnValue;
+                }
 
-		public bool ContainsStoreFor(Variable variable) => Instructions.Any(i => i.ContainsStoreFor(variable));
+                insns.Add(newInsn);
+            }
 
-		public void EnableForkGuard() => ForkGuard = true;
+            return (insns, variables);
+        }
 
-		public override string ToString() => Name;
+        public bool ContainsStoreFor(Variable variable) => Instructions.Any(i => i.ContainsStoreFor(variable));
 
-		public RenderContext GetRenderCtx(GeodeBuilder builder, FunctionContext ctx) =>
-			new(Function, this, builder, ctx);
-	}
+        public void EnableForkGuard() => ForkGuard = true;
+
+        public override string ToString() => Name;
+
+        public RenderContext GetRenderCtx(GeodeBuilder builder, FunctionContext ctx) => new(Function, this, builder, ctx);
+    }
 }

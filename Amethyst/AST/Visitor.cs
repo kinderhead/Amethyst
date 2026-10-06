@@ -345,7 +345,6 @@ namespace Amethyst.AST
         public override Node VisitCastExpression([NotNull] AmethystParser.CastExpressionContext context)
         {
             if (context.type() is not null) return new CastExpression(Loc(context), Visit(context.type()), (Expression)Visit(context.castExpression()));
-
             return Visit(context.unaryExpression());
         }
 

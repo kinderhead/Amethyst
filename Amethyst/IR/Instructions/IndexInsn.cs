@@ -9,72 +9,57 @@ using Geode.Values;
 
 namespace Amethyst.IR.Instructions
 {
-	public class IndexInsn(ValueRef dest, ValueRef index) : Instruction([dest, index])
-	{
-		public override string Name => "index";
-		public override NBTType?[] ArgTypes => [null, NBTType.Int];
+    public class IndexInsn(ValueRef dest, ValueRef index) : Instruction([dest, index])
+    {
+        public override string Name => "index";
+        public override NBTType?[] ArgTypes => [null, NBTType.Int];
 
-		public TypeSpecifier ActualReturnType
-		{
-			get
-			{
-				var type = Arg<ValueRef>(0).Type;
+        public TypeSpecifier ActualReturnType
+        {
+            get
+            {
+                var type = Arg<ValueRef>(0).Type;
 
-				if (type is ReferenceType r && r.Inner is ListType rl)
-				{
-					return rl.Inner;
-				}
+                return type switch
+                {
+                    ReferenceType { Inner: ListType rl } => rl.Inner,
+                    ListType l => l.Inner,
+                    _ => throw new InvalidTypeError(dest.Type.ToString(), "list")
+                };
+            }
+        }
 
-				if (type is ListType l)
-				{
-					return l.Inner;
-				}
+        public override TypeSpecifier ReturnType => Arg<ValueRef>(0).Type is ReferenceType and not WeakReferenceType
+            ? new ReferenceType(ActualReturnType)
+            : new WeakReferenceType(ActualReturnType);
 
-				throw new InvalidTypeError(dest.Type.ToString(), "list");
-			}
-		}
+        public override void Render(RenderContext ctx)
+        {
+            var val = Arg<ValueRef>(0).AsRef();
+            var index = Arg<ValueRef>(1).Expect();
 
-		public override TypeSpecifier ReturnType => Arg<ValueRef>(0).Type is ReferenceType and not WeakReferenceType
-			? new ReferenceType(ActualReturnType)
-			: new WeakReferenceType(ActualReturnType);
+            ReturnValue.Expect<DynamicValue>().Add(val).Add("[").Add(index).Add("]");
+        }
 
-		public override void Render(RenderContext ctx)
-		{
-			var val = Arg<ValueRef>(0).AsRef();
-			var index = Arg<ValueRef>(1).Expect();
+        protected override IValue ComputeReturnValue(FunctionContext ctx)
+        {
+            var val = Arg<ValueRef>(0);
+            var index = Arg<ValueRef>(1);
 
-			ReturnValue.Expect<DynamicValue>()
-				.Add(val)
-				.Add("[")
-				.Add(index)
-				.Add("]");
-		}
+            ReturnValue.AddDependency(val);
+            ReturnValue.AddDependency(index);
 
-		protected override IValue ComputeReturnValue(FunctionContext ctx)
-		{
-			var val = Arg<ValueRef>(0);
-			var index = Arg<ValueRef>(1);
+            if (val is { Value: MacroValue, Type: not ReferenceType }) throw new MacroPropertyError();
 
-			ReturnValue.AddDependency(val);
-			ReturnValue.AddDependency(index);
+            if (val.Type is not ReferenceType && val.Value is DataTargetValue list && index.Value is LiteralValue i)
+            {
+                if (i.Value is not NBTInt ind) throw new InvalidTypeError(index.Type.ToString(), "int");
 
-			if (val.Value is MacroValue && val.Type is not ReferenceType)
-			{
-				throw new MacroPropertyError();
-			}
+                Remove();
+                return WeakReferenceType.From(list.Index(ind.Value, ActualReturnType));
+            }
 
-			if (val.Type is not ReferenceType && val.Value is DataTargetValue list && index.Value is LiteralValue i)
-			{
-				if (i.Value is not NBTInt ind)
-				{
-					throw new InvalidTypeError(index.Type.ToString(), "int");
-				}
-
-				Remove();
-				return WeakReferenceType.From(list.Index(ind.Value, ActualReturnType));
-			}
-
-			return new DynamicValue(ReturnType);
-		}
-	}
+            return new DynamicValue(ReturnType);
+        }
+    }
 }

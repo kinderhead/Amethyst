@@ -1,7 +1,7 @@
 namespace test;
 
 #test
-void test_add() {
+void test_int_add() {
     start("int add");
 
     int x = 5;
@@ -13,7 +13,7 @@ void test_add() {
 }
 
 #test
-void test_sub() {
+void test_int_sub() {
     start("int sub");
 
     int x = 5;
@@ -25,7 +25,7 @@ void test_sub() {
 }
 
 #test
-void test_mul() {
+void test_int_mul() {
     start("int mul");
 
     int x = 5;
@@ -37,7 +37,7 @@ void test_mul() {
 }
 
 #test
-void test_div() {
+void test_int_div() {
     start("int div");
 
     int x = 100;
@@ -49,7 +49,7 @@ void test_div() {
 }
 
 #test
-void test_mod() {
+void test_int_mod() {
     start("int mod");
 
     int x = 8;
@@ -61,7 +61,7 @@ void test_mod() {
 }
 
 #test
-void test_big_math() {
+void test_int_big_math() {
     start("int big math");
 
     int a = 4;
@@ -76,7 +76,7 @@ void test_big_math() {
 }
 
 #test
-void test_assign_math() {
+void test_int_assign_math() {
     start("int assign math");
 
     int x = 5;
@@ -100,7 +100,7 @@ void test_assign_math() {
 }
 
 #test
-void test_inc() {
+void test_int_inc() {
     start("int increment");
 
     int x = 5;
@@ -110,7 +110,7 @@ void test_inc() {
 }
 
 #test
-void test_dec() {
+void test_int_dec() {
     start("int decrement");
 
     int x = -5;
@@ -120,7 +120,7 @@ void test_dec() {
 }
 
 #test
-void test_negate() {
+void test_int_negate() {
     start("int negate");
 
     int x = 5;
@@ -131,3 +131,103 @@ void test_negate() {
     
     complete();
 }
+
+// #test
+// void test_float_add() {
+//     start("float add");
+
+//     float x = 5.3;
+//     float y = x + 70.2;
+
+//     assert_eq(y, 75.5);
+
+//     complete();
+// }
+
+// #test
+// void test_float_sub() {
+//     start("float sub");
+
+//     float x = 5.2;
+//     float y = 70.5 - x;
+
+//     assert_eq(y, 65.3);
+    
+//     complete();
+// }
+
+// #test
+// void test_float_mul() {
+//     start("float mul");
+
+//     float x = 5.2;
+//     float y = 6.65 * x;
+
+//     assert_eq(y, 34.58);
+    
+//     complete();
+// }
+
+// #test
+// void test_float_div() {
+//     start("float div");
+
+//     float x = 100.321;
+//     float y = x / 4.9;
+
+//     assert_eq(y, 20.4736734694);
+    
+//     complete();
+// }
+
+// #test
+// void test_float_big_math() {
+//     start("float big math");
+
+//     float a = 4.43;
+//     float b = 2.1123;
+//     float c = 10.432;
+//     float d = -3.432;
+
+//     float ret = a + b - 10 * c / d + 80 - a * b;
+//     assert_eq(ret, 45);
+    
+//     complete();
+// }
+
+// #test
+// void test_float_assign_math() {
+//     start("float assign math");
+
+//     float x = 5;
+
+//     x += 10;
+//     assert_eq(x, 15);
+
+//     x -= 12;
+//     assert_eq(x, 3);
+
+//     x *= -6;
+//     assert_eq(x, -18);
+
+//     x /= 2;
+//     assert_eq(x, -9);
+
+//     x %= 3;
+//     assert_eq(x, 0);
+    
+//     complete();
+// }
+
+// #test
+// void test_float_negate() {
+//     start("float negate");
+
+//     float x = 5.4;
+//     assert_eq(-x, -5.4);
+
+//     x = -9.87;
+//     assert_eq(-x, 9.87);
+    
+//     complete();
+// }

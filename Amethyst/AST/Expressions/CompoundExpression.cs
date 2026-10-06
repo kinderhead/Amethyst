@@ -1,4 +1,5 @@
 using Amethyst.Errors;
+using Datapack.Net.Data;
 using Geode;
 using Geode.Errors;
 using Geode.IR;
@@ -17,6 +18,7 @@ namespace Amethyst.AST.Expressions
 		protected override ValueRef ExecuteImpl(FunctionContext ctx, TypeSpecifier? expected)
 		{
 			var type = expected ?? PrimitiveType.Compound;
+			if (type.EffectiveType != NBTType.Compound) type = PrimitiveType.Compound;
 
 			if (ctx.GetConstructorOrNull(type) is not null)
 			{

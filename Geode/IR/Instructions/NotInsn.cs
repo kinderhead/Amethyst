@@ -20,8 +20,7 @@ namespace Geode.IR.Instructions
 			cond.Run(ctx.WithFaux(ctx => ret.Store(new LiteralValue(false), ctx)).Single(), ctx);
 		}
 
-		public override void ConfigureLifetime(Func<ValueRef, ValueRef, bool> tryLink,
-			Action<ValueRef, ValueRef> markOverlap)
+		public override void ConfigureLifetime(Func<ValueRef, ValueRef, bool> tryLink, Action<ValueRef, ValueRef> markOverlap)
 		{
 			foreach (var i in Arg<ExecuteChain>(0).Dependencies)
 			{

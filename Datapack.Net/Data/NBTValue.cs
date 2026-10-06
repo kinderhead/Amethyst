@@ -1,8 +1,9 @@
-﻿using System.Text;
+﻿using System.Numerics;
+using System.Text;
 
 namespace Datapack.Net.Data
 {
-    public abstract class NBTValue
+    public abstract class NBTValue : IEqualityOperators<NBTValue, NBTValue, bool>
     {
         public static readonly Type[] RawNBTTypes =
         [
@@ -30,6 +31,9 @@ namespace Datapack.Net.Data
             }
         }
 
+        public static bool operator ==(NBTValue? left, NBTValue? right) => left?.Equals((object?)right) ?? right is null;
+        public static bool operator !=(NBTValue? left, NBTValue? right) => !(left?.Equals((object?)right) ?? right is null);
+
         public abstract void Build(StringBuilder sb);
 
         public virtual string Build()
@@ -45,6 +49,16 @@ namespace Datapack.Net.Data
 
         public NBTInt CastInt() => (NBTInt)Cast(NBTNumberType.Int);
         public NBTFloat CastFloat() => (NBTFloat)Cast(NBTNumberType.Float);
+
+        protected abstract bool Equals(NBTValue other);
+        public abstract override int GetHashCode();
+
+        public override bool Equals(object? obj)
+        {
+            if (obj is null) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            return Equals((NBTValue)obj);
+        }
 
         public static NBTNumberType? IsNumberType<T>() where T : NBTValue
         {

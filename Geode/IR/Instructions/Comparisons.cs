@@ -9,7 +9,7 @@ namespace Geode.IR.Instructions
 	{
 		public override TypeSpecifier ReturnType => PrimitiveType.Bool;
 		public abstract Comparison Op { get; }
-		public virtual bool Invert { get; } = false;
+		public virtual bool Invert => false;
 
 		public override void Render(RenderContext ctx)
 		{
@@ -24,8 +24,7 @@ namespace Geode.IR.Instructions
 			ctx.Add(cmd);
 		}
 
-		public override void ConfigureLifetime(Func<ValueRef, ValueRef, bool> tryLink,
-			Action<ValueRef, ValueRef> markOverlap)
+		public override void ConfigureLifetime(Func<ValueRef, ValueRef, bool> tryLink, Action<ValueRef, ValueRef> markOverlap)
 		{
 			markOverlap(ReturnValue, Arg<ValueRef>(0));
 			markOverlap(ReturnValue, Arg<ValueRef>(1));

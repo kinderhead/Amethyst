@@ -86,8 +86,7 @@ namespace Geode
                 mcFunc.Add(faux);
                 var compiled = mcFunc.Build();
 
-                if (CachedFunctions.TryGetValue(compiled, out var newFunc))
-                    mcFunc = newFunc;
+                if (CachedFunctions.TryGetValue(compiled, out var newFunc)) mcFunc = newFunc;
                 else
                 {
                     CachedFunctions[compiled] = mcFunc;

@@ -4,81 +4,102 @@ using System.Text;
 
 namespace Datapack.Net.Data
 {
-	public class NBTCompound : NBTValue, IDictionary<string, NBTValue>, INegatable<NBTCompound>
-	{
-		public Dictionary<string, NBTValue> Values = [];
+    public class NBTCompound : NBTValue, IDictionary<string, NBTValue>, INegatable<NBTCompound>
+    {
+        public readonly Dictionary<string, NBTValue> Values = [];
 
-		public NBTCompound()
-		{
-		}
+        public NBTCompound()
+        {
+        }
 
-		public NBTCompound(IEnumerable<KeyValuePair<string, NBTValue>> values)
-		{
-			foreach (var i in values)
-			{
-				Values.Add(i.Key, i.Value);
-			}
-		}
+        public NBTCompound(IEnumerable<KeyValuePair<string, NBTValue>> values)
+        {
+            foreach (var i in values)
+            {
+                Values.Add(i.Key, i.Value);
+            }
+        }
 
-		public override NBTType Type => NBTType.Compound;
-		public NBTValue this[string key] { get => Values[key]; set => Values[key] = value; }
-		public ICollection<string> Keys => Values.Keys;
-		public int Count => Values.Count;
-		public bool IsReadOnly => false;
+        public override NBTType Type => NBTType.Compound;
 
-		ICollection<NBTValue> IDictionary<string, NBTValue>.Values => Values.Values;
+        public NBTValue this[string key]
+        {
+            get => Values[key];
+            set => Values[key] = value;
+        }
 
-		public void Add(string key, NBTValue value) => Values.Add(key, value);
+        public ICollection<string> Keys => Values.Keys;
+        public int Count => Values.Count;
+        public bool IsReadOnly => false;
 
-		public void Add(KeyValuePair<string, NBTValue> item) => Values.Add(item.Key, item.Value);
+        ICollection<NBTValue> IDictionary<string, NBTValue>.Values => Values.Values;
 
-		public void Clear() => Values.Clear();
+        public void Add(string key, NBTValue value) => Values.Add(key, value);
 
-		public bool Contains(KeyValuePair<string, NBTValue> item) => Values.Contains(item);
+        public void Add(KeyValuePair<string, NBTValue> item) => Values.Add(item.Key, item.Value);
 
-		public bool ContainsKey(string key) => Values.ContainsKey(key);
+        public void Clear() => Values.Clear();
 
-		public void CopyTo(KeyValuePair<string, NBTValue>[] array, int arrayIndex) =>
-			throw new NotImplementedException();
+        public bool Contains(KeyValuePair<string, NBTValue> item) => Values.Contains(item);
 
-		public IEnumerator<KeyValuePair<string, NBTValue>> GetEnumerator() => Values.GetEnumerator();
+        public bool ContainsKey(string key) => Values.ContainsKey(key);
 
-		public bool Remove(string key) => Values.Remove(key);
+        public void CopyTo(KeyValuePair<string, NBTValue>[] array, int arrayIndex) =>
+            throw new NotImplementedException();
 
-		public bool Remove(KeyValuePair<string, NBTValue> item) => Values.Remove(item.Key);
+        public IEnumerator<KeyValuePair<string, NBTValue>> GetEnumerator() => Values.GetEnumerator();
 
-		public bool TryGetValue(string key, [MaybeNullWhen(false)] out NBTValue value) =>
-			Values.TryGetValue(key, out value);
+        public bool Remove(string key) => Values.Remove(key);
 
-		IEnumerator IEnumerable.GetEnumerator() => Values.GetEnumerator();
+        public bool Remove(KeyValuePair<string, NBTValue> item) => Values.Remove(item.Key);
 
-		public Negatable<NBTCompound> Negate() => new(this, true);
+        public bool TryGetValue(string key, [MaybeNullWhen(false)] out NBTValue value) =>
+            Values.TryGetValue(key, out value);
 
-		public override NBTValue Cast(NBTNumberType type) =>
-			throw new InvalidOperationException("Cannot cast compound to number");
+        IEnumerator IEnumerable.GetEnumerator() => Values.GetEnumerator();
 
-		public override void Build(StringBuilder sb)
-		{
-			sb.Append('{');
-			foreach (var i in Values)
-			{
-				sb.Append('"');
-				sb.Append(NBTString.Escape(i.Key));
-				sb.Append('"');
-				sb.Append(':');
-				i.Value.Build(sb);
-				sb.Append(',');
-			}
+        public Negatable<NBTCompound> Negate() => new(this, true);
 
-			if (Values.Count > 0)
-			{
-				sb.Length--;
-			}
+        public override NBTValue Cast(NBTNumberType type) => throw new InvalidOperationException("Cannot cast compound to number");
 
-			sb.Append('}');
-		}
+        protected override bool Equals(NBTValue other)
+        {
+            if (other is NBTCompound nbt)
+            {
+                if (nbt.Count != Count) return false;
 
-		public static Negatable<NBTCompound> operator !(NBTCompound nbt) => nbt.Negate();
-		public static implicit operator Negatable<NBTCompound>(NBTCompound nbt) => new(nbt);
-	}
+                foreach (var i in Keys)
+                {
+                    if (!nbt.TryGetValue(i, out var value) || value != this[i]) return false;
+                }
+
+                return true;
+            }
+
+            return false;
+        }
+
+        public override int GetHashCode() => HashCode.Combine(Values, Type);
+
+        public override void Build(StringBuilder sb)
+        {
+            sb.Append('{');
+            foreach (var i in Values)
+            {
+                sb.Append('"');
+                sb.Append(NBTString.Escape(i.Key));
+                sb.Append('"');
+                sb.Append(':');
+                i.Value.Build(sb);
+                sb.Append(',');
+            }
+
+            if (Values.Count > 0) sb.Length--;
+
+            sb.Append('}');
+        }
+
+        public static Negatable<NBTCompound> operator !(NBTCompound nbt) => nbt.Negate();
+        public static implicit operator Negatable<NBTCompound>(NBTCompound nbt) => new(nbt);
+    }
 }

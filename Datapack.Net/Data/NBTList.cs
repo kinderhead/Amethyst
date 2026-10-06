@@ -6,7 +6,7 @@ namespace Datapack.Net.Data
     public class NBTList<T>(string prefix = "") : NBTValue, IList<T> where T : NBTValue
     {
         protected readonly string Prefix = prefix;
-        public List<T> Values = [];
+        public readonly List<T> Values = [];
         public override NBTType Type => NBTType.List;
 
         public T this[int index]
@@ -20,27 +20,36 @@ namespace Datapack.Net.Data
         public bool IsReadOnly => false;
 
         public void Add(T item) => Values.Add(item);
-
         public void Clear() => Values.Clear();
-
         public bool Contains(T item) => Values.Contains(item);
-
         public void CopyTo(T[] array, int arrayIndex) => Values.CopyTo(array, arrayIndex);
-
         public IEnumerator<T> GetEnumerator() => Values.GetEnumerator();
-
         public int IndexOf(T item) => Values.IndexOf(item);
-
         public void Insert(int index, T item) => Values.Insert(index, item);
-
         public bool Remove(T item) => Values.Remove(item);
-
         public void RemoveAt(int index) => Values.RemoveAt(index);
-
         IEnumerator IEnumerable.GetEnumerator() => Values.GetEnumerator();
 
-        public override NBTValue Cast(NBTNumberType type) =>
-            throw new InvalidOperationException("Cannot cast list to number");
+        public override NBTValue Cast(NBTNumberType type) => throw new InvalidOperationException("Cannot cast list to number");
+
+        protected override bool Equals(NBTValue other)
+        {
+            if (other is NBTList<T> list)
+            {
+                if (Count != list.Count) return false;
+
+                foreach (var (a, b) in this.Zip(list))
+                {
+                    if (a != b) return false;
+                }
+
+                return true;
+            }
+
+            return false;
+        }
+
+        public override int GetHashCode() => HashCode.Combine(Values, Type);
 
         public override void Build(StringBuilder sb)
         {

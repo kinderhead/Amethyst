@@ -19,3 +19,109 @@ void test_int_comp() {
 
     complete();
 }
+
+#test
+void test_float_comp() {
+    start("float compare");
+
+    float x = 50.4;
+    float y = -50.4;
+
+    assert(x == x);
+    assert(y == y);
+    assert(x != y);
+    // assert(x > y);
+    // assert(x >= y);
+    // assert(x >= x);
+    // assert(y < x);
+    // assert(y <= x);
+    // assert(y <= y);
+
+    complete();
+}
+
+#test
+void test_string_comp() {
+    start("string compare");
+
+    string x = "asfgs";
+    string y = "oiejf";
+
+    assert(x == x);
+    assert(y == y);
+    assert(x != y);
+
+    complete();
+}
+
+#test
+void test_string_static_comp() {
+    start("string static compare");
+
+    assert("asdasd" == "asdasd");
+    assert("asdasd" != "as435345dasd");
+
+    complete();
+}
+
+#test
+void test_nbt_comp() {
+    start("nbt compare");
+
+    nbt x = {a: 1};
+    nbt y = {b: 2};
+
+    assert(x == x);
+    assert(y == y);
+    assert(x != y);
+
+    complete();
+}
+
+#test
+void test_nbt_similar_comp() {
+    start("nbt similar compare");
+
+    nbt x = {a: 1};
+    nbt y = {a: 2};
+
+    assert(x == x);
+    assert(y == y);
+    assert(x != y);
+
+    complete();
+}
+
+#test
+void test_nbt_static_comp() {
+    start("nbt static compare");
+
+    assert({a: 1, b: 2} == {b: 2, a: 1});
+    assert({a: 1, b: 2} != {b: 1, a: 1});
+
+    complete();
+}
+
+#test
+void test_list_comp() {
+    start("list compare");
+
+    int[] x = [1,2,3,4,5];
+    string[] y = ["1","2","3","4","5"];
+
+    assert(x == x);
+    assert(y == y);
+    assert(x != y);
+
+    complete();
+}
+
+#test
+void test_list_static_comp() {
+    start("list static compare");
+
+    assert([1,2,3,4,5] == [1,2,3,4,5]);
+    assert([1,2,3,4,5] != ["1","2","3","4","5"]);
+
+    complete();
+}

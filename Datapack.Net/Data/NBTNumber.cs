@@ -45,6 +45,8 @@ namespace Datapack.Net.Data
             _ => throw new NotImplementedException()
         };
 
+        protected override bool Equals(NBTValue other) => other is NBTNumber<T, TSelf> n && this == n;
+
         public override bool Equals(object? obj)
         {
             if (obj is NBTNumber<T, TSelf> n) return this == n;
@@ -52,7 +54,7 @@ namespace Datapack.Net.Data
             return false;
         }
 
-        public override int GetHashCode() => Value.GetHashCode() * 1061;
+        public override int GetHashCode() => HashCode.Combine(Value, Type);
 
         public static bool operator ==(NBTNumber<T, TSelf> left, NBTNumber<T, TSelf> right) => left.Value == right.Value;
         public static bool operator !=(NBTNumber<T, TSelf> left, NBTNumber<T, TSelf> right) => !(left.Value == right.Value);

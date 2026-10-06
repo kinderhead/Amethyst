@@ -232,10 +232,11 @@ namespace Geode
 
         private MCFunction GetInitFunc()
         {
-            var func = new MCFunction(new("amethyst", $"{INTERNAL_PATH}/{UniqueString}"));
+            var func = new MCFunction(new(Namespace, $"{INTERNAL_PATH}/{UniqueString}"));
 
-            func.Add(new DataCommand.Modify(new Storage(new("amethyst", "runtime")), "stack").Set().Value("[{}]"));
-            func.Add(new DataCommand.Remove(new Storage(new("amethyst", "runtime")), "null"));
+            func.Add(new DataCommand.Modify(new Storage(RuntimeID), "stack").Set().Value("[{}]"));
+            func.Add(new DataCommand.Remove(new Storage(RuntimeID), "null"));
+            func.Add(new DataCommand.Remove(new Storage(RuntimeID), "tmp"));
 
             foreach (var i in registeredScores)
             {
@@ -254,7 +255,7 @@ namespace Geode
 
         private MCFunction GetCleanupFunc()
         {
-            var func = new MCFunction(new("amethyst", $"{INTERNAL_PATH}/{UniqueString}"));
+            var func = new MCFunction(new(Namespace, $"{INTERNAL_PATH}/{UniqueString}"));
 
             foreach (var i in RuntimeStorageUsed)
             {
