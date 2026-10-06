@@ -44,6 +44,7 @@ namespace Datapack.Net.Data
         public abstract NBTValue Cast(NBTNumberType type);
 
         public NBTInt CastInt() => (NBTInt)Cast(NBTNumberType.Int);
+        public NBTFloat CastFloat() => (NBTFloat)Cast(NBTNumberType.Float);
 
         public static NBTNumberType? IsNumberType<T>() where T : NBTValue
         {

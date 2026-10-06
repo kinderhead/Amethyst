@@ -22,7 +22,8 @@ namespace Geode.Equations
             _ => throw new NotImplementedException("Operation not supported for compute yet")
         };
 
-        public override NBTValue Execute(NBTValue[] args) => Op switch
+        public override NBTValue Execute(NBTValue[] args) => Type == ProviderNumberType.Int
+            ? (NBTInt)(Op switch
         {
             ScoreOperation.Add => args[0].CastInt() + args[1].CastInt(),
             ScoreOperation.Sub => args[0].CastInt() - args[1].CastInt(),
@@ -30,7 +31,16 @@ namespace Geode.Equations
             ScoreOperation.Div => args[0].CastInt() / args[1].CastInt(),
             ScoreOperation.Mod => args[0].CastInt() % args[1].CastInt(),
             _ => throw new NotImplementedException("Operation not supported for compute yet")
-        };
+        })
+            : (NBTFloat)(Op switch
+            {
+                ScoreOperation.Add => args[0].CastFloat() + args[1].CastFloat(),
+                ScoreOperation.Sub => args[0].CastFloat() - args[1].CastFloat(),
+                ScoreOperation.Mul => args[0].CastFloat() * args[1].CastFloat(),
+                ScoreOperation.Div => args[0].CastFloat() / args[1].CastFloat(),
+                ScoreOperation.Mod => args[0].CastFloat() % args[1].CastFloat(),
+                _ => throw new NotImplementedException("Operation not supported for compute yet")
+            });
 
         public override NBTValue? IsConstant() => null;
     }
