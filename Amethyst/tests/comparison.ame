@@ -68,7 +68,7 @@ void test_string_static_comp() {
 void test_nbt_comp() {
     start("nbt compare");
 
-    nbt x = {a: 1};
+    nbt x = {a: 1, c: 3};
     nbt y = {b: 2};
 
     assert(x == x);

@@ -110,6 +110,15 @@ namespace Amethyst
 
         public string MapToPath(string mappedPath) => mappedPath.StartsWith("@std") ? Path.Combine(CoreLibPath, mappedPath["@std".Length..]) : mappedPath;
 
+        public bool CompileWithSpinner()
+        {
+            //var start = Stopwatch.GetTimestamp();
+            var success = AnsiConsole.Status().Start("[darkviolet]Compiling...[/]", _ => Compile()); // TODO: replace spinner with progress
+            // if (success) AnsiConsole.MarkupLineInterpolated($"[darkviolet]Compiled in [/][gold1]{Math.Round(Stopwatch.GetElapsedTime(start).TotalSeconds, 2)}s[/]");
+
+            return success;
+        }
+
         public bool Compile(StatusContext? ctx = null)
         {
             var errored = false;

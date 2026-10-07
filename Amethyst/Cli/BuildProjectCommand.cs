@@ -1,7 +1,6 @@
 using System.ComponentModel;
 using Amethyst.Daemon;
 using Datapack.Net.Pack;
-using Spectre.Console;
 using Spectre.Console.Cli;
 
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
@@ -68,12 +67,8 @@ namespace Amethyst.Cli
             Directory.CreateDirectory(Path.Join(Environment.CurrentDirectory, "build"));
 
             var compiler = new Compiler(settings);
-            var success = false;
 
-            AnsiConsole.Status().Start("[darkviolet]Compiling...[/]", _ => { success = compiler.Compile(); });
-
-            if (!success) return 1;
-
+            if (!compiler.CompileWithSpinner()) return 1;
             if (settings.Run) Runner.RunDatapack(new() { Datapack = settings.Output }, compiler);
 
             return 0;

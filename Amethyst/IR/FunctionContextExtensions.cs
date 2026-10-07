@@ -13,6 +13,7 @@ namespace Amethyst.IR
         {
             public ValueRef GetProperty(ValueRef val, string name)
             {
+                val = ReferenceType.TryDeref(val, ctx, TryDerefRecursive.ExceptObject);
                 if (val.Type.HasProperty(name) is { } t) return ctx.Add(new PropertyInsn(val, LiteralValue.Raw(name), t));
                 if (ctx.GetMethodOrNull(val, name) is { } method) return method;
                 if (val.Type.DefaultPropertyType is { } t2) return ctx.Add(new PropertyInsn(val, LiteralValue.Raw(name), t2));

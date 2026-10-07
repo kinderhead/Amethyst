@@ -232,3 +232,23 @@ void test_class_inheritance() {
 
     complete();
 }
+
+#test
+void test_class_inheritance_array() {
+    start("class inheritance array");
+
+    clsvec2[] arr = [];
+    
+    arr.add(new clssubvec(1, 2, 3));
+
+    assert_eq(arr[0].x, 2);
+    assert_eq(arr[0].y, 4);
+    assert_eq(arr[0].z, 6);
+    assert_eq(arr[0].sum(), 12);
+    assert_eq(arr[0].get-x(), 4);
+    assert_eq(arr[0].get-x2(), 3);
+    assert_eq(arr[0].get-x2(3), 6);
+
+    complete();
+    print(no);
+}

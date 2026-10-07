@@ -15,9 +15,20 @@ entitydef minecraft:sheep implements minecraft:base {
 }
 /* The rest can be modified */
 
+
+void foo(list[]& arr) {
+    
+}
+
+class myclass {
+    list[] myarr;
+
+    myclass() {
+        foo(&myarr);
+    }
+}
+
 #load
 void main() {
-    print({a: 1, b: 2} == {b: 2, a: 1});
-
     amethyst:exit();
 }

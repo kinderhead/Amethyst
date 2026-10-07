@@ -11,6 +11,13 @@ using Geode.Values;
 
 namespace Amethyst.IR.Types
 {
+    public enum TryDerefRecursive
+    {
+        None,
+        Full,
+        ExceptObject
+    }
+
     public class ReferenceType(TypeSpecifier inner, bool mutable = true) : TypeSpecifier
     {
         public readonly TypeSpecifier Inner = inner;
@@ -68,7 +75,13 @@ namespace Amethyst.IR.Types
 
         public static ValueRef Deref(ValueRef src, FunctionContext ctx) => ctx.Add(new DereferenceInsn(src));
         public static LiteralValue From(DataTargetValue val) => new(val.Target.GetTarget(), new ReferenceType(val.Type));
-        public static ValueRef TryDeref(ValueRef src, FunctionContext ctx) => src.Type is ReferenceType ? Deref(src, ctx) : src;
+
+        public static ValueRef TryDeref(ValueRef src, FunctionContext ctx, TryDerefRecursive recursive = TryDerefRecursive.None)
+        {
+            if ((recursive == TryDerefRecursive.ExceptObject && src.Type is ReferenceType { Inner: StructType }) || src.Type is not ReferenceType) return src;
+            var ret = Deref(src, ctx);
+            return recursive == TryDerefRecursive.Full ? TryDeref(ret, ctx, recursive) : ret;
+        }
 
         public override string ToString()
         {

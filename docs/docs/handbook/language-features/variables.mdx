@@ -77,8 +77,14 @@ All the normal operators work as expected:
 * `x * y`
 * `x / y`
 * `x % y`
+* `x > y`
+* `x < y`
+* `x >= y`
+* `x <= y`
+* `x == y`
+* `x != y`
 
-As well as compound assignment (`x += y`).
+As well as compound assignments (`x += y`, etc).
 
 Amethyst also provides the following unary operators:
 
@@ -96,6 +102,10 @@ Postfix increment and decrement (`x++`) does not exist due to clarity concerns. 
 :::warning
 Minecraft may handle integer division slightly differently than the languages you are used to. Scoreboard division floors while `/compute` truncates. Unless disabled, Amethyst for 26.3+ uses `/compute` for math by default.
 :::
+
+### NBT Equality
+
+All types can be used in `==` and `!=`. Internally, Amethyst attempts to overwrite one value with another and checks the success of the command. NBT equality is defined as `/data modify` failing when no change is made.
 
 ## Strings
 

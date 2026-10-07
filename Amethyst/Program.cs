@@ -41,8 +41,7 @@ namespace Amethyst
 
                 config.SetExceptionHandler((ex, _) =>
                 {
-                    if (ex is CommandRuntimeException cre)
-                        AnsiConsole.MarkupLineInterpolated($"[red]Error:[/] {cre.Message}");
+                    if (ex is CommandRuntimeException cre) AnsiConsole.MarkupLineInterpolated($"[red]Error:[/] {cre.Message}");
                     else
                     {
                         if (!errored)

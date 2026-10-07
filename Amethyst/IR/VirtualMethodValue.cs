@@ -15,7 +15,9 @@ namespace Amethyst.IR
 
         public override ValueRef CallBehavior(FunctionContext ctx, params ValueRef[] args)
         {
-            var typeID = ReferenceType.TryDeref(ctx.Add(new PropertyInsn(args[0], new LiteralValue(StructType.TYPE_ID_PROPERTY), new UnsafeStringType())), ctx);
+            var typeID = ReferenceType.TryDeref(
+                ctx.Add(new PropertyInsn(ReferenceType.TryDeref(args[0], ctx, TryDerefRecursive.ExceptObject), new LiteralValue(StructType.TYPE_ID_PROPERTY),
+                    new UnsafeStringType())), ctx);
             var typeInfo = ctx.Add(new PropertyInsn(new(ctx.GetVariable("amethyst:type_info")), typeID, PrimitiveType.Compound, true));
             var func = ReferenceType.TryDeref(ctx.Add(new PropertyInsn(typeInfo, Raw($"methods.\"{ID.GetFile()}\""), FuncType)), ctx);
 

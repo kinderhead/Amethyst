@@ -81,8 +81,7 @@ namespace Geode.IR
 
             var renderer = GetRenderCtx(builder, ctx);
 
-            if (Instructions.Any(i => !ctx.Compiler.WrapError(i.Location, ctx, [DebuggerNonUserCode]() => { i.Render(renderer); })))
-                throw new EmptyGeodeError();
+            if (Instructions.Any(i => !ctx.Compiler.WrapError(i.Location, ctx, [DebuggerNonUserCode]() => { i.Render(renderer); }))) throw new EmptyGeodeError();
 
             builder.Register(Function);
         }

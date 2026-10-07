@@ -11,3 +11,4 @@
 # Bug Fixes
 
 * Allow casting `[]` to any list type.
+* Fixed accessing class members when in an array.

@@ -143,7 +143,7 @@ namespace Amethyst.Daemon
                     if (limitMatch.Success)
                     {
                         AnsiConsole.MarkupLine("[red]Command execution limit reached[/]");
-                        continue;
+                        break;
                     }
 
                     var parseErrorMatch = ParseErrorLookup().Match(msg);
@@ -186,8 +186,7 @@ namespace Amethyst.Daemon
                         }
                         catch (Exception e)
                         {
-                            AnsiConsole.MarkupLineInterpolated(
-                                $"[orange1]Error getting sources for {lastFailedFunction}: {e.Message}[/]");
+                            AnsiConsole.MarkupLineInterpolated($"[orange1]Error getting sources for {lastFailedFunction}: {e.Message}[/]");
                             throw;
                         }
                     }
