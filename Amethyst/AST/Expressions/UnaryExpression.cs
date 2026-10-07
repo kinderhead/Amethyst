@@ -44,9 +44,9 @@ namespace Amethyst.AST.Expressions
                 case UnaryOperation.Negate:
                     return ctx.Add(new MulInsn(ctx.AddLoad(ctx.ImplicitCast(val, PrimitiveType.Int)), new LiteralValue(-1)));
                 case UnaryOperation.Reference:
-                    return Value is IPropertyLikeExpression ? val : ctx.ImplicitCast(val, new ReferenceType(val.Type));
+                    return Value.ReferenceHandler(val, new(val.Type), ctx); // These don't actually cast between references so idk if that will cause issues
                 case UnaryOperation.WeakReference:
-                    return Value is IPropertyLikeExpression ? val : ctx.ImplicitCast(val, new WeakReferenceType(val.Type));
+                    return Value.ReferenceHandler(val, new WeakReferenceType(val.Type), ctx);
                 case UnaryOperation.Dereference:
                     return val.Type is not ReferenceType _ ? throw new InvalidTypeError(val.Type.ToString(), "reference") : ReferenceType.Deref(val, ctx);
                 default:

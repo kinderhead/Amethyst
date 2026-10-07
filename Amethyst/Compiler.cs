@@ -113,9 +113,10 @@ namespace Amethyst
         public bool CompileWithSpinner()
         {
             //var start = Stopwatch.GetTimestamp();
-            var success = AnsiConsole.Status().Start("[darkviolet]Compiling...[/]", _ => Compile()); // TODO: replace spinner with progress
+            // var success = AnsiConsole.Status().Start("[darkviolet]Compiling...[/]", _ => ); // TODO: replace spinner with progress
             // if (success) AnsiConsole.MarkupLineInterpolated($"[darkviolet]Compiled in [/][gold1]{Math.Round(Stopwatch.GetElapsedTime(start).TotalSeconds, 2)}s[/]");
 
+            var success = Compile();
             return success;
         }
 

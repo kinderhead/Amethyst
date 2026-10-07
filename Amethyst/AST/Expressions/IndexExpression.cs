@@ -8,40 +8,30 @@ using Geode.Types;
 
 namespace Amethyst.AST.Expressions
 {
-	public class IndexExpression(LocationRange loc, Expression val, Expression index)
-		: Expression(loc), IPropertyLikeExpression
-	{
-		public readonly Expression Index = index;
-		public readonly Expression Value = val;
+    public class IndexExpression(LocationRange loc, Expression val, Expression index) : Expression(loc)
+    {
+        public readonly Expression Index = index;
+        public readonly Expression Value = val;
 
-		protected override ValueRef ExecuteImpl(FunctionContext ctx, TypeSpecifier? expected)
-		{
-			var val = Value.Execute(ctx, new VarType());
-			ValueRef ret;
+        protected override ValueRef ExecuteImpl(FunctionContext ctx, TypeSpecifier? expected)
+        {
+            var val = Value.Execute(ctx, new VarType());
+            ValueRef ret;
 
-			if (val.IsTypeOrRef<ListType>())
-			{
-				ret = ctx.Add(new IndexInsn(val, Index.Execute(ctx, PrimitiveType.Int)));
-			}
-			else if (val.IsTypeOrRef<SimpleMapType>(out var map))
-			{
-				ret = ctx.Add(new PropertyInsn(val, Index.Execute(ctx, new QStringType()), map.Inner));
-			}
-			else if (val.IsTypeOrRef<PrimitiveType>(out var raw) && raw == PrimitiveType.Compound)
-			{
-				ret = ctx.Add(new PropertyInsn(val, Index.Execute(ctx, new QStringType()), raw));
-			}
-			else
-			{
-				throw new CannotIndexError(val.Type.ToString());
-			}
+            if (val.IsTypeOrRef<ListType>())
+                ret = ctx.Add(new IndexInsn(val, Index.Execute(ctx, PrimitiveType.Int)));
+            else if (val.IsTypeOrRef<SimpleMapType>(out var map))
+                ret = ctx.Add(new PropertyInsn(val, Index.Execute(ctx, new QStringType()), map.Inner));
+            else if (val.IsTypeOrRef<PrimitiveType>(out var raw) && raw == PrimitiveType.Compound)
+                ret = ctx.Add(new PropertyInsn(val, Index.Execute(ctx, new QStringType()), raw));
+            else
+                throw new CannotIndexError(val.Type.ToString());
 
-			if (expected is null)
-			{
-				ret = ctx.ImplicitCast(ret, ((ReferenceType)ret.Type).Inner);
-			}
+            if (expected is null) ret = ctx.ImplicitCast(ret, ((ReferenceType)ret.Type).Inner);
 
-			return ret;
-		}
-	}
+            return ret;
+        }
+
+        public override ValueRef ReferenceHandler(ValueRef val, ReferenceType type, FunctionContext ctx) => val;
+    }
 }

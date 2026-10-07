@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using Amethyst.IR.Types;
 using Datapack.Net.NumberProviders;
 using Geode;
 using Geode.Equations;
@@ -33,6 +34,8 @@ namespace Amethyst.AST
             var val = Execute(ctx, null);
             val.Type.ExecuteChainOverload(val, chain, ctx, invert);
         }
+
+        public virtual ValueRef ReferenceHandler(ValueRef val, ReferenceType type, FunctionContext ctx) => ctx.ImplicitCast(val, type);
 
         protected abstract ValueRef ExecuteImpl(FunctionContext ctx, TypeSpecifier? expected);
 

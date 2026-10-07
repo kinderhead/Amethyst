@@ -6,7 +6,7 @@ using Geode.Types;
 
 namespace Amethyst.AST.Expressions
 {
-    public class PropertyExpression(LocationRange loc, Expression expression, string prop) : Expression(loc), IPropertyLikeExpression, IMethodHolder
+    public class PropertyExpression(LocationRange loc, Expression expression, string prop) : Expression(loc), IMethodHolder
     {
         public readonly Expression Expression = expression;
         public readonly string Property = prop;
@@ -28,5 +28,7 @@ namespace Amethyst.AST.Expressions
 
             return ret;
         }
+
+        public override ValueRef ReferenceHandler(ValueRef val, ReferenceType type, FunctionContext ctx) => val;
     }
 }

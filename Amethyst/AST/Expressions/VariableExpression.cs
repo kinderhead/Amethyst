@@ -1,4 +1,5 @@
 using Amethyst.IR;
+using Amethyst.IR.Types;
 using Geode;
 using Geode.IR;
 using Geode.Values;
@@ -46,5 +47,8 @@ namespace Amethyst.AST.Expressions
             //
             // if (expected is null && property.Type is ReferenceType ptr) property = ctx.ImplicitCast(property, ptr.Inner);
             new PropertyExpression(Location, new ValueRefExpression(Location, self), Name).Execute(ctx, expected);
+
+        public override ValueRef ReferenceHandler(ValueRef val, ReferenceType type, FunctionContext ctx) =>
+            ctx.GetLocalVariableOrNull(Name) is not null ? base.ReferenceHandler(val, type, ctx) : val;
     }
 }
