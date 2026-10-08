@@ -19,14 +19,14 @@ namespace Amethyst.AST.Expressions
             var left = Left.Execute(ctx, null, false);
             var right = Right.Execute(ctx, null, false);
 
-            if (IsFloatComparison(left, right))
+            if (IsFloatComparison(left, right) && (Op is ComparisonOperator.Lt or ComparisonOperator.Lte or ComparisonOperator.Gt or ComparisonOperator.Gte))
             {
                 ctx.Compiler.IR.RequireCompute();
                 chain.Add(IfValueChain.With(ctx.Add(new FloatComparisonInsn(left, right, Op)), ctx, invert));
                 return;
             }
 
-            if ((!NBTValue.IsOperableType(left.Type.EffectiveType) || !NBTValue.IsOperableType(right.Type.EffectiveType)) && Op is ComparisonOperator.Eq or ComparisonOperator.Neq)
+            if ((IsFloatComparison(left, right) || !NBTValue.IsOperableType(left.Type.EffectiveType) || !NBTValue.IsOperableType(right.Type.EffectiveType)) && (Op is ComparisonOperator.Eq or ComparisonOperator.Neq))
             {
                 switch (Op)
                 {
@@ -50,13 +50,13 @@ namespace Amethyst.AST.Expressions
             var left = Left.Execute(ctx, null, false);
             var right = Right.Execute(ctx, null, false);
 
-            if (IsFloatComparison(left, right))
+            if (IsFloatComparison(left, right) && (Op is ComparisonOperator.Lt or ComparisonOperator.Lte or ComparisonOperator.Gt or ComparisonOperator.Gte))
             {
                 ctx.Compiler.IR.RequireCompute();
                 return ctx.Add(new FloatComparisonInsn(left, right, Op));
             }
 
-            if ((!NBTValue.IsOperableType(left.Type.EffectiveType) || !NBTValue.IsOperableType(right.Type.EffectiveType)) && Op is ComparisonOperator.Eq or ComparisonOperator.Neq)
+            if ((IsFloatComparison(left, right) || !NBTValue.IsOperableType(left.Type.EffectiveType) || !NBTValue.IsOperableType(right.Type.EffectiveType)) && (Op is ComparisonOperator.Eq or ComparisonOperator.Neq))
             {
                 switch (Op)
                 {

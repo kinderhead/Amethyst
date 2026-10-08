@@ -92,11 +92,6 @@ namespace Geode.IR.Instructions
 
 			switch (op)
 			{
-				case ComparisonOperator.Eq:
-				case ComparisonOperator.Neq:
-					StoreNotEquals(leftValue, rightValue, result, ctx);
-					if (op == ComparisonOperator.Eq) Invert(result, ctx);
-					break;
 				case ComparisonOperator.Lt:
 				case ComparisonOperator.Lte:
 				case ComparisonOperator.Gt:
@@ -106,19 +101,15 @@ namespace Geode.IR.Instructions
 					var signedDifference = op is ComparisonOperator.Lt or ComparisonOperator.Lte
 						? StoreProvider(new SubProvider(rightProvider, leftProvider, ctx.Builder.RandomID), ctx)
 						: StoreProvider(new SubProvider(leftProvider, rightProvider, ctx.Builder.RandomID), ctx);
-					var equalDifferences = ctx.Builder.Score("float_cmp", PrimitiveType.Bool);
-					StoreNotEquals(absoluteDifference, signedDifference, equalDifferences, ctx);
-					Invert(equalDifferences, ctx);
+					StoreNotEquals(absoluteDifference, signedDifference, result, ctx);
+					Invert(result, ctx);
 
 					if (op is ComparisonOperator.Lt or ComparisonOperator.Gt)
 					{
-						StoreNotEquals(leftValue, rightValue, result, ctx);
+						var notEqual = ctx.Builder.Temp(0, PrimitiveType.Bool);
+						StoreNotEquals(leftValue, rightValue, notEqual, ctx);
 						ctx.Add(new Scoreboard.Players.Operation(result.Target, result.Score, ScoreOperation.Mul,
-							equalDifferences.Target, equalDifferences.Score));
-					}
-					else
-					{
-						result.Store(equalDifferences, ctx);
+							notEqual.Target, notEqual.Score));
 					}
 
 					break;
@@ -142,8 +133,6 @@ namespace Geode.IR.Instructions
 
 			return new LiteralValue(op switch
 			{
-				ComparisonOperator.Eq => equal,
-				ComparisonOperator.Neq => !equal,
 				ComparisonOperator.Lt => less && !equal,
 				ComparisonOperator.Lte => less,
 				ComparisonOperator.Gt => greater && !equal,
@@ -175,7 +164,7 @@ namespace Geode.IR.Instructions
 		private static void Invert(ScoreValue value, RenderContext ctx)
 		{
 			var one = ctx.Builder.Constant(1);
-			var original = ctx.Builder.Score("float_cmp_inv", PrimitiveType.Bool);
+			var original = ctx.Builder.Temp(0, PrimitiveType.Bool);
 			original.Store(value, ctx);
 			value.Store(one, ctx);
 			ctx.Add(new Scoreboard.Players.Operation(value.Target, value.Score, ScoreOperation.Sub, original.Target, original.Score));
