@@ -20,10 +20,8 @@ namespace Amethyst.AST.Statements
                 i.Compute(chain, ctx);
             }
 
-            if (Else is not null)
-                ctx.Branch(chain, "execute", () => Statement.Compile(ctx), () => Else.Compile(ctx));
-            else
-                ctx.Branch(chain, "execute", () => Statement.Compile(ctx));
+            if (Else is not null) ctx.Branch(chain, "execute", () => Statement.Compile(ctx), () => Else.Compile(ctx));
+            else ctx.Branch(chain, "execute", () => Statement.Compile(ctx));
         }
     }
 
