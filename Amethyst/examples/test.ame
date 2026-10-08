@@ -28,6 +28,7 @@ class MyClass {
 void main() {
     var obj = new MyClass();
     obj.x = 54;
+    print(^obj);
     print(obj.x);
 
     amethyst:exit();
