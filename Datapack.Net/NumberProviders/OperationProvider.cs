@@ -55,4 +55,13 @@ namespace Datapack.Net.NumberProviders
         public override NamespacedID Type => "minecraft:mod";
         public override bool Associative => false;
     }
+
+    public class AbsProvider(NumberProvider input, NamespacedID id) : NumberProvider(id)
+    {
+        public readonly NumberProvider Input = input;
+        public override ProviderNumberType NumberType => Input.NumberType;
+        public override NamespacedID Type => "minecraft:abs";
+
+        protected override JObject InnerRender() => new() { ["input"] = Input.Render() };
+    }
 }
