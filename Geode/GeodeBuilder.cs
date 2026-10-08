@@ -282,5 +282,14 @@ namespace Geode
 
         private static DP GetDP(IOptions opts) => new(opts.Output,
             new MCMeta().SetDescription(opts.Description ?? "A project made with Amethyst.").SetMinVersion(opts.PackFormat).SetMaxVersion(opts.PackFormat));
+
+        public void RequireCompute()
+        {
+            if (!Compiler.IR.CanUseCompute)
+            {
+                var options = Compiler.IR.Options;
+                throw new ComputeNotSupportedError(options.PackFormat, options.DisableCompute);
+            }
+        }
     }
 }

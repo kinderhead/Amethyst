@@ -1,5 +1,7 @@
 using Datapack.Net.Data;
 using Datapack.Net.Function.Commands;
+using Datapack.Net.NumberProviders;
+using Geode.Chains;
 using Geode.Types;
 using Geode.Values;
 
@@ -72,5 +74,100 @@ namespace Geode.IR.Instructions
 		public override string Name => "gte";
 		public override Comparison Op => Comparison.GreaterThanOrEqual;
 		public override NBTBool Compute(NBTInt left, NBTInt right) => left >= right;
+	}
+
+	public class FloatComparisonInsn(ValueRef left, ValueRef right, ComparisonOperator op) : Instruction([left, right])
+	{
+		public override NBTType?[] ArgTypes => [null, null];
+		public override string Name => $"float_{op}";
+		public override TypeSpecifier ReturnType => PrimitiveType.Bool;
+
+		public override void Render(RenderContext ctx)
+		{
+			var leftProvider = ToFloatProvider(Arg<ValueRef>(0).Expect().ToCompute(ctx), ctx);
+			var rightProvider = ToFloatProvider(Arg<ValueRef>(1).Expect().ToCompute(ctx), ctx);
+			var leftValue = StoreProvider(leftProvider, ctx);
+			var rightValue = StoreProvider(rightProvider, ctx);
+			var result = ReturnValue.Expect<LValue>().AsScore(ctx);
+
+			switch (op)
+			{
+				case ComparisonOperator.Lt:
+				case ComparisonOperator.Lte:
+				case ComparisonOperator.Gt:
+				case ComparisonOperator.Gte:
+					var absoluteDifference = StoreProvider(new AbsProvider(
+						new SubProvider(leftProvider, rightProvider, ctx.Builder.RandomID), ctx.Builder.RandomID), ctx);
+					var signedDifference = op is ComparisonOperator.Lt or ComparisonOperator.Lte
+						? StoreProvider(new SubProvider(rightProvider, leftProvider, ctx.Builder.RandomID), ctx)
+						: StoreProvider(new SubProvider(leftProvider, rightProvider, ctx.Builder.RandomID), ctx);
+					StoreNotEquals(absoluteDifference, signedDifference, result, ctx);
+					Invert(result, ctx);
+
+					if (op is ComparisonOperator.Lt or ComparisonOperator.Gt)
+					{
+						var notEqual = ctx.Builder.Temp(0, PrimitiveType.Bool);
+						StoreNotEquals(leftValue, rightValue, notEqual, ctx);
+						ctx.Add(new Scoreboard.Players.Operation(result.Target, result.Score, ScoreOperation.Mul,
+							notEqual.Target, notEqual.Score));
+					}
+
+					break;
+				default:
+					throw new NotImplementedException();
+			}
+		}
+
+		protected override IValue? ComputeReturnValue(FunctionContext ctx)
+		{
+			if (!AreArgsLiteral(out LiteralValue[] args) || args[0].Value is not INBTNumber left || args[1].Value is not INBTNumber right)
+			{
+				return null;
+			}
+
+			var a = Convert.ToSingle(left.RawValue);
+			var b = Convert.ToSingle(right.RawValue);
+			var equal = a == b;
+			var less = Math.Abs(a - b) == b - a;
+			var greater = Math.Abs(a - b) == a - b;
+
+			return new LiteralValue(op switch
+			{
+				ComparisonOperator.Lt => less && !equal,
+				ComparisonOperator.Lte => less,
+				ComparisonOperator.Gt => greater && !equal,
+				ComparisonOperator.Gte => greater,
+				_ => throw new NotImplementedException()
+			});
+		}
+
+		private static NumberProvider ToFloatProvider(NumberProvider provider, RenderContext ctx) =>
+			provider.NumberType == ProviderNumberType.Float
+				? provider
+				: new FromIntProvider(provider, ctx.Builder.RandomID);
+
+		private static StorageValue StoreProvider(NumberProvider provider, RenderContext ctx)
+		{
+			ctx.Builder.Datapack.FloatProviders.Add(provider);
+			var value = ctx.Builder.TempStorage(PrimitiveType.Float);
+			value.Store(provider, ctx);
+			return value;
+		}
+
+		private static void StoreNotEquals(DataTargetValue left, DataTargetValue right, ScoreValue result, RenderContext ctx)
+		{
+			var test = ctx.Builder.TempStorage(PrimitiveType.Float);
+			test.Store(left, ctx);
+			ctx.Add(result.StoreExecute(false).Run(ctx.WithFaux(ctx => test.Store(right, ctx)).Single()));
+		}
+
+		private static void Invert(ScoreValue value, RenderContext ctx)
+		{
+			var one = ctx.Builder.Constant(1);
+			var original = ctx.Builder.Temp(0, PrimitiveType.Bool);
+			original.Store(value, ctx);
+			value.Store(one, ctx);
+			ctx.Add(new Scoreboard.Players.Operation(value.Target, value.Score, ScoreOperation.Sub, original.Target, original.Score));
+		}
 	}
 }

@@ -16,20 +16,53 @@ entitydef minecraft:sheep implements minecraft:base {
 /* The rest can be modified */
 
 
-class MyClass {
-    int x;
-
-    MyClass() {
-        
-    }
-}
-
 #load
 void main() {
-    var obj = new MyClass();
-    obj.x = 54;
-    print(^obj);
-    print(obj.x);
+
+    float a = 5f;
+    float b = 4f;
+    float c = 3f;
+
+    if (a > b) {
+        print("a > b");
+    }
+    if (b > a) {
+        print("b > a");
+    }
+
+    // float vs int
+    if (a > 6) {
+        print("a > 6");
+    }
+    if (a < 6) {
+        print("a < 6");
+    }
+
+    if (4 > c) {
+        print("4 > c");
+    }
+    if (4 < c) {
+        print("4 < c");
+    }
+
+    if (b < c) {
+        print("b < c");
+    }
+    if (c < b) {
+        print("c < b");
+    }
+
+    if (a + c >= b) {
+        print("a + c >= b");
+    }
+    if (a + c <= b) {
+        print("a + c <= b");
+    }
+
+    if (c + 2f == a) {
+        print("c + 2f == a");
+    }
+
 
     amethyst:exit();
 }
