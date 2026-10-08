@@ -16,19 +16,19 @@ entitydef minecraft:sheep implements minecraft:base {
 /* The rest can be modified */
 
 
-void foo(list[]& arr) {
-    
-}
+class MyClass {
+    int x;
 
-class myclass {
-    list[] myarr;
-
-    myclass() {
-        foo(&myarr);
+    MyClass() {
+        
     }
 }
 
 #load
 void main() {
+    var obj = new MyClass();
+    obj.x = 54;
+    print(obj.x);
+
     amethyst:exit();
 }

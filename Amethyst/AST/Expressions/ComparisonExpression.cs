@@ -18,7 +18,7 @@ namespace Amethyst.AST.Expressions
             var left = Left.Execute(ctx, PrimitiveType.Int, false);
             var right = Right.Execute(ctx, PrimitiveType.Int, false);
 
-            if ((!NBTValue.IsOperableType(left.Type.EffectiveType) || !NBTValue.IsOperableType(left.Type.EffectiveType)) && Op is ComparisonOperator.Eq or ComparisonOperator.Neq)
+            if (!NBTValue.IsOperableType(left.Type.EffectiveType) || !NBTValue.IsOperableType(left.Type.EffectiveType))
             {
                 switch (Op)
                 {
@@ -42,7 +42,7 @@ namespace Amethyst.AST.Expressions
             var left = Left.Execute(ctx, PrimitiveType.Int, false);
             var right = Right.Execute(ctx, PrimitiveType.Int, false);
 
-            if ((!NBTValue.IsOperableType(left.Type.EffectiveType) || !NBTValue.IsOperableType(left.Type.EffectiveType)) && Op is ComparisonOperator.Eq or ComparisonOperator.Neq)
+            if (!NBTValue.IsOperableType(left.Type.EffectiveType) || !NBTValue.IsOperableType(left.Type.EffectiveType))
             {
                 switch (Op)
                 {
