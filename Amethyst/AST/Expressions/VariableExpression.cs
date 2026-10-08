@@ -49,6 +49,6 @@ namespace Amethyst.AST.Expressions
             new PropertyExpression(Location, new ValueRefExpression(Location, self), Name).Execute(ctx, expected);
 
         public override ValueRef ReferenceHandler(ValueRef val, ReferenceType type, FunctionContext ctx) =>
-            ctx.GetLocalVariableOrNull(Name) is not null ? base.ReferenceHandler(val, type, ctx) : val;
+            ctx.GetVariableOrNull(Name) is not null ? base.ReferenceHandler(val, type, ctx) : val;
     }
 }
