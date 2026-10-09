@@ -17,19 +17,28 @@ namespace Amethyst.AST.Statements
 
 		public override void Compile(FunctionContext ctx)
 		{
-			Initializer?.Compile(ctx);
-			ctx.Loop(() =>
+			ctx.PushScope();
+			
+			try
 			{
-				var chain = new ExecuteChain();
-				Condition.ExecuteChain(chain, ctx);
-				return chain;
-			}, "for", () =>
+				Initializer?.Compile(ctx);
+				ctx.Loop(() =>
+				{
+					var chain = new ExecuteChain();
+					Condition.ExecuteChain(chain, ctx);
+					return chain;
+				}, "for", () =>
+				{
+					Body.Compile(ctx);
+				}, () =>
+				{
+					Iterator.Execute(ctx, null);
+				});
+			}
+			finally
 			{
-				Body.Compile(ctx);
-			}, () =>
-			{
-				Iterator.Execute(ctx, null);
-			});
+                ctx.PopScope();
+            }
 		}
 	}
 }
