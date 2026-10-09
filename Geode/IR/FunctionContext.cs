@@ -191,6 +191,9 @@ namespace Geode.IR
 
         public static void TryImplicitCast(ValueRef val, TypeSpecifier type, FunctionContextRecorder recorder)
         {
+            while (type is GenericType { Resolved: true } genericType)
+                type = genericType.Constraint;
+
             if (val.Type == type || type is VarType)
             {
                 recorder.Record(val);
