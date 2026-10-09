@@ -30,18 +30,18 @@ void main() {
         print("b > a");
     }
 
-    // float vs int
-    if (a > 6) {
+    // float comparisons
+    if (a > 6f) {
         print("a > 6");
     }
-    if (a < 6) {
+    if (a < 6f) {
         print("a < 6");
     }
 
-    if (4 > c) {
+    if (4f > c) {
         print("4 > c");
     }
-    if (4 < c) {
+    if (4f < c) {
         print("4 < c");
     }
 
@@ -63,6 +63,16 @@ void main() {
         print("c + 2f == a");
     }
 
+
+    float num = 1.75f;
+    print(math/abs(-1f*num));
+    print(math/sqrt(num));
+    print(math/sin(num));
+    print(math/cos(num));
+    print(math/round(num));
+    print(math/floor(num));
+    print(math/ceil(num));
+    print(math/trunc(num));
 
     amethyst:exit();
 }

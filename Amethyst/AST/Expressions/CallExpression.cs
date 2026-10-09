@@ -19,10 +19,13 @@ namespace Amethyst.AST.Expressions
     {
         public readonly List<Expression> Args = args;
         public readonly Expression Function = func;
+        private ValueRef? cachedFunction;
 
         protected override ValueRef ExecuteImpl(FunctionContext ctx, TypeSpecifier? expected)
         {
-            var func = ReferenceType.TryDeref(Function.Execute(ctx, null), ctx);
+            var function = cachedFunction ?? Function.Execute(ctx, null);
+            cachedFunction = null;
+            var func = ReferenceType.TryDeref(function, ctx);
             Expression[] newArgs;
 
             if (Function is IMethodHolder prop && prop.GetThis(ctx) is { } self)
@@ -31,8 +34,18 @@ namespace Amethyst.AST.Expressions
                 newArgs = [self, .. Args];
             }
             else newArgs = [.. Args];
+            if (func.Value is Intrinsic i)
+            {
+                var parameters = i.FuncType.Parameters.ToArray();
+                // Intrinsics with no declared parameters may accept dynamically-sized argument lists (e.g. print).
+                if (parameters.Length == 0)
+                    return i.CallBehavior(ctx, [.. newArgs.Select(arg => arg.Execute(ctx, null))]);
 
-            if (func.Value is Intrinsic i) return i.CallBehavior(ctx, [.. newArgs.Select(i => i.Execute(ctx, null))]);
+                if (newArgs.Length != parameters.Length)
+                    throw new MismatchedArgumentCountError(parameters.Length, newArgs.Length);
+
+                return i.CallBehavior(ctx, [.. newArgs.Zip(parameters).Select(t => t.First.Execute(ctx, t.Second.Type))]);
+            }
 
             ValueRef[]? args = null;
 
@@ -51,6 +64,34 @@ namespace Amethyst.AST.Expressions
 
             ctx.Add(new PushFuncArgsInsn(type, ctx.PrepArgs(type, args)));
             return ctx.Add(new DynCallInsn(func));
+        }
+
+        protected override Equation ComputeImpl(FunctionContext ctx)
+        {
+            var func = Function.Execute(ctx, null);
+
+            if (func.Value is Intrinsic i && i.FuncType.Parameters.All(p => p.Type.EffectiveNumberType is not null))
+            {
+                Expression[] newArgs;
+
+                if (Function is IMethodHolder prop && prop.GetThis(ctx) is { } self)
+                {
+                    newArgs = [self, .. Args];
+                }
+                else newArgs = [.. Args];
+
+                return i.Compute(ctx, [.. newArgs.Select(i => i.Compute(ctx))]);
+            }
+
+            cachedFunction = func;
+            try
+            {
+                return base.ComputeImpl(ctx);
+            }
+            finally
+            {
+                cachedFunction = null;
+            }
         }
     }
 }

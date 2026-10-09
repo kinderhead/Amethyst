@@ -2,6 +2,7 @@
 using Datapack.Net.NumberProviders;
 using Datapack.Net.Utils;
 using Geode;
+using Geode.Equations;
 using Geode.Errors;
 using Geode.IR;
 using Geode.Types;
@@ -21,6 +22,13 @@ namespace Amethyst.AST
         public abstract ValueRef CallBehavior(FunctionContext ctx, params ValueRef[] args);
         public RawFunctionValue Get(TypeArray types) => throw new InvalidOperationException("Intrinsics do not have real functions");
 
+        public virtual bool SupportsEquationCompute => false;
+
         public override NumberProvider ToCompute(RenderContext ctx) => throw new ComputeError(this);
+
+        public virtual Equation Compute(FunctionContext ctx, params Equation[] args)
+        {
+            throw new ComputeError(this);
+        }
     }
 }
