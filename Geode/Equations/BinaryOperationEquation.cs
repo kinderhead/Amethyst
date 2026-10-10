@@ -13,7 +13,7 @@ namespace Geode.Equations
 
     public class BinaryOperationEquation(Equation left, BinaryOperation op, Equation right): Equation([], [left, right])
     {
-        public readonly BinaryOperation Op;
+        public readonly BinaryOperation Op = op;
 
         public override ProviderNumberType Type => Children[0].Type == ProviderNumberType.Float || Children[1].Type == ProviderNumberType.Float
             ? ProviderNumberType.Float
