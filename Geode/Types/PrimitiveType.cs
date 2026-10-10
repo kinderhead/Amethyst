@@ -1,6 +1,7 @@
 ﻿using Datapack.Net.Data;
 using Datapack.Net.Utils;
 using Geode.IR;
+using Geode.IR.Instructions;
 using Geode.Values;
 
 namespace Geode.Types
@@ -64,12 +65,22 @@ namespace Geode.Types
 
         public override void CastToOverload(ValueRef val, FunctionContextRecorder recorder)
         {
-            if (val.Value is LiteralValue literal)
-            {
-                if (literal.Value.NumberType is not null && EffectiveNumberType is { } destType) recorder.Record(new LiteralValue(literal.Value.Cast(destType)));
-            }
+            if (val.Value is LiteralValue { Value.NumberType: not null } literal && EffectiveNumberType is { } destType)
+                recorder.Record(new LiteralValue(literal.Value.Cast(destType)));
+            else if (val.Type == Int && Type == NBTType.Float) recorder.Record(new LoadNBTInsn(val, this));
             // What was I on about? If something breaks then I'll fix it then
             // else if (Type is NBTType.Double or NBTType.Float && recorder.TryImplicitCast(val, Int) is { } toFloat) return toFloat;
+        }
+
+        public override void ExplicitCastToOverload(ValueRef val, FunctionContextRecorder recorder)
+        {
+            if (Type is NBTType.Int)
+            {
+                recorder.Record(new LoadInsn(val, this));
+                return;
+            }
+
+            if (EffectiveNumberType is not null && val.Type.EffectiveNumberType is not null) recorder.Record(new LoadNBTInsn(val, this));
         }
     }
 }

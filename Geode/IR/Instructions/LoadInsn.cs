@@ -4,43 +4,67 @@ using Geode.Values;
 
 namespace Geode.IR.Instructions
 {
-	public class LoadInsn(ValueRef val, TypeSpecifier? type = null) : Instruction([val]), ILoadInsn
-	{
-		public override NBTType?[] ArgTypes => [null];
-		public override bool AlwaysUseScore => true;
-		public override string Name => "load";
-		public override TypeSpecifier ReturnType => type ?? PrimitiveType.Int;
+    public class LoadInsn(ValueRef val, TypeSpecifier? type = null) : Instruction([val]), ILoadInsn
+    {
+        public override NBTType?[] ArgTypes => [null];
+        public override bool AlwaysUseScore => true;
+        public override string Name => "load";
+        public override TypeSpecifier ReturnType => type ?? PrimitiveType.Int;
 
-		public ValueRef Variable => Arg<ValueRef>(0);
+        public ValueRef Variable => Arg<ValueRef>(0);
 
-		public override void Render(RenderContext ctx)
-		{
-			var val = Arg<ValueRef>(0).Expect();
-			var ret = ReturnValue.Expect<ScoreValue>();
+        public override void Render(RenderContext ctx)
+        {
+            var val = Arg<ValueRef>(0).Expect();
+            var ret = ReturnValue.Expect<ScoreValue>();
 
-			if (val.Equals(ret))
-			{
-				return;
-			}
+            if (val.Equals(ret)) return;
 
-			ret.Store(val, ctx);
-		}
+            ret.Store(val, ctx);
+        }
 
-		public override void ConfigureLifetime(Func<ValueRef, ValueRef, bool> tryLink, Action<ValueRef, ValueRef> markOverlap) => tryLink(Arg<ValueRef>(0), ReturnValue);
-		
-		protected override IValue? ComputeReturnValue(FunctionContext ctx)
-		{
-			var val = Arg<ValueRef>(0);
-			switch (val.Value)
-			{
-				case ScoreValue score:
-					Remove();
-					return score;
-				case LiteralValue literal when val.Type is PrimitiveType:
-					return new LiteralValue(literal.Value.CastInt());
-				default:
-					return null;
-			}
-		}
-	}
+        public override void ConfigureLifetime(Func<ValueRef, ValueRef, bool> tryLink, Action<ValueRef, ValueRef> markOverlap) => tryLink(Arg<ValueRef>(0), ReturnValue);
+
+        protected override IValue? ComputeReturnValue(FunctionContext ctx)
+        {
+            var val = Arg<ValueRef>(0);
+            switch (val.Value)
+            {
+                case ScoreValue score:
+                    Remove();
+                    return score;
+                case LiteralValue literal when val.Type is PrimitiveType:
+                    return new LiteralValue(literal.Value.CastInt());
+                default:
+                    return null;
+            }
+        }
+    }
+
+    public class LoadNBTInsn(ValueRef val, TypeSpecifier type) : Instruction([val]), ILoadInsn
+    {
+        public override NBTType?[] ArgTypes => [null];
+        public override string Name => "load_nbt";
+        public override TypeSpecifier ReturnType => type;
+
+        public ValueRef Variable => Arg<ValueRef>(0);
+
+        public override void Render(RenderContext ctx)
+        {
+            var val = Arg<ValueRef>(0).Expect();
+            var ret = ReturnValue.Expect<LValue>();
+
+            if (val.Equals(ret)) return;
+
+            ret.Store(val, ctx);
+        }
+
+        public override void ConfigureLifetime(Func<ValueRef, ValueRef, bool> tryLink, Action<ValueRef, ValueRef> markOverlap) => tryLink(Arg<ValueRef>(0), ReturnValue);
+
+        protected override IValue? ComputeReturnValue(FunctionContext ctx)
+        {
+            var val = Arg<ValueRef>(0);
+            return val.Type == ReturnType && val.Value is { } ret ? ret : null;
+        }
+    }
 }

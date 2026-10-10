@@ -1,7 +1,6 @@
 ﻿using Datapack.Net.Data;
 using Geode;
 using Geode.Chains;
-using Geode.Errors;
 using Geode.IR;
 using Geode.IR.Instructions;
 using Geode.Types;
@@ -19,14 +18,14 @@ namespace Amethyst.AST.Expressions
             var left = Left.Execute(ctx, null, false);
             var right = Right.Execute(ctx, null, false);
 
-            if (IsFloatComparison(left, right) && (Op is ComparisonOperator.Lt or ComparisonOperator.Lte or ComparisonOperator.Gt or ComparisonOperator.Gte))
+            if (IsFloatComparison(left, right) && Op is ComparisonOperator.Lt or ComparisonOperator.Lte or ComparisonOperator.Gt or ComparisonOperator.Gte)
             {
                 ctx.Compiler.IR.RequireCompute();
                 chain.Add(IfValueChain.With(ctx.Add(new FloatComparisonInsn(left, right, Op)), ctx, invert));
                 return;
             }
 
-            if ((IsFloatComparison(left, right) || !NBTValue.IsOperableType(left.Type.EffectiveType) || !NBTValue.IsOperableType(right.Type.EffectiveType)) && (Op is ComparisonOperator.Eq or ComparisonOperator.Neq))
+            if ((!NBTValue.IsOperableType(left.Type.EffectiveType) || !NBTValue.IsOperableType(right.Type.EffectiveType)) && Op is ComparisonOperator.Eq or ComparisonOperator.Neq)
             {
                 switch (Op)
                 {
@@ -50,13 +49,13 @@ namespace Amethyst.AST.Expressions
             var left = Left.Execute(ctx, null, false);
             var right = Right.Execute(ctx, null, false);
 
-            if (IsFloatComparison(left, right) && (Op is ComparisonOperator.Lt or ComparisonOperator.Lte or ComparisonOperator.Gt or ComparisonOperator.Gte))
+            if (IsFloatComparison(left, right) && Op is ComparisonOperator.Lt or ComparisonOperator.Lte or ComparisonOperator.Gt or ComparisonOperator.Gte)
             {
                 ctx.Compiler.IR.RequireCompute();
                 return ctx.Add(new FloatComparisonInsn(left, right, Op));
             }
 
-            if ((IsFloatComparison(left, right) || !NBTValue.IsOperableType(left.Type.EffectiveType) || !NBTValue.IsOperableType(right.Type.EffectiveType)) && (Op is ComparisonOperator.Eq or ComparisonOperator.Neq))
+            if ((!NBTValue.IsOperableType(left.Type.EffectiveType) || !NBTValue.IsOperableType(right.Type.EffectiveType)) && Op is ComparisonOperator.Eq or ComparisonOperator.Neq)
             {
                 switch (Op)
                 {
@@ -82,7 +81,6 @@ namespace Amethyst.AST.Expressions
             };
         }
 
-        private static bool IsFloatComparison(ValueRef left, ValueRef right) =>
-            left.Type.EffectiveType is NBTType.Float or NBTType.Double || right.Type.EffectiveType is NBTType.Float or NBTType.Double;
+        private static bool IsFloatComparison(ValueRef left, ValueRef right) => left.Type.EffectiveType is NBTType.Float || right.Type.EffectiveType is NBTType.Float;
     }
 }

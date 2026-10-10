@@ -7,6 +7,7 @@
 * Clear temp storage addresses on load.
 * Added NBT equality support.
 * Added message for when the command execution limit is reached.
+* Added explicit casts between number types.
 
 # Bug Fixes
 
