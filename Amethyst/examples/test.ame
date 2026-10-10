@@ -22,7 +22,12 @@ bool run(bool test) {
 
 #load
 void main() {
-    print(run(true) && run(true));
 
+    int val = 0;
+    val += 1;
+
+    print(run(true) && run(true));
+    print(math/sin(1f));
+    print(math/sin(val));
     amethyst:exit();
 }
