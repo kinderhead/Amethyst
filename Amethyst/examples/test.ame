@@ -15,11 +15,6 @@ entitydef minecraft:sheep implements minecraft:base {
 }
 /* The rest can be modified */
 
-bool run(bool test) {
-    print("Hi");
-    return test;
-}
-
 #load
 void main() {
     print(run(true) && run(true));

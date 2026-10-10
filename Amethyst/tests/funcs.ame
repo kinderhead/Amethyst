@@ -34,6 +34,52 @@ void test_overload() {
     complete();
 }
 
+#test
+void test_dyn_func() {
+    start("dyn func");
+    
+    var func = bool_pass;
+
+    assert(func(true));
+    assert(!func(false));
+
+    complete();
+}
+
+#test
+void test_dyn_macro_func() {
+    start("dyn macro func");
+    
+    var func = macro_bool_pass;
+
+    assert(func(true));
+    assert(!func(false));
+
+    complete();
+}
+
+#test
+void test_dyn_func_passthrough() {
+    start("dyn func passthrough");
+    
+    assert(bool_layer(bool_pass, true));
+    assert(!bool_layer(bool_pass, false));
+
+    complete();
+}
+
+bool bool_pass(bool val) {
+    return val;
+}
+
+bool macro_bool_pass(macro bool val) {
+    return val;
+}
+
+bool bool_layer(bool(bool) func, bool arg) {
+    return func(arg);
+}
+
 inline void simple_inline() {
     int x = 7;
     assert_eq(x, 7);

@@ -102,7 +102,7 @@ namespace Geode
                     case MacroValue macro:
                         Store(macro, ctx);
                         break;
-                    case StoreableValue s:
+                    case StorableValue s:
                         val = s.AsStoreable();
                         continue;
                     default:

@@ -1,14 +1,16 @@
 using Amethyst.Errors;
-using Datapack.Net.Data;
+using Datapack.Net.Function;
+using Datapack.Net.NumberProviders;
 using Datapack.Net.Utils;
 using Geode;
 using Geode.Errors;
 using Geode.IR;
+using Geode.Types;
 using Geode.Values;
 
 namespace Amethyst.IR
 {
-    public class OverloadedFunctionValue(NamespacedID id) : LiteralValue(new NBTString(id.ToString())), IMinimalFunction
+    public class OverloadedFunctionValue(NamespacedID id) : StorableValue(FunctionType.VoidFunc), IMinimalFunction
     {
         public readonly NamespacedID ID = id;
         private readonly Dictionary<TypeArray, RawFunctionValue> funcs = [];
@@ -16,11 +18,15 @@ namespace Amethyst.IR
         public ValueRef CallBehavior(FunctionContext ctx, params ValueRef[] args) => Get(args).CallBehavior(ctx, args);
 
         public RawFunctionValue Get(TypeArray types) => funcs.GetValueOrDefault(types) ?? throw new NoOverloadError(ID, types);
+        public override ScoreValue AsScore(RenderContext ctx) => throw new InvalidTypeError("function", "int");
+        public override FormattedText Render(FormattedText text, RenderContext ctx) => text.Text(ID.ToString());
+        public override NumberProvider ToCompute(RenderContext ctx) => throw new ComputeError(this);
 
         public OverloadedFunctionValue Add(RawFunctionValue val)
         {
             if (funcs.TryGetValue(val.FuncType.ParameterTypes, out var existing)) throw new RedefinedSymbolError(val.FuncType.ToString(ID.ToString()), existing.Location);
 
+            Type = val.Type;
             funcs[val.FuncType.ParameterTypes] = val;
 
             return this;
@@ -66,5 +72,8 @@ namespace Amethyst.IR
 
             return option;
         }
+
+        public RawFunctionValue? IsOne() => funcs.Count == 1 ? funcs.Values.First() : null;
+        public override IValue AsStoreable() => IsOne() ?? throw new AmbiguousOverloadError(ID);
     }
 }

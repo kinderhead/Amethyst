@@ -56,11 +56,11 @@ namespace Geode
                 }
 
                 // Allow existing macros to keep their name
-                var macroName = $"arg{macroIdx++}";
+                var macroName = $"m{macroIdx++}";
 
                 while (toMacro.ContainsKey(macroName))
                 {
-                    macroName = $"arg{macroIdx++}";
+                    macroName = $"m{macroIdx++}";
                 }
 
                 var macro = new MacroValue(macroName, val.Type);
@@ -98,21 +98,18 @@ namespace Geode
                 RawFunctionValue.Call(ctx, mcFunc.ID,
                     new(FunctionModifiers.None, new VoidType(),
                         toMacro.Select(i => new Parameter(ParameterModifiers.Macro, i.Value.Type, i.Key))),
-                    [.. toMacro.Values.Select(i => new ValueRef(i))]);
+                    [.. toMacro.Values.Select(i => new ValueRef(i))], true);
             }
         }
 
-        public void RunAndPropagateMacros(RenderContext ctx, IValueLike[] dependencies,
-                                          Action<IConstantValue[], NBTCompound, RenderContext> func) => Run(ctx,
+        public void RunAndPropagateMacros(RenderContext ctx, IValueLike[] dependencies, Action<IConstantValue[], NBTCompound, RenderContext> func) => Run(ctx,
             [.. dependencies, .. ctx.Func.Decl.FuncType.MacroParameters], (args, ctx) =>
             {
                 IConstantValue[] realArgs = [.. args.Take(dependencies.Length)];
                 IConstantValue[] propagated;
 
-                if (args.Length == 0)
-                    propagated = [.. ctx.Func.Decl.FuncType.MacroParameters];
-                else
-                    propagated = [.. args.Skip(dependencies.Length)];
+                if (args.Length == 0) propagated = [.. ctx.Func.Decl.FuncType.MacroParameters];
+                else propagated = [.. args.Skip(dependencies.Length)];
 
                 func(realArgs, [
                     .. ctx.Func.Decl.FuncType.MacroParameters.Zip(propagated).Select(i =>
