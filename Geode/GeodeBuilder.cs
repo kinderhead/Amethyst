@@ -15,6 +15,7 @@ namespace Geode
     {
         public const string INTERNAL_PATH = "zz_internal";
         public static readonly string[] RuntimeStorageUsed = ["stack", "tmp"];
+
         public readonly ICompiler Compiler;
         public readonly DP Datapack;
         public readonly IFileHandler FileHandler;

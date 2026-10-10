@@ -6,7 +6,7 @@
         <PerGrammarGenerationSettings>
           <option name="fileName" value="$PROJECT_DIR$/Amethyst/Amethyst.g4" />
           <option name="autoGen" value="true" />
-          <option name="outputDir" value="$PROJECT_DIR$/Amethyst/Antlr" />
+          <option name="outputDir" value=".." />
           <option name="libDir" value="" />
           <option name="encoding" value="" />
           <option name="pkg" value="Amethyst.Antlr" />

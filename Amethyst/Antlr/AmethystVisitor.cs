@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-// Generated from Amethyst.g4 by ANTLR 4.13.2
+// Generated from /home/daniel/Documents/CSharp/Amethyst/Amethyst/Amethyst.g4 by ANTLR 4.13.2
 
 // Unreachable code detected
 #pragma warning disable 0162
@@ -39,11 +39,11 @@ public interface IAmethystVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <return>The visitor result.</return>
 	Result VisitRoot([NotNull] AmethystParser.RootContext context);
 	/// <summary>
-	/// Visit a parse tree produced by <see cref="AmethystParser.namespace"/>.
+	/// Visit a parse tree produced by <see cref="AmethystParser.ns"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
-	Result VisitNamespace([NotNull] AmethystParser.NamespaceContext context);
+	Result VisitNs([NotNull] AmethystParser.NsContext context);
 	/// <summary>
 	/// Visit a parse tree produced by <see cref="AmethystParser.conditionalComp"/>.
 	/// </summary>
@@ -75,11 +75,11 @@ public interface IAmethystVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <return>The visitor result.</return>
 	Result VisitBlock([NotNull] AmethystParser.BlockContext context);
 	/// <summary>
-	/// Visit a parse tree produced by <see cref="AmethystParser.struct"/>.
+	/// Visit a parse tree produced by <see cref="AmethystParser.structDecl"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
-	Result VisitStruct([NotNull] AmethystParser.StructContext context);
+	Result VisitStructDecl([NotNull] AmethystParser.StructDeclContext context);
 	/// <summary>
 	/// Visit a parse tree produced by <see cref="AmethystParser.declaration"/>.
 	/// </summary>

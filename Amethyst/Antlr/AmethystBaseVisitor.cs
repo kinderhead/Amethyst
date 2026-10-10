@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-// Generated from Amethyst.g4 by ANTLR 4.13.2
+// Generated from /home/daniel/Documents/CSharp/Amethyst/Amethyst/Amethyst.g4 by ANTLR 4.13.2
 
 // Unreachable code detected
 #pragma warning disable 0162
@@ -46,7 +46,7 @@ public partial class AmethystBaseVisitor<Result> : AbstractParseTreeVisitor<Resu
 	/// <return>The visitor result.</return>
 	public virtual Result VisitRoot([NotNull] AmethystParser.RootContext context) { return VisitChildren(context); }
 	/// <summary>
-	/// Visit a parse tree produced by <see cref="AmethystParser.namespace"/>.
+	/// Visit a parse tree produced by <see cref="AmethystParser.ns"/>.
 	/// <para>
 	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
 	/// on <paramref name="context"/>.
@@ -54,7 +54,7 @@ public partial class AmethystBaseVisitor<Result> : AbstractParseTreeVisitor<Resu
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
-	public virtual Result VisitNamespace([NotNull] AmethystParser.NamespaceContext context) { return VisitChildren(context); }
+	public virtual Result VisitNs([NotNull] AmethystParser.NsContext context) { return VisitChildren(context); }
 	/// <summary>
 	/// Visit a parse tree produced by <see cref="AmethystParser.conditionalComp"/>.
 	/// <para>
@@ -106,7 +106,7 @@ public partial class AmethystBaseVisitor<Result> : AbstractParseTreeVisitor<Resu
 	/// <return>The visitor result.</return>
 	public virtual Result VisitBlock([NotNull] AmethystParser.BlockContext context) { return VisitChildren(context); }
 	/// <summary>
-	/// Visit a parse tree produced by <see cref="AmethystParser.struct"/>.
+	/// Visit a parse tree produced by <see cref="AmethystParser.structDecl"/>.
 	/// <para>
 	/// The default implementation returns the result of calling <see cref="AbstractParseTreeVisitor{Result}.VisitChildren(IRuleNode)"/>
 	/// on <paramref name="context"/>.
@@ -114,7 +114,7 @@ public partial class AmethystBaseVisitor<Result> : AbstractParseTreeVisitor<Resu
 	/// </summary>
 	/// <param name="context">The parse tree.</param>
 	/// <return>The visitor result.</return>
-	public virtual Result VisitStruct([NotNull] AmethystParser.StructContext context) { return VisitChildren(context); }
+	public virtual Result VisitStructDecl([NotNull] AmethystParser.StructDeclContext context) { return VisitChildren(context); }
 	/// <summary>
 	/// Visit a parse tree produced by <see cref="AmethystParser.declaration"/>.
 	/// <para>

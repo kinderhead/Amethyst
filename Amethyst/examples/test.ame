@@ -15,19 +15,14 @@ entitydef minecraft:sheep implements minecraft:base {
 }
 /* The rest can be modified */
 
+bool run(bool test) {
+    print("Hi");
+    return test;
+}
+
 #load
 void main() {
-    print("Good");
+    print(run(true) && run(true));
 
     amethyst:exit();
-}
-
-#[<121.0]
-void test() {
-    print("old");
-}
-
-#[>=121.0]
-void test() {
-    print("new");
 }

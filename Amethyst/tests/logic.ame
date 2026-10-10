@@ -1,0 +1,30 @@
+namespace test;
+
+bool logic(bool ret, bool success) {
+    assert(success);
+    return ret;
+}
+
+#test
+void test_or() {
+    start("or");
+
+    assert(logic(true, true) || logic(false, false));
+    assert(logic(true, true) || logic(true, true));
+    assert(logic(false, true) || logic(true, true));
+    assert(!(logic(false, true) || logic(false, true)));
+    
+    complete();
+}
+
+#test
+void test_and() {
+    start("and");
+
+    assert(!(logic(true, true) && logic(false, true)));
+    assert(logic(true, true) && logic(true, true));
+    assert(!(logic(false, true) && logic(true, false)));
+    assert(!(logic(false, true) && logic(false, false)));
+    
+    complete();
+}

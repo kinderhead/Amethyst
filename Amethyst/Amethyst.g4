@@ -3,10 +3,10 @@ grammar Amethyst;
 // Parser
 
 root
-    : (namespace | function | struct | (initAssignmentStatement Semi) | Semi)* EOF
+    : (ns | function | structDecl | (initAssignmentStatement Semi) | Semi)* EOF
     ;
 
-namespace
+ns
     : Namespace id Semi
     ;
     
@@ -30,7 +30,7 @@ block
     : LBrak statement* RBrak
     ;
 
-struct
+structDecl
     : (Struct | Class | EntityDef) id (Implements simpleType)? LBrak (declaration | method)* RBrak
     ;
 

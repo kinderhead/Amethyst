@@ -37,7 +37,7 @@ namespace Amethyst.AST
 
                 switch (i)
                 {
-                    case AmethystParser.NamespaceContext ns:
+                    case AmethystParser.NsContext ns:
                         currentNamespace = Visit(ns.id());
                         break;
                     case AmethystParser.FunctionContext func:
@@ -47,7 +47,7 @@ namespace Amethyst.AST
                         root.Children.Add(new GlobalVariableNode(Loc(init), Visit(init.type()), IdentifierToID(Visit(init.id())),
                             init.expression() is null ? null : Visit(init.expression())));
                         break;
-                    case AmethystParser.StructContext type:
+                    case AmethystParser.StructDeclContext type:
                         root.Children.Add((IRootChild)Visit(type));
                         break;
                 }
@@ -98,7 +98,7 @@ namespace Amethyst.AST
             return block;
         }
 
-        public override Node VisitStruct([NotNull] AmethystParser.StructContext context)
+        public override Node VisitStructDecl([NotNull] AmethystParser.StructDeclContext context)
         {
             var props = new Dictionary<string, AbstractTypeSpecifier>();
 

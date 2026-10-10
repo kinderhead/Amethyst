@@ -134,13 +134,13 @@ LineComment
 
 rule names:
 root
-namespace
+ns
 conditionalComp
 function
 functionTag
 functionModifier
 block
-struct
+structDecl
 declaration
 method
 methodModifier

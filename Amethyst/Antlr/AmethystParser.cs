@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-// Generated from Amethyst.g4 by ANTLR 4.13.2
+// Generated from /home/daniel/Documents/CSharp/Amethyst/Amethyst/Amethyst.g4 by ANTLR 4.13.2
 
 // Unreachable code detected
 #pragma warning disable 0162
@@ -48,8 +48,8 @@ public partial class AmethystParser : Parser {
 		Command=59, TargetSelectorVariable=60, Number=61, Whitespace=62, Comment=63, 
 		LineComment=64;
 	public const int
-		RULE_root = 0, RULE_namespace = 1, RULE_conditionalComp = 2, RULE_function = 3, 
-		RULE_functionTag = 4, RULE_functionModifier = 5, RULE_block = 6, RULE_struct = 7, 
+		RULE_root = 0, RULE_ns = 1, RULE_conditionalComp = 2, RULE_function = 3, 
+		RULE_functionTag = 4, RULE_functionModifier = 5, RULE_block = 6, RULE_structDecl = 7, 
 		RULE_declaration = 8, RULE_method = 9, RULE_methodModifier = 10, RULE_statement = 11, 
 		RULE_initAssignmentStatement = 12, RULE_expressionStatement = 13, RULE_commandStatement = 14, 
 		RULE_executeStatement = 15, RULE_executeSubcommand = 16, RULE_forStatement = 17, 
@@ -64,8 +64,8 @@ public partial class AmethystParser : Parser {
 		RULE_paramModifier = 42, RULE_expressionList = 43, RULE_type = 44, RULE_simpleType = 45, 
 		RULE_id = 46;
 	public static readonly string[] ruleNames = {
-		"root", "namespace", "conditionalComp", "function", "functionTag", "functionModifier", 
-		"block", "struct", "declaration", "method", "methodModifier", "statement", 
+		"root", "ns", "conditionalComp", "function", "functionTag", "functionModifier", 
+		"block", "structDecl", "declaration", "method", "methodModifier", "statement", 
 		"initAssignmentStatement", "expressionStatement", "commandStatement", 
 		"executeStatement", "executeSubcommand", "forStatement", "returnStatement", 
 		"loopControlStatement", "expression", "assignmentExpression", "newExpression", 
@@ -131,11 +131,11 @@ public partial class AmethystParser : Parser {
 
 	public partial class RootContext : ParserRuleContext {
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode Eof() { return GetToken(AmethystParser.Eof, 0); }
-		[System.Diagnostics.DebuggerNonUserCode] public NamespaceContext[] @namespace() {
-			return GetRuleContexts<NamespaceContext>();
+		[System.Diagnostics.DebuggerNonUserCode] public NsContext[] ns() {
+			return GetRuleContexts<NsContext>();
 		}
-		[System.Diagnostics.DebuggerNonUserCode] public NamespaceContext @namespace(int i) {
-			return GetRuleContext<NamespaceContext>(i);
+		[System.Diagnostics.DebuggerNonUserCode] public NsContext ns(int i) {
+			return GetRuleContext<NsContext>(i);
 		}
 		[System.Diagnostics.DebuggerNonUserCode] public FunctionContext[] function() {
 			return GetRuleContexts<FunctionContext>();
@@ -143,11 +143,11 @@ public partial class AmethystParser : Parser {
 		[System.Diagnostics.DebuggerNonUserCode] public FunctionContext function(int i) {
 			return GetRuleContext<FunctionContext>(i);
 		}
-		[System.Diagnostics.DebuggerNonUserCode] public StructContext[] @struct() {
-			return GetRuleContexts<StructContext>();
+		[System.Diagnostics.DebuggerNonUserCode] public StructDeclContext[] structDecl() {
+			return GetRuleContexts<StructDeclContext>();
 		}
-		[System.Diagnostics.DebuggerNonUserCode] public StructContext @struct(int i) {
-			return GetRuleContext<StructContext>(i);
+		[System.Diagnostics.DebuggerNonUserCode] public StructDeclContext structDecl(int i) {
+			return GetRuleContext<StructDeclContext>(i);
 		}
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode[] Semi() { return GetTokens(AmethystParser.Semi); }
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode Semi(int i) {
@@ -191,7 +191,7 @@ public partial class AmethystParser : Parser {
 				case 1:
 					{
 					State = 94;
-					@namespace();
+					ns();
 					}
 					break;
 				case 2:
@@ -203,7 +203,7 @@ public partial class AmethystParser : Parser {
 				case 3:
 					{
 					State = 96;
-					@struct();
+					structDecl();
 					}
 					break;
 				case 4:
@@ -243,29 +243,29 @@ public partial class AmethystParser : Parser {
 		return _localctx;
 	}
 
-	public partial class NamespaceContext : ParserRuleContext {
+	public partial class NsContext : ParserRuleContext {
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode Namespace() { return GetToken(AmethystParser.Namespace, 0); }
 		[System.Diagnostics.DebuggerNonUserCode] public IdContext id() {
 			return GetRuleContext<IdContext>(0);
 		}
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode Semi() { return GetToken(AmethystParser.Semi, 0); }
-		public NamespaceContext(ParserRuleContext parent, int invokingState)
+		public NsContext(ParserRuleContext parent, int invokingState)
 			: base(parent, invokingState)
 		{
 		}
-		public override int RuleIndex { get { return RULE_namespace; } }
+		public override int RuleIndex { get { return RULE_ns; } }
 		[System.Diagnostics.DebuggerNonUserCode]
 		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
 			IAmethystVisitor<TResult> typedVisitor = visitor as IAmethystVisitor<TResult>;
-			if (typedVisitor != null) return typedVisitor.VisitNamespace(this);
+			if (typedVisitor != null) return typedVisitor.VisitNs(this);
 			else return visitor.VisitChildren(this);
 		}
 	}
 
 	[RuleVersion(0)]
-	public NamespaceContext @namespace() {
-		NamespaceContext _localctx = new NamespaceContext(Context, State);
-		EnterRule(_localctx, 2, RULE_namespace);
+	public NsContext ns() {
+		NsContext _localctx = new NsContext(Context, State);
+		EnterRule(_localctx, 2, RULE_ns);
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
@@ -602,7 +602,7 @@ public partial class AmethystParser : Parser {
 		return _localctx;
 	}
 
-	public partial class StructContext : ParserRuleContext {
+	public partial class StructDeclContext : ParserRuleContext {
 		[System.Diagnostics.DebuggerNonUserCode] public IdContext id() {
 			return GetRuleContext<IdContext>(0);
 		}
@@ -627,23 +627,23 @@ public partial class AmethystParser : Parser {
 		[System.Diagnostics.DebuggerNonUserCode] public MethodContext method(int i) {
 			return GetRuleContext<MethodContext>(i);
 		}
-		public StructContext(ParserRuleContext parent, int invokingState)
+		public StructDeclContext(ParserRuleContext parent, int invokingState)
 			: base(parent, invokingState)
 		{
 		}
-		public override int RuleIndex { get { return RULE_struct; } }
+		public override int RuleIndex { get { return RULE_structDecl; } }
 		[System.Diagnostics.DebuggerNonUserCode]
 		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
 			IAmethystVisitor<TResult> typedVisitor = visitor as IAmethystVisitor<TResult>;
-			if (typedVisitor != null) return typedVisitor.VisitStruct(this);
+			if (typedVisitor != null) return typedVisitor.VisitStructDecl(this);
 			else return visitor.VisitChildren(this);
 		}
 	}
 
 	[RuleVersion(0)]
-	public StructContext @struct() {
-		StructContext _localctx = new StructContext(Context, State);
-		EnterRule(_localctx, 14, RULE_struct);
+	public StructDeclContext structDecl() {
+		StructDeclContext _localctx = new StructDeclContext(Context, State);
+		EnterRule(_localctx, 14, RULE_structDecl);
 		int _la;
 		try {
 			EnterOuterAlt(_localctx, 1);

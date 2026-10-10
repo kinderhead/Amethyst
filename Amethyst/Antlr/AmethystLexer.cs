@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-// Generated from Amethyst.g4 by ANTLR 4.13.2
+// Generated from /home/daniel/Documents/CSharp/Amethyst/Amethyst/Amethyst.g4 by ANTLR 4.13.2
 
 // Unreachable code detected
 #pragma warning disable 0162

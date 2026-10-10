@@ -1,41 +1,36 @@
-﻿using Geode;
+﻿using System.Diagnostics;
+using Geode;
 using Geode.Errors;
 using Geode.IR;
-using System.Diagnostics;
 
 namespace Amethyst.AST.Statements
 {
-	public class BlockNode(LocationRange loc) : Statement(loc)
-	{
-		public readonly List<Statement> Statements = [];
+    public class BlockNode(LocationRange loc) : Statement(loc)
+    {
+        public readonly List<Statement> Statements = [];
 
-		public override void Compile(FunctionContext ctx)
-		{
-			if (!CompileWithErrorChecking(ctx))
-			{
-				throw new EmptyGeodeError();
-			}
-		}
+        public override void Compile(FunctionContext ctx)
+        {
+            if (!CompileWithErrorChecking(ctx)) throw new EmptyGeodeError();
+        }
 
-		public void Prepend(Statement stmt) => Statements.Insert(0, stmt);
-		public void Add(Statement stmt) => Statements.Add(stmt);
+        public void Prepend(Statement stmt) => Statements.Insert(0, stmt);
+        public void Add(Statement stmt) => Statements.Add(stmt);
 
-		public bool CompileWithErrorChecking(FunctionContext ctx)
-		{
-			var success = true;
+        public bool CompileWithErrorChecking(FunctionContext ctx)
+        {
+            var success = true;
 
-			ctx.PushScope();
-			foreach (var i in Statements)
-			{
-				if (!ctx.Compiler.WrapError(i.Location, ctx, [DebuggerNonUserCode]() => i.Compile(ctx)))
-				{
-					success = false;
-				}
-			}
+            ctx.PushScope();
 
-			ctx.PopScope();
+            foreach (var i in Statements)
+            {
+                if (!ctx.Compiler.WrapError(i.Location, ctx, [DebuggerNonUserCode]() => i.Compile(ctx))) success = false;
+            }
 
-			return success;
-		}
-	}
+            ctx.PopScope();
+
+            return success;
+        }
+    }
 }
