@@ -1,4 +1,5 @@
 ﻿using Amethyst.IR.Types;
+using Datapack.Net.Function.Commands;
 using Geode;
 using Geode.Errors;
 using Geode.IR;
@@ -42,7 +43,8 @@ namespace Amethyst.AST.Expressions
                     ctx.Add(new StoreInsn(val, dec));
                     return val;
                 case UnaryOperation.Negate:
-                    return ctx.Add(new MulInsn(ctx.AddLoad(ctx.ImplicitCast(val, PrimitiveType.Int)), new LiteralValue(-1)));
+                    return new ArithmeticExpression(Location, new ValueRefExpression(Location, val), ScoreOperation.Mul, new LiteralExpression(Location, -1))
+                        .Execute(ctx, expected);
                 case UnaryOperation.Reference:
                     return Value.ReferenceHandler(val, new(val.Type), ctx); // These don't actually cast between references so idk if that will cause issues
                 case UnaryOperation.WeakReference:
@@ -52,6 +54,13 @@ namespace Amethyst.AST.Expressions
                 default:
                     throw new NotImplementedException();
             }
+        }
+
+        protected override Equation ComputeImpl(FunctionContext ctx)
+        {
+            if (Op == UnaryOperation.Negate) return new ArithmeticExpression(Location, Value, ScoreOperation.Mul, new LiteralExpression(Location, -1)).Compute(ctx);
+
+            return base.ComputeImpl(ctx);
         }
     }
 }

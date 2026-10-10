@@ -21,6 +21,7 @@ void test_int_comp() {
 }
 
 #test
+#[>=121.0]
 void test_float_comp() {
     start("float compare");
 
@@ -30,12 +31,15 @@ void test_float_comp() {
     assert(x == x);
     assert(y == y);
     assert(x != y);
-    // assert(x > y);
-    // assert(x >= y);
-    // assert(x >= x);
-    // assert(y < x);
-    // assert(y <= x);
-    // assert(y <= y);
+    assert(x > y);
+    assert(x >= y);
+    assert(x >= x);
+    assert(y < x);
+    assert(y <= x);
+    assert(y <= y);
+
+    assert(!(x <= 50));
+    assert(!(50 >= x));
 
     complete();
 }

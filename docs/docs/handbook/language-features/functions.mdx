@@ -104,3 +104,20 @@ Functions, [methods](./structs.mdx#methods), and [constructors](./structs.mdx#co
 Functions with parameters will have their names mangled. Mangled functions have their arguments included in their `.mcfunction` names along with some other filler characters.
 
 It is possible to call specific overloads by using its mangled name, but this is not recommended. Additionally, overloaded functions cannot be used in dynamic function pointers.
+
+## Conditional Compilation
+
+Sometimes your project might target different versions of Minecraft. In this case, conditional compilation can be used to limit which code compiles for which [pack formats](https://minecraft.wiki/w/Pack_format).
+
+<Highlight code={`\
+    #[>=121.0]
+    void func() { }
+
+    #[>=101.7]
+    #[<121.0]
+    void func() { }
+`}/>
+
+:::tip
+Conditional compilation can also apply to individual statements within functions.
+:::

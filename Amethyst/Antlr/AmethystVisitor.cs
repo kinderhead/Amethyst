@@ -45,6 +45,12 @@ public interface IAmethystVisitor<Result> : IParseTreeVisitor<Result> {
 	/// <return>The visitor result.</return>
 	Result VisitNamespace([NotNull] AmethystParser.NamespaceContext context);
 	/// <summary>
+	/// Visit a parse tree produced by <see cref="AmethystParser.conditionalComp"/>.
+	/// </summary>
+	/// <param name="context">The parse tree.</param>
+	/// <return>The visitor result.</return>
+	Result VisitConditionalComp([NotNull] AmethystParser.ConditionalCompContext context);
+	/// <summary>
 	/// Visit a parse tree produced by <see cref="AmethystParser.function"/>.
 	/// </summary>
 	/// <param name="context">The parse tree.</param>

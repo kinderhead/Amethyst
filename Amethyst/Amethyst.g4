@@ -9,9 +9,13 @@ root
 namespace
     : Namespace id Semi
     ;
+    
+conditionalComp
+    : Hash LSquareBrak (Gt | Gte | Lt | Lte) Number RSquareBrak
+    ;
 
 function
-    : functionTag* functionModifier* type name=id paramList block
+    : (functionTag | conditionalComp)* functionModifier* type name=id paramList block
     ;
 
 functionTag
@@ -35,8 +39,8 @@ declaration
     ;
 
 method
-    : methodModifier* type RawIdentifier paramList block
-    | functionModifier* RawIdentifier paramList (Colon expression)? block
+    : (methodModifier | conditionalComp)* type RawIdentifier paramList block
+    | (functionModifier | conditionalComp)* RawIdentifier paramList (Colon expression)? block
     ;
 
 methodModifier
@@ -44,7 +48,7 @@ methodModifier
     ;
 
 statement
-    : (
+    : conditionalComp* ((
         initAssignmentStatement
         | expressionStatement
         | returnStatement
@@ -53,7 +57,7 @@ statement
     | commandStatement
     | block
     | executeStatement
-    | forStatement
+    | forStatement)
     ;
 
 initAssignmentStatement

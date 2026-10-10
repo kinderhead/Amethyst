@@ -1,4 +1,5 @@
-﻿using System.Text.RegularExpressions;
+﻿using System.Globalization;
+using System.Text.RegularExpressions;
 using Amethyst.Antlr;
 using Amethyst.AST.Expressions;
 using Amethyst.AST.Statements;
@@ -8,6 +9,7 @@ using Antlr4.Runtime.Tree;
 using Datapack.Net.Data;
 using Datapack.Net.Function;
 using Datapack.Net.Function.Commands;
+using Datapack.Net.Pack;
 using Datapack.Net.Utils;
 using Geode;
 using Geode.Chains;
@@ -56,6 +58,8 @@ namespace Amethyst.AST
 
         public override Node VisitFunction([NotNull] AmethystParser.FunctionContext context)
         {
+            if (!ShouldCompile(context.conditionalComp())) return new NullFunction();
+
             var mod = FunctionModifiers.None;
             foreach (var i in context.functionModifier())
             {
@@ -63,25 +67,24 @@ namespace Amethyst.AST
                 else if (i.GetText() == "inline") mod |= FunctionModifiers.Inline;
             }
 
-            return new FunctionNode(Loc(context), [
-                    .. context.functionTag().Select(i =>
-                    {
-                        var text = Visit(i.id());
-                        if (text.Contains(':')) return new(text);
+            var tags = new List<NamespacedID>();
 
-                        if (text is "load" or "tick") return new("minecraft", text);
+            foreach (var i in context.functionTag())
+            {
+                var text = Visit(i.id());
+                if (text.Contains(':')) tags.Add(new(text));
+                else if (text is "load" or "tick") tags.Add(new("minecraft", text));
+                else tags.Add(new(currentNamespace, text));
+            }
 
-                        return new NamespacedID(currentNamespace, text);
-                    })
-                ],
-                mod, Visit(context.type()),
-                IdentifierToID(Visit(context.name)),
-                Visit(context.paramList()),
-                Visit(context.block())
-            );
+            return new FunctionNode(Loc(context), tags, mod, Visit(context.type()), IdentifierToID(Visit(context.name)), Visit(context.paramList()), Visit(context.block()));
         }
 
-        public override Node VisitStatement([NotNull] AmethystParser.StatementContext context) => Visit(context.children[0]);
+        public override Node VisitStatement([NotNull] AmethystParser.StatementContext context)
+        {
+            if (!ShouldCompile(context.conditionalComp())) return new VoidStatement();
+            return Visit(context.children[context.conditionalComp().Length]);
+        }
 
         public override Node VisitBlock([NotNull] AmethystParser.BlockContext context)
         {
@@ -126,6 +129,8 @@ namespace Amethyst.AST
 
         public override Node VisitMethod([NotNull] AmethystParser.MethodContext context)
         {
+            if (!ShouldCompile(context.conditionalComp())) return new NullFunction();
+
             var mod = FunctionModifiers.None;
             foreach (var i in context.functionModifier().Length == 0 ? context.methodModifier().Select(i => i.GetText()) : context.functionModifier().Select(i => i.GetText()))
             {
@@ -482,6 +487,21 @@ namespace Amethyst.AST
         {
             if (name.Contains(':')) return new(name);
             return new(currentNamespace, name);
+        }
+
+        public bool ShouldCompile(params IEnumerable<AmethystParser.ConditionalCompContext> conditions)
+        {
+            foreach (var i in conditions)
+            {
+                var version = new PackFormat(ParseNumber(i.Number().GetText()).CastFloat().Value.ToString(CultureInfo.InvariantCulture));
+
+                if (i.Gt() is not null && !(Compiler.Options.PackFormat > version)) return false;
+                if (i.Gte() is not null && !(Compiler.Options.PackFormat >= version)) return false;
+                if (i.Lt() is not null && !(Compiler.Options.PackFormat < version)) return false;
+                if (i.Lte() is not null && !(Compiler.Options.PackFormat <= version)) return false;
+            }
+
+            return true;
         }
 
         public static NBTValue ParseNumber(string raw)

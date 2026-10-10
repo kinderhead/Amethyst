@@ -90,7 +90,7 @@ namespace Amethyst.AST
                 i.Process(ctx, root);
 
                 if (i is ConstructorNode c) constructor = c;
-                else
+                else if (i is not NullFunction)
                 {
                     var type = i.GetFunctionType(ctx);
                     methods[i.ID.GetFile()] = (RawFunctionValue?)ctx.IR.GetGlobal(i.ID) ?? throw new UndefinedSymbolError(i.ID.ToString());
