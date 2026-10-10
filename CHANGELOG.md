@@ -13,3 +13,4 @@
 
 * Allow casting `[]` to any list type.
 * Fixed accessing class members when in an array.
+* Fixed broken casting nested expressions (#139). 

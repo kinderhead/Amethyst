@@ -17,14 +17,7 @@ entitydef minecraft:sheep implements minecraft:base {
 
 #load
 void main() {
-    float x = 4.32;
-    int y = 4;
-
-    if (x <= y) {
-        print("yay");
-    } else {
-        print("nay");
-    }
+    print((int)(4));
 
     amethyst:exit();
 }

@@ -122,8 +122,8 @@ multiplicativeExpression
     ;
 
 castExpression
-    : unaryExpression
-    | LParen type RParen castExpression
+    : LParen type RParen castExpression
+    | unaryExpression
     ;
 
 unaryExpression

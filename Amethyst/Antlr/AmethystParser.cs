@@ -2087,9 +2087,6 @@ public partial class AmethystParser : Parser {
 	}
 
 	public partial class CastExpressionContext : ParserRuleContext {
-		[System.Diagnostics.DebuggerNonUserCode] public UnaryExpressionContext unaryExpression() {
-			return GetRuleContext<UnaryExpressionContext>(0);
-		}
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode LParen() { return GetToken(AmethystParser.LParen, 0); }
 		[System.Diagnostics.DebuggerNonUserCode] public TypeContext type() {
 			return GetRuleContext<TypeContext>(0);
@@ -2097,6 +2094,9 @@ public partial class AmethystParser : Parser {
 		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode RParen() { return GetToken(AmethystParser.RParen, 0); }
 		[System.Diagnostics.DebuggerNonUserCode] public CastExpressionContext castExpression() {
 			return GetRuleContext<CastExpressionContext>(0);
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public UnaryExpressionContext unaryExpression() {
+			return GetRuleContext<UnaryExpressionContext>(0);
 		}
 		public CastExpressionContext(ParserRuleContext parent, int invokingState)
 			: base(parent, invokingState)
@@ -2123,20 +2123,20 @@ public partial class AmethystParser : Parser {
 				EnterOuterAlt(_localctx, 1);
 				{
 				State = 319;
-				unaryExpression();
+				Match(LParen);
+				State = 320;
+				type(0);
+				State = 321;
+				Match(RParen);
+				State = 322;
+				castExpression();
 				}
 				break;
 			case 2:
 				EnterOuterAlt(_localctx, 2);
 				{
-				State = 320;
-				Match(LParen);
-				State = 321;
-				type(0);
-				State = 322;
-				Match(RParen);
-				State = 323;
-				castExpression();
+				State = 324;
+				unaryExpression();
 				}
 				break;
 			}
@@ -3570,9 +3570,9 @@ public partial class AmethystParser : Parser {
 		305,7,8,0,0,305,307,3,52,26,0,306,304,1,0,0,0,307,310,1,0,0,0,308,306,
 		1,0,0,0,308,309,1,0,0,0,309,51,1,0,0,0,310,308,1,0,0,0,311,316,3,54,27,
 		0,312,313,7,9,0,0,313,315,3,54,27,0,314,312,1,0,0,0,315,318,1,0,0,0,316,
-		314,1,0,0,0,316,317,1,0,0,0,317,53,1,0,0,0,318,316,1,0,0,0,319,326,3,56,
-		28,0,320,321,5,23,0,0,321,322,3,86,43,0,322,323,5,24,0,0,323,324,3,54,
-		27,0,324,326,1,0,0,0,325,319,1,0,0,0,325,320,1,0,0,0,326,55,1,0,0,0,327,
+		314,1,0,0,0,316,317,1,0,0,0,317,53,1,0,0,0,318,316,1,0,0,0,319,320,5,23,
+		0,0,320,321,3,86,43,0,321,322,5,24,0,0,322,323,3,54,27,0,323,326,1,0,0,
+		0,324,326,3,56,28,0,325,319,1,0,0,0,325,324,1,0,0,0,326,55,1,0,0,0,327,
 		329,7,10,0,0,328,327,1,0,0,0,329,332,1,0,0,0,330,328,1,0,0,0,330,331,1,
 		0,0,0,331,333,1,0,0,0,332,330,1,0,0,0,333,334,3,58,29,0,334,57,1,0,0,0,
 		335,341,3,64,32,0,336,340,3,84,42,0,337,340,3,60,30,0,338,340,3,62,31,
