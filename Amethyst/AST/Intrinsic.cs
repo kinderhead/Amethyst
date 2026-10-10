@@ -22,5 +22,7 @@ namespace Amethyst.AST
         public RawFunctionValue Get(TypeArray types) => throw new InvalidOperationException("Intrinsics do not have real functions");
 
         public override NumberProvider ToCompute(RenderContext ctx) => throw new ComputeError(this);
+
+        public virtual Equation Compute(FunctionContext ctx, params Equation[] args) => throw new ComputeError(this);
     }
 }

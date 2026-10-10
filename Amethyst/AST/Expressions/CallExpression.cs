@@ -1,7 +1,9 @@
 ﻿using Amethyst.IR;
 using Amethyst.IR.Instructions;
 using Amethyst.IR.Types;
+using Datapack.Net.NumberProviders;
 using Geode;
+using Geode.Equations;
 using Geode.Errors;
 using Geode.IR;
 using Geode.IR.Instructions;
@@ -22,7 +24,12 @@ namespace Amethyst.AST.Expressions
 
         protected override ValueRef ExecuteImpl(FunctionContext ctx, TypeSpecifier? expected)
         {
-            var func = ReferenceType.TryDeref(Function.Execute(ctx, null), ctx);
+            return ExecuteImpl(ctx, expected, Function.Execute(ctx, null));
+        }
+
+        private ValueRef ExecuteImpl(FunctionContext ctx, TypeSpecifier? expected, ValueRef function)
+        {
+            var func = ReferenceType.TryDeref(function, ctx);
             Expression[] newArgs;
 
             if (Function is IMethodHolder prop && prop.GetThis(ctx) is { } self)
@@ -51,6 +58,32 @@ namespace Amethyst.AST.Expressions
 
             ctx.Add(new PushFuncArgsInsn(type, ctx.PrepArgs(type, args)));
             return ctx.Add(new DynCallInsn(func));
+        }
+
+        protected override Equation ComputeImpl(FunctionContext ctx)
+        {
+            var func = Function.Execute(ctx, null);
+
+            if (func.Value is Intrinsic i && i.FuncType.Parameters.All(p => p.Type.EffectiveNumberType is not null))
+            {
+                Expression[] newArgs;
+
+                if (Function is IMethodHolder prop && prop.GetThis(ctx) is { } self)
+                {
+                    newArgs = [self, .. Args];
+                }
+                else newArgs = [.. Args];
+
+                return i.Compute(ctx, [.. newArgs.Select(i => i.Compute(ctx))]);
+            }
+
+
+            var value = ExecuteImpl(ctx, null, func);
+            var equation = new ValueRefEquation(value);
+
+            return equation.Type == ProviderNumberType.Int
+                ? new ValueRefEquation(ctx.ImplicitCast(value, PrimitiveType.Int))
+                : new ValueRefEquation(ctx.ImplicitCast(value, PrimitiveType.Float));
         }
     }
 }
