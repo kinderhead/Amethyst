@@ -306,6 +306,15 @@ namespace Amethyst
             Register(new Kill());
             Register(new Random());
             Register(new Contains());
+            Register(new Abs());
+            Register(new Sqrt());
+            Register(new Sin());
+            Register(new Cos());
+            Register(new Round());
+            Register(new Floor());
+            Register(new Ceil());
+            Register(new Truncate());
+            Register(new Pow());
 
             IR.AddSymbol(new("builtin:null", LocationRange.None, new NullValue()));
             IR.AddSymbol(new("amethyst:stack", LocationRange.None, new StorageValue(IR.RuntimeID, "stack", new ListType(PrimitiveType.Compound))));
