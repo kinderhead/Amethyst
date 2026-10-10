@@ -191,6 +191,14 @@ paramList
 paramPair
     : (paramModifier)* type id
     ;
+    
+abstractParamList
+    : LParen (abstractParamPair (Comma abstractParamPair)*)? RParen
+    ;
+
+abstractParamPair
+    : (paramModifier)* type
+    ;
 
 paramModifier
     : Macro
@@ -206,6 +214,7 @@ type
     | type LBrak RBrak
     | type And
     | type WeakRef
+    | type abstractParamList
     ;
 
 simpleType

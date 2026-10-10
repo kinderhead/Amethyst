@@ -7,7 +7,7 @@ using Geode.Values;
 
 namespace Amethyst.IR
 {
-    public class NullValue() : StoreableValue(new ReferenceType(new VoidType(), false))
+    public class NullValue() : StorableValue(new ReferenceType(new VoidType(), false))
     {
         public override ScoreValue AsScore(RenderContext ctx) => ctx.Builder.Constant(0);
         public override IValue AsStoreable() => Type.DefaultValue;

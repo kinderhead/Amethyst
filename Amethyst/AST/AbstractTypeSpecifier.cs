@@ -113,4 +113,26 @@ namespace Amethyst.AST
         protected override TypeSpecifier ResolveImpl(Compiler ctx, string baseNamespace, bool allowAuto = false) => new WeakReferenceType(Inner.Resolve(ctx, baseNamespace));
         public override IEnumerable<NamespacedID> SoftResolve(Compiler ctx, string baseNamespace, bool allowAuto = false) => Inner.SoftResolve(ctx, baseNamespace, allowAuto);
     }
+
+    public class AbstractFunctionTypeSpecifier(LocationRange loc, AbstractTypeSpecifier returnType, IEnumerable<(ParameterModifiers, AbstractTypeSpecifier)> parameters)
+        : AbstractTypeSpecifier(loc)
+    {
+        public readonly (ParameterModifiers, AbstractTypeSpecifier)[] Parameters = [.. parameters];
+        public readonly AbstractTypeSpecifier ReturnType = returnType;
+
+        public override bool Equals(AbstractTypeSpecifier? other) =>
+            other is AbstractFunctionTypeSpecifier t && t.ReturnType == ReturnType && t.Parameters.SequenceEqual(Parameters);
+
+        public override int GetHashCode() => HashCode.Combine(ReturnType, Parameters);
+
+        protected override TypeSpecifier ResolveImpl(Compiler ctx, string baseNamespace, bool allowAuto = false) =>
+            new FunctionType(FunctionModifiers.None, ReturnType.Resolve(ctx, baseNamespace),
+                Parameters.Select((i, index) => new Parameter(i.Item1, i.Item2.Resolve(ctx, baseNamespace, allowAuto), $"arg{index}")));
+
+        public override IEnumerable<NamespacedID> SoftResolve(Compiler ctx, string baseNamespace, bool allowAuto = false) =>
+        [
+            .. ReturnType.SoftResolve(ctx, baseNamespace, allowAuto),
+            .. Parameters.SelectMany(i => i.Item2.SoftResolve(ctx, baseNamespace, allowAuto))
+        ];
+    }
 }

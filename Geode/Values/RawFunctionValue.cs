@@ -22,9 +22,9 @@ namespace Geode.Values
 
         public void Call(RenderContext ctx, IValueLike[] args) => Call(ctx, ID, FuncType, args);
 
-        public static void Call(RenderContext ctx, NamespacedID id, FunctionType funcType, IValueLike[] args)
+        public static void Call(RenderContext ctx, NamespacedID id, FunctionType funcType, IValueLike[] args, bool preserveArgs = false)
         {
-            var processedMacros = SetArgsAndGetMacros(ctx, funcType, args);
+            var processedMacros = SetArgsAndGetMacros(ctx, funcType, args, preserveArgs);
 
             switch (processedMacros)
             {
@@ -60,7 +60,7 @@ namespace Geode.Values
             }
         }
 
-        public static IValue? SetArgsAndGetMacros(RenderContext ctx, FunctionType funcType, IValueLike[] args)
+        public static IValue? SetArgsAndGetMacros(RenderContext ctx, FunctionType funcType, IValueLike[] args, bool preserveArgs = false)
         {
             IValue? processedMacros = null;
 
@@ -72,8 +72,10 @@ namespace Geode.Values
                 var macros = new Dictionary<string, IValueLike>();
                 var macroStorageLocation = new StackValue(-1, ctx.Builder.RuntimeID, "macros", PrimitiveType.Compound);
 
-                foreach (var (param, val) in funcType.Parameters.Zip(args))
+                foreach (var (index, (param, val)) in funcType.Parameters.Zip(args).Index())
                 {
+                    var argName = preserveArgs ? param.Name : $"arg{index}";
+
                     if (param.Modifiers.HasFlag(ParameterModifiers.Macro))
                     {
                         if (param.Type == PrimitiveType.String)
@@ -82,25 +84,19 @@ namespace Geode.Values
                             if (val.Expect() is not LiteralValue l) throw new MacroStringError();
 
                             // Escape string
-                            macros.Add(param.Name, new LiteralValue(l.Value.ToString()));
+                            macros.Add(argName, new LiteralValue(l.Value.ToString()));
                         }
                         else
                         {
                             if (val.Expect() is IConstantValue c and not LiteralValue && val.Type.WrapInQuotesForMacro)
-                                macros.Add(param.Name, new LiteralValue(c.Value.ToString()));
-                            else
-                                macros.Add(param.Name, val);
+                                macros.Add(argName, new LiteralValue(c.Value.ToString()));
+                            else macros.Add(argName, val);
                         }
                     }
-                    else
-                        processedArgs.Add(param.Name, val);
+                    else processedArgs.Add(argName, val);
                 }
 
-                if (processedArgs.Count != 0)
-                {
-                    ctx.StoreCompound(new StackValue(-1, ctx.Builder.RuntimeID, "args", PrimitiveType.Compound),
-                        processedArgs, false);
-                }
+                if (processedArgs.Count != 0) ctx.StoreCompound(new StackValue(-1, ctx.Builder.RuntimeID, "args", PrimitiveType.Compound), processedArgs, false);
 
                 if (macros.Count != 0) processedMacros = ctx.StoreCompoundOrReturnConstant(macroStorageLocation, macros, false);
             }

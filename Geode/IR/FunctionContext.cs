@@ -60,14 +60,13 @@ namespace Geode.IR
 
             ExitBlock = new("exit", GetNewInternalID(), this);
 
-            foreach (var i in Decl.FuncType.Parameters)
+            foreach (var (index, i) in Decl.FuncType.Parameters.Index())
             {
-                if (i.Modifiers.HasFlag(ParameterModifiers.Macro)) RegisterLocal(i.Name, new MacroValue(i.Name, i.Type), Location);
+                if (i.Modifiers.HasFlag(ParameterModifiers.Macro)) RegisterLocal(i.Name, new MacroValue($"arg{index}", i.Type), Location);
                 else
                 {
                     // Maybe make it so that if the stack isn't used by the function, then use -1 and don't push new frame
-                    RegisterLocal(i.Name, new StackValue(-2, compiler.IR.RuntimeID, $"args.{i.Name}", i.Type),
-                        Location);
+                    RegisterLocal(i.Name, new StackValue(-2, compiler.IR.RuntimeID, $"args.arg{index}", i.Type), Location);
                 }
             }
         }
