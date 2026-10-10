@@ -81,7 +81,7 @@ Example:
 
 ## Calling Convention
 
-Amethyst compiles functions into `.mcfunction` files. Functions without parameters retain their names while functions with parameters will have their names mangled to support overloads. The argument calling convention is to place named arguments into a special place in the current stack frame. In most cases, this will be `amethyst:runtime stack[-1].args`. If arguments or stack values are used, the called function will push a new frame and access arguments using `amethyst:runtime stack[-2].args`. Functions without arguments can be easily called in-game using `/function`.
+Amethyst compiles functions into `.mcfunction` files. Functions without parameters retain their names while functions with parameters will have their names mangled to support overloads. The argument calling convention is to place named arguments into a special place in the current stack frame. In most cases, this will be `amethyst:runtime stack[-1].args`. If arguments or stack values are used, the called function will push a new frame and access arguments using `amethyst:runtime stack[-2].args`. Functions without arguments can be easily called in-game using `/function`. Argument names are stripped and are replaced by `arg0, arg1...`.
 
 ## Function Overloading
 
@@ -104,6 +104,23 @@ Functions, [methods](./structs.mdx#methods), and [constructors](./structs.mdx#co
 Functions with parameters will have their names mangled. Mangled functions have their arguments included in their `.mcfunction` names along with some other filler characters.
 
 It is possible to call specific overloads by using its mangled name, but this is not recommended. Additionally, overloaded functions cannot be used in dynamic function pointers.
+
+## Dynamic Functions
+
+Functions are treated as first-class objects in Amethyst, meaning that they can be stored and passed around to other functions.
+
+<Highlight code={`\
+    var func = some_function;
+    func("Hi", 4.3f);
+`}/>
+
+Functions can be explicitly typed like so:
+
+<Highlight code={`\
+    int(string, macro float) func;
+`}/>
+
+Where `int` is the return type and the types inside the parenthesis are arguments. Note that `macro` needs to be specified and must match the actual function. As mentioned earlier, functions with at least one overload cannot be turned into dynamic functions due to ambiguity.
 
 ## Conditional Compilation
 

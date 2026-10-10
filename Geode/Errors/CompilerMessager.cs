@@ -57,7 +57,7 @@ namespace Geode.Errors
 					Final();
 				}
 
-				AddContent($"[turquoise2]{i[indentToSkip..].EscapeMarkup()}[/]");
+				AddContent($"[turquoise2]{i[indentToSkip..].EscapeMarkup().TrimEnd()}[/]");
 			}
 
 			if (lines.Length == 1)
@@ -67,8 +67,7 @@ namespace Geode.Errors
 					Final();
 				}
 
-				AddContent(
-					$"{new string(' ', loc.Start.Column - 1 - indentToSkip)}{new string('~', loc.End.Column - loc.Start.Column + 1)}");
+				AddContent($"{new string(' ', loc.Start.Column - 1 - indentToSkip)}{new string('~', loc.End.Column - loc.Start.Column + 1)}");
 			}
 			else if (!final)
 			{

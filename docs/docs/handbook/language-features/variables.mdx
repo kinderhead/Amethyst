@@ -97,10 +97,6 @@ Amethyst also provides the following unary operators:
 
 Floating point arithmetic is only available on 26.3+ with `/compute`. Including floats in an equation automatically promotes integers into floats.
 
-:::note
-Postfix increment and decrement (`x++`) does not exist due to clarity concerns. This may change in the future.
-:::
-
 :::warning
 Minecraft may handle integer division slightly differently than the languages you are used to. Scoreboard division floors while `/compute` truncates. Unless disabled, Amethyst for 26.3+ uses `/compute` for math by default.
 :::
@@ -108,6 +104,28 @@ Minecraft may handle integer division slightly differently than the languages yo
 ### NBT Equality
 
 All types can be used in `==` and `!=`. Internally, Amethyst attempts to overwrite one value with another and checks the success of the command. NBT equality is defined as `/data modify` failing when no change is made.
+
+### Math Functions
+
+:::Note
+These functions use `/compute` which is only available on 26.3+.
+:::
+
+Currently only `float` versions of these functions are available.
+
+* `minecraft:math/abs(float x)`
+* `minecraft:math/sqrt(float x)`
+* `minecraft:math/sin(float x)`
+* `minecraft:math/cos(float x)`
+* `minecraft:math/round(float x)`
+* `minecraft:math/floor(float x)`
+* `minecraft:math/ceil(float x)`
+* `minecraft:math/truncate(float x)`
+* `minecraft:math/pow(float x, float y)`
+
+:::tip
+Resources in the `minecraft` namespace can omit that part, so `minecraft:math/abs(x)` can be shortened to `math/abs(x)`.
+:::
 
 ## Strings
 
