@@ -314,6 +314,7 @@ namespace Amethyst
             Register(new Floor());
             Register(new Ceil());
             Register(new Truncate());
+            Register(new Pow());
 
             IR.AddSymbol(new("builtin:null", LocationRange.None, new NullValue()));
             IR.AddSymbol(new("amethyst:stack", LocationRange.None, new StorageValue(IR.RuntimeID, "stack", new ListType(PrimitiveType.Compound))));

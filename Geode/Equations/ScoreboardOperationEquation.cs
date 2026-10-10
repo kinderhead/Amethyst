@@ -4,7 +4,7 @@ using Datapack.Net.NumberProviders;
 
 namespace Geode.Equations
 {
-    public class OperationEquation(Equation left, ScoreOperation op, Equation right) : Equation([], [left, right])
+    public class ScoreboardOperationEquation(Equation left, ScoreOperation op, Equation right) : Equation([], [left, right])
     {
         public readonly ScoreOperation Op = op;
 

@@ -31,6 +31,6 @@ namespace Amethyst.AST.Expressions
             };
         }
 
-        protected override Equation ComputeImpl(FunctionContext ctx) => new OperationEquation(Left.Compute(ctx), Op, Right.Compute(ctx));
+        protected override Equation ComputeImpl(FunctionContext ctx) => new ScoreboardOperationEquation(Left.Compute(ctx), Op, Right.Compute(ctx));
     }
 }

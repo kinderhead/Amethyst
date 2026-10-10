@@ -37,8 +37,7 @@ namespace Geode.Equations
             _ => throw new NotImplementedException("Operation not supported for compute yet")
         };
 
-        public override NBTValue Execute(NBTValue[] args) =>
-            Op switch
+        public override NBTValue Execute(NBTValue[] args) => Op switch
             {
                 UnaryOperation.Abs      => Type == ProviderNumberType.Int ? Math.Abs(args[0].CastInt()) : Math.Abs(args[0].CastFloat()),
                 UnaryOperation.Sqrt     => (float)Math.Sqrt(args[0].CastFloat()),
@@ -48,7 +47,7 @@ namespace Geode.Equations
                 UnaryOperation.Floor    => (float)Math.Floor(args[0].CastFloat()),
                 UnaryOperation.Ceil     => (float)Math.Ceiling(args[0].CastFloat()),
                 UnaryOperation.Trunc    => (float)Math.Truncate(args[0].CastFloat()),
-                _ => throw new NotImplementedException("Operation does not support ints")
+                _ => throw new NotImplementedException("Operation not supported for compute yet")
             };
         public override NBTValue? IsConstant() => null;
     }
