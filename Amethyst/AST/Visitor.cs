@@ -240,6 +240,7 @@ namespace Amethyst.AST
             if (context.LBrak() is not null) return new AbstractMapTypeSpecifier(Loc(context), Visit(context.type()));
             if (context.And() is not null) return new AbstractReferenceTypeSpecifier(Loc(context), Visit(context.type()));
             if (context.WeakRef() is not null) return new AbstractWeakReferenceTypeSpecifier(Loc(context), Visit(context.type()));
+            if (context.abstractParamList() is not null) return new AbstractFunctionTypeSpecifier(Loc(context), Visit(context.type()), Visit(context.abstractParamList()));
 
             throw new NotImplementedException();
         }
@@ -466,14 +467,17 @@ namespace Amethyst.AST
 
         public List<Expression> Visit(AmethystParser.ExpressionListContext context) => [.. context.expression().Select(Visit)];
 
+        public static ParameterModifiers Visit(params AmethystParser.ParamModifierContext[] context) =>
+            context.Where(e => e.GetText() == "macro").Aggregate(ParameterModifiers.None, (current, _) => current | ParameterModifiers.Macro);
+
         public List<AbstractParameter> Visit(AmethystParser.ParamListContext context) =>
         [
-            .. context.paramPair().Select(i =>
-            {
-                var mod = i.paramModifier().Where(e => e.GetText() == "macro").Aggregate(ParameterModifiers.None, (current, _) => current | ParameterModifiers.Macro);
+            .. context.paramPair().Select(i => new AbstractParameter(Visit(i.paramModifier()), Visit(i.type()), Visit(i.id())))
+        ];
 
-                return new AbstractParameter(mod, Visit(i.type()), Visit(i.id()));
-            })
+        public List<(ParameterModifiers, AbstractTypeSpecifier)> Visit(AmethystParser.AbstractParamListContext context) =>
+        [
+            .. context.abstractParamPair().Select(i => (Visit(i.paramModifier()), Visit(i.type())))
         ];
 
         public static string Visit(AmethystParser.IdContext context) => context.GetText();

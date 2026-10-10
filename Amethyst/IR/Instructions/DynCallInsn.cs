@@ -20,7 +20,7 @@ namespace Amethyst.IR.Instructions
 
             if (func.Type is not FunctionType) throw new InvalidTypeError(func.Type.ToString(), "function");
 
-            new StackValue(-1, ctx.Builder.RuntimeID, "func", func.Type).Store(func, ctx);
+            new StackValue(-1, ctx.Builder.RuntimeID, "arg0", func.Type).Store(func, ctx);
 
             ctx.Add(new FunctionCommand(
                 ctx.Func.GetGlobalOrThrow<IMinimalFunction>(FuncType.IsMacroFunction ? "amethyst:core/func/call-macro" : "amethyst:core/func/call")

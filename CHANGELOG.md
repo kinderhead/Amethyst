@@ -10,9 +10,10 @@
 * Added explicit casts between number types.
 * Added conditional compilation.
 * Added `&&` and `||`.
+* Added function types and re-enabled dynamic functions.
 
 # Bug Fixes
 
 * Allow casting `[]` to any list type.
 * Fixed accessing class members when in an array.
-* Fixed broken casting nested expressions (#139). 
+* Fixed broken casting nested expressions (#139).

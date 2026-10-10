@@ -61,7 +61,7 @@ void collect() {
 
         if (^ptr["@type"]) {
             var info = amethyst:type_info[(qstring)ptr["@type"]];
-            @/function $(info.methods["@mark"]) {this: "$(ptr)"}
+            @/function $(info.methods["@mark"]) {arg0: "$(ptr)"}
         }
     }
 
