@@ -65,12 +65,28 @@ Values can attempt to be casted to other types. There are two main types of cast
 `}/>
 
 :::info
-Explicit casting is mainly used for casting down an inheritance tree. However some types have special explicit casting rules. For instance, casting anything to an int will effectively use `/execute store`. So for most values, it will call `/data get` and store that into a score.
+Explicit casting is mainly used for casting down an inheritance tree. However some types have special explicit casting rules. For instance, casting anything to an `int` will effectively use `/execute store`. So for most values, it will call `/data get` and store that into a score.
 :::
 
-## Math
+## Math and Logic
 
-All the normal operators work as expected.
+All the normal operators work as expected:
+
+* `x + y`
+* `x - y`
+* `x * y`
+* `x / y`
+* `x % y`
+* `x > y`
+* `x < y`
+* `x >= y`
+* `x <= y`
+* `x == y`
+* `x != y`
+* `x && y`
+* `x || y`
+
+As well as compound assignments (`x += y`, etc).
 
 Amethyst also provides the following unary operators:
 
@@ -79,12 +95,36 @@ Amethyst also provides the following unary operators:
 * `!x`
 * `-x`
 
-:::note
-Postfix increment and decrement (`x++`) does not exist due to clarity concerns. This may change in the future.
-:::
+Floating point arithmetic is only available on 26.3+ with `/compute`. Including floats in an equation automatically promotes integers into floats.
 
 :::warning
-Minecraft may handle integer division slightly differently than the languages you are used to.
+Minecraft may handle integer division slightly differently than the languages you are used to. Scoreboard division floors while `/compute` truncates. Unless disabled, Amethyst for 26.3+ uses `/compute` for math by default.
+:::
+
+### NBT Equality
+
+All types can be used in `==` and `!=`. Internally, Amethyst attempts to overwrite one value with another and checks the success of the command. NBT equality is defined as `/data modify` failing when no change is made.
+
+### Math Functions
+
+:::Note
+These functions use `/compute` which is only available on 26.3+.
+:::
+
+Currently only `float` versions of these functions are available.
+
+* `float minecraft:math/abs(float x)`
+* `float minecraft:math/sqrt(float x)`
+* `float minecraft:math/sin(float x)`
+* `float minecraft:math/cos(float x)`
+* `float minecraft:math/round(float x)`
+* `float minecraft:math/floor(float x)`
+* `float minecraft:math/ceil(float x)`
+* `float minecraft:math/truncate(float x)`
+* `float minecraft:math/pow(float x, float y)`
+
+:::tip
+Resources in the `minecraft` namespace are already [imported](./namespaces.mdx#using-statements), so `minecraft:math/abs(x)` can be shortened to `math/abs(x)`.
 :::
 
 ## Strings

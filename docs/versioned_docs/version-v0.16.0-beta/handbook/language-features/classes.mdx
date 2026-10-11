@@ -66,9 +66,15 @@ Amethyst stores class type information at runtime at `storage amethyst:runtime t
 * Classes have a hidden `@type` property that holds the ID of the class.
 * Constructors have a hidden `this` parameter just like methods.
 
+:::warning
+As you may know, garbage collection is slow. Additionally, in the resource constrained environment of Minecraft commands, dereferencing pointers is also expensive. Using classes can lead to a large chain of pointers which in turn can prevent Amethyst from generating efficient code. Unless classes are needed, it is recommended to use structs and global variables instead. Unlike most native programming languages compiled to machine code, the number of instructions (or commands) is much more important than the memory layout for performance.
+
+While the garbage collection system always runs in the background, if the heap is not used then the performance impact is negligible at worst.
+:::
+
 ## Garbage Collection
 
-Objects allocated on the heap will be deleted if no surviving references to it are found. The garbage collector will run automatically every few ticks when necessary.
+Objects allocated on the heap will be deleted if no surviving references to it are found. The garbage collector will only run if new objects have been allocated.
 
 Places references are checked for:
 
@@ -81,13 +87,14 @@ Blocked locations for references:
 * Struct properties
 * Entity properties
 * Maps
+  * This may change in the future if a reliable way to iterate over NBT object keys is found. Feel free to create an [issue](https://github.com/kinderhead/Amethyst/issues) if you know of one.
 
 To get around these limitations, use [weak references](./references.mdx#weak-references).
 
 :::warning
-Storing lists or classes as `nbt` or `nbt&` will cause nested references to not be correctly marked as alive. Additionally, references to references do not check nested properties.
+Storing lists or classes as `nbt` or `nbt&` will cause nested references to not be correctly marked as alive. Additionally, references to references (`T&&`) do not check nested properties.
 
-Additionally, the garbage collection algorithm will start to lag the game at around 700 objects. A future asynchronous algorithm may be applied in the future.
+Additionally, the garbage collection algorithm will start to lag the game at around a few hundred objects. A future asynchronous algorithm may be applied in the future.
 :::
 
 ### Manual Marking

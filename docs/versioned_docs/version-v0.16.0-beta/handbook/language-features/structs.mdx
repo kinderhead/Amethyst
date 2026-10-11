@@ -36,7 +36,7 @@ Properties are set to their default values if not explicitly set. Additionally, 
         int z;
 
         int sum() {
-            return this.x + this.y + this.z;
+            return x + y + z;
         }
     }
 
@@ -45,7 +45,7 @@ Properties are set to their default values if not explicitly set. Additionally, 
     }
 `}/>
 
-Methods have an implicit variable called `this` which stores a reference to the current object.
+Methods have an implicit parameter called `this` which stores a reference to the current object. `this` is optional and can be omitted.
 
 Struct methods are processed internally as [Extension Methods](./extension-methods.mdx), where the first parameter is `macro T& this`.
 
