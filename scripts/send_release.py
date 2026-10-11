@@ -57,7 +57,7 @@ with open("webhook.txt", "r") as f:
     
 res = requests.post(url, json={
     "embeds": [{
-        "description": f"# [v{old_ver}](https://github.com/kinderhead/Amethyst/releases/tag/v{old_ver}])\n\n" + changelog.replace("## ", "### ").replace("# ", "## ").replace(
+        "description": f"# [v{old_ver}](https://github.com/kinderhead/Amethyst/releases/tag/v{old_ver})\n\n" + changelog.replace("## ", "### ").replace("# ", "## ").replace(
             "\n\n", "\n")
     }],
     "content": "<@&1536599453086257163>"
