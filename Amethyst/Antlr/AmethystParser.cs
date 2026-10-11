@@ -37,36 +37,37 @@ public partial class AmethystParser : Parser {
 	protected static DFA[] decisionToDFA;
 	protected static PredictionContextCache sharedContextCache = new PredictionContextCache();
 	public const int
-		Namespace=1, If=2, As=3, At=4, Else=5, For=6, Return=7, Break=8, Continue=9, 
-		New=10, Struct=11, Class=12, EntityDef=13, Implements=14, Macro=15, Inline=16, 
-		Virtual=17, Const=18, Static=19, Semi=20, Colon=21, Comma=22, LParen=23, 
-		RParen=24, LSquareBrak=25, RSquareBrak=26, LBrak=27, RBrak=28, Eq=29, 
-		Plus=30, Minus=31, Star=32, Slash=33, Mod=34, Not=35, PlusEq=36, MinusEq=37, 
-		StarEq=38, SlashEq=39, PercentEq=40, Hash=41, EqEq=42, Neq=43, Gt=44, 
-		Gte=45, Lt=46, Lte=47, And=48, AndAnd=49, OrOr=50, PlusPlus=51, MinusMinus=52, 
-		RangeOp=53, Dot=54, WeakRef=55, Boolean=56, RawIdentifier=57, String=58, 
-		Command=59, TargetSelectorVariable=60, Number=61, Whitespace=62, Comment=63, 
-		LineComment=64;
+		Namespace=1, Using=2, If=3, As=4, At=5, Else=6, For=7, Return=8, Break=9, 
+		Continue=10, New=11, Struct=12, Class=13, EntityDef=14, Implements=15, 
+		Macro=16, Inline=17, Virtual=18, Const=19, Static=20, Semi=21, Colon=22, 
+		Comma=23, LParen=24, RParen=25, LSquareBrak=26, RSquareBrak=27, LBrak=28, 
+		RBrak=29, Eq=30, Plus=31, Minus=32, Star=33, Slash=34, Mod=35, Not=36, 
+		PlusEq=37, MinusEq=38, StarEq=39, SlashEq=40, PercentEq=41, Hash=42, EqEq=43, 
+		Neq=44, Gt=45, Gte=46, Lt=47, Lte=48, And=49, AndAnd=50, OrOr=51, PlusPlus=52, 
+		MinusMinus=53, RangeOp=54, Dot=55, WeakRef=56, Boolean=57, RawIdentifier=58, 
+		String=59, Command=60, TargetSelectorVariable=61, Number=62, Whitespace=63, 
+		Comment=64, LineComment=65;
 	public const int
-		RULE_root = 0, RULE_ns = 1, RULE_conditionalComp = 2, RULE_function = 3, 
-		RULE_functionTag = 4, RULE_functionModifier = 5, RULE_block = 6, RULE_structDecl = 7, 
-		RULE_declaration = 8, RULE_method = 9, RULE_methodModifier = 10, RULE_statement = 11, 
-		RULE_initAssignmentStatement = 12, RULE_expressionStatement = 13, RULE_commandStatement = 14, 
-		RULE_executeStatement = 15, RULE_executeSubcommand = 16, RULE_forStatement = 17, 
-		RULE_returnStatement = 18, RULE_loopControlStatement = 19, RULE_expression = 20, 
-		RULE_assignmentExpression = 21, RULE_newExpression = 22, RULE_logicalExpression = 23, 
-		RULE_equalityExpression = 24, RULE_relationalExpression = 25, RULE_additiveExpression = 26, 
-		RULE_multiplicativeExpression = 27, RULE_castExpression = 28, RULE_unaryExpression = 29, 
-		RULE_postfixExpression = 30, RULE_indexExpression = 31, RULE_propertyExpression = 32, 
-		RULE_rangeExpression = 33, RULE_primaryExpression = 34, RULE_listLiteral = 35, 
-		RULE_compoundLiteral = 36, RULE_compoundKeyPair = 37, RULE_targetSelector = 38, 
-		RULE_targetSelectorArgument = 39, RULE_paramList = 40, RULE_paramPair = 41, 
-		RULE_abstractParamList = 42, RULE_abstractParamPair = 43, RULE_paramModifier = 44, 
-		RULE_expressionList = 45, RULE_type = 46, RULE_simpleType = 47, RULE_id = 48;
+		RULE_root = 0, RULE_ns = 1, RULE_usingStatement = 2, RULE_conditionalComp = 3, 
+		RULE_function = 4, RULE_functionTag = 5, RULE_functionModifier = 6, RULE_block = 7, 
+		RULE_structDecl = 8, RULE_declaration = 9, RULE_method = 10, RULE_methodModifier = 11, 
+		RULE_statement = 12, RULE_initAssignmentStatement = 13, RULE_expressionStatement = 14, 
+		RULE_commandStatement = 15, RULE_executeStatement = 16, RULE_executeSubcommand = 17, 
+		RULE_forStatement = 18, RULE_returnStatement = 19, RULE_loopControlStatement = 20, 
+		RULE_expression = 21, RULE_assignmentExpression = 22, RULE_newExpression = 23, 
+		RULE_logicalExpression = 24, RULE_equalityExpression = 25, RULE_relationalExpression = 26, 
+		RULE_additiveExpression = 27, RULE_multiplicativeExpression = 28, RULE_castExpression = 29, 
+		RULE_unaryExpression = 30, RULE_postfixExpression = 31, RULE_indexExpression = 32, 
+		RULE_propertyExpression = 33, RULE_rangeExpression = 34, RULE_primaryExpression = 35, 
+		RULE_listLiteral = 36, RULE_compoundLiteral = 37, RULE_compoundKeyPair = 38, 
+		RULE_targetSelector = 39, RULE_targetSelectorArgument = 40, RULE_paramList = 41, 
+		RULE_paramPair = 42, RULE_abstractParamList = 43, RULE_abstractParamPair = 44, 
+		RULE_paramModifier = 45, RULE_expressionList = 46, RULE_type = 47, RULE_simpleType = 48, 
+		RULE_id = 49;
 	public static readonly string[] ruleNames = {
-		"root", "ns", "conditionalComp", "function", "functionTag", "functionModifier", 
-		"block", "structDecl", "declaration", "method", "methodModifier", "statement", 
-		"initAssignmentStatement", "expressionStatement", "commandStatement", 
+		"root", "ns", "usingStatement", "conditionalComp", "function", "functionTag", 
+		"functionModifier", "block", "structDecl", "declaration", "method", "methodModifier", 
+		"statement", "initAssignmentStatement", "expressionStatement", "commandStatement", 
 		"executeStatement", "executeSubcommand", "forStatement", "returnStatement", 
 		"loopControlStatement", "expression", "assignmentExpression", "newExpression", 
 		"logicalExpression", "equalityExpression", "relationalExpression", "additiveExpression", 
@@ -79,8 +80,8 @@ public partial class AmethystParser : Parser {
 	};
 
 	private static readonly string[] _LiteralNames = {
-		null, "'namespace'", "'if'", "'as'", "'at'", "'else'", "'for'", "'return'", 
-		"'break'", "'continue'", "'new'", "'struct'", "'class'", "'entitydef'", 
+		null, "'namespace'", "'using'", "'if'", "'as'", "'at'", "'else'", "'for'", 
+		"'return'", "'break'", "'continue'", "'new'", "'struct'", "'class'", "'entitydef'", 
 		"'implements'", "'macro'", "'inline'", "'virtual'", "'const'", "'static'", 
 		"';'", "':'", "','", "'('", "')'", "'['", "']'", "'{'", "'}'", "'='", 
 		"'+'", "'-'", "'*'", "'/'", "'%'", "'!'", "'+='", "'-='", "'*='", "'/='", 
@@ -88,11 +89,11 @@ public partial class AmethystParser : Parser {
 		"'||'", "'++'", "'--'", "'..'", "'.'", "'^'"
 	};
 	private static readonly string[] _SymbolicNames = {
-		null, "Namespace", "If", "As", "At", "Else", "For", "Return", "Break", 
-		"Continue", "New", "Struct", "Class", "EntityDef", "Implements", "Macro", 
-		"Inline", "Virtual", "Const", "Static", "Semi", "Colon", "Comma", "LParen", 
-		"RParen", "LSquareBrak", "RSquareBrak", "LBrak", "RBrak", "Eq", "Plus", 
-		"Minus", "Star", "Slash", "Mod", "Not", "PlusEq", "MinusEq", "StarEq", 
+		null, "Namespace", "Using", "If", "As", "At", "Else", "For", "Return", 
+		"Break", "Continue", "New", "Struct", "Class", "EntityDef", "Implements", 
+		"Macro", "Inline", "Virtual", "Const", "Static", "Semi", "Colon", "Comma", 
+		"LParen", "RParen", "LSquareBrak", "RSquareBrak", "LBrak", "RBrak", "Eq", 
+		"Plus", "Minus", "Star", "Slash", "Mod", "Not", "PlusEq", "MinusEq", "StarEq", 
 		"SlashEq", "PercentEq", "Hash", "EqEq", "Neq", "Gt", "Gte", "Lt", "Lte", 
 		"And", "AndAnd", "OrOr", "PlusPlus", "MinusMinus", "RangeOp", "Dot", "WeakRef", 
 		"Boolean", "RawIdentifier", "String", "Command", "TargetSelectorVariable", 
@@ -138,6 +139,12 @@ public partial class AmethystParser : Parser {
 		[System.Diagnostics.DebuggerNonUserCode] public NsContext ns(int i) {
 			return GetRuleContext<NsContext>(i);
 		}
+		[System.Diagnostics.DebuggerNonUserCode] public UsingStatementContext[] usingStatement() {
+			return GetRuleContexts<UsingStatementContext>();
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public UsingStatementContext usingStatement(int i) {
+			return GetRuleContext<UsingStatementContext>(i);
+		}
 		[System.Diagnostics.DebuggerNonUserCode] public FunctionContext[] function() {
 			return GetRuleContexts<FunctionContext>();
 		}
@@ -181,55 +188,61 @@ public partial class AmethystParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 107;
+			State = 110;
 			ErrorHandler.Sync(this);
 			_la = TokenStream.LA(1);
-			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & 144117387101026306L) != 0)) {
+			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & 288234774202052614L) != 0)) {
 				{
-				State = 105;
+				State = 108;
 				ErrorHandler.Sync(this);
 				switch ( Interpreter.AdaptivePredict(TokenStream,0,Context) ) {
 				case 1:
 					{
-					State = 98;
+					State = 100;
 					ns();
 					}
 					break;
 				case 2:
 					{
-					State = 99;
-					function();
+					State = 101;
+					usingStatement();
 					}
 					break;
 				case 3:
 					{
-					State = 100;
-					structDecl();
+					State = 102;
+					function();
 					}
 					break;
 				case 4:
 					{
-					{
-					State = 101;
-					initAssignmentStatement();
-					State = 102;
-					Match(Semi);
-					}
+					State = 103;
+					structDecl();
 					}
 					break;
 				case 5:
 					{
+					{
 					State = 104;
+					initAssignmentStatement();
+					State = 105;
+					Match(Semi);
+					}
+					}
+					break;
+				case 6:
+					{
+					State = 107;
 					Match(Semi);
 					}
 					break;
 				}
 				}
-				State = 109;
+				State = 112;
 				ErrorHandler.Sync(this);
 				_la = TokenStream.LA(1);
 			}
-			State = 110;
+			State = 113;
 			Match(Eof);
 			}
 		}
@@ -270,11 +283,56 @@ public partial class AmethystParser : Parser {
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 112;
+			State = 115;
 			Match(Namespace);
-			State = 113;
+			State = 116;
 			id();
-			State = 114;
+			State = 117;
+			Match(Semi);
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			ErrorHandler.ReportError(this, re);
+			ErrorHandler.Recover(this, re);
+		}
+		finally {
+			ExitRule();
+		}
+		return _localctx;
+	}
+
+	public partial class UsingStatementContext : ParserRuleContext {
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode Using() { return GetToken(AmethystParser.Using, 0); }
+		[System.Diagnostics.DebuggerNonUserCode] public IdContext id() {
+			return GetRuleContext<IdContext>(0);
+		}
+		[System.Diagnostics.DebuggerNonUserCode] public ITerminalNode Semi() { return GetToken(AmethystParser.Semi, 0); }
+		public UsingStatementContext(ParserRuleContext parent, int invokingState)
+			: base(parent, invokingState)
+		{
+		}
+		public override int RuleIndex { get { return RULE_usingStatement; } }
+		[System.Diagnostics.DebuggerNonUserCode]
+		public override TResult Accept<TResult>(IParseTreeVisitor<TResult> visitor) {
+			IAmethystVisitor<TResult> typedVisitor = visitor as IAmethystVisitor<TResult>;
+			if (typedVisitor != null) return typedVisitor.VisitUsingStatement(this);
+			else return visitor.VisitChildren(this);
+		}
+	}
+
+	[RuleVersion(0)]
+	public UsingStatementContext usingStatement() {
+		UsingStatementContext _localctx = new UsingStatementContext(Context, State);
+		EnterRule(_localctx, 4, RULE_usingStatement);
+		try {
+			EnterOuterAlt(_localctx, 1);
+			{
+			State = 119;
+			Match(Using);
+			State = 120;
+			id();
+			State = 121;
 			Match(Semi);
 			}
 		}
@@ -314,27 +372,27 @@ public partial class AmethystParser : Parser {
 	[RuleVersion(0)]
 	public ConditionalCompContext conditionalComp() {
 		ConditionalCompContext _localctx = new ConditionalCompContext(Context, State);
-		EnterRule(_localctx, 4, RULE_conditionalComp);
+		EnterRule(_localctx, 6, RULE_conditionalComp);
 		int _la;
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 116;
+			State = 123;
 			Match(Hash);
-			State = 117;
+			State = 124;
 			Match(LSquareBrak);
-			State = 118;
+			State = 125;
 			_la = TokenStream.LA(1);
-			if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & 263882790666240L) != 0)) ) {
+			if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & 527765581332480L) != 0)) ) {
 			ErrorHandler.RecoverInline(this);
 			}
 			else {
 				ErrorHandler.ReportMatch(this);
 			    Consume();
 			}
-			State = 119;
+			State = 126;
 			Match(Number);
-			State = 120;
+			State = 127;
 			Match(RSquareBrak);
 			}
 		}
@@ -397,58 +455,58 @@ public partial class AmethystParser : Parser {
 	[RuleVersion(0)]
 	public FunctionContext function() {
 		FunctionContext _localctx = new FunctionContext(Context, State);
-		EnterRule(_localctx, 6, RULE_function);
+		EnterRule(_localctx, 8, RULE_function);
 		int _la;
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 126;
+			State = 133;
 			ErrorHandler.Sync(this);
 			_la = TokenStream.LA(1);
 			while (_la==Hash) {
 				{
-				State = 124;
+				State = 131;
 				ErrorHandler.Sync(this);
 				switch ( Interpreter.AdaptivePredict(TokenStream,2,Context) ) {
 				case 1:
 					{
-					State = 122;
+					State = 129;
 					functionTag();
 					}
 					break;
 				case 2:
 					{
-					State = 123;
+					State = 130;
 					conditionalComp();
 					}
 					break;
 				}
 				}
-				State = 128;
+				State = 135;
 				ErrorHandler.Sync(this);
 				_la = TokenStream.LA(1);
 			}
-			State = 132;
+			State = 139;
 			ErrorHandler.Sync(this);
 			_la = TokenStream.LA(1);
 			while (_la==Inline) {
 				{
 				{
-				State = 129;
+				State = 136;
 				functionModifier();
 				}
 				}
-				State = 134;
+				State = 141;
 				ErrorHandler.Sync(this);
 				_la = TokenStream.LA(1);
 			}
-			State = 135;
+			State = 142;
 			type(0);
-			State = 136;
+			State = 143;
 			_localctx.name = id();
-			State = 137;
+			State = 144;
 			paramList();
-			State = 138;
+			State = 145;
 			block();
 			}
 		}
@@ -484,13 +542,13 @@ public partial class AmethystParser : Parser {
 	[RuleVersion(0)]
 	public FunctionTagContext functionTag() {
 		FunctionTagContext _localctx = new FunctionTagContext(Context, State);
-		EnterRule(_localctx, 8, RULE_functionTag);
+		EnterRule(_localctx, 10, RULE_functionTag);
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 140;
+			State = 147;
 			Match(Hash);
-			State = 141;
+			State = 148;
 			id();
 			}
 		}
@@ -523,11 +581,11 @@ public partial class AmethystParser : Parser {
 	[RuleVersion(0)]
 	public FunctionModifierContext functionModifier() {
 		FunctionModifierContext _localctx = new FunctionModifierContext(Context, State);
-		EnterRule(_localctx, 10, RULE_functionModifier);
+		EnterRule(_localctx, 12, RULE_functionModifier);
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 143;
+			State = 150;
 			Match(Inline);
 			}
 		}
@@ -567,28 +625,28 @@ public partial class AmethystParser : Parser {
 	[RuleVersion(0)]
 	public BlockContext block() {
 		BlockContext _localctx = new BlockContext(Context, State);
-		EnterRule(_localctx, 12, RULE_block);
+		EnterRule(_localctx, 14, RULE_block);
 		int _la;
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 145;
+			State = 152;
 			Match(LBrak);
-			State = 149;
+			State = 156;
 			ErrorHandler.Sync(this);
 			_la = TokenStream.LA(1);
-			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & 4591703535083325404L) != 0)) {
+			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & 9183407070166650808L) != 0)) {
 				{
 				{
-				State = 146;
+				State = 153;
 				statement();
 				}
 				}
-				State = 151;
+				State = 158;
 				ErrorHandler.Sync(this);
 				_la = TokenStream.LA(1);
 			}
-			State = 152;
+			State = 159;
 			Match(RBrak);
 			}
 		}
@@ -644,63 +702,63 @@ public partial class AmethystParser : Parser {
 	[RuleVersion(0)]
 	public StructDeclContext structDecl() {
 		StructDeclContext _localctx = new StructDeclContext(Context, State);
-		EnterRule(_localctx, 14, RULE_structDecl);
+		EnterRule(_localctx, 16, RULE_structDecl);
 		int _la;
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 154;
+			State = 161;
 			_la = TokenStream.LA(1);
-			if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & 14336L) != 0)) ) {
+			if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & 28672L) != 0)) ) {
 			ErrorHandler.RecoverInline(this);
 			}
 			else {
 				ErrorHandler.ReportMatch(this);
 			    Consume();
 			}
-			State = 155;
+			State = 162;
 			id();
-			State = 158;
+			State = 165;
 			ErrorHandler.Sync(this);
 			_la = TokenStream.LA(1);
 			if (_la==Implements) {
 				{
-				State = 156;
+				State = 163;
 				Match(Implements);
-				State = 157;
+				State = 164;
 				simpleType();
 				}
 			}
 
-			State = 160;
+			State = 167;
 			Match(LBrak);
-			State = 165;
+			State = 172;
 			ErrorHandler.Sync(this);
 			_la = TokenStream.LA(1);
-			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & 144117387099308032L) != 0)) {
+			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & 288234774198616064L) != 0)) {
 				{
-				State = 163;
+				State = 170;
 				ErrorHandler.Sync(this);
 				switch ( Interpreter.AdaptivePredict(TokenStream,7,Context) ) {
 				case 1:
 					{
-					State = 161;
+					State = 168;
 					declaration();
 					}
 					break;
 				case 2:
 					{
-					State = 162;
+					State = 169;
 					method();
 					}
 					break;
 				}
 				}
-				State = 167;
+				State = 174;
 				ErrorHandler.Sync(this);
 				_la = TokenStream.LA(1);
 			}
-			State = 168;
+			State = 175;
 			Match(RBrak);
 			}
 		}
@@ -744,38 +802,38 @@ public partial class AmethystParser : Parser {
 	[RuleVersion(0)]
 	public DeclarationContext declaration() {
 		DeclarationContext _localctx = new DeclarationContext(Context, State);
-		EnterRule(_localctx, 16, RULE_declaration);
+		EnterRule(_localctx, 18, RULE_declaration);
 		int _la;
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 170;
+			State = 177;
 			type(0);
-			State = 171;
+			State = 178;
 			Match(RawIdentifier);
-			State = 174;
+			State = 181;
 			ErrorHandler.Sync(this);
 			_la = TokenStream.LA(1);
 			if (_la==Eq) {
 				{
-				State = 172;
+				State = 179;
 				Match(Eq);
-				State = 173;
+				State = 180;
 				expression();
 				}
 			}
 
-			State = 177;
+			State = 184;
 			ErrorHandler.Sync(this);
 			_la = TokenStream.LA(1);
 			do {
 				{
 				{
-				State = 176;
+				State = 183;
 				Match(Semi);
 				}
 				}
-				State = 179;
+				State = 186;
 				ErrorHandler.Sync(this);
 				_la = TokenStream.LA(1);
 			} while ( _la==Semi );
@@ -841,33 +899,33 @@ public partial class AmethystParser : Parser {
 	[RuleVersion(0)]
 	public MethodContext method() {
 		MethodContext _localctx = new MethodContext(Context, State);
-		EnterRule(_localctx, 18, RULE_method);
+		EnterRule(_localctx, 20, RULE_method);
 		int _la;
 		try {
-			State = 208;
+			State = 215;
 			ErrorHandler.Sync(this);
 			switch ( Interpreter.AdaptivePredict(TokenStream,16,Context) ) {
 			case 1:
 				EnterOuterAlt(_localctx, 1);
 				{
-				State = 185;
+				State = 192;
 				ErrorHandler.Sync(this);
 				_la = TokenStream.LA(1);
-				while ((((_la) & ~0x3f) == 0 && ((1L << _la) & 2199023452160L) != 0)) {
+				while ((((_la) & ~0x3f) == 0 && ((1L << _la) & 4398046904320L) != 0)) {
 					{
-					State = 183;
+					State = 190;
 					ErrorHandler.Sync(this);
 					switch (TokenStream.LA(1)) {
 					case Inline:
 					case Virtual:
 						{
-						State = 181;
+						State = 188;
 						methodModifier();
 						}
 						break;
 					case Hash:
 						{
-						State = 182;
+						State = 189;
 						conditionalComp();
 						}
 						break;
@@ -875,40 +933,40 @@ public partial class AmethystParser : Parser {
 						throw new NoViableAltException(this);
 					}
 					}
-					State = 187;
+					State = 194;
 					ErrorHandler.Sync(this);
 					_la = TokenStream.LA(1);
 				}
-				State = 188;
+				State = 195;
 				type(0);
-				State = 189;
+				State = 196;
 				Match(RawIdentifier);
-				State = 190;
+				State = 197;
 				paramList();
-				State = 191;
+				State = 198;
 				block();
 				}
 				break;
 			case 2:
 				EnterOuterAlt(_localctx, 2);
 				{
-				State = 197;
+				State = 204;
 				ErrorHandler.Sync(this);
 				_la = TokenStream.LA(1);
 				while (_la==Inline || _la==Hash) {
 					{
-					State = 195;
+					State = 202;
 					ErrorHandler.Sync(this);
 					switch (TokenStream.LA(1)) {
 					case Inline:
 						{
-						State = 193;
+						State = 200;
 						functionModifier();
 						}
 						break;
 					case Hash:
 						{
-						State = 194;
+						State = 201;
 						conditionalComp();
 						}
 						break;
@@ -916,27 +974,27 @@ public partial class AmethystParser : Parser {
 						throw new NoViableAltException(this);
 					}
 					}
-					State = 199;
+					State = 206;
 					ErrorHandler.Sync(this);
 					_la = TokenStream.LA(1);
 				}
-				State = 200;
+				State = 207;
 				Match(RawIdentifier);
-				State = 201;
+				State = 208;
 				paramList();
-				State = 204;
+				State = 211;
 				ErrorHandler.Sync(this);
 				_la = TokenStream.LA(1);
 				if (_la==Colon) {
 					{
-					State = 202;
+					State = 209;
 					Match(Colon);
-					State = 203;
+					State = 210;
 					expression();
 					}
 				}
 
-				State = 206;
+				State = 213;
 				block();
 				}
 				break;
@@ -974,22 +1032,22 @@ public partial class AmethystParser : Parser {
 	[RuleVersion(0)]
 	public MethodModifierContext methodModifier() {
 		MethodModifierContext _localctx = new MethodModifierContext(Context, State);
-		EnterRule(_localctx, 20, RULE_methodModifier);
+		EnterRule(_localctx, 22, RULE_methodModifier);
 		try {
-			State = 212;
+			State = 219;
 			ErrorHandler.Sync(this);
 			switch (TokenStream.LA(1)) {
 			case Inline:
 				EnterOuterAlt(_localctx, 1);
 				{
-				State = 210;
+				State = 217;
 				functionModifier();
 				}
 				break;
 			case Virtual:
 				EnterOuterAlt(_localctx, 2);
 				{
-				State = 211;
+				State = 218;
 				Match(Virtual);
 				}
 				break;
@@ -1059,69 +1117,69 @@ public partial class AmethystParser : Parser {
 	[RuleVersion(0)]
 	public StatementContext statement() {
 		StatementContext _localctx = new StatementContext(Context, State);
-		EnterRule(_localctx, 22, RULE_statement);
+		EnterRule(_localctx, 24, RULE_statement);
 		int _la;
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 217;
+			State = 224;
 			ErrorHandler.Sync(this);
 			_la = TokenStream.LA(1);
 			while (_la==Hash) {
 				{
 				{
-				State = 214;
+				State = 221;
 				conditionalComp();
 				}
 				}
-				State = 219;
+				State = 226;
 				ErrorHandler.Sync(this);
 				_la = TokenStream.LA(1);
 			}
-			State = 235;
+			State = 242;
 			ErrorHandler.Sync(this);
 			switch ( Interpreter.AdaptivePredict(TokenStream,21,Context) ) {
 			case 1:
 				{
-				State = 224;
+				State = 231;
 				ErrorHandler.Sync(this);
 				switch ( Interpreter.AdaptivePredict(TokenStream,19,Context) ) {
 				case 1:
 					{
-					State = 220;
+					State = 227;
 					initAssignmentStatement();
 					}
 					break;
 				case 2:
 					{
-					State = 221;
+					State = 228;
 					expressionStatement();
 					}
 					break;
 				case 3:
 					{
-					State = 222;
+					State = 229;
 					returnStatement();
 					}
 					break;
 				case 4:
 					{
-					State = 223;
+					State = 230;
 					loopControlStatement();
 					}
 					break;
 				}
-				State = 227;
+				State = 234;
 				ErrorHandler.Sync(this);
 				_la = TokenStream.LA(1);
 				do {
 					{
 					{
-					State = 226;
+					State = 233;
 					Match(Semi);
 					}
 					}
-					State = 229;
+					State = 236;
 					ErrorHandler.Sync(this);
 					_la = TokenStream.LA(1);
 				} while ( _la==Semi );
@@ -1129,25 +1187,25 @@ public partial class AmethystParser : Parser {
 				break;
 			case 2:
 				{
-				State = 231;
+				State = 238;
 				commandStatement();
 				}
 				break;
 			case 3:
 				{
-				State = 232;
+				State = 239;
 				block();
 				}
 				break;
 			case 4:
 				{
-				State = 233;
+				State = 240;
 				executeStatement();
 				}
 				break;
 			case 5:
 				{
-				State = 234;
+				State = 241;
 				forStatement();
 				}
 				break;
@@ -1200,18 +1258,18 @@ public partial class AmethystParser : Parser {
 	[RuleVersion(0)]
 	public InitAssignmentStatementContext initAssignmentStatement() {
 		InitAssignmentStatementContext _localctx = new InitAssignmentStatementContext(Context, State);
-		EnterRule(_localctx, 24, RULE_initAssignmentStatement);
+		EnterRule(_localctx, 26, RULE_initAssignmentStatement);
 		int _la;
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 240;
+			State = 247;
 			ErrorHandler.Sync(this);
 			_la = TokenStream.LA(1);
 			while (_la==Const || _la==Static) {
 				{
 				{
-				State = 237;
+				State = 244;
 				_la = TokenStream.LA(1);
 				if ( !(_la==Const || _la==Static) ) {
 				ErrorHandler.RecoverInline(this);
@@ -1222,22 +1280,22 @@ public partial class AmethystParser : Parser {
 				}
 				}
 				}
-				State = 242;
+				State = 249;
 				ErrorHandler.Sync(this);
 				_la = TokenStream.LA(1);
 			}
-			State = 243;
+			State = 250;
 			type(0);
-			State = 244;
+			State = 251;
 			id();
-			State = 247;
+			State = 254;
 			ErrorHandler.Sync(this);
 			_la = TokenStream.LA(1);
 			if (_la==Eq) {
 				{
-				State = 245;
+				State = 252;
 				Match(Eq);
-				State = 246;
+				State = 253;
 				expression();
 				}
 			}
@@ -1275,11 +1333,11 @@ public partial class AmethystParser : Parser {
 	[RuleVersion(0)]
 	public ExpressionStatementContext expressionStatement() {
 		ExpressionStatementContext _localctx = new ExpressionStatementContext(Context, State);
-		EnterRule(_localctx, 26, RULE_expressionStatement);
+		EnterRule(_localctx, 28, RULE_expressionStatement);
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 249;
+			State = 256;
 			expression();
 			}
 		}
@@ -1312,11 +1370,11 @@ public partial class AmethystParser : Parser {
 	[RuleVersion(0)]
 	public CommandStatementContext commandStatement() {
 		CommandStatementContext _localctx = new CommandStatementContext(Context, State);
-		EnterRule(_localctx, 28, RULE_commandStatement);
+		EnterRule(_localctx, 30, RULE_commandStatement);
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 251;
+			State = 258;
 			Match(Command);
 			}
 		}
@@ -1361,12 +1419,12 @@ public partial class AmethystParser : Parser {
 	[RuleVersion(0)]
 	public ExecuteStatementContext executeStatement() {
 		ExecuteStatementContext _localctx = new ExecuteStatementContext(Context, State);
-		EnterRule(_localctx, 30, RULE_executeStatement);
+		EnterRule(_localctx, 32, RULE_executeStatement);
 		try {
 			int _alt;
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 254;
+			State = 261;
 			ErrorHandler.Sync(this);
 			_alt = 1;
 			do {
@@ -1374,7 +1432,7 @@ public partial class AmethystParser : Parser {
 				case 1:
 					{
 					{
-					State = 253;
+					State = 260;
 					executeSubcommand();
 					}
 					}
@@ -1382,20 +1440,20 @@ public partial class AmethystParser : Parser {
 				default:
 					throw new NoViableAltException(this);
 				}
-				State = 256;
+				State = 263;
 				ErrorHandler.Sync(this);
 				_alt = Interpreter.AdaptivePredict(TokenStream,24,Context);
 			} while ( _alt!=2 && _alt!=global::Antlr4.Runtime.Atn.ATN.INVALID_ALT_NUMBER );
-			State = 258;
+			State = 265;
 			statement();
-			State = 261;
+			State = 268;
 			ErrorHandler.Sync(this);
 			switch ( Interpreter.AdaptivePredict(TokenStream,25,Context) ) {
 			case 1:
 				{
-				State = 259;
+				State = 266;
 				Match(Else);
-				State = 260;
+				State = 267;
 				statement();
 				}
 				break;
@@ -1438,25 +1496,25 @@ public partial class AmethystParser : Parser {
 	[RuleVersion(0)]
 	public ExecuteSubcommandContext executeSubcommand() {
 		ExecuteSubcommandContext _localctx = new ExecuteSubcommandContext(Context, State);
-		EnterRule(_localctx, 32, RULE_executeSubcommand);
+		EnterRule(_localctx, 34, RULE_executeSubcommand);
 		int _la;
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 263;
+			State = 270;
 			_la = TokenStream.LA(1);
-			if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & 28L) != 0)) ) {
+			if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & 56L) != 0)) ) {
 			ErrorHandler.RecoverInline(this);
 			}
 			else {
 				ErrorHandler.ReportMatch(this);
 			    Consume();
 			}
-			State = 264;
+			State = 271;
 			Match(LParen);
-			State = 265;
+			State = 272;
 			expression();
-			State = 266;
+			State = 273;
 			Match(RParen);
 			}
 		}
@@ -1509,36 +1567,36 @@ public partial class AmethystParser : Parser {
 	[RuleVersion(0)]
 	public ForStatementContext forStatement() {
 		ForStatementContext _localctx = new ForStatementContext(Context, State);
-		EnterRule(_localctx, 34, RULE_forStatement);
+		EnterRule(_localctx, 36, RULE_forStatement);
 		int _la;
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 268;
+			State = 275;
 			Match(For);
-			State = 269;
+			State = 276;
 			Match(LParen);
-			State = 271;
+			State = 278;
 			ErrorHandler.Sync(this);
 			_la = TokenStream.LA(1);
-			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & 144115188076642304L) != 0)) {
+			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & 288230376153284608L) != 0)) {
 				{
-				State = 270;
+				State = 277;
 				initAssignmentStatement();
 				}
 			}
 
-			State = 273;
+			State = 280;
 			Match(Semi);
-			State = 274;
+			State = 281;
 			_localctx.cond = expression();
-			State = 275;
+			State = 282;
 			Match(Semi);
-			State = 276;
+			State = 283;
 			_localctx.it = expression();
-			State = 277;
+			State = 284;
 			Match(RParen);
-			State = 278;
+			State = 285;
 			statement();
 			}
 		}
@@ -1574,19 +1632,19 @@ public partial class AmethystParser : Parser {
 	[RuleVersion(0)]
 	public ReturnStatementContext returnStatement() {
 		ReturnStatementContext _localctx = new ReturnStatementContext(Context, State);
-		EnterRule(_localctx, 36, RULE_returnStatement);
+		EnterRule(_localctx, 38, RULE_returnStatement);
 		int _la;
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 280;
+			State = 287;
 			Match(Return);
-			State = 282;
+			State = 289;
 			ErrorHandler.Sync(this);
 			_la = TokenStream.LA(1);
-			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & 4015240583755858944L) != 0)) {
+			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & 8030481167511717888L) != 0)) {
 				{
-				State = 281;
+				State = 288;
 				expression();
 				}
 			}
@@ -1623,12 +1681,12 @@ public partial class AmethystParser : Parser {
 	[RuleVersion(0)]
 	public LoopControlStatementContext loopControlStatement() {
 		LoopControlStatementContext _localctx = new LoopControlStatementContext(Context, State);
-		EnterRule(_localctx, 38, RULE_loopControlStatement);
+		EnterRule(_localctx, 40, RULE_loopControlStatement);
 		int _la;
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 284;
+			State = 291;
 			_la = TokenStream.LA(1);
 			if ( !(_la==Break || _la==Continue) ) {
 			ErrorHandler.RecoverInline(this);
@@ -1670,11 +1728,11 @@ public partial class AmethystParser : Parser {
 	[RuleVersion(0)]
 	public ExpressionContext expression() {
 		ExpressionContext _localctx = new ExpressionContext(Context, State);
-		EnterRule(_localctx, 40, RULE_expression);
+		EnterRule(_localctx, 42, RULE_expression);
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 286;
+			State = 293;
 			assignmentExpression();
 			}
 		}
@@ -1718,28 +1776,28 @@ public partial class AmethystParser : Parser {
 	[RuleVersion(0)]
 	public AssignmentExpressionContext assignmentExpression() {
 		AssignmentExpressionContext _localctx = new AssignmentExpressionContext(Context, State);
-		EnterRule(_localctx, 42, RULE_assignmentExpression);
+		EnterRule(_localctx, 44, RULE_assignmentExpression);
 		int _la;
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 288;
+			State = 295;
 			newExpression();
-			State = 291;
+			State = 298;
 			ErrorHandler.Sync(this);
 			_la = TokenStream.LA(1);
-			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & 2130840649728L) != 0)) {
+			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & 4261681299456L) != 0)) {
 				{
-				State = 289;
+				State = 296;
 				_la = TokenStream.LA(1);
-				if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & 2130840649728L) != 0)) ) {
+				if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & 4261681299456L) != 0)) ) {
 				ErrorHandler.RecoverInline(this);
 				}
 				else {
 					ErrorHandler.ReportMatch(this);
 				    Consume();
 				}
-				State = 290;
+				State = 297;
 				expression();
 				}
 			}
@@ -1784,9 +1842,9 @@ public partial class AmethystParser : Parser {
 	[RuleVersion(0)]
 	public NewExpressionContext newExpression() {
 		NewExpressionContext _localctx = new NewExpressionContext(Context, State);
-		EnterRule(_localctx, 44, RULE_newExpression);
+		EnterRule(_localctx, 46, RULE_newExpression);
 		try {
-			State = 298;
+			State = 305;
 			ErrorHandler.Sync(this);
 			switch (TokenStream.LA(1)) {
 			case LParen:
@@ -1807,18 +1865,18 @@ public partial class AmethystParser : Parser {
 			case Number:
 				EnterOuterAlt(_localctx, 1);
 				{
-				State = 293;
+				State = 300;
 				logicalExpression();
 				}
 				break;
 			case New:
 				EnterOuterAlt(_localctx, 2);
 				{
-				State = 294;
+				State = 301;
 				Match(New);
-				State = 295;
+				State = 302;
 				type(0);
-				State = 296;
+				State = 303;
 				expressionList();
 				}
 				break;
@@ -1868,20 +1926,20 @@ public partial class AmethystParser : Parser {
 	[RuleVersion(0)]
 	public LogicalExpressionContext logicalExpression() {
 		LogicalExpressionContext _localctx = new LogicalExpressionContext(Context, State);
-		EnterRule(_localctx, 46, RULE_logicalExpression);
+		EnterRule(_localctx, 48, RULE_logicalExpression);
 		int _la;
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 300;
+			State = 307;
 			equalityExpression();
-			State = 305;
+			State = 312;
 			ErrorHandler.Sync(this);
 			_la = TokenStream.LA(1);
 			while (_la==AndAnd || _la==OrOr) {
 				{
 				{
-				State = 301;
+				State = 308;
 				_la = TokenStream.LA(1);
 				if ( !(_la==AndAnd || _la==OrOr) ) {
 				ErrorHandler.RecoverInline(this);
@@ -1890,11 +1948,11 @@ public partial class AmethystParser : Parser {
 					ErrorHandler.ReportMatch(this);
 				    Consume();
 				}
-				State = 302;
+				State = 309;
 				equalityExpression();
 				}
 				}
-				State = 307;
+				State = 314;
 				ErrorHandler.Sync(this);
 				_la = TokenStream.LA(1);
 			}
@@ -1942,20 +2000,20 @@ public partial class AmethystParser : Parser {
 	[RuleVersion(0)]
 	public EqualityExpressionContext equalityExpression() {
 		EqualityExpressionContext _localctx = new EqualityExpressionContext(Context, State);
-		EnterRule(_localctx, 48, RULE_equalityExpression);
+		EnterRule(_localctx, 50, RULE_equalityExpression);
 		int _la;
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 308;
+			State = 315;
 			relationalExpression();
-			State = 313;
+			State = 320;
 			ErrorHandler.Sync(this);
 			_la = TokenStream.LA(1);
 			while (_la==EqEq || _la==Neq) {
 				{
 				{
-				State = 309;
+				State = 316;
 				_la = TokenStream.LA(1);
 				if ( !(_la==EqEq || _la==Neq) ) {
 				ErrorHandler.RecoverInline(this);
@@ -1964,11 +2022,11 @@ public partial class AmethystParser : Parser {
 					ErrorHandler.ReportMatch(this);
 				    Consume();
 				}
-				State = 310;
+				State = 317;
 				relationalExpression();
 				}
 				}
-				State = 315;
+				State = 322;
 				ErrorHandler.Sync(this);
 				_la = TokenStream.LA(1);
 			}
@@ -2024,33 +2082,33 @@ public partial class AmethystParser : Parser {
 	[RuleVersion(0)]
 	public RelationalExpressionContext relationalExpression() {
 		RelationalExpressionContext _localctx = new RelationalExpressionContext(Context, State);
-		EnterRule(_localctx, 50, RULE_relationalExpression);
+		EnterRule(_localctx, 52, RULE_relationalExpression);
 		int _la;
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 316;
+			State = 323;
 			additiveExpression();
-			State = 321;
+			State = 328;
 			ErrorHandler.Sync(this);
 			_la = TokenStream.LA(1);
-			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & 263882790666240L) != 0)) {
+			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & 527765581332480L) != 0)) {
 				{
 				{
-				State = 317;
+				State = 324;
 				_la = TokenStream.LA(1);
-				if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & 263882790666240L) != 0)) ) {
+				if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & 527765581332480L) != 0)) ) {
 				ErrorHandler.RecoverInline(this);
 				}
 				else {
 					ErrorHandler.ReportMatch(this);
 				    Consume();
 				}
-				State = 318;
+				State = 325;
 				additiveExpression();
 				}
 				}
-				State = 323;
+				State = 330;
 				ErrorHandler.Sync(this);
 				_la = TokenStream.LA(1);
 			}
@@ -2098,20 +2156,20 @@ public partial class AmethystParser : Parser {
 	[RuleVersion(0)]
 	public AdditiveExpressionContext additiveExpression() {
 		AdditiveExpressionContext _localctx = new AdditiveExpressionContext(Context, State);
-		EnterRule(_localctx, 52, RULE_additiveExpression);
+		EnterRule(_localctx, 54, RULE_additiveExpression);
 		int _la;
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 324;
+			State = 331;
 			multiplicativeExpression();
-			State = 329;
+			State = 336;
 			ErrorHandler.Sync(this);
 			_la = TokenStream.LA(1);
 			while (_la==Plus || _la==Minus) {
 				{
 				{
-				State = 325;
+				State = 332;
 				_la = TokenStream.LA(1);
 				if ( !(_la==Plus || _la==Minus) ) {
 				ErrorHandler.RecoverInline(this);
@@ -2120,11 +2178,11 @@ public partial class AmethystParser : Parser {
 					ErrorHandler.ReportMatch(this);
 				    Consume();
 				}
-				State = 326;
+				State = 333;
 				multiplicativeExpression();
 				}
 				}
-				State = 331;
+				State = 338;
 				ErrorHandler.Sync(this);
 				_la = TokenStream.LA(1);
 			}
@@ -2176,33 +2234,33 @@ public partial class AmethystParser : Parser {
 	[RuleVersion(0)]
 	public MultiplicativeExpressionContext multiplicativeExpression() {
 		MultiplicativeExpressionContext _localctx = new MultiplicativeExpressionContext(Context, State);
-		EnterRule(_localctx, 54, RULE_multiplicativeExpression);
+		EnterRule(_localctx, 56, RULE_multiplicativeExpression);
 		int _la;
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 332;
+			State = 339;
 			castExpression();
-			State = 337;
+			State = 344;
 			ErrorHandler.Sync(this);
 			_la = TokenStream.LA(1);
-			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & 30064771072L) != 0)) {
+			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & 60129542144L) != 0)) {
 				{
 				{
-				State = 333;
+				State = 340;
 				_la = TokenStream.LA(1);
-				if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & 30064771072L) != 0)) ) {
+				if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & 60129542144L) != 0)) ) {
 				ErrorHandler.RecoverInline(this);
 				}
 				else {
 					ErrorHandler.ReportMatch(this);
 				    Consume();
 				}
-				State = 334;
+				State = 341;
 				castExpression();
 				}
 				}
-				State = 339;
+				State = 346;
 				ErrorHandler.Sync(this);
 				_la = TokenStream.LA(1);
 			}
@@ -2247,28 +2305,28 @@ public partial class AmethystParser : Parser {
 	[RuleVersion(0)]
 	public CastExpressionContext castExpression() {
 		CastExpressionContext _localctx = new CastExpressionContext(Context, State);
-		EnterRule(_localctx, 56, RULE_castExpression);
+		EnterRule(_localctx, 58, RULE_castExpression);
 		try {
-			State = 346;
+			State = 353;
 			ErrorHandler.Sync(this);
 			switch ( Interpreter.AdaptivePredict(TokenStream,35,Context) ) {
 			case 1:
 				EnterOuterAlt(_localctx, 1);
 				{
-				State = 340;
+				State = 347;
 				Match(LParen);
-				State = 341;
+				State = 348;
 				type(0);
-				State = 342;
+				State = 349;
 				Match(RParen);
-				State = 343;
+				State = 350;
 				castExpression();
 				}
 				break;
 			case 2:
 				EnterOuterAlt(_localctx, 2);
 				{
-				State = 345;
+				State = 352;
 				unaryExpression();
 				}
 				break;
@@ -2333,20 +2391,20 @@ public partial class AmethystParser : Parser {
 	[RuleVersion(0)]
 	public UnaryExpressionContext unaryExpression() {
 		UnaryExpressionContext _localctx = new UnaryExpressionContext(Context, State);
-		EnterRule(_localctx, 58, RULE_unaryExpression);
+		EnterRule(_localctx, 60, RULE_unaryExpression);
 		int _la;
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 351;
+			State = 358;
 			ErrorHandler.Sync(this);
 			_la = TokenStream.LA(1);
-			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & 43065712238919680L) != 0)) {
+			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & 86131424477839360L) != 0)) {
 				{
 				{
-				State = 348;
+				State = 355;
 				_la = TokenStream.LA(1);
-				if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & 43065712238919680L) != 0)) ) {
+				if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & 86131424477839360L) != 0)) ) {
 				ErrorHandler.RecoverInline(this);
 				}
 				else {
@@ -2355,11 +2413,11 @@ public partial class AmethystParser : Parser {
 				}
 				}
 				}
-				State = 353;
+				State = 360;
 				ErrorHandler.Sync(this);
 				_la = TokenStream.LA(1);
 			}
-			State = 354;
+			State = 361;
 			postfixExpression();
 			}
 		}
@@ -2412,36 +2470,36 @@ public partial class AmethystParser : Parser {
 	[RuleVersion(0)]
 	public PostfixExpressionContext postfixExpression() {
 		PostfixExpressionContext _localctx = new PostfixExpressionContext(Context, State);
-		EnterRule(_localctx, 60, RULE_postfixExpression);
+		EnterRule(_localctx, 62, RULE_postfixExpression);
 		int _la;
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 356;
+			State = 363;
 			rangeExpression();
-			State = 362;
+			State = 369;
 			ErrorHandler.Sync(this);
 			_la = TokenStream.LA(1);
-			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & 18014398551425024L) != 0)) {
+			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & 36028797102850048L) != 0)) {
 				{
-				State = 360;
+				State = 367;
 				ErrorHandler.Sync(this);
 				switch (TokenStream.LA(1)) {
 				case LParen:
 					{
-					State = 357;
+					State = 364;
 					expressionList();
 					}
 					break;
 				case LSquareBrak:
 					{
-					State = 358;
+					State = 365;
 					indexExpression();
 					}
 					break;
 				case Dot:
 					{
-					State = 359;
+					State = 366;
 					propertyExpression();
 					}
 					break;
@@ -2449,7 +2507,7 @@ public partial class AmethystParser : Parser {
 					throw new NoViableAltException(this);
 				}
 				}
-				State = 364;
+				State = 371;
 				ErrorHandler.Sync(this);
 				_la = TokenStream.LA(1);
 			}
@@ -2488,15 +2546,15 @@ public partial class AmethystParser : Parser {
 	[RuleVersion(0)]
 	public IndexExpressionContext indexExpression() {
 		IndexExpressionContext _localctx = new IndexExpressionContext(Context, State);
-		EnterRule(_localctx, 62, RULE_indexExpression);
+		EnterRule(_localctx, 64, RULE_indexExpression);
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 365;
+			State = 372;
 			Match(LSquareBrak);
-			State = 366;
+			State = 373;
 			expression();
-			State = 367;
+			State = 374;
 			Match(RSquareBrak);
 			}
 		}
@@ -2530,13 +2588,13 @@ public partial class AmethystParser : Parser {
 	[RuleVersion(0)]
 	public PropertyExpressionContext propertyExpression() {
 		PropertyExpressionContext _localctx = new PropertyExpressionContext(Context, State);
-		EnterRule(_localctx, 64, RULE_propertyExpression);
+		EnterRule(_localctx, 66, RULE_propertyExpression);
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 369;
+			State = 376;
 			Match(Dot);
-			State = 370;
+			State = 377;
 			Match(RawIdentifier);
 			}
 		}
@@ -2575,10 +2633,10 @@ public partial class AmethystParser : Parser {
 	[RuleVersion(0)]
 	public RangeExpressionContext rangeExpression() {
 		RangeExpressionContext _localctx = new RangeExpressionContext(Context, State);
-		EnterRule(_localctx, 66, RULE_rangeExpression);
+		EnterRule(_localctx, 68, RULE_rangeExpression);
 		int _la;
 		try {
-			State = 381;
+			State = 388;
 			ErrorHandler.Sync(this);
 			switch (TokenStream.LA(1)) {
 			case LParen:
@@ -2591,21 +2649,21 @@ public partial class AmethystParser : Parser {
 			case Number:
 				EnterOuterAlt(_localctx, 1);
 				{
-				State = 372;
+				State = 379;
 				primaryExpression();
-				State = 377;
+				State = 384;
 				ErrorHandler.Sync(this);
 				_la = TokenStream.LA(1);
 				if (_la==RangeOp) {
 					{
-					State = 373;
+					State = 380;
 					Match(RangeOp);
-					State = 375;
+					State = 382;
 					ErrorHandler.Sync(this);
 					switch ( Interpreter.AdaptivePredict(TokenStream,39,Context) ) {
 					case 1:
 						{
-						State = 374;
+						State = 381;
 						primaryExpression();
 						}
 						break;
@@ -2618,9 +2676,9 @@ public partial class AmethystParser : Parser {
 			case RangeOp:
 				EnterOuterAlt(_localctx, 2);
 				{
-				State = 379;
+				State = 386;
 				Match(RangeOp);
-				State = 380;
+				State = 387;
 				primaryExpression();
 				}
 				break;
@@ -2676,68 +2734,68 @@ public partial class AmethystParser : Parser {
 	[RuleVersion(0)]
 	public PrimaryExpressionContext primaryExpression() {
 		PrimaryExpressionContext _localctx = new PrimaryExpressionContext(Context, State);
-		EnterRule(_localctx, 68, RULE_primaryExpression);
+		EnterRule(_localctx, 70, RULE_primaryExpression);
 		try {
-			State = 394;
+			State = 401;
 			ErrorHandler.Sync(this);
 			switch (TokenStream.LA(1)) {
 			case Boolean:
 				EnterOuterAlt(_localctx, 1);
 				{
-				State = 383;
+				State = 390;
 				Match(Boolean);
 				}
 				break;
 			case RawIdentifier:
 				EnterOuterAlt(_localctx, 2);
 				{
-				State = 384;
+				State = 391;
 				id();
 				}
 				break;
 			case String:
 				EnterOuterAlt(_localctx, 3);
 				{
-				State = 385;
+				State = 392;
 				Match(String);
 				}
 				break;
 			case Number:
 				EnterOuterAlt(_localctx, 4);
 				{
-				State = 386;
+				State = 393;
 				Match(Number);
 				}
 				break;
 			case LSquareBrak:
 				EnterOuterAlt(_localctx, 5);
 				{
-				State = 387;
+				State = 394;
 				listLiteral();
 				}
 				break;
 			case LBrak:
 				EnterOuterAlt(_localctx, 6);
 				{
-				State = 388;
+				State = 395;
 				compoundLiteral();
 				}
 				break;
 			case TargetSelectorVariable:
 				EnterOuterAlt(_localctx, 7);
 				{
-				State = 389;
+				State = 396;
 				targetSelector();
 				}
 				break;
 			case LParen:
 				EnterOuterAlt(_localctx, 8);
 				{
-				State = 390;
+				State = 397;
 				Match(LParen);
-				State = 391;
+				State = 398;
 				expression();
-				State = 392;
+				State = 399;
 				Match(RParen);
 				}
 				break;
@@ -2785,40 +2843,40 @@ public partial class AmethystParser : Parser {
 	[RuleVersion(0)]
 	public ListLiteralContext listLiteral() {
 		ListLiteralContext _localctx = new ListLiteralContext(Context, State);
-		EnterRule(_localctx, 70, RULE_listLiteral);
+		EnterRule(_localctx, 72, RULE_listLiteral);
 		int _la;
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 396;
+			State = 403;
 			Match(LSquareBrak);
-			State = 405;
+			State = 412;
 			ErrorHandler.Sync(this);
 			_la = TokenStream.LA(1);
-			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & 4015240583755858944L) != 0)) {
+			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & 8030481167511717888L) != 0)) {
 				{
-				State = 397;
+				State = 404;
 				expression();
-				State = 402;
+				State = 409;
 				ErrorHandler.Sync(this);
 				_la = TokenStream.LA(1);
 				while (_la==Comma) {
 					{
 					{
-					State = 398;
+					State = 405;
 					Match(Comma);
-					State = 399;
+					State = 406;
 					expression();
 					}
 					}
-					State = 404;
+					State = 411;
 					ErrorHandler.Sync(this);
 					_la = TokenStream.LA(1);
 				}
 				}
 			}
 
-			State = 407;
+			State = 414;
 			Match(RSquareBrak);
 			}
 		}
@@ -2862,40 +2920,40 @@ public partial class AmethystParser : Parser {
 	[RuleVersion(0)]
 	public CompoundLiteralContext compoundLiteral() {
 		CompoundLiteralContext _localctx = new CompoundLiteralContext(Context, State);
-		EnterRule(_localctx, 72, RULE_compoundLiteral);
+		EnterRule(_localctx, 74, RULE_compoundLiteral);
 		int _la;
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 409;
+			State = 416;
 			Match(LBrak);
-			State = 418;
+			State = 425;
 			ErrorHandler.Sync(this);
 			_la = TokenStream.LA(1);
 			if (_la==RawIdentifier) {
 				{
-				State = 410;
+				State = 417;
 				compoundKeyPair();
-				State = 415;
+				State = 422;
 				ErrorHandler.Sync(this);
 				_la = TokenStream.LA(1);
 				while (_la==Comma) {
 					{
 					{
-					State = 411;
+					State = 418;
 					Match(Comma);
-					State = 412;
+					State = 419;
 					compoundKeyPair();
 					}
 					}
-					State = 417;
+					State = 424;
 					ErrorHandler.Sync(this);
 					_la = TokenStream.LA(1);
 				}
 				}
 			}
 
-			State = 420;
+			State = 427;
 			Match(RBrak);
 			}
 		}
@@ -2932,15 +2990,15 @@ public partial class AmethystParser : Parser {
 	[RuleVersion(0)]
 	public CompoundKeyPairContext compoundKeyPair() {
 		CompoundKeyPairContext _localctx = new CompoundKeyPairContext(Context, State);
-		EnterRule(_localctx, 74, RULE_compoundKeyPair);
+		EnterRule(_localctx, 76, RULE_compoundKeyPair);
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 422;
+			State = 429;
 			Match(RawIdentifier);
-			State = 423;
+			State = 430;
 			Match(Colon);
-			State = 424;
+			State = 431;
 			expression();
 			}
 		}
@@ -2985,47 +3043,47 @@ public partial class AmethystParser : Parser {
 	[RuleVersion(0)]
 	public TargetSelectorContext targetSelector() {
 		TargetSelectorContext _localctx = new TargetSelectorContext(Context, State);
-		EnterRule(_localctx, 76, RULE_targetSelector);
+		EnterRule(_localctx, 78, RULE_targetSelector);
 		int _la;
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 426;
+			State = 433;
 			Match(TargetSelectorVariable);
-			State = 439;
+			State = 446;
 			ErrorHandler.Sync(this);
 			switch ( Interpreter.AdaptivePredict(TokenStream,49,Context) ) {
 			case 1:
 				{
-				State = 427;
+				State = 434;
 				Match(LSquareBrak);
-				State = 436;
+				State = 443;
 				ErrorHandler.Sync(this);
 				_la = TokenStream.LA(1);
 				if (_la==RawIdentifier) {
 					{
-					State = 428;
+					State = 435;
 					targetSelectorArgument();
-					State = 433;
+					State = 440;
 					ErrorHandler.Sync(this);
 					_la = TokenStream.LA(1);
 					while (_la==Comma) {
 						{
 						{
-						State = 429;
+						State = 436;
 						Match(Comma);
-						State = 430;
+						State = 437;
 						targetSelectorArgument();
 						}
 						}
-						State = 435;
+						State = 442;
 						ErrorHandler.Sync(this);
 						_la = TokenStream.LA(1);
 					}
 					}
 				}
 
-				State = 438;
+				State = 445;
 				Match(RSquareBrak);
 				}
 				break;
@@ -3066,26 +3124,26 @@ public partial class AmethystParser : Parser {
 	[RuleVersion(0)]
 	public TargetSelectorArgumentContext targetSelectorArgument() {
 		TargetSelectorArgumentContext _localctx = new TargetSelectorArgumentContext(Context, State);
-		EnterRule(_localctx, 78, RULE_targetSelectorArgument);
+		EnterRule(_localctx, 80, RULE_targetSelectorArgument);
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 441;
+			State = 448;
 			Match(RawIdentifier);
-			State = 442;
+			State = 449;
 			Match(Eq);
-			State = 445;
+			State = 452;
 			ErrorHandler.Sync(this);
 			switch ( Interpreter.AdaptivePredict(TokenStream,50,Context) ) {
 			case 1:
 				{
-				State = 443;
+				State = 450;
 				expression();
 				}
 				break;
 			case 2:
 				{
-				State = 444;
+				State = 451;
 				Match(Not);
 				}
 				break;
@@ -3132,40 +3190,40 @@ public partial class AmethystParser : Parser {
 	[RuleVersion(0)]
 	public ParamListContext paramList() {
 		ParamListContext _localctx = new ParamListContext(Context, State);
-		EnterRule(_localctx, 80, RULE_paramList);
+		EnterRule(_localctx, 82, RULE_paramList);
 		int _la;
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 447;
+			State = 454;
 			Match(LParen);
-			State = 456;
+			State = 463;
 			ErrorHandler.Sync(this);
 			_la = TokenStream.LA(1);
 			if (_la==Macro || _la==RawIdentifier) {
 				{
-				State = 448;
+				State = 455;
 				paramPair();
-				State = 453;
+				State = 460;
 				ErrorHandler.Sync(this);
 				_la = TokenStream.LA(1);
 				while (_la==Comma) {
 					{
 					{
-					State = 449;
+					State = 456;
 					Match(Comma);
-					State = 450;
+					State = 457;
 					paramPair();
 					}
 					}
-					State = 455;
+					State = 462;
 					ErrorHandler.Sync(this);
 					_la = TokenStream.LA(1);
 				}
 				}
 			}
 
-			State = 458;
+			State = 465;
 			Match(RParen);
 			}
 		}
@@ -3209,28 +3267,28 @@ public partial class AmethystParser : Parser {
 	[RuleVersion(0)]
 	public ParamPairContext paramPair() {
 		ParamPairContext _localctx = new ParamPairContext(Context, State);
-		EnterRule(_localctx, 82, RULE_paramPair);
+		EnterRule(_localctx, 84, RULE_paramPair);
 		int _la;
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 463;
+			State = 470;
 			ErrorHandler.Sync(this);
 			_la = TokenStream.LA(1);
 			while (_la==Macro) {
 				{
 				{
-				State = 460;
+				State = 467;
 				paramModifier();
 				}
 				}
-				State = 465;
+				State = 472;
 				ErrorHandler.Sync(this);
 				_la = TokenStream.LA(1);
 			}
-			State = 466;
+			State = 473;
 			type(0);
-			State = 467;
+			State = 474;
 			id();
 			}
 		}
@@ -3274,40 +3332,40 @@ public partial class AmethystParser : Parser {
 	[RuleVersion(0)]
 	public AbstractParamListContext abstractParamList() {
 		AbstractParamListContext _localctx = new AbstractParamListContext(Context, State);
-		EnterRule(_localctx, 84, RULE_abstractParamList);
+		EnterRule(_localctx, 86, RULE_abstractParamList);
 		int _la;
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 469;
+			State = 476;
 			Match(LParen);
-			State = 478;
+			State = 485;
 			ErrorHandler.Sync(this);
 			_la = TokenStream.LA(1);
 			if (_la==Macro || _la==RawIdentifier) {
 				{
-				State = 470;
+				State = 477;
 				abstractParamPair();
-				State = 475;
+				State = 482;
 				ErrorHandler.Sync(this);
 				_la = TokenStream.LA(1);
 				while (_la==Comma) {
 					{
 					{
-					State = 471;
+					State = 478;
 					Match(Comma);
-					State = 472;
+					State = 479;
 					abstractParamPair();
 					}
 					}
-					State = 477;
+					State = 484;
 					ErrorHandler.Sync(this);
 					_la = TokenStream.LA(1);
 				}
 				}
 			}
 
-			State = 480;
+			State = 487;
 			Match(RParen);
 			}
 		}
@@ -3348,26 +3406,26 @@ public partial class AmethystParser : Parser {
 	[RuleVersion(0)]
 	public AbstractParamPairContext abstractParamPair() {
 		AbstractParamPairContext _localctx = new AbstractParamPairContext(Context, State);
-		EnterRule(_localctx, 86, RULE_abstractParamPair);
+		EnterRule(_localctx, 88, RULE_abstractParamPair);
 		int _la;
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 485;
+			State = 492;
 			ErrorHandler.Sync(this);
 			_la = TokenStream.LA(1);
 			while (_la==Macro) {
 				{
 				{
-				State = 482;
+				State = 489;
 				paramModifier();
 				}
 				}
-				State = 487;
+				State = 494;
 				ErrorHandler.Sync(this);
 				_la = TokenStream.LA(1);
 			}
-			State = 488;
+			State = 495;
 			type(0);
 			}
 		}
@@ -3400,11 +3458,11 @@ public partial class AmethystParser : Parser {
 	[RuleVersion(0)]
 	public ParamModifierContext paramModifier() {
 		ParamModifierContext _localctx = new ParamModifierContext(Context, State);
-		EnterRule(_localctx, 88, RULE_paramModifier);
+		EnterRule(_localctx, 90, RULE_paramModifier);
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 490;
+			State = 497;
 			Match(Macro);
 			}
 		}
@@ -3448,40 +3506,40 @@ public partial class AmethystParser : Parser {
 	[RuleVersion(0)]
 	public ExpressionListContext expressionList() {
 		ExpressionListContext _localctx = new ExpressionListContext(Context, State);
-		EnterRule(_localctx, 90, RULE_expressionList);
+		EnterRule(_localctx, 92, RULE_expressionList);
 		int _la;
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 492;
+			State = 499;
 			Match(LParen);
-			State = 501;
+			State = 508;
 			ErrorHandler.Sync(this);
 			_la = TokenStream.LA(1);
-			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & 4015240583755858944L) != 0)) {
+			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & 8030481167511717888L) != 0)) {
 				{
-				State = 493;
+				State = 500;
 				expression();
-				State = 498;
+				State = 505;
 				ErrorHandler.Sync(this);
 				_la = TokenStream.LA(1);
 				while (_la==Comma) {
 					{
 					{
-					State = 494;
+					State = 501;
 					Match(Comma);
-					State = 495;
+					State = 502;
 					expression();
 					}
 					}
-					State = 500;
+					State = 507;
 					ErrorHandler.Sync(this);
 					_la = TokenStream.LA(1);
 				}
 				}
 			}
 
-			State = 503;
+			State = 510;
 			Match(RParen);
 			}
 		}
@@ -3535,18 +3593,18 @@ public partial class AmethystParser : Parser {
 		int _parentState = State;
 		TypeContext _localctx = new TypeContext(Context, _parentState);
 		TypeContext _prevctx = _localctx;
-		int _startState = 92;
-		EnterRecursionRule(_localctx, 92, RULE_type, _p);
+		int _startState = 94;
+		EnterRecursionRule(_localctx, 94, RULE_type, _p);
 		try {
 			int _alt;
 			EnterOuterAlt(_localctx, 1);
 			{
 			{
-			State = 506;
+			State = 513;
 			simpleType();
 			}
 			Context.Stop = TokenStream.LT(-1);
-			State = 522;
+			State = 529;
 			ErrorHandler.Sync(this);
 			_alt = Interpreter.AdaptivePredict(TokenStream,60,Context);
 			while ( _alt!=2 && _alt!=global::Antlr4.Runtime.Atn.ATN.INVALID_ALT_NUMBER ) {
@@ -3555,18 +3613,18 @@ public partial class AmethystParser : Parser {
 						TriggerExitRuleEvent();
 					_prevctx = _localctx;
 					{
-					State = 520;
+					State = 527;
 					ErrorHandler.Sync(this);
 					switch ( Interpreter.AdaptivePredict(TokenStream,59,Context) ) {
 					case 1:
 						{
 						_localctx = new TypeContext(_parentctx, _parentState);
 						PushNewRecursionContext(_localctx, _startState, RULE_type);
-						State = 508;
+						State = 515;
 						if (!(Precpred(Context, 5))) throw new FailedPredicateException(this, "Precpred(Context, 5)");
-						State = 509;
+						State = 516;
 						Match(LSquareBrak);
-						State = 510;
+						State = 517;
 						Match(RSquareBrak);
 						}
 						break;
@@ -3574,11 +3632,11 @@ public partial class AmethystParser : Parser {
 						{
 						_localctx = new TypeContext(_parentctx, _parentState);
 						PushNewRecursionContext(_localctx, _startState, RULE_type);
-						State = 511;
+						State = 518;
 						if (!(Precpred(Context, 4))) throw new FailedPredicateException(this, "Precpred(Context, 4)");
-						State = 512;
+						State = 519;
 						Match(LBrak);
-						State = 513;
+						State = 520;
 						Match(RBrak);
 						}
 						break;
@@ -3586,9 +3644,9 @@ public partial class AmethystParser : Parser {
 						{
 						_localctx = new TypeContext(_parentctx, _parentState);
 						PushNewRecursionContext(_localctx, _startState, RULE_type);
-						State = 514;
+						State = 521;
 						if (!(Precpred(Context, 3))) throw new FailedPredicateException(this, "Precpred(Context, 3)");
-						State = 515;
+						State = 522;
 						Match(And);
 						}
 						break;
@@ -3596,9 +3654,9 @@ public partial class AmethystParser : Parser {
 						{
 						_localctx = new TypeContext(_parentctx, _parentState);
 						PushNewRecursionContext(_localctx, _startState, RULE_type);
-						State = 516;
+						State = 523;
 						if (!(Precpred(Context, 2))) throw new FailedPredicateException(this, "Precpred(Context, 2)");
-						State = 517;
+						State = 524;
 						Match(WeakRef);
 						}
 						break;
@@ -3606,16 +3664,16 @@ public partial class AmethystParser : Parser {
 						{
 						_localctx = new TypeContext(_parentctx, _parentState);
 						PushNewRecursionContext(_localctx, _startState, RULE_type);
-						State = 518;
+						State = 525;
 						if (!(Precpred(Context, 1))) throw new FailedPredicateException(this, "Precpred(Context, 1)");
-						State = 519;
+						State = 526;
 						abstractParamList();
 						}
 						break;
 					}
 					} 
 				}
-				State = 524;
+				State = 531;
 				ErrorHandler.Sync(this);
 				_alt = Interpreter.AdaptivePredict(TokenStream,60,Context);
 			}
@@ -3652,11 +3710,11 @@ public partial class AmethystParser : Parser {
 	[RuleVersion(0)]
 	public SimpleTypeContext simpleType() {
 		SimpleTypeContext _localctx = new SimpleTypeContext(Context, State);
-		EnterRule(_localctx, 94, RULE_simpleType);
+		EnterRule(_localctx, 96, RULE_simpleType);
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 525;
+			State = 532;
 			id();
 			}
 		}
@@ -3693,20 +3751,20 @@ public partial class AmethystParser : Parser {
 	[RuleVersion(0)]
 	public IdContext id() {
 		IdContext _localctx = new IdContext(Context, State);
-		EnterRule(_localctx, 96, RULE_id);
+		EnterRule(_localctx, 98, RULE_id);
 		try {
 			EnterOuterAlt(_localctx, 1);
 			{
-			State = 527;
+			State = 534;
 			Match(RawIdentifier);
-			State = 530;
+			State = 537;
 			ErrorHandler.Sync(this);
 			switch ( Interpreter.AdaptivePredict(TokenStream,61,Context) ) {
 			case 1:
 				{
-				State = 528;
+				State = 535;
 				Match(Colon);
-				State = 529;
+				State = 536;
 				Match(RawIdentifier);
 				}
 				break;
@@ -3726,7 +3784,7 @@ public partial class AmethystParser : Parser {
 
 	public override bool Sempred(RuleContext _localctx, int ruleIndex, int predIndex) {
 		switch (ruleIndex) {
-		case 46: return type_sempred((TypeContext)_localctx, predIndex);
+		case 47: return type_sempred((TypeContext)_localctx, predIndex);
 		}
 		return true;
 	}
@@ -3742,185 +3800,188 @@ public partial class AmethystParser : Parser {
 	}
 
 	private static int[] _serializedATN = {
-		4,1,64,533,2,0,7,0,2,1,7,1,2,2,7,2,2,3,7,3,2,4,7,4,2,5,7,5,2,6,7,6,2,7,
+		4,1,65,540,2,0,7,0,2,1,7,1,2,2,7,2,2,3,7,3,2,4,7,4,2,5,7,5,2,6,7,6,2,7,
 		7,7,2,8,7,8,2,9,7,9,2,10,7,10,2,11,7,11,2,12,7,12,2,13,7,13,2,14,7,14,
 		2,15,7,15,2,16,7,16,2,17,7,17,2,18,7,18,2,19,7,19,2,20,7,20,2,21,7,21,
 		2,22,7,22,2,23,7,23,2,24,7,24,2,25,7,25,2,26,7,26,2,27,7,27,2,28,7,28,
 		2,29,7,29,2,30,7,30,2,31,7,31,2,32,7,32,2,33,7,33,2,34,7,34,2,35,7,35,
 		2,36,7,36,2,37,7,37,2,38,7,38,2,39,7,39,2,40,7,40,2,41,7,41,2,42,7,42,
-		2,43,7,43,2,44,7,44,2,45,7,45,2,46,7,46,2,47,7,47,2,48,7,48,1,0,1,0,1,
-		0,1,0,1,0,1,0,1,0,5,0,106,8,0,10,0,12,0,109,9,0,1,0,1,0,1,1,1,1,1,1,1,
-		1,1,2,1,2,1,2,1,2,1,2,1,2,1,3,1,3,5,3,125,8,3,10,3,12,3,128,9,3,1,3,5,
-		3,131,8,3,10,3,12,3,134,9,3,1,3,1,3,1,3,1,3,1,3,1,4,1,4,1,4,1,5,1,5,1,
-		6,1,6,5,6,148,8,6,10,6,12,6,151,9,6,1,6,1,6,1,7,1,7,1,7,1,7,3,7,159,8,
-		7,1,7,1,7,1,7,5,7,164,8,7,10,7,12,7,167,9,7,1,7,1,7,1,8,1,8,1,8,1,8,3,
-		8,175,8,8,1,8,4,8,178,8,8,11,8,12,8,179,1,9,1,9,5,9,184,8,9,10,9,12,9,
-		187,9,9,1,9,1,9,1,9,1,9,1,9,1,9,1,9,5,9,196,8,9,10,9,12,9,199,9,9,1,9,
-		1,9,1,9,1,9,3,9,205,8,9,1,9,1,9,3,9,209,8,9,1,10,1,10,3,10,213,8,10,1,
-		11,5,11,216,8,11,10,11,12,11,219,9,11,1,11,1,11,1,11,1,11,3,11,225,8,11,
-		1,11,4,11,228,8,11,11,11,12,11,229,1,11,1,11,1,11,1,11,3,11,236,8,11,1,
-		12,5,12,239,8,12,10,12,12,12,242,9,12,1,12,1,12,1,12,1,12,3,12,248,8,12,
-		1,13,1,13,1,14,1,14,1,15,4,15,255,8,15,11,15,12,15,256,1,15,1,15,1,15,
-		3,15,262,8,15,1,16,1,16,1,16,1,16,1,16,1,17,1,17,1,17,3,17,272,8,17,1,
-		17,1,17,1,17,1,17,1,17,1,17,1,17,1,18,1,18,3,18,283,8,18,1,19,1,19,1,20,
-		1,20,1,21,1,21,1,21,3,21,292,8,21,1,22,1,22,1,22,1,22,1,22,3,22,299,8,
-		22,1,23,1,23,1,23,5,23,304,8,23,10,23,12,23,307,9,23,1,24,1,24,1,24,5,
-		24,312,8,24,10,24,12,24,315,9,24,1,25,1,25,1,25,5,25,320,8,25,10,25,12,
-		25,323,9,25,1,26,1,26,1,26,5,26,328,8,26,10,26,12,26,331,9,26,1,27,1,27,
-		1,27,5,27,336,8,27,10,27,12,27,339,9,27,1,28,1,28,1,28,1,28,1,28,1,28,
-		3,28,347,8,28,1,29,5,29,350,8,29,10,29,12,29,353,9,29,1,29,1,29,1,30,1,
-		30,1,30,1,30,5,30,361,8,30,10,30,12,30,364,9,30,1,31,1,31,1,31,1,31,1,
-		32,1,32,1,32,1,33,1,33,1,33,3,33,376,8,33,3,33,378,8,33,1,33,1,33,3,33,
-		382,8,33,1,34,1,34,1,34,1,34,1,34,1,34,1,34,1,34,1,34,1,34,1,34,3,34,395,
-		8,34,1,35,1,35,1,35,1,35,5,35,401,8,35,10,35,12,35,404,9,35,3,35,406,8,
-		35,1,35,1,35,1,36,1,36,1,36,1,36,5,36,414,8,36,10,36,12,36,417,9,36,3,
-		36,419,8,36,1,36,1,36,1,37,1,37,1,37,1,37,1,38,1,38,1,38,1,38,1,38,5,38,
-		432,8,38,10,38,12,38,435,9,38,3,38,437,8,38,1,38,3,38,440,8,38,1,39,1,
-		39,1,39,1,39,3,39,446,8,39,1,40,1,40,1,40,1,40,5,40,452,8,40,10,40,12,
-		40,455,9,40,3,40,457,8,40,1,40,1,40,1,41,5,41,462,8,41,10,41,12,41,465,
-		9,41,1,41,1,41,1,41,1,42,1,42,1,42,1,42,5,42,474,8,42,10,42,12,42,477,
-		9,42,3,42,479,8,42,1,42,1,42,1,43,5,43,484,8,43,10,43,12,43,487,9,43,1,
-		43,1,43,1,44,1,44,1,45,1,45,1,45,1,45,5,45,497,8,45,10,45,12,45,500,9,
-		45,3,45,502,8,45,1,45,1,45,1,46,1,46,1,46,1,46,1,46,1,46,1,46,1,46,1,46,
-		1,46,1,46,1,46,1,46,1,46,1,46,5,46,521,8,46,10,46,12,46,524,9,46,1,47,
-		1,47,1,48,1,48,1,48,3,48,531,8,48,1,48,0,1,92,49,0,2,4,6,8,10,12,14,16,
-		18,20,22,24,26,28,30,32,34,36,38,40,42,44,46,48,50,52,54,56,58,60,62,64,
-		66,68,70,72,74,76,78,80,82,84,86,88,90,92,94,96,0,11,1,0,44,47,1,0,11,
-		13,1,0,18,19,1,0,2,4,1,0,8,9,2,0,29,29,36,40,1,0,49,50,1,0,42,43,1,0,30,
-		31,1,0,32,34,5,0,31,32,35,35,48,48,51,52,55,55,564,0,107,1,0,0,0,2,112,
-		1,0,0,0,4,116,1,0,0,0,6,126,1,0,0,0,8,140,1,0,0,0,10,143,1,0,0,0,12,145,
-		1,0,0,0,14,154,1,0,0,0,16,170,1,0,0,0,18,208,1,0,0,0,20,212,1,0,0,0,22,
-		217,1,0,0,0,24,240,1,0,0,0,26,249,1,0,0,0,28,251,1,0,0,0,30,254,1,0,0,
-		0,32,263,1,0,0,0,34,268,1,0,0,0,36,280,1,0,0,0,38,284,1,0,0,0,40,286,1,
-		0,0,0,42,288,1,0,0,0,44,298,1,0,0,0,46,300,1,0,0,0,48,308,1,0,0,0,50,316,
-		1,0,0,0,52,324,1,0,0,0,54,332,1,0,0,0,56,346,1,0,0,0,58,351,1,0,0,0,60,
-		356,1,0,0,0,62,365,1,0,0,0,64,369,1,0,0,0,66,381,1,0,0,0,68,394,1,0,0,
-		0,70,396,1,0,0,0,72,409,1,0,0,0,74,422,1,0,0,0,76,426,1,0,0,0,78,441,1,
-		0,0,0,80,447,1,0,0,0,82,463,1,0,0,0,84,469,1,0,0,0,86,485,1,0,0,0,88,490,
-		1,0,0,0,90,492,1,0,0,0,92,505,1,0,0,0,94,525,1,0,0,0,96,527,1,0,0,0,98,
-		106,3,2,1,0,99,106,3,6,3,0,100,106,3,14,7,0,101,102,3,24,12,0,102,103,
-		5,20,0,0,103,106,1,0,0,0,104,106,5,20,0,0,105,98,1,0,0,0,105,99,1,0,0,
-		0,105,100,1,0,0,0,105,101,1,0,0,0,105,104,1,0,0,0,106,109,1,0,0,0,107,
-		105,1,0,0,0,107,108,1,0,0,0,108,110,1,0,0,0,109,107,1,0,0,0,110,111,5,
-		0,0,1,111,1,1,0,0,0,112,113,5,1,0,0,113,114,3,96,48,0,114,115,5,20,0,0,
-		115,3,1,0,0,0,116,117,5,41,0,0,117,118,5,25,0,0,118,119,7,0,0,0,119,120,
-		5,61,0,0,120,121,5,26,0,0,121,5,1,0,0,0,122,125,3,8,4,0,123,125,3,4,2,
-		0,124,122,1,0,0,0,124,123,1,0,0,0,125,128,1,0,0,0,126,124,1,0,0,0,126,
-		127,1,0,0,0,127,132,1,0,0,0,128,126,1,0,0,0,129,131,3,10,5,0,130,129,1,
-		0,0,0,131,134,1,0,0,0,132,130,1,0,0,0,132,133,1,0,0,0,133,135,1,0,0,0,
-		134,132,1,0,0,0,135,136,3,92,46,0,136,137,3,96,48,0,137,138,3,80,40,0,
-		138,139,3,12,6,0,139,7,1,0,0,0,140,141,5,41,0,0,141,142,3,96,48,0,142,
-		9,1,0,0,0,143,144,5,16,0,0,144,11,1,0,0,0,145,149,5,27,0,0,146,148,3,22,
-		11,0,147,146,1,0,0,0,148,151,1,0,0,0,149,147,1,0,0,0,149,150,1,0,0,0,150,
-		152,1,0,0,0,151,149,1,0,0,0,152,153,5,28,0,0,153,13,1,0,0,0,154,155,7,
-		1,0,0,155,158,3,96,48,0,156,157,5,14,0,0,157,159,3,94,47,0,158,156,1,0,
-		0,0,158,159,1,0,0,0,159,160,1,0,0,0,160,165,5,27,0,0,161,164,3,16,8,0,
-		162,164,3,18,9,0,163,161,1,0,0,0,163,162,1,0,0,0,164,167,1,0,0,0,165,163,
-		1,0,0,0,165,166,1,0,0,0,166,168,1,0,0,0,167,165,1,0,0,0,168,169,5,28,0,
-		0,169,15,1,0,0,0,170,171,3,92,46,0,171,174,5,57,0,0,172,173,5,29,0,0,173,
-		175,3,40,20,0,174,172,1,0,0,0,174,175,1,0,0,0,175,177,1,0,0,0,176,178,
-		5,20,0,0,177,176,1,0,0,0,178,179,1,0,0,0,179,177,1,0,0,0,179,180,1,0,0,
-		0,180,17,1,0,0,0,181,184,3,20,10,0,182,184,3,4,2,0,183,181,1,0,0,0,183,
-		182,1,0,0,0,184,187,1,0,0,0,185,183,1,0,0,0,185,186,1,0,0,0,186,188,1,
-		0,0,0,187,185,1,0,0,0,188,189,3,92,46,0,189,190,5,57,0,0,190,191,3,80,
-		40,0,191,192,3,12,6,0,192,209,1,0,0,0,193,196,3,10,5,0,194,196,3,4,2,0,
-		195,193,1,0,0,0,195,194,1,0,0,0,196,199,1,0,0,0,197,195,1,0,0,0,197,198,
-		1,0,0,0,198,200,1,0,0,0,199,197,1,0,0,0,200,201,5,57,0,0,201,204,3,80,
-		40,0,202,203,5,21,0,0,203,205,3,40,20,0,204,202,1,0,0,0,204,205,1,0,0,
-		0,205,206,1,0,0,0,206,207,3,12,6,0,207,209,1,0,0,0,208,185,1,0,0,0,208,
-		197,1,0,0,0,209,19,1,0,0,0,210,213,3,10,5,0,211,213,5,17,0,0,212,210,1,
-		0,0,0,212,211,1,0,0,0,213,21,1,0,0,0,214,216,3,4,2,0,215,214,1,0,0,0,216,
-		219,1,0,0,0,217,215,1,0,0,0,217,218,1,0,0,0,218,235,1,0,0,0,219,217,1,
-		0,0,0,220,225,3,24,12,0,221,225,3,26,13,0,222,225,3,36,18,0,223,225,3,
-		38,19,0,224,220,1,0,0,0,224,221,1,0,0,0,224,222,1,0,0,0,224,223,1,0,0,
-		0,225,227,1,0,0,0,226,228,5,20,0,0,227,226,1,0,0,0,228,229,1,0,0,0,229,
-		227,1,0,0,0,229,230,1,0,0,0,230,236,1,0,0,0,231,236,3,28,14,0,232,236,
-		3,12,6,0,233,236,3,30,15,0,234,236,3,34,17,0,235,224,1,0,0,0,235,231,1,
-		0,0,0,235,232,1,0,0,0,235,233,1,0,0,0,235,234,1,0,0,0,236,23,1,0,0,0,237,
-		239,7,2,0,0,238,237,1,0,0,0,239,242,1,0,0,0,240,238,1,0,0,0,240,241,1,
-		0,0,0,241,243,1,0,0,0,242,240,1,0,0,0,243,244,3,92,46,0,244,247,3,96,48,
-		0,245,246,5,29,0,0,246,248,3,40,20,0,247,245,1,0,0,0,247,248,1,0,0,0,248,
-		25,1,0,0,0,249,250,3,40,20,0,250,27,1,0,0,0,251,252,5,59,0,0,252,29,1,
-		0,0,0,253,255,3,32,16,0,254,253,1,0,0,0,255,256,1,0,0,0,256,254,1,0,0,
-		0,256,257,1,0,0,0,257,258,1,0,0,0,258,261,3,22,11,0,259,260,5,5,0,0,260,
-		262,3,22,11,0,261,259,1,0,0,0,261,262,1,0,0,0,262,31,1,0,0,0,263,264,7,
-		3,0,0,264,265,5,23,0,0,265,266,3,40,20,0,266,267,5,24,0,0,267,33,1,0,0,
-		0,268,269,5,6,0,0,269,271,5,23,0,0,270,272,3,24,12,0,271,270,1,0,0,0,271,
-		272,1,0,0,0,272,273,1,0,0,0,273,274,5,20,0,0,274,275,3,40,20,0,275,276,
-		5,20,0,0,276,277,3,40,20,0,277,278,5,24,0,0,278,279,3,22,11,0,279,35,1,
-		0,0,0,280,282,5,7,0,0,281,283,3,40,20,0,282,281,1,0,0,0,282,283,1,0,0,
-		0,283,37,1,0,0,0,284,285,7,4,0,0,285,39,1,0,0,0,286,287,3,42,21,0,287,
-		41,1,0,0,0,288,291,3,44,22,0,289,290,7,5,0,0,290,292,3,40,20,0,291,289,
-		1,0,0,0,291,292,1,0,0,0,292,43,1,0,0,0,293,299,3,46,23,0,294,295,5,10,
-		0,0,295,296,3,92,46,0,296,297,3,90,45,0,297,299,1,0,0,0,298,293,1,0,0,
-		0,298,294,1,0,0,0,299,45,1,0,0,0,300,305,3,48,24,0,301,302,7,6,0,0,302,
-		304,3,48,24,0,303,301,1,0,0,0,304,307,1,0,0,0,305,303,1,0,0,0,305,306,
-		1,0,0,0,306,47,1,0,0,0,307,305,1,0,0,0,308,313,3,50,25,0,309,310,7,7,0,
-		0,310,312,3,50,25,0,311,309,1,0,0,0,312,315,1,0,0,0,313,311,1,0,0,0,313,
-		314,1,0,0,0,314,49,1,0,0,0,315,313,1,0,0,0,316,321,3,52,26,0,317,318,7,
-		0,0,0,318,320,3,52,26,0,319,317,1,0,0,0,320,323,1,0,0,0,321,319,1,0,0,
-		0,321,322,1,0,0,0,322,51,1,0,0,0,323,321,1,0,0,0,324,329,3,54,27,0,325,
-		326,7,8,0,0,326,328,3,54,27,0,327,325,1,0,0,0,328,331,1,0,0,0,329,327,
-		1,0,0,0,329,330,1,0,0,0,330,53,1,0,0,0,331,329,1,0,0,0,332,337,3,56,28,
-		0,333,334,7,9,0,0,334,336,3,56,28,0,335,333,1,0,0,0,336,339,1,0,0,0,337,
-		335,1,0,0,0,337,338,1,0,0,0,338,55,1,0,0,0,339,337,1,0,0,0,340,341,5,23,
-		0,0,341,342,3,92,46,0,342,343,5,24,0,0,343,344,3,56,28,0,344,347,1,0,0,
-		0,345,347,3,58,29,0,346,340,1,0,0,0,346,345,1,0,0,0,347,57,1,0,0,0,348,
-		350,7,10,0,0,349,348,1,0,0,0,350,353,1,0,0,0,351,349,1,0,0,0,351,352,1,
-		0,0,0,352,354,1,0,0,0,353,351,1,0,0,0,354,355,3,60,30,0,355,59,1,0,0,0,
-		356,362,3,66,33,0,357,361,3,90,45,0,358,361,3,62,31,0,359,361,3,64,32,
-		0,360,357,1,0,0,0,360,358,1,0,0,0,360,359,1,0,0,0,361,364,1,0,0,0,362,
-		360,1,0,0,0,362,363,1,0,0,0,363,61,1,0,0,0,364,362,1,0,0,0,365,366,5,25,
-		0,0,366,367,3,40,20,0,367,368,5,26,0,0,368,63,1,0,0,0,369,370,5,54,0,0,
-		370,371,5,57,0,0,371,65,1,0,0,0,372,377,3,68,34,0,373,375,5,53,0,0,374,
-		376,3,68,34,0,375,374,1,0,0,0,375,376,1,0,0,0,376,378,1,0,0,0,377,373,
-		1,0,0,0,377,378,1,0,0,0,378,382,1,0,0,0,379,380,5,53,0,0,380,382,3,68,
-		34,0,381,372,1,0,0,0,381,379,1,0,0,0,382,67,1,0,0,0,383,395,5,56,0,0,384,
-		395,3,96,48,0,385,395,5,58,0,0,386,395,5,61,0,0,387,395,3,70,35,0,388,
-		395,3,72,36,0,389,395,3,76,38,0,390,391,5,23,0,0,391,392,3,40,20,0,392,
-		393,5,24,0,0,393,395,1,0,0,0,394,383,1,0,0,0,394,384,1,0,0,0,394,385,1,
-		0,0,0,394,386,1,0,0,0,394,387,1,0,0,0,394,388,1,0,0,0,394,389,1,0,0,0,
-		394,390,1,0,0,0,395,69,1,0,0,0,396,405,5,25,0,0,397,402,3,40,20,0,398,
-		399,5,22,0,0,399,401,3,40,20,0,400,398,1,0,0,0,401,404,1,0,0,0,402,400,
-		1,0,0,0,402,403,1,0,0,0,403,406,1,0,0,0,404,402,1,0,0,0,405,397,1,0,0,
-		0,405,406,1,0,0,0,406,407,1,0,0,0,407,408,5,26,0,0,408,71,1,0,0,0,409,
-		418,5,27,0,0,410,415,3,74,37,0,411,412,5,22,0,0,412,414,3,74,37,0,413,
-		411,1,0,0,0,414,417,1,0,0,0,415,413,1,0,0,0,415,416,1,0,0,0,416,419,1,
-		0,0,0,417,415,1,0,0,0,418,410,1,0,0,0,418,419,1,0,0,0,419,420,1,0,0,0,
-		420,421,5,28,0,0,421,73,1,0,0,0,422,423,5,57,0,0,423,424,5,21,0,0,424,
-		425,3,40,20,0,425,75,1,0,0,0,426,439,5,60,0,0,427,436,5,25,0,0,428,433,
-		3,78,39,0,429,430,5,22,0,0,430,432,3,78,39,0,431,429,1,0,0,0,432,435,1,
-		0,0,0,433,431,1,0,0,0,433,434,1,0,0,0,434,437,1,0,0,0,435,433,1,0,0,0,
-		436,428,1,0,0,0,436,437,1,0,0,0,437,438,1,0,0,0,438,440,5,26,0,0,439,427,
-		1,0,0,0,439,440,1,0,0,0,440,77,1,0,0,0,441,442,5,57,0,0,442,445,5,29,0,
-		0,443,446,3,40,20,0,444,446,5,35,0,0,445,443,1,0,0,0,445,444,1,0,0,0,445,
-		446,1,0,0,0,446,79,1,0,0,0,447,456,5,23,0,0,448,453,3,82,41,0,449,450,
-		5,22,0,0,450,452,3,82,41,0,451,449,1,0,0,0,452,455,1,0,0,0,453,451,1,0,
-		0,0,453,454,1,0,0,0,454,457,1,0,0,0,455,453,1,0,0,0,456,448,1,0,0,0,456,
-		457,1,0,0,0,457,458,1,0,0,0,458,459,5,24,0,0,459,81,1,0,0,0,460,462,3,
-		88,44,0,461,460,1,0,0,0,462,465,1,0,0,0,463,461,1,0,0,0,463,464,1,0,0,
-		0,464,466,1,0,0,0,465,463,1,0,0,0,466,467,3,92,46,0,467,468,3,96,48,0,
-		468,83,1,0,0,0,469,478,5,23,0,0,470,475,3,86,43,0,471,472,5,22,0,0,472,
-		474,3,86,43,0,473,471,1,0,0,0,474,477,1,0,0,0,475,473,1,0,0,0,475,476,
-		1,0,0,0,476,479,1,0,0,0,477,475,1,0,0,0,478,470,1,0,0,0,478,479,1,0,0,
-		0,479,480,1,0,0,0,480,481,5,24,0,0,481,85,1,0,0,0,482,484,3,88,44,0,483,
-		482,1,0,0,0,484,487,1,0,0,0,485,483,1,0,0,0,485,486,1,0,0,0,486,488,1,
-		0,0,0,487,485,1,0,0,0,488,489,3,92,46,0,489,87,1,0,0,0,490,491,5,15,0,
-		0,491,89,1,0,0,0,492,501,5,23,0,0,493,498,3,40,20,0,494,495,5,22,0,0,495,
-		497,3,40,20,0,496,494,1,0,0,0,497,500,1,0,0,0,498,496,1,0,0,0,498,499,
-		1,0,0,0,499,502,1,0,0,0,500,498,1,0,0,0,501,493,1,0,0,0,501,502,1,0,0,
-		0,502,503,1,0,0,0,503,504,5,24,0,0,504,91,1,0,0,0,505,506,6,46,-1,0,506,
-		507,3,94,47,0,507,522,1,0,0,0,508,509,10,5,0,0,509,510,5,25,0,0,510,521,
-		5,26,0,0,511,512,10,4,0,0,512,513,5,27,0,0,513,521,5,28,0,0,514,515,10,
-		3,0,0,515,521,5,48,0,0,516,517,10,2,0,0,517,521,5,55,0,0,518,519,10,1,
-		0,0,519,521,3,84,42,0,520,508,1,0,0,0,520,511,1,0,0,0,520,514,1,0,0,0,
-		520,516,1,0,0,0,520,518,1,0,0,0,521,524,1,0,0,0,522,520,1,0,0,0,522,523,
-		1,0,0,0,523,93,1,0,0,0,524,522,1,0,0,0,525,526,3,96,48,0,526,95,1,0,0,
-		0,527,530,5,57,0,0,528,529,5,21,0,0,529,531,5,57,0,0,530,528,1,0,0,0,530,
-		531,1,0,0,0,531,97,1,0,0,0,62,105,107,124,126,132,149,158,163,165,174,
-		179,183,185,195,197,204,208,212,217,224,229,235,240,247,256,261,271,282,
-		291,298,305,313,321,329,337,346,351,360,362,375,377,381,394,402,405,415,
-		418,433,436,439,445,453,456,463,475,478,485,498,501,520,522,530
+		2,43,7,43,2,44,7,44,2,45,7,45,2,46,7,46,2,47,7,47,2,48,7,48,2,49,7,49,
+		1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,5,0,109,8,0,10,0,12,0,112,9,0,1,0,1,0,
+		1,1,1,1,1,1,1,1,1,2,1,2,1,2,1,2,1,3,1,3,1,3,1,3,1,3,1,3,1,4,1,4,5,4,132,
+		8,4,10,4,12,4,135,9,4,1,4,5,4,138,8,4,10,4,12,4,141,9,4,1,4,1,4,1,4,1,
+		4,1,4,1,5,1,5,1,5,1,6,1,6,1,7,1,7,5,7,155,8,7,10,7,12,7,158,9,7,1,7,1,
+		7,1,8,1,8,1,8,1,8,3,8,166,8,8,1,8,1,8,1,8,5,8,171,8,8,10,8,12,8,174,9,
+		8,1,8,1,8,1,9,1,9,1,9,1,9,3,9,182,8,9,1,9,4,9,185,8,9,11,9,12,9,186,1,
+		10,1,10,5,10,191,8,10,10,10,12,10,194,9,10,1,10,1,10,1,10,1,10,1,10,1,
+		10,1,10,5,10,203,8,10,10,10,12,10,206,9,10,1,10,1,10,1,10,1,10,3,10,212,
+		8,10,1,10,1,10,3,10,216,8,10,1,11,1,11,3,11,220,8,11,1,12,5,12,223,8,12,
+		10,12,12,12,226,9,12,1,12,1,12,1,12,1,12,3,12,232,8,12,1,12,4,12,235,8,
+		12,11,12,12,12,236,1,12,1,12,1,12,1,12,3,12,243,8,12,1,13,5,13,246,8,13,
+		10,13,12,13,249,9,13,1,13,1,13,1,13,1,13,3,13,255,8,13,1,14,1,14,1,15,
+		1,15,1,16,4,16,262,8,16,11,16,12,16,263,1,16,1,16,1,16,3,16,269,8,16,1,
+		17,1,17,1,17,1,17,1,17,1,18,1,18,1,18,3,18,279,8,18,1,18,1,18,1,18,1,18,
+		1,18,1,18,1,18,1,19,1,19,3,19,290,8,19,1,20,1,20,1,21,1,21,1,22,1,22,1,
+		22,3,22,299,8,22,1,23,1,23,1,23,1,23,1,23,3,23,306,8,23,1,24,1,24,1,24,
+		5,24,311,8,24,10,24,12,24,314,9,24,1,25,1,25,1,25,5,25,319,8,25,10,25,
+		12,25,322,9,25,1,26,1,26,1,26,5,26,327,8,26,10,26,12,26,330,9,26,1,27,
+		1,27,1,27,5,27,335,8,27,10,27,12,27,338,9,27,1,28,1,28,1,28,5,28,343,8,
+		28,10,28,12,28,346,9,28,1,29,1,29,1,29,1,29,1,29,1,29,3,29,354,8,29,1,
+		30,5,30,357,8,30,10,30,12,30,360,9,30,1,30,1,30,1,31,1,31,1,31,1,31,5,
+		31,368,8,31,10,31,12,31,371,9,31,1,32,1,32,1,32,1,32,1,33,1,33,1,33,1,
+		34,1,34,1,34,3,34,383,8,34,3,34,385,8,34,1,34,1,34,3,34,389,8,34,1,35,
+		1,35,1,35,1,35,1,35,1,35,1,35,1,35,1,35,1,35,1,35,3,35,402,8,35,1,36,1,
+		36,1,36,1,36,5,36,408,8,36,10,36,12,36,411,9,36,3,36,413,8,36,1,36,1,36,
+		1,37,1,37,1,37,1,37,5,37,421,8,37,10,37,12,37,424,9,37,3,37,426,8,37,1,
+		37,1,37,1,38,1,38,1,38,1,38,1,39,1,39,1,39,1,39,1,39,5,39,439,8,39,10,
+		39,12,39,442,9,39,3,39,444,8,39,1,39,3,39,447,8,39,1,40,1,40,1,40,1,40,
+		3,40,453,8,40,1,41,1,41,1,41,1,41,5,41,459,8,41,10,41,12,41,462,9,41,3,
+		41,464,8,41,1,41,1,41,1,42,5,42,469,8,42,10,42,12,42,472,9,42,1,42,1,42,
+		1,42,1,43,1,43,1,43,1,43,5,43,481,8,43,10,43,12,43,484,9,43,3,43,486,8,
+		43,1,43,1,43,1,44,5,44,491,8,44,10,44,12,44,494,9,44,1,44,1,44,1,45,1,
+		45,1,46,1,46,1,46,1,46,5,46,504,8,46,10,46,12,46,507,9,46,3,46,509,8,46,
+		1,46,1,46,1,47,1,47,1,47,1,47,1,47,1,47,1,47,1,47,1,47,1,47,1,47,1,47,
+		1,47,1,47,1,47,5,47,528,8,47,10,47,12,47,531,9,47,1,48,1,48,1,49,1,49,
+		1,49,3,49,538,8,49,1,49,0,1,94,50,0,2,4,6,8,10,12,14,16,18,20,22,24,26,
+		28,30,32,34,36,38,40,42,44,46,48,50,52,54,56,58,60,62,64,66,68,70,72,74,
+		76,78,80,82,84,86,88,90,92,94,96,98,0,11,1,0,45,48,1,0,12,14,1,0,19,20,
+		1,0,3,5,1,0,9,10,2,0,30,30,37,41,1,0,50,51,1,0,43,44,1,0,31,32,1,0,33,
+		35,5,0,32,33,36,36,49,49,52,53,56,56,571,0,110,1,0,0,0,2,115,1,0,0,0,4,
+		119,1,0,0,0,6,123,1,0,0,0,8,133,1,0,0,0,10,147,1,0,0,0,12,150,1,0,0,0,
+		14,152,1,0,0,0,16,161,1,0,0,0,18,177,1,0,0,0,20,215,1,0,0,0,22,219,1,0,
+		0,0,24,224,1,0,0,0,26,247,1,0,0,0,28,256,1,0,0,0,30,258,1,0,0,0,32,261,
+		1,0,0,0,34,270,1,0,0,0,36,275,1,0,0,0,38,287,1,0,0,0,40,291,1,0,0,0,42,
+		293,1,0,0,0,44,295,1,0,0,0,46,305,1,0,0,0,48,307,1,0,0,0,50,315,1,0,0,
+		0,52,323,1,0,0,0,54,331,1,0,0,0,56,339,1,0,0,0,58,353,1,0,0,0,60,358,1,
+		0,0,0,62,363,1,0,0,0,64,372,1,0,0,0,66,376,1,0,0,0,68,388,1,0,0,0,70,401,
+		1,0,0,0,72,403,1,0,0,0,74,416,1,0,0,0,76,429,1,0,0,0,78,433,1,0,0,0,80,
+		448,1,0,0,0,82,454,1,0,0,0,84,470,1,0,0,0,86,476,1,0,0,0,88,492,1,0,0,
+		0,90,497,1,0,0,0,92,499,1,0,0,0,94,512,1,0,0,0,96,532,1,0,0,0,98,534,1,
+		0,0,0,100,109,3,2,1,0,101,109,3,4,2,0,102,109,3,8,4,0,103,109,3,16,8,0,
+		104,105,3,26,13,0,105,106,5,21,0,0,106,109,1,0,0,0,107,109,5,21,0,0,108,
+		100,1,0,0,0,108,101,1,0,0,0,108,102,1,0,0,0,108,103,1,0,0,0,108,104,1,
+		0,0,0,108,107,1,0,0,0,109,112,1,0,0,0,110,108,1,0,0,0,110,111,1,0,0,0,
+		111,113,1,0,0,0,112,110,1,0,0,0,113,114,5,0,0,1,114,1,1,0,0,0,115,116,
+		5,1,0,0,116,117,3,98,49,0,117,118,5,21,0,0,118,3,1,0,0,0,119,120,5,2,0,
+		0,120,121,3,98,49,0,121,122,5,21,0,0,122,5,1,0,0,0,123,124,5,42,0,0,124,
+		125,5,26,0,0,125,126,7,0,0,0,126,127,5,62,0,0,127,128,5,27,0,0,128,7,1,
+		0,0,0,129,132,3,10,5,0,130,132,3,6,3,0,131,129,1,0,0,0,131,130,1,0,0,0,
+		132,135,1,0,0,0,133,131,1,0,0,0,133,134,1,0,0,0,134,139,1,0,0,0,135,133,
+		1,0,0,0,136,138,3,12,6,0,137,136,1,0,0,0,138,141,1,0,0,0,139,137,1,0,0,
+		0,139,140,1,0,0,0,140,142,1,0,0,0,141,139,1,0,0,0,142,143,3,94,47,0,143,
+		144,3,98,49,0,144,145,3,82,41,0,145,146,3,14,7,0,146,9,1,0,0,0,147,148,
+		5,42,0,0,148,149,3,98,49,0,149,11,1,0,0,0,150,151,5,17,0,0,151,13,1,0,
+		0,0,152,156,5,28,0,0,153,155,3,24,12,0,154,153,1,0,0,0,155,158,1,0,0,0,
+		156,154,1,0,0,0,156,157,1,0,0,0,157,159,1,0,0,0,158,156,1,0,0,0,159,160,
+		5,29,0,0,160,15,1,0,0,0,161,162,7,1,0,0,162,165,3,98,49,0,163,164,5,15,
+		0,0,164,166,3,96,48,0,165,163,1,0,0,0,165,166,1,0,0,0,166,167,1,0,0,0,
+		167,172,5,28,0,0,168,171,3,18,9,0,169,171,3,20,10,0,170,168,1,0,0,0,170,
+		169,1,0,0,0,171,174,1,0,0,0,172,170,1,0,0,0,172,173,1,0,0,0,173,175,1,
+		0,0,0,174,172,1,0,0,0,175,176,5,29,0,0,176,17,1,0,0,0,177,178,3,94,47,
+		0,178,181,5,58,0,0,179,180,5,30,0,0,180,182,3,42,21,0,181,179,1,0,0,0,
+		181,182,1,0,0,0,182,184,1,0,0,0,183,185,5,21,0,0,184,183,1,0,0,0,185,186,
+		1,0,0,0,186,184,1,0,0,0,186,187,1,0,0,0,187,19,1,0,0,0,188,191,3,22,11,
+		0,189,191,3,6,3,0,190,188,1,0,0,0,190,189,1,0,0,0,191,194,1,0,0,0,192,
+		190,1,0,0,0,192,193,1,0,0,0,193,195,1,0,0,0,194,192,1,0,0,0,195,196,3,
+		94,47,0,196,197,5,58,0,0,197,198,3,82,41,0,198,199,3,14,7,0,199,216,1,
+		0,0,0,200,203,3,12,6,0,201,203,3,6,3,0,202,200,1,0,0,0,202,201,1,0,0,0,
+		203,206,1,0,0,0,204,202,1,0,0,0,204,205,1,0,0,0,205,207,1,0,0,0,206,204,
+		1,0,0,0,207,208,5,58,0,0,208,211,3,82,41,0,209,210,5,22,0,0,210,212,3,
+		42,21,0,211,209,1,0,0,0,211,212,1,0,0,0,212,213,1,0,0,0,213,214,3,14,7,
+		0,214,216,1,0,0,0,215,192,1,0,0,0,215,204,1,0,0,0,216,21,1,0,0,0,217,220,
+		3,12,6,0,218,220,5,18,0,0,219,217,1,0,0,0,219,218,1,0,0,0,220,23,1,0,0,
+		0,221,223,3,6,3,0,222,221,1,0,0,0,223,226,1,0,0,0,224,222,1,0,0,0,224,
+		225,1,0,0,0,225,242,1,0,0,0,226,224,1,0,0,0,227,232,3,26,13,0,228,232,
+		3,28,14,0,229,232,3,38,19,0,230,232,3,40,20,0,231,227,1,0,0,0,231,228,
+		1,0,0,0,231,229,1,0,0,0,231,230,1,0,0,0,232,234,1,0,0,0,233,235,5,21,0,
+		0,234,233,1,0,0,0,235,236,1,0,0,0,236,234,1,0,0,0,236,237,1,0,0,0,237,
+		243,1,0,0,0,238,243,3,30,15,0,239,243,3,14,7,0,240,243,3,32,16,0,241,243,
+		3,36,18,0,242,231,1,0,0,0,242,238,1,0,0,0,242,239,1,0,0,0,242,240,1,0,
+		0,0,242,241,1,0,0,0,243,25,1,0,0,0,244,246,7,2,0,0,245,244,1,0,0,0,246,
+		249,1,0,0,0,247,245,1,0,0,0,247,248,1,0,0,0,248,250,1,0,0,0,249,247,1,
+		0,0,0,250,251,3,94,47,0,251,254,3,98,49,0,252,253,5,30,0,0,253,255,3,42,
+		21,0,254,252,1,0,0,0,254,255,1,0,0,0,255,27,1,0,0,0,256,257,3,42,21,0,
+		257,29,1,0,0,0,258,259,5,60,0,0,259,31,1,0,0,0,260,262,3,34,17,0,261,260,
+		1,0,0,0,262,263,1,0,0,0,263,261,1,0,0,0,263,264,1,0,0,0,264,265,1,0,0,
+		0,265,268,3,24,12,0,266,267,5,6,0,0,267,269,3,24,12,0,268,266,1,0,0,0,
+		268,269,1,0,0,0,269,33,1,0,0,0,270,271,7,3,0,0,271,272,5,24,0,0,272,273,
+		3,42,21,0,273,274,5,25,0,0,274,35,1,0,0,0,275,276,5,7,0,0,276,278,5,24,
+		0,0,277,279,3,26,13,0,278,277,1,0,0,0,278,279,1,0,0,0,279,280,1,0,0,0,
+		280,281,5,21,0,0,281,282,3,42,21,0,282,283,5,21,0,0,283,284,3,42,21,0,
+		284,285,5,25,0,0,285,286,3,24,12,0,286,37,1,0,0,0,287,289,5,8,0,0,288,
+		290,3,42,21,0,289,288,1,0,0,0,289,290,1,0,0,0,290,39,1,0,0,0,291,292,7,
+		4,0,0,292,41,1,0,0,0,293,294,3,44,22,0,294,43,1,0,0,0,295,298,3,46,23,
+		0,296,297,7,5,0,0,297,299,3,42,21,0,298,296,1,0,0,0,298,299,1,0,0,0,299,
+		45,1,0,0,0,300,306,3,48,24,0,301,302,5,11,0,0,302,303,3,94,47,0,303,304,
+		3,92,46,0,304,306,1,0,0,0,305,300,1,0,0,0,305,301,1,0,0,0,306,47,1,0,0,
+		0,307,312,3,50,25,0,308,309,7,6,0,0,309,311,3,50,25,0,310,308,1,0,0,0,
+		311,314,1,0,0,0,312,310,1,0,0,0,312,313,1,0,0,0,313,49,1,0,0,0,314,312,
+		1,0,0,0,315,320,3,52,26,0,316,317,7,7,0,0,317,319,3,52,26,0,318,316,1,
+		0,0,0,319,322,1,0,0,0,320,318,1,0,0,0,320,321,1,0,0,0,321,51,1,0,0,0,322,
+		320,1,0,0,0,323,328,3,54,27,0,324,325,7,0,0,0,325,327,3,54,27,0,326,324,
+		1,0,0,0,327,330,1,0,0,0,328,326,1,0,0,0,328,329,1,0,0,0,329,53,1,0,0,0,
+		330,328,1,0,0,0,331,336,3,56,28,0,332,333,7,8,0,0,333,335,3,56,28,0,334,
+		332,1,0,0,0,335,338,1,0,0,0,336,334,1,0,0,0,336,337,1,0,0,0,337,55,1,0,
+		0,0,338,336,1,0,0,0,339,344,3,58,29,0,340,341,7,9,0,0,341,343,3,58,29,
+		0,342,340,1,0,0,0,343,346,1,0,0,0,344,342,1,0,0,0,344,345,1,0,0,0,345,
+		57,1,0,0,0,346,344,1,0,0,0,347,348,5,24,0,0,348,349,3,94,47,0,349,350,
+		5,25,0,0,350,351,3,58,29,0,351,354,1,0,0,0,352,354,3,60,30,0,353,347,1,
+		0,0,0,353,352,1,0,0,0,354,59,1,0,0,0,355,357,7,10,0,0,356,355,1,0,0,0,
+		357,360,1,0,0,0,358,356,1,0,0,0,358,359,1,0,0,0,359,361,1,0,0,0,360,358,
+		1,0,0,0,361,362,3,62,31,0,362,61,1,0,0,0,363,369,3,68,34,0,364,368,3,92,
+		46,0,365,368,3,64,32,0,366,368,3,66,33,0,367,364,1,0,0,0,367,365,1,0,0,
+		0,367,366,1,0,0,0,368,371,1,0,0,0,369,367,1,0,0,0,369,370,1,0,0,0,370,
+		63,1,0,0,0,371,369,1,0,0,0,372,373,5,26,0,0,373,374,3,42,21,0,374,375,
+		5,27,0,0,375,65,1,0,0,0,376,377,5,55,0,0,377,378,5,58,0,0,378,67,1,0,0,
+		0,379,384,3,70,35,0,380,382,5,54,0,0,381,383,3,70,35,0,382,381,1,0,0,0,
+		382,383,1,0,0,0,383,385,1,0,0,0,384,380,1,0,0,0,384,385,1,0,0,0,385,389,
+		1,0,0,0,386,387,5,54,0,0,387,389,3,70,35,0,388,379,1,0,0,0,388,386,1,0,
+		0,0,389,69,1,0,0,0,390,402,5,57,0,0,391,402,3,98,49,0,392,402,5,59,0,0,
+		393,402,5,62,0,0,394,402,3,72,36,0,395,402,3,74,37,0,396,402,3,78,39,0,
+		397,398,5,24,0,0,398,399,3,42,21,0,399,400,5,25,0,0,400,402,1,0,0,0,401,
+		390,1,0,0,0,401,391,1,0,0,0,401,392,1,0,0,0,401,393,1,0,0,0,401,394,1,
+		0,0,0,401,395,1,0,0,0,401,396,1,0,0,0,401,397,1,0,0,0,402,71,1,0,0,0,403,
+		412,5,26,0,0,404,409,3,42,21,0,405,406,5,23,0,0,406,408,3,42,21,0,407,
+		405,1,0,0,0,408,411,1,0,0,0,409,407,1,0,0,0,409,410,1,0,0,0,410,413,1,
+		0,0,0,411,409,1,0,0,0,412,404,1,0,0,0,412,413,1,0,0,0,413,414,1,0,0,0,
+		414,415,5,27,0,0,415,73,1,0,0,0,416,425,5,28,0,0,417,422,3,76,38,0,418,
+		419,5,23,0,0,419,421,3,76,38,0,420,418,1,0,0,0,421,424,1,0,0,0,422,420,
+		1,0,0,0,422,423,1,0,0,0,423,426,1,0,0,0,424,422,1,0,0,0,425,417,1,0,0,
+		0,425,426,1,0,0,0,426,427,1,0,0,0,427,428,5,29,0,0,428,75,1,0,0,0,429,
+		430,5,58,0,0,430,431,5,22,0,0,431,432,3,42,21,0,432,77,1,0,0,0,433,446,
+		5,61,0,0,434,443,5,26,0,0,435,440,3,80,40,0,436,437,5,23,0,0,437,439,3,
+		80,40,0,438,436,1,0,0,0,439,442,1,0,0,0,440,438,1,0,0,0,440,441,1,0,0,
+		0,441,444,1,0,0,0,442,440,1,0,0,0,443,435,1,0,0,0,443,444,1,0,0,0,444,
+		445,1,0,0,0,445,447,5,27,0,0,446,434,1,0,0,0,446,447,1,0,0,0,447,79,1,
+		0,0,0,448,449,5,58,0,0,449,452,5,30,0,0,450,453,3,42,21,0,451,453,5,36,
+		0,0,452,450,1,0,0,0,452,451,1,0,0,0,452,453,1,0,0,0,453,81,1,0,0,0,454,
+		463,5,24,0,0,455,460,3,84,42,0,456,457,5,23,0,0,457,459,3,84,42,0,458,
+		456,1,0,0,0,459,462,1,0,0,0,460,458,1,0,0,0,460,461,1,0,0,0,461,464,1,
+		0,0,0,462,460,1,0,0,0,463,455,1,0,0,0,463,464,1,0,0,0,464,465,1,0,0,0,
+		465,466,5,25,0,0,466,83,1,0,0,0,467,469,3,90,45,0,468,467,1,0,0,0,469,
+		472,1,0,0,0,470,468,1,0,0,0,470,471,1,0,0,0,471,473,1,0,0,0,472,470,1,
+		0,0,0,473,474,3,94,47,0,474,475,3,98,49,0,475,85,1,0,0,0,476,485,5,24,
+		0,0,477,482,3,88,44,0,478,479,5,23,0,0,479,481,3,88,44,0,480,478,1,0,0,
+		0,481,484,1,0,0,0,482,480,1,0,0,0,482,483,1,0,0,0,483,486,1,0,0,0,484,
+		482,1,0,0,0,485,477,1,0,0,0,485,486,1,0,0,0,486,487,1,0,0,0,487,488,5,
+		25,0,0,488,87,1,0,0,0,489,491,3,90,45,0,490,489,1,0,0,0,491,494,1,0,0,
+		0,492,490,1,0,0,0,492,493,1,0,0,0,493,495,1,0,0,0,494,492,1,0,0,0,495,
+		496,3,94,47,0,496,89,1,0,0,0,497,498,5,16,0,0,498,91,1,0,0,0,499,508,5,
+		24,0,0,500,505,3,42,21,0,501,502,5,23,0,0,502,504,3,42,21,0,503,501,1,
+		0,0,0,504,507,1,0,0,0,505,503,1,0,0,0,505,506,1,0,0,0,506,509,1,0,0,0,
+		507,505,1,0,0,0,508,500,1,0,0,0,508,509,1,0,0,0,509,510,1,0,0,0,510,511,
+		5,25,0,0,511,93,1,0,0,0,512,513,6,47,-1,0,513,514,3,96,48,0,514,529,1,
+		0,0,0,515,516,10,5,0,0,516,517,5,26,0,0,517,528,5,27,0,0,518,519,10,4,
+		0,0,519,520,5,28,0,0,520,528,5,29,0,0,521,522,10,3,0,0,522,528,5,49,0,
+		0,523,524,10,2,0,0,524,528,5,56,0,0,525,526,10,1,0,0,526,528,3,86,43,0,
+		527,515,1,0,0,0,527,518,1,0,0,0,527,521,1,0,0,0,527,523,1,0,0,0,527,525,
+		1,0,0,0,528,531,1,0,0,0,529,527,1,0,0,0,529,530,1,0,0,0,530,95,1,0,0,0,
+		531,529,1,0,0,0,532,533,3,98,49,0,533,97,1,0,0,0,534,537,5,58,0,0,535,
+		536,5,22,0,0,536,538,5,58,0,0,537,535,1,0,0,0,537,538,1,0,0,0,538,99,1,
+		0,0,0,62,108,110,131,133,139,156,165,170,172,181,186,190,192,202,204,211,
+		215,219,224,231,236,242,247,254,263,268,278,289,298,305,312,320,328,336,
+		344,353,358,367,369,382,384,388,401,409,412,422,425,440,443,446,452,460,
+		463,470,482,485,492,505,508,527,529,537
 	};
 
 	public static readonly ATN _ATN =

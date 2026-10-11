@@ -54,8 +54,13 @@ namespace Amethyst.IR
                 if (types.TryGetValue(type, out var ret)) return ret.Type;
             }
             else if (GeodeBuilder.NamespaceWalk(baseNamespace, type, types) is { } sym) return sym.Type;
-            else if (types.TryGetValue($"minecraft:{type}", out var mc)) return mc.Type;
-            else if (types.TryGetValue($"builtin:{type}", out var bt)) return bt.Type;
+            else
+            {
+                foreach (var i in Compiler.IR.UsingsHolder.Value?.Usings ?? [])
+                {
+                    if (types.TryGetValue($"{i}{type}", out var us)) return us.Type;
+                }
+            }
 
             throw new UnknownTypeError(type);
         }
@@ -67,8 +72,13 @@ namespace Amethyst.IR
                 if (softTypes.ContainsKey(type)) return type;
             }
             else if (GeodeBuilder.NamespaceWalk(baseNamespace, type, softTypes) is { } sym) return sym.Provides!.Value; // Probably not good but idc
-            else if (softTypes.ContainsKey($"minecraft:{type}")) return $"minecraft:{type}";
-            else if (softTypes.ContainsKey($"builtin:{type}")) return $"builtin:{type}";
+            else
+            {
+                foreach (var i in Compiler.IR.UsingsHolder.Value?.Usings ?? [])
+                {
+                    if (softTypes.ContainsKey($"{i}{type}")) return $"{i}{type}";
+                }
+            }
 
             return Find(baseNamespace, type).ID;
         }

@@ -22,12 +22,9 @@ namespace Amethyst.AST.Expressions
         public readonly List<Expression> Args = args;
         public readonly Expression Function = func;
 
-        protected override ValueRef ExecuteImpl(FunctionContext ctx, TypeSpecifier? expected)
-        {
-            return ExecuteImpl(ctx, expected, Function.Execute(ctx, null));
-        }
+        protected override ValueRef ExecuteImpl(FunctionContext ctx, TypeSpecifier? expected) => ExecuteImpl(ctx, Function.Execute(ctx, null));
 
-        private ValueRef ExecuteImpl(FunctionContext ctx, TypeSpecifier? expected, ValueRef function)
+        private ValueRef ExecuteImpl(FunctionContext ctx, ValueRef function)
         {
             var func = ReferenceType.TryDeref(function, ctx);
             Expression[] newArgs;
@@ -69,16 +66,14 @@ namespace Amethyst.AST.Expressions
                 Expression[] newArgs;
 
                 if (Function is IMethodHolder prop && prop.GetThis(ctx) is { } self)
-                {
                     newArgs = [self, .. Args];
-                }
                 else newArgs = [.. Args];
 
                 return i.Compute(ctx, [.. newArgs.Select(i => i.Compute(ctx))]);
             }
 
 
-            var value = ExecuteImpl(ctx, null, func);
+            var value = ExecuteImpl(ctx, func);
             var equation = new ValueRefEquation(value);
 
             return equation.Type == ProviderNumberType.Int

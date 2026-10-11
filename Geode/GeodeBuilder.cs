@@ -31,6 +31,8 @@ namespace Geode
         public readonly Dictionary<NamespacedID, GlobalSymbol> Symbols = [];
         public readonly List<Command> UserInitCommands = [];
 
+        public readonly ThreadLocal<IUsingsHolder> UsingsHolder = new(() => null!);
+
         private readonly SortedDictionary<int, ScoreValue> constants = [];
         private readonly List<MCFunction> functionsToRemove = [];
         private readonly SortedSet<Score> registeredScores = [];

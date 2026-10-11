@@ -42,8 +42,7 @@ void _loop() {
     // Run once a second
     ticks = (ticks + 1) % 20;
 
-    // TODO: implement &&
-    if (ticks == 0) if (allocated_since_pass) {
+    if (allocated_since_pass && ticks == 0) {
         collect();
     }
 }

@@ -1,15 +1,11 @@
 ﻿using Datapack.Net.Utils;
 using Newtonsoft.Json.Linq;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Datapack.Net.NumberProviders
 {
     public abstract class BinaryOperationProvider(NumberProvider left, NumberProvider right, NamespacedID id) : NumberProvider(id)
     {
         public readonly NumberProvider Left = left;
-
         public readonly NumberProvider Right = right;
 
         public override ProviderNumberType NumberType => Left.NumberType == ProviderNumberType.Float || Right.NumberType == ProviderNumberType.Float
@@ -60,9 +56,20 @@ namespace Datapack.Net.NumberProviders
         public override bool Associative => false;
     }
 
-    public class PowProvider(NumberProvider left, NumberProvider right, NamespacedID id) : BinaryOperationProvider(left, right, id)
+    public class PowProvider(NumberProvider left, NumberProvider right, NamespacedID id) : NumberProvider(id)
     {
         public override NamespacedID Type => "minecraft:pow";
-        public override bool Associative => true;
+        public readonly NumberProvider Left = left;
+        public readonly NumberProvider Right = right;
+
+        public override ProviderNumberType NumberType => Left.NumberType == ProviderNumberType.Float || Right.NumberType == ProviderNumberType.Float
+            ? ProviderNumberType.Float
+            : ProviderNumberType.Int;
+
+        protected override JObject InnerRender() => new()
+        {
+            ["base"] = ToType(Left).Render(),
+            ["exponent"] = ToType(Right).Render()
+        };
     }
 }

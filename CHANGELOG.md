@@ -11,6 +11,7 @@
 * Added conditional compilation.
 * Added `&&` and `||`.
 * Added function types and re-enabled dynamic functions.
+* Added `using` statements.
 
 # Bug Fixes
 

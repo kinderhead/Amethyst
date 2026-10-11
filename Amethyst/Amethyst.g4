@@ -3,11 +3,15 @@ grammar Amethyst;
 // Parser
 
 root
-    : (ns | function | structDecl | (initAssignmentStatement Semi) | Semi)* EOF
+    : (ns | usingStatement | function | structDecl | (initAssignmentStatement Semi) | Semi)* EOF
     ;
 
 ns
     : Namespace id Semi
+    ;
+    
+usingStatement
+    : Using id Semi
     ;
     
 conditionalComp
@@ -228,6 +232,7 @@ id
 // Lexer
 
 Namespace: 'namespace';
+Using: 'using';
 If: 'if';
 As: 'as';
 At: 'at';

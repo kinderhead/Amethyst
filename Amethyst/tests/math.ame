@@ -1,4 +1,5 @@
 namespace test;
+using minecraft:math;
 
 #test
 void test_int_add() {
@@ -243,37 +244,37 @@ void test_math_intrinsics() {
     start("math intrinsics");
 
     float x = 2f;
-    assert_eq(math/pow(2f, 3), 8f);
+    assert_eq(pow(x, 3), 8f);
     x = 1.5f;
-    assert_eq(math/pow(1.5f, 2.5f), 2.755676f);
+    assert_eq(pow(x, 2.5f), 2.755676f);
 
     x = 64f;
-    assert_eq(math/sqrt(x), 8f);
+    assert_eq(sqrt(x), 8f);
     x = 32f;
-    assert_eq(math/sqrt(x), 5.656854f);
+    assert_eq(sqrt(x), 5.656854f);
     
     x = 1f;
-    assert_eq(math/sin(x), 0.8414514f);
-    assert_eq(math/cos(x), 0.54033285f);
+    assert_eq(sin(x), 0.8414514f);
+    assert_eq(cos(x), 0.54033285f);
 
     x = 2f;
-    assert_eq(math/sin(x), 0.9093276f);
-    assert_eq(math/cos(x), -0.41608086f);
+    assert_eq(sin(x), 0.9093276f);
+    assert_eq(cos(x), -0.41608086f);
     
     x = 1.5f;
-    assert_eq(math/round(x), 2f); 
+    assert_eq(round(x), 2f); 
     x = 1.49f;
-    assert_eq(math/round(x), 1f); 
+    assert_eq(round(x), 1f); 
     
     x = 2.75f;
-    assert_eq(math/floor(x), 2f);
-    assert_eq(math/floor(-x), -3f);
-    assert_eq(math/ceil(x), 3f);
-    assert_eq(math/ceil(-x), -2f);
+    assert_eq(floor(x), 2f);
+    assert_eq(floor(-x), -3f);
+    assert_eq(ceil(x), 3f);
+    assert_eq(ceil(-x), -2f);
     
     x = 100.5f;
-    assert_eq(math/trunc(x), 100f);
-    assert_eq(math/trunc(-x), -100f);
+    assert_eq(trunc(x), 100f);
+    assert_eq(trunc(-x), -100f);
 
     complete();
 }

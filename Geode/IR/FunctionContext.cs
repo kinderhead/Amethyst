@@ -124,8 +124,13 @@ namespace Geode.IR
                 if (GetGlobal(new(name)) is { } v) return v;
             }
             else if (GetGlobalWalk(Decl.ID.GetContainingFolder(), name) is { } v2) return v2;
-            else if (GetGlobal(new("minecraft", name)) is { } v3) return v3;
-            else if (GetGlobal(new("builtin", name)) is { } v4) return v4;
+            else
+            {
+                foreach (var i in Compiler.IR.UsingsHolder.Value?.Usings ?? [])
+                {
+                    if (GetGlobal($"{i}{name}") is { } us) return us;
+                }
+            }
 
             return null;
         }

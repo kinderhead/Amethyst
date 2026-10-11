@@ -6,15 +6,18 @@ using Geode.IR;
 
 namespace Amethyst.AST
 {
-    public class RootNode(LocationRange loc, Compiler ctx) : Node(loc)
+    public class RootNode(LocationRange loc, Compiler ctx) : Node(loc), IUsingsHolder
     {
         public readonly List<IRootChild> Children = [];
         public readonly Compiler Ctx = ctx;
         public readonly List<FunctionNode> Functions = [];
 
+        public List<string> Usings { get; } = ["minecraft:", "builtin:"];
+
         public bool BuildSoftTypes()
         {
             var success = true;
+            Ctx.IR.UsingsHolder.Value = this;
 
             foreach (var i in Children)
             {
@@ -27,6 +30,7 @@ namespace Amethyst.AST
         public bool BuildSymbols()
         {
             var success = true;
+            Ctx.IR.UsingsHolder.Value = this;
 
             foreach (var i in Children)
             {
@@ -39,6 +43,7 @@ namespace Amethyst.AST
         public bool CompileFunctions(out List<FunctionContext> funcs)
         {
             var success = true;
+            Ctx.IR.UsingsHolder.Value = this;
             funcs = [];
 
             foreach (var i in Functions)

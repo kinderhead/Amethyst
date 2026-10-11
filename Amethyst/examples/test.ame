@@ -15,12 +15,11 @@ entitydef minecraft:sheep implements minecraft:base {
 }
 /* The rest can be modified */
 
+using minecraft:math;
+
 #load
 void main() {
-    print(run(true) && run(true));
-    print(math/sin(1f));
-    print(math/sin(1));
-    print(math/pow(2, 3));
+    print(sin(4.324));
 
     amethyst:exit();
 }

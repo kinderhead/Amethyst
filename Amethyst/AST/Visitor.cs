@@ -50,6 +50,12 @@ namespace Amethyst.AST
                     case AmethystParser.StructDeclContext type:
                         root.Children.Add((IRootChild)Visit(type));
                         break;
+                    case AmethystParser.UsingStatementContext usings:
+                    {
+                        var id = Visit(usings.id());
+                        root.Usings.Add(id.Contains(':') ? id + '/' : id + ':');
+                        break;
+                    }
                 }
             }
 
