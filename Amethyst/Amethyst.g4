@@ -19,7 +19,7 @@ conditionalComp
     ;
 
 function
-    : (functionTag | conditionalComp)* functionModifier* type name=id paramList block
+    : (functionTag | conditionalComp)* functionModifier* type name=id paramList (block | Semi)
     ;
 
 functionTag
@@ -35,7 +35,7 @@ block
     ;
 
 structDecl
-    : (Struct | Class | EntityDef) id (Implements simpleType)? LBrak (declaration | method)* RBrak
+    : (Struct | (Declare? Class) | EntityDef) id (Implements simpleType)? LBrak (declaration | method)* RBrak
     ;
 
 declaration
@@ -43,8 +43,8 @@ declaration
     ;
 
 method
-    : (methodModifier | conditionalComp)* type RawIdentifier paramList block
-    | (functionModifier | conditionalComp)* RawIdentifier paramList (Colon expression)? block
+    : (methodModifier | conditionalComp)* type RawIdentifier paramList (block | Semi)
+    | (functionModifier | conditionalComp)* RawIdentifier paramList (Colon expression)? (block | Semi)
     ;
 
 methodModifier
@@ -233,6 +233,7 @@ id
 
 Namespace: 'namespace';
 Using: 'using';
+Declare: 'declare';
 If: 'if';
 As: 'as';
 At: 'at';

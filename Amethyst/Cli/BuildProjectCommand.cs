@@ -42,11 +42,15 @@ namespace Amethyst.Cli
         [Description("Disable generating and using number providers and /compute.")]
         public bool DisableCompute { get; set; }
 
+        [CommandOption("-p|--pack-version")]
+        [Description("Data pack version to support. 0.0 to use the project default.")]
+        [DefaultValue("0.0")]
+        public PackFormat PackFormat { get; set; }
+
         // IAmethystOptions settings
         public string Output { get; set; }
         public string? Data { get; set; }
         public string? Description { get; set; }
-        public PackFormat PackFormat { get; set; }
         public string[] Inputs { get; set; }
     }
 
@@ -59,10 +63,11 @@ namespace Amethyst.Cli
                                            throw new FormatException($"Invalid path {settings.ShardFile}");
 
             settings.Output = Path.Join(Environment.CurrentDirectory, "build", $"{project.Name}-{project.Version}.zip");
-            settings.PackFormat = project.PackFormat;
             settings.Inputs = [Path.Join(project.SourceDir, "**/*.ame")];
             settings.Data = project.DataDir;
             settings.Description = project.Description;
+
+            if (settings.PackFormat == new PackFormat("0.0")) settings.PackFormat = project.PackFormat;
 
             Directory.CreateDirectory(Path.Join(Environment.CurrentDirectory, "build"));
 

@@ -128,7 +128,7 @@ namespace Amethyst.AST
             else if (context.EntityDef() is not null) type = ContainerType.Entity;
             else type = ContainerType.Class;
 
-            var ret = new StructNode(type, Loc(context), id, context.simpleType() is null ? null : Visit(context.simpleType()), props, methods);
+            var ret = new StructNode(type, Loc(context), id, context.simpleType() is null ? null : Visit(context.simpleType()), props, methods, context.Declare() is not null);
             currentStructID = oldSID;
             return ret;
         }
@@ -467,7 +467,7 @@ namespace Amethyst.AST
         public AbstractTypeSpecifier Visit(AmethystParser.TypeContext context) => (AbstractTypeSpecifier)Visit((IParseTree)context);
         public AbstractTypeSpecifier Visit(AmethystParser.SimpleTypeContext context) => (AbstractTypeSpecifier)Visit((IParseTree)context);
 
-        public BlockNode Visit(AmethystParser.BlockContext context) => (BlockNode)Visit((IParseTree)context);
+        public BlockNode? Visit(AmethystParser.BlockContext? context) => context is null ? null : (BlockNode)Visit((IParseTree)context);
         public Statement Visit(AmethystParser.StatementContext context) => (Statement)Visit((IParseTree)context);
         public Expression Visit(AmethystParser.ExpressionContext context) => (Expression)Visit((IParseTree)context);
 

@@ -46,7 +46,7 @@ namespace Datapack.Net.Pack
     {
         public static readonly PackFormat Latest = new(121, 0);
 
-        public PackFormat(string[] parts) : this(int.Parse(parts[0]), parts.Length > 1 ? int.Parse(parts[0]) : 0)
+        public PackFormat(string[] parts) : this(int.Parse(parts[0]), parts.Length > 1 ? int.Parse(parts[1]) : 0)
         {
         }
 

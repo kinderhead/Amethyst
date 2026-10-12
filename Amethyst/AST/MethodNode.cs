@@ -15,7 +15,7 @@ namespace Amethyst.AST
         NamespacedID id,
         NamespacedID selfID,
         List<AbstractParameter> parameters,
-        BlockNode body) : FunctionNode(loc, tags, modifiers, ret, id, parameters, body)
+        BlockNode? body) : FunctionNode(loc, tags, modifiers, ret, id, parameters, body)
     {
         public readonly NamespacedID SelfID = selfID;
 
@@ -39,7 +39,7 @@ namespace Amethyst.AST
         NamespacedID id,
         List<AbstractParameter> parameters,
         Expression? baseCall,
-        BlockNode body) : MethodNode(loc, tags, modifiers, new SimpleAbstractTypeSpecifier(loc, id.ToString()), id, id, parameters, body)
+        BlockNode? body) : MethodNode(loc, tags, modifiers, new SimpleAbstractTypeSpecifier(loc, id.ToString()), id, id, parameters, body)
     {
         public readonly Expression? BaseCall = baseCall;
 
@@ -55,9 +55,9 @@ namespace Amethyst.AST
             }
 
             var constructor = new FunctionNode(Location, Tags, Modifiers, isClass ? new(Location, "builtin:void") : self, ID, Parameters, Body);
-            constructor.Body.Prepend(new ConstructorInitStatement(Location, self, BaseCall));
+            constructor.Body?.Prepend(new ConstructorInitStatement(Location, self, BaseCall));
 
-            if (!isClass) constructor.Body.Add(new ReturnStatement(Location, new VariableExpression(Location, "this")));
+            if (!isClass) constructor.Body?.Add(new ReturnStatement(Location, new VariableExpression(Location, "this")));
 
             constructor.Process(ctx, root);
         }

@@ -26,10 +26,12 @@ namespace Amethyst.AST
         NamespacedID id,
         AbstractTypeSpecifier? baseClass,
         Dictionary<string, AbstractTypeSpecifier> props,
-        List<MethodNode> methods) : Node(loc), IRootChild
+        List<MethodNode> methods,
+        bool declared) : Node(loc), IRootChild
     {
         public static readonly ReadOnlySet<string> ReservedProperties = [StructType.TYPE_ID_PROPERTY];
         public readonly AbstractTypeSpecifier? BaseClass = baseClass;
+        public readonly bool Declared = declared;
         public readonly NamespacedID ID = id;
         public readonly List<MethodNode> Methods = methods;
         public readonly Dictionary<string, AbstractTypeSpecifier> Properties = props;
@@ -65,7 +67,7 @@ namespace Amethyst.AST
             if (Type == ContainerType.Class)
             {
                 ctx.TypeHandler.Register((GlobalTypeSymbol)new(ID, Location, new ReferenceType(selfType, false)));
-                ctx.TypeHandler.RegisterTypeInfo(selfType);
+                if (!Declared) ctx.TypeHandler.RegisterTypeInfo(selfType);
             }
             else ctx.TypeHandler.Register((GlobalTypeSymbol)new(ID, Location, selfType));
         }
@@ -120,14 +122,14 @@ namespace Amethyst.AST
             if (constructor is null && Type == ContainerType.Class)
             {
                 constructor = new(Location, [], FunctionModifiers.Inline, ID.ToString(), [], actualBaseClass is ReferenceType cls
-                    ? new CallExpression(Location, new VariableExpression(Location, cls.Inner.ID.ToString()), [new VariableExpression(Location, "this")])
-                    : null, new(Location));
+                    ? new CallExpression(Location, new VariableExpression(Location, cls.Inner.ID.ToString()), [])
+                    : null, Declared ? null : new(Location));
                 constructor.Process(ctx, root);
             }
 
             if (ctx.IR.GetConstructorOrNull(selfType.BaseClass) is not null && constructor?.BaseCall is null) throw new MissingConstructorError(selfType.BaseClass.ToString());
             if (Properties.Count != 0 && Type == ContainerType.Struct && selfType.EffectiveType != NBTType.Compound) throw new PropertyError(selfType.ToString());
-            if (Type == ContainerType.Class) GenerateMetaMethods(ctx, root, methods);
+            if (Type == ContainerType.Class && !Declared) GenerateMetaMethods(ctx, root, methods);
         }
 
         private void RecursePropertyType(Compiler ctx, TypeSpecifier type, TypeSpecifier parent)

@@ -138,3 +138,13 @@ Sometimes your project might target different versions of Minecraft. In this cas
 :::tip
 Conditional compilation can also apply to individual statements within functions.
 :::
+
+## Declared Functions
+
+Sometimes you want to tell Amethyst that a function exists but you don't want to define it. The body of a function can be omitted to achieve this.
+
+<Highlight code={`\
+    void func();
+`}/>
+
+Methods and constructors can also be defined like this.

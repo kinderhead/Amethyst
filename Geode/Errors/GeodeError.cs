@@ -8,11 +8,11 @@ namespace Geode.Errors
 
         public override string Message => $"{GetType().Name}: {char.ToLowerInvariant(RawMessage[0])}{RawMessage[1..]}";
 
-        public virtual CompilerMessager Display(IFileHandler handler, LocationRange loc, bool last = true)
+        public virtual CompilerMessenger Display(IFileHandler handler, LocationRange loc, bool last = true)
         {
             // Console.WriteLine(StackTrace);
 
-            var msg = new CompilerMessager(Color.Red);
+            var msg = new CompilerMessenger(Color.Red);
             msg.Header($"Error at [underline]{loc.Start}[/]");
             msg.AddCode(handler, loc);
 
@@ -31,7 +31,7 @@ namespace Geode.Errors
         public readonly LocationRange Location2 = loc2;
         public readonly string RawMessage2 = msg2;
 
-        public override CompilerMessager Display(IFileHandler handler, LocationRange loc, bool last = true)
+        public override CompilerMessenger Display(IFileHandler handler, LocationRange loc, bool last = true)
         {
             var msg = base.Display(handler, loc, false);
 
@@ -45,7 +45,7 @@ namespace Geode.Errors
 
     public class EmptyGeodeError() : GeodeError("")
     {
-        public override CompilerMessager Display(IFileHandler handler, LocationRange loc, bool lastNewlines = true) =>
+        public override CompilerMessenger Display(IFileHandler handler, LocationRange loc, bool lastNewlines = true) =>
             new(Color.Red);
     }
 }

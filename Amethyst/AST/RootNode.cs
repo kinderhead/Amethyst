@@ -50,6 +50,7 @@ namespace Amethyst.AST
             {
                 try
                 {
+                    if (!i.ShouldCompile) continue;
                     if (!i.Compile(Ctx, out var ctx) || ctx is null) success = false;
                     else funcs.Add(ctx);
                 }

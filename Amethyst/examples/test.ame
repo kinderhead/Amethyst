@@ -15,11 +15,21 @@ entitydef minecraft:sheep implements minecraft:base {
 }
 /* The rest can be modified */
 
-using minecraft:math;
+declare class Base {
+    int x;
+}
+
+declare class Test implements Base {
+    virtual int func(string x);
+}
 
 #load
 void main() {
-    print(sin(4.324));
-
+    print("Hi");
     amethyst:exit();
+}
+
+void test() {
+    var obj = new Test();
+    print(obj.func("w"));
 }

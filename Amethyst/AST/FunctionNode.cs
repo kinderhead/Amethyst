@@ -16,9 +16,9 @@ namespace Amethyst.AST
         AbstractTypeSpecifier ret,
         NamespacedID id,
         List<AbstractParameter> parameters,
-        BlockNode body) : Node(loc), IRootChild
+        BlockNode? body) : Node(loc), IRootChild
     {
-        public readonly BlockNode Body = body;
+        public readonly BlockNode? Body = body;
         public readonly FunctionModifiers Modifiers = modifiers;
         public readonly List<AbstractParameter> Parameters = parameters;
         public readonly AbstractTypeSpecifier ReturnType = ret;
@@ -26,6 +26,8 @@ namespace Amethyst.AST
 
         private FunctionType? funcType;
         public NamespacedID ID { get; private set; } = id;
+
+        public bool ShouldCompile => Body is not null;
 
         public NamespacedID? Provides => null;
 
@@ -73,6 +75,7 @@ namespace Amethyst.AST
 
         public bool Compile(Compiler compiler, out FunctionContext? ctx)
         {
+            if (Body is null) throw new InvalidOperationException("Cannot compile declared function");
             ctx = null;
 
             var type = GetFunctionType(compiler);

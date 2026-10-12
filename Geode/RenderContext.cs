@@ -19,7 +19,7 @@ namespace Geode
         {
             var loc = Block.Ctx.LocationStack.Peek();
 
-            if (loc != lastLocation)
+            if (loc != lastLocation && Builder.Options.Debug)
             {
                 MCFunction.Add(new Comment(loc.MapFile(Builder.FileHandler).ToString()));
                 lastLocation = loc;

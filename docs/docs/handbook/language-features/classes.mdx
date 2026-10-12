@@ -109,3 +109,22 @@ Example:
         amethyst:gc/mark(my_reference_that_for_some_reason_wasnt_marked);
     }
 `}/>
+
+## Declared Classes
+
+Similarly to [functions](./functions.mdx#declared-functions), classes can be declared as defined elsewhere with the `declare` keyword.
+
+<Highlight code={`\
+    declare class Vec {
+        int x;
+        int y;
+
+        virtual int sum();
+    }
+
+    declare class SubVec implements Vec {
+        virtual int sum();
+    }
+`}/>
+
+Unlike functions, `declare` is required because Amethyst generates internal functions for each class even if it has no methods or properties.

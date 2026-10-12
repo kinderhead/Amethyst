@@ -166,15 +166,15 @@ namespace Amethyst.Daemon
 
                             if (mapLoc is null)
                             {
-                                new CompilerMessager(Color.Red)
+                                new CompilerMessenger(Color.Red)
                                     .Header(
                                         $"Error loading [yellow]{lastFailedFunction}[/] ([grey underline]{srcLoc}[/])")
-                                    .AddCode(datapack, srcLoc, true)
-                                    .AddContent("Syntax error: [turquoise2]Could not parse command[/]");
+                                    .AddCode(datapack, srcLoc)
+                                    .Final().AddContent("Syntax error: [turquoise2]Could not parse command[/]");
                             }
                             else
                             {
-                                new CompilerMessager(Color.Red)
+                                new CompilerMessenger(Color.Red)
                                     .Header(
                                         $"Error loading [yellow]{lastFailedFunction}[/] ([grey underline]{srcLoc}[/])")
                                     .AddCode(datapack, srcLoc)
