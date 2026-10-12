@@ -92,6 +92,23 @@ void test_entity_ref() {
 }
 
 #test
+void test_entity_ref_equals() {
+    start("entity ref equals");
+
+    kill(@e[type="wither"]);
+    summon("wither");
+    
+    test_entity e1 = @e[type="wither", limit=1];
+    test_entity e2 = @e[type="wither", limit=1];
+    
+    assert(e1 == e2);
+
+    kill(@e[type="wither"]);
+
+    complete();
+}
+
+#test
 void test_entity_ref_ref() {
     start("entity ref ref");
 

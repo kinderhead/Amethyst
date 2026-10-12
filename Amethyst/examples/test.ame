@@ -15,14 +15,6 @@ entitydef minecraft:sheep implements minecraft:base {
 }
 /* The rest can be modified */
 
-declare class Base {
-    int x;
-}
-
-declare class Test implements Base {
-    virtual int func(string x);
-}
-
 #load
 void main() {
     print("Hi");
@@ -30,6 +22,7 @@ void main() {
 }
 
 void test() {
-    var obj = new Test();
-    print(obj.func("w"));
+    sheep my_player = @s;
+
+    print(my_player == my_player);
 }
