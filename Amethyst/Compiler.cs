@@ -162,6 +162,8 @@ namespace Amethyst
                 IR.AddFunctions(GlobalInitFunc);
             }
 
+            IR.Datapack.Tags.GetTag("minecraft:load", "function").Values.Add("amethyst:init");
+
             ctx?.Status = "[darkviolet]Generating commands...[/]";
 
             if (errored || !IR.Compile()) return false;
@@ -325,7 +327,7 @@ namespace Amethyst
 
         protected FunctionContext GetGlobalInitFunc() => new(this,
             new(new("amethyst", GeodeBuilder.INTERNAL_PATH + "/" + GeodeBuilder.UniqueString), FunctionType.VoidFunc,
-                LocationRange.None), ["minecraft:load"], LocationRange.None, true);
+                LocationRange.None), ["amethyst:var"], LocationRange.None, true);
 
         public void Register(Intrinsic func) => IR.Symbols[func.ID] = new(func.ID, LocationRange.None, func);
 

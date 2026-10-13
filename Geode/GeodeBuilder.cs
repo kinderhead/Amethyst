@@ -118,11 +118,11 @@ namespace Geode
         {
             var init = GetInitFunc();
             Register(init);
-            Datapack.Tags.GetTag(new("minecraft", "load"), "function").Values.Insert(0, init.ID);
+            Datapack.Tags.GetTag(new(Namespace, "init"), "function").Values.Add(init.ID);
 
             var cleanup = GetCleanupFunc();
             Register(cleanup);
-            Datapack.Tags.GetTag(new("amethyst", "cleanup"), "function").Values.Add(cleanup.ID);
+            Datapack.Tags.GetTag(new(Namespace, "cleanup"), "function").Values.Add(cleanup.ID);
         }
 
         private void AddDataFiles()

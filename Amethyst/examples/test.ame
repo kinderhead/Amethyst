@@ -17,9 +17,7 @@ entitydef minecraft:sheep implements minecraft:base {
 
 #load
 void main() {
-    if (true) {
-        int i = 0;
-    }
+    print("Hi");
     
     amethyst:exit();
 }

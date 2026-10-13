@@ -1,0 +1,7 @@
+namespace amethyst;
+
+void init() {
+    @/function #amethyst:init
+    @/function #amethyst:var
+    @/function #amethyst:load
+}

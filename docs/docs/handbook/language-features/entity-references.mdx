@@ -38,6 +38,8 @@ Check the [Minecraft Wiki](https://minecraft.wiki/w/Entity_format) for entity da
 Beware that not all NBT properties listed are always defined on a given instance of the entity. Accessing an undefined property will result in undefined behavior. 
 
 For example, `OnGround` is undefined if `false`.
+
+Additionally, players cannot have their NBT modified, so use commands like `/tp` and `/item` instead of NBT.
 :::
 
 ## Using Definitions

@@ -1,8 +1,9 @@
 ---
 name: Amethyst Bug Report
-about: Create a report to help us improve
+about: Create a report to help us improve the language
 title: ''
 labels: amethyst, bug
+assignees: kinderhead
 
 ---
 

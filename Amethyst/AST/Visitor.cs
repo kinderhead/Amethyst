@@ -78,9 +78,23 @@ namespace Amethyst.AST
             foreach (var i in context.functionTag())
             {
                 var text = Visit(i.id());
-                if (text.Contains(':')) tags.Add(new(text));
-                else if (text is "load" or "tick") tags.Add(new("minecraft", text));
-                else tags.Add(new(currentNamespace, text));
+                if (text == "minecraft:load") tags.Add("amethyst:load");
+                else if (text.Contains(':')) tags.Add(text);
+                else
+                {
+                    switch (text)
+                    {
+                        case "tick":
+                            tags.Add(new("minecraft", text));
+                            break;
+                        case "load":
+                            tags.Add(new("amethyst", text));
+                            break;
+                        default:
+                            tags.Add(new(currentNamespace, text));
+                            break;
+                    }
+                }
             }
 
             return new FunctionNode(Loc(context), tags, mod, Visit(context.type()), IdentifierToID(Visit(context.name)), Visit(context.paramList()), Visit(context.block()));
