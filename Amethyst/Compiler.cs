@@ -257,8 +257,8 @@ namespace Amethyst
         private void GenerateGCMarkFunction()
         {
             var ctx = new FunctionContext(this,
-                new(new("amethyst", GeodeBuilder.INTERNAL_PATH + "/" + GeodeBuilder.UniqueString), FunctionType.VoidFunc,
-                    LocationRange.None), ["amethyst:gc/mark"], LocationRange.None, true);
+                new(new("amethyst", GeodeBuilder.INTERNAL_PATH + "/" + GeodeBuilder.UniqueString), FunctionType.VoidFunc, LocationRange.None), ["amethyst:gc/mark"],
+                LocationRange.None, true);
 
             foreach (var (_, val) in IR.Symbols)
             {

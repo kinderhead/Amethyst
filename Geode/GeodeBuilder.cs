@@ -122,7 +122,7 @@ namespace Geode
 
             var cleanup = GetCleanupFunc();
             Register(cleanup);
-            Datapack.Tags.GetTag(new("amethyst", "cleanup"), "function").Values.Insert(0, cleanup.ID);
+            Datapack.Tags.GetTag(new("amethyst", "cleanup"), "function").Values.Add(cleanup.ID);
         }
 
         private void AddDataFiles()

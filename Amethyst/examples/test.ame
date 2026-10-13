@@ -17,12 +17,9 @@ entitydef minecraft:sheep implements minecraft:base {
 
 #load
 void main() {
-    print("Hi");
+    if (true) {
+        int i = 0;
+    }
+    
     amethyst:exit();
-}
-
-void test() {
-    sheep my_player = @s;
-
-    print(my_player == my_player);
 }

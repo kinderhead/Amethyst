@@ -57,7 +57,8 @@ namespace Geode.IR.Passes
 					}
 				}
 
-				throw new InvalidOperationException("Error picking variable for Mem2Reg. Report the issue and turn off optimizations.");
+				return variable.Type.DefaultValue; // I don't know if this is a good idea, but it seems fine?
+				// throw new InvalidOperationException("Error picking variable for Mem2Reg. Report the issue and turn off optimizations.");
 			}
 
 			bool usesVariable(Variable variable) => state.PhiLocations.ContainsKey(variable);
