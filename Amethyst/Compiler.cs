@@ -162,7 +162,7 @@ namespace Amethyst
                 IR.AddFunctions(GlobalInitFunc);
             }
 
-            IR.Datapack.Tags.GetTag("minecraft:load", "function").Values.Add("amethyst:init");
+            if (IR.GetGlobal("amethyst:init") is not null) IR.Datapack.Tags.GetTag("minecraft:load", "function").Values.Add("amethyst:init");
 
             ctx?.Status = "[darkviolet]Generating commands...[/]";
 
@@ -334,7 +334,7 @@ namespace Amethyst
         public IEnumerable<string> GetCoreLib()
         {
             if (AttemptCoreLibLoad(Path.Join(AppContext.BaseDirectory, "std"), out var normal)) return normal;
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux) && AttemptCoreLibLoad("/usr/share/amethyst/std", out var linux)) return linux;
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux) && AttemptCoreLibLoad("/usr/lib/amethyst/std", out var linux)) return linux;
 
             throw new FileNotFoundException("The standard library could not be loaded. Try reinstalling Amethyst");
         }
