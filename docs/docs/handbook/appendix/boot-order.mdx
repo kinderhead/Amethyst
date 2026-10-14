@@ -5,7 +5,7 @@ description: Load execution order
 
 # Boot Order
 
-Amethyst has a custom initialization sequence that replaces `minecraft:load` so that systems are initialized in the correct order.
+Amethyst has a custom initialization sequence that replaces `#minecraft:load` so that systems are initialized in the correct order.
 
 Function tags called on data pack load:
 
@@ -13,4 +13,4 @@ Function tags called on data pack load:
 * `#amethyst:var`: global variables and reflection data
 * `#amethyst:load`: functions with the `load` tag.
 
-Any functions with the tag `minecraft:load` will be replaced by `amethyst:load`. This system is in place to allow multiple data packs compiled with Amethyst to work together.
+Any functions with the tag `#minecraft:load` will be replaced by `#amethyst:load`. This system is in place to allow multiple data packs compiled with Amethyst to work together.

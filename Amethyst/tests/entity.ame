@@ -136,8 +136,27 @@ void test_fork_block() {
     
     int count = 0;
     as (@e[limit=1]) {
+        at (@s) {
+            assert(true);
+        }
+
         for (int i = 0; i < 5; ++i) {
             assert(i < 5);
+        }
+        
+        ++count;
+    }
+
+    assert_eq(count, 1);
+
+    count = 0;
+    as (@e[limit=1]) {
+        if (true) { 
+            assert(true);
+        }
+
+        at (@s) {
+            assert(true);
         }
         
         ++count;

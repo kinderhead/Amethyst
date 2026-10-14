@@ -25,9 +25,11 @@ namespace Geode.IR.Instructions
             var returning = ctx.Func.GetIsFunctionReturningValue();
             var forking = ctx.Func.GetIsForkingEndValue();
 
+            if (cond.Forks) ctx.Add(new DataCommand.Remove(forking.Target));
+
             foreach (var i in ctx.JumpTo(ifFalse))
             {
-                ctx.Add(InFork
+                ctx.Add(InFork && !cond.Forks
                     ? new Execute().Unless.Data(returning.Storage, returning.Path).Unless.Data(forking.Storage, forking.Path).Run(i)
                     : new Execute().Unless.Data(returning.Storage, returning.Path).Run(i));
             }
