@@ -14,6 +14,7 @@ namespace Datapack.Net
         private readonly Dictionary<string, string> extraFiles = [];
 
         private readonly HashSet<string> filesWriten = [];
+        private readonly Dictionary<string, string> miscFiles = [];
 
         private FileStream? fileStream;
         private ZipArchive? zipFile;
@@ -60,6 +61,11 @@ namespace Datapack.Net
                         zipFile.CreateEntryFromFile(k, v.Replace('\\', '/'));
                     }
 
+                    foreach (var (k, v) in miscFiles)
+                    {
+                        WriteFile(k, v);
+                    }
+
                     WriteFile("pack.mcmeta", Meta.Build().ToString());
                 }
             }
@@ -74,6 +80,7 @@ namespace Datapack.Net
         }
 
         public void AddExtraFile(string externalPath, string zipPath) => extraFiles[externalPath] = zipPath;
+        public void AddMiscFile(string zipPath, string contents) => miscFiles[zipPath] = contents;
 
         public void Optimize()
         {

@@ -126,3 +126,37 @@ void test_entity_ref_ref() {
 
     complete();
 }
+
+#test
+void test_fork_block() {
+    start("fork block");
+
+    kill(@e[type="wither"]);
+    summon("wither");
+    
+    int count = 0;
+    as (@e[limit=1]) {
+        for (int i = 0; i < 5; ++i) {
+            assert(i < 5);
+        }
+        
+        ++count;
+    }
+
+    assert_eq(count, 1);
+
+    count = 0;
+    as (@e[limit=1]) {
+        if (true) { 
+            assert(true);
+        }
+        
+        ++count;
+    }
+
+    assert_eq(count, 1);
+
+    kill(@e[type="wither"]);
+
+    complete();
+}

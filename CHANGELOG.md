@@ -11,3 +11,4 @@
 * Fixed bug where explicit constructors were required for subclasses.
 * Fixed entity reference equality not working.
 * Fixed integer variables in branching scopes failing to compile (#155).
+* Fixed issue where blocks inside forking `execute` statements executed more than once (#156).

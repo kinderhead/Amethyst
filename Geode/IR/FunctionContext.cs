@@ -308,20 +308,22 @@ namespace Geode.IR
             blocks.Add(trueBlock);
             blocks.Add(endBlock);
 
-            Add(new BranchInsn(cond, trueBlock, endBlock));
+            Add(new BranchInsn(cond, trueBlock, endBlock, InForkingExecute));
 
             CurrentBlock = trueBlock;
 
             var tmpFork = InForkingExecute;
-
-            if (cond.Forks) InForkingExecute = true;
+            if (cond.Forks)
+            {
+                InForkingExecute = true;
+                Add(new ClearForkEndInsn());
+            }
 
             ifTrue();
 
-            if (!cond.Forks)
-                Add(new JumpInsn(endBlock));
-            else
-                InForkingExecute = tmpFork;
+            if (!cond.Forks) Add(new JumpInsn(endBlock));
+            else Add(new SetForkEndInsn());
+            InForkingExecute = tmpFork;
 
             CurrentBlock = endBlock;
         }
@@ -342,7 +344,7 @@ namespace Geode.IR
             blocks.Add(falseBlock);
             blocks.Add(endBlock);
 
-            Add(new BranchInsn(cond, trueBlock, falseBlock));
+            Add(new BranchInsn(cond, trueBlock, falseBlock, InForkingExecute));
 
             CurrentBlock = trueBlock;
             ifTrue();
@@ -365,14 +367,14 @@ namespace Geode.IR
             blocks.Add(loopBlock);
             blocks.Add(endBlock);
 
-            Add(new BranchInsn(cond(), loopBlock, endBlock));
+            Add(new BranchInsn(cond(), loopBlock, endBlock, InForkingExecute));
 
             CurrentBlock = loopBlock;
             loopStack.Push((loopBlock, iter, endBlock));
             loop();
             iter();
             loopStack.Pop();
-            Add(new BranchInsn(cond(), loopBlock, endBlock));
+            Add(new BranchInsn(cond(), loopBlock, endBlock, InForkingExecute));
 
             CurrentBlock = endBlock;
         }
@@ -571,6 +573,7 @@ namespace Geode.IR
         public NamespacedID GetNewInternalID() => new(Decl.ID.Namespace, $"{GeodeBuilder.INTERNAL_PATH}/{GeodeBuilder.UniqueString}");
 
         public StackValue GetIsFunctionReturningValue() => new(-1, Compiler.IR.RuntimeID, "returning", PrimitiveType.Bool);
+        public StackValue GetIsForkingEndValue() => new(-1, Compiler.IR.RuntimeID, "fork_end", PrimitiveType.Bool);
         public StackValue GetFunctionReturnValue() => GetFunctionReturnValue(Decl.FuncType.ReturnType, UsesStack ? -2 : -1);
         public StackValue GetFunctionReturnValue(TypeSpecifier type, int depth = -2) => new(depth, Compiler.IR.RuntimeID, "ret", type);
 

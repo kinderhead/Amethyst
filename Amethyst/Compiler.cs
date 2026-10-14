@@ -163,6 +163,7 @@ namespace Amethyst
             }
 
             if (IR.GetGlobal("amethyst:init") is not null) IR.Datapack.Tags.GetTag("minecraft:load", "function").Values.Add("amethyst:init");
+            GenerateSymbolTable();
 
             ctx?.Status = "[darkviolet]Generating commands...[/]";
 
@@ -272,6 +273,10 @@ namespace Amethyst
             ctx.Add(new ReturnInsn());
             ctx.Finish();
             IR.AddFunctions(ctx);
+        }
+
+        private void GenerateSymbolTable()
+        {
         }
 
         private void RegisterGlobals()

@@ -9,11 +9,8 @@ namespace Geode.Values
 
 		public override IDataTarget Target => new StorageTarget(Storage, Path);
 
-		public override DataTargetValue Property(string member, TypeSpecifier type) =>
-			new StorageValue(Storage, $"{Path}.{member}", type);
-
-		public override DataTargetValue Index(int index, TypeSpecifier type) =>
-			new StorageValue(Storage, $"{Path}[{index}]", type);
+		public override DataTargetValue Property(string member, TypeSpecifier type) => new StorageValue(Storage, $"{Path}.{member}", type);
+		public override DataTargetValue Index(int index, TypeSpecifier type) => new StorageValue(Storage, $"{Path}[{index}]", type);
 
 		public override bool Equals(object? obj) => obj is StorageValue s && s.Storage == Storage && s.Path == Path;
 
