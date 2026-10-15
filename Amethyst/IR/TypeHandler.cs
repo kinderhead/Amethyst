@@ -95,6 +95,10 @@ namespace Amethyst.IR
             }
         }
 
+        public IEnumerable<TypeSpecifier> GetLocallyDefinedTypes() =>
+            types.Values.Where(i => !i.Location.Start.File.StartsWith("@std") && !i.Location.Start.File.StartsWith(Compiler.CoreLibPath) && i.Location.Start.File != "")
+                 .Select(i => i.Type);
+
         public bool GenerateSymbols()
         {
             var errored = false;

@@ -20,8 +20,8 @@ namespace Geode
             : $"{Start.File}: {Start.Line}:{Start.Column}-{End.Line}:{End.Column}";
 
         public LocationRange MapFile(IFileHandler handler) => new(
-            new(handler.PathToMap(Start.File), Start.Line, Start.Column),
-            new(handler.PathToMap(End.File), End.Line, End.Column));
+            Start with { File = handler.PathToMap(Start.File) },
+            End with { File = handler.PathToMap(End.File) });
 
         public static LocationRange? From(string loc, IFileHandler? handler = null)
         {

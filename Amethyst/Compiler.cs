@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 using System.Runtime.InteropServices;
+using System.Text;
 using Amethyst.Antlr;
 using Amethyst.AST;
 using Amethyst.AST.Intrinsics;
@@ -277,6 +278,15 @@ namespace Amethyst
 
         private void GenerateSymbolTable()
         {
+            var syms = new StringBuilder();
+
+            foreach (var i in TypeHandler.GetLocallyDefinedTypes().OfType<ISerializableType>())
+            {
+                i.Serialize(syms);
+                syms.AppendLine();
+            }
+
+            //Console.WriteLine(syms.ToString());
         }
 
         private void RegisterGlobals()

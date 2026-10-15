@@ -31,10 +31,8 @@ namespace Datapack.Net.Function
         public FormattedText Text(string str, Modifiers? modifiers = null)
         {
             modifiers ??= modifierStack.Count != 0 ? modifierStack.Peek() : null;
-            if (modifiers is null)
-                obj.Add(str);
-            else
-                obj.Add(modifiers.Value.Process(new(new JProperty("text", str)), this));
+            if (modifiers is null) obj.Add(str);
+            else obj.Add(modifiers.Value.Process(new(new JProperty("text", str)), this));
 
             return this;
         }
@@ -49,8 +47,7 @@ namespace Datapack.Net.Function
             return this;
         }
 
-        public FormattedText NBT(IDataTarget target, bool interpret = false, bool plain = false,
-                                 Modifiers? modifiers = null)
+        public FormattedText NBT(IDataTarget target, bool interpret = false, bool plain = false, Modifiers? modifiers = null)
         {
             modifiers ??= modifierStack.Count != 0 ? modifierStack.Peek() : new();
             var nbt = new JObject(new JProperty("nbt", target.Path), new JProperty(target.Type, target.Source));
@@ -77,8 +74,7 @@ namespace Datapack.Net.Function
         {
             for (var i = 1; i < obj.Count; i++)
             {
-                if (obj[i - 1] is JValue v1 && v1.Type == JTokenType.String && obj[i] is JValue v2 &&
-                    v2.Type == JTokenType.String)
+                if (obj[i - 1] is JValue { Type: JTokenType.String } v1 && obj[i] is JValue { Type: JTokenType.String } v2)
                 {
                     v1.Value += (string?)v2.Value;
                     obj.RemoveAt(i--);
@@ -88,7 +84,8 @@ namespace Datapack.Net.Function
             return this;
         }
 
-        public override string ToString() => ToJson().ToString(Formatting.None);
+        // Silly Newtonsoft.JSON behavior
+        public override string ToString() => ToJson().ToString(Formatting.None).Replace(@"\\n", "\\n");
         public JArray ToJson() => obj;
 
         public struct Modifiers()

@@ -9,11 +9,9 @@ namespace Datapack.Net.Data
 
         public override void Build(StringBuilder sb) => sb.Append($"\"{Escape(Value)}\"");
 
-        public static string Escape(string val)
-        {
-            val = val.Replace("\\", "\\\\");
-            return val.Replace("\"", "\\\"");
-        }
+        public static string Escape(string val) =>
+            //val = val.Replace("\\", @"\\");
+            val.Replace("\"", "\\\"");
 
         public static string Unescape(string val)
         {

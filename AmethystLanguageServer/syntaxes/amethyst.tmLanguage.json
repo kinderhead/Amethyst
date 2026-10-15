@@ -146,7 +146,7 @@
           "patterns": [
             {
               "name": "constant.character.escape.amethyst",
-              "match": "\\\\[\\\"\\\\]"
+              "match": "\\\\[\\\"\\\\bfnrst']"
             }
           ]
         }

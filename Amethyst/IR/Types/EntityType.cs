@@ -17,6 +17,7 @@ namespace Amethyst.IR.Types
         public static readonly EntityType Dummy = new("amethyst:dummy", null, [], []);
         public override LiteralValue DefaultValue => new(0, this);
         public override NBTType EffectiveType => NBTType.Int;
+        protected override string StorageClass => "entitydef";
 
 #pragma warning disable IDE0028
         public override object Clone() => new EntityType(ID, BaseClass, new(props.Select(i => new KeyValuePair<string, TypeSpecifier>(i.Key, i.Value))), Methods);
