@@ -85,7 +85,15 @@ namespace Datapack.Net.Function
         }
 
         // Silly Newtonsoft.JSON behavior
-        public override string ToString() => ToJson().ToString(Formatting.None).Replace(@"\\n", "\\n");
+        public override string ToString() => ToJson().ToString(Formatting.None);
+        // .Replace(@"\\b", "\\b")
+        // .Replace(@"\\f", "\\f")
+        // .Replace(@"\\n", "\\n")
+        // .Replace(@"\\r", "\\r")
+        // .Replace(@"\\s", "\\s")
+        // .Replace(@"\\t", "\\t")
+        // .Replace(@"\\'", "\\'");
+
         public JArray ToJson() => obj;
 
         public struct Modifiers()

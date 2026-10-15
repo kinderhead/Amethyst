@@ -50,6 +50,8 @@ class Child implements Base {
 
 #load
 void main() {
-    print("\b\f\n\r\s\t\\\'\"");
+    var x = "\b\f\n\r\s\t \\ \'\"";
+    print(x);
+    print("\b\f\n\r\s\t \\ \'\"");
     amethyst:exit();
 }

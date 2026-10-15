@@ -3,6 +3,7 @@
 * Changed source maps to only exist in debug mode.
 * Added implicit casts from complex types to their primitive NBT forms.
 * Changed initialization system to incorporate multiple data packs.
+* Implemented custom string parsing to support Minecraft escape codes.
 
 # Bug Fixes
 

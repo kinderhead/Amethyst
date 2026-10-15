@@ -295,7 +295,7 @@ WeakRef: '^';
 Boolean: 'true' | 'false';
 RawIdentifier: ([a-z] | [A-Z] | '_' ) ([a-z] | [A-Z] | [0-9] | '_' | '-' | '/')*;
 //Identifier: ([a-z] | [A-Z] | [0-9] | '_' | '-')* ':' ([a-z] | [A-Z] | [0-9] | '_' | '-' | '/')*;
-String: '"' ( ~[\\"\n\r] | '\\' [\\"] | '\\' [\\'] | '\\b' | '\\f' | '\\n' | '\\r' | '\\s' | '\\t' )* '"';
+String: '"' ( ~["\n\r] | '\\' ["] )* '"';
 Command: '@/' ( ~[\n\r] )* ('\r' | '\n');
 TargetSelectorVariable: '@' [praesn];
 
