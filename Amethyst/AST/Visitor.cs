@@ -441,7 +441,7 @@ namespace Amethyst.AST
                 context.compoundKeyPair().Select(i =>
                     i.RawIdentifier() is not null
                         ? new(i.RawIdentifier().GetText(), Visit(i.expression()))
-                        : new KeyValuePair<string, Expression>(i.RawIdentifier().GetText(), Visit(i.expression()))));
+                        : new KeyValuePair<string, Expression>(NBTString.Unescape(i.String().GetText()[1..^1]), Visit(i.expression()))));
 
         public override Node VisitTargetSelector([NotNull] AmethystParser.TargetSelectorContext context)
         {

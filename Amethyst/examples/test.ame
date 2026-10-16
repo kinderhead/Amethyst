@@ -48,15 +48,10 @@ entitydef minecraft:sheep implements minecraft:base {
 //     }
 // }
 
-void test(macro qstring str) {
-    if (true) {
-        print(str);
-    }
-}
-
 #load
 void main() {
-    test("hi");
+    int{} map = { "w w": 4 };
+    print(map["w w"], " ", map.contains("w w"));
 
     amethyst:exit();
 }

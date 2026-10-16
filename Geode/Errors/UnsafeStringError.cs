@@ -1,6 +1,6 @@
 namespace Geode.Errors
 {
-    public class UnsafeStringError() : GeodeError("String is not a valid unsafe_string");
+    public class UnsafeStringError(string val) : GeodeError($"\"{val}\" is not a valid unsafe_string");
 
-    public class QStringError() : GeodeError("String is not a valid qstring");
+    public class QStringError(string val) : GeodeError($"\"{val}\" is not a valid qstring");
 }

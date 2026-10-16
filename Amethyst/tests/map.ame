@@ -16,3 +16,16 @@ void test_int_map() {
     
     complete();
 }
+
+#test
+void test_string_map() {
+    start("string map");
+
+    string{} x = { a: "yay", "b b": "yay2" };
+    var id = "b b";
+
+    assert_eq(x["a"], "yay");
+    assert_eq(x[id], "yay2");
+    
+    complete();
+}

@@ -22,7 +22,7 @@ namespace Geode.Types
         {
             if ((val.Type == PrimitiveType.String || val.Type is QStringType) && val.Value is IConstantValue { Value: NBTString str })
             {
-                if (InvalidUnsafeString().IsMatch(str.Value)) throw new UnsafeStringError();
+                if (InvalidUnsafeString().IsMatch(str.Value)) throw new UnsafeStringError(str.Value);
 
                 recorder.Record(LiteralValue.Raw(str.Value));
             }

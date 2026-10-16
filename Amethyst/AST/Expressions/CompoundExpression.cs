@@ -29,6 +29,8 @@ namespace Amethyst.AST.Expressions
 
 			foreach (var (k, v) in Values)
 			{
+				if (QStringType.InvalidQString().IsMatch(k)) throw new QStringError(k);
+				
 				if (type.HasProperty(k, true) is not { } t)
 				{
 					throw new PropertyError(type.ToString(), k);

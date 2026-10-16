@@ -9,6 +9,7 @@
 * Updated `contains` signature to `bool nbt.contains(qstring prop)`.
 * String literals attempt to assign themselves `qstring` before `string`.
 * Improved ranges.
+* Allow creating compound literals with string keys.
 
 # Bug Fixes
 
@@ -19,3 +20,4 @@
 * Fixed integer variables in branching scopes failing to compile (#155).
 * Fixed issue where blocks inside forking `execute` statements executed more than once (#156).
 * Correctly throw `TargetSelectorInvalidGamemodeError` instead of `TargetSelectorInvalidSortError`.
+* Correctly throw `QStringError` instead of `UnsafeStringError`.

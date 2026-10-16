@@ -177,7 +177,7 @@ compoundLiteral
     ;
 
 compoundKeyPair
-    : RawIdentifier Colon expression
+    : (RawIdentifier | String) Colon expression
     ;
 
 targetSelector
