@@ -1,4 +1,5 @@
-﻿using Datapack.Net.Data;
+﻿using System.Text.RegularExpressions;
+using Datapack.Net.Data;
 using Datapack.Net.Function;
 using Datapack.Net.Function.Commands;
 using Datapack.Net.NumberProviders;
@@ -6,7 +7,7 @@ using Datapack.Net.Pack;
 
 namespace Geode.Values
 {
-    public abstract class DataTargetValue(TypeSpecifier type) : DataLValue(type), IValueWithProperties<DataTargetValue>
+    public abstract partial class DataTargetValue(TypeSpecifier type) : DataLValue(type), IValueWithProperties<DataTargetValue>
     {
         public abstract IDataTarget Target { get; }
 
@@ -59,5 +60,14 @@ namespace Geode.Values
         public override void Store(NumberProvider provider, RenderContext ctx) => ctx.Add(new DataCommand.Modify(Target).Set().Compute(provider));
 
         public override string ToString() => Target.GetTarget();
+
+        [GeneratedRegex(@"[^a-zA-Z0-9\-_\+\.\[\]]")]
+        public static partial Regex InvalidRawProperty();
+
+        public static string SanitizeProperty(string prop)
+        {
+            if (!InvalidRawProperty().IsMatch(prop)) return prop;
+            return $"'{prop}'";
+        }
     }
 }

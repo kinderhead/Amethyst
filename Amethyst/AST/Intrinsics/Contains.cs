@@ -10,7 +10,7 @@ namespace Amethyst.AST.Intrinsics
     public class Contains(FunctionType? type = null) : Intrinsic("minecraft:nbt/contains", type ?? new(
         FunctionModifiers.None, PrimitiveType.Bool, [
             new(ParameterModifiers.None, new ReferenceType(PrimitiveType.Compound), "this"),
-            new(ParameterModifiers.None, new UnsafeStringType(), "tag")
+            new(ParameterModifiers.None, new QStringType(), "tag")
         ]))
     {
         public override IFunctionLike CloneWithType(FunctionType type) => new Contains(type);
@@ -19,7 +19,7 @@ namespace Amethyst.AST.Intrinsics
         {
             if (args.Length != 2) throw new MismatchedArgumentCountError(1, args.Length);
 
-            return ctx.Add(new ContainsInsn(args[0], ctx.ImplicitCast(args[1], new UnsafeStringType())));
+            return ctx.Add(new ContainsInsn(args[0], ctx.ImplicitCast(args[1], new QStringType())));
         }
     }
 }

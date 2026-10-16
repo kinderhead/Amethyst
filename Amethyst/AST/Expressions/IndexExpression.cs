@@ -18,14 +18,11 @@ namespace Amethyst.AST.Expressions
             var val = Value.Execute(ctx, new VarType());
             ValueRef ret;
 
-            if (val.IsTypeOrRef<ListType>())
-                ret = ctx.Add(new IndexInsn(val, Index.Execute(ctx, PrimitiveType.Int)));
-            else if (val.IsTypeOrRef<SimpleMapType>(out var map))
-                ret = ctx.Add(new PropertyInsn(val, Index.Execute(ctx, new QStringType()), map.Inner));
+            if (val.IsTypeOrRef<ListType>()) ret = ctx.Add(new IndexInsn(val, Index.Execute(ctx, PrimitiveType.Int)));
+            else if (val.IsTypeOrRef<SimpleMapType>(out var map)) ret = ctx.Add(new PropertyInsn(val, Index.Execute(ctx, new QStringType()), map.Inner, true));
             else if (val.IsTypeOrRef<PrimitiveType>(out var raw) && raw == PrimitiveType.Compound)
                 ret = ctx.Add(new PropertyInsn(val, Index.Execute(ctx, new QStringType()), raw));
-            else
-                throw new CannotIndexError(val.Type.ToString());
+            else throw new CannotIndexError(val.Type.ToString());
 
             if (expected is null) ret = ctx.ImplicitCast(ret, ((ReferenceType)ret.Type).Inner);
 

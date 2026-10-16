@@ -1,0 +1,103 @@
+namespace test;
+
+#test
+void test_int_range_constant() {
+    start("int range constant");
+    
+    var a = 3..4;
+    var b = ..4;
+    var c = 3..;
+
+    assert_eq((string)a, "3..4");
+    assert_eq((string)b, "..4");
+    assert_eq((string)c, "3..");
+
+    complete();
+}
+
+#test
+void test_int_range_dynamic() {
+    start("int range dynamic");
+
+    var l = 3;
+    var r = 4;
+    
+    var a = l..r;
+    var b = ..r;
+    var c = l..;
+
+    assert_eq((string)a, "3..4");
+    assert_eq((string)b, "..4");
+    assert_eq((string)c, "3..");
+
+    complete();
+}
+
+#test
+void test_float_range_constant() {
+    start("float range constant");
+    
+    var a = 3.4..4.7;
+    var b = ..4.7;
+    var c = 3.4..;
+
+    assert_eq((string)a, "3.4..4.7");
+    assert_eq((string)b, "..4.7");
+    assert_eq((string)c, "3.4..");
+
+    complete();
+}
+
+#test
+void test_float_range_dynamic() {
+    start("float range dynamic");
+    
+    var l = 3.4;
+    var r = 4.7;
+    
+    var a = l..r;
+    var b = ..r;
+    var c = l..;
+
+    assert_eq((string)a, "3.4..4.7");
+    assert_eq((string)b, "..4.7");
+    assert_eq((string)c, "3.4..");
+
+    complete();
+}
+
+void int_range_tester(macro int_range a) {
+    assert_eq((string)a, "3..4");
+
+    // Propagation testing
+    if ((string)a == "3..4") {
+        assert_eq((string)a, "3..4");
+    }
+}
+
+void float_range_tester(macro float_range a) {
+    assert_eq((string)a, "3.4..4.7");
+
+    // Propagation testing
+    if ((string)a == "3.4..4.7") {
+        assert_eq((string)a, "3.4..4.7");
+    }
+}
+
+#test
+void test_int_range_macro() {
+    start("int range macro");
+
+    int_range_tester(3..4);
+
+    complete();
+}
+
+#test
+void test_float_range_macro() {
+    start("float range macro");
+
+    float_range_tester(3.4..4.7);
+
+    complete();
+}

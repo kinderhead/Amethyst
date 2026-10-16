@@ -8,12 +8,12 @@ namespace Geode
     {
         private static int valueCounter;
 
-        private readonly HashSet<ValueRef> dependencies;
-
         public readonly int ID = valueCounter++;
 
         // Used for debugging
         public readonly Instruction? SourceInsn;
+
+        private readonly HashSet<ValueRef> dependencies;
 
         public bool ForceScoreReg = false;
         private TypeSpecifier type;
@@ -74,9 +74,10 @@ namespace Geode
         {
             // Kind of evil, but I suppose it's fine
             if (type is VarType) return this;
-            
+
             this.type = type;
-            //Value?.Type = type;
+            if (Value is LiteralValue l) Value = new LiteralValue(l.Value, type);
+
             return this;
         }
 

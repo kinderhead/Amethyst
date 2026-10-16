@@ -24,8 +24,7 @@ namespace Amethyst.IR.Instructions
 				ctx.Macroize([val, prop], (args, ctx) =>
 				{
 					ctx.Add(ret.StoreExecute(false)
-						.Run(new RawCommand(
-							$"data get entity @e[scores={{amethyst_id={args[0].Value}}}] {args[1].Value}")));
+					           .Run(new RawCommand($"data get entity @e[scores={{amethyst_id={args[0].Value}}}] '{args[1].Value}'")));
 				});
 
 				return;
@@ -35,7 +34,7 @@ namespace Amethyst.IR.Instructions
 
 			ctx.Macroize([val, prop], (args, ctx) =>
 			{
-				ctx.Add(ret.StoreExecute(false).Run(new RawCommand($"data get {args[0].Value}.{args[1].Value}")));
+				ctx.Add(ret.StoreExecute(false).Run(new RawCommand($"data get {args[0].Value}.'{args[1].Value}'")));
 			});
 		}
 

@@ -11,6 +11,6 @@ namespace Geode.Values
         public override int GetHashCode() => RawTarget.GetHashCode() * 17;
 
         public override DataTargetValue Index(int index, TypeSpecifier type) => new RawDataTargetValue($"{RawTarget}[{index}]", type);
-        public override DataTargetValue Property(string member, TypeSpecifier type) => new RawDataTargetValue($"{RawTarget}.{member}", type);
+        public override DataTargetValue Property(string member, TypeSpecifier type) => new RawDataTargetValue($"{RawTarget}.{SanitizeProperty(member)}", type);
     }
 }

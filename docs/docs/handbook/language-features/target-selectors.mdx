@@ -29,8 +29,12 @@ String arguments like `name` and `type` must be quoted strings or else Amethyst 
 :::
 
 :::note
-Many of the arguments have not been implemented. See [this](https://github.com/kinderhead/Amethyst/issues/12) issue for more information.
+Some of the arguments have not been implemented. See [this](https://github.com/kinderhead/Amethyst/issues/12) issue for more information.
 :::
+
+### Storing
+
+When storing target selectors as variables instead of using them immediately (i.e. [`execute`](./control-flow.mdx#execute-statements)), some restrictions apply. Due to how Minecraft handles quotes, `name` and `nbt` must be constants.
 
 ### Negation
 
@@ -107,3 +111,27 @@ Of course, variables can be used as well:
 <Highlight code={`\
     as (@e[x_rotation=a..b]) { }
 `}/>
+
+## Fields
+
+All implemented target selector fields and their types:
+
+* `x`: `double`
+* `y`: `double`
+* `z`: `double`
+* `dx`: `double`
+* `dy`: `double`
+* `dz`: `double`
+* `limit`: `int`
+* `name`: `string`, negatable
+* `type`: `qstring`, negatable
+* `predicate`: `qstring`, negatable
+* `tag`: `unsafe_string`, negatable
+* `team`: `unsafe_string`, negatable
+* `sort`: `unsafe_string`
+* `gamemode`: `unsafe_string`, negatable
+* `distance`: `float_range`
+* `x_rotation`: `float_range`
+* `y_rotation`: `float_range`
+* `level`: `int_range`
+* `nbt`: `nbt`, negatable

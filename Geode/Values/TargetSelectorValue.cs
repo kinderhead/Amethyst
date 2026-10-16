@@ -23,8 +23,7 @@ namespace Geode.Values
                     // Ignore macro string warnings
                     newArgs.Add(k, apply(new RawDataTargetValue(nbt.Target.GetTarget(), PrimitiveType.Compound)));
                 }
-                else
-                    newArgs.Add(k, apply(v));
+                else newArgs.Add(k, apply(v));
             }
 
             return new LiteralValue(new NBTRawString(new TargetSelectorValue(TargetType, newArgs).ToString()), Type);
@@ -38,7 +37,6 @@ namespace Geode.Values
         public void StoreTo(DataTargetValue val, RenderContext ctx)
         {
             if (Arguments["name"].Concat(Arguments["!name"]).Any(i => i is not IConstantValue)) throw new TargetSelectorMacroArgumentError("name");
-
             if (Arguments["nbt"].Concat(Arguments["!nbt"]).Any(i => i is not IConstantValue)) throw new TargetSelectorMacroArgumentError("nbt");
 
             ctx.Macroize([this], (args, ctx) =>
@@ -93,23 +91,25 @@ namespace Geode.Values
                 string val;
 
                 // Remove quotes if constant
-                if ((arg is "type" || v.Type is RangeType) && v is IConstantValue c && c.Value is NBTString str2)
-                    val = str2.Value;
-                else
-                    val = v.ToString() ?? "";
+                if ((arg is "type" || v.Type is RangeType) && v is IConstantValue { Value: NBTString str2 }) val = str2.Value;
+                else val = v.ToString() ?? "";
 
                 switch (arg)
                 {
-                    case "sort" when v is IConstantValue { Value: NBTString { Value: not "nearest" and not "furthest" and not "random" and not "arbituary" } str3 }:
+                    case "sort" when v is not MacroValue and IConstantValue
+                    {
+                        Value: NBTString { Value: not "nearest" and not "furthest" and not "random" and not "arbituary" } str3
+                    }:
                         throw new TargetSelectorInvalidSortError(str3.Value);
-                    case "gamemode" when v is IConstantValue { Value: NBTString { Value: not "survival" and not "creative" and not "spectator" and not "adventure" } str4 }:
-                        throw new TargetSelectorInvalidSortError(str4.Value);
+                    case "gamemode" when v is not MacroValue and IConstantValue
+                    {
+                        Value: NBTString { Value: not "survival" and not "creative" and not "spectator" and not "adventure" } str4
+                    }:
+                        throw new TargetSelectorInvalidGamemodeError(str4.Value);
                 }
 
-                if (negated)
-                    target.Add(arg, '!' + val);
-                else
-                    target.Add(arg, val);
+                if (negated) target.Add(arg, '!' + val);
+                else target.Add(arg, val);
             }
 
             return $"{TargetSelector.GetTypeName(TargetType)}{(target.Count > 0 ? $"[{TargetSelector.CompileDict(target)}]" : "")}";

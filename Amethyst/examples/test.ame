@@ -15,43 +15,48 @@ entitydef minecraft:sheep implements minecraft:base {
 }
 /* The rest can be modified */
 
-struct test {
-    int x;
+// struct test {
+//     int x;
 
-    void func() {
-        print(x);
-    }
+//     void func() {
+//         print(x);
+//     }
 
-    void func(int y) {
-        print(x + y);
-    }
-}
+//     void func(int y) {
+//         print(x + y);
+//     }
+// }
 
-class Base {
-    string str;
-    test obj;
+// class Base {
+//     string str;
+//     test obj;
 
-    Base(string str) {
-        this.str = str;
-    }
+//     Base(string str) {
+//         this.str = str;
+//     }
 
-    virtual void hi() {
+//     virtual void hi() {
+//         print(str);
+//     }
+// }
+
+// class Child implements Base {
+//     Child(string str) : Base(str) { }
+
+//     virtual void hi() {
+//         print(str, " Hi");
+//     }
+// }
+
+void test(macro qstring str) {
+    if (true) {
         print(str);
-    }
-}
-
-class Child implements Base {
-    Child(string str) : Base(str) { }
-
-    virtual void hi() {
-        print(str, " Hi");
     }
 }
 
 #load
 void main() {
-    var x = "\b\f\n\r\s\t \\ \'\"";
-    print(x);
-    print("\b\f\n\r\s\t \\ \'\"");
+    test("hi");
+
     amethyst:exit();
 }

@@ -6,40 +6,31 @@ using Geode.Values;
 
 namespace Amethyst.IR.Instructions
 {
-	public class DereferenceInsn(ValueRef ptr, bool force = false) : Instruction([ptr])
-	{
-		public readonly bool Force = force;
-		public override string Name => "deref";
-		public override NBTType?[] ArgTypes => [null];
-		public override TypeSpecifier ReturnType => ((ReferenceType)ptr.Type).Inner;
+    public class DereferenceInsn(ValueRef ptr, bool force = false) : Instruction([ptr])
+    {
+        public readonly bool Force = force;
+        public override string Name => "deref";
+        public override NBTType?[] ArgTypes => [null];
+        public override TypeSpecifier ReturnType => ((ReferenceType)ptr.Type).Inner;
 
-		public override void Render(RenderContext ctx)
-		{
-			var ret = ReturnValue.Expect<LValue>();
-			var ptr = Arg<ValueRef>(0).Expect();
+        public override void Render(RenderContext ctx)
+        {
+            var ret = ReturnValue.Expect<LValue>();
+            var ptr = Arg<ValueRef>(0).Expect();
 
-			ctx.Macroize([ptr], (args, ctx) =>
-			{
-				ret.Store(new RawDataTargetValue(args[0].Value.ToString(), args[0].Type), ctx);
-			});
-		}
+            ctx.Macroize([ptr], (args, ctx) => { ret.Store(new RawDataTargetValue(args[0].Value.ToString(), args[0].Type), ctx); });
+        }
 
-		protected override IValue? ComputeReturnValue(FunctionContext ctx)
-		{
-			if (!Force && Arg<ValueRef>(0).Expect() is LiteralValue l && l.Is<NBTString>(out var str))
-			{
-				Remove();
+        protected override IValue? ComputeReturnValue(FunctionContext ctx)
+        {
+            if (!Force && Arg<ValueRef>(0).Expect() is LiteralValue l && l.Is<NBTString>(out var str))
+            {
+                Remove();
+                if (str.Value.Contains("stack[-1].")) return new StackValue(-1, ctx.Compiler.IR.RuntimeID, str.Value.Split("stack[-1].")[1].Replace("\"", ""), ReturnType);
+                return new RawDataTargetValue(str.Value.Replace("\"", ""), ReturnType);
+            }
 
-				if (str.Value.Contains("stack[-1]."))
-				{
-					return new StackValue(-1, ctx.Compiler.IR.RuntimeID,
-						str.Value.Split("stack[-1].")[1].Replace("\"", ""), ReturnType);
-				}
-
-				return new RawDataTargetValue(str.Value.Replace("\"", ""), ReturnType);
-			}
-
-			return null;
-		}
-	}
+            return null;
+        }
+    }
 }

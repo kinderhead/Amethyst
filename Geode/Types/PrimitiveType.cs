@@ -67,7 +67,7 @@ namespace Geode.Types
         {
             if (val.Value is LiteralValue { Value.NumberType: not null } literal && EffectiveNumberType is { } destType)
                 recorder.Record(new LiteralValue(literal.Value.Cast(destType)));
-            else if (val.Type == Int && Type == NBTType.Float) recorder.Record(new LoadNBTInsn(val, this));
+            else if (val.Type == Int && Type is NBTType.Float or NBTType.Double) recorder.Record(new LoadNBTInsn(val, this));
             else if (val.Type.EffectiveType == Type) recorder.Record(val);
             // What was I on about? If something breaks then I'll fix it then
             // else if (Type is NBTType.Double or NBTType.Float && recorder.TryImplicitCast(val, Int) is { } toFloat) return toFloat;

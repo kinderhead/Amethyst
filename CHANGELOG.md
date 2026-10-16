@@ -4,6 +4,11 @@
 * Added implicit casts from complex types to their primitive NBT forms.
 * Changed initialization system to incorporate multiple data packs.
 * Implemented custom string parsing to support Minecraft escape codes.
+* `qstring` can no longer have single quotes or escape sequences in them.
+* Changed dynamic property accessing to use single quotes.
+* Updated `contains` signature to `bool nbt.contains(qstring prop)`.
+* String literals attempt to assign themselves `qstring` before `string`.
+* Improved ranges.
 
 # Bug Fixes
 
@@ -13,3 +18,4 @@
 * Fixed entity reference equality not working.
 * Fixed integer variables in branching scopes failing to compile (#155).
 * Fixed issue where blocks inside forking `execute` statements executed more than once (#156).
+* Correctly throw `TargetSelectorInvalidGamemodeError` instead of `TargetSelectorInvalidSortError`.

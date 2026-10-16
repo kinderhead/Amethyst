@@ -27,7 +27,7 @@ void test_entity_exists() {
 }
 
 void macro_entity_tester(macro bool x) {
-    string type = "wither";
+    qstring type = "wither";
 
     if (@e[type=type]) {
         assert(x);
@@ -176,6 +176,44 @@ void test_fork_block() {
     assert_eq(count, 1);
 
     kill(@e[type="wither"]);
+
+    complete();
+}
+
+#test
+void test_target_literal() {
+    start("target literal");
+
+    var test = (string)@e[x=4.3, y=5.3, z=-93, dx=3, dy=-3.2, dz=0, limit=1, name="hi", type="minecraft:sheep", predicate="minecraft:zang", tag="no", team="yes", sort="nearest", gamemode="creative", distance=3.2..8.7, x_rotation=5..7, y_rotation=9..10.2, level=4..5, nbt={x: 4}];
+    assert_eq(test, "@e[x=4.3,y=5.3,z=-93,dx=3,dy=-3.2,dz=0,limit=1,name=\"hi\",type=minecraft:sheep,predicate=minecraft:zang,tag=no,team=yes,sort=nearest,gamemode=creative,distance=3.2..8.7,x_rotation=5..7,y_rotation=9..10.2,level=4..5,nbt={\"x\":4}]");
+
+    complete();
+}
+
+#test
+void test_target_dynamic() {
+    start("target literal");
+
+    var x = 4.3;
+    var y = 5.3;
+    var z = -93;
+    var dx = 3;
+    var dy = -3.2;
+    var dz = 0;
+    var limit = 1;
+    var type = "minecraft:sheep";
+    var predicate = "minecraft:zang";
+    unsafe_string tag = "no";
+    unsafe_string team = "yes";
+    unsafe_string sort = "nearest";
+    unsafe_string gamemode = "creative";
+    var distance = 3.2..8.7;
+    var x_rotation = 5..7;
+    var y_rotation = 9..10.2;
+    var level = 4..5;
+
+    var test = (string)@e[x=x, y=y, z=z, dx=dx, dy=dy, dz=dz, limit=limit, name=!"hi", type=type, predicate=predicate, tag=tag, team=team, sort=sort, gamemode=gamemode, distance=distance, x_rotation=x_rotation, y_rotation=y_rotation, level=level, nbt=!{x: 4}];
+    assert_eq(test, "@e[x=4.3,y=5.3,z=-93,dx=3,dy=-3.2,dz=0,limit=1,name=!\"hi\",type=minecraft:sheep,predicate=minecraft:zang,tag=no,team=yes,sort=nearest,gamemode=creative,distance=3.2..8.7,x_rotation=5..7,y_rotation=9..10.2,level=4..5,nbt=!{\"x\":4}]");
 
     complete();
 }

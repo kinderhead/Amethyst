@@ -28,7 +28,7 @@ namespace Geode.Types
             }
         }
 
-        [GeneratedRegex(@"""")]
-        private static partial Regex InvalidQString();
+        [GeneratedRegex(@"[""'\n\\]")]
+        public static partial Regex InvalidQString();
     }
 }

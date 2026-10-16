@@ -23,6 +23,11 @@ namespace Geode.Types
             if (to == PrimitiveType.Bool) recorder.Record(new TargetExistsInsn(val));
         }
 
+        public override void ExplicitCastToOverload(ValueRef val, FunctionContextRecorder recorder)
+        {
+            if (val.Type is QStringType) recorder.Record(val);
+        }
+
         public override void ExecuteChainOverload(ValueRef val, ExecuteChain chain, FunctionContext ctx, bool invert = false) => chain.Add(new IfEntityChain(val, invert));
     }
 }

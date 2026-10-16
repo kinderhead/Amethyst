@@ -60,6 +60,13 @@ void assert_eq(float value, float expected) {
     }
 }
 
+void assert_eq(string value, string expected) {
+    if (value != expected) {
+        print("--> Expected ", expected, " but got ", value);
+        currentTestFailed = true;
+    }
+}
+
 void complete() {
     if (currentTestFailed) {
         print("--> Test \"", currentTest, "\" failed");

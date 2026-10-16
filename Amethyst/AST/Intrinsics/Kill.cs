@@ -6,8 +6,7 @@ using Geode.Types;
 
 namespace Amethyst.AST.Intrinsics
 {
-    public class Kill(FunctionType? type = null) : Intrinsic("minecraft:kill",
-        type ?? new FunctionType(FunctionModifiers.None, new VoidType(),
+    public class Kill(FunctionType? type = null) : Intrinsic("minecraft:kill", type ?? new FunctionType(FunctionModifiers.None, new VoidType(),
             [new(ParameterModifiers.None, new TargetSelectorType(), "target")]))
     {
         public override IFunctionLike CloneWithType(FunctionType type) => new Summon(type);

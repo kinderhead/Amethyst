@@ -20,7 +20,7 @@ namespace Geode.Types
 
         public override void CastToOverload(ValueRef val, FunctionContextRecorder recorder)
         {
-            if (val.Type == PrimitiveType.String && val.Value is IConstantValue { Value: NBTString str })
+            if ((val.Type == PrimitiveType.String || val.Type is QStringType) && val.Value is IConstantValue { Value: NBTString str })
             {
                 if (InvalidUnsafeString().IsMatch(str.Value)) throw new UnsafeStringError();
 
@@ -42,6 +42,6 @@ namespace Geode.Types
         }
 
         [GeneratedRegex(@"[^a-zA-Z0-9\-_\+\.]")]
-        private static partial Regex InvalidUnsafeString();
+        public static partial Regex InvalidUnsafeString();
     }
 }

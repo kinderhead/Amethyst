@@ -26,14 +26,14 @@ namespace Amethyst.IR.Instructions
 
             if (val.Type is EntityType)
             {
-                if (AddQuotes) ReturnValue.Expect<DynamicValue>().Add("entity @e[scores={amethyst_id=").Add(val).Add("},limit=1] \"").Add(prop).Add("\"");
+                if (AddQuotes) ReturnValue.Expect<DynamicValue>().Add("entity @e[scores={amethyst_id=").Add(val).Add("},limit=1] '").Add(prop).Add("'");
                 else ReturnValue.Expect<DynamicValue>().Add("entity @e[scores={amethyst_id=").Add(val).Add("},limit=1] ").Add(prop);
                 return;
             }
 
             val = val.AsRef();
 
-            if (AddQuotes) ReturnValue.Expect<DynamicValue>().Add(val).Add(".\"").Add(prop).Add("\"");
+            if (AddQuotes) ReturnValue.Expect<DynamicValue>().Add(val).Add(".'").Add(prop).Add("'");
             else ReturnValue.Expect<DynamicValue>().Add(val).Add(".").Add(prop);
         }
 

@@ -47,7 +47,7 @@ void test_if_many() {
     start("if many");
 
     int x = 8;
-    string type = "wither";
+    qstring type = "wither";
 
     summon("wither");
 
