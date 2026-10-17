@@ -1,3 +1,4 @@
+using System.Text;
 using Amethyst.AST.Expressions;
 using Amethyst.AST.Statements;
 using Amethyst.IR.Types;
@@ -29,6 +30,13 @@ namespace Amethyst.AST
             base.Process(ctx, root);
         }
 
+        public override void GenDeclaration(StringBuilder builder, Compiler ctx)
+        {
+            var type = GetFunctionType(ctx);
+            type = new(type.Modifiers, type.ReturnType, type.Parameters.Skip(1));
+            builder.AppendLine($"    {type.ToString(OriginalID.GetFile(), true)};");
+        }
+
         protected override NamespacedID Mangle(TypeArray args) => base.Mangle(new(args.Types.Skip(1)));
     }
 
@@ -46,13 +54,9 @@ namespace Amethyst.AST
         public override void Process(Compiler ctx, RootNode root)
         {
             var self = new SimpleAbstractTypeSpecifier(Location, SelfID.ToString());
-            var isClass = false;
+            var isClass = IsClass(ctx);
 
-            if (ctx.TypeHandler[SelfID].Type is ReferenceType)
-            {
-                isClass = true;
-                Parameters.Insert(0, new(ParameterModifiers.Macro, self, "this"));
-            }
+            if (isClass) Parameters.Insert(0, new(ParameterModifiers.Macro, self, "this"));
 
             var constructor = new FunctionNode(Location, Tags, Modifiers, isClass ? new(Location, "builtin:void") : self, ID, Parameters, Body);
             constructor.Body?.Prepend(new ConstructorInitStatement(Location, self, BaseCall));
@@ -60,6 +64,16 @@ namespace Amethyst.AST
             if (!isClass) constructor.Body?.Add(new ReturnStatement(Location, new VariableExpression(Location, "this")));
 
             constructor.Process(ctx, root);
+            ID = constructor.ID;
+        }
+
+        public bool IsClass(Compiler ctx) => ctx.TypeHandler[SelfID].Type is ReferenceType;
+
+        public override void GenDeclaration(StringBuilder builder, Compiler ctx)
+        {
+            var type = GetFunctionType(ctx);
+            if (IsClass(ctx)) type = new(type.Modifiers, type.ReturnType, type.Parameters.Skip(1));
+            builder.AppendLine($"    {OriginalID.GetFile()}{type.ParamsToString(true)};");
         }
     }
 }

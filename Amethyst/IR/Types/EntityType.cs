@@ -10,17 +10,21 @@ using Geode.Values;
 namespace Amethyst.IR.Types
 {
 #pragma warning disable CS9107
-    public class EntityType(NamespacedID id, TypeSpecifier? baseClass, Dictionary<string, TypeSpecifier> props, Dictionary<string, RawFunctionValue> methods)
-        : StructType(id, baseClass, props, methods, false)
+    public class EntityType(
+        NamespacedID id,
+        TypeSpecifier? baseClass,
+        Dictionary<string, TypeSpecifier> props,
+        Dictionary<string, RawFunctionValue> methods,
+        Dictionary<string, RawFunctionValue> constructors)
+        : StructType(id, baseClass, props, methods, constructors, false)
 #pragma warning restore CS9107
     {
-        public static readonly EntityType Dummy = new("amethyst:dummy", null, [], []);
+        public static readonly EntityType Dummy = new("amethyst:dummy", null, [], [], []);
         public override LiteralValue DefaultValue => new(0, this);
         public override NBTType EffectiveType => NBTType.Int;
-        protected override string StorageClass => "entitydef";
 
 #pragma warning disable IDE0028
-        public override object Clone() => new EntityType(ID, BaseClass, new(props.Select(i => new KeyValuePair<string, TypeSpecifier>(i.Key, i.Value))), Methods);
+        public override object Clone() => new EntityType(ID, BaseClass, new(props.Select(i => new KeyValuePair<string, TypeSpecifier>(i.Key, i.Value))), Methods, Constructors);
 #pragma warning restore IDE0028
         public override string ToString() => ID.ToString();
         protected override bool EqualsImpl(TypeSpecifier obj) => obj is EntityType other && other.ID == ID;

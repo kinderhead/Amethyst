@@ -1,5 +1,4 @@
-﻿using System.Text;
-using Amethyst.Errors;
+﻿using Amethyst.Errors;
 using Amethyst.IR.Chains;
 using Amethyst.IR.Instructions;
 using Datapack.Net.Data;
@@ -19,7 +18,7 @@ namespace Amethyst.IR.Types
         ExceptObject
     }
 
-    public class ReferenceType(TypeSpecifier inner, bool mutable = true) : TypeSpecifier, ISerializableType
+    public class ReferenceType(TypeSpecifier inner, bool mutable = true) : TypeSpecifier
     {
         public readonly TypeSpecifier Inner = inner;
         public readonly bool Mutable = mutable;
@@ -37,11 +36,6 @@ namespace Amethyst.IR.Types
         public virtual string Postfix => "&";
 
         public override TypeSpecifier AssignmentOverloadType => Inner;
-
-        public void Serialize(StringBuilder builder)
-        {
-            if (Inner is ISerializableType t) t.Serialize(builder);
-        }
 
         public override void AssignmentOverload(ValueRef dest, ValueRef val, FunctionContext ctx)
         {

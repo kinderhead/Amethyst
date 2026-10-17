@@ -1,8 +1,6 @@
-using System.Text;
 using Datapack.Net.Data;
 using Datapack.Net.Utils;
 using Geode;
-using Geode.Types;
 using Geode.Values;
 
 namespace Amethyst.IR.Types
@@ -12,9 +10,11 @@ namespace Amethyst.IR.Types
         TypeSpecifier? baseClass,
         Dictionary<string, TypeSpecifier> props,
         Dictionary<string, RawFunctionValue> methods,
-        bool isClass) : TypeSpecifier, ISerializableType
+        Dictionary<string, RawFunctionValue> constructors,
+        bool isClass) : TypeSpecifier
     {
         public const string TYPE_ID_PROPERTY = "@type";
+        public readonly Dictionary<string, RawFunctionValue> Constructors = constructors;
         public readonly bool IsClass = isClass;
 
         public readonly Dictionary<string, RawFunctionValue> Methods = methods;
@@ -32,8 +32,6 @@ namespace Amethyst.IR.Types
         public override TypeSpecifier BaseClass => baseClass ?? this;
 
         public override NamespacedID ID => id;
-
-        protected virtual string StorageClass => IsClass ? "declare class" : "struct";
 
         public (StructType Source, RawFunctionValue Function)? HierarchyMethod(string name)
         {
@@ -92,23 +90,8 @@ namespace Amethyst.IR.Types
 
         public override string ToString() => ID.ToString();
 
-        public void Serialize(StringBuilder builder)
-        {
-            builder.Append($"{StorageClass} {ID}");
-
-            if (BaseClass != this && BaseClass != PrimitiveType.Compound && BaseClass != EntityType.Dummy) builder.Append($" implements {BaseClass}");
-
-            builder.Append(" {");
-            builder.AppendLine();
-
-            builder.AppendJoin(Environment.NewLine, props.Select(i => $"    {i.Value} {i.Key};"));
-
-            builder.AppendLine();
-            builder.Append('}');
-            builder.AppendLine();
-        }
-
-        public override object Clone() => new StructType(ID, BaseClass, new(props.Select(i => new KeyValuePair<string, TypeSpecifier>(i.Key, i.Value))), Methods, IsClass);
+        public override object Clone() =>
+            new StructType(ID, BaseClass, new(props.Select(i => new KeyValuePair<string, TypeSpecifier>(i.Key, i.Value))), Methods, Constructors, IsClass);
 #pragma warning restore IDE0028 // Simplify collection initialization
     }
 }

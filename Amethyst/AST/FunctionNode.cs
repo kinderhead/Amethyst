@@ -1,4 +1,5 @@
-﻿using Amethyst.AST.Statements;
+﻿using System.Text;
+using Amethyst.AST.Statements;
 using Amethyst.Errors;
 using Amethyst.IR;
 using Datapack.Net.Utils;
@@ -20,16 +21,18 @@ namespace Amethyst.AST
     {
         public readonly BlockNode? Body = body;
         public readonly FunctionModifiers Modifiers = modifiers;
+        public readonly NamespacedID OriginalID = id;
         public readonly List<AbstractParameter> Parameters = parameters;
         public readonly AbstractTypeSpecifier ReturnType = ret;
         public readonly List<NamespacedID> Tags = tags;
 
         private FunctionType? funcType;
-        public NamespacedID ID { get; private set; } = id;
+        public NamespacedID ID { get; protected set; } = id;
 
         public bool ShouldCompile => Body is not null;
 
         public NamespacedID? Provides => null;
+        public bool Export { get; set; } = true;
 
         public IEnumerable<NamespacedID> GetTypeDependencies(Compiler ctx) =>
             ReturnType.SoftResolve(ctx, ID.GetContainingFolder()).Concat(Parameters.SelectMany(i => i.Type.SoftResolve(ctx, ID.GetContainingFolder())));
@@ -38,6 +41,11 @@ namespace Amethyst.AST
 
         public void SecondPass(Compiler ctx, RootNode root)
         {
+        }
+
+        public virtual void GenDeclaration(StringBuilder builder, Compiler ctx)
+        {
+            builder.AppendLine($"{GetFunctionType(ctx).ToString(OriginalID.ToString(), true)};");
         }
 
         public RawFunctionValue ProcessAndGetFunc(Compiler ctx, RootNode root)

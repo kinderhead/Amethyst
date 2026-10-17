@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using System.Text;
 using Datapack.Net.Utils;
 using Geode;
 using Geode.Errors;
@@ -69,9 +70,11 @@ namespace Amethyst.AST
     {
         LocationRange Location { get; }
         NamespacedID? Provides { get; }
+        bool Export { get; set; }
 
         IEnumerable<NamespacedID> GetTypeDependencies(Compiler ctx);
         void Process(Compiler ctx, RootNode root);
         void SecondPass(Compiler ctx, RootNode root);
+        void GenDeclaration(StringBuilder builder, Compiler ctx);
     }
 }

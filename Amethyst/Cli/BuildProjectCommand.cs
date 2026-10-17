@@ -47,6 +47,10 @@ namespace Amethyst.Cli
         [DefaultValue("0.0")]
         public PackFormat PackFormat { get; set; }
 
+        [CommandOption("-I|--include")]
+        [Description("Paths to data packs to include")]
+        public string[] Include { get; set; }
+
         // IAmethystOptions settings
         public string Output { get; set; }
         public string? Data { get; set; }

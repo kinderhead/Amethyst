@@ -1,4 +1,5 @@
 ﻿using System.Collections.ObjectModel;
+using System.Text;
 using Amethyst.AST.Expressions;
 using Amethyst.AST.Statements;
 using Amethyst.Errors;
@@ -36,13 +37,14 @@ namespace Amethyst.AST
         public readonly List<MethodNode> Methods = methods;
         public readonly Dictionary<string, AbstractTypeSpecifier> Properties = props;
         public readonly ContainerType Type = type;
+        private readonly Dictionary<string, RawFunctionValue> constructors = [];
 
         private readonly Dictionary<string, RawFunctionValue> methods = [];
         private readonly Dictionary<string, TypeSpecifier> props = [];
-        private TypeSpecifier? actualBaseClass;
         private StructType? selfType;
 
         public NamespacedID? Provides => ID;
+        public bool Export { get; set; } = true;
 
         public IEnumerable<NamespacedID> GetTypeDependencies(Compiler ctx) => BaseClass is not null ? BaseClass.SoftResolve(ctx, ID.GetContainingFolder()) : [];
 
@@ -50,17 +52,15 @@ namespace Amethyst.AST
         {
             if (selfType is not null) throw new InvalidOperationException("Called first pass twice");
 
-            actualBaseClass = BaseClass?.Resolve(ctx, ID.GetContainingFolder()) ?? (Type == ContainerType.Entity ? EntityType.Dummy : PrimitiveType.Compound);
-            var baseClass = actualBaseClass;
-
+            var baseClass = GetBaseClass(ctx);
             if (baseClass is ReferenceType r) baseClass = r.Inner;
 
             if (Type == ContainerType.Class && !(baseClass is StructType || baseClass == PrimitiveType.Compound)) throw new InvalidBaseClassError(baseClass.ToString());
 
             selfType = Type switch
             {
-                ContainerType.Struct or ContainerType.Class => new StructType(ID, baseClass, props, methods, Type == ContainerType.Class),
-                ContainerType.Entity => new EntityType(ID, baseClass, props, methods),
+                ContainerType.Struct or ContainerType.Class => new StructType(ID, baseClass, props, methods, constructors, Type == ContainerType.Class),
+                ContainerType.Entity => new EntityType(ID, baseClass, props, methods, constructors),
                 _ => throw new NotImplementedException()
             };
 
@@ -74,7 +74,7 @@ namespace Amethyst.AST
 
         public void SecondPass(Compiler ctx, RootNode root)
         {
-            if (selfType is null || actualBaseClass is null) throw new InvalidOperationException("Called second pass before first pass");
+            if (selfType is null) throw new InvalidOperationException("Called second pass before first pass");
 
             foreach (var (k, v) in Properties)
             {
@@ -91,7 +91,11 @@ namespace Amethyst.AST
             {
                 i.Process(ctx, root);
 
-                if (i is ConstructorNode c) constructor = c;
+                if (i is ConstructorNode c)
+                {
+                    constructors[i.ID.GetFile()] = (RawFunctionValue?)ctx.IR.GetGlobal(i.ID) ?? throw new UndefinedSymbolError(i.ID.ToString());
+                    constructor = c;
+                }
                 else if (i is not NullFunction)
                 {
                     var type = i.GetFunctionType(ctx);
@@ -121,7 +125,7 @@ namespace Amethyst.AST
 
             if (constructor is null && Type == ContainerType.Class)
             {
-                constructor = new(Location, [], FunctionModifiers.Inline, ID.ToString(), [], actualBaseClass is ReferenceType cls
+                constructor = new(Location, [], FunctionModifiers.Inline, ID.ToString(), [], GetBaseClass(ctx) is ReferenceType cls
                     ? new CallExpression(Location, new VariableExpression(Location, cls.Inner.ID.ToString()), [])
                     : null, Declared ? null : new(Location));
                 constructor.Process(ctx, root);
@@ -131,6 +135,39 @@ namespace Amethyst.AST
             if (Properties.Count != 0 && Type == ContainerType.Struct && selfType.EffectiveType != NBTType.Compound) throw new PropertyError(selfType.ToString());
             if (Type == ContainerType.Class && !Declared) GenerateMetaMethods(ctx, root, methods);
         }
+
+        public void GenDeclaration(StringBuilder builder, Compiler ctx)
+        {
+            builder.Append($"{Type switch
+            {
+                ContainerType.Struct => "struct",
+                ContainerType.Class => "declare class",
+                ContainerType.Entity => "entitydef",
+                _ => throw new NotImplementedException()
+            }} {ID}");
+
+            var baseClass = GetBaseClass(ctx);
+            if (baseClass.ID != ID && baseClass != PrimitiveType.Compound && baseClass != EntityType.Dummy) builder.Append($" implements {baseClass}");
+
+            builder.Append(" {");
+            builder.AppendLine();
+
+            foreach (var (name, type) in Properties)
+            {
+                builder.AppendLine($"    {type.Resolve(ctx, ID.GetContainingFolder())} {name};");
+            }
+
+            foreach (var i in Methods)
+            {
+                i.GenDeclaration(builder, ctx);
+            }
+
+            builder.Append('}');
+            builder.AppendLine();
+        }
+
+        public TypeSpecifier GetBaseClass(Compiler ctx) =>
+            BaseClass?.Resolve(ctx, ID.GetContainingFolder()) ?? (Type == ContainerType.Entity ? EntityType.Dummy : PrimitiveType.Compound);
 
         private void RecursePropertyType(Compiler ctx, TypeSpecifier type, TypeSpecifier parent)
         {

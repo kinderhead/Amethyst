@@ -21,6 +21,8 @@ using Random = Amethyst.AST.Intrinsics.Random;
 
 namespace Amethyst
 {
+    public record struct CompilerFile(string Contents, bool Export);
+
     public class Compiler : ICompiler, IFileHandler
     {
         public const string SHARD_PROJECT = "shard.json";
@@ -45,7 +47,7 @@ namespace Amethyst
 
         public string CoreLibPath => coreLibPath ?? throw new("No core library has been loaded");
 
-        private Dictionary<string, string> Files { get; } = [];
+        private Dictionary<string, CompilerFile> Files { get; } = [];
         public GeodeBuilder IR { get; }
 
         [DebuggerNonUserCode] // Hide this on the call stack
@@ -98,11 +100,11 @@ namespace Amethyst
 
         public string GetFile(string path)
         {
-            if (Files.TryGetValue(path, out var file)) return file;
+            if (Files.TryGetValue(path, out var file)) return file.Contents;
 
-            file = File.ReadAllText(path);
-            Files[path] = file;
-            return file;
+            var contents = File.ReadAllText(path);
+            Files[path] = new(contents, false);
+            return contents;
         }
 
         public string PathToMap(string path) =>
@@ -221,24 +223,29 @@ namespace Amethyst
                 else inputs.AddRange(globToCheck.Select(i => Path.Join(glob[..lastSlash], i)));
             }
 
-            foreach (var i in new List<string>([.. inputs, .. GetCoreLib()]))
+            foreach (var i in inputs)
             {
-                LoadFile(i);
+                LoadFile(i, true);
+            }
+
+            foreach (var i in GetCoreLib())
+            {
+                LoadFile(i, false);
             }
         }
 
-        public void LoadFile(string path) => LoadFile(path, File.ReadAllText(path));
-        public void LoadFile(string path, string file) => Files[path] = file;
+        public void LoadFile(string path, bool export) => LoadFile(path, File.ReadAllText(path), export);
+        public void LoadFile(string path, string file, bool export) => Files[path] = new(file, export);
 
-        public bool ParseFile(string filename, string file)
+        public bool ParseFile(string filename, CompilerFile file)
         {
-            var input = new AntlrInputStream(file);
+            var input = new AntlrInputStream(file.Contents);
             var lexer = new AmethystLexer(input);
             var tokens = new CommonTokenStream(lexer);
             var parser = new AmethystParser(tokens);
             var visitor = new Visitor(filename, this);
 
-            var error = new ParserErrorHandler(filename, file, visitor);
+            var error = new ParserErrorHandler(filename, file.Contents, visitor);
             lexer.RemoveErrorListeners();
             lexer.AddErrorListener(error);
             parser.RemoveErrorListeners();
@@ -249,6 +256,11 @@ namespace Amethyst
                 var root = parser.root();
                 if (error.Errored) return false;
                 Roots[filename] = (RootNode)visitor.Visit(root);
+
+                foreach (var i in Roots[filename].Children)
+                {
+                    i.Export = file.Export;
+                }
             }
             catch
             {
@@ -280,13 +292,13 @@ namespace Amethyst
         {
             var syms = new StringBuilder();
 
-            foreach (var i in TypeHandler.GetLocallyDefinedTypes().OfType<ISerializableType>())
+            foreach (var i in Roots.SelectMany(i => i.Value.Children))
             {
-                i.Serialize(syms);
-                syms.AppendLine();
+                if (i.Export) i.GenDeclaration(syms, this);
             }
 
-            //Console.WriteLine(syms.ToString());
+            Console.WriteLine(syms.ToString());
+            IR.Datapack.AddMiscFile(".d.ame", syms.ToString());
         }
 
         private void RegisterGlobals()

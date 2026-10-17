@@ -4,6 +4,8 @@ using Amethyst.Daemon;
 using Datapack.Net.Pack;
 using Spectre.Console.Cli;
 
+#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
+
 namespace Amethyst.Cli
 {
     [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.AllFields | DynamicallyAccessedMemberTypes.AllProperties)]
@@ -50,6 +52,10 @@ namespace Amethyst.Cli
         [CommandOption("--disable-compute")]
         [Description("Disable generating and using number providers and /compute.")]
         public bool DisableCompute { get; set; }
+
+        [CommandOption("-I|--include")]
+        [Description("Paths to data packs to include")]
+        public string[] Include { get; set; }
 
         [CommandArgument(0, "<inputs>")]
         [Description("Files to compile.")]

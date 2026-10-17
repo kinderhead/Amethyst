@@ -15,38 +15,45 @@ entitydef minecraft:sheep implements minecraft:base {
 }
 /* The rest can be modified */
 
-// struct test {
-//     int x;
+struct test {
+    int x;
 
-//     void func() {
-//         print(x);
-//     }
+    test(int val) {
+        x = val;
+    }
 
-//     void func(int y) {
-//         print(x + y);
-//     }
-// }
+    void func() {
+        print(x);
+    }
 
-// class Base {
-//     string str;
-//     test obj;
+    void func(int y) {
+        print(x + y);
+    }
+}
 
-//     Base(string str) {
-//         this.str = str;
-//     }
+class Base {
+    string str;
+    test obj;
 
-//     virtual void hi() {
-//         print(str);
-//     }
-// }
+    Base(string str) {
+        this.str = str;
+    }
 
-// class Child implements Base {
-//     Child(string str) : Base(str) { }
+    virtual void hi() {
+        print(str);
+    }
+}
 
-//     virtual void hi() {
-//         print(str, " Hi");
-//     }
-// }
+class Child implements Base {
+    Child(string str) : Base(str) { }
+
+    virtual void hi() {
+        print(str, " Hi");
+    }
+}
+
+test glob;
+int glob2 = 4;
 
 #load
 void main() {

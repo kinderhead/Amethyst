@@ -71,17 +71,31 @@ namespace Geode.Types
                                                                               .All(i => i.First.Type == i.Second.Type && i.First.Modifiers == i.Second.Modifiers);
 
         public override string ToString() => $"{ReturnType}{ParamsToString()}";
-        public string ToString(string name) => $"{ReturnType} {name}{ParamsToString()}";
+        public string ToString(string name, bool includeParamNames = false) => $"{Modifiers.Render()}{ReturnType} {name}{ParamsToString(includeParamNames)}";
 
-        public string ParamsToString() => $"({string.Join(", ", Parameters.Select(p => {
+        public string ParamsToString(bool includeParamNames = false) => $"({string.Join(", ", Parameters.Select(p => {
             return p.Modifiers switch
             {
                 ParameterModifiers.None => $"{p.Type}",
                 ParameterModifiers.Macro => $"macro {p.Type}",
-                _ => throw new ArgumentOutOfRangeException()
-            };
+                _ => throw new InvalidOperationException()
+            } + (includeParamNames ? " " + p.Name : "");
         }))})";
 
         public override object Clone() => new FunctionType(Modifiers, (TypeSpecifier)ReturnType.Clone(), Parameters.Select(i => i with { Type = (TypeSpecifier)i.Type.Clone() }));
+    }
+
+    public static class FunctionModifiersExtensions
+    {
+        extension(FunctionModifiers modifiers)
+        {
+            public string Render()
+            {
+                var ret = "";
+                if (modifiers.HasFlag(FunctionModifiers.Inline)) ret += "inline ";
+                if (modifiers.HasFlag(FunctionModifiers.Virtual)) ret += "virtual ";
+                return ret;
+            }
+        }
     }
 }
