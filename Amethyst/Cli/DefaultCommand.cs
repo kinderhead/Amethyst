@@ -1,6 +1,7 @@
 using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
+using Spectre.Console;
 using Spectre.Console.Cli;
 
 namespace Amethyst.Cli
@@ -20,11 +21,11 @@ namespace Amethyst.Cli
             if (settings.Version)
             {
                 var version = Assembly.GetEntryAssembly()?.GetName().Version ?? new Version();
-                Console.WriteLine($"Amethyst version {version.Major}.{version.Minor}.{version.Build}");
+                AnsiConsole.WriteLine($"Amethyst version {version.Major}.{version.Minor}.{version.Build}");
                 return 0;
             }
 
-            Console.WriteLine("No arguments specified. Run amethyst --help for more information");
+            AnsiConsole.WriteLine("No arguments specified. Run amethyst --help for more information");
             return 0;
         }
     }

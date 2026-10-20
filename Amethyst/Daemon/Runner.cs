@@ -127,7 +127,7 @@ namespace Amethyst.Daemon
                         msg = logMatch.Groups[1].Value;
                         if (msg == "[exit]") break;
 
-                        AnsiConsole.MarkupLine(msg.EscapeMarkup());
+                        AnsiConsole.WriteLine(msg);
                         continue;
                     }
 

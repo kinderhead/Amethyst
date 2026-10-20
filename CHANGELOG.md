@@ -12,6 +12,7 @@
 * Allow creating compound literals with string keys.
 * Changed daemon mode to allow for multiple running data packs.
 * Added dynamic linking.
+* Added compiler progress bar.
 
 # Bug Fixes
 

@@ -73,7 +73,7 @@ namespace Amethyst.Cli
 
             var compiler = new Compiler(settings);
 
-            if (!compiler.CompileWithSpinner()) return 1;
+            if (!compiler.CompileWithProgress()) return 1;
             if (settings.Run) Runner.RunDatapack(new() { Datapacks = [settings.Output, .. settings.Include] }, compiler);
 
             return 0;

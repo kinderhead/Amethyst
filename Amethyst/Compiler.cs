@@ -114,17 +114,36 @@ namespace Amethyst
 
         public string MapToPath(string mappedPath) => mappedPath.StartsWith("@std") ? Path.Combine(CoreLibPath, mappedPath["@std".Length..]) : mappedPath;
 
-        public bool CompileWithSpinner()
+        public bool CompileWithProgress()
         {
-            //var start = Stopwatch.GetTimestamp();
-            // var success = AnsiConsole.Status().Start("[darkviolet]Compiling...[/]", _ => ); // TODO: replace spinner with progress
-            // if (success) AnsiConsole.MarkupLineInterpolated($"[darkviolet]Compiled in [/][gold1]{Math.Round(Stopwatch.GetElapsedTime(start).TotalSeconds, 2)}s[/]");
+            var start = Stopwatch.GetTimestamp();
+            var success = AnsiConsole.Progress().Columns(
+                new SpinnerColumn(),
+                new TaskDescriptionColumn(),
+                new ProgressBarColumn
+                {
+                    CompletedStyle = new(Color.Violet)
+                },
+                new PercentageColumn()).Start(ctx =>
+            {
+                var task = ctx.AddTask("[darkviolet]Loading files...[/]", false);
+                try
+                {
+                    return Compile(task);
+                }
+                finally
+                {
+                    ctx.RemoveTask(task);
+                }
+            });
 
-            var success = Compile();
+            AnsiConsole.Write("\e[1A\e[1A\e[1A");
+
+            if (success) AnsiConsole.MarkupLineInterpolated($"[darkviolet]Compiled in [/][gold1]{Math.Round(Stopwatch.GetElapsedTime(start).TotalSeconds, 2)}s[/]");
             return success;
         }
 
-        public bool Compile(StatusContext? ctx = null)
+        public bool Compile(ProgressTask? task = null)
         {
             if (Options.Link.Length != 0) throw new NotImplementedException("Static linking it not implemented yet. Use dynamic linking for now.");
 
@@ -140,35 +159,51 @@ namespace Amethyst
                 return false;
             }
 
+            task?.MaxValue = Files.Count;
+            task?.Description = "[darkviolet]Parsing...[/]";
+            task?.StartTask();
+
             var errored = false;
             
             foreach (var (k, v) in Files)
             {
-                ctx?.Status = $"[darkviolet]Parsing {k}...[/]";
+                task?.Description = $"[darkviolet]Parsing {k}...[/]";
                 if (!ParseFile(k, v)) errored = true;
+                task?.Increment(1);
             }
 
             if (errored) return false;
+
+            task?.Value = 0;
+            task?.MaxValue = Roots.Count;
+            task?.Description = "[darkviolet]Processing...[/]";
 
             foreach (var i in Roots)
             {
-                ctx?.Status = $"[darkviolet]Processing {i.Key.EscapeMarkup()}...[/]";
+                task?.Description = $"[darkviolet]Processing {i.Key.EscapeMarkup()}...[/]";
                 if (!i.Value.BuildSoftTypes()) errored = true;
+                task?.Increment(1);
             }
 
             if (errored) return false;
 
-            ctx?.Status = "[darkviolet]Building symbols...[/]";
+            task?.Description = "[darkviolet]Building symbols...[/]";
             if (!TypeHandler.GenerateSymbols()) errored = true;
 
             TypeHandler.GenerateTypeInfo(GlobalInitFunc);
             GenerateGCMarkFunction();
 
+            task?.Value = 0;
+            task?.MaxValue = Roots.Count;
+            task?.Description = "[darkviolet]Compiling...[/]";
+            task?.StartTask();
+
             foreach (var i in Roots)
             {
-                ctx?.Status = $"[darkviolet]Compiling {i.Key.EscapeMarkup()}...[/]";
+                task?.Description = $"[darkviolet]Compiling {i.Key.EscapeMarkup()}...[/]";
                 if (!i.Value.CompileFunctions(out var funcs)) errored = true;
                 else IR.AddFunctions(funcs);
+                task?.Increment(1);
             }
 
             if (GlobalInitFunc.Start.Instructions.Count != 0)
@@ -181,7 +216,7 @@ namespace Amethyst
             if (IR.GetGlobal("amethyst:init") is not null) IR.Datapack.Tags.GetTag("minecraft:load", "function").Values.Add("amethyst:init");
             GenerateSymbolTable();
 
-            ctx?.Status = "[darkviolet]Generating commands...[/]";
+            task?.Description = "[darkviolet]Generating commands...[/]";
 
             if (errored || !IR.Compile()) return false;
 
@@ -196,8 +231,6 @@ namespace Amethyst
                        ) i.FancyPrintCommands();
                 }
             }
-
-            ctx?.Status = "[darkviolet]Done![/]";
 
             return true;
         }

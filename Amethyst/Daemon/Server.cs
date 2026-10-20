@@ -42,6 +42,11 @@ namespace Amethyst.Daemon
 
             Rcon.StopServer();
 
+            while (Rcon.IsServerRunning())
+            {
+                Thread.Sleep(100);
+            }
+
             var config = UpdateConfig(settings);
 
             File.Delete(EULALocation);
