@@ -316,8 +316,11 @@ namespace Amethyst.Daemon
 
         public static void RemoveDatapack()
         {
-            Directory.Delete(DatapackFolder, true);
-            Directory.CreateDirectory(DatapackFolder);
+            if (Directory.Exists(DatapackFolder))
+            {
+                Directory.Delete(DatapackFolder, true);
+                Directory.CreateDirectory(DatapackFolder);
+            }
         }
 
         public static Process Run(string cmd, string args, bool detach = false)
