@@ -1,0 +1,102 @@
+namespace test;
+
+entitydef test_entity {
+    bool Invulnerable;
+}
+
+struct vec {
+    int x;
+    int y;
+    int z;
+
+    int sum() {
+        return this.x + this.y + this.z;
+    }
+
+    int sum(int mod) {
+        return this.x + this.y + this.z + mod;
+    }
+}
+
+struct vec2 {
+    int x;
+    int y;
+    int z;
+
+    vec2(int x, int y, int z) {
+        this.x = x;
+        this.y = y;
+        this.z = z;
+    }
+
+    int sum() {
+        return this.x + this.y + this.z;
+    }
+
+    int get-x() {
+        return this.x;
+    }
+
+    int get-x2() {
+        return this.x;
+    }
+
+    int get-x2(int y) {
+        return this.x + y;
+    }
+}
+
+class clsvec {
+    int x;
+    int y;
+    int z;
+
+    int sum() {
+        return this.x + this.y + this.z;
+    }
+
+    int sum(int mod) {
+        return this.x + this.y + this.z + mod;
+    }
+}
+
+class clsvec2 {
+    int x;
+    int y;
+    int z;
+
+    clsvec2(int x, int y, int z) {
+        this.x = x;
+        this.y = y;
+        this.z = z;
+    }
+
+    int sum() {
+        return this.x + this.y + this.z;
+    }
+
+    virtual int get-x() {
+        return this.x;
+    }
+
+    virtual int get-x2() {
+        return this.x;
+    }
+
+    virtual int get-x2(int y) {
+        return this.x + y;
+    }
+}
+
+Node save = null;
+Node[] saves = [];
+
+// Test dependency graph
+class Node {
+    int val;
+    Node next;
+
+    Node(int x) {
+        this.val = x;
+    }
+}

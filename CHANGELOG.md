@@ -10,6 +10,8 @@
 * String literals attempt to assign themselves `qstring` before `string`.
 * Improved ranges.
 * Allow creating compound literals with string keys.
+* Changed daemon mode to allow for multiple running data packs.
+* Added dynamic linking.
 
 # Bug Fixes
 

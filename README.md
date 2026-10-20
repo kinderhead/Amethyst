@@ -67,6 +67,11 @@ Join the [Discord server](https://discord.gg/TTmZSHgSSq) for more.
 
 See the [1.0 release project](https://github.com/users/kinderhead/projects/3) for more details.
 
+## Running the Unit Tests
+
+The unit tests require the prior compilation of `lib.zip` for library testing purposes. This can be achieved by running the `Test Suite Lib` launch profile (`amethyst compile
+tests/linking/lib.ame -o lib.zip`) before the main unit tests.
+
 ## Support the Project
 
 Like what you see? Support me on [Ko-fi](https://ko-fi.com/kinderhead).

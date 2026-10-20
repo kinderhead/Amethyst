@@ -1,46 +1,6 @@
 namespace test;
 
-struct vec {
-    int x;
-    int y;
-    int z;
-
-    int sum() {
-        return this.x + this.y + this.z;
-    }
-
-    int sum(int mod) {
-        return this.x + this.y + this.z + mod;
-    }
-}
-
-struct vec2 {
-    int x;
-    int y;
-    int z;
-
-    vec2(int x, int y, int z) {
-        this.x = x;
-        this.y = y;
-        this.z = z;
-    }
-
-    int sum() {
-        return this.x + this.y + this.z;
-    }
-
-    int get-x() {
-        return this.x;
-    }
-
-    int get-x2() {
-        return this.x;
-    }
-
-    int get-x2(int y) {
-        return this.x + y;
-    }
-}
+// Some definitions are in linking/lib.ame to test that as well
 
 struct vec3 {
     int x;
@@ -52,21 +12,6 @@ struct vec3 {
     }
 }
 
-class clsvec {
-    int x;
-    int y;
-    int z;
-
-    int sum() {
-        return this.x + this.y + this.z;
-    }
-
-    int sum(int mod) {
-        return this.x + this.y + this.z + mod;
-    }
-}
-
-// Put clssubvec definition before clsvec2 to test type depency graph generation
 class clssubvec implements clsvec2 {
     clssubvec(int x, int y, int z) : clsvec2(x * 2, y * 2, z * 2) { }
 
@@ -80,34 +25,6 @@ class clssubvec implements clsvec2 {
 
     virtual int get-x2(int y) {
         return this.x + y + 1;
-    }
-}
-
-class clsvec2 {
-    int x;
-    int y;
-    int z;
-
-    clsvec2(int x, int y, int z) {
-        this.x = x;
-        this.y = y;
-        this.z = z;
-    }
-
-    int sum() {
-        return this.x + this.y + this.z;
-    }
-
-    virtual int get-x() {
-        return this.x;
-    }
-
-    virtual int get-x2() {
-        return this.x;
-    }
-
-    virtual int get-x2(int y) {
-        return this.x + y;
     }
 }
 

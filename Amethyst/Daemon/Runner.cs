@@ -16,10 +16,13 @@ namespace Amethyst.Daemon
         {
             if (Server.GetConfig() is null) return 1;
 
-            if (!Path.Exists(settings.Datapack))
+            foreach (var i in settings.Datapacks)
             {
-                AnsiConsole.MarkupLineInterpolated($"[red]Could not find datapack \"{settings.Datapack}\"[/]");
-                return 1;
+                if (!Path.Exists(i))
+                {
+                    AnsiConsole.MarkupLineInterpolated($"[red]Could not find datapack \"{i}\"[/]");
+                    return 1;
+                }
             }
 
             // Bad windows :(
@@ -74,27 +77,30 @@ namespace Amethyst.Daemon
 
             Directory.CreateDirectory(Path.Combine(Server.ServerFolder, "world", "datapacks"));
 
-            if (File.Exists(settings.Datapack))
+            foreach (var (index, pack) in settings.Datapacks.Index())
             {
-                if (Path.GetExtension(settings.Datapack) != ".zip")
+                if (File.Exists(pack))
                 {
-                    AnsiConsole.MarkupLineInterpolated($"[red]Invalid datapack \"{settings.Datapack}\"[/]");
-                    return 1;
-                }
+                    if (Path.GetExtension(pack) != ".zip")
+                    {
+                        AnsiConsole.MarkupLineInterpolated($"[red]Invalid datapack \"{pack}\"[/]");
+                        return 1;
+                    }
 
-                File.Copy(settings.Datapack, Server.DatapackLocation + ".zip", true);
-                //ZipFile.ExtractToDirectory(settings.Datapack, Server.DatapackLocation);
-            }
-            else
-            {
-                foreach (var dir in Directory.GetDirectories(settings.Datapack, "*", SearchOption.AllDirectories))
-                {
-                    Directory.CreateDirectory(dir.Replace(settings.Datapack, Server.DatapackLocation));
+                    File.Copy(pack, Server.DatapackLocation(index) + ".zip", true);
+                    //ZipFile.ExtractToDirectory(settings.Datapack, Server.DatapackLocation);
                 }
-
-                foreach (var file in Directory.GetFiles(settings.Datapack, "*", SearchOption.AllDirectories))
+                else
                 {
-                    File.Copy(file, file.Replace(settings.Datapack, Server.DatapackLocation));
+                    foreach (var dir in Directory.GetDirectories(pack, "*", SearchOption.AllDirectories))
+                    {
+                        Directory.CreateDirectory(dir.Replace(pack, Server.DatapackLocation(index)));
+                    }
+
+                    foreach (var file in Directory.GetFiles(pack, "*", SearchOption.AllDirectories))
+                    {
+                        File.Copy(file, file.Replace(pack, Server.DatapackLocation(index)));
+                    }
                 }
             }
 
@@ -109,7 +115,7 @@ namespace Amethyst.Daemon
 
             var lastFailedFunction = "";
 
-            var datapack = new DatapackReaderHandler(settings.Datapack);
+            var datapack = new DatapackReaderHandler(settings.Datapacks);
 
             while (true)
             {
@@ -156,7 +162,7 @@ namespace Amethyst.Daemon
                             var file = DatapackReader.PathFor<Functions>(lastFailedFunction);
                             var srcLoc = new LocationRange(new(file, line, column));
 
-                            var mcfunction = datapack.Reader.ReadFile(file).Split('\n');
+                            var mcfunction = datapack.GetFile(file).Split('\n');
                             LocationRange? mapLoc = null;
 
                             for (var i = 0; i < line; i++)
@@ -167,8 +173,7 @@ namespace Amethyst.Daemon
                             if (mapLoc is null)
                             {
                                 new CompilerMessenger(Color.Red)
-                                    .Header(
-                                        $"Error loading [yellow]{lastFailedFunction}[/] ([grey underline]{srcLoc}[/])")
+                                    .Header($"Error loading [yellow]{lastFailedFunction}[/] ([grey underline]{srcLoc}[/])")
                                     .AddCode(datapack, srcLoc)
                                     .Final().AddContent("Syntax error: [turquoise2]Could not parse command[/]");
                             }

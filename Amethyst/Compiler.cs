@@ -9,6 +9,7 @@ using Amethyst.IR;
 using Amethyst.IR.Types;
 using Antlr4.Runtime;
 using Datapack.Net.Function;
+using Datapack.Net.Reader;
 using Geode;
 using Geode.Errors;
 using Geode.IR;
@@ -125,10 +126,22 @@ namespace Amethyst
 
         public bool Compile(StatusContext? ctx = null)
         {
+            if (Options.Link.Length != 0) throw new NotImplementedException("Static linking it not implemented yet. Use dynamic linking for now.");
+
+            try
+            {
+                LoadFiles();
+            }
+            catch (FileNotFoundException e)
+            {
+                AnsiConsole.MarkupLineInterpolated(e.FileName is not null
+                    ? (FormattableString)$"[red]Could not load file {e.FileName}[/]"
+                    : (FormattableString)$"[red]FileNotFoundException: {e.Message}[/]");
+                return false;
+            }
+
             var errored = false;
-
-            LoadFiles();
-
+            
             foreach (var (k, v) in Files)
             {
                 ctx?.Status = $"[darkviolet]Parsing {k}...[/]";
@@ -232,6 +245,12 @@ namespace Amethyst
             {
                 LoadFile(i, false);
             }
+
+            foreach (var i in Options.Include)
+            {
+                var reader = new DatapackReader(i);
+                if (reader.ReadFileOrNull(".d.ame") is { } def) LoadFile($"{i}.d.ame", def, false);
+            }
         }
 
         public void LoadFile(string path, bool export) => LoadFile(path, File.ReadAllText(path), export);
@@ -297,7 +316,6 @@ namespace Amethyst
                 if (i.Export) i.GenDeclaration(syms, this);
             }
 
-            Console.WriteLine(syms.ToString());
             IR.Datapack.AddMiscFile(".d.ame", syms.ToString());
         }
 

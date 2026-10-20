@@ -9,8 +9,7 @@ using Geode.Types;
 namespace Amethyst.AST.Intrinsics
 {
     public class Summon(FunctionType? type = null) : Intrinsic("minecraft:summon",
-        type ?? new FunctionType(FunctionModifiers.None, EntityType.Dummy,
-            [new(ParameterModifiers.None, PrimitiveType.String, "target")]))
+        type ?? new FunctionType(FunctionModifiers.None, EntityType.Dummy, [new(ParameterModifiers.None, new QStringType(), "target")]))
     {
         public override IFunctionLike CloneWithType(FunctionType type) => new Summon(type);
 

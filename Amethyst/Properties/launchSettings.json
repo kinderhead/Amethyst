@@ -2,7 +2,7 @@
   "profiles": {
     "Amethyst": {
       "commandName": "Project",
-      "commandLineArgs": "compile examples/test.ame -o output.zip",
+      "commandLineArgs": "compile examples/test.ame -c -o output.zip -I lib.zip --run",
       "workingDirectory": "$(ProjectDir)"
     },
     "Shard": {
@@ -12,7 +12,12 @@
     },
     "Test Suite": {
       "commandName": "Project",
-      "commandLineArgs": "compile tests/*.ame -o output.zip --run",
+      "commandLineArgs": "compile tests/*.ame -I lib.zip -o output.zip --run",
+      "workingDirectory": "$(ProjectDir)"
+    },
+    "Test Suite Lib": {
+      "commandName": "Project",
+      "commandLineArgs": "compile tests/linking/lib.ame -o lib.zip",
       "workingDirectory": "$(ProjectDir)"
     },
     "Random": {

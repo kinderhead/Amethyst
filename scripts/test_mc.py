@@ -32,7 +32,10 @@ amethyst, version, packver, arg = test_info()
 print(f"Setting up Minecraft version {version}")
 call(f"{amethyst} setup --eula -v {version}")
 
+print("Compiling lib...")
+call(f"{amethyst} compile tests/linking/lib.ame {arg} -p {packver} -o lib.zip")
+
 print("Running tests...")
-call(f"{amethyst} compile tests/*.ame {arg} -p {packver} -o test.zip")
+call(f"{amethyst} compile tests/*.ame {arg} -p {packver} -I lib.zip -o test.zip")
 
 run_test(f"{amethyst} run test.zip", tester)

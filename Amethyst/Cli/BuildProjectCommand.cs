@@ -3,8 +3,6 @@ using Amethyst.Daemon;
 using Datapack.Net.Pack;
 using Spectre.Console.Cli;
 
-#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
-
 namespace Amethyst.Cli
 {
     public class BaseProjectSettings : CommandSettings
@@ -12,7 +10,7 @@ namespace Amethyst.Cli
         [CommandOption("-f|--shard-file")]
         [Description("Project file to use.")]
         [DefaultValue(Compiler.SHARD_PROJECT)]
-        public string ShardFile { get; set; }
+        public string ShardFile { get; set; } = "";
     }
 
     public class BuildProjectSettings : BaseProjectSettings, IAmethystOptions
@@ -48,14 +46,18 @@ namespace Amethyst.Cli
         public PackFormat PackFormat { get; set; }
 
         [CommandOption("-I|--include")]
-        [Description("Paths to data packs to include")]
-        public string[] Include { get; set; }
+        [Description("Paths to data packs to include references to.")]
+        public string[] Include { get; set; } = [];
+
+        [CommandOption("-L|--link")]
+        [Description("Paths to data packs to link into the output.")]
+        public string[] Link { get; set; } = [];
 
         // IAmethystOptions settings
-        public string Output { get; set; }
+        public string Output { get; set; } = "";
         public string? Data { get; set; }
         public string? Description { get; set; }
-        public string[] Inputs { get; set; }
+        public string[] Inputs { get; set; } = [];
     }
 
     public class BuildProjectCommand : Command<BuildProjectSettings>
@@ -78,7 +80,7 @@ namespace Amethyst.Cli
             var compiler = new Compiler(settings);
 
             if (!compiler.CompileWithSpinner()) return 1;
-            if (settings.Run) Runner.RunDatapack(new() { Datapack = settings.Output }, compiler);
+            if (settings.Run) Runner.RunDatapack(new() { Datapacks = [settings.Output, .. settings.Include] }, compiler);
 
             return 0;
         }

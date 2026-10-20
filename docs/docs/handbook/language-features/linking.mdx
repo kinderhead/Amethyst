@@ -1,0 +1,36 @@
+---
+sidebar_position: 12
+description: Data pack linking
+---
+
+import Highlight from "@site/src/components/highlight";
+
+# Linking
+
+Amethyst supports linking prebuilt data packs into your project. This allows people to share data packs as packages for others to consume.
+
+:::warning
+Unless you can control the file names of the data packs, assume that the load order is random.
+:::
+
+## Dynamic Linking
+
+Dynamic linking is when you include symbols from another data pack in yours, but the client still needs to install it separately. An example of this is an optional dependency.
+
+Data packs can be dynamically linked with the `-I` or `--include` flag:
+
+```sh
+amethyst compile main.ame -I lib.zip -I lib2.zip
+```
+
+### Shards
+
+Adding packs to a [`shard.json`](../shards/shard_json.mdx) is WIP.
+
+## Static Linking
+
+Not implemented yet.
+
+## Amethyst ABI
+
+In every data pack, Amethyst generates a `.d.ame` file which contains definitions for all of the exported symbols. The compiler simply loads this file to import them.

@@ -8,9 +8,9 @@ namespace Amethyst.Cli
     [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.AllFields | DynamicallyAccessedMemberTypes.AllProperties)]
     public class DaemonRunOptions : CommandSettings
     {
-        [CommandArgument(0, "<data pack>")]
-        [Description("Path to a data pack to run.")]
-        public required string Datapack { get; set; }
+        [CommandArgument(0, "<data packs>")]
+        [Description("Path to data packs to run.")]
+        public required string[] Datapacks { get; set; }
     }
 
     public class DaemonRunCommand : Command<DaemonRunOptions>
@@ -18,7 +18,7 @@ namespace Amethyst.Cli
         public override int Execute(CommandContext context, DaemonRunOptions settings, CancellationToken cancellationToken)
         {
             var compiler = new Compiler(new CompileOptions { Inputs = [], Output = "" });
-            compiler.GetCoreLib(); // Find an std path
+            compiler.GetCoreLib(); // Find the std path
             return Runner.RunDatapack(settings, compiler);
         }
     }

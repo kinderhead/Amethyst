@@ -1,9 +1,5 @@
 namespace test;
 
-entitydef test_entity {
-    bool Invulnerable;
-}
-
 #test
 void test_entity_exists() {
     start("entity exists");

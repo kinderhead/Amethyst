@@ -15,50 +15,10 @@ entitydef minecraft:sheep implements minecraft:base {
 }
 /* The rest can be modified */
 
-struct test {
-    int x;
-
-    test(int val) {
-        x = val;
-    }
-
-    void func() {
-        print(x);
-    }
-
-    void func(int y) {
-        print(x + y);
-    }
-}
-
-class Base {
-    string str;
-    test obj;
-
-    Base(string str) {
-        this.str = str;
-    }
-
-    virtual void hi() {
-        print(str);
-    }
-}
-
-class Child implements Base {
-    Child(string str) : Base(str) { }
-
-    virtual void hi() {
-        print(str, " Hi");
-    }
-}
-
-test glob;
-int glob2 = 4;
-
 #load
 void main() {
-    int{} map = { "w w": 4 };
-    print(map["w w"], " ", map.contains("w w"));
+    var obj = lib:test(7);
+    print(obj.func());
 
-    amethyst:exit();
+    //amethyst:exit();
 }

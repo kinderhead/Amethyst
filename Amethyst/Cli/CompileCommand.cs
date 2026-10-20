@@ -4,8 +4,6 @@ using Amethyst.Daemon;
 using Datapack.Net.Pack;
 using Spectre.Console.Cli;
 
-#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
-
 namespace Amethyst.Cli
 {
     [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.AllFields | DynamicallyAccessedMemberTypes.AllProperties)]
@@ -54,8 +52,12 @@ namespace Amethyst.Cli
         public bool DisableCompute { get; set; }
 
         [CommandOption("-I|--include")]
-        [Description("Paths to data packs to include")]
-        public string[] Include { get; set; }
+        [Description("Paths to data packs to include references to.")]
+        public string[] Include { get; set; } = [];
+
+        [CommandOption("-L|--link")]
+        [Description("Paths to data packs to link into the output.")]
+        public string[] Link { get; set; } = [];
 
         [CommandArgument(0, "<inputs>")]
         [Description("Files to compile.")]
@@ -72,7 +74,7 @@ namespace Amethyst.Cli
             var compiler = new Compiler(settings);
 
             if (!compiler.CompileWithSpinner()) return 1;
-            if (settings.Run) Runner.RunDatapack(new() { Datapack = settings.Output }, compiler);
+            if (settings.Run) Runner.RunDatapack(new() { Datapacks = [settings.Output, .. settings.Include] }, compiler);
 
             return 0;
         }

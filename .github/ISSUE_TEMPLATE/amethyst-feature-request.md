@@ -10,7 +10,7 @@ assignees: kinderhead
 <!--
 BEFORE SUBMITTING AN ISSUE
 
-Does this feature solve a bug? Is so, then make a bug report.
+Does this feature solve a bug? If so, then make a bug report.
 -->
 
 **Problem**

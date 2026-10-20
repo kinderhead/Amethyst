@@ -28,6 +28,16 @@ namespace Amethyst
             {
                 config.SetApplicationName("amethyst");
                 config.Settings.MaximumIndirectExamples = 100;
+
+                // config.Settings.HelpProviderStyles = new()
+                // {
+                //     Arguments = new()
+                //     {
+                //         RequiredArgument = "aqua",
+                //         OptionalArgument = "silver"
+                //     }
+                // };
+
                 // config.Settings.HelpProviderStyles?.Description?.Header = "default";
                 // config.Settings.HelpProviderStyles?.Usage?.Header = "default";
                 // config.Settings.HelpProviderStyles?.Examples?.Header = "default";

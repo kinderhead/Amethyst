@@ -22,7 +22,8 @@ namespace Amethyst.Daemon
         public static readonly string EULALocation = Path.Combine(ServerFolder, "eula.txt");
         public static readonly string ServerPropertiesLocation = Path.Combine(ServerFolder, "server.properties");
         public static readonly string MinecraftServerLocation = Path.Combine(ServerFolder, "server.jar");
-        public static readonly string DatapackLocation = Path.Combine(ServerFolder, "world", "datapacks", "datapack");
+        public static readonly string DatapackFolder = Path.Combine(ServerFolder, "world", "datapacks");
+        public static string DatapackLocation(int index) => Path.Combine(DatapackFolder, $"datapack{index}");
         public static readonly string LogLocation = Path.Combine(ServerFolder, "logs", "latest.log");
 
         public static async Task<int> Setup(DaemonSetupOptions settings)
@@ -256,7 +257,7 @@ namespace Amethyst.Daemon
                         ctx.Refresh();
 
                         using var client = new HttpClient();
-                        using var file = new FileStream(path, FileMode.Create, FileAccess.Write, FileShare.None);
+                        await using var file = new FileStream(path, FileMode.Create, FileAccess.Write, FileShare.None);
                         using var res = await client.GetAsync(url).ConfigureAwait(false);
 
                         var length = res.Content.Headers.ContentLength ?? 0;
@@ -315,9 +316,8 @@ namespace Amethyst.Daemon
 
         public static void RemoveDatapack()
         {
-            if (File.Exists(DatapackLocation + ".zip")) File.Delete(DatapackLocation + ".zip");
-
-            if (Directory.Exists(DatapackLocation)) Directory.Delete(DatapackLocation, true);
+            Directory.Delete(DatapackFolder, true);
+            Directory.CreateDirectory(DatapackFolder);
         }
 
         public static Process Run(string cmd, string args, bool detach = false)
