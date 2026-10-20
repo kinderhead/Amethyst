@@ -38,4 +38,4 @@ call(f"{amethyst} compile tests/linking/lib.ame {arg} -p {packver} -o lib.zip")
 print("Running tests...")
 call(f"{amethyst} compile tests/*.ame {arg} -p {packver} -I lib.zip -o test.zip")
 
-run_test(f"{amethyst} run test.zip", tester)
+run_test(f"{amethyst} run test.zip lib.zip", tester)

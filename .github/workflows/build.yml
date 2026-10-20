@@ -90,10 +90,4 @@ jobs:
           timeout_minutes: 5
           max_attempts: 3
           command: python -u ${{ matrix.script.path }} ${{ matrix.version }} "${{ matrix.args }}"
-
-      - name: Upload Server Logs on Failure
-        if: failure() && runner.os == 'Linux'
-        uses: actions/upload-artifact@v4
-        with:
-          name: ${{ matrix.script.name }} on ${{ matrix.version }} with args ${{ matrix.args }} logs
-          path: ~/.local/share/Amethyst/server/logs/latest.log
+          
