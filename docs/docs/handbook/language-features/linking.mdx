@@ -20,16 +20,28 @@ Dynamic linking is when you include symbols from another data pack in yours, but
 Data packs can be dynamically linked with the `-I` or `--include` flag:
 
 ```sh
-amethyst compile main.ame -I lib.zip -I lib2.zip
+amethyst compile main.ame -I lib.zip -I lib2.zip -o output.zip
 ```
 
-### Shards
+If running separately with `amethyst run`, make sure to also include the dynamic dependencies:
 
-Adding packs to a [`shard.json`](../shards/shard_json.mdx) is WIP.
+```sh
+amethyst run lib.zip lib2.zip output.zip
+```
 
 ## Static Linking
 
-Not implemented yet.
+Static linking merges data packs together into one final output. This is the default method for handling dependencies in [shards](../shards/shard_json.mdx).
+
+Data packs can be dynamically linked with the `-L` or `--link` flag:
+
+```sh
+amethyst compile main.ame -L lib.zip -L lib2.zip -o output.zip
+```
+
+## Shards
+
+Adding packs to a [`shard.json`](../shards/shard_json.mdx) is WIP.
 
 ## Amethyst ABI
 

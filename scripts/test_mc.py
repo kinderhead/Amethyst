@@ -35,7 +35,12 @@ call(f"{amethyst} setup --eula -v {version}")
 print("Compiling lib...")
 call(f"{amethyst} compile tests/linking/lib.ame {arg} -p {packver} -o lib.zip")
 
-print("Running tests...")
+print("Running tests with dynamic linking...")
 call(f"{amethyst} compile tests/*.ame {arg} -p {packver} -I lib.zip -o test.zip")
 
 run_test(f"{amethyst} run test.zip lib.zip", tester)
+
+print("Running tests with static linking...")
+call(f"{amethyst} compile tests/*.ame {arg} -p {packver} -L lib.zip -o test.zip")
+
+run_test(f"{amethyst} run test.zip", tester)

@@ -8,6 +8,7 @@ using Geode.IR;
 using Geode.IR.Passes;
 using Geode.Types;
 using Geode.Values;
+using Spectre.Console;
 
 namespace Geode
 {
@@ -172,7 +173,7 @@ namespace Geode
         {
             foreach (var i in Functions)
             {
-                if (!i.Decl.ID.ToString().StartsWith("amethyst:core")) Console.WriteLine(i.Dump() + '\n');
+                if (!i.Decl.ID.ToString().StartsWith("amethyst:core")) AnsiConsole.WriteLine(i.Dump() + '\n');
             }
         }
 

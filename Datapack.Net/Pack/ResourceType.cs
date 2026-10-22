@@ -17,7 +17,19 @@ namespace Datapack.Net.Pack
             }
         }
 
-        public virtual string ComputePath(NamespacedID id, string extraPath = "") => $"data/{id.Namespace}/{Path}/{extraPath}{id.Path}{FileExtension}";
+        /// <summary>
+        ///     For now, just do <see cref="DP.AddMiscFile" /> if there's no special behavior.
+        /// </summary>
+        /// <param name="pack">Data pack</param>
+        /// <param name="ns">Resource namespace</param>
+        /// <param name="path">Path relative to resource folder</param>
+        /// <param name="file">File contents</param>
+        public virtual void Import(DP pack, string ns, string path, string file)
+        {
+            pack.AddMiscFile(System.IO.Path.Join("data", ns, Path, path), file);
+        }
+
+        public string ComputePath(NamespacedID id, string extraPath = "") => $"data/{id.Namespace}/{Path}/{extraPath}{id.Path}{FileExtension}";
     }
 
     public abstract class GenericResourceType(string path, string fileExtension = ".json") : ResourceType(path, fileExtension)

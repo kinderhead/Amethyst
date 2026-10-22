@@ -139,14 +139,28 @@ namespace Amethyst
 
             AnsiConsole.Write("\e[1A\e[1A\e[1A");
 
-            if (success) AnsiConsole.MarkupLineInterpolated($"[darkviolet]Compiled in [/][gold1]{Math.Round(Stopwatch.GetElapsedTime(start).TotalSeconds, 2)}s[/]");
+            if (success)
+            {
+                AnsiConsole.MarkupLineInterpolated($"[darkviolet]Compiled in [/][gold1]{Math.Round(Stopwatch.GetElapsedTime(start).TotalSeconds, 2)}s[/]");
+
+                if (Options.DumpCommands)
+                {
+                    foreach (var i in IR.Functions)
+                    {
+                        if (i.Decl.ID.Namespace != "amethyst"
+#if DEBUG
+                            || i.Tags.Any(i => i.ToString().Contains("debug"))
+#endif
+                           ) i.FancyPrintCommands();
+                    }
+                }
+            }
+
             return success;
         }
 
         public bool Compile(ProgressTask? task = null)
         {
-            if (Options.Link.Length != 0) throw new NotImplementedException("Static linking it not implemented yet. Use dynamic linking for now.");
-
             try
             {
                 LoadFiles();
@@ -164,7 +178,7 @@ namespace Amethyst
             task?.StartTask();
 
             var errored = false;
-            
+
             foreach (var (k, v) in Files)
             {
                 task?.Description = $"[darkviolet]Parsing {k}...[/]";
@@ -220,18 +234,6 @@ namespace Amethyst
 
             if (errored || !IR.Compile()) return false;
 
-            if (Options.DumpCommands)
-            {
-                foreach (var i in IR.Functions)
-                {
-                    if (i.Decl.ID.Namespace != "amethyst"
-#if DEBUG
-                        || i.Tags.Any(i => i.ToString().Contains("debug"))
-#endif
-                       ) i.FancyPrintCommands();
-                }
-            }
-
             return true;
         }
 
@@ -281,8 +283,13 @@ namespace Amethyst
 
             foreach (var i in Options.Include)
             {
-                var reader = new DatapackReader(i);
-                if (reader.ReadFileOrNull(".d.ame") is { } def) LoadFile($"{i}.d.ame", def, false);
+                if (new DatapackReader(i).ReadFileOrNull(".d.ame") is { } def) LoadFile($"{i}.d.ame", def, false);
+            }
+
+            foreach (var i in Options.Link)
+            {
+                if (new DatapackReader(i).ReadFileOrNull(".d.ame") is { } def) LoadFile($"{i}.d.ame", def, true);
+                IR.Datapack.Merge(i);
             }
         }
 

@@ -17,8 +17,6 @@ entitydef minecraft:sheep implements minecraft:base {
 
 #load
 void main() {
-    var obj = lib:test(7);
-    print(obj.func());
-
+    lib:hello();
     //amethyst:exit();
 }

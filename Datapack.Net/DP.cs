@@ -2,6 +2,8 @@
 using Datapack.Net.Function;
 using Datapack.Net.Function.Commands;
 using Datapack.Net.Pack;
+using Datapack.Net.Reader;
+using Datapack.Net.Utils;
 using static Datapack.Net.Function.Commands.Execute.Subcommand;
 
 namespace Datapack.Net
@@ -82,6 +84,52 @@ namespace Datapack.Net
         public void AddExtraFile(string externalPath, string zipPath) => extraFiles[externalPath] = zipPath;
         public void AddMiscFile(string zipPath, string contents) => miscFiles[zipPath] = contents;
 
+        public void AddExistingOverlay(string path, PackFormat min, PackFormat max)
+        {
+            var name = Path.GetFileNameWithoutExtension(path);
+            var reader = new DatapackReader(path); // TODO: Use AddExtraFile for when the pack is a folder
+
+            foreach (var (filepath, file) in reader.ReadAll())
+            {
+                AddMiscFile(Path.Join(name, filepath), file);
+            }
+
+            Meta.AddOverlay(name, min, max);
+        }
+
+        /// <summary>
+        ///     Merge data pack into this one. Duplicate files are ignored unless they have special behavior.
+        /// </summary>
+        /// <param name="path"></param>
+        public void Merge(string path)
+        {
+            var reader = new DatapackReader(path);
+
+            foreach (var (filepath, file) in reader.ReadAll())
+            {
+                var pathList = filepath.Split(PathUtils.Separators, StringSplitOptions.RemoveEmptyEntries);
+                if (pathList[0] is "pack.mcmeta" or "pack.png" || pathList[0].StartsWith('.')) continue;
+                if (pathList[0] != "data" || pathList.Length < 4)
+                {
+                    AddMiscFile(filepath, file);
+                    continue;
+                }
+
+                var imported = false;
+                foreach (var i in Types)
+                {
+                    if (i.Path == pathList[2])
+                    {
+                        imported = true;
+                        i.Import(this, pathList[1], string.Join('/', pathList[3..]), file);
+                        break;
+                    }
+                }
+
+                if (!imported) AddMiscFile(filepath, file);
+            }
+        }
+
         public void Optimize()
         {
             while (EmptyFunctions())
@@ -111,7 +159,7 @@ namespace Datapack.Net
                         case FunctionCommand cmd when toRemove.Select(i => i.ID).Contains(cmd.Function):
                             remove = true;
                             break;
-                        case ReturnCommand { Cmd: FunctionCommand retfunc } when toRemove.Select(i => i.ID).Contains(retfunc.Function):
+                        case ReturnCommand { Cmd: FunctionCommand retFunc } when toRemove.Select(i => i.ID).Contains(retFunc.Function):
                             i.Commands[e] = new ReturnCommand();
                             break;
                         case Execute ex when ex.Get<Run>().Command is FunctionCommand exfunc && toRemove.Select(i => i.ID).Contains(exfunc.Function):
@@ -146,9 +194,10 @@ namespace Datapack.Net
         {
             if (zipFile != null)
             {
-                if (filesWriten.Contains(path)) throw new($"Datapack has duplicate file: {path}");
+                // Eh, it's fine probably
+                if (filesWriten.Contains(path)) return;
 
-                var entry = zipFile.CreateEntry(path);
+                var entry = zipFile.CreateEntry(path.Replace('\\', '/'));
 
                 using var stream = new StreamWriter(entry.Open());
                 stream.Write(content);

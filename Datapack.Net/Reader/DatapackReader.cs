@@ -43,6 +43,25 @@ namespace Datapack.Net.Reader
 
         public string Read<T>(NamespacedID id) where T : ResourceType, new() => ReadFile(PathFor<T>(id));
 
+        public Dictionary<string, string> ReadAll()
+        {
+            var ret = new Dictionary<string, string>();
+
+            if (IsZip)
+            {
+                using var zip = ZipFile.OpenRead(FilePath);
+                foreach (var i in zip.Entries)
+                {
+                    using var file = i.Open();
+                    using var stream = new StreamReader(file);
+                    ret[i.FullName] = stream.ReadToEnd();
+                }
+            }
+            else throw new NotImplementedException("ReadAll is not implemented for folders yet");
+
+            return ret;
+        }
+
         public static string PathFor(NamespacedID id, string folder, string extension) => Path.Combine("data", id.Namespace, folder, id.Path) + extension;
         public static string PathFor(NamespacedID id, ResourceType res) => PathFor(id, res.Path, res.FileExtension);
         public static string PathFor<T>(NamespacedID id) where T : ResourceType, new() => PathFor(id, new T());

@@ -1,0 +1,10 @@
+namespace lib;
+
+void hello() {
+    print("Hi");
+}
+
+#load
+void main() {
+    print("Hi from lib");
+}
