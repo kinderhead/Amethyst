@@ -23,7 +23,7 @@ def unit_tester(process: subprocess.Popen[bytes]):
         if process.returncode is not None:
             print("Done")
             break
-        
+
 
 def shard_tester(process: subprocess.Popen[bytes]):
     while True:
@@ -38,6 +38,7 @@ def shard_tester(process: subprocess.Popen[bytes]):
             print("Done")
             break
 
+
 os.chdir("Amethyst")
 
 print("Preparing tests")
@@ -47,7 +48,7 @@ amethyst, version, packver, arg = test_info()
 print(f"Setting up Minecraft version {version}")
 call(f"{amethyst} setup --eula -v {version}")
 
-### Unit tests
+# Unit tests
 
 print("Compiling lib...")
 call(f"{amethyst} compile tests/linking/lib.ame {arg} -p {packver} -o lib.zip")
@@ -62,18 +63,4 @@ call(f"{amethyst} compile tests/*.ame {arg} -p {packver} -L lib.zip -o test.zip"
 
 run_test(f"{amethyst} run test.zip", unit_tester)
 
-### Shards
-
-shutil.rmtree("shard", ignore_errors=True)
-os.makedirs("shard", exist_ok=True)
-os.chdir("shard")
-
-print("Creating shard")
-call(f"../{amethyst} shard init -n test -d Test -p {packver}")
-
-with open("data/test.txt", "+w") as f:
-    f.write("Hello")
-
-run_test(f"../{amethyst} build {arg} --run", shard_tester)
-
-exit(0) # Just in case I guess
+exit(0)  # Just in case I guess

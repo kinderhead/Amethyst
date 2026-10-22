@@ -46,7 +46,7 @@ jobs:
             !**/tests/**/*.ame
 
   test:
-    name: "Test ${{ matrix.script.name }} on ${{ matrix.version }} with args \"${{ matrix.args }}\""
+    name: "Test on ${{ matrix.version }} with args \"${{ matrix.args }}\""
     runs-on: ${{ inputs.os }}
     needs: [build]
 
@@ -54,10 +54,6 @@ jobs:
       matrix:
         version: ["1.21.10", "1.21.11", "26.1.2", "26.2", "26.3"]
         args: ["-O 0", "-d", "-O 1"]
-        script: [
-          { path: "scripts/test_mc.py", name: suite }
-          # { path: "scripts/test_shard.py", name: shard }
-        ]
       fail-fast: false
     
     steps:
@@ -83,11 +79,18 @@ jobs:
         with:
           distribution: 'zulu'
           java-version: '25'
-      
-      - name: Test
+
+      - name: Unit Tests
         uses: nick-fields/retry@v4
         with:
           timeout_minutes: 5
           max_attempts: 3
-          command: python -u ${{ matrix.script.path }} ${{ matrix.version }} "${{ matrix.args }}"
+          command: python -u scripts/test_mc.py ${{ matrix.version }} "${{ matrix.args }}"
+
+      - name: Shard Tests
+        uses: nick-fields/retry@v4
+        with:
+          timeout_minutes: 5
+          max_attempts: 3
+          command: python -u scripts/test_shard.py ${{ matrix.version }} "${{ matrix.args }}"
           

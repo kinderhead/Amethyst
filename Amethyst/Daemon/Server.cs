@@ -155,8 +155,6 @@ namespace Amethyst.Daemon
             Justification = "Should be fine")]
         public static Config? GetConfig()
         {
-            Console.WriteLine($"Checking {ServerFolder} for an existing server"); // TODO: Remove
-            
             if (!File.Exists(ConfigLocation) || !File.Exists(MinecraftServerLocation))
             {
                 AnsiConsole.MarkupLine("[red]Minecraft server is not set up yet. Run \"amethyst setup\" to get started[/]");

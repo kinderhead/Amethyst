@@ -28,6 +28,8 @@ amethyst, version, packver, arg = test_info()
 print(f"Setting up Minecraft version {version}")
 call(f"../Amethyst/{amethyst} setup --eula -v {version}")
 
+# Shards
+
 print("Creating shard")
 call(f"../Amethyst/{amethyst} shard init -n test -d Test -p {packver}")
 
@@ -35,3 +37,5 @@ with open("data/test.txt", "+w") as f:
     f.write("Hello")
 
 run_test(f"../Amethyst/{amethyst} build {arg} --run", tester)
+
+exit(0)  # Just in case I guess
