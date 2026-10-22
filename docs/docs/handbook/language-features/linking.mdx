@@ -39,6 +39,8 @@ Data packs can be dynamically linked with the `-L` or `--link` flag:
 amethyst compile main.ame -L lib.zip -L lib2.zip -o output.zip
 ```
 
+Symbols linked from external libraries are exported in the final data pack.
+
 ## Shards
 
 Adding packs to a [`shard.json`](../shards/shard_json.mdx) is WIP.
