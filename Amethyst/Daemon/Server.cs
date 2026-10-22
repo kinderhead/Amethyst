@@ -15,8 +15,7 @@ namespace Amethyst.Daemon
         public const string MARKER_TEXT = "[Server thread/INFO] (TellrawLogger) ";
 
         public static readonly string ServerFolder =
-            Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Amethyst",
-                "server");
+            Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Amethyst", "server");
 
         public static readonly string ConfigLocation = Path.Combine(ServerFolder, "config.json");
         public static readonly string EULALocation = Path.Combine(ServerFolder, "eula.txt");
@@ -156,10 +155,11 @@ namespace Amethyst.Daemon
             Justification = "Should be fine")]
         public static Config? GetConfig()
         {
+            Console.WriteLine($"Checking {ServerFolder} for an existing server"); // TODO: Remove
+            
             if (!File.Exists(ConfigLocation) || !File.Exists(MinecraftServerLocation))
             {
-                AnsiConsole.MarkupLine(
-                    "[red]Minecraft server is not set up yet. Run \"amethyst setup\" to get started[/]");
+                AnsiConsole.MarkupLine("[red]Minecraft server is not set up yet. Run \"amethyst setup\" to get started[/]");
                 return null;
             }
 
