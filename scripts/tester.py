@@ -61,7 +61,7 @@ def run_test(cmd: str, cb: Callable[[subprocess.Popen[bytes]], None]):
                 break
 
         if not timed_out:
-            exit(0)
+            return
 
         print("Timed out")
         process.kill()

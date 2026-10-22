@@ -75,3 +75,5 @@ with open("data/test.txt", "+w") as f:
     f.write("Hello")
 
 run_test(f"../{amethyst} build {arg} --run", shard_tester)
+
+exit(0) # Just in case I guess
