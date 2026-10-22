@@ -26,7 +26,7 @@ os.chdir("shard")
 amethyst, version, packver, arg = test_info()
 
 print(f"Setting up Minecraft version {version}")
-call(f"../Amethyst/{amethyst} setup --eula -v {version}")
+call(f"../Amethyst/{amethyst} setup --eula -v {version} -p 25602")
 
 # Shards
 
