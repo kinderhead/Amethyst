@@ -41,10 +41,6 @@ amethyst compile main.ame -L lib.zip -L lib2.zip -o output.zip
 
 Symbols linked from external libraries are exported in the final data pack.
 
-## Shards
-
-Adding packs to a [`shard.json`](../shards/shard_json.mdx) is WIP.
-
 ## Amethyst ABI
 
 In every data pack, Amethyst generates a `.d.ame` file which contains definitions for all of the exported symbols. The compiler simply loads this file to import them.

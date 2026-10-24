@@ -30,7 +30,27 @@ description: Shard definition reference
 
 ## Dependencies
 
-WIP
+Shards can have dependencies defined in their `dependencies` section. There are two ways to define a dependency:
+
+```json
+{
+    "minecraft": "26.2",
+    "library": {
+        "type": "dynamic",
+        "version": "1.0.0"
+    }
+}
+```
+
+All dependencies are statically linked by default, but each entry can opt-out.
+
+There are currently two dependency sources: packages and local files. If the `version` field (or the version in the compact entry) starts with `file:`, Amethyst will search for a data pack at the given path. Otherwise, the package manager installs the corresponding remote version.
+
+Depending on local shard projects is planned but not implemented. See [#168](https://github.com/kinderhead/Amethyst/issues/168) for progress on this issue.
+
+:::tip
+See [Linking](../language-features/linking.mdx) for more information on how dependencies are consumed.
+:::
 
 ## Paths
 

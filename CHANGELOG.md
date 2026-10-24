@@ -13,6 +13,8 @@
 * Changed daemon mode to allow for multiple running data packs.
 * Added linking.
 * Added compiler progress bar.
+* Added error handling for invalid `shard.json` parsing.
+* Added proper dependency handling to `shard.json`.
 
 # Bug Fixes
 

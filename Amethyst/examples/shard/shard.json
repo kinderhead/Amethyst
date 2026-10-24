@@ -4,6 +4,7 @@
   "version": "1.0.0",
   "pack_format": "121.0",
   "dependencies": {
-    "minecraft": "26.3"
+    "minecraft": "26.3",
+    "lib": "file:../../testlib.zip"
   }
 }

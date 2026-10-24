@@ -1,48 +1,54 @@
 using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Text.RegularExpressions;
+using Amethyst.PM;
 using Datapack.Net.Pack;
 using Datapack.Net.Utils;
 using Newtonsoft.Json;
+using Spectre.Console;
 
 namespace Amethyst
 {
     [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.AllFields | DynamicallyAccessedMemberTypes.AllProperties)]
     [JsonObject(MemberSerialization.OptIn)]
-    public partial struct ProjectDefinition()
+    public partial class ProjectDefinition
     {
-        [JsonProperty("name")]
-        public required string Name;
+        private static readonly JsonSerializerSettings jsonSettings = new()
+        {
+            Formatting = Formatting.Indented, DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate
+        };
+
+        [JsonProperty("data")]
+        [DefaultValue("data")]
+        public string DataDir = "data";
+
+        [JsonProperty("dependencies")]
+        public DependencyHandler Dependencies = new();
 
         [JsonProperty("description")]
         public required string Description;
 
-        [JsonProperty("version")]
-        public MinecraftVersion Version = new(1, 0, 0);
+        [JsonProperty("name")]
+        public required string Name;
 
         [JsonProperty("pack_format")]
         public PackFormat PackFormat;
-
-        [JsonProperty("dependencies")]
-        public SortedDictionary<string, MinecraftVersion> Dependencies = [];
 
         [JsonProperty("source")]
         [DefaultValue("src")]
         public string SourceDir = "src";
 
-        [JsonProperty("data")]
-        [DefaultValue("data")]
-        public string DataDir = "data";
+        [JsonProperty("version")]
+        public MinecraftVersion Version = new(1, 0, 0);
 
         [UnconditionalSuppressMessage("Trimming",
             "IL2026:Members annotated with 'RequiresUnreferencedCodeAttribute' require dynamic access otherwise can break functionality when trimming application code",
             Justification = "Should be fine")]
         [UnconditionalSuppressMessage("AOT", "IL3050:Calling members annotated with 'RequiresDynamicCodeAttribute' may break functionality when AOT compiling.",
             Justification = "Should be fine")]
-        public readonly string Serialize()
+        public string Serialize()
         {
             using var text = new StringWriter();
-
             using var writer = new JsonTextWriter(text);
             writer.Indentation = 4;
 
@@ -57,22 +63,31 @@ namespace Amethyst
             Justification = "Should be fine")]
         public static ProjectDefinition Deserialize(string path)
         {
-            var project = JsonConvert.DeserializeObject<ProjectDefinition>(File.ReadAllText(path), jsonSettings);
+            var project = JsonConvert.DeserializeObject<ProjectDefinition>(File.ReadAllText(path), jsonSettings) ?? throw new FormatException("Could not deserialize project");
 
             if (!ValidNameRegex().IsMatch(project.Name))
-            {
                 throw new FormatException($"{project.Name} is not a valid package name. Only lowercase alphanumeric characters, -, and _ are allowed.");
-            }
 
             return project;
         }
 
+        public static bool Deserialize(string path, out ProjectDefinition project)
+        {
+            try
+            {
+                project = Deserialize(path);
+                return true;
+            }
+            catch (Exception e)
+            {
+                AnsiConsole.MarkupLineInterpolated($"[red]Error parsing {path}:[/] [yellow]{e.Message}[/]");
+            }
+
+            project = null!;
+            return false;
+        }
+
         [GeneratedRegex(@"^[a-z0-9\-_]+$")]
         private static partial Regex ValidNameRegex();
-
-        private static readonly JsonSerializerSettings jsonSettings = new()
-        {
-            Formatting = Formatting.Indented, DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate
-        };
     }
 }

@@ -1,10 +1,12 @@
-﻿using Geode.IR;
+﻿using Geode.Errors;
+using Geode.IR;
 
 namespace Geode
 {
     public interface ICompiler
     {
         GeodeBuilder IR { get; }
+        List<GeodeError> Errors { get; }
 
         bool WrapError(LocationRange loc, Action cb);
         bool WrapError<T>(LocationRange loc, Func<T> cb, out T ret);

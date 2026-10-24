@@ -126,7 +126,7 @@ namespace Amethyst.IR
 
                 foreach (var i in graph.Nodes)
                 {
-                    if (!processed.Contains(i.Child) && i.Child.Provides is { } id) new CircularDependencyError(id.ToString()).Display(Compiler, i.Child.Location);
+                    if (!processed.Contains(i.Child) && i.Child.Provides is { } id) Compiler.Errors.Add(new CircularDependencyError(id.ToString()).Bind(i.Child.Location));
                 }
             }
 
@@ -150,7 +150,7 @@ namespace Amethyst.IR
         {
             if (!processed.Add(node.Child))
             {
-                new CircularDependencyError(node.Child.Provides?.ToString() ?? "<error>").Display(Compiler, node.Child.Location);
+                Compiler.Errors.Add(new CircularDependencyError(node.Child.Provides?.ToString() ?? "<error>").Bind(node.Child.Location));
                 errored = true;
                 return;
             }

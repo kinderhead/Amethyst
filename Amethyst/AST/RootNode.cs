@@ -57,7 +57,7 @@ namespace Amethyst.AST
                 }
                 catch (GeodeError e)
                 {
-                    e.Display(Ctx, i.Location);
+                    Ctx.Errors.Add(e.Bind(i.Location));
                     success = false;
                 }
             }

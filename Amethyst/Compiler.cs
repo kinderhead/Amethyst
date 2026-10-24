@@ -50,6 +50,7 @@ namespace Amethyst
 
         private Dictionary<string, CompilerFile> Files { get; } = [];
         public GeodeBuilder IR { get; }
+        public List<GeodeError> Errors { get; } = [];
 
         [DebuggerNonUserCode] // Hide this on the call stack
         public bool WrapError(LocationRange loc, Action cb)
@@ -60,7 +61,7 @@ namespace Amethyst
             }
             catch (GeodeError e)
             {
-                e.Display(this, loc);
+                Errors.Add(e.Bind(loc));
                 return false;
             }
 
@@ -88,7 +89,7 @@ namespace Amethyst
             }
             catch (GeodeError e)
             {
-                e.Display(this, loc);
+                Errors.Add(e.Bind(loc));
                 return false;
             }
             finally
@@ -139,6 +140,11 @@ namespace Amethyst
 
             AnsiConsole.Write("\e[1A\e[1A\e[1A");
 
+            foreach (var i in Errors)
+            {
+                i.Display(this);
+            }
+
             if (success)
             {
                 AnsiConsole.MarkupLineInterpolated($"[darkviolet]Compiled in [/][gold1]{Math.Round(Stopwatch.GetElapsedTime(start).TotalSeconds, 2)}s[/]");
@@ -159,7 +165,7 @@ namespace Amethyst
             return success;
         }
 
-        public bool Compile(ProgressTask? task = null)
+        private bool Compile(ProgressTask? task = null)
         {
             try
             {
@@ -177,6 +183,7 @@ namespace Amethyst
             task?.Description = "[darkviolet]Parsing...[/]";
             task?.StartTask();
 
+            // TODO: Remove this in favor of checking the size of Errors
             var errored = false;
 
             foreach (var (k, v) in Files)

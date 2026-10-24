@@ -24,7 +24,7 @@
         <AllowedReferenceRelatedFileExtensions>*.pdb</AllowedReferenceRelatedFileExtensions>
         <NativeDebugSymbols>False</NativeDebugSymbols>
         <StripSymbols>true</StripSymbols>
-        <NoWarn>IL3050;IL2104;IL3053;IL3000;IL3002</NoWarn>
+        <NoWarn>IL3050;IL2104;IL3053;IL3000;IL3002;CS3021</NoWarn>
         <OptimizationPreference>Speed</OptimizationPreference>
         <DebuggerSupport>false</DebuggerSupport>
         <MetadataUpdaterSupport>false</MetadataUpdaterSupport>

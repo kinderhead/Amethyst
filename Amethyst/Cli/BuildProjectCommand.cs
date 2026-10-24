@@ -1,5 +1,6 @@
 using System.ComponentModel;
 using Amethyst.Daemon;
+using Amethyst.PM;
 using Datapack.Net.Pack;
 using Spectre.Console.Cli;
 
@@ -64,7 +65,8 @@ namespace Amethyst.Cli
     {
         public override int Execute(CommandContext context, BuildProjectSettings settings, CancellationToken cancellationToken)
         {
-            var project = ProjectDefinition.Deserialize(settings.ShardFile);
+            if (!ProjectDefinition.Deserialize(settings.ShardFile, out var project)) return 1;
+
             Environment.CurrentDirectory = Path.GetDirectoryName(Path.GetFullPath(settings.ShardFile)) ??
                                            throw new FormatException($"Invalid path {settings.ShardFile}");
 
@@ -74,6 +76,18 @@ namespace Amethyst.Cli
             settings.Description = project.Description;
 
             if (settings.PackFormat == new PackFormat("0.0")) settings.PackFormat = project.PackFormat;
+
+            var newLink = new List<string>();
+            var newInclude = new List<string>();
+
+            foreach (var i in project.Dependencies.GetDependencies(project))
+            {
+                if (i.Type == LinkType.Dynamic) newInclude.Add(i.ZipPath);
+                else newLink.Add(i.ZipPath);
+            }
+
+            settings.Link = [.. settings.Link, .. newLink];
+            settings.Include = [.. settings.Include, .. newInclude];
 
             Directory.CreateDirectory(Path.Join(Environment.CurrentDirectory, "build"));
 

@@ -95,7 +95,7 @@ namespace Amethyst.AST
                 if (type.ReturnType is VoidType) Body.Add(new ReturnStatement(Location, null));
                 else
                 {
-                    new MissingReturnError().Display(compiler, Location);
+                    compiler.Errors.Add(new MissingReturnError().Bind(Location));
                     return false;
                 }
             }

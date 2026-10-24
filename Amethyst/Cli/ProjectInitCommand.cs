@@ -1,5 +1,6 @@
 using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
+using Amethyst.PM;
 using Datapack.Net.Pack;
 using Datapack.Net.Utils;
 using Spectre.Console;
@@ -63,7 +64,7 @@ namespace Amethyst.Cli
                 AnsiConsole.MarkupLineInterpolated($"[aqua]Pick a Minecraft version[/]: {version}");
 
                 project.PackFormat = SupportedVersions.Versions[version];
-                project.Dependencies["minecraft"] = version;
+                project.Dependencies.Set(new PackageEntry("minecraft", LinkType.Static, version));
             }
 
             Directory.CreateDirectory(output);
