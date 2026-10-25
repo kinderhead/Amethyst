@@ -1,6 +1,6 @@
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
-using Amethyst.Cli;
+using Amethyst.Cli.Daemon;
 using Datapack.Net.Pack;
 using Datapack.Net.Reader;
 using Geode;

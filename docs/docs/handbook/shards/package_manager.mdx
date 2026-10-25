@@ -1,0 +1,81 @@
+---
+sidebar_position: 2
+description: Package manager specification
+---
+
+# Package Manager
+
+:::warning
+The package management system is WIP and subject to change.
+:::
+
+Unlike other package managers, Amethyst does not have a centralized server where all packages are stored. Instead, it uses static files hosted on sites like Github.
+
+## Clusters
+
+Clusters serve as "repositories" that point Amethyst to shards or other clusters.
+
+### `cluster.json`
+
+A cluster is defined in a `cluster.json`. Inside is an object defining shards or namespaces like so:
+
+```json
+/* Root cluster given to Amethyst */
+{
+    "minecraft": "https://www.link.to/minecraft/cluster.json",
+    "utils": "https://some.other.link.to/utils/cluster.json"
+}
+
+/* https://www.link.to/minecraft/cluster.json */
+{
+    ".": {
+        "versions": {
+            "26.3": {
+                "pack_format": "121.0",
+                /* File names do not matter and can be relative */
+                "link": "https://www.link.to/minecraft/releases/26.3.zip"
+            }
+        }
+    },
+    /* Relative to the current cluster */
+    "misc": "../misc/cluster.json"
+}
+
+/* https://some.other.link.to/utils/cluster.json */
+{
+    "math": {
+        "versions": {
+            "1.0.1": {
+                "pack_format": "121.0",
+                "link": "https://some.other.link.to/utils/releases/1.0.1.zip"
+            }
+        }
+    },
+    "path": {
+        "join": {
+            "versions": {
+                "3.2.8": {
+                    "pack_format": "121.0",
+                    "link": "https://some.other.link.to/path/releases/3.2.8.zip",
+                    /* Required dynamically linked dependencies */
+                    /* Optional dependencies can be omitted */
+                    "dependencies": {
+                        "utils:math": "1.0.1"
+                    }
+                }
+            }
+        }
+    }
+}
+```
+
+Through each successive traversal, a namespaced ID is formed and that becomes the ID of the shard. In the above example, the shards defined are `minecraft`, `utils:math`, and `utils:path/join`. These IDs only effect the package manager and are not rules that bind symbols declared in the shard. However, it is recommended to keep the `name` field identical to the final ID.
+
+### Commands
+
+* `amethyst cluster init`: Creates an empty cluster
+* `amethyst cluster add <link>`: Adds a shard version to a cluster. Optionally can autofill from a `shard.json`. Only modifies the specified cluster and uses the last part of the shard ID (as in, `namespace:path/name` is reduced to `name`).
+
+## Cache
+
+Downloaded shards are cached next to the [daemon server](../daemon.mdx)'s folder. The cache is reset when Amethyst is updated.

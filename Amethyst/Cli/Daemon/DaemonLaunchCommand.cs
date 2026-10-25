@@ -4,7 +4,7 @@ using Amethyst.Daemon;
 using Spectre.Console;
 using Spectre.Console.Cli;
 
-namespace Amethyst.Cli
+namespace Amethyst.Cli.Daemon
 {
     [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.AllFields |
                                 DynamicallyAccessedMemberTypes.AllProperties)]

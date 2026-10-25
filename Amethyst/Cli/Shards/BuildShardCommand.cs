@@ -4,17 +4,9 @@ using Amethyst.PM;
 using Datapack.Net.Pack;
 using Spectre.Console.Cli;
 
-namespace Amethyst.Cli
+namespace Amethyst.Cli.Shards
 {
-    public class BaseProjectSettings : CommandSettings
-    {
-        [CommandOption("-f|--shard-file")]
-        [Description("Project file to use.")]
-        [DefaultValue(Compiler.SHARD_PROJECT)]
-        public string ShardFile { get; set; } = "";
-    }
-
-    public class BuildProjectSettings : BaseProjectSettings, IAmethystOptions
+    public class BuildShardSettings : BaseShardSettings, IAmethystOptions
     {
         [CommandOption("--run")]
         [Description("Run the datapack if built successfully.")]
@@ -41,7 +33,7 @@ namespace Amethyst.Cli
         [Description("Disable generating and using number providers and /compute.")]
         public bool DisableCompute { get; set; }
 
-        [CommandOption("-p|--pack-version")]
+        [CommandOption("-p|--pack-format")]
         [Description("Data pack version to support. 0.0 to use the project default.")]
         [DefaultValue("0.0")]
         public PackFormat PackFormat { get; set; }
@@ -61,16 +53,16 @@ namespace Amethyst.Cli
         public string[] Inputs { get; set; } = [];
     }
 
-    public class BuildProjectCommand : Command<BuildProjectSettings>
+    public class BuildShardCommand : Command<BuildShardSettings>
     {
-        public override int Execute(CommandContext context, BuildProjectSettings settings, CancellationToken cancellationToken)
+        public override int Execute(CommandContext context, BuildShardSettings settings, CancellationToken cancellationToken)
         {
             if (!ProjectDefinition.Deserialize(settings.ShardFile, out var project)) return 1;
 
             Environment.CurrentDirectory = Path.GetDirectoryName(Path.GetFullPath(settings.ShardFile)) ??
                                            throw new FormatException($"Invalid path {settings.ShardFile}");
 
-            settings.Output = Path.Join(Environment.CurrentDirectory, "build", $"{project.Name}-{project.Version}.zip");
+            settings.Output = Path.Join(Environment.CurrentDirectory, "build", $"{project.Name.Replace('/', '-').Replace(':', '-')}@{project.Version}.zip");
             settings.Inputs = [Path.Join(project.SourceDir, "**/*.ame")];
             settings.Data = project.DataDir;
             settings.Description = project.Description;
@@ -80,7 +72,7 @@ namespace Amethyst.Cli
             var newLink = new List<string>();
             var newInclude = new List<string>();
 
-            foreach (var i in project.Dependencies.GetDependencies(project))
+            foreach (var i in project.Dependencies.ResolveDependencies(project))
             {
                 if (i.Type == LinkType.Dynamic) newInclude.Add(i.ZipPath);
                 else newLink.Add(i.ZipPath);

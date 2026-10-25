@@ -1,3 +1,4 @@
+using Datapack.Net.Utils;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
@@ -24,7 +25,10 @@ namespace Amethyst.PM
             Entries.Add(entry);
         }
 
-        public IEnumerable<DependencyResult> GetDependencies(ProjectDefinition project) => Entries.SelectMany(i => i.Resolve(project));
+        public IEnumerable<DependencyResult> ResolveDependencies(ProjectDefinition project) => Entries.SelectMany(i => i.Resolve(project));
+
+        public Dictionary<string, MinecraftVersion> GetDynamicClusterDependencies() =>
+            new(Entries.OfType<PackageEntry>().Where(i => i.Type == LinkType.Dynamic).Select(i => new KeyValuePair<string, MinecraftVersion>(i.Name, i.Version)));
     }
 
     public class DependencyHandlerJsonConverter : JsonConverter<DependencyHandler>

@@ -7,7 +7,7 @@
 * `qstring` can no longer have single quotes or escape sequences in them.
 * Changed dynamic property accessing to use single quotes.
 * Updated `contains` signature to `bool nbt.contains(qstring prop)`.
-* String literals attempt to assign themselves `qstring` before `string`.
+* String literals attempt to assign themselves as `qstring` before `string`.
 * Improved ranges.
 * Allow creating compound literals with string keys.
 * Changed daemon mode to allow for multiple running data packs.
@@ -15,6 +15,7 @@
 * Added compiler progress bar.
 * Added error handling for invalid `shard.json` parsing.
 * Added proper dependency handling to `shard.json`.
+* Renamed `--pack-version` to `--pack-format`.
 
 # Bug Fixes
 

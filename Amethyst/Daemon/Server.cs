@@ -1,7 +1,7 @@
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
-using Amethyst.Cli;
+using Amethyst.Cli.Daemon;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Spectre.Console;
@@ -22,8 +22,8 @@ namespace Amethyst.Daemon
         public static readonly string ServerPropertiesLocation = Path.Combine(ServerFolder, "server.properties");
         public static readonly string MinecraftServerLocation = Path.Combine(ServerFolder, "server.jar");
         public static readonly string DatapackFolder = Path.Combine(ServerFolder, "world", "datapacks");
-        public static string DatapackLocation(int index) => Path.Combine(DatapackFolder, $"datapack{index}");
         public static readonly string LogLocation = Path.Combine(ServerFolder, "logs", "latest.log");
+        public static string DatapackLocation(int index) => Path.Combine(DatapackFolder, $"datapack{index}");
 
         public static async Task<int> Setup(DaemonSetupOptions settings)
         {

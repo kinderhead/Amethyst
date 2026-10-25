@@ -3,7 +3,7 @@ using System.Diagnostics.CodeAnalysis;
 using Amethyst.Daemon;
 using Spectre.Console.Cli;
 
-namespace Amethyst.Cli
+namespace Amethyst.Cli.Daemon
 {
     [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.AllFields | DynamicallyAccessedMemberTypes.AllProperties)]
     public class DaemonRunOptions : CommandSettings

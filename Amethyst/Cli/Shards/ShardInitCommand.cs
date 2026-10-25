@@ -6,10 +6,10 @@ using Datapack.Net.Utils;
 using Spectre.Console;
 using Spectre.Console.Cli;
 
-namespace Amethyst.Cli
+namespace Amethyst.Cli.Shards
 {
     [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.AllFields | DynamicallyAccessedMemberTypes.AllProperties)]
-    public class ProjectInitCommandOptions : CommandSettings
+    public class ShardInitCommandOptions : CommandSettings
     {
         // Flag values do not work for some reason, so null checks it is.
 
@@ -31,9 +31,9 @@ namespace Amethyst.Cli
         public string? Output { get; set; }
     }
 
-    public class ProjectInitCommand : Command<ProjectInitCommandOptions>
+    public class ShardInitCommand : Command<ShardInitCommandOptions>
     {
-        public override int Execute(CommandContext context, ProjectInitCommandOptions settings, CancellationToken cancellationToken)
+        public override int Execute(CommandContext context, ShardInitCommandOptions settings, CancellationToken cancellationToken)
         {
             var output = settings.Output ?? Environment.CurrentDirectory;
             var path = Path.Join(output, Compiler.SHARD_PROJECT);

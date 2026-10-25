@@ -53,7 +53,7 @@ namespace Amethyst
             writer.Indentation = 4;
 
             JsonSerializer.CreateDefault(jsonSettings).Serialize(writer, this);
-            return JsonConvert.SerializeObject(this, jsonSettings);
+            return text.ToString();
         }
 
         [UnconditionalSuppressMessage("Trimming",
@@ -66,12 +66,12 @@ namespace Amethyst
             var project = JsonConvert.DeserializeObject<ProjectDefinition>(File.ReadAllText(path), jsonSettings) ?? throw new FormatException("Could not deserialize project");
 
             if (!ValidNameRegex().IsMatch(project.Name))
-                throw new FormatException($"{project.Name} is not a valid package name. Only lowercase alphanumeric characters, -, and _ are allowed.");
+                throw new FormatException($"{project.Name} is not a valid package name. Only lowercase alphanumeric characters, :, /, -, and _ are allowed.");
 
             return project;
         }
 
-        public static bool Deserialize(string path, out ProjectDefinition project)
+        public static bool Deserialize(string path, out ProjectDefinition project, bool showError = true)
         {
             try
             {
@@ -80,14 +80,14 @@ namespace Amethyst
             }
             catch (Exception e)
             {
-                AnsiConsole.MarkupLineInterpolated($"[red]Error parsing {path}:[/] [yellow]{e.Message}[/]");
+                if (showError) AnsiConsole.MarkupLineInterpolated($"[red]Error parsing {path}:[/] [yellow]{e.Message}[/]");
             }
 
             project = null!;
             return false;
         }
 
-        [GeneratedRegex(@"^[a-z0-9\-_]+$")]
+        [GeneratedRegex(@"^[a-z0-9\-_:\/]+$")]
         private static partial Regex ValidNameRegex();
     }
 }

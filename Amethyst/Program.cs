@@ -1,5 +1,8 @@
 ﻿using System.Runtime.ExceptionServices;
 using Amethyst.Cli;
+using Amethyst.Cli.Clusters;
+using Amethyst.Cli.Daemon;
+using Amethyst.Cli.Shards;
 using Spectre.Console;
 using Spectre.Console.Cli;
 using Tmds.Utils;
@@ -66,7 +69,7 @@ namespace Amethyst
                     // return 1;
                 });
 
-                config.AddCommand<BuildProjectCommand>("build")
+                config.AddCommand<BuildShardCommand>("build")
                       .WithDescription("Build shard project.")
                       .WithExample("build")
                       .WithExample("build", "-d", "--run");
@@ -79,9 +82,20 @@ namespace Amethyst
                 config.AddBranch("shard", cmd =>
                 {
                     cmd.SetDescription("Project subcommands.");
-                    cmd.AddCommand<ProjectInitCommand>("init")
+                    cmd.AddCommand<ShardInitCommand>("init")
                        .WithDescription("Initialize a project.")
                        .WithExample("shard init");
+                });
+
+                config.AddBranch("cluster", cmd =>
+                {
+                    cmd.SetDescription("Cluster subcommands.");
+                    cmd.AddCommand<ClusterInitCommand>("init")
+                       .WithDescription("Initialize a cluster.")
+                       .WithExample("cluster init");
+                    cmd.AddCommand<ClusterAddCommand>("add")
+                       .WithDescription("Add a package to a cluster.")
+                       .WithExample("cluster add https://link.to/data_pack.zip");
                 });
 
                 config.AddCommand<DaemonSetupCommand>("setup")

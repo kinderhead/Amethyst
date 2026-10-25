@@ -22,7 +22,7 @@
     },
     "Random": {
       "commandName": "Project",
-      "commandLineArgs": "compile examples/lib.ame -o testlib.zip",
+      "commandLineArgs": "cluster add -s examples/shard/shard.json -v 1.1 yay",
       "workingDirectory": "$(ProjectDir)"
     }
   }
