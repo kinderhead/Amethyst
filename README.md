@@ -51,7 +51,7 @@ void main() {
 
     @/say $(x == 7)
 
-    int array = [x];
+    int[] array = [x];
     array.add(-9);
     print(array);
 
