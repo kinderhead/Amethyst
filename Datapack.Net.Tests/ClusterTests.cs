@@ -12,7 +12,7 @@ namespace Datapack.Net.Tests
         {
             var cluster = Cluster.New("test/folder/cluster.json");
             using var _ = Assert.EnterMultipleScope();
-            Assert.That(cluster.ResolvePath("../test.json"), Is.EqualTo("test/test.json"));
+            Assert.That(cluster.ResolvePath("../test.json"), Is.EqualTo($"test{Path.PathSeparator}test.json"));
 
             if (OperatingSystem.IsWindows()) Assert.That(cluster.ResolvePath("C:\\Test.json"), Is.EqualTo("C:\\Test.json"));
             else Assert.That(cluster.ResolvePath("/test.json"), Is.EqualTo("/test.json"));

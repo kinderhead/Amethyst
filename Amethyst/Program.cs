@@ -94,7 +94,7 @@ namespace Amethyst
                        .WithDescription("Initialize a cluster.")
                        .WithExample("cluster init");
                     cmd.AddCommand<ClusterAddCommand>("add")
-                       .WithDescription("Add a package to a cluster.")
+                       .WithDescription("Add a shard to a cluster.")
                        .WithExample("cluster add https://link.to/data_pack.zip");
                 });
 
@@ -103,7 +103,7 @@ namespace Amethyst
                       .WithExample("setup", "--eula");
 
                 config.AddCommand<DaemonRunCommand>("run")
-                      .WithDescription("Run a datapack.")
+                      .WithDescription("Run data packs in the command line.")
                       .WithExample("run", "test.zip");
 
                 config.AddCommand<DaemonLaunchCommand>("daemon")

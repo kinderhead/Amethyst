@@ -16,6 +16,7 @@
 * Added error handling for invalid `shard.json` parsing.
 * Added proper dependency handling to `shard.json`.
 * Renamed `--pack-version` to `--pack-format`.
+* Changed default `shard.json` property order.
 
 # Bug Fixes
 

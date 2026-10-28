@@ -18,27 +18,27 @@ namespace Amethyst
             Formatting = Formatting.Indented, DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate
         };
 
-        [JsonProperty("data")]
+        [JsonProperty("data", Order = 2)]
         [DefaultValue("data")]
         public string DataDir = "data";
 
-        [JsonProperty("dependencies")]
+        [JsonProperty("dependencies", Order = 3)]
         public DependencyHandler Dependencies = new();
 
-        [JsonProperty("description")]
+        [JsonProperty("description", Order = -3)]
         public required string Description;
 
-        [JsonProperty("name")]
+        [JsonProperty("name", Order = -4)]
         public required string Name;
 
-        [JsonProperty("pack_format")]
+        [JsonProperty("pack_format", Order = -2)]
         public PackFormat PackFormat;
 
-        [JsonProperty("source")]
+        [JsonProperty("source", Order = 1)]
         [DefaultValue("src")]
         public string SourceDir = "src";
 
-        [JsonProperty("version")]
+        [JsonProperty("version", Order = -1)]
         public MinecraftVersion Version = new(1, 0, 0);
 
         [UnconditionalSuppressMessage("Trimming",

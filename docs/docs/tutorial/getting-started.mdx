@@ -61,10 +61,6 @@ If you did not set up a Minecraft server, copy or symlink the data pack to the `
 
 The most important file created is [`shard.json`](../handbook/shards/shard_json.mdx). Amethyst calls projects/packages **shards** (because why not). Inside you will find important information like the shard name, target pack format, and dependences. Amethyst automatically generates a dependency to `libminecraft` which houses block data, entity data, and more for the selected Minecraft version. `libminecraft` is aliased as simply `minecraft` in the dependencies section.
 
-:::warning
-Package management and `libminecraft` are currently works in progress. As of writing, data definitions are not available for use. Create them manually as needed until `libminecraft` available.
-:::
-
 The `data` folder is used to add additional files into the final data pack. Anything placed inside will be added to the data pack with no modification.
 
 The `src` folder contains all of the `.ame` files to compile. New projects generate a simple `src/main.ame` file.

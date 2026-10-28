@@ -33,6 +33,9 @@ call(f"../Amethyst/{amethyst} setup --eula -v {version} -p 25602")
 print("Creating shard")
 call(f"../Amethyst/{amethyst} shard init -n test -d Test -p {packver}")
 
+with open("shard.json", "r") as f:
+    print(f.read())
+
 with open("data/test.txt", "+w") as f:
     f.write("Hello")
 
