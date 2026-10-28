@@ -46,7 +46,7 @@ namespace Amethyst.AST
         public NamespacedID? Provides => ID;
         public bool Export { get; set; } = true;
 
-        public IEnumerable<NamespacedID> GetTypeDependencies(Compiler ctx) => BaseClass is not null ? BaseClass.SoftResolve(ctx, ID.GetContainingFolder()) : [];
+        public IEnumerable<NamespacedID> GetTypeDependencies(Compiler ctx) => BaseClass is not null ? BaseClass.SoftResolve(ctx, ID.ContainingFolder) : [];
 
         public void Process(Compiler ctx, RootNode root)
         {
@@ -78,7 +78,7 @@ namespace Amethyst.AST
 
             foreach (var (k, v) in Properties)
             {
-                props[k] = v.Resolve(ctx, ID.GetContainingFolder());
+                props[k] = v.Resolve(ctx, ID.ContainingFolder);
                 RecursePropertyType(ctx, props[k], selfType);
 
                 if (Type != ContainerType.Class && props[k] is ReferenceType && props[k] is not WeakReferenceType) throw new ReferencePropertyError(k);
@@ -93,32 +93,32 @@ namespace Amethyst.AST
 
                 if (i is ConstructorNode c)
                 {
-                    constructors[i.ID.GetFile()] = (RawFunctionValue?)ctx.IR.GetGlobal(i.ID) ?? throw new UndefinedSymbolError(i.ID.ToString());
+                    constructors[i.ID.File] = (RawFunctionValue?)ctx.IR.GetGlobal(i.ID) ?? throw new UndefinedSymbolError(i.ID.ToString());
                     constructor = c;
                 }
                 else if (i is not NullFunction)
                 {
                     var type = i.GetFunctionType(ctx);
-                    methods[i.ID.GetFile()] = (RawFunctionValue?)ctx.IR.GetGlobal(i.ID) ?? throw new UndefinedSymbolError(i.ID.ToString());
+                    methods[i.ID.File] = (RawFunctionValue?)ctx.IR.GetGlobal(i.ID) ?? throw new UndefinedSymbolError(i.ID.ToString());
 
                     var thisIsVirtual = i.Modifiers.HasFlag(FunctionModifiers.Virtual);
 
                     if (thisIsVirtual && Type != ContainerType.Class) throw new VirtualMethodError();
-                    if (selfType.HierarchyMethod(i.ID.GetFile())?.Function.Type is FunctionType other)
+                    if (selfType.HierarchyMethod(i.ID.File)?.Function.Type is FunctionType other)
                     {
                         var otherIsVirtual = other.Modifiers.HasFlag(FunctionModifiers.Virtual);
 
                         switch (otherIsVirtual)
                         {
                             case true when !thisIsVirtual:
-                                throw new MissingVirtualError(i.ID.GetFile());
+                                throw new MissingVirtualError(i.ID.File);
                             case false:
-                                throw new CannotOverrideError(i.ID.GetFile());
+                                throw new CannotOverrideError(i.ID.File);
                         }
 
                         if (other.ReturnType != type.ReturnType || other.Parameters.Length != type.Parameters.Length ||
                             other.Parameters.Skip(1).Zip(type.Parameters.Skip(1)).Any(i => i.First != i.Second))
-                            throw new InvalidOverrideSignatureError(i.ID.GetFile());
+                            throw new InvalidOverrideSignatureError(i.ID.File);
                     }
                 }
             }
@@ -154,7 +154,7 @@ namespace Amethyst.AST
 
             foreach (var (name, type) in Properties)
             {
-                builder.AppendLine($"    {type.Resolve(ctx, ID.GetContainingFolder())} {name};");
+                builder.AppendLine($"    {type.Resolve(ctx, ID.ContainingFolder)} {name};");
             }
 
             foreach (var i in Methods)
@@ -167,7 +167,7 @@ namespace Amethyst.AST
         }
 
         public TypeSpecifier GetBaseClass(Compiler ctx) =>
-            BaseClass?.Resolve(ctx, ID.GetContainingFolder()) ?? (Type == ContainerType.Entity ? EntityType.Dummy : PrimitiveType.Compound);
+            BaseClass?.Resolve(ctx, ID.ContainingFolder) ?? (Type == ContainerType.Entity ? EntityType.Dummy : PrimitiveType.Compound);
 
         private void RecursePropertyType(Compiler ctx, TypeSpecifier type, TypeSpecifier parent)
         {

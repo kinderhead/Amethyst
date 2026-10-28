@@ -17,7 +17,7 @@ namespace Amethyst.AST
         public static bool operator !=(AbstractTypeSpecifier? left, AbstractTypeSpecifier? right) => !left?.Equals(right) ?? true;
         public abstract bool Equals(AbstractTypeSpecifier? other);
 
-        public TypeSpecifier Resolve(FunctionContext ctx, bool allowAuto = false) => Resolve((Compiler)ctx.Compiler, ctx.Decl.ID.GetContainingFolder(), allowAuto);
+        public TypeSpecifier Resolve(FunctionContext ctx, bool allowAuto = false) => Resolve((Compiler)ctx.Compiler, ctx.Decl.ID.ContainingFolder, allowAuto);
 
         public TypeSpecifier Resolve(Compiler ctx, string baseNamespace, bool allowAuto = false)
         {

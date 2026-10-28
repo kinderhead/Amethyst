@@ -34,7 +34,7 @@ namespace Amethyst.AST
         {
             var type = GetFunctionType(ctx);
             type = new(type.Modifiers, type.ReturnType, type.Parameters.Skip(1));
-            builder.AppendLine($"    {type.ToString(OriginalID.GetFile(), true)};");
+            builder.AppendLine($"    {type.ToString(OriginalID.File, true)};");
         }
 
         protected override NamespacedID Mangle(TypeArray args) => base.Mangle(new(args.Types.Skip(1)));
@@ -73,7 +73,7 @@ namespace Amethyst.AST
         {
             var type = GetFunctionType(ctx);
             if (IsClass(ctx)) type = new(type.Modifiers, type.ReturnType, type.Parameters.Skip(1));
-            builder.AppendLine($"    {OriginalID.GetFile()}{type.ParamsToString(true)};");
+            builder.AppendLine($"    {OriginalID.File}{type.ParamsToString(true)};");
         }
     }
 }

@@ -35,7 +35,7 @@ namespace Amethyst.AST
         public bool Export { get; set; } = true;
 
         public IEnumerable<NamespacedID> GetTypeDependencies(Compiler ctx) =>
-            ReturnType.SoftResolve(ctx, ID.GetContainingFolder()).Concat(Parameters.SelectMany(i => i.Type.SoftResolve(ctx, ID.GetContainingFolder())));
+            ReturnType.SoftResolve(ctx, ID.ContainingFolder).Concat(Parameters.SelectMany(i => i.Type.SoftResolve(ctx, ID.ContainingFolder)));
 
         public virtual void Process(Compiler ctx, RootNode root) => ProcessAndGetFunc(ctx, root);
 
@@ -73,9 +73,9 @@ namespace Amethyst.AST
         {
             if (recompute || funcType is null)
             {
-                funcType = new(Modifiers, ReturnType.Resolve(ctx, ID.GetContainingFolder()),
+                funcType = new(Modifiers, ReturnType.Resolve(ctx, ID.ContainingFolder),
                     Parameters.Select(i =>
-                        new Parameter(i.Modifiers, i.Type.Resolve(ctx, ID.GetContainingFolder()), i.Name)));
+                        new Parameter(i.Modifiers, i.Type.Resolve(ctx, ID.ContainingFolder), i.Name)));
             }
 
             return funcType;

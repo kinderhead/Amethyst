@@ -1,7 +1,6 @@
 using System.ComponentModel;
 using Amethyst.PM;
 using Datapack.Net.Pack;
-using Datapack.Net.Utils;
 using Spectre.Console;
 using Spectre.Console.Cli;
 
@@ -13,10 +12,6 @@ namespace Amethyst.Cli.Clusters
         [Description("Project file to autofill missing arguments.")]
         [DefaultValue(Compiler.SHARD_PROJECT)]
         public string ShardFile { get; set; } = "";
-
-        [CommandOption("-n|--name")]
-        [Description("ID of shard. Will only use the last part of the path.")]
-        public string? Name { get; set; }
 
         [CommandOption("-v|--version")]
         [Description("Version to publish.")]
@@ -46,17 +41,10 @@ namespace Amethyst.Cli.Clusters
                 project = ret;
             }
 
-            settings.Name ??= project?.Name;
             settings.Format ??= project?.PackFormat;
             settings.Version ??= project?.Version.ToString();
 
             if (project is not null) settings.Dependencies = [.. settings.Dependencies, .. project.Dependencies.GetDynamicClusterDependencies().Select(i => $"{i.Key}@{i.Value}")];
-
-            if (settings.Name is null)
-            {
-                AnsiConsole.MarkupLine("[red]Error:[/] [yellow]Missing shard name[/]");
-                return 1;
-            }
 
             if (settings.Format is null)
             {
@@ -72,12 +60,12 @@ namespace Amethyst.Cli.Clusters
 
             return Cluster.WithCli(() =>
             {
-                var name = settings.Name.Contains(':') ? new NamespacedID(settings.Name).GetFile() : settings.Name;
                 var cluster = Cluster.From(settings.ClusterFile);
-                cluster.Add(name, settings.Version, settings.Format.Value, settings.Link,
+                cluster.Add(settings.Version, settings.Format.Value, settings.Link,
                     new(settings.Dependencies.Select(i => new KeyValuePair<string, string>(i.Split('@')[0], i.Split('@')[1]))));
-                
-                AnsiConsole.MarkupLineInterpolated($"Added {name}@{settings.Version} to {settings.ClusterFile}");
+                cluster.Save();
+
+                AnsiConsole.MarkupLineInterpolated($"Added {settings.Version} to {settings.ClusterFile}");
             });
         }
     }

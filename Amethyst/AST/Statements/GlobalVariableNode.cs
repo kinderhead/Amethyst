@@ -14,7 +14,7 @@ namespace Amethyst.AST.Statements
         public NamespacedID? Provides => null;
         public bool Export { get; set; } = true;
 
-        public IEnumerable<NamespacedID> GetTypeDependencies(Compiler ctx) => Type.SoftResolve(ctx, Name.GetContainingFolder());
+        public IEnumerable<NamespacedID> GetTypeDependencies(Compiler ctx) => Type.SoftResolve(ctx, Name.ContainingFolder);
 
         public void Process(Compiler ctx, RootNode root)
         {
@@ -31,6 +31,6 @@ namespace Amethyst.AST.Statements
             builder.AppendLine($"{ComputeType(ctx)} {Name};");
         }
 
-        public TypeSpecifier ComputeType(Compiler ctx) => Type.Resolve(ctx, Name.GetContainingFolder());
+        public TypeSpecifier ComputeType(Compiler ctx) => Type.Resolve(ctx, Name.ContainingFolder);
     }
 }

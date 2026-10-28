@@ -35,8 +35,9 @@ namespace Datapack.Net.Utils
 
         public override int GetHashCode() => Namespace.GetHashCode() * Path.GetHashCode();
 
-        public string GetContainingFolder() => Path.Contains('/') ? $"{Namespace}:{string.Join('/', Path.Split('/')[..^1])}" : Namespace;
-        public string GetFile() => Path.Split('/')[^1];
+        public string ContainingFolder => Path.Contains('/') ? $"{Namespace}:{string.Join('/', Path.Split('/')[..^1])}" : Namespace;
+        public string File => Path.Split('/')[^1];
+        public string[] Parts => [Namespace, .. Path.Split('/')];
 
         public NamespacedID WithFile(string file) => new(Namespace, string.Join('/', Path.Split('/')[..^1]) + '/' + file);
 

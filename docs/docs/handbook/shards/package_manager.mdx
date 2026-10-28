@@ -28,13 +28,11 @@ A cluster is defined in a `cluster.json`. Inside is an object defining shards or
 
 /* https://www.link.to/minecraft/cluster.json */
 {
-    ".": {
-        "versions": {
-            "26.3": {
-                "pack_format": "121.0",
-                /* File names do not matter and can be relative */
-                "link": "https://www.link.to/minecraft/releases/26.3.zip"
-            }
+    "@versions": {
+        "26.3": {
+            "pack_format": "121.0",
+            /* File names do not matter and can be relative */
+            "link": "https://www.link.to/minecraft/releases/26.3.zip"
         }
     },
     /* Relative to the current cluster */
@@ -44,7 +42,7 @@ A cluster is defined in a `cluster.json`. Inside is an object defining shards or
 /* https://some.other.link.to/utils/cluster.json */
 {
     "math": {
-        "versions": {
+        "@versions": {
             "1.0.1": {
                 "pack_format": "121.0",
                 "link": "https://some.other.link.to/utils/releases/1.0.1.zip"
@@ -52,11 +50,21 @@ A cluster is defined in a `cluster.json`. Inside is an object defining shards or
         }
     },
     "path": {
+        "@versions": {
+            "2.3": {
+                "pack_format": "121.0",
+                "link": "https://some.other.link.to/path/releases/2.3.zip"
+            },
+            "2.4": {
+                "pack_format": "121.0",
+                "link": "https://some.other.link.to/path/releases/2.4.zip"
+            }
+        },
         "join": {
-            "versions": {
+            "@versions": {
                 "3.2.8": {
                     "pack_format": "121.0",
-                    "link": "https://some.other.link.to/path/releases/3.2.8.zip",
+                    "link": "https://some.other.link.to/path/join/releases/3.2.8.zip",
                     /* Required dynamically linked dependencies */
                     /* Optional dependencies can be omitted */
                     "dependencies": {
@@ -74,7 +82,7 @@ Through each successive traversal, a namespaced ID is formed and that becomes th
 ### Commands
 
 * `amethyst cluster init`: Creates an empty cluster
-* `amethyst cluster add <link>`: Adds a shard version to a cluster. Optionally can autofill from a `shard.json`. Only modifies the specified cluster and uses the last part of the shard ID (as in, `namespace:path/name` is reduced to `name`).
+* `amethyst cluster add <link>`: Adds a shard version to the root of a cluster. Optionally can autofill from a `shard.json`.
 
 ## Cache
 

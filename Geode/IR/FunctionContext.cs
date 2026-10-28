@@ -123,7 +123,7 @@ namespace Geode.IR
             {
                 if (GetGlobal(new(name)) is { } v) return v;
             }
-            else if (GetGlobalWalk(Decl.ID.GetContainingFolder(), name) is { } v2) return v2;
+            else if (GetGlobalWalk(Decl.ID.ContainingFolder, name) is { } v2) return v2;
             else
             {
                 foreach (var i in Compiler.IR.UsingsHolder.Value?.Usings ?? [])
