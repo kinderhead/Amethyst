@@ -1,0 +1,50 @@
+---
+sidebar_position: 4
+description: Publishing shards
+---
+
+# Publishing Shards
+
+Amethyst provides package management through decentralized [clusters](../handbook/shards/package_manager.mdx). This page serves as an example for getting your libraries published on this network.
+
+This tutorial assumes that you are using Github, but it can be altered to work in any environment.
+
+## Setting Up
+
+To start, initialize a cluster:
+
+```sh
+amethyst cluster init
+```
+
+This creates a `cluster.json` file that will store the versions of your package. Add this file to your repository so that it is public.
+
+:::note
+The source code of your project does not need to be public, but the `cluster.json` file needs to be internet accessible.
+:::
+
+## Adding a Version
+
+Create a Github release and upload your built data pack. Copy the download link for your library and paste it into the following command:
+
+```sh
+amethyst cluster add <link>
+```
+
+Then commit and push the changes to `cluster.json`.
+
+## Linking Your Cluster to the Network
+
+To let other users consume your library, you need to let Amethyst know where to find your `cluster.json`. On Github, navigate to `cluster.json` and click the "Raw" button. This will bring you to a plain-text page with just the contents of your cluster.
+
+Copy that link and go to Amethyst's [issue page](https://github.com/kinderhead/Amethyst/issues). Create a Cluster Request issue and fill in the required information. If your cluster is accepted, your library will immediately become available for any Amethyst user to install like so:
+
+```sh
+amethyst shard add <your-shard>
+```
+
+Once this step is complete, you will not need to do it again unless you want to register a new shard namespace for a different cluster.
+
+## Not Making an Issue Every Time You Make a Library
+
+If you find yourself making a lot of libraries, you can take advantage of the cluster system and only register a single root namespace. Once your `cluster.json` is accepted, you can add any libraries you want to it. Your shards will then have names like `namespace:shard1` and `namespace:path/shard2`.

@@ -2,6 +2,6 @@ namespace example;
 
 #load
 void main() {
-    lib:hello();
-    // amethyst:exit();
+    print(minecraft:test(10));
+    amethyst:exit();
 }

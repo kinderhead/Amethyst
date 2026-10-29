@@ -17,6 +17,10 @@
 * Added proper dependency handling to `shard.json`.
 * Renamed `--pack-version` to `--pack-format`.
 * Changed default `shard.json` property order.
+* Added clusters and package management.
+* Added `amethyst cluster init`.
+* Added `amethyst cluster add`.
+* Added `amethyst shard add`.
 
 # Bug Fixes
 

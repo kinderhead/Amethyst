@@ -85,6 +85,10 @@ namespace Amethyst
                     cmd.AddCommand<ShardInitCommand>("init")
                        .WithDescription("Initialize a project.")
                        .WithExample("shard init");
+                    cmd.AddCommand<ShardAddCommand>("add")
+                       .WithDescription("Add a shard dependency.")
+                       .WithExample("shard add minecraft")
+                       .WithExample("shard add minecraft@26.3");
                 });
 
                 config.AddBranch("cluster", cmd =>

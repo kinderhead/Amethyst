@@ -22,7 +22,7 @@
     },
     "Random": {
       "commandName": "Project",
-      "commandLineArgs": "cluster add -s examples/shard/shard.json -v 1.1 yay",
+      "commandLineArgs": "shard add -f examples/shard/shard.json minecraft",
       "workingDirectory": "$(ProjectDir)"
     }
   }

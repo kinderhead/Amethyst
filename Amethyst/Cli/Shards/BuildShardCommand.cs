@@ -72,11 +72,15 @@ namespace Amethyst.Cli.Shards
             var newLink = new List<string>();
             var newInclude = new List<string>();
 
-            foreach (var i in project.Dependencies.ResolveDependencies(project))
-            {
-                if (i.Type == LinkType.Dynamic) newInclude.Add(i.ZipPath);
-                else newLink.Add(i.ZipPath);
-            }
+            if (Cluster.WithCli(() =>
+                {
+                    foreach (var i in project.Dependencies.ResolveDependencies(project))
+                    {
+                        if (i.Type == LinkType.Dynamic) newInclude.Add(i.ZipPath);
+                        else newLink.Add(i.ZipPath);
+                    }
+                }) == 1) return 1;
+
 
             settings.Link = [.. settings.Link, .. newLink];
             settings.Include = [.. settings.Include, .. newInclude];

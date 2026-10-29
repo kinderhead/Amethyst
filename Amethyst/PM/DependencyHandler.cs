@@ -25,7 +25,9 @@ namespace Amethyst.PM
             Entries.Add(entry);
         }
 
-        public IEnumerable<DependencyResult> ResolveDependencies(ProjectDefinition project) => Entries.SelectMany(i => i.Resolve(project));
+        // Kind of defeats the purpose of inheritance, but I don't really care right now
+        public IEnumerable<DependencyResult> ResolveDependencies(ProjectDefinition project) =>
+            [.. Entries.SelectMany(i => i.Resolve(project)), .. Cluster.Resolve(Entries.OfType<PackageEntry>(), project.PackFormat).SelectMany(i => i.Resolve(project))];
 
         public Dictionary<string, MinecraftVersion> GetDynamicClusterDependencies() =>
             new(Entries.OfType<PackageEntry>().Where(i => i.Type == LinkType.Dynamic).Select(i => new KeyValuePair<string, MinecraftVersion>(i.Name, i.Version)));

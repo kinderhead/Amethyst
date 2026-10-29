@@ -14,9 +14,8 @@ namespace Amethyst.Daemon
     {
         public const string MARKER_TEXT = "[Server thread/INFO] (TellrawLogger) ";
 
-        public static readonly string ServerFolder =
-            Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Amethyst", "server");
-
+        public static readonly string AmethystFolder = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Amethyst");
+        public static readonly string ServerFolder = Path.Combine(AmethystFolder, "server");
         public static readonly string ConfigLocation = Path.Combine(ServerFolder, "config.json");
         public static readonly string EULALocation = Path.Combine(ServerFolder, "eula.txt");
         public static readonly string ServerPropertiesLocation = Path.Combine(ServerFolder, "server.properties");
@@ -236,7 +235,7 @@ namespace Amethyst.Daemon
             return (false, "");
         }
 
-        public static bool DownloadFiles(params (string name, Uri url, string path)[] files)
+        public static bool DownloadFiles(params IEnumerable<(string name, Uri url, string path)> files)
         {
             var success = true;
 
@@ -256,7 +255,7 @@ namespace Amethyst.Daemon
                 {
                     try
                     {
-                        var task = ctx.AddTask($"Downloading {name}", false).IsIndeterminate();
+                        var task = ctx.AddTask($"Downloading [gold1]{name}[/]", false).IsIndeterminate();
                         ctx.Refresh();
 
                         using var client = new HttpClient();

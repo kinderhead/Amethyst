@@ -12,7 +12,7 @@ namespace Datapack.Net.Tests
         {
             var cluster = Cluster.New("test/folder/cluster.json");
             using var _ = Assert.EnterMultipleScope();
-            Assert.That(cluster.ResolvePath("../test.json"), Is.EqualTo($"test{Path.PathSeparator}test.json"));
+            Assert.That(cluster.ResolvePath("../test.json"), Is.EqualTo($"test{Path.DirectorySeparatorChar}test.json"));
 
             if (OperatingSystem.IsWindows()) Assert.That(cluster.ResolvePath("C:\\Test.json"), Is.EqualTo("C:\\Test.json"));
             else Assert.That(cluster.ResolvePath("/test.json"), Is.EqualTo("/test.json"));
@@ -57,6 +57,41 @@ namespace Datapack.Net.Tests
         }
 
         [Test]
+        public void AddWithPath()
+        {
+            var cluster = Cluster.New("cluster.json");
+            cluster.Add(["path1"], "1.0.1", new(121, 0), "link.zip", new() { ["minecraft"] = "26.3" });
+            cluster.Add(["path1", "path2"], "1.0.2", new(122, 0), "link2.zip", new() { ["minecraft"] = "26.4" });
+
+            Assert.That(cluster.Serialize(), Is.EqualTo("""
+                                                        {
+                                                            "path1": {
+                                                                "@versions": {
+                                                                    "1.0.1": {
+                                                                        "pack_format": "121.0",
+                                                                        "link": "link.zip",
+                                                                        "dependencies": {
+                                                                            "minecraft": "26.3"
+                                                                        }
+                                                                    }
+                                                                },
+                                                                "path2": {
+                                                                    "@versions": {
+                                                                        "1.0.2": {
+                                                                            "pack_format": "122.0",
+                                                                            "link": "link2.zip",
+                                                                            "dependencies": {
+                                                                                "minecraft": "26.4"
+                                                                            }
+                                                                        }
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                        """.Trim()));
+        }
+
+        [Test]
         public void QueryVersions()
         {
             var cluster = Get();
@@ -79,6 +114,28 @@ namespace Datapack.Net.Tests
             Assert.That(entry.Link, Is.EqualTo("https://some.other.link.to/path/join/releases/3.2.8.zip"));
             Assert.That(entry.Dependencies, Has.Count.EqualTo(1));
             Assert.That(entry.Dependencies.Single(), Is.EqualTo(new KeyValuePair<string, string>("utils:math", "1.0.1")));
+        }
+
+        [Test]
+        public void QueryRoot()
+        {
+            var cluster = Cluster.From(Cluster.ROOT_CLUSTER);
+            var entry = cluster.Query("minecraft", "26.3");
+            using var _ = Assert.EnterMultipleScope();
+
+            Assert.That(entry.Format, Is.EqualTo(new PackFormat(121, 0)));
+            Assert.That(entry.Link, Is.EqualTo("https://github.com/kinderhead/libminecraft/releases/download/release/minecraft@26.3.zip"));
+            Assert.That(entry.Dependencies, Has.Count.EqualTo(0));
+        }
+
+        [Test]
+        public void QueryLatest()
+        {
+            var cluster = Get();
+            using var _ = Assert.EnterMultipleScope();
+
+            Assert.That(cluster.QueryLatest("utils:path").Version, Is.EqualTo(new MinecraftVersion("2.4")));
+            Assert.That(cluster.QueryLatest("utils:path", new("120.0")).Version, Is.EqualTo(new MinecraftVersion("2.3")));
         }
 
         private static Cluster Get()
@@ -114,7 +171,7 @@ namespace Datapack.Net.Tests
                                                                                                              "path": {
                                                                                                                  "@versions": {
                                                                                                                      "2.3": {
-                                                                                                                         "pack_format": "121.0",
+                                                                                                                         "pack_format": "120.0",
                                                                                                                          "link": "https://some.other.link.to/path/releases/2.3.zip"
                                                                                                                      },
                                                                                                                      "2.4": {
