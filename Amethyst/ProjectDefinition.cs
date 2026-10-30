@@ -42,8 +42,8 @@ namespace Amethyst
         [JsonProperty("version", Order = -1)]
         public MinecraftVersion Version = new(1, 0, 0);
 
-        [JsonExtensionData]
-        public Dictionary<string, JToken> ExtraProperties { get; set; } = [];
+        // [JsonExtensionData]
+        // public Dictionary<string, JToken> ExtraProperties { get; set; } = [];
 
         [UnconditionalSuppressMessage("Trimming",
             "IL2026:Members annotated with 'RequiresUnreferencedCodeAttribute' require dynamic access otherwise can break functionality when trimming application code",
