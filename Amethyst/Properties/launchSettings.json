@@ -22,7 +22,7 @@
     },
     "Random": {
       "commandName": "Project",
-      "commandLineArgs": "shard add -f examples/shard/shard.json minecraft",
+      "commandLineArgs": "shard init -n test -d Test -p 121.0",
       "workingDirectory": "$(ProjectDir)"
     }
   }

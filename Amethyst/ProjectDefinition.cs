@@ -10,7 +10,7 @@ using Spectre.Console;
 
 namespace Amethyst
 {
-    [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.AllFields | DynamicallyAccessedMemberTypes.AllProperties)]
+    [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.All)]
     [JsonObject(MemberSerialization.OptIn)]
     public partial class ProjectDefinition
     {
