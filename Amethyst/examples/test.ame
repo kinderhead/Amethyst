@@ -15,8 +15,14 @@ entitydef minecraft:sheep implements minecraft:base {
 }
 /* The rest can be modified */
 
+struct test {
+    #[<121.0]
+    int x;
+}
+
 #load
 void main() {
-    lib:hello();
-    //amethyst:exit();
+    test obj;
+    print(obj.x);
+    amethyst:exit();
 }

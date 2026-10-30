@@ -124,7 +124,7 @@ namespace Amethyst.AST
 
             foreach (var i in context.declaration())
             {
-                props[i.RawIdentifier().GetText()] = Visit(i.type());
+                if (ShouldCompile(i.conditionalComp())) props[i.RawIdentifier().GetText()] = Visit(i.type());
             }
 
             var id = IdentifierToID(Visit(context.id()));

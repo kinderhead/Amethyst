@@ -2,7 +2,7 @@
   "profiles": {
     "Amethyst": {
       "commandName": "Project",
-      "commandLineArgs": "compile examples/test.ame -c -o output.zip -L testlib.zip --run",
+      "commandLineArgs": "compile examples/test.ame -c -o output.zip --run",
       "workingDirectory": "$(ProjectDir)"
     },
     "Shard": {

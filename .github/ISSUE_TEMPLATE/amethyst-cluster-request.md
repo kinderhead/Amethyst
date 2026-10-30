@@ -1,7 +1,7 @@
 ---
 name: Cluster Publish Request
 about: Request to add your packages to the root cluster
-title: 'Cluster request:'
+title: 'Cluster request: '
 labels: cluster
 assignees: kinderhead
 

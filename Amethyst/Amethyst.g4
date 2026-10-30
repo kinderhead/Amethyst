@@ -39,7 +39,7 @@ structDecl
     ;
 
 declaration
-    : type RawIdentifier (Eq expression)? Semi+
+    : (conditionalComp)* type RawIdentifier (Eq expression)? Semi+
     ;
 
 method
