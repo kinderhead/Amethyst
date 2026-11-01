@@ -50,20 +50,18 @@ namespace Amethyst
                 // config.Settings.HelpProviderStyles?.Options?.Header = "default";
                 // config.Settings.HelpProviderStyles?.Commands?.Header = "default";
 
-                var errored = false;
-
                 config.SetExceptionHandler((ex, _) =>
                 {
                     if (ex is CommandRuntimeException cre) AnsiConsole.MarkupLineInterpolated($"[red]Error:[/] {cre.Message}");
                     else
                     {
-                        if (!errored)
-                        {
-                            AnsiConsole.MarkupLine("[red]An unexpected error has occured. Please create an issue on Github.[/] ");
-                            errored = true;
-                        }
+                        AnsiConsole.MarkupLineInterpolated($"[red]An unexpected error has occured. Please create an issue on Github.[/]\n{ex}");
 
+#if DEBUG
                         ExceptionDispatchInfo.Capture(ex).Throw();
+#else
+                        Environment.Exit(1);
+#endif
                     }
                     // AnsiConsole.MarkupLineInterpolated($"[red]{ex.GetType().Name}: {ex.Message}[/]");
                     // return 1;

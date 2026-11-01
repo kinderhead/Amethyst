@@ -120,6 +120,8 @@ namespace Amethyst.AST
 
         public override Node VisitStructDecl([NotNull] AmethystParser.StructDeclContext context)
         {
+            if (!ShouldCompile(context.conditionalComp())) return new NullFunction();
+            
             var props = new Dictionary<string, AbstractTypeSpecifier>();
 
             foreach (var i in context.declaration())

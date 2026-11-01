@@ -35,7 +35,7 @@ block
     ;
 
 structDecl
-    : (Struct | (Declare? Class) | EntityDef) id (Implements simpleType)? LBrak (declaration | method)* RBrak
+    : (conditionalComp)* (Struct | (Declare? Class) | EntityDef) id (Implements simpleType)? LBrak (declaration | method)* RBrak
     ;
 
 declaration

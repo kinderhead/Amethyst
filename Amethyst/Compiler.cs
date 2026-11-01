@@ -360,7 +360,7 @@ namespace Amethyst
 
             foreach (var i in Roots.SelectMany(i => i.Value.Children))
             {
-                if (i.Export) i.GenDeclaration(syms, this);
+                if (i.Export) WrapError(i.Location, () => i.GenDeclaration(syms, this));
             }
 
             IR.Datapack.AddMiscFile(".d.ame", syms.ToString());

@@ -21,7 +21,7 @@
 * Added `amethyst cluster init`.
 * Added `amethyst cluster add`.
 * Added `amethyst shard add`.
-* Added conditional compilation support to struct properties.
+* Added conditional compilation support to structs and properties.
 
 # Bug Fixes
 
@@ -33,4 +33,3 @@
 * Fixed issue where blocks inside forking `execute` statements executed more than once (#156).
 * Correctly throw `TargetSelectorInvalidGamemodeError` instead of `TargetSelectorInvalidSortError`.
 * Correctly throw `QStringError` instead of `UnsafeStringError`.
-* Preserve custom user properties in `shard.json`.

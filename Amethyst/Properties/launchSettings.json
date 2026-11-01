@@ -1,29 +1,29 @@
 {
-  "profiles": {
-    "Amethyst": {
-      "commandName": "Project",
-      "commandLineArgs": "compile examples/test.ame -c -o output.zip --run",
-      "workingDirectory": "$(ProjectDir)"
-    },
-    "Shard": {
-      "commandName": "Project",
-      "commandLineArgs": "build -f examples/shard/shard.json --run",
-      "workingDirectory": "$(ProjectDir)"
-    },
-    "Test Suite": {
-      "commandName": "Project",
-      "commandLineArgs": "compile tests/*.ame -I lib.zip -o output.zip --run",
-      "workingDirectory": "$(ProjectDir)"
-    },
-    "Test Suite Lib": {
-      "commandName": "Project",
-      "commandLineArgs": "compile tests/linking/lib.ame -o lib.zip",
-      "workingDirectory": "$(ProjectDir)"
-    },
-    "Random": {
-      "commandName": "Project",
-      "commandLineArgs": "shard init -n test -d Test -p 121.0",
-      "workingDirectory": "$(ProjectDir)"
+    "profiles": {
+        "Amethyst": {
+            "commandName": "Project",
+            "commandLineArgs": "compile examples/test.ame -c -o output.zip --run",
+            "workingDirectory": "$(ProjectDir)"
+        },
+        "Shard": {
+            "commandName": "Project",
+            "commandLineArgs": "build -f examples/shard/shard.json --run",
+            "workingDirectory": "$(ProjectDir)"
+        },
+        "Test Suite": {
+            "commandName": "Project",
+            "commandLineArgs": "compile tests/*.ame -I lib.zip -o output.zip --run",
+            "workingDirectory": "$(ProjectDir)"
+        },
+        "Test Suite Lib": {
+            "commandName": "Project",
+            "commandLineArgs": "compile tests/linking/lib.ame -o lib.zip",
+            "workingDirectory": "$(ProjectDir)"
+        },
+        "Random": {
+            "commandName": "Project",
+            "commandLineArgs": "build -f ../../../Amethyst/libminecraft/shard.json",
+            "workingDirectory": "$(ProjectDir)"
+        }
     }
-  }
 }
