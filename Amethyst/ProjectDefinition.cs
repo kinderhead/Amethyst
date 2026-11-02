@@ -5,7 +5,6 @@ using Amethyst.PM;
 using Datapack.Net.Pack;
 using Datapack.Net.Utils;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using Spectre.Console;
 
 namespace Amethyst

@@ -12,6 +12,10 @@ namespace Amethyst.Cli.Shards
         [Description("Run the datapack if built successfully.")]
         public bool Run { get; set; }
 
+        [CommandOption("-v|--version")]
+        [Description("Override version defined in shard.json.")]
+        public string? Version { get; set; }
+
         [CommandOption("-d|--debug")]
         [Description("Enable debug checks.")]
         public bool Debug { get; set; }
@@ -62,7 +66,9 @@ namespace Amethyst.Cli.Shards
             Environment.CurrentDirectory = Path.GetDirectoryName(Path.GetFullPath(settings.ShardFile)) ??
                                            throw new FormatException($"Invalid path {settings.ShardFile}");
 
-            settings.Output = Path.Join(Environment.CurrentDirectory, "build", $"{project.Name.Replace('/', '-').Replace(':', '-')}@{project.Version}.zip");
+            // If `project.Version` is used elsewhere in the future, then assign `settings.Version` to it
+            settings.Output = Path.Join(Environment.CurrentDirectory, "build",
+                $"{project.Name.Replace('/', '-').Replace(':', '-')}@{settings.Version ?? project.Version.ToString()}.zip");
             settings.Inputs = [Path.Join(project.SourceDir, "**/*.ame")];
             settings.Data = project.DataDir;
             settings.Description = project.Description;
