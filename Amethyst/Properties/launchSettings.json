@@ -22,7 +22,7 @@
         },
         "Random": {
             "commandName": "Project",
-            "commandLineArgs": "build -f ../../../Amethyst/libminecraft/shard.json",
+            "commandLineArgs": "data versions v.json",
             "workingDirectory": "$(ProjectDir)"
         }
     }

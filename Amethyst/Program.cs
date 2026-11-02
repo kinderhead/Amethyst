@@ -2,6 +2,7 @@
 using Amethyst.Cli;
 using Amethyst.Cli.Clusters;
 using Amethyst.Cli.Daemon;
+using Amethyst.Cli.Data;
 using Amethyst.Cli.Shards;
 using Spectre.Console;
 using Spectre.Console.Cli;
@@ -98,6 +99,14 @@ namespace Amethyst
                     cmd.AddCommand<ClusterAddCommand>("add")
                        .WithDescription("Add a shard to a cluster.")
                        .WithExample("cluster add https://link.to/data_pack.zip");
+                });
+
+                config.AddBranch("data", cmd =>
+                {
+                    cmd.SetDescription("Data subcommands.");
+                    cmd.AddCommand<VersionsCommand>("versions")
+                       .WithDescription("Dump supported versions and their corresponding pack formats as JSON.")
+                       .WithExample("data versions");
                 });
 
                 config.AddCommand<DaemonSetupCommand>("setup")
