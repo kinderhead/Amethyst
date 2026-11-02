@@ -23,6 +23,7 @@
 * Added `amethyst shard add`.
 * Added conditional compilation support to structs and properties.
 * Added `amethyst data versions`.
+* Added `--version` override to `amethyst build`.
 
 # Bug Fixes
 
