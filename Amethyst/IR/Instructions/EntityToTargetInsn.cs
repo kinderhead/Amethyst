@@ -16,7 +16,7 @@ namespace Amethyst.IR.Instructions
 			ReturnValue.Expect<DynamicValue>()
 				.Add("@e[scores={amethyst_id=")
 				.Add(Arg<ValueRef>(0).Expect())
-				.Add("}]");
+				.Add(",limit=1}]");
 
 		protected override IValue ComputeReturnValue(FunctionContext ctx)
 		{

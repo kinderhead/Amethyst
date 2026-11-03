@@ -23,14 +23,14 @@ Entity definitions work similarly to structs. They can have properties and metho
 Entity definitions can also have base classes:
 
 <Highlight code={`\
-    entitydef minecraft:living_entity implements entity {
+    entitydef minecraft:entity/living implements entity {
         float Health;
     }
 `}/>
 
 Check the [Minecraft Wiki](https://minecraft.wiki/w/Entity_format) for entity data information.
 
-Amethyst provides definitions for vanilla entities in [`libminecraft`](https://github.com/kinderhead/libminecraft)
+Amethyst provides definitions for vanilla entities in [`libminecraft`](https://github.com/kinderhead/libminecraft).
 
 :::warning
 Beware that not all NBT properties listed are always defined on a given instance of the entity. Accessing an undefined property will result in undefined behavior. 
@@ -45,7 +45,7 @@ Additionally, players cannot have their NBT modified, so use commands like `/tp`
 Amethyst interacts with entities through entity references which take the form of a unique ID score (`amethyst_id`). UUIDs are not used due to the performance impact of the `nbt` target selector argument. To create a reference to an existing entity, cast a `minecraft:target` to an entity definition:
 
 <Highlight code={`\
-    living_entity cow = @e[type="cow", limit=1];
+    entity/living cow = @e[type="cow", limit=1];
 `}/>
 
 :::note
@@ -68,7 +68,7 @@ Since `minecraft:entity` may not always be defined, a special all-encompasing en
 The other way to reference entities is to directly summon them.
 
 <Highlight code={`\
-    living_entity cow = summon("cow");
+    entity/living cow = summon("cow");
 `}/>
 
 `minecraft:summon` currently returns an `amethyst:dummy`, so `var` should not be used in this context. Eventually this function will use generics.

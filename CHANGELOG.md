@@ -39,3 +39,4 @@
 * Correctly throw `TargetSelectorInvalidGamemodeError` instead of `TargetSelectorInvalidSortError`.
 * Correctly throw `QStringError` instead of `UnsafeStringError`.
 * Fixed unhandled exception when provided an invalid pack format.
+* Add `limit=1` to entity reference to target selector conversion.
