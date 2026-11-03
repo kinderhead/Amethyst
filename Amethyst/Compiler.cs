@@ -167,6 +167,8 @@ namespace Amethyst
 
         private bool Compile(ProgressTask? task = null)
         {
+            if (!SupportedVersions.Versions.ContainsValue(Options.PackFormat)) AnsiConsole.MarkupLineInterpolated($"[red]Pack format {Options.PackFormat} is not supported[/]");
+
             try
             {
                 LoadFiles();

@@ -99,6 +99,9 @@ namespace Amethyst
                     cmd.AddCommand<ClusterAddCommand>("add")
                        .WithDescription("Add a shard to a cluster.")
                        .WithExample("cluster add https://link.to/data_pack.zip");
+                    cmd.AddCommand<ClusterClearCommand>("clear")
+                       .WithDescription("Clears the cluster cache.")
+                       .WithExample("cluster clear");
                 });
 
                 config.AddBranch("data", cmd =>

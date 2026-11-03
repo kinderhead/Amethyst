@@ -26,8 +26,7 @@ namespace Amethyst.Cli
         public string? Description { get; set; }
 
         [CommandOption("-p|--pack-format")]
-        [Description("Data pack version to support.")]
-        [DefaultValue("121.0")]
+        [Description("Data pack version to support. Defaults to latest")]
         public PackFormat PackFormat { get; set; }
 
         [CommandOption("-d|--debug")]
@@ -70,6 +69,7 @@ namespace Amethyst.Cli
         {
             // ReSharper disable once NullCoalescingConditionIsAlwaysNotNullAccordingToAPIContract
             settings.Output ??= Path.GetFileName(settings.Inputs[0]) + ".zip";
+            if (settings.PackFormat.Major == 0) settings.PackFormat = PackFormat.Latest;
 
             var compiler = new Compiler(settings);
 

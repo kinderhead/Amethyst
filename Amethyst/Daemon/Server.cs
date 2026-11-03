@@ -49,7 +49,7 @@ namespace Amethyst.Daemon
 
             File.Delete(EULALocation);
 
-            if (!await GetMinecraftServer(settings.MinecraftVersion)) return 1;
+            if (!await GetMinecraftServer(settings.MinecraftVersion ?? SupportedVersions.Versions.First().Key.ToString())) return 1;
 
             var res = AnsiConsole.Status().Spinner(Spinner.Known.BouncingBar).SpinnerStyle(Style.Parse("gold1")).Start(
                 "[gold1]Setting up Minecraft server[/]", ctx =>
@@ -213,12 +213,11 @@ namespace Amethyst.Daemon
 
             return DownloadFiles(
                 ($"Minecraft {version}",
-                    new($"https://meta.fabricmc.net/v2/versions/loader/{version}/0.19.3/1.1.0/server/jar"),
+                    new($"https://meta.fabricmc.net/v2/versions/loader/{version}/0.20.1/1.1.3/server/jar"),
                     MinecraftServerLocation),
                 ("Tellraw Logger", new(tellraw), Path.Combine(ServerFolder, "mods", "tellraw-logger.jar")),
                 ("Better Log4j Config",
-                    new(
-                        "https://github.com/BigWingBeat/better_log4j_config/releases/download/1.2.0/better_log4j_config-1.2.0-fabric.jar"),
+                    new("https://github.com/BigWingBeat/better_log4j_config/releases/download/1.2.0/better_log4j_config-1.2.0-fabric.jar"),
                     Path.Combine(ServerFolder, "mods", "better-log4j-config.jar"))
             );
         }

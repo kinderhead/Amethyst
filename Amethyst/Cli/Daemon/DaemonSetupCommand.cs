@@ -25,9 +25,8 @@ namespace Amethyst.Cli.Daemon
         public string Memory { get; set; }
 
         [CommandOption("-v|--version")]
-        [Description("Minecraft server version.")]
-        [DefaultValue("26.3")]
-        public string MinecraftVersion { get; set; }
+        [Description("Minecraft server version. Defaults to latest.")]
+        public string? MinecraftVersion { get; set; }
 
         [CommandOption("-p|--port")]
         [Description("Minecraft server port. Port + 1 will be used for rcon.")]

@@ -73,7 +73,7 @@ namespace Amethyst.Cli.Shards
             settings.Data = project.DataDir;
             settings.Description = project.Description;
 
-            if (settings.PackFormat == new PackFormat("0.0")) settings.PackFormat = project.PackFormat;
+            if (settings.PackFormat == new PackFormat(0, 0)) settings.PackFormat = project.PackFormat;
 
             var newLink = new List<string>();
             var newInclude = new List<string>();

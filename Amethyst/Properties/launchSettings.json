@@ -22,7 +22,7 @@
         },
         "Random": {
             "commandName": "Project",
-            "commandLineArgs": "data versions v.json",
+            "commandLineArgs": "build -f /home/daniel/Documents/Amethyst/test/shard.json --run",
             "workingDirectory": "$(ProjectDir)"
         }
     }

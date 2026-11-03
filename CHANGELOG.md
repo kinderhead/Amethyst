@@ -20,10 +20,14 @@
 * Added clusters and package management.
 * Added `amethyst cluster init`.
 * Added `amethyst cluster add`.
+* Added `amethyst cluster clear`.
 * Added `amethyst shard add`.
 * Added conditional compilation support to structs and properties.
 * Added `amethyst data versions`.
 * Added `--version` override to `amethyst build`.
+* Added `libminecraft`.
+* Updated fabric server version.
+* Changed Arch Linux package ID to `amethyst-bin` to not conflict with an existing AUR package.
 
 # Bug Fixes
 
@@ -35,3 +39,4 @@
 * Fixed issue where blocks inside forking `execute` statements executed more than once (#156).
 * Correctly throw `TargetSelectorInvalidGamemodeError` instead of `TargetSelectorInvalidSortError`.
 * Correctly throw `QStringError` instead of `UnsafeStringError`.
+* Fixed unhandled exception when provided an invalid pack format.
