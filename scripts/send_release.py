@@ -1,5 +1,6 @@
 import json
 import os
+import sys
 import requests
 import shlex
 import shutil
@@ -9,26 +10,27 @@ from time import sleep
 
 from tester import call
 
-os.chdir("docs")
-call("bun run update")
-os.chdir("..")
-call("git add .")
-call("git commit -m \"Publish documentation for release\"")
-call("git push")
-print("Pushed update")
+if sys.argv[1] != "skip":
+    os.chdir("docs")
+    call("bun run update")
+    os.chdir("..")
+    call("git add .")
+    call("git commit -m \"Publish documentation for release\"")
+    call("git push")
+    print("Pushed update")
 
-sleep(1)
-call("gh workflow run Release")
+# sleep(1)
+# call("gh workflow run Release")
 
-# Just in case idk it doesn't matter
-sleep(5)
+# # Just in case idk it doesn't matter
+# sleep(5)
 
-print("Searching for releases...")
-runId = str(json.loads(call('gh run list -L 1 -w "Release" --json databaseId'))[0]["databaseId"])
+# print("Searching for releases...")
+# runId = str(json.loads(call('gh run list -L 1 -w "Release" --json databaseId'))[0]["databaseId"])
 
-print(f"Waiting for release {runId}...")
-call(f"gh run watch {runId}")
-call(f"gh run view {runId} --exit-status")
+# print(f"Waiting for release {runId}...")
+# call(f"gh run watch {runId}")
+# call(f"gh run view {runId} --exit-status")
 
 changelog = ""
 with open("CHANGELOG.md", "r") as f:
