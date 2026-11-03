@@ -26,7 +26,6 @@
 * Added `amethyst data versions`.
 * Added `--version` override to `amethyst build`.
 * Added `libminecraft`.
-* Updated fabric server version.
 * Changed Arch Linux package ID to `amethyst-bin` to not conflict with an existing AUR package.
 
 # Bug Fixes

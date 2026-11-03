@@ -213,7 +213,7 @@ namespace Amethyst.Daemon
 
             return DownloadFiles(
                 ($"Minecraft {version}",
-                    new($"https://meta.fabricmc.net/v2/versions/loader/{version}/0.20.1/1.1.3/server/jar"),
+                    new($"https://meta.fabricmc.net/v2/versions/loader/{version}/0.19.3/1.1.0/server/jar"),
                     MinecraftServerLocation),
                 ("Tellraw Logger", new(tellraw), Path.Combine(ServerFolder, "mods", "tellraw-logger.jar")),
                 ("Better Log4j Config",
