@@ -10,7 +10,7 @@ from time import sleep
 from tester import call
 
 os.chdir("docs")
-call("npm run update")
+call("bun run update")
 os.chdir("..")
 call("git add .")
 call("git commit -m \"Publish documentation for release\"")

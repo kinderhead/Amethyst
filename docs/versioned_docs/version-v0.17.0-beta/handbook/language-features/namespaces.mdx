@@ -78,3 +78,14 @@ The namespace and path of a function determines where to search for other functi
 :::info
 All symbols in the `builtin` and base `minecraft` namespace are available everywhere.
 :::
+
+## Using Statements
+
+Namespaces can be "imported" with `using` statements. The path must be fully qualified and cannot omit already-imported namespaces.
+
+<Highlight code={`\
+    using minecraft:math;
+    using math; // Imports symbols in the "math" namespace, not "minecraft:math"
+`}/>
+
+Amethyst does not throw an error if the namespace does not exist. By default, `minecraft` and `builtin` are already imported.

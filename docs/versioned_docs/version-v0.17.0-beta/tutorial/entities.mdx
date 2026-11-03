@@ -1,0 +1,74 @@
+---
+sidebar_position: 4
+description: Entity references
+---
+
+import Highlight from "@site/src/components/highlight";
+
+# Entities
+
+## Connecting to the Server
+
+If you are using the internal daemon server (aka, `--run`), open up Minecraft and join the server. By default, the address is `localhost:25600`. This will make it easier to see the effects of the code you'll write.
+
+The daemon server can be started and kept alive past the usual timeout with:
+
+```sh
+amethyst daemon
+```
+
+:::warning
+Due to an issue with file permissions, the daemon server does not persist on Windows. For this part, either symlink the built program to the data pack folder of a singleplayer world or manually drag it (unzipping may be required).
+
+If you are a Windows user and would like to fix it, look at [this](https://github.com/kinderhead/Amethyst/issues/175) issue.
+:::
+
+To give yourself operator privileges, run the following command:
+
+```sh
+amethyst daemon -c "op <username>" 
+```
+
+## Entity Manipulation
+
+Replace your `main` function with:
+
+<Highlight code={`\
+    #load
+    void main() {
+        sheep entity = @e[type="sheep", limit=1];
+        entity.tp(0, -57, 0);
+        entity.Sheared = true;
+
+        amethyst:exit();
+    }
+`}/>
+
+If you are not using the daemon server, you can remove the call to `amethyst:exit` and change the position array to be above ground. Otherwise navigate to the world origin and run the program. A sheared sheep should appear at the specified coordinates. If nothing happens, make sure that a sheep exists in the world.
+
+:::note
+This tutorial assumes that you are using `libminecraft`. If you get an undefined symbol error for `sheep` or `tp`, try running:
+```sh
+amethyst shard add minecraft
+```
+:::
+
+Let's break down each line.
+
+<Highlight code={`\
+    sheep entity = @e[type="sheep", limit=1];
+`}/>
+
+Here we grab a sheep and store it as an [entity reference](../handbook/language-features/entity-references.mdx).
+
+<Highlight code={`\
+    entity.tp(0, -57, 0);
+`}/>
+
+The `tp` method teleports the entity to the coordinates. Additionally, another entity can be passed in to teleport to that entity instead.
+
+<Highlight code={`\
+    entity.Sheared = true;
+`}/>
+
+Because we're using `libminecraft`, all entity NBT properties are statically typed. This line sets the sheep to sheared.
